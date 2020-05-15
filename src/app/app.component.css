@@ -1,0 +1,27 @@
+#mainModule {
+  padding: 56px 15px 0;
+}
+
+#sidebarToggle {
+  display: inline !important;
+}
+
+.dropdown:hover>.dropdown-menu {
+  display: block;
+}
+
+ng-sidebar-container {
+  height: 100vh;
+}
+
+.footer {
+  position: fixed;
+  height: 20px;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  color: #9d9d9d;
+  text-align: center;
+  background-color: #222;
+  border: 0;
+}
