@@ -1,0 +1,50 @@
+<nav class="navbar navbar-expand navbar-dark bg-primary shadow-lg p-1">
+
+  <!-- Side Navbar Toggle -->
+  <button (click)="this._toggleOpened.emit()" class="navbar-toggler mr-2" id="sidebarToggle">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <a class="navbar-brand" href="/">
+    <fa-icon icon="cogs"></fa-icon>
+    GSA EA Analytics & Reporting (GEAR) -
+    <span style="color: red">DEVELOPMENT ENVIRONMENT</span>
+  </a>
+
+  <!-- Global Search -->
+  <form class="form-inline mr-sm-2" role="search">
+    <input type="search" name="globalSearchField" ng-model="searchkw" class="form-control mr-sm-2"
+      placeholder="Global Search">
+    <!-- href="#!/search/{{searchkw}}" -->
+    <a type="submit" class="btn btn-light my-2 my-sm-0">
+      <fa-icon icon="search"></fa-icon>
+    </a>
+  </form>
+
+  <!-- Right Side Links -->
+  <ul class="navbar-nav ml-auto">
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/about">About</a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/assist_tech">Assitive Technology</a>
+    </li>
+
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" id="contactDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Contact/Feedback</a>
+      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="contactDropdown">
+        <li class="dropdown-header">Regarding IT Standards</li>
+        <a class="dropdown-item" href="https://mail.google.com/mail/?view=cm&fs=1&to=it-standards@gsa.gov"
+                target="_blank">IT Standards</a>
+
+        <div class="dropdown-divider"></div>
+
+        <li class="dropdown-header">Regarding Everything Else</li>
+        <a class="dropdown-item" href="https://mail.google.com/mail/?view=cm&fs=1&to=ea_planning@gsa.gov"
+                target="_blank">EA Team</a>
+      </div>
+    </li>
+    
+  </ul>
+</nav>
