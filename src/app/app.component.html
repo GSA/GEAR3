@@ -54,13 +54,13 @@
     <!-- Side Navbar -->
     <!-- Container for sidebar(s) + page content -->
     <ng-sidebar-container (onBackdropClicked)="_onBackdropClicked()">
-      <ng-sidebar
+      <ng-sidebar id="sidebar"
         [(opened)]="_opened"
-        [mode]="'push'"
+        [mode]="_mode"
         [keyClose]="_keyClose"
-        [position]="_POSITIONS[_positionNum]"
+        [position]="_position"
         [dock]="_dock"
-        [dockedSize]="'50px'"
+        [dockedSize]="_dockedSize"
         [autoCollapseHeight]="_autoCollapseHeight"
         [autoCollapseWidth]="_autoCollapseWidth"
         [closeOnClickOutside]="_closeOnClickOutside"
@@ -69,77 +69,66 @@
         [animate]="_animate"
         [trapFocus]="_trapFocus"
         [autoFocus]="_autoFocus"
-        [sidebarClass]="'demo-sidebar'"
-        [ariaLabel]="'My sidebar'"
+        [sidebarClass]="'w-15'"
+        [ariaLabel]="'sideNavbar'"
         (onOpenStart)="_onOpenStart()"
         (onOpened)="_onOpened()"
         (onCloseStart)="_onCloseStart()"
         (onClosed)="_onClosed()"
         (onTransitionEnd)="_onTransitionEnd()">
-        <p>Sidebar contents</p>
 
-        <button (click)="_toggleOpened()">Close sidebar</button>
-        <p><a closeSidebar>This will close the sidebar too</a></p>
-        <hr>
-        <p>Throwup on your pillow.</p>
-        <p>Steal the warm chair right after you get up.</p>
-        <p>Use lap as chair hide head under blanket.</p>
-        <p>Walk on car leaving trail of paw prints on hood.</p>
-        <p>Steal the warm chair right after you get up.</p>
+        <ul class="list-group">
+          <li>
+            <!-- Strategy -->
+            <a data-toggle="collapse" aria-expanded="false" class="bg-info list-group-item list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-start align-items-center">
+                    <span class="menu-collapsed">Strategy</span>
+                    <span class="submenu-icon ml-auto"><fa-icon icon="puzzle-piece"></fa-icon></span>
+                </div>
+            </a>
+            <div class="collapse sidebar-submenu">
+              <a routerLink="/strategic_framework" class="list-group-item list-group-item-action bg-secondary">
+                GSA IT Strategic Framework</a>
+              <a routerLink="/investments" class="list-group-item list-group-item-action bg-secondary">
+                GSA IT Investments</a>
+              <a href="https://insite.gsa.gov/directives-library/#GSAIT"
+                target="_blank" class="list-group-item list-group-item-action bg-secondary">
+                GSA IT Policies</a>
+            </div>
+
+            <!-- Business -->
+            <a data-toggle="collapse" aria-expanded="false" class="bg-info list-group-item list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-start align-items-center">
+                    <span class="menu-collapsed">Business Applications</span>
+                    <span class="submenu-icon ml-auto"><fa-icon icon="laptop"></fa-icon></span>
+                </div>
+            </a>
+            <div class="collapse sidebar-submenu">
+              <a routerLink="/systems" class="list-group-item list-group-item-action bg-secondary">
+                GSA Parent Systems</a>
+              <a routerLink="/applications" class="list-group-item list-group-item-action bg-secondary">
+                GSA Business Applications</a>
+              <a routerLink="/applications_TIME" class="list-group-item list-group-item-action bg-secondary">
+                Application TIME Report</a>
+              <a routerLink="/applications_retired" class="list-group-item list-group-item-action bg-secondary">
+                GSA Retired Applications</a>
+              <a routerLink="/applications_graveyard" class="list-group-item list-group-item-action bg-secondary">
+                GSA Application Graveyard</a>
+            </div>
+
+
+          </li>
+        </ul>
       </ng-sidebar>
 
       <!-- Page content -->
       <div ng-sidebar-content>
-    <!-- <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-      <div class="sidebar-sticky">
-        <ul class="nav flex-column">
-          <li class="nav-item">
-            <a class="nav-link active" href="#">
-              <span data-feather="home"></span>
-              Dashboard <span class="sr-only">(current)</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span data-feather="file"></span>
-              Orders
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span data-feather="shopping-cart"></span>
-              Products
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span data-feather="users"></span>
-              Customers
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span data-feather="bar-chart-2"></span>
-              Reports
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span data-feather="layers"></span>
-              Integrations
-            </a>
-          </li>
-        </ul>
-      </div>
-    </nav> -->
-
-        <!-- Content -->
         <main role="main">
           <router-outlet></router-outlet>
         </main>
-        <!-- End Content -->
-
       </div>
+      <!-- End Page Content -->
+
     </ng-sidebar-container>
     <!-- End Side Navbar -->
 

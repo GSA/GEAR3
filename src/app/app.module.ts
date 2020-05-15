@@ -14,6 +14,10 @@ import { SidebarModule } from 'ng-sidebar';
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { faCogs } from '@fortawesome/free-solid-svg-icons';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faPuzzlePiece } from '@fortawesome/free-solid-svg-icons';
+import { faLaptop } from '@fortawesome/free-solid-svg-icons';
+
+// Components
 import { AboutComponent } from './about/about.component';
 import { AssistTechComponent } from './assist-tech/assist-tech.component';
 import { HomeComponent } from './home/home.component';

@@ -1,17 +1,17 @@
-#mainModule {
-  padding: 56px 15px 0;
-}
-
-#sidebarToggle {
-  display: inline !important;
-}
-
-.dropdown:hover>.dropdown-menu {
+.nav-item.dropdown:hover>.dropdown-menu {
   display: block;
 }
 
+/* Sidebar */
 ng-sidebar-container {
   height: 100vh;
+  z-index: 100; /* Behind the top navbar */
+  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+
+/* Side Menu item*/
+ng-sidebar .list-group a {
+    color: white;
 }
 
 .footer {
