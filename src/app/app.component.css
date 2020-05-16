@@ -1,7 +1,3 @@
-.nav-item.dropdown:hover>.dropdown-menu {
-  display: block;
-}
-
 /* Sidebar */
 ng-sidebar-container {
   height: 100vh;
