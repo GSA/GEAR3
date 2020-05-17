@@ -4,9 +4,6 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-// Bootstrap
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
 // Sidebar Module
 import { SidebarModule } from 'ng-sidebar';
 
@@ -34,7 +31,6 @@ import { HomeComponent } from './home/home.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    NgbModule,
     SidebarModule.forRoot(),
     FontAwesomeModule,
   ],
