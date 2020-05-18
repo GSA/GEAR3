@@ -19,6 +19,10 @@ import { TopNavbarComponent } from './components/top-navbar/top-navbar.component
 import { AboutComponent } from './about/about.component';
 import { AssistTechComponent } from './assist-tech/assist-tech.component';
 import { HomeComponent } from './home/home.component';
+import { SidenavComponent } from './components/sidenav/sidenav.component';
+
+// Services
+import { SharedService } from './services/shared.service';
 
 @NgModule({
   declarations: [
@@ -26,7 +30,8 @@ import { HomeComponent } from './home/home.component';
     TopNavbarComponent,
     AboutComponent,
     AssistTechComponent,
-    HomeComponent
+    HomeComponent,
+    SidenavComponent
   ],
   imports: [
     BrowserModule,
@@ -34,7 +39,9 @@ import { HomeComponent } from './home/home.component';
     SidebarModule.forRoot(),
     FontAwesomeModule,
   ],
-  providers: [],
+  providers: [
+    SharedService
+  ],
   bootstrap: [AppComponent]
 })
 

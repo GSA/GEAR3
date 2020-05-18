@@ -1,0 +1,12 @@
+/* Sidebar */
+ng-sidebar-container {
+  height: 100vh;  /* and position needed to render sidebar properly */
+  position: absolute;
+  z-index: 100;  /* Behind the top navbar */
+  overflow-y: auto;  /* Scrollable contents if viewport is shorter than content. */
+}
+
+/* Side Menu item*/
+ng-sidebar .list-group a {
+    color: white;
+}

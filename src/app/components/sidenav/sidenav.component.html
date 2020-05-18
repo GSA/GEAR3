@@ -1,0 +1,84 @@
+<!-- Container for sidebar(s) + page content -->
+<ng-sidebar-container (onBackdropClicked)="_onBackdropClicked()">
+  <ng-sidebar id="sidebar" [(opened)]="_opened" [mode]="_mode"
+    [keyClose]="_keyClose" [position]="_position" [dock]="_dock"
+    [dockedSize]="_dockedSize" [autoCollapseHeight]="_autoCollapseHeight"
+    [autoCollapseWidth]="_autoCollapseWidth"
+    [closeOnClickOutside]="_closeOnClickOutside"
+    [closeOnClickBackdrop]="_closeOnClickBackdrop"
+    [showBackdrop]="_showBackdrop" [animate]="_animate" [trapFocus]="_trapFocus"
+    [autoFocus]="_autoFocus" [sidebarClass]="'w-15'" [ariaLabel]="'sideNavbar'"
+    (onOpenStart)="_onOpenStart()" (onOpened)="_onOpened()"
+    (onCloseStart)="_onCloseStart()" (onClosed)="_onClosed()"
+    (onTransitionEnd)="_onTransitionEnd()">
+
+    <ul class="list-group">
+      <li>
+        <!-- Strategy -->
+        <a data-toggle="collapse" data-target="#strategyDropdown"
+          aria-expanded="false"
+          class="bg-info list-group-item list-group-item-action flex-column align-items-start">
+          <div class="d-flex w-100 justify-content-start align-items-center">
+            <span class="menu-collapsed">Strategy</span>
+            <span class="submenu-icon ml-auto">
+              <fa-icon icon="puzzle-piece"></fa-icon>
+            </span>
+          </div>
+        </a>
+        <div id="strategyDropdown" class="collapse sidebar-submenu">
+          <a routerLink="/strategic_framework"
+            class="bg-dark list-group-item list-group-item-action">
+            GSA IT Strategic Framework</a>
+          <a routerLink="/investments"
+            class="bg-dark list-group-item list-group-item-action">
+            GSA IT Investments</a>
+          <a href="https://insite.gsa.gov/directives-library/#GSAIT"
+            target="_blank"
+            class="bg-dark list-group-item list-group-item-action">
+            GSA IT Policies</a>
+        </div>
+
+        <!-- Business -->
+        <a data-toggle="collapse" data-target="#businessDropdown"
+          aria-expanded="false"
+          class="bg-info list-group-item list-group-item-action flex-column align-items-start">
+          <div class="d-flex w-100 justify-content-start align-items-center">
+            <span class="menu-collapsed">Business Applications</span>
+            <span class="submenu-icon ml-auto">
+              <fa-icon icon="laptop"></fa-icon>
+            </span>
+          </div>
+        </a>
+        <div id="businessDropdown" class="collapse sidebar-submenu">
+          <a routerLink="/systems"
+            class="bg-dark list-group-item list-group-item-action">
+            GSA Parent Systems</a>
+          <a routerLink="/applications"
+            class="bg-dark list-group-item list-group-item-action">
+            GSA Business Applications</a>
+          <a routerLink="/applications_TIME"
+            class="bg-dark list-group-item list-group-item-action">
+            Application TIME Report</a>
+          <a routerLink="/applications_retired"
+            class="bg-dark list-group-item list-group-item-action">
+            GSA Retired Applications</a>
+          <a routerLink="/applications_graveyard"
+            class="bg-dark list-group-item list-group-item-action">
+            GSA Application Graveyard</a>
+        </div>
+
+
+      </li>
+    </ul>
+  </ng-sidebar>
+
+  <!-- Page content -->
+  <div ng-sidebar-content>
+    <main role="main">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+  <!-- End Page Content -->
+
+</ng-sidebar-container>
+<!-- End Side Navbar -->
