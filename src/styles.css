@@ -1,5 +1,28 @@
 /* You can add global styles to this file, and also import other style files */
 
+/* Underline card links for easy distinction */
+.card-link {
+  text-decoration: underline;
+}
+
+/* 15% width class */
 .w-15 {
   width: 15% !important;
+}
+
+/* Make tab borders thicker */
+.nav-tabs {
+  border-bottom: 4px solid #eceeef;
+}
+
+.nav-tabs .nav-item {
+  margin-bottom: -4px;
+}
+
+.nav-tabs .nav-link {
+  border: 4px solid transparent;
+}
+
+.nav-tabs .dropdown-menu {
+  margin-top: -4px;
 }
