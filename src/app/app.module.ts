@@ -4,8 +4,8 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-// Sidebar Module
-import { SidebarModule } from 'ng-sidebar';
+import { SidebarModule } from 'ng-sidebar';  // Sidebar Module
+import { PdfViewerModule } from 'ng2-pdf-viewer';  // PDF Viewer
 
 // Font Awesome Icons
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
@@ -23,6 +23,7 @@ import { SidenavComponent } from './components/sidenav/sidenav.component';
 
 // Services
 import { SharedService } from './services/shared.service';
+import { FrameworkComponent } from './strategy/framework/framework.component';
 
 @NgModule({
   declarations: [
@@ -31,12 +32,14 @@ import { SharedService } from './services/shared.service';
     AboutComponent,
     AssistTechComponent,
     HomeComponent,
-    SidenavComponent
+    SidenavComponent,
+    FrameworkComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     SidebarModule.forRoot(),
+    PdfViewerModule,
     FontAwesomeModule,
   ],
   providers: [

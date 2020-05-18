@@ -30,6 +30,7 @@
     "bootstrap": "^4.5.0",
     "jquery": "^3.5.1",
     "ng-sidebar": "^9.2.1",
+    "ng2-pdf-viewer": "^6.3.0",
     "rxjs": "~6.5.4",
     "save": "^2.4.0",
     "tslib": "^1.10.0",
