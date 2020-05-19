@@ -4,7 +4,7 @@ function createRouter(db) {
   const router = express.Router();
 
   // Route Definitions
-  router.get('/api/investments', function (req, res, next) {
+  router.get('/investments', function (req, res, next) {
     db.query(
       'SELECT * FROM obj_investment',
       (error, results) => {
