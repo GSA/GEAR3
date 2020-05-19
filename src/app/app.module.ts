@@ -10,9 +10,11 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';  // PDF Viewer
 // Font Awesome Icons
 import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { faCogs } from '@fortawesome/free-solid-svg-icons';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import { faPuzzlePiece } from '@fortawesome/free-solid-svg-icons';
 import { faLaptop } from '@fortawesome/free-solid-svg-icons';
+import { faPuzzlePiece } from '@fortawesome/free-solid-svg-icons';
+import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
+
 
 // Components
 import { TopNavbarComponent } from './components/top-navbar/top-navbar.component';
@@ -24,6 +26,7 @@ import { SidenavComponent } from './components/sidenav/sidenav.component';
 // Services
 import { SharedService } from './services/shared.service';
 import { FrameworkComponent } from './strategy/framework/framework.component';
+import { InvestmentsComponent } from './strategy/investments/investments.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +36,8 @@ import { FrameworkComponent } from './strategy/framework/framework.component';
     AssistTechComponent,
     HomeComponent,
     SidenavComponent,
-    FrameworkComponent
+    FrameworkComponent,
+    InvestmentsComponent
   ],
   imports: [
     BrowserModule,
@@ -53,8 +57,9 @@ export class AppModule {
   constructor(library: FaIconLibrary) {
     // Add icon to the library for convenient access in other components
     library.addIcons(faCogs);
-    library.addIcons(faSearch);
-    library.addIcons(faPuzzlePiece);
     library.addIcons(faLaptop);
+    library.addIcons(faPuzzlePiece);
+    library.addIcons(faQuestionCircle);
+    library.addIcons(faSearch);
   }
 }

@@ -8,6 +8,7 @@ import { AssistTechComponent } from './assist-tech/assist-tech.component'
 
 // Strategy Components
 import { FrameworkComponent } from './strategy/framework/framework.component'
+import { InvestmentsComponent } from './strategy/investments/investments.component'
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -15,8 +16,9 @@ const routes: Routes = [
   { path: 'assist_tech', component: AssistTechComponent },
 
   { path: 'strategic_framework', component: FrameworkComponent },
+  { path: 'investments', component: InvestmentsComponent },
 
-  {  // Redirects for any other catchall URLs
+  {  // Catch-all Redirect to Home
     path: '**',
     redirectTo: '',
     pathMatch: 'full'

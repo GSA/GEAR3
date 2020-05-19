@@ -25,7 +25,7 @@ export class SidenavComponent implements OnInit {
   _mode: string = 'push';
   _position: string = 'left';
   _dock: boolean = true;
-  _dockedSize: string = '50px';
+  _dockedSize: string = '65px';
   _closeOnClickOutside: boolean = true;
   _closeOnClickBackdrop: boolean = false;
   _showBackdrop: boolean = false;
