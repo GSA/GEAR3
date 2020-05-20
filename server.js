@@ -2,24 +2,13 @@ var dotenv = require('dotenv').config();  // .env Credentials
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const mysql = require('mysql2');
 
 const path = require('path');
 http = require('http');
 
-const investments = require('./api/investments');
+const api = require('./api/routes/index');
 
-// Connection Credentials
-const connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB
-})
 const port = process.env.PORT || 8000;
-
-// Create DB Connection
-connection.connect();
 
 const app = express()
   .use(cors())
@@ -31,7 +20,7 @@ const app = express()
 /********************************************************************
 API Platform
 ********************************************************************/
-app.use('/api', investments(connection));
+app.use('/api', api);
 
 /********************************************************************
 REDIRECT ROOT TO GEAR "read only" (aka "angular") app
