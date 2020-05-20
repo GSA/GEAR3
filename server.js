@@ -26,24 +26,27 @@ const app = express()
   .use(bodyParser.json())
   .use(bodyParser.urlencoded({ extended: false }))
   .use(express.static(path.join(__dirname, 'src')))
-  .use('/', express.static(path.join(__dirname, 'src')))
-  .use('/api', investments(connection))
-
-  app.listen(port, () => {
-  console.log("DB connected successfully!")
-  console.log('Express server listening to port ' + port);
-})
-app.on('error', onError);
-app.on('listening', onListening);
+  .use(express.static(path.join(__dirname, 'src')));
 
 /********************************************************************
-REDIRECT ROOT TO GEAR "read only" (aka "legacy"; aka "angular") app
+API Platform
+********************************************************************/
+app.use('/api', investments(connection));
+
+/********************************************************************
+REDIRECT ROOT TO GEAR "read only" (aka "angular") app
 ********************************************************************/
 app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'src','index.html'));
 });
 
 const server = http.createServer(app);
+
+server.listen(process.env.PORT, function() {
+  console.log('Express server listening on port ' + server.address().port);
+})
+server.on('error', onError);
+server.on('listening', onListening);
 
 /*
  * Event listener for HTTP server "error" event.

@@ -1,6 +1,8 @@
 {
   "name": "gear3",
   "version": "3.0.0",
+  "description": "Next Iteration of the GEAR portal to latest tech stack of 2020",
+  "main": "server.js",
   "scripts": {
     "ng": "ng",
     "start": "concurrently --kill-others \"npm run serve-api\" \"npm run serve\"",
@@ -11,7 +13,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
-  "private": true,
+  "author": "IDRA - Enterprise Architecture Group",
   "dependencies": {
     "-": "0.0.1",
     "@angular/animations": "~9.1.6",
