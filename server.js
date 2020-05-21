@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 http = require('http');
 
-const api = require('./api/routes/index');
+const api = require('./api/index');
 
 const port = process.env.PORT || 8000;
 

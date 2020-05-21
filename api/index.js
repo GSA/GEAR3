@@ -1,3 +1,5 @@
+const routesPath = './routes/';
+
 const express = require('express');
 // const cap = require('./capability');
 // const capsso = require('./capability_sso');
@@ -9,7 +11,7 @@ const express = require('express');
 // const its = require('./itstandards');
 // const interfaces = require('./interface');
 // const interfacesv2 = require('./interfacev2');
-const investment = require('./investments.routes');
+const investment = require(routesPath + 'investments.routes');
 // const org = require('./organization');
 // const sys = require('./parentsystem');
 // const mng = require('./managerpage');
