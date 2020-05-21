@@ -26,3 +26,12 @@
 .nav-tabs .dropdown-menu {
   margin-top: -4px;
 }
+
+/* Increase popover font size */
+.popover-header {
+  font-size: 1.25rem;
+}
+
+.popover-body {
+  font-size: 1rem;
+}
