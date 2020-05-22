@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { formatDate } from '@angular/common';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -24,7 +25,9 @@ export class InvestmentsComponent implements OnInit {
     exportDataType: 'all',
     exportOptions: {
         fileName: function () {
-          return 'GSA_IT_Investments'
+          // Append current date time to filename
+          this.currentDate = formatDate(Date.now(), 'MMM_dd_yyyy-HH_mm', 'en-US');
+          return 'GSA_IT_Investments-' + this.currentDate
         }
     },
     exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
