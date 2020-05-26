@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs/internal/Subscription';
 })
 export class SharedService {
 
+  // Sidebar Toggle Service
   toggleEmitter = new EventEmitter();
   subsVar: Subscription;
 
