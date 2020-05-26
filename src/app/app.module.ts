@@ -34,8 +34,7 @@ import { InvestmentsComponent } from './strategy/investments/investments.compone
     BrowserModule,
     AppRoutingModule,
     SidebarModule.forRoot(),
-    PdfViewerModule,
-    FontAwesomeModule,
+    PdfViewerModule
   ],
   providers: [
     SharedService
