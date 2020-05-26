@@ -1,13 +1,19 @@
 /* You can add global styles to this file, and also import other style files */
 
-/* Underline card links for easy distinction */
-.card-link {
+/* Underline H4 Headers, email links, card links for easy distinction */
+h4,
+a.email,
+.card-link,
+.modal .modal-body table th {
   text-decoration: underline;
 }
 
 /* 15% width class */
 .w-15 {
   width: 15% !important;
+}
+.w-80 {
+  width: 80% !important;
 }
 
 /* Make tab borders thicker */
@@ -34,4 +40,8 @@
 
 .popover-body {
   font-size: 1rem;
+}
+
+table svg {
+  margin-right: 10px;
 }

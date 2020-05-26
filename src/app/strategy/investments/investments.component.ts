@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { formatDate } from '@angular/common';
+import { Location } from '@angular/common';
+
+import { ModalsService } from '../../services/modals/modals.service';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -11,7 +14,13 @@ declare var $: any;
 })
 export class InvestmentsComponent implements OnInit {
 
-  constructor() { }
+  row: any;
+
+  constructor(
+    private location: Location,
+    public modalService: ModalsService) {
+      this.modalService.currentInvest.subscribe(row => this.row = row);
+  }
 
   // Bootstrap-Table Options
   tableOptions : {} = {
@@ -39,7 +48,7 @@ export class InvestmentsComponent implements OnInit {
     sortName: 'Name',
     sortOrder: 'asc',
     showToggle: true,
-    url: 'http://localhost:4200/api/investments'
+    url: this.location.prepareExternalUrl('/api/investments')
   };
 
   // Bootstrap-Table Columns
@@ -85,5 +94,17 @@ export class InvestmentsComponent implements OnInit {
       columns: this.columnDefs,
       data: [],
     }));
+
+    // Method to handle click events on the Investments table
+    $(document).ready(
+      $('#investTable').on('click-row.bs.table', function(e, row) {
+          console.log("Clicked Row: ", row);  // Debug
+
+          this.modalService.updateDetails(row);
+          $('#investDetail').modal('show');
+
+        }.bind(this)
+    ));
+
   }
 }
