@@ -2,9 +2,9 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 // Main Components
-import { HomeComponent } from './home/home.component'
-import { AboutComponent } from './about/about.component'
-import { AssistTechComponent } from './assist-tech/assist-tech.component'
+import { HomeComponent } from './main/home/home.component'
+import { AboutComponent } from './main/about/about.component'
+import { AssistTechComponent } from './main/assist-tech/assist-tech.component'
 
 // Strategy Components
 import { FrameworkComponent } from './strategy/framework/framework.component'

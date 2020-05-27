@@ -9,11 +9,11 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';  // PDF Viewer
 
 // Components
 import { TopNavbarComponent } from './components/top-navbar/top-navbar.component';
-import { AboutComponent } from './about/about.component';
+import { AboutComponent } from './main/about/about.component';
 
 //// Main
-import { AssistTechComponent } from './assist-tech/assist-tech.component';
-import { HomeComponent } from './home/home.component';
+import { AssistTechComponent } from './main/assist-tech/assist-tech.component';
+import { HomeComponent } from './main/home/home.component';
 import { SidenavComponent } from './components/sidenav/sidenav.component';
 
 //// Strategy
