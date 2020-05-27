@@ -8,12 +8,19 @@ a.email,
   text-decoration: underline;
 }
 
-/* 15% width class */
+/* More Width Classes */
 .w-15 {
   width: 15% !important;
 }
 .w-80 {
   width: 80% !important;
+}
+
+/* Make xl modals bigger */
+@media (min-width: 1200px) {
+  .modal-xl {
+    max-width: 80% !important;
+  }
 }
 
 /* Make tab borders thicker */
