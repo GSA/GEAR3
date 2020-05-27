@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { SharedService } from '../../services/shared/shared.service';
 
+// Declare jQuery symbol
+declare var $: any;
+
 @Component({
   selector: 'sidenav',
   templateUrl: './sidenav.component.html',
@@ -50,6 +53,8 @@ export class SidenavComponent implements OnInit {
 
   _onCloseStart(): void {
     console.info('Sidebar closing');
+    $('#strategyDropdown').collapse('hide');
+    $('#businessDropdown').collapse('hide');
   }
 
   _onClosed(): void {
