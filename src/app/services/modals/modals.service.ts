@@ -7,12 +7,12 @@ import { Subject } from 'rxjs';
 export class ModalsService {
 
   // Investment Modal
-  private investSource = new Subject<any>();
+  private investSource = new Subject();
   currentInvest = this.investSource.asObservable();
 
   constructor() { }
 
-  updateDetails(row: any) {
+  updateDetails(row: {}) {
     this.investSource.next(row);
   }
 }

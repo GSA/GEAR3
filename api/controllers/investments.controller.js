@@ -1,14 +1,71 @@
+const sql = require("../db.js");
 const Investment = require("../models/investments.model");
 
+const fs = require('fs');
+const path = require('path');
+
+const queryPath = '../queries/';
+
 function findAll (req, res) {
-  Investment.getAll((err, data) => {
-    if (err)
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'get_investments.sql')).toString() +
+    ";";
+
+  sql.query(query, (error, data) => {
+    if (error) {
+      console.log("Error: ", error);
       res.status(501).json({
         message:
-          err.message || "DB Query Error while retrieving investments"
+          error.message || "DB Query Error while retrieving investments"
       });
-    else res.status(200).json(data);
+    } else {
+      // console.log("Investments: ", res);  // Debug
+      res.status(200).json(data);
+    }
   });
 };
 
-module.exports = {findAll};
+function findOne (req, res) {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'get_investments.sql')).toString() +
+    " AND invest.Id = ?;";
+
+  sql.query(query,
+    [req.params.id],
+    (error, data) => {
+      if (error) {
+        console.log("Error: ", error);
+        res.status(501).json({
+          message:
+            error.message || "DB Query Error while retrieving individual investment"
+        });
+      } else {
+        // console.log("Investment: ", res);  // Debug
+        res.status(200).json(data);
+      }
+  });
+};
+
+function findApplications (req, res) {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'get_applications.sql')).toString() +
+    " AND app.obj_investment_Id = ? GROUP BY app.Id;";
+
+  sql.query(query,
+    [req.params.id],
+    (error, data) => {
+      if (error) {
+        console.log("Error: ", error);
+        res.status(501).json({
+          message:
+            error.message || "DB Query Error while retrieving application relations for investment"
+        });
+      } else {
+        // console.log("Investment: ", res);  // Debug
+        res.status(200).json(data);
+      }
+  });
+};
+
+module.exports = {
+  findAll,
+  findOne,
+  findApplications
+};

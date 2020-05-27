@@ -6,12 +6,12 @@ const router = express.Router();
 router.route('/')
     .get(investmentCtrl.findAll);
 
-// router.route('/:id')
-//     .get(investmentCtrl.findOne);
+router.route('/:id')
+    .get(investmentCtrl.findOne);
 
-// // children
-// router.route('/:id/applications/')
-//     .get(investmentCtrl.findApplications);
+// children
+router.route('/:id/applications/')
+    .get(investmentCtrl.findApplications);
 
 // router.route('/:id/pocs/')
 //     .get(investmentCtrl.findPOCs);

@@ -1,10 +1,3 @@
-const sql = require("../db.js");
-const fs = require('fs');
-const path = require('path');
-
-const queryPath = '../queries/';
-
-// Constructor
 class Investment {
   constructor(investment) {
     this.ID = investment.ID;
@@ -28,22 +21,6 @@ class Investment {
     this.InvManagerEmail = investment.InvManagerEmail;
     this.POC = investment.POC;
   }
-
-  static getAll(result) {
-    var query = fs.readFileSync(path.join(__dirname, queryPath, 'get_investments_detail.sql')).toString();
-
-    sql.query(query, (err, res) => {
-      if (err) {
-        console.log("Error: ", err);
-        result(null, err);
-        return;
-      }
-
-      // console.log("Investments: ", res);  // Debug
-      result(null, res);
-    });
-  }
 }
-
 
 module.exports = Investment;

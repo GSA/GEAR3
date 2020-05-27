@@ -14,16 +14,16 @@ declare var $: any;
 })
 export class InvestmentsComponent implements OnInit {
 
-  row: any;
+  row: Object = <any>{};
 
   constructor(
     private location: Location,
-    public modalService: ModalsService) {
-      this.modalService.currentInvest.subscribe(row => this.row = row);
+    private modalService: ModalsService) {
+    this.modalService.currentInvest.subscribe(row => this.row = row);
   }
 
-  // Bootstrap-Table Options
-  tableOptions : {} = {
+  // Investment Table Options
+  tableOptions: {} = {
     advancedSearch: true,
     idTable: 'advSearchInvestTable',
     buttonsClass: 'info',
@@ -33,11 +33,11 @@ export class InvestmentsComponent implements OnInit {
     showExport: true,
     exportDataType: 'all',
     exportOptions: {
-        fileName: function () {
-          // Append current date time to filename
-          this.currentDate = formatDate(Date.now(), 'MMM_dd_yyyy-HH_mm', 'en-US');
-          return 'GSA_IT_Investments-' + this.currentDate
-        }
+      fileName: function () {
+        // Append current date time to filename
+        this.currentDate = formatDate(Date.now(), 'MMM_dd_yyyy-HH_mm', 'en-US');
+        return 'GSA_IT_Investments-' + this.currentDate
+      }
     },
     exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
     pagination: true,
@@ -51,43 +51,42 @@ export class InvestmentsComponent implements OnInit {
     url: this.location.prepareExternalUrl('/api/investments')
   };
 
-  // Bootstrap-Table Columns
-  columnDefs : any[] = [{
-      field: 'Name',
-      title: 'Investment Name',
-      sortable: true
-    }, {
-      field: 'Description',
-      title: 'Description',
-      sortable: true
-    }, {
-      field: 'Type',
-      title: 'Type',
-      sortable: true
-    }, {
-      field: 'InvManager',
-      title: 'Investment Manager',
-      sortable: true
-    }, {
-      field: 'SSO',
-      title: 'SSO',
-      sortable: true
-    }, {
-      field: 'PSA',
-      title: 'Primary Service Area',
-      sortable: true
-    }, {
-      field: 'SSA',
-      title: 'Secondary Service Area',
-      sortable: true,
-      visible: false
-    }, {
-      field: 'UII',
-      title: 'Investment UII',
-      sortable: true,
-      visible: false
-    }
-  ];
+  // Investments Table Columns
+  columnDefs: any[] = [{
+    field: 'Name',
+    title: 'Investment Name',
+    sortable: true
+  }, {
+    field: 'Description',
+    title: 'Description',
+    sortable: true
+  }, {
+    field: 'Type',
+    title: 'Type',
+    sortable: true
+  }, {
+    field: 'InvManager',
+    title: 'Investment Manager',
+    sortable: true
+  }, {
+    field: 'SSO',
+    title: 'SSO',
+    sortable: true
+  }, {
+    field: 'PSA',
+    title: 'Primary Service Area',
+    sortable: true
+  }, {
+    field: 'SSA',
+    title: 'Secondary Service Area',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'UII',
+    title: 'Investment UII',
+    sortable: true,
+    visible: false
+  }];
 
   ngOnInit(): void {
     $('#investTable').bootstrapTable($.extend(this.tableOptions, {
@@ -97,13 +96,26 @@ export class InvestmentsComponent implements OnInit {
 
     // Method to handle click events on the Investments table
     $(document).ready(
-      $('#investTable').on('click-row.bs.table', function(e, row) {
-          console.log("Clicked Row: ", row);  // Debug
+      $('#investTable').on('click-row.bs.table', function (e, row) {
+        console.log("Investment Table Clicked Row: ", row);  // Debug
 
-          this.modalService.updateDetails(row);
-          $('#investDetail').modal('show');
+        this.modalService.updateDetails(row);
+        $('#investDetail').modal('show');
 
-        }.bind(this)
+        // Update related apps table in detail modal with clicked investment
+        $('#investRelAppsTable').bootstrapTable('refreshOptions', {
+          exportOptions: {
+            fileName: function () {
+              // Append current date time to filename
+              this.currentDate = formatDate(Date.now(), 'MMM_dd_yyyy-HH_mm', 'en-US');
+              return row.Name + '-Related_Apps-' + this.currentDate
+            }
+          },
+          url: this.location.prepareExternalUrl('/api/investments/' 
+            + String(row.ID) + '/applications')
+        })
+
+      }.bind(this)
     ));
 
   }

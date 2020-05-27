@@ -34,4 +34,4 @@ LEFT JOIN obj_capability        AS sec_service_area3      ON invest.sec_serv_are
 LEFT JOIN obj_capability        AS sec_service_area4      ON invest.sec_serv_area4 = sec_service_area4.Id
 LEFT JOIN obj_investment_active AS invact                 ON invest.Active = invact.Id
 
-WHERE invact.Keyname <> 'No';
+WHERE invact.Keyname <> 'No'
