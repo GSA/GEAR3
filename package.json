@@ -25,7 +25,6 @@
     "@angular/platform-browser": "~9.1.6",
     "@angular/platform-browser-dynamic": "~9.1.6",
     "@angular/router": "~9.1.6",
-    "@ng-bootstrap/ng-bootstrap": "^6.1.0",
     "body-parser": "^1.19.0",
     "bootstrap": "^4.5.0",
     "bootstrap-table": "^1.16.0",
