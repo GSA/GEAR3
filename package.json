@@ -7,7 +7,7 @@
     "ng": "ng",
     "start": "concurrently --kill-others \"npm run serve-api\" \"npm run serve\"",
     "serve": "ng serve --proxy-config proxy.conf.json",
-    "build": "ng build --output-path=public",
+    "build": "ng build --output-path=public --prod",
     "serve-api": "node server.js",
     "test": "ng test",
     "lint": "ng lint",

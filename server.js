@@ -8,14 +8,13 @@ http = require('http');
 
 const api = require('./api/index');
 
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 3334;
 
 const app = express()
   .use(cors())
   .use(bodyParser.json())
   .use(bodyParser.urlencoded({ extended: false }))
-  .use(express.static(path.join(__dirname, 'src')))
-  .use(express.static(path.join(__dirname, 'src')));
+  .use(express.static(path.join(__dirname, 'public')));
 
 /********************************************************************
 API Platform
@@ -26,12 +25,12 @@ app.use('/api', api);
 REDIRECT ROOT TO GEAR "read only" (aka "angular") app
 ********************************************************************/
 app.get('/', function (req, res) {
-  res.sendFile(path.join(__dirname, 'src','index.html'));
+  res.sendFile(path.join(__dirname, 'public','index.html'));
 });
 
 const server = http.createServer(app);
 
-server.listen(process.env.PORT, function() {
+server.listen(port, function() {
   console.log('Express server listening on port ' + server.address().port);
 })
 server.on('error', onError);
