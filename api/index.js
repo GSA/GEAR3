@@ -1,7 +1,7 @@
 const routesPath = './routes/';
 
 const express = require('express');
-// const cap = require('./capability');
+const cap = require(routesPath + 'capabilities.routes');
 // const capsso = require('./capability_sso');
 // const app = require('./application');
 // const appTIME = require('./apptime');
@@ -22,7 +22,7 @@ const router = express.Router();
 
 // router.use('/applications', app);
 // router.use('/apptime', appTIME);
-// router.use('/capabilities', cap);
+router.use('/capabilities', cap);
 // router.use('/capabilities_by_sso', capsso);
 // router.use('/fisma', fisma);
 // router.use('/fismaexp', fismaexp);
