@@ -40,6 +40,15 @@ a.email,
   margin-top: -4px;
 }
 
+.nav-tabs > li > a.active {
+  color: #fff !important;
+  background-color: #1F9BCF !important;
+}
+
+.bg-dark a.nav-link:not(.active) {
+  color: #fff !important;
+}
+
 /* Increase popover font size */
 .popover-header {
   font-size: 1.25rem;
