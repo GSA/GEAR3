@@ -10,6 +10,9 @@ import { AssistTechComponent } from './main/assist-tech/assist-tech.component'
 import { FrameworkComponent } from './strategy/framework/framework.component'
 import { InvestmentsComponent } from './strategy/investments/investments.component'
 
+// Business Components
+import { CapabilitiesModelComponent } from './business/capabilities-model/capabilities-model.component'
+
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'about', component: AboutComponent },
@@ -17,6 +20,8 @@ const routes: Routes = [
 
   { path: 'strategic_framework', component: FrameworkComponent },
   { path: 'investments', component: InvestmentsComponent },
+
+  { path: 'capabilities_model', component: CapabilitiesModelComponent },
 
   {  // Catch-all Redirect to Home
     path: '**',

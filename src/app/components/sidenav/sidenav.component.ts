@@ -55,6 +55,7 @@ export class SidenavComponent implements OnInit {
     console.info('Sidebar closing');
     $('#strategyDropdown').collapse('hide');
     $('#businessDropdown').collapse('hide');
+    $('#businessAppDropdown').collapse('hide');
   }
 
   _onClosed(): void {

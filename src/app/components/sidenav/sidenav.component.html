@@ -13,8 +13,8 @@
     (onTransitionEnd)="_onTransitionEnd()">
 
     <ul class="list-group">
+      <!-- Strategy -->
       <li>
-        <!-- Strategy -->
         <a data-toggle="collapse" data-target="#strategyDropdown"
           aria-controls="#strategyDropdown" aria-expanded="false" (click)="_opened=true"
           class="bg-info list-group-item list-group-item-action flex-column align-items-start">
@@ -40,10 +40,38 @@
         </div>
       </li>
 
+      <!-- Business  -->
       <li>
-        <!-- Business -->
         <a data-toggle="collapse" data-target="#businessDropdown"
-          aria-controls="#strategyDropdown" aria-expanded="false" (click)="_opened=true"
+          aria-controls="#businessDropdown" aria-expanded="false" (click)="_opened=true"
+          class="bg-info list-group-item list-group-item-action flex-column align-items-start">
+          <div class="d-flex w-100 justify-content-start align-items-center">
+            Business
+            <span class="submenu-icon ml-auto">
+              <i class="fas fa-sitemap fa-lg"></i>
+            </span>
+          </div>
+        </a>
+        <div id="businessDropdown" class="collapse sidebar-submenu">
+          <a routerLink="/capabilities_model"
+            class="bg-dark list-group-item list-group-item-action">
+            GSA Business Capability Model</a>
+          <a routerLink="/capabilities"
+            class="bg-dark list-group-item list-group-item-action">
+            GSA Business Capability List</a>
+          <a routerLink="/org_chart"
+            class="bg-dark list-group-item list-group-item-action">
+            GSA Organization Chart</a>
+          <a routerLink="/organizations"
+            class="bg-dark list-group-item list-group-item-action">
+            GSA Organization List</a>
+        </div>
+      </li>
+
+      <li>
+        <!-- Business Applications -->
+        <a data-toggle="collapse" data-target="#businessAppDropdown"
+          aria-controls="#businessAppDropdown" aria-expanded="false" (click)="_opened=true"
           class="bg-info list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
             Business Applications
@@ -52,7 +80,7 @@
             </span>
           </div>
         </a>
-        <div id="businessDropdown" class="collapse sidebar-submenu">
+        <div id="businessAppDropdown" class="collapse sidebar-submenu">
           <a routerLink="/systems"
             class="bg-dark list-group-item list-group-item-action">
             GSA Parent Systems</a>

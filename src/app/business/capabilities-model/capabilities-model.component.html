@@ -1,0 +1,39 @@
+<div class="card bg-light">
+  <div class="row card-header text-white bg-dark text-center">
+    <h3 class="card-title col-11 mb-0 align-self-center">
+      <span class="my-auto">
+        <i class="fas fa-project-diagram"></i>
+        GSA Capabilities Model</span>
+    </h3>
+    <!-- Help Button -->
+    <a tabindex="0" class="col-1 btn btn-sm text-black-50 btn-info float-right" role="button" data-toggle="popover"
+      data-trigger="focus" data-placement="auto" data-html="true" title="Help Using this Table"
+      data-content="<b>Hover:</b> Hover over a circle next to an capabilities to see its description. 
+        In the pop-up window, click the <i class='far fa-file-alt'></i> icon to see additional information about the capabilities 
+        or click the <i class='fa fa-times'></i> icon to close the window.
+        <br><br>
+        <b>Click:</b> Left click on the circle next to an capabilities to see the next level of the capabilities. (Not all capabilities have another level).
+        <br><br>
+        <b>Search:</b> The search box below can search for any of the capabilities display names and expand the chart to the nodes that match. 
+        Enter your desired term into the search bar and press <i>Enter</i> or click the magnifying glass. You will get an alert if no matching term is found.">
+      <i class="far fa-question-circle fa-2x text-white"></i>
+    </a>
+  </div>
+
+  <div class="row card-body bg-light card-text">
+    <!-- Graph Searchbar -->
+    <div class="input-group col-lg-3 ml-auto">
+      <input type="text" class="form-control" placeholder="Search Capability Names"
+        id="capSearchField" ng-model="searchKey" ng-keydown="$event.keyCode === 13 && search()"/>
+      <div class="input-group-btn">
+        <button class="btn btn-primary" (click)="search()">
+          <span class="fa fa-search"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Capability Graph -->
+    <div id="busCapGraph"></div>
+    <!-- <table id="investTable"></table> -->
+  </div>
+</div>

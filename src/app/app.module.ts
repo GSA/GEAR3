@@ -21,6 +21,9 @@ import { FrameworkComponent } from './strategy/framework/framework.component';
 import { InvestmentsComponent } from './strategy/investments/investments.component';
 import { InvestmentsModalComponent } from './components/modals/investments-modal/investments-modal.component';
 
+//// Business
+import { CapabilitiesModelComponent } from './business/capabilities-model/capabilities-model.component';
+
 // Services
 import { SharedService } from './services/shared/shared.service';
 import { ModalsService } from './services/modals/modals.service';
@@ -38,7 +41,9 @@ import { ModalsService } from './services/modals/modals.service';
 
     FrameworkComponent,
     InvestmentsComponent,
-    InvestmentsModalComponent
+    InvestmentsModalComponent,
+
+    CapabilitiesModelComponent
   ],
   imports: [
     BrowserModule,
