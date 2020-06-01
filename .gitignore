@@ -3,11 +3,13 @@
 #----- Custom Ignores -----
 # sensitive data
 .env
+/iisnode
 
 #--------------------------
 
 # compiled output
 /dist
+/public
 /tmp
 /out-tsc
 # Only exists if Bazel was run
