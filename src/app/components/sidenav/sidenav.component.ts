@@ -11,9 +11,7 @@ declare var $: any;
 })
 export class SidenavComponent implements OnInit {
 
-  constructor(
-    private sharedService: SharedService
-  ) { }
+  constructor(private sharedService: SharedService) { }
 
   ngOnInit(): void {
     if (this.sharedService.subsVar == undefined) {

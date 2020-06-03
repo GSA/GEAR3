@@ -1,4 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -25,8 +26,8 @@ import { InvestmentsModalComponent } from './components/modals/investments-modal
 import { CapabilitiesModelComponent } from './business/capabilities-model/capabilities-model.component';
 
 // Services
-import { SharedService } from './services/shared/shared.service';
 import { ModalsService } from './services/modals/modals.service';
+import { SharedService } from './services/shared/shared.service';
 
 @NgModule({
   declarations: [
@@ -46,14 +47,15 @@ import { ModalsService } from './services/modals/modals.service';
     CapabilitiesModelComponent
   ],
   imports: [
-    BrowserModule,
     AppRoutingModule,
-    SidebarModule.forRoot(),
-    PdfViewerModule
+    BrowserModule,
+    HttpClientModule,
+    PdfViewerModule,
+    SidebarModule.forRoot()
   ],
   providers: [
-    SharedService,
-    ModalsService
+    ModalsService,
+    SharedService
   ],
   bootstrap: [AppComponent]
 })

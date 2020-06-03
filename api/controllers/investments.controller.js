@@ -1,5 +1,4 @@
 const sql = require("../db.js");
-const Investment = require("../models/investments.model");
 
 const fs = require('fs');
 const path = require('path');
