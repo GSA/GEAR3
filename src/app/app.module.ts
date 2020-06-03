@@ -25,6 +25,7 @@ import { InvestmentsModalComponent } from './components/modals/investments-modal
 //// Business
 import { CapabilitiesModelComponent } from './business/capabilities-model/capabilities-model.component';
 import { CapabilitiesComponent } from './business/capabilities/capabilities.component';
+import { CapabilitiesModalComponent } from './components/modals/capabilities-modal/capabilities-modal.component';
 
 // Services
 import { ModalsService } from './services/modals/modals.service';
@@ -46,7 +47,8 @@ import { SharedService } from './services/shared/shared.service';
     InvestmentsModalComponent,
 
     CapabilitiesModelComponent,
-    CapabilitiesComponent
+    CapabilitiesComponent,
+    CapabilitiesModalComponent
   ],
   imports: [
     AppRoutingModule,

@@ -6,12 +6,12 @@ const router = express.Router();
 router.route('/')
     .get(capabilitiesCtrl.findAll);
 
-// router.route('/:id')
-//     .get(capabilityCtrl.findOne);
+router.route('/:id')
+    .get(capabilitiesCtrl.findOne);
 
-// children
-// router.route('/:id/applications')
-//     .get(capabilityCtrl.findApplications);
+// Children
+router.route('/:id/applications')
+    .get(capabilitiesCtrl.findApplications);
 
 // special (reports, data viz, etc.)
 // router.route('/app-counts')

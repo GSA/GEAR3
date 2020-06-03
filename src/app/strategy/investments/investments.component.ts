@@ -8,7 +8,7 @@ import { ModalsService } from '../../services/modals/modals.service';
 declare var $: any;
 
 @Component({
-  selector: 'app-investments',
+  selector: 'investments',
   templateUrl: './investments.component.html',
   styleUrls: ['./investments.component.css']
 })
@@ -97,9 +97,9 @@ export class InvestmentsComponent implements OnInit {
     // Method to handle click events on the Investments table
     $(document).ready(
       $('#investTable').on('click-row.bs.table', function (e, row) {
-        console.log("Investment Table Clicked Row: ", row);  // Debug
+        // console.log("Investment Table Clicked Row: ", row);  // Debug
 
-        this.modalService.updateDetails(row);
+        this.modalService.updateDetails(row, 'investment');
         $('#investDetail').modal('show');
 
         // Update related apps table in detail modal with clicked investment

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { formatDate } from '@angular/common';
 import { Location } from '@angular/common';
 
+import { ModalsService } from '../../services/modals/modals.service';
+
 // Declare jQuery symbol
 declare var $: any;
 
@@ -12,14 +14,18 @@ declare var $: any;
 })
 export class CapabilitiesComponent implements OnInit {
 
+  row: Object = <any>{};
+
   constructor(
-    private location: Location
-  ) { }
+    private location: Location,
+    private modalService: ModalsService) {
+    this.modalService.currentInvest.subscribe(row => this.row = row);
+  }
 
   // Capabilities Table Options
   tableOptions: {} = {
     advancedSearch: true,
-    idTable: 'advSearchCapsTable',
+    idTable: 'advSearchCapTable',
     buttonsClass: 'info',
     cache: true,
     classes: "table table-bordered table-striped table-hover table-dark",
@@ -65,10 +71,35 @@ export class CapabilitiesComponent implements OnInit {
   }];
 
   ngOnInit(): void {
-    $('#capsTable').bootstrapTable($.extend(this.tableOptions, {
+    $('#capTable').bootstrapTable($.extend(this.tableOptions, {
       columns: this.columnDefs,
       data: [],
     }));
+
+    // Method to handle click events on the Investments table
+    $(document).ready(
+      $('#capTable').on('click-row.bs.table', function (e, row) {
+        console.log("Capability Table Clicked Row: ", row);  // Debug
+
+        this.modalService.updateDetails(row, 'capability');
+        $('#capabilityDetail').modal('show');
+
+        // Update related apps table in detail modal with clicked investment
+        $('#capSupportAppsTable').bootstrapTable('refreshOptions', {
+          exportOptions: {
+            fileName: function () {
+              // Append current date time to filename
+              this.currentDate = formatDate(Date.now(), 'MMM_dd_yyyy-HH_mm', 'en-US');
+              return row.Name + '-Supporting_Apps-' + this.currentDate
+            }
+          },
+          url: this.location.prepareExternalUrl('/api/capabilities/' 
+            + String(row.ID) + '/applications')
+        })
+
+      }.bind(this)
+    ));
+
   }
 
 }

@@ -3,7 +3,7 @@
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
     <div class="modal-content">
       <div class="modal-header bg-info">
-        <h5 class="modal-title" id="investTitle">
+        <h5 class="modal-title text-white" id="investTitle">
           <i class="fas fa-money-bill-wave"></i>
           {{ investment.Name }}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -15,16 +15,16 @@
         <!-- Tabs -->
         <ul class="nav nav-tabs">
           <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#overview">
+            <a class="nav-link active" data-toggle="tab" href="#investOverview">
               Overview</a></li>
           <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#relatedApps">
+            <a class="nav-link" data-toggle="tab" href="#investRelatedApps">
               Related Business Applications</a></li>
         </ul>
 
         <!-- Tab Panes -->
         <div class="tab-content mt-3">
-          <div class="tab-pane fade show active" id="overview">
+          <div class="tab-pane fade show active" id="investOverview">
             <h4>Description</h4>
             <p>{{ investment.Description }}</p>
             <br>
@@ -82,7 +82,7 @@
     
           </div>
 
-          <div class="tab-pane fade show" id="relatedApps">
+          <div class="tab-pane fade show" id="investRelatedApps">
             <table id="investRelAppsTable"></table>
           </div>
 

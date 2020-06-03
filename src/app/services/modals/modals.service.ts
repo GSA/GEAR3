@@ -10,9 +10,19 @@ export class ModalsService {
   private investSource = new Subject();
   currentInvest = this.investSource.asObservable();
 
+  // Capability Modal
+  private capSource = new Subject();
+  currentCap = this.capSource.asObservable();
+
   constructor() { }
 
-  updateDetails(row: {}) {
-    this.investSource.next(row);
+  updateDetails(row: {}, component: string) {
+    if (component == 'investment') {
+      this.investSource.next(row);
+    } else if (component == 'capability') {
+      this.capSource.next(row);
+    } else {
+      console.log("Error: Not a valid component to updaate details");
+    }
   }
 }
