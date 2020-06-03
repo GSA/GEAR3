@@ -30,14 +30,13 @@ export class SharedService {
 
   // API Calls
   //// Capabilities API
-  public getCapabilities(): Observable<Capability[]>{
+  public getCapabilities(): Observable<Capability[]> {
     return this.http.get<Capability[]>(this.capUrl).pipe(
       catchError(this.handleError<Capability[]>('Capabilities', []))
     )
   }
 
-
-  // Error Handler for API calls
+  //// Error Handler for API calls
   private handleError<T>(operation: string = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       console.log(`Failed ${operation} API Call: ${error.message}`);
@@ -45,5 +44,18 @@ export class SharedService {
     }
   }
 
+  // Table Data Formatters
+  //// Fiscal Year Breakdown
+  public FYFormatter(value, row, index, field) {
+    var appTime = row.AppTime;
+    var re = new RegExp(field + ", ([BDEIMT123]{1,3});?");
+    var match = re.exec(appTime);
+    var finaleVal = undefined;
+
+    if (match != null) {  // Did it match?
+        finaleVal = match[1];
+    }
+    return finaleVal;
+  };
   
 }

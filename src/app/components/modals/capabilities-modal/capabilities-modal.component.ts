@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { ModalsService } from '../../../services/modals/modals.service';
+import { SharedService } from '../../../services/shared/shared.service';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -14,7 +15,9 @@ export class CapabilitiesModalComponent implements OnInit {
 
   capability = <any>{};
 
-  constructor(private modalService: ModalsService) { }
+  constructor(
+    private modalService: ModalsService,
+    private sharedService: SharedService) { }
 
   // Supporting Apps Table Options
   tableOptions: {} = {
@@ -89,31 +92,39 @@ export class CapabilitiesModalComponent implements OnInit {
   }, {
     field: 'FY14',
     title: 'FY14',
-    visible: false
+    visible: false,
+    formatter: this.sharedService.FYFormatter
   }, {
     field: 'FY15',
     title: 'FY15',
-    visible: false
+    visible: false,
+    formatter: this.sharedService.FYFormatter
   }, {
     field: 'FY16',
     title: 'FY16',
-    visible: false
+    visible: false,
+    formatter: this.sharedService.FYFormatter
   }, {
     field: 'FY17',
     title: 'FY17',
-    visible: false
+    visible: false,
+    formatter: this.sharedService.FYFormatter
   }, {
     field: 'FY18',
-    title: 'FY18'
+    title: 'FY18',
+    formatter: this.sharedService.FYFormatter
   }, {
     field: 'FY19',
-    title: 'FY19'
+    title: 'FY19',
+    formatter: this.sharedService.FYFormatter
   }, {
     field: 'FY20',
-    title: 'FY20'
+    title: 'FY20',
+    formatter: this.sharedService.FYFormatter
   }, {
     field: 'FY21',
-    title: 'FY21'
+    title: 'FY21',
+    formatter: this.sharedService.FYFormatter
   }, {
     field: 'Notes',
     title: 'Notes',
