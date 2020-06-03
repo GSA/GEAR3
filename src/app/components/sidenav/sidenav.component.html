@@ -12,7 +12,7 @@
     (onCloseStart)="_onCloseStart()" (onClosed)="_onClosed()"
     (onTransitionEnd)="_onTransitionEnd()">
 
-    <ul class="list-group">
+    <ul id="sideMenu" class="list-group">
       <!-- Strategy -->
       <li>
         <a data-toggle="collapse" data-target="#strategyDropdown"
@@ -25,7 +25,8 @@
             </span>
           </div>
         </a>
-        <div id="strategyDropdown" class="collapse sidebar-submenu">
+        <div id="strategyDropdown" aria-labelledby="strategyDropdown"
+          data-parent="#sideMenu" class="collapse sidebar-submenu">
           <a routerLink="/strategic_framework"
             class="bg-dark list-group-item list-group-item-action">
             GSA IT Strategic Framework</a>
@@ -52,7 +53,8 @@
             </span>
           </div>
         </a>
-        <div id="businessDropdown" class="collapse sidebar-submenu">
+        <div id="businessDropdown" aria-labelledby="businessDropdown"
+          data-parent="#sideMenu" class="collapse sidebar-submenu">
           <a routerLink="/capabilities_model"
             class="bg-dark list-group-item list-group-item-action">
             GSA Business Capability Model</a>
@@ -80,7 +82,8 @@
             </span>
           </div>
         </a>
-        <div id="businessAppDropdown" class="collapse sidebar-submenu">
+        <div id="businessAppDropdown" aria-labelledby="businessAppDropdown"
+        data-parent="#sideMenu" class="collapse sidebar-submenu">
           <a routerLink="/systems"
             class="bg-dark list-group-item list-group-item-action">
             GSA Parent Systems</a>
