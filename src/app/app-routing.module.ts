@@ -14,6 +14,8 @@ import { InvestmentsComponent } from './strategy/investments/investments.compone
 import { CapabilitiesModelComponent } from './business/capabilities-model/capabilities-model.component';
 import { CapabilitiesComponent } from './business/capabilities/capabilities.component';
 
+import { OrganizationsComponent } from './business/organizations/organizations.component';
+
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'about', component: AboutComponent },
@@ -24,6 +26,7 @@ const routes: Routes = [
 
   { path: 'capabilities_model', component: CapabilitiesModelComponent },
   { path: 'capabilities', component: CapabilitiesComponent },
+  { path: 'organizations', component: OrganizationsComponent },
 
   {  // Catch-all Redirect to Home
     path: '**',

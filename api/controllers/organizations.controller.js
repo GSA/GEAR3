@@ -6,7 +6,7 @@ const path = require('path');
 const queryPath = '../queries/';
 
 function findAll (req, res) {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'get_capabilities.sql')).toString() +
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'get_organizations.sql')).toString() +
     ";";
 
   sql.query(query, (error, data) => {
@@ -14,18 +14,18 @@ function findAll (req, res) {
       console.log("Error: ", error);
       res.status(501).json({
         message:
-          error.message || "DB Query Error while retrieving capabilities"
+          error.message || "DB Query Error while retrieving organizations"
       });
     } else {
-      // console.log("Capabilities: ", res);  // Debug
+      // console.log("Organizations: ", res);  // Debug
       res.status(200).json(data);
     }
   });
 };
 
 function findOne (req, res) {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'get_capabilities.sql')).toString() +
-    " AND cap.Id = ?;";
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'get_organizations.sql')).toString() +
+    " AND org.Id = ?;";
 
   sql.query(query,
     [req.params.id],
@@ -34,10 +34,10 @@ function findOne (req, res) {
         console.log("Error: ", error);
         res.status(501).json({
           message:
-            error.message || "DB Query Error while retrieving individual business capability"
+            error.message || "DB Query Error while retrieving individual organization"
         });
       } else {
-        // console.log("Capability: ", res);  // Debug
+        // console.log("Organization: ", res);  // Debug
         res.status(200).json(data);
       }
   });
@@ -45,7 +45,7 @@ function findOne (req, res) {
 
 function findApplications (req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'get_applications.sql')).toString() +
-    " AND cap.Id = ? GROUP BY app.Id;";
+    " AND owner.Id = ? GROUP BY app.Id;";
 
   sql.query(query,
     [req.params.id],
@@ -54,7 +54,7 @@ function findApplications (req, res) {
         console.log("Error: ", error);
         res.status(501).json({
           message:
-            error.message || "DB Query Error while retrieving supporting applications for capability"
+            error.message || "DB Query Error while retrieving applications for organization"
         });
       } else {
         // console.log("Capability: ", res);  // Debug

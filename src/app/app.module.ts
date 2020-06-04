@@ -27,6 +27,9 @@ import { CapabilitiesModelComponent } from './business/capabilities-model/capabi
 import { CapabilitiesComponent } from './business/capabilities/capabilities.component';
 import { CapabilitiesModalComponent } from './components/modals/capabilities-modal/capabilities-modal.component';
 
+import { OrganizationsComponent } from './business/organizations/organizations.component';
+import { OrganizationsModalComponent } from './components/modals/organizations-modal/organizations-modal.component';
+
 // Services
 import { ModalsService } from './services/modals/modals.service';
 import { SharedService } from './services/shared/shared.service';
@@ -48,7 +51,9 @@ import { SharedService } from './services/shared/shared.service';
 
     CapabilitiesModelComponent,
     CapabilitiesComponent,
-    CapabilitiesModalComponent
+    CapabilitiesModalComponent,
+    OrganizationsComponent,
+    OrganizationsModalComponent
   ],
   imports: [
     AppRoutingModule,
