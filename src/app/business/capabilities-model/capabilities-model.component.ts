@@ -17,8 +17,10 @@ interface CapTree {
 })
 export class CapabilitiesModelComponent implements OnInit {
 
-  constructor() { }
-
+  private parentCap = 'Manage GSA';
+  private caps = [];
+  private capTree: any = {};
+  private highlightColor = '#ff4136';
 
   constructor(private sharedService: SharedService) { }
 
