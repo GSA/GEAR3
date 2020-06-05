@@ -6,7 +6,7 @@ const path = require('path');
 const queryPath = '../queries/';
 
 function findAll (req, res) {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'get_capabilities.sql')).toString() +
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_capabilities.sql')).toString() +
     ";";
 
   sql.query(query, (error, data) => {
@@ -24,7 +24,7 @@ function findAll (req, res) {
 };
 
 function findOne (req, res) {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'get_capabilities.sql')).toString() +
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_capabilities.sql')).toString() +
     " AND cap.Id = ?;";
 
   sql.query(query,
@@ -44,7 +44,7 @@ function findOne (req, res) {
 };
 
 function findApplications (req, res) {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'get_applications.sql')).toString() +
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_applications.sql')).toString() +
     " AND cap.Id = ? GROUP BY app.Id;";
 
   sql.query(query,
@@ -64,7 +64,7 @@ function findApplications (req, res) {
 };
 
 function findSSO (req, res) {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'get_capabilities_by_org.sql')).toString();
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_capabilities_by_org.sql')).toString();
 
   sql.query(query,
     ['%' + req.params.name + '%'],

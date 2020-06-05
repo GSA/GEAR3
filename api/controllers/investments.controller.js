@@ -6,7 +6,7 @@ const path = require('path');
 const queryPath = '../queries/';
 
 function findAll (req, res) {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'get_investments.sql')).toString() +
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_investments.sql')).toString() +
     ";";
 
   sql.query(query, (error, data) => {
@@ -24,7 +24,7 @@ function findAll (req, res) {
 };
 
 function findOne (req, res) {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'get_investments.sql')).toString() +
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_investments.sql')).toString() +
     " AND invest.Id = ?;";
 
   sql.query(query,
@@ -44,7 +44,7 @@ function findOne (req, res) {
 };
 
 function findApplications (req, res) {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'get_applications.sql')).toString() +
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_applications.sql')).toString() +
     " AND app.obj_investment_Id = ? GROUP BY app.Id;";
 
   sql.query(query,
