@@ -6,17 +6,21 @@ import { Subject } from 'rxjs';
 })
 export class ModalsService {
 
-  // Investment Modal
+  // Investment
   private investSource = new Subject();
   currentInvest = this.investSource.asObservable();
 
-  // Capability Modal
+  // Capability
   private capSource = new Subject();
   currentCap = this.capSource.asObservable();
 
-  // Organization Modal
+  // Organization
   private orgSource = new Subject();
   currentOrg = this.orgSource.asObservable();
+
+  // Parent System
+  private sysSource = new Subject();
+  currentSys = this.sysSource.asObservable();
 
   constructor() { }
 
@@ -27,8 +31,10 @@ export class ModalsService {
       this.capSource.next(row);
     } else if (component == 'organization') {
       this.orgSource.next(row);
+    } else if (component == 'system') {
+      this.sysSource.next(row);
     } else {
-      console.log("Error: Not a valid component to updaate details");
+      console.log("Error: Not a valid component to update details");
     }
   }
 }

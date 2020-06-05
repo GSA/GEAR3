@@ -30,6 +30,10 @@ import { CapabilitiesModalComponent } from './components/modals/capabilities-mod
 import { OrganizationsComponent } from './business/organizations/organizations.component';
 import { OrganizationsModalComponent } from './components/modals/organizations-modal/organizations-modal.component';
 
+//// Applications
+import { SystemsComponent } from './applications/systems/systems.component';
+import { SystemsModalComponent } from './components/modals/systems-modal/systems-modal.component';
+
 // Services
 import { ModalsService } from './services/modals/modals.service';
 import { SharedService } from './services/shared/shared.service';
@@ -53,7 +57,10 @@ import { SharedService } from './services/shared/shared.service';
     CapabilitiesComponent,
     CapabilitiesModalComponent,
     OrganizationsComponent,
-    OrganizationsModalComponent
+    OrganizationsModalComponent,
+    
+    SystemsComponent,
+    SystemsModalComponent
   ],
   imports: [
     AppRoutingModule,

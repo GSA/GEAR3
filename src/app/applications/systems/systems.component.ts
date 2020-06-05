@@ -8,35 +8,35 @@ import { ModalsService } from '../../services/modals/modals.service';
 declare var $: any;
 
 @Component({
-  selector: 'investments',
-  templateUrl: './investments.component.html',
-  styleUrls: ['./investments.component.css']
+  selector: 'systems',
+  templateUrl: './systems.component.html',
+  styleUrls: ['./systems.component.css']
 })
-export class InvestmentsComponent implements OnInit {
+export class SystemsComponent implements OnInit {
 
   row: Object = <any>{};
 
   constructor(
     private location: Location,
     private modalService: ModalsService) {
-    this.modalService.currentInvest.subscribe(row => this.row = row);
+    this.modalService.currentSys.subscribe(row => this.row = row);
   }
 
-  // Investment Table Options
+  // Systems Table Options
   tableOptions: {} = {
     advancedSearch: true,
-    idTable: 'advSearchInvestTable',
+    idTable: 'advSearchSystemTable',
     buttonsClass: 'info',
     cache: true,
     classes: "table table-bordered table-striped table-hover table-dark",
-    showColumns: true,
+    showColumns: false,
     showExport: true,
     exportDataType: 'all',
     exportOptions: {
       fileName: function () {
         // Append current date time to filename
         this.currentDate = formatDate(Date.now(), 'MMM_dd_yyyy-HH_mm', 'en-US');
-        return 'GSA_IT_Investments-' + this.currentDate
+        return 'GSA_Parent_Systems-' + this.currentDate
       }
     },
     exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
@@ -48,70 +48,48 @@ export class InvestmentsComponent implements OnInit {
     sortName: 'Name',
     sortOrder: 'asc',
     showToggle: true,
-    url: this.location.prepareExternalUrl('/api/investments')
+    url: this.location.prepareExternalUrl('/api/parentsystems')
   };
 
-  // Investments Table Columns
+  // Systems Table Columns
   columnDefs: any[] = [{
     field: 'Name',
-    title: 'Investment Name',
+    title: 'System Name',
     sortable: true
   }, {
     field: 'Description',
     title: 'Description',
     sortable: true
   }, {
-    field: 'Type',
-    title: 'Type',
-    sortable: true
-  }, {
-    field: 'InvManager',
-    title: 'Investment Manager',
-    sortable: true
-  }, {
     field: 'SSO',
     title: 'SSO',
     sortable: true
-  }, {
-    field: 'PSA',
-    title: 'Primary Service Area',
-    sortable: true
-  }, {
-    field: 'SSA',
-    title: 'Secondary Service Area',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'UII',
-    title: 'Investment UII',
-    sortable: true,
-    visible: false
   }];
 
   ngOnInit(): void {
-    $('#investTable').bootstrapTable($.extend(this.tableOptions, {
+    $('#systemTable').bootstrapTable($.extend(this.tableOptions, {
       columns: this.columnDefs,
       data: [],
     }));
 
     // Method to handle click events on the Investments table
     $(document).ready(
-      $('#investTable').on('click-row.bs.table', function (e, row) {
+      $('#systemTable').on('click-row.bs.table', function (e, row) {
         // console.log("Investment Table Clicked Row: ", row);  // Debug
 
-        this.modalService.updateDetails(row, 'investment');
-        $('#investDetail').modal('show');
+        this.modalService.updateDetails(row, 'system');
+        $('#systemDetail').modal('show');
 
         // Update related apps table in detail modal with clicked investment
-        $('#investRelAppsTable').bootstrapTable('refreshOptions', {
+        $('#childAppsTable').bootstrapTable('refreshOptions', {
           exportOptions: {
             fileName: function () {
               // Append current date time to filename
               this.currentDate = formatDate(Date.now(), 'MMM_dd_yyyy-HH_mm', 'en-US');
-              return row.Name + '-Related_Apps-' + this.currentDate
+              return row.Name + '-Child_Apps-' + this.currentDate
             }
           },
-          url: this.location.prepareExternalUrl('/api/investments/' 
+          url: this.location.prepareExternalUrl('/api/parentsystems/' 
             + String(row.ID) + '/applications')
         })
 
@@ -119,5 +97,5 @@ export class InvestmentsComponent implements OnInit {
     ));
 
   }
-  
+
 }

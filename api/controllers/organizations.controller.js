@@ -57,7 +57,7 @@ function findApplications (req, res) {
             error.message || "DB Query Error while retrieving applications for organization"
         });
       } else {
-        // console.log("Capability: ", res);  // Debug
+        // console.log("Apps for Organization: ", res);  // Debug
         res.status(200).json(data);
       }
   });

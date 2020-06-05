@@ -57,7 +57,7 @@ function findApplications (req, res) {
             error.message || "DB Query Error while retrieving supporting applications for capability"
         });
       } else {
-        // console.log("Capability: ", res);  // Debug
+        // console.log("Apps for Capability: ", res);  // Debug
         res.status(200).json(data);
       }
   });

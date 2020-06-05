@@ -1,20 +1,23 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-// Main Components
+// Main
 import { HomeComponent } from './main/home/home.component';
 import { AboutComponent } from './main/about/about.component';
 import { AssistTechComponent } from './main/assist-tech/assist-tech.component';
 
-// Strategy Components
+// Strategy
 import { FrameworkComponent } from './strategy/framework/framework.component';
 import { InvestmentsComponent } from './strategy/investments/investments.component';
 
-// Business Components
+// Business
 import { CapabilitiesModelComponent } from './business/capabilities-model/capabilities-model.component';
 import { CapabilitiesComponent } from './business/capabilities/capabilities.component';
 
 import { OrganizationsComponent } from './business/organizations/organizations.component';
+
+// Applications
+import { SystemsComponent } from './applications/systems/systems.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -27,6 +30,8 @@ const routes: Routes = [
   { path: 'capabilities_model', component: CapabilitiesModelComponent },
   { path: 'capabilities', component: CapabilitiesComponent },
   { path: 'organizations', component: OrganizationsComponent },
+
+  { path: 'systems', component: SystemsComponent },
 
   {  // Catch-all Redirect to Home
     path: '**',

@@ -1,9 +1,9 @@
-<div class="card bg-light border-0">
+<div class="card bg-light">
   <div class="row card-header text-white bg-dark text-center">
     <h3 class="card-title col-11 mb-0 align-self-center">
       <span class="my-auto">
-        <i class="fas fa-project-diagram"></i>
-        GSA Business Capabilities List</span>
+        <i class="fas fa-server"></i>
+        GSA Parent Systems</span>
     </h3>
     <!-- Help Button -->
     <a tabindex="0" class="col-1 btn btn-sm text-black-50 btn-info float-right" role="button" data-toggle="popover"
@@ -24,20 +24,7 @@
     </a>
   </div>
 
-  <div class="row card-body bg-light border-0 card-text justify-content-center">
-    <!-- Filter by SSO Buttons -->
-    <button role="button" name="capFASbttn" class="btn btn-primary" (click)="changeCapSSO('FAS')">
-      FAS (Q)</button>
-    <button role="button" name="capITbttn" class="btn btn-primary" (click)="changeCapSSO('GSA IT')">
-      GSA IT (I)</button>
-    <button role="button" name="capOCFObttn" class="btn btn-primary" (click)="changeCapSSO('OCFO')">
-      OCFO (B)</button>
-    <button role="button" name="capPBSbttn" class="btn btn-primary" (click)="changeCapSSO('PBS')">
-      PBS (P)</button>
-    <button role="button" name="capBttn" class="btn btn-primary" (click)="backToMainCap()" [hidden]="!ssoTable">
-      Back to All Capabilities</button>
-
-    <!-- Main Capabilities Table -->
-    <table id="capTable"></table>
+  <div class="row card-body bg-light card-text justify-content-center">
+    <table id="systemTable"></table>
   </div>
 </div>

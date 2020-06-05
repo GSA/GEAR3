@@ -6,7 +6,7 @@ const path = require('path');
 const queryPath = '../queries/';
 
 function findAll (req, res) {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'get_investments.sql')).toString() +
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'get_parent_system.sql')).toString() +
     ";";
 
   sql.query(query, (error, data) => {
@@ -14,18 +14,18 @@ function findAll (req, res) {
       console.log("Error: ", error);
       res.status(501).json({
         message:
-          error.message || "DB Query Error while retrieving investments"
+          error.message || "DB Query Error while retrieving parent systems"
       });
     } else {
-      // console.log("Investments: ", res);  // Debug
+      // console.log("Parent Systems: ", res);  // Debug
       res.status(200).json(data);
     }
   });
 };
 
 function findOne (req, res) {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'get_investments.sql')).toString() +
-    " AND invest.Id = ?;";
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'get_parent_system.sql')).toString() +
+    " AND parentSys.Id = ?;";
 
   sql.query(query,
     [req.params.id],
@@ -34,10 +34,10 @@ function findOne (req, res) {
         console.log("Error: ", error);
         res.status(501).json({
           message:
-            error.message || "DB Query Error while retrieving individual investment"
+            error.message || "DB Query Error while retrieving individual parent system"
         });
       } else {
-        // console.log("Investment: ", res);  // Debug
+        // console.log("Parent System: ", res);  // Debug
         res.status(200).json(data);
       }
   });
@@ -45,7 +45,7 @@ function findOne (req, res) {
 
 function findApplications (req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'get_applications.sql')).toString() +
-    " AND app.obj_investment_Id = ? GROUP BY app.Id;";
+    " AND app.obj_parent_system_Id = ? GROUP BY app.Id;";
 
   sql.query(query,
     [req.params.id],
@@ -54,10 +54,10 @@ function findApplications (req, res) {
         console.log("Error: ", error);
         res.status(501).json({
           message:
-            error.message || "DB Query Error while retrieving application relations for investment"
+            error.message || "DB Query Error while retrieving child applications for parent system"
         });
       } else {
-        // console.log("Apps for Investment: ", res);  // Debug
+        // console.log("Child Apps for Parent System: ", res);  // Debug
         res.status(200).json(data);
       }
   });
