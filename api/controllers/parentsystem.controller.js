@@ -1,4 +1,4 @@
-const sql = require("../db.js");
+const ctrl = require('./base.controller');
 
 const fs = require('fs');
 const path = require('path');
@@ -9,58 +9,23 @@ function findAll (req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_parent_system.sql')).toString() +
     ";";
 
-  sql.query(query, (error, data) => {
-    if (error) {
-      console.log("Error: ", error);
-      res.status(501).json({
-        message:
-          error.message || "DB Query Error while retrieving parent systems"
-      });
-    } else {
-      // console.log("Parent Systems: ", res);  // Debug
-      res.status(200).json(data);
-    }
-  });
+    res = ctrl.sendQuery(query, 'parent systems', res);
 };
 
 function findOne (req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_parent_system.sql')).toString() +
-    " AND parentSys.Id = ?;";
+    " WHERE parentSys.Id = ?;";
+  var params = [req.params.id];
 
-  sql.query(query,
-    [req.params.id],
-    (error, data) => {
-      if (error) {
-        console.log("Error: ", error);
-        res.status(501).json({
-          message:
-            error.message || "DB Query Error while retrieving individual parent system"
-        });
-      } else {
-        // console.log("Parent System: ", res);  // Debug
-        res.status(200).json(data);
-      }
-  });
+  res = ctrl.sendQuery(query, 'individual parent system', res, params);
 };
 
 function findApplications (req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_applications.sql')).toString() +
     " AND app.obj_parent_system_Id = ? GROUP BY app.Id;";
+  var params = [req.params.id];
 
-  sql.query(query,
-    [req.params.id],
-    (error, data) => {
-      if (error) {
-        console.log("Error: ", error);
-        res.status(501).json({
-          message:
-            error.message || "DB Query Error while retrieving child applications for parent system"
-        });
-      } else {
-        // console.log("Child Apps for Parent System: ", res);  // Debug
-        res.status(200).json(data);
-      }
-  });
+  res = ctrl.sendQuery(query, 'child applications for parent system', res, params);
 };
 
 module.exports = {

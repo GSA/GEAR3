@@ -1,4 +1,4 @@
-const sql = require("../db.js");
+const ctrl = require('./base.controller');
 
 const fs = require('fs');
 const path = require('path');
@@ -9,77 +9,30 @@ function findAll (req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_capabilities.sql')).toString() +
     ";";
 
-  sql.query(query, (error, data) => {
-    if (error) {
-      console.log("Error: ", error);
-      res.status(501).json({
-        message:
-          error.message || "DB Query Error while retrieving capabilities"
-      });
-    } else {
-      // console.log("Capabilities: ", res);  // Debug
-      res.status(200).json(data);
-    }
-  });
+  res = ctrl.sendQuery(query, 'business capabilities', res);
 };
 
 function findOne (req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_capabilities.sql')).toString() +
-    " AND cap.Id = ?;";
+    " WHERE cap.Id = ?;";
+  var params = [req.params.id];
 
-  sql.query(query,
-    [req.params.id],
-    (error, data) => {
-      if (error) {
-        console.log("Error: ", error);
-        res.status(501).json({
-          message:
-            error.message || "DB Query Error while retrieving individual business capability"
-        });
-      } else {
-        // console.log("Capability: ", res);  // Debug
-        res.status(200).json(data);
-      }
-  });
+  res = ctrl.sendQuery(query, 'individual business capability', res, params);
 };
 
 function findApplications (req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_applications.sql')).toString() +
     " AND cap.Id = ? GROUP BY app.Id;";
+  var params = [req.params.id];
 
-  sql.query(query,
-    [req.params.id],
-    (error, data) => {
-      if (error) {
-        console.log("Error: ", error);
-        res.status(501).json({
-          message:
-            error.message || "DB Query Error while retrieving supporting applications for capability"
-        });
-      } else {
-        // console.log("Apps for Capability: ", res);  // Debug
-        res.status(200).json(data);
-      }
-  });
+  res = ctrl.sendQuery(query, 'supporting applications for capability', res, params);
 };
 
 function findSSO (req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_capabilities_by_org.sql')).toString();
+  var params = ['%' + req.params.name + '%'];
 
-  sql.query(query,
-    ['%' + req.params.name + '%'],
-    (error, data) => {
-      if (error) {
-        console.log("Error: ", error);
-        res.status(501).json({
-          message:
-            error.message || "DB Query Error while retrieving capabilities for specified SSO"
-        });
-      } else {
-        // console.log(`Capabilities for ${req.params.name}: ${res}`);  // Debug
-        res.status(200).json(data);
-      }
-  });
+  res = ctrl.sendQuery(query, 'capabilities for specified SSO', res, params);
 };
 
 module.exports = {

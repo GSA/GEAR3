@@ -1,4 +1,4 @@
-const sql = require("../db.js");
+const ctrl = require('./base.controller');
 
 const fs = require('fs');
 const path = require('path');
@@ -9,58 +9,23 @@ function findAll (req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_organizations.sql')).toString() +
     ";";
 
-  sql.query(query, (error, data) => {
-    if (error) {
-      console.log("Error: ", error);
-      res.status(501).json({
-        message:
-          error.message || "DB Query Error while retrieving organizations"
-      });
-    } else {
-      // console.log("Organizations: ", res);  // Debug
-      res.status(200).json(data);
-    }
-  });
+  res = ctrl.sendQuery(query, 'organizations', res);
 };
 
 function findOne (req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_organizations.sql')).toString() +
-    " AND org.Id = ?;";
+    " WHERE org.Id = ?;";
+  var params = [req.params.id];
 
-  sql.query(query,
-    [req.params.id],
-    (error, data) => {
-      if (error) {
-        console.log("Error: ", error);
-        res.status(501).json({
-          message:
-            error.message || "DB Query Error while retrieving individual organization"
-        });
-      } else {
-        // console.log("Organization: ", res);  // Debug
-        res.status(200).json(data);
-      }
-  });
+  res = ctrl.sendQuery(query, 'individual organization', res, params);
 };
 
 function findApplications (req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_applications.sql')).toString() +
     " AND owner.Id = ? GROUP BY app.Id;";
+  var params = [req.params.id];
 
-  sql.query(query,
-    [req.params.id],
-    (error, data) => {
-      if (error) {
-        console.log("Error: ", error);
-        res.status(501).json({
-          message:
-            error.message || "DB Query Error while retrieving applications for organization"
-        });
-      } else {
-        // console.log("Apps for Organization: ", res);  // Debug
-        res.status(200).json(data);
-      }
-  });
+  res = ctrl.sendQuery(query, 'applications for organization', res, params);
 };
 
 module.exports = {
