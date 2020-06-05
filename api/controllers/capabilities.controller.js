@@ -63,8 +63,28 @@ function findApplications (req, res) {
   });
 };
 
+function findSSO (req, res) {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'get_capabilities_by_org.sql')).toString();
+
+  sql.query(query,
+    ['%' + req.params.name + '%'],
+    (error, data) => {
+      if (error) {
+        console.log("Error: ", error);
+        res.status(501).json({
+          message:
+            error.message || "DB Query Error while retrieving capabilities for specified SSO"
+        });
+      } else {
+        // console.log(`Capabilities for ${req.params.name}: ${res}`);  // Debug
+        res.status(200).json(data);
+      }
+  });
+};
+
 module.exports = {
   findAll,
   findOne,
-  findApplications
+  findApplications,
+  findSSO
 };

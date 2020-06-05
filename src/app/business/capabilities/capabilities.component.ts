@@ -15,6 +15,7 @@ declare var $: any;
 export class CapabilitiesComponent implements OnInit {
 
   row: Object = <any>{};
+  ssoTable: boolean = false;
 
   constructor(
     private location: Location,
@@ -52,7 +53,7 @@ export class CapabilitiesComponent implements OnInit {
   };
 
   // Capabilities Table Columns
-  columnDefs: any[] = [{
+  capColumnDefs: any[] = [{
     field: 'ReferenceNum',
     title: 'Ref Id',
     sortable: true
@@ -70,9 +71,36 @@ export class CapabilitiesComponent implements OnInit {
     sortable: true
   }];
 
+  // Capabilities by SSO Table Columns
+  ssoColumnDefs: any[] = [{
+    field: 'ReferenceNum',
+    title: 'Ref Id',
+    sortable: true
+  }, {
+    field: 'Name',
+    title: 'Function Name',
+    sortable: true
+  }, {
+    field: 'Description',
+    title: 'Description',
+    sortable: true
+  }, {
+    field: 'ParentCap',
+    title: 'Parent',
+    sortable: true
+  }, {
+    field: 'Organizations',
+    title: 'SSO',
+    sortable: true
+  }, {
+    field: 'Applications',
+    title: 'Apps',
+    sortable: true
+  }];
+
   ngOnInit(): void {
     $('#capTable').bootstrapTable($.extend(this.tableOptions, {
-      columns: this.columnDefs,
+      columns: this.capColumnDefs,
       data: [],
     }));
 
@@ -96,10 +124,43 @@ export class CapabilitiesComponent implements OnInit {
           url: this.location.prepareExternalUrl('/api/capabilities/' 
             + String(row.ID) + '/applications')
         })
+      }.bind(this))
+    );
+  }
 
-      }.bind(this)
-    ));
+  // Update SSO table after SSO button is clicked
+  changeCapSSO(sso: string) {
+    this.ssoTable = true;  // SSO filters are on, expose main table button
 
+    $('#capTable').bootstrapTable('refreshOptions', {
+      columns: this.ssoColumnDefs,
+      idTable: 'advSearchCapSSOTable',
+      exportOptions: {
+        fileName: function () {
+          // Append current date time to filename
+          this.currentDate = formatDate(Date.now(), 'MMM_dd_yyyy-HH_mm', 'en-US');
+          return 'GSA_Business_Capabilities_by_SSO-' + this.currentDate
+        }
+      },
+      url: this.location.prepareExternalUrl('/api/capabilities/sso/' + sso)
+    })
+  }
+
+  backToMainCap() {
+    this.ssoTable = false;  // Hide main button
+
+    $('#capTable').bootstrapTable('refreshOptions', {
+      columns: this.capColumnDefs,
+      idTable: 'advSearchCapTable',
+      exportOptions: {
+        fileName: function () {
+          // Append current date time to filename
+          this.currentDate = formatDate(Date.now(), 'MMM_dd_yyyy-HH_mm', 'en-US');
+          return 'GSA_Business_Capabilities-' + this.currentDate
+        }
+      },
+      url: this.location.prepareExternalUrl('/api/capabilities')
+    })
   }
 
 }
