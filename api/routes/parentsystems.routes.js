@@ -1,5 +1,5 @@
 const express = require('express');
-const sysCtrl = require('../controllers/parentsystem.controller');
+const sysCtrl = require('../controllers/parentsystems.controller');
 
 const router = express.Router();
 

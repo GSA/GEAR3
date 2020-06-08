@@ -50,12 +50,12 @@ export class SharedService {
     var appTime = row.AppTime;
     var re = new RegExp(field + ", ([BDEIMT123]{1,3});?");
     var match = re.exec(appTime);
-    var finaleVal = undefined;
+    var finalVal = undefined;
 
     if (match != null) {  // Did it match?
-        finaleVal = match[1];
+        finalVal = match[1];
     }
-    return finaleVal;
+    return finalVal;
   };
   
 }

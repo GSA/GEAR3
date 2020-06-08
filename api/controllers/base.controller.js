@@ -11,7 +11,7 @@ function sendQuery (query, msg, response, params) {
             error.message || `DB Query Error while retrieving ${msg}`
         });
       } else {
-        // console.log("Query Response: ", res);  // Debug
+        // console.log("Query Response: ", response);  // Debug
         response.status(200).json(data);
       }
     });
@@ -26,7 +26,7 @@ function sendQuery (query, msg, response, params) {
             error.message || `DB Query Error while retrieving ${msg}`
         });
       } else {
-        // console.log("Query Response: ", res);  // Debug
+        // console.log("Query Response: ", response);  // Debug
         response.status(200).json(data);
       }
     });

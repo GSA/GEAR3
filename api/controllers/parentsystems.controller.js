@@ -6,14 +6,14 @@ const path = require('path');
 const queryPath = '../queries/';
 
 function findAll (req, res) {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_parent_system.sql')).toString() +
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_parent_systems.sql')).toString() +
     ";";
 
     res = ctrl.sendQuery(query, 'parent systems', res);
 };
 
 function findOne (req, res) {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_parent_system.sql')).toString() +
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_parent_systems.sql')).toString() +
     " WHERE parentSys.Id = ?;";
   var params = [req.params.id];
 
