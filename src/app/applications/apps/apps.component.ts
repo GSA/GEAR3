@@ -148,6 +148,96 @@ export class AppsComponent implements OnInit {
     visible: false
   }];
 
+  // Retired Apps Table Column Definitions
+  retiredColumnDefs: any[] = [{
+    field: 'Name',
+    title: 'Application Name',
+    sortable: true
+  }, {
+    field: 'Alias',
+    title: 'Alias',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'Description',
+    title: 'Description',
+    sortable: true
+  }, {
+    field: 'SSO',
+    title: 'SSO',
+    sortable: true
+  }, {
+    field: 'CUI',
+    title: 'CUI',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'Owner',
+    title: 'Two Letter Org (Long)',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'OwnerShort',
+    title: 'Two Letter Org (Short)',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'BusinessPOC',
+    title: 'Business POC',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'TechnicalPOC',
+    title: 'Technical POC',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'System',
+    title: 'Parent System',
+    sortable: true,
+    formatter: this.systemFormatter
+  }, {
+    field: 'HostingProvider',
+    title: 'Hosting Provider',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'Cloud',
+    title: 'Cloud',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'Status',
+    title: 'Status',
+    sortable: true
+  }, {
+    field: 'ProdYear',
+    title: 'Production Year',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'FismaSystem',
+    title: 'FISMA System',
+    sortable: true,
+    visible: false,
+    formatter: this.systemFormatter
+  }, {
+    field: 'RetiredYear',
+    title: 'Retired Year (CY)',
+    sortable: true
+  }, {
+    field: 'OMBUID',
+    title: 'Application ID',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'Replacedby',
+    title: 'Application Replaced By',
+    sortable: true,
+    visible: false
+  }];
+
+
   ngOnInit(): void {
     $('#appsTable').bootstrapTable($.extend(this.tableOptions, {
       columns: this.columnDefs,
@@ -204,18 +294,48 @@ export class AppsComponent implements OnInit {
   };
 
   // Update table, filtering by SSO
-  changeAppSSO(sso: string) {
+  changeFilter(field: string, term: string) {
     this.ssoTable = true;  // SSO filters are on, expose main table button
+    var filter = {};
+    filter[field] = term;
 
-    $('#appsTable').bootstrapTable('filterBy', {
-      SSOShort: sso
-    });
+    // Set cloud field to visible if filtering by cloud enabled
+    if (field == 'Cloud') {
+      var cloudCols = this.columnDefs;
+      for (let index = 0; index < cloudCols.length; index++) {
+        const column = cloudCols[index];
+        if (column['field'] == 'Cloud') {
+          column['visible'] = true;
+        }
+      }
+      $('#appsTable').bootstrapTable('filterBy', filter);
+      $('#appsTable').bootstrapTable('refreshOptions', {
+        columns: cloudCols
+      });
+
+    // Retired Apps Button
+    } else if (field == 'Retired') {
+      // Remove any filters and grab data from another API
+      $('#appsTable').bootstrapTable('filterBy', {});
+      $('#appsTable').bootstrapTable('refreshOptions', {
+        columns: this.retiredColumnDefs,
+        url: this.location.prepareExternalUrl('/api/applications/applications_retired')
+      });
+
+    } else {
+      $('#appsTable').bootstrapTable('filterBy', filter);
+    }
   }
 
   backToMainApp() {
     this.ssoTable = false;  // Hide main button
 
+    // Remove filters and back to default
     $('#appsTable').bootstrapTable('filterBy', {});
+    $('#appsTable').bootstrapTable('refreshOptions', {
+      columns: this.columnDefs,
+      url: this.location.prepareExternalUrl('/api/applications')
+    });
   }
 
 }

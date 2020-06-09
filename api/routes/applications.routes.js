@@ -9,8 +9,8 @@ router.route('/')
 router.route('/:id')
     .get(appCtrl.findOne);
 
-// router.route('/applications_retired')
-//     .get(appCtrl.findAllRetired);
+router.route('/applications_retired')
+    .get(appCtrl.findAllRetired);
 
 // Children
 router.route('/:id/capabilities/')
