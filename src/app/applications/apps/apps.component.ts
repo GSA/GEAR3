@@ -15,6 +15,7 @@ declare var $: any;
 export class AppsComponent implements OnInit {
 
   row: Object = <any>{};
+  ssoTable: boolean = false;
 
   constructor(
     private location: Location,
@@ -201,5 +202,20 @@ export class AppsComponent implements OnInit {
 
     return finalVal;
   };
+
+  // Update table, filtering by SSO
+  changeAppSSO(sso: string) {
+    this.ssoTable = true;  // SSO filters are on, expose main table button
+
+    $('#appsTable').bootstrapTable('filterBy', {
+      SSOShort: sso
+    });
+  }
+
+  backToMainApp() {
+    this.ssoTable = false;  // Hide main button
+
+    $('#appsTable').bootstrapTable('filterBy', {});
+  }
 
 }

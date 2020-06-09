@@ -25,6 +25,19 @@
   </div>
 
   <div class="row card-body bg-light card-text justify-content-center">
+    <!-- Filter by SSO Buttons -->
+    <button role="button" name="appFASbttn" class="btn btn-primary" (click)="changeAppSSO('FAS (Q)')">
+      FAS (Q)</button>
+    <button role="button" name="appITbttn" class="btn btn-primary" (click)="changeAppSSO('GSA IT (I)')">
+      GSA IT (I)</button>
+    <button role="button" name="appOCFObttn" class="btn btn-primary" (click)="changeAppSSO('OCFO (B)')">
+      OCFO (B)</button>
+    <button role="button" name="appPBSbttn" class="btn btn-primary" (click)="changeAppSSO('PBS (P)')">
+      PBS (P)</button>
+    <button role="button" name="appBttn" class="btn btn-primary" (click)="backToMainApp()" [hidden]="!ssoTable">
+      Back to All Capabilities</button>
+
+    <!-- Main Apps Table -->
     <table id="appsTable"></table>
   </div>
 </div>

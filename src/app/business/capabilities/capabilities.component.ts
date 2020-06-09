@@ -121,7 +121,7 @@ export class CapabilitiesComponent implements OnInit {
     );
   }
 
-  // Update SSO table after SSO button is clicked
+  // Update table, filtering by SSO
   changeCapSSO(sso: string) {
     this.ssoTable = true;  // SSO filters are on, expose main table button
 
