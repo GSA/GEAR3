@@ -18,6 +18,7 @@ import { OrganizationsComponent } from './business/organizations/organizations.c
 
 // Applications
 import { SystemsComponent } from './applications/systems/systems.component';
+import { AppsComponent } from './applications/apps/apps.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -32,6 +33,7 @@ const routes: Routes = [
   { path: 'organizations', component: OrganizationsComponent },
 
   { path: 'systems', component: SystemsComponent },
+  { path: 'applications', component: AppsComponent },
 
   {  // Catch-all Redirect to Home
     path: '**',

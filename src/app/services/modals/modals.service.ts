@@ -22,6 +22,10 @@ export class ModalsService {
   private sysSource = new Subject();
   currentSys = this.sysSource.asObservable();
 
+  // Application
+  private appSource = new Subject();
+  currentApp = this.appSource.asObservable();
+
   constructor() { }
 
   updateDetails(row: {}, component: string) {
@@ -33,6 +37,8 @@ export class ModalsService {
       this.orgSource.next(row);
     } else if (component == 'system') {
       this.sysSource.next(row);
+    } else if (component == 'application') {
+      this.appSource.next(row);
     } else {
       console.log("Error: Not a valid component to update details");
     }

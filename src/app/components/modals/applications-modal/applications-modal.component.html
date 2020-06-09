@@ -1,0 +1,183 @@
+<!-- Applications Detail Modal -->
+<div class="modal fade" id="appsDetail" tabindex="-1" role="dialog" aria-labelledby="appTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-xl">
+    <div class="modal-content">
+      <div class="modal-header bg-info">
+        <h5 class="modal-title text-white" id="appTitle">
+          <i class="fas fa-money-bill-wave"></i>
+          {{ application.Name }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <!-- Tabs -->
+        <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#appOverview">
+              Overview</a></li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#businessRelated">
+              Business</a></li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#technologyRelated">
+              Technology</a></li>
+        </ul>
+
+        <!-- Tab Panes -->
+        <div class="tab-content mt-3">
+          <div class="tab-pane fade show active" id="appOverview">
+            <h4>Alias</h4>
+            <p>{{ application.Alias }}</p>
+            <br><br>
+
+            <h4>Description</h4>
+            <p>{{ application.Description }}</p>
+
+            <div class="float-right">Last Updated: {{ application.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}</div>
+          </div>
+          <!-- End of Overview Tab Pane -->
+          
+          <div class="tab-pane fade show" id="businessRelated">
+            <h4 class="text-center">Business Overview</h4>
+            <br>
+
+            <table id="appBusinessTable" class="table table-borderless table-striped table-dark rounded-lg w-50 mx-auto">
+              <thead>
+              <tr>
+                  <th><h5 class="text-white">Attribute</h5></th>
+                  <th><h5 class="text-white">Value</h5></th>
+              </tr>
+              </thead>
+              
+              <tbody>
+              <tr>
+                <td><i class="fa fa-fingerprint"></i>Application ID</td>
+                <td>{{ application.OMBUID }}</td>
+              </tr>
+              <tr>
+                <td><i class="fa fa-user-friends"></i>Business POC(s)</td>
+                <td>
+                  <ul>
+                    <li *ngFor="let p of splitPOCInfo(application.BusinessPOC)">
+                      <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ p.email }}" target="_blank">
+                        {{ p.name }}</a>
+                      <span [hidden]="!p.org">, {{ p.org }}</span>
+                      <span [hidden]="p.org">, No Org Provided</span>
+                    </li>
+                  </ul>
+                </td>
+              </tr>
+              <tr>
+                <td><i class="fa fa-bookmark"></i>CUI Indicator</td>
+                <td>{{ application.CUI }}</td>
+              </tr>
+              <tr>
+                <td><i class="fa fa-calendar-alt"></i>Production Year</td>
+                <td>{{ application.ProdYear }}</td>
+              </tr>
+              <tr>
+                <td><i class="fa fa-sitemap"></i>SSO</td>
+                <td>
+                  {{ application.SSO }}
+                  <div [hidden]="application.SSO">None Provided</div>
+                </td>
+              </tr>
+              <tr>
+                <td><i class="fa fa-door-open"></i>Owning 2-Letter Org</td>
+                <td>
+                  {{ application.Owner }}
+                  <div [hidden]="application.Owner">None Provided</div>
+                </td>
+              </tr>
+              <tr>
+                <td><i class="fa fa-info-circle"></i>Status</td>
+                <td>
+                  {{ application.Status }}
+                </td>
+              </tr>
+              </tbody>
+            </table>
+            <br>
+            
+            <!-- App Roadmap/TIME Report -->
+            <div>
+              <h4 class="text-center">Business Application Roadmap</h4>
+              <table id="appTimeTable"></table>
+            </div>
+            <br>
+
+            <!-- Related Business Capabilities Table -->
+            <div>
+              <h4 class="text-center">Related Business Capabilities</h4>
+              <table id="appCapTable"></table>
+            </div>
+          </div>
+          <!-- End of Business Tab Pane -->
+
+          <div class="tab-pane fade show" id="technologyRelated">
+            <h4 class="text-center">Technical Overview</h4>
+            <br>
+
+            <table id="techAttrTable" class="table table-borderless table-striped table-dark rounded-lg w-50 mx-auto">
+              <thead>
+              <tr>
+                  <th><h5 class="text-white">Attribute</h5></th>
+                  <th><h5 class="text-white">Value</h5></th>
+              </tr>
+              </thead>
+              
+              <tbody>
+              <tr>
+                <td><i class="fa fa-cloud"></i>Cloud</td>
+                <td>{{ application.Cloud }}</td>
+              </tr>
+              <tr>
+                <td><i class="fa fa-shield-alt"></i>FISMA System</td>
+                <td>{{ application.FISMASystem }}</td>
+              </tr>
+              <tr>
+                <td><i class="fa fa-building"></i>Hosting Provider</td>
+                <td>{{ application.HostingProvider }}</td>
+              </tr>
+              <tr [hidden]="application.ParentSystem">
+                <td><i class="fa fa-server"></i>Parent System</td>
+                <td>
+                  {{ application.ParentSystem }}
+                </td>
+              </tr>
+              <tr>
+                <td><i class="fa fa-user-friends"></i>Technical POC(s)</td>
+                <td>
+                  <ul>
+                    <li *ngFor="let p of splitPOCInfo(application.TechnicalPOC)">
+                      <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ p.email }}" target="_blank">
+                        {{ p.name }}</a>
+                      <span [hidden]="!p.org">, {{ p.org }}</span>
+                      <span [hidden]="p.org">, No Org Provided</span>
+                    </li>
+                  </ul>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+            <br>
+
+            <!-- Related Technologies Table -->
+            <div>
+              <h4 class="text-center">Related Technology</h4>
+              <table id="appTechTable"></table>
+            </div>
+          </div>
+          <!-- End of Technology Tab Pane -->
+
+        </div>
+        <!-- End of Tab Panes -->
+      </div>
+      <!-- End of Modal Body -->
+
+      <div class="modal-footer"></div>
+    </div>
+  </div>
+</div>
