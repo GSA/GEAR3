@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { formatDate } from '@angular/common';
 import { Location } from '@angular/common';
 
 import { ModalsService } from '../../services/modals/modals.service';
+import { SharedService } from '../../services/shared/shared.service';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -19,6 +19,7 @@ export class CapabilitiesComponent implements OnInit {
 
   constructor(
     private location: Location,
+    private sharedService: SharedService,
     private modalService: ModalsService) {
       this.modalService.currentInvest.subscribe(row => this.row = row);
   }
@@ -34,11 +35,7 @@ export class CapabilitiesComponent implements OnInit {
     showExport: true,
     exportDataType: 'all',
     exportOptions: {
-      fileName: function () {
-        // Append current date time to filename
-        this.currentDate = formatDate(Date.now(), 'MMM_dd_yyyy-HH_mm', 'en-US');
-        return 'GSA_Business_Capabilities-' + this.currentDate
-      }
+      fileName: this.sharedService.fileNameFmt('GSA_Business_Capabilities')
     },
     exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
     pagination: true,
@@ -115,11 +112,7 @@ export class CapabilitiesComponent implements OnInit {
         // Update related apps table in detail modal with clicked capabilities
         $('#capSupportAppsTable').bootstrapTable('refreshOptions', {
           exportOptions: {
-            fileName: function () {
-              // Append current date time to filename
-              this.currentDate = formatDate(Date.now(), 'MMM_dd_yyyy-HH_mm', 'en-US');
-              return row.Name + '-Supporting_Apps-' + this.currentDate
-            }
+            fileName: this.sharedService.fileNameFmt(row.Name + '-Supporting_Apps')
           },
           url: this.location.prepareExternalUrl('/api/capabilities/' 
             + String(row.ID) + '/applications')
@@ -136,11 +129,7 @@ export class CapabilitiesComponent implements OnInit {
       columns: this.ssoColumnDefs,
       idTable: 'advSearchCapSSOTable',
       exportOptions: {
-        fileName: function () {
-          // Append current date time to filename
-          this.currentDate = formatDate(Date.now(), 'MMM_dd_yyyy-HH_mm', 'en-US');
-          return 'GSA_Business_Capabilities_by_SSO-' + this.currentDate
-        }
+        fileName: this.sharedService.fileNameFmt('GSA_Business_Capabilities_by_SSO')
       },
       url: this.location.prepareExternalUrl('/api/capabilities/sso/' + sso)
     })
@@ -153,11 +142,7 @@ export class CapabilitiesComponent implements OnInit {
       columns: this.capColumnDefs,
       idTable: 'advSearchCapTable',
       exportOptions: {
-        fileName: function () {
-          // Append current date time to filename
-          this.currentDate = formatDate(Date.now(), 'MMM_dd_yyyy-HH_mm', 'en-US');
-          return 'GSA_Business_Capabilities-' + this.currentDate
-        }
+        fileName: this.sharedService.fileNameFmt('GSA_Business_Capabilities')
       },
       url: this.location.prepareExternalUrl('/api/capabilities')
     })

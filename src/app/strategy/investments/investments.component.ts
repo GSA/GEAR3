@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { formatDate } from '@angular/common';
 import { Location } from '@angular/common';
 
 import { ModalsService } from '../../services/modals/modals.service';
+import { SharedService } from '../../services/shared/shared.service';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -18,8 +18,9 @@ export class InvestmentsComponent implements OnInit {
 
   constructor(
     private location: Location,
+    private sharedService: SharedService,
     private modalService: ModalsService) {
-    this.modalService.currentInvest.subscribe(row => this.row = row);
+      this.modalService.currentInvest.subscribe(row => this.row = row);
   }
 
   // Investment Table Options
@@ -33,11 +34,7 @@ export class InvestmentsComponent implements OnInit {
     showExport: true,
     exportDataType: 'all',
     exportOptions: {
-      fileName: function () {
-        // Append current date time to filename
-        this.currentDate = formatDate(Date.now(), 'MMM_dd_yyyy-HH_mm', 'en-US');
-        return 'GSA_IT_Investments-' + this.currentDate
-      }
+      fileName: this.sharedService.fileNameFmt('GSA_IT_Investments')
     },
     exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
     pagination: true,
@@ -105,11 +102,7 @@ export class InvestmentsComponent implements OnInit {
         // Update related apps table in detail modal with clicked investment
         $('#investRelAppsTable').bootstrapTable('refreshOptions', {
           exportOptions: {
-            fileName: function () {
-              // Append current date time to filename
-              this.currentDate = formatDate(Date.now(), 'MMM_dd_yyyy-HH_mm', 'en-US');
-              return row.Name + '-Related_Apps-' + this.currentDate
-            }
+            fileName: this.sharedService.fileNameFmt(row.Name + '-Related_Apps')
           },
           url: this.location.prepareExternalUrl('/api/investments/' 
             + String(row.ID) + '/applications')

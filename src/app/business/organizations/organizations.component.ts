@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { formatDate } from '@angular/common';
 import { Location } from '@angular/common';
 
 import { ModalsService } from '../../services/modals/modals.service';
+import { SharedService } from '../../services/shared/shared.service';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -16,7 +16,9 @@ export class OrganizationsComponent implements OnInit {
 
   row: Object = <any>{};
 
-  constructor(private location: Location,
+  constructor(
+    private location: Location,
+    private sharedService: SharedService,
     private modalService: ModalsService) {
       this.modalService.currentInvest.subscribe(row => this.row = row);
   }
@@ -32,11 +34,7 @@ export class OrganizationsComponent implements OnInit {
     showExport: true,
     exportDataType: 'all',
     exportOptions: {
-      fileName: function () {
-        // Append current date time to filename
-        this.currentDate = formatDate(Date.now(), 'MMM_dd_yyyy-HH_mm', 'en-US');
-        return 'GSA_Business_Capabilities-' + this.currentDate
-      }
+      fileName: this.sharedService.fileNameFmt('GSA_Business_Capabilities')
     },
     exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
     pagination: true,
@@ -86,11 +84,7 @@ export class OrganizationsComponent implements OnInit {
         // Update related apps table in detail modal with clicked organization
         $('#orgAppsTable').bootstrapTable('refreshOptions', {
           exportOptions: {
-            fileName: function () {
-              // Append current date time to filename
-              this.currentDate = formatDate(Date.now(), 'MMM_dd_yyyy-HH_mm', 'en-US');
-              return row.Name + '-Organizational_Apps-' + this.currentDate
-            }
+            fileName: this.sharedService.fileNameFmt(row.Name + '-Organizational_Apps')
           },
           url: this.location.prepareExternalUrl('/api/organizations/' 
             + String(row.ID) + '/applications')

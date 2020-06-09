@@ -1,5 +1,5 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import { Location } from '@angular/common';
+import { formatDate, Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from "rxjs";
 import { Subscription } from 'rxjs/internal/Subscription';
@@ -26,23 +26,30 @@ export class SharedService {
   // Sidebar Toggle
   public toggleClick() {
     this.toggleEmitter.emit();
-  }
+  };
+
+  // File Name Formatting
+  public fileNameFmt (name: string) {
+    // Append current date time to filename
+    var currentDate = formatDate(Date.now(), 'MMM_dd_yyyy-HH_mm', 'en-US');
+    return name + '-' + currentDate;
+  };
 
   // API Calls
   //// Capabilities API
   public getCapabilities(): Observable<Capability[]> {
     return this.http.get<Capability[]>(this.capUrl).pipe(
       catchError(this.handleError<Capability[]>('Capabilities', []))
-    )
-  }
+    );
+  };
 
   //// Error Handler for API calls
   private handleError<T>(operation: string = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       console.log(`Failed ${operation} API Call: ${error.message}`);
       return of(result as T)
-    }
-  }
+    };
+  };
 
   // Table Data Formatters
   //// Fiscal Year Breakdown

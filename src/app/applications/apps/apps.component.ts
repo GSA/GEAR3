@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { formatDate } from '@angular/common';
 import { Location } from '@angular/common';
 
 import { ModalsService } from '../../services/modals/modals.service';
+import { SharedService } from '../../services/shared/shared.service';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -18,6 +18,7 @@ export class AppsComponent implements OnInit {
 
   constructor(
     private location: Location,
+    private sharedService: SharedService,
     private modalService: ModalsService) {
       this.modalService.currentSys.subscribe(row => this.row = row);
   }
@@ -33,11 +34,7 @@ export class AppsComponent implements OnInit {
     showExport: true,
     exportDataType: 'all',
     exportOptions: {
-      fileName: function () {
-        // Append current date time to filename
-        this.currentDate = formatDate(Date.now(), 'MMM_dd_yyyy-HH_mm', 'en-US');
-        return 'GSA_Business_Apps-' + this.currentDate
-      }
+      fileName: this.sharedService.fileNameFmt('GSA_Business_Apps')
     },
     exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
     pagination: true,
@@ -167,11 +164,7 @@ export class AppsComponent implements OnInit {
         // Update TIME report table in detail modal with clicked application
         $('#appTimeTable').bootstrapTable('refreshOptions', {
           exportOptions: {
-            fileName: function () {
-              // Append current date time to filename
-              this.currentDate = formatDate(Date.now(), 'MMM_dd_yyyy-HH_mm', 'en-US');
-              return row.Name + '-TIME_Report-' + this.currentDate
-            }
+            fileName: this.sharedService.fileNameFmt(row.Name + '-TIME_Report')
           },
           data: [row]
         });
@@ -179,11 +172,7 @@ export class AppsComponent implements OnInit {
         // Update related capabilities table in detail modal with clicked application
         $('#appCapTable').bootstrapTable('refreshOptions', {
           exportOptions: {
-            fileName: function () {
-              // Append current date time to filename
-              this.currentDate = formatDate(Date.now(), 'MMM_dd_yyyy-HH_mm', 'en-US');
-              return row.Name + '-Related_Capabilities-' + this.currentDate
-            }
+            fileName: this.sharedService.fileNameFmt(row.Name + '-Related_Capabilities')
           },
           url: this.location.prepareExternalUrl('/api/applications/'
            + String(row.ID) + '/capabilities')
@@ -192,11 +181,7 @@ export class AppsComponent implements OnInit {
         // Update related technologies table in detail modal with clicked application
         $('#appTechTable').bootstrapTable('refreshOptions', {
           exportOptions: {
-            fileName: function () {
-              // Append current date time to filename
-              this.currentDate = formatDate(Date.now(), 'MMM_dd_yyyy-HH_mm', 'en-US');
-              return row.Name + '-Related_Technologies-' + this.currentDate
-            }
+            fileName: this.sharedService.fileNameFmt(row.Name + '-Related_Technologies')
           },
           url: this.location.prepareExternalUrl('/api/applications/'
            + String(row.ID) + '/technologies')
