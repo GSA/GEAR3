@@ -35,6 +35,7 @@ import { SystemsComponent } from './applications/systems/systems.component';
 import { SystemsModalComponent } from './components/modals/systems-modal/systems-modal.component';
 import { AppsComponent } from './applications/apps/apps.component';
 import { ApplicationsModalComponent } from './components/modals/applications-modal/applications-modal.component';
+import { TimeComponent } from './applications/time/time.component';
 
 // Services
 import { ModalsService } from './services/modals/modals.service';
@@ -64,7 +65,8 @@ import { SharedService } from './services/shared/shared.service';
     SystemsComponent,
     SystemsModalComponent,
     AppsComponent,
-    ApplicationsModalComponent
+    ApplicationsModalComponent,
+    TimeComponent
   ],
   imports: [
     AppRoutingModule,

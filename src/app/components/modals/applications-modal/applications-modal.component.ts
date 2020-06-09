@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { formatDate } from '@angular/common';
-import { Location } from '@angular/common';
 
 import { ModalsService } from '../../../services/modals/modals.service';
 import { SharedService } from '../../../services/shared/shared.service';
@@ -219,7 +217,7 @@ export class ApplicationsModalComponent implements OnInit {
         pocObjs.push(tmpObj);
       }
     }
-    console.log(pocObjs);
+    
     return pocObjs;
   }
 

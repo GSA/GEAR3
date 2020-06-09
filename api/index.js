@@ -2,9 +2,9 @@ const routesPath = './routes/';
 
 const express = require('express');
 const app = require(routesPath + 'applications.routes');
+const appTIME = require(routesPath + 'apptime.routes');
 const cap = require(routesPath + 'capabilities.routes');
 // const capsso = require('./capability_sso');
-// const appTIME = require('./apptime');
 // const fisma = require('./fisma');
 // const fismaexp = require('./fismaexp');
 // const poc = require('./poc');
@@ -21,7 +21,7 @@ const sys = require(routesPath + 'parentsystems.routes');
 const router = express.Router();
 
 router.use('/applications', app);
-// router.use('/apptime', appTIME);
+router.use('/apptime', appTIME);
 router.use('/capabilities', cap);
 // router.use('/capabilities_by_sso', capsso);
 // router.use('/fisma', fisma);
