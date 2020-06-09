@@ -20,7 +20,7 @@ export class CapabilitiesComponent implements OnInit {
   constructor(
     private location: Location,
     private modalService: ModalsService) {
-    this.modalService.currentInvest.subscribe(row => this.row = row);
+      this.modalService.currentInvest.subscribe(row => this.row = row);
   }
 
   // Capabilities Table Options

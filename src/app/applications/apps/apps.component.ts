@@ -19,7 +19,7 @@ export class AppsComponent implements OnInit {
   constructor(
     private location: Location,
     private modalService: ModalsService) {
-    this.modalService.currentSys.subscribe(row => this.row = row);
+      this.modalService.currentSys.subscribe(row => this.row = row);
   }
 
   // Apps Table Options

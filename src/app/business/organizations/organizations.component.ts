@@ -18,7 +18,7 @@ export class OrganizationsComponent implements OnInit {
 
   constructor(private location: Location,
     private modalService: ModalsService) {
-    this.modalService.currentInvest.subscribe(row => this.row = row);
+      this.modalService.currentInvest.subscribe(row => this.row = row);
   }
 
   // Organizations Table Options

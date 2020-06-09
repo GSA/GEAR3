@@ -19,7 +19,7 @@ export class SystemsComponent implements OnInit {
   constructor(
     private location: Location,
     private modalService: ModalsService) {
-    this.modalService.currentSys.subscribe(row => this.row = row);
+      this.modalService.currentSys.subscribe(row => this.row = row);
   }
 
   // Systems Table Options
