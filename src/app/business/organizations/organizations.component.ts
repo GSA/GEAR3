@@ -75,7 +75,7 @@ export class OrganizationsComponent implements OnInit {
       data: [],
     }));
 
-    // Method to handle click events on the Investments table
+    // Method to handle click events on the organization table
     $(document).ready(
       $('#orgTable').on('click-row.bs.table', function (e, row) {
         // console.log("Organization Table Clicked Row: ", row);  // Debug
@@ -83,7 +83,7 @@ export class OrganizationsComponent implements OnInit {
         this.modalService.updateDetails(row, 'organization');
         $('#organizationDetail').modal('show');
 
-        // Update related apps table in detail modal with clicked investment
+        // Update related apps table in detail modal with clicked organization
         $('#orgAppsTable').bootstrapTable('refreshOptions', {
           exportOptions: {
             fileName: function () {

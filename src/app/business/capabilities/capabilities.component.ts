@@ -104,7 +104,7 @@ export class CapabilitiesComponent implements OnInit {
       data: [],
     }));
 
-    // Method to handle click events on the Investments table
+    // Method to handle click events on the capabilities table
     $(document).ready(
       $('#capTable').on('click-row.bs.table', function (e, row) {
         // console.log("Capability Table Clicked Row: ", row);  // Debug
@@ -112,7 +112,7 @@ export class CapabilitiesComponent implements OnInit {
         this.modalService.updateDetails(row, 'capability');
         $('#capabilityDetail').modal('show');
 
-        // Update related apps table in detail modal with clicked investment
+        // Update related apps table in detail modal with clicked capabilities
         $('#capSupportAppsTable').bootstrapTable('refreshOptions', {
           exportOptions: {
             fileName: function () {

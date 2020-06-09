@@ -72,15 +72,15 @@ export class SystemsComponent implements OnInit {
       data: [],
     }));
 
-    // Method to handle click events on the Investments table
+    // Method to handle click events on the Systems table
     $(document).ready(
       $('#systemTable').on('click-row.bs.table', function (e, row) {
-        // console.log("Investment Table Clicked Row: ", row);  // Debug
+        // console.log("Parent Systems Table Clicked Row: ", row);  // Debug
 
         this.modalService.updateDetails(row, 'system');
         $('#systemDetail').modal('show');
 
-        // Update related apps table in detail modal with clicked investment
+        // Update related apps table in detail modal with clicked parent system
         $('#childAppsTable').bootstrapTable('refreshOptions', {
           exportOptions: {
             fileName: function () {
