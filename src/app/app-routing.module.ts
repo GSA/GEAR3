@@ -13,13 +13,15 @@ import { InvestmentsComponent } from './strategy/investments/investments.compone
 // Business
 import { CapabilitiesModelComponent } from './business/capabilities-model/capabilities-model.component';
 import { CapabilitiesComponent } from './business/capabilities/capabilities.component';
-
 import { OrganizationsComponent } from './business/organizations/organizations.component';
 
 // Applications
 import { SystemsComponent } from './applications/systems/systems.component';
 import { AppsComponent } from './applications/apps/apps.component';
 import { TimeComponent } from './applications/time/time.component';
+
+// Security
+import { FismaComponent } from './security/fisma/fisma.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -36,6 +38,8 @@ const routes: Routes = [
   { path: 'systems', component: SystemsComponent },
   { path: 'applications', component: AppsComponent },
   { path: 'applications_TIME', component: TimeComponent },
+
+  { path: 'FISMA', component: FismaComponent },
 
   {  // Catch-all Redirect to Home
     path: '**',

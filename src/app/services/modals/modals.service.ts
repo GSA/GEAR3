@@ -26,6 +26,10 @@ export class ModalsService {
   private appSource = new Subject();
   currentApp = this.appSource.asObservable();
 
+  // FiSMA System
+  private fismaSysSource = new Subject();
+  currentFismaSys = this.fismaSysSource.asObservable();
+
   constructor() { }
 
   updateDetails(row: {}, component: string) {
@@ -39,6 +43,8 @@ export class ModalsService {
       this.sysSource.next(row);
     } else if (component == 'application') {
       this.appSource.next(row);
+    } else if (component == 'fisma') {
+      this.fismaSysSource.next(row);
     } else {
       console.log("Error: Not a valid component to update details");
     }

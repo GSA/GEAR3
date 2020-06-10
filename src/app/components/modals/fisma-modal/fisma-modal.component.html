@@ -1,0 +1,138 @@
+<!-- FISMA System Detail Modal -->
+<div class="modal fade" id="fismaDetail" tabindex="-1" role="dialog" aria-labelledby="fismaTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-xl">
+    <div class="modal-content">
+      <div class="modal-header bg-info">
+        <h5 class="modal-title text-white" id="fismaTitle">
+          <i class="fas fa-shield-alt"></i>
+          {{ fisma.Name }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <!-- Tabs -->
+        <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#fismaOverview">
+              Overview</a></li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#certifiedApps">
+              Certified Business Applications</a></li>
+        </ul>
+
+        <!-- Tab Panes -->
+        <div class="tab-content mt-3">
+          <div class="container-fluid tab-pane fade show active" id="fismaOverview">
+            <div class="row"><div class="col-5">
+              <h4 class="text-center">System Overview</h4>
+              <br>
+
+              <table id="fismaOverviewTable" class="table table-striped table-hover table-dark rounded-lg">
+                <thead>
+                <tr>
+                  <th><h5>Attribute</h5></th>
+                  <th><h5>Value</h5></th>
+                </tr>
+                </thead>
+
+                <tbody>
+                  <tr>
+                    <td><i class="fa fa-calendar-alt"></i>ATO Date</td>
+                    <td>{{ fisma.ATODate | date:'longDate' }}</td>
+                  </tr>
+                  <tr>
+                    <td><i class="far fa-file"></i>ATO Type</td>
+                    <td>{{ fisma.ATOType }}</td>
+                  </tr>
+                  <tr>
+                    <td><i class="fa fa-cloud"></i>Cloud Hosted?</td>
+                    <td>{{ fisma.CloudYN }}</td>
+                  </tr>
+                  <tr>
+                    <td><i class="fa fa-building"></i>Cloud Service Provider</td>
+                    <td>{{ fisma.CSP }}</td>
+                  </tr>
+                  <tr>
+                    <td><i class="fa fa-tag"></i>FISMA System Identifier</td>
+                    <td>{{ fisma.FISMASystemIdentifier }}</td>
+                  </tr>
+                  <tr>
+                    <td><i class="fa fa-info-circle"></i>PII</td>
+                    <td>{{ fisma.PII }}</td>
+                  </tr>
+                  <tr>
+                    <td class="align-middle">
+                      <i class="fa fa-file-alt"></i>Related Artifacts
+                    </td>
+                    <td>
+                      <ul>
+                        <li *ngFor="let artifact of splitRelArtifacts(fisma.RelatedArtifacts)">
+                          <a href="{{ artifact.link }}" target="_blank">
+                            {{ artifact.name }}</a>
+                        </li>
+                      </ul>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><i class="fa fa-calendar-alt"></i>Renewal Date</td>
+                    <td>{{ fisma.RenewalDate | date:'longDate' }}</td>
+                  </tr>
+                  <tr>
+                    <td><i class="fa fa-door-open"></i>Responsible Org</td>
+                    <td>{{ fisma.orgName }}</td>
+                  </tr>
+                  <tr>
+                    <td><i class="fa fa-certificate"></i>Type of Service</td>
+                    <td>{{ fisma.ServiceType }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <!-- End of Overview Table -->
+
+            <!-- Points of Contact Table -->
+            <div class="col-7">
+              <h4 class="text-center">Points of Contact</h4>
+              <br>
+
+              <table id="fismaPOCTable" class="table table-striped table-hover table-dark rounded-lg">
+                <thead>
+                <tr>
+                  <th><h5>Role</h5></th>
+                  <th><h5>Name</h5></th>
+                  <th><h5>Phone</h5></th>
+                  <th><h5>Email</h5></th>
+                </tr>
+                </thead>
+
+
+                <tbody>
+                <tr *ngFor="let p of splitFismaPOCInfo(fisma.POC)">
+                  <td>{{ p.type }}</td>
+                  <td>{{ p.name }}</td>
+                  <td>{{ p.phone.substring(0, 4) }}-{{ p.phone.substring(4, 7) }}-{{ p.phone.substring(7, 11) }}</td>
+                  <td><a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ p.Email }}">
+                    {{ p.email }}</a></td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div></div>
+          <!-- End of Overview Tab Pane -->
+          
+          <div class="tab-pane fade show" id="certifiedApps">
+            <table id="fismaCertAppsTable"></table>
+          </div>
+          <!-- End of Certified Apps Tab Pane -->
+
+        </div>
+        <!-- End of Tab Panes -->
+      </div>
+      <!-- End of Modal Body -->
+
+      <div class="modal-footer"></div>
+    </div>
+  </div>
+</div>

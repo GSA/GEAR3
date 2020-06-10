@@ -26,7 +26,6 @@ import { InvestmentsModalComponent } from './components/modals/investments-modal
 import { CapabilitiesModelComponent } from './business/capabilities-model/capabilities-model.component';
 import { CapabilitiesComponent } from './business/capabilities/capabilities.component';
 import { CapabilitiesModalComponent } from './components/modals/capabilities-modal/capabilities-modal.component';
-
 import { OrganizationsComponent } from './business/organizations/organizations.component';
 import { OrganizationsModalComponent } from './components/modals/organizations-modal/organizations-modal.component';
 
@@ -36,6 +35,10 @@ import { SystemsModalComponent } from './components/modals/systems-modal/systems
 import { AppsComponent } from './applications/apps/apps.component';
 import { ApplicationsModalComponent } from './components/modals/applications-modal/applications-modal.component';
 import { TimeComponent } from './applications/time/time.component';
+
+//// Security
+import { FismaComponent } from './security/fisma/fisma.component';
+import { FismaModalComponent } from './components/modals/fisma-modal/fisma-modal.component';
 
 // Services
 import { ModalsService } from './services/modals/modals.service';
@@ -66,7 +69,10 @@ import { SharedService } from './services/shared/shared.service';
     SystemsModalComponent,
     AppsComponent,
     ApplicationsModalComponent,
-    TimeComponent
+    TimeComponent,
+    
+    FismaComponent,
+    FismaModalComponent
   ],
   imports: [
     AppRoutingModule,
