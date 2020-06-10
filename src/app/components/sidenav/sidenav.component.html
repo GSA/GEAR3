@@ -70,8 +70,8 @@
         </div>
       </li>
 
+      <!-- Business Applications -->
       <li>
-        <!-- Business Applications -->
         <a data-toggle="collapse" data-target="#businessAppDropdown"
           aria-controls="#businessAppDropdown" aria-expanded="false" (click)="_opened=true"
           class="bg-info list-group-item list-group-item-action flex-column align-items-start">
@@ -94,8 +94,32 @@
             class="bg-dark list-group-item list-group-item-action">
             Application TIME Report</a>
         </div>
+      </li>
 
-
+      <!-- Security -->
+      <li>
+        <a data-toggle="collapse" data-target="#securityDropdown"
+          aria-controls="#securityDropdown" aria-expanded="false" (click)="_opened=true"
+          class="bg-info list-group-item list-group-item-action flex-column align-items-start">
+          <div class="d-flex w-100 justify-content-start align-items-center">
+            Business Applications
+            <span class="submenu-icon ml-auto">
+              <i class="fas fa-shield-alt fa-lg"></i>
+            </span>
+          </div>
+        </a>
+        <div id="securityDropdown" aria-labelledby="securityDropdown"
+        data-parent="#sideMenu" class="collapse sidebar-submenu">
+          <a routerLink="/FISMA"
+            class="bg-dark list-group-item list-group-item-action">
+            FISMA Systems Inventory</a>
+          <a routerLink="/FISMA_POC"
+            class="bg-dark list-group-item list-group-item-action">
+            FISMA System POCs</a>
+          <a routerLink="/RISSO_POC"
+            class="bg-dark list-group-item list-group-item-action">
+            RISSO POCs</a>
+        </div>
       </li>
     </ul>
   </ng-sidebar>
