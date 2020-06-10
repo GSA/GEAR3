@@ -58,6 +58,15 @@ a.email,
   font-size: 1rem;
 }
 
+/* Customize Table formatting */
+table h5 {
+  margin-bottom: 0;
+}
+
+table.table-dark h5 {
+  color: #fff;
+}
+
 /* Separate icons from text when in tables */
 table svg {
   margin-right: 10px;

@@ -46,8 +46,8 @@
             <table id="appBusinessTable" class="table table-borderless table-striped table-dark rounded-lg w-50 mx-auto">
               <thead>
               <tr>
-                  <th><h5 class="text-white">Attribute</h5></th>
-                  <th><h5 class="text-white">Value</h5></th>
+                  <th><h5>Attribute</h5></th>
+                  <th><h5>Value</h5></th>
               </tr>
               </thead>
               
@@ -57,7 +57,9 @@
                 <td>{{ application.OMBUID }}</td>
               </tr>
               <tr>
-                <td><i class="fa fa-user-friends"></i>Business POC(s)</td>
+                <td class="align-middle">
+                  <i class="fa fa-user-friends"></i>Business POC(s)
+                </td>
                 <td>
                   <ul>
                     <li *ngFor="let p of splitPOCInfo(application.BusinessPOC)">
@@ -93,9 +95,7 @@
               </tr>
               <tr>
                 <td><i class="fa fa-info-circle"></i>Status</td>
-                <td>
-                  {{ application.Status }}
-                </td>
+                <td>{{ application.Status }}</td>
               </tr>
               </tbody>
             </table>
@@ -123,8 +123,8 @@
             <table id="techAttrTable" class="table table-borderless table-striped table-dark rounded-lg w-50 mx-auto">
               <thead>
               <tr>
-                  <th><h5 class="text-white">Attribute</h5></th>
-                  <th><h5 class="text-white">Value</h5></th>
+                  <th><h5>Attribute</h5></th>
+                  <th><h5>Value</h5></th>
               </tr>
               </thead>
               
@@ -148,7 +148,9 @@
                 </td>
               </tr>
               <tr>
-                <td><i class="fa fa-user-friends"></i>Technical POC(s)</td>
+                <td class="align-middle">
+                  <i class="fa fa-user-friends"></i>Technical POC(s)
+                </td>
                 <td>
                   <ul>
                     <li *ngFor="let p of splitPOCInfo(application.TechnicalPOC)">

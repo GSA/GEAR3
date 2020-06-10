@@ -205,17 +205,18 @@ export class ApplicationsModalComponent implements OnInit {
 
     if (p) {
       pocs = p.split(';');
-      for (let index = 0; index < pocs.length; index++) {
-        let tmpObj: any = {};
-        const poc = pocs[index];
-        let pieces = poc.split(',')
 
-        tmpObj.name = pieces[0];
-        tmpObj.email = pieces[1];
-        tmpObj.org = pieces[2];
-        
+      pocs = pocs.map((poc, tmpObj) => {
+        let pieces = poc.split(',');
+
+        tmpObj = {
+          name: pieces[0],
+          email: pieces[1],
+          org: pieces[2]
+        }
+
         pocObjs.push(tmpObj);
-      }
+      })
     }
     
     return pocObjs;
