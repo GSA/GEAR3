@@ -8,7 +8,7 @@
     <!-- Help Button -->
     <a tabindex="0" class="col-1 btn btn-sm text-black-50 btn-info float-right" role="button" data-toggle="popover"
       data-trigger="focus" data-placement="auto" data-html="true" title="Help Using this Table"
-      data-content="<b>Details:</b> Left click on a row within the table to view additional details.
+      data-content="<b>Details:</b> <b><i>DOUBLE</i></b> left click on a row within the table to view additional details.
         <br><br>
         <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
         <br><br>
@@ -27,19 +27,31 @@
   </div>
 
   <div class="card-body bg-light card-text">
-    <div class="row justify-content-center">
+    <div class="row">
       <!-- Filter by SSO Buttons -->
-      <span class="my-auto mr-3">Filters:</span>
-      <button role="button" name="fismaRISSObttn" class="btn btn-primary" (click)="showRISSOs()" [hidden]="rissoTable">
-        RISSO POCs</button>
+      <div class="offset-md-5">
+        <span class="my-auto mr-3">Filters:</span>
+        <button role="button" name="fismaRISSObttn" class="btn btn-primary" (click)="showRISSOs()" [hidden]="rissoTable">
+          RISSO POCs</button>
 
-      <button role="button" name="fismaBttn" class="btn btn-primary ml-3" (click)="backToMainFisma()" [hidden]="!rissoTable">
-        Back to System POCs</button>
+        <button role="button" name="fismaBttn" class="btn btn-primary" (click)="backToMainFisma()" [hidden]="!rissoTable">
+          Back to System POCs</button>
+      </div>
+      
+      <span class="my-auto ml-auto"  [hidden]="rissoTable">
+        *DOUBLE left click on table row for detail view. Links in table are clickable.
+      </span>
     </div>
 
     <!-- Main FISMA POC Table -->
     <div class="row justify-content-center">
-      <table id="fismaPOCTable"></table>
+      <div [hidden]="rissoTable">
+        <table id="fismaPOCTable"></table>
+      </div>
+      <div [hidden]="!rissoTable">
+        <table id="rissoPOCTable"></table>
+      </div>
     </div>
+    
   </div>
 </div>
