@@ -13,10 +13,4 @@ router.route('/:id')
 router.route('/:id/applications/')
     .get(fismaCtrl.findApplications);
 
-// router.route('/pocs')
-//     .get(fismaCtrl.findPOCs);
-
-// router.route('/:id/pocs')
-//     .get(fismaCtrl.findPOCs); 
-
 module.exports = router;

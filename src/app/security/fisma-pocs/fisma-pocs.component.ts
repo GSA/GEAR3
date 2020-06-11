@@ -15,6 +15,7 @@ declare var $: any;
 export class FismaPocsComponent implements OnInit {
 
   row: Object = <any>{};
+  rissoTable: boolean = false;
 
   constructor(
     private location: Location,
@@ -23,8 +24,8 @@ export class FismaPocsComponent implements OnInit {
       this.modalService.currentFismaSys.subscribe(row => this.row = row);
   }
 
-  // FISMA System Table Options
-  tableOptions: {} = {
+  // FISMA POC Table Options
+  pocTableOptions: {} = {
     advancedSearch: true,
     idTable: 'advSearchFismaTable',
     buttonsClass: 'info',
@@ -48,8 +49,8 @@ export class FismaPocsComponent implements OnInit {
     url: this.location.prepareExternalUrl('/api/fisma')
   };
 
-  // FISMA System Table Columns
-  columnDefs: any[] = [{
+  // FISMA POC Table Columns
+  pocColumnDefs: any[] = [{
     field: 'Name',
     title: 'System Name',
     sortable: true
@@ -96,9 +97,32 @@ export class FismaPocsComponent implements OnInit {
     formatter: this.pocFormatter
   }];
 
+  // RISSO POCs Table Columns
+  rissoColumnDefs: any[] = [{
+    field: 'Name',
+    title: 'Name',
+    sortable: true
+  }, {
+    field: 'Organization',
+    title: 'Organization',
+    sortable: true
+  }, {
+    field: 'RISSO_Region',
+    title: 'Region',
+    sortable: true
+  }, {
+    field: 'Phone',
+    title: 'Phone',
+    sortable: true
+  }, {
+    field: 'Email',
+    title: 'Email',
+    sortable: true
+  }];
+
   ngOnInit(): void {
-    $('#fismaPOCTable').bootstrapTable($.extend(this.tableOptions, {
-      columns: this.columnDefs,
+    $('#fismaPOCTable').bootstrapTable($.extend(this.pocTableOptions, {
+      columns: this.pocColumnDefs,
       data: [],
     }));
 
@@ -183,6 +207,33 @@ export class FismaPocsComponent implements OnInit {
 
     // Block each POC's info with breaks
     return pocs.join('<br><br>');
+  }
+
+  // Update table to RISSO POCs
+  showRISSOs() {
+    this.rissoTable = true;  // Expose main table button after RISSO button is pressed
+
+    // Change columns, filename, and url
+    $('#fismaPOCTable').bootstrapTable('refreshOptions', {
+      columns: this.rissoColumnDefs,
+      exportOptions: {
+        fileName: this.sharedService.fileNameFmt('GSA_RISSO_POCs')
+      },
+      url: this.location.prepareExternalUrl('/api/pocs/risso')
+    });
+  }
+
+  backToMainFisma() {
+    this.rissoTable = false;  // Hide main button
+
+    // Back to default
+    $('#fismaPOCTable').bootstrapTable('refreshOptions', {
+      columns: this.pocColumnDefs,
+      exportOptions: {
+        fileName: this.sharedService.fileNameFmt('GSA_FISMA_POCs')
+      },
+      url: this.location.prepareExternalUrl('/api/fisma')
+    });
   }
 
 }

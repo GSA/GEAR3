@@ -6,13 +6,13 @@ const appTIME = require(routesPath + 'apptime.routes');
 const cap = require(routesPath + 'capabilities.routes');
 const fisma = require(routesPath + 'fisma.routes');
 // const fismaexp = require('./fismaexp');
-// const poc = require('./poc');
 // const its = require('./itstandards');
 // const interfaces = require('./interface');
 // const interfacesv2 = require('./interfacev2');
 const investment = require(routesPath + 'investments.routes');
 const org = require(routesPath + 'organizations.routes');
-const sys = require(routesPath + 'parentsystems.routes');
+const parentSys = require(routesPath + 'parentsystems.routes');
+const poc = require(routesPath + 'pocs.routes');
 // const mng = require('./managerpage');
 // const search = require('./search');
 
@@ -28,8 +28,8 @@ router.use('/fisma', fisma);
 // router.use('/interfacesv2', interfacesv2);
 router.use('/investments', investment);
 router.use('/organizations', org);
-router.use('/parentsystems', sys);
-// router.use('/pocs', poc);
+router.use('/parentsystems', parentSys);
+router.use('/pocs', poc);
 // router.use('/managerpage', mng);
 // router.use('/search', search);
 
