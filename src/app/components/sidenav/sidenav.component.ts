@@ -55,6 +55,7 @@ export class SidenavComponent implements OnInit {
     $('#businessDropdown').collapse('hide');
     $('#businessAppDropdown').collapse('hide');
     $('#securityDropdown').collapse('hide');
+    $('#technologiesDropdown').collapse('hide');
   }
 
   _onClosed(): void {

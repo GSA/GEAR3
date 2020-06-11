@@ -118,6 +118,32 @@
             FISMA System POCs</a>
         </div>
       </li>
+
+      <!-- Technologies -->
+      <li>
+        <a data-toggle="collapse" data-target="#technologiesDropdown"
+          aria-controls="#technologiesDropdown" aria-expanded="false" (click)="_opened=true"
+          class="bg-info list-group-item list-group-item-action flex-column align-items-start">
+          <div class="d-flex w-100 justify-content-start align-items-center">
+            Technologies
+            <span class="submenu-icon ml-auto">
+              <i class="fas fa-microchip fa-lg"></i>
+            </span>
+          </div>
+        </a>
+        <div id="technologiesDropdown" aria-labelledby="technologiesDropdown"
+        data-parent="#sideMenu" class="collapse sidebar-submenu">
+          <a routerLink="/itstandards"
+            class="bg-dark list-group-item list-group-item-action">
+            IT Standards List</a>
+          <a href="https://insite.gsa.gov/portal/content/500499"
+            target="_blank"
+            class="bg-dark list-group-item list-group-item-action">
+            IT Standards Approval Process
+            <i class="fas fa-external-link-alt"></i></a>
+        </div>
+      </li>
+
     </ul>
   </ng-sidebar>
 
