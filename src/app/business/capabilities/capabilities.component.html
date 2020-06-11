@@ -24,21 +24,26 @@
     </a>
   </div>
 
-  <div class="row card-body bg-light border-0 card-text justify-content-center">
-    <!-- Filter by SSO Buttons -->
-    <span class="my-auto mr-3">Filters:</span>
-    <button role="button" name="capFASbttn" class="btn btn-primary" (click)="changeCapSSO('FAS')">
-      FAS (Q)</button>
-    <button role="button" name="capITbttn" class="btn btn-primary" (click)="changeCapSSO('GSA IT')">
-      GSA IT (I)</button>
-    <button role="button" name="capOCFObttn" class="btn btn-primary" (click)="changeCapSSO('OCFO')">
-      OCFO (B)</button>
-    <button role="button" name="capPBSbttn" class="btn btn-primary" (click)="changeCapSSO('PBS')">
-      PBS (P)</button>
-    <button role="button" name="capBttn" class="btn btn-primary" (click)="backToMainCap()" [hidden]="!ssoTable">
-      Back to All Capabilities</button>
+  <div class="card-body bg-light border-0 card-text">
+    <div class="row justify-content-center">
+      <!-- Filter by SSO Buttons -->
+      <span class="my-auto mr-3">Filters:</span>
+      <button role="button" name="capFASbttn" class="btn btn-primary" (click)="changeCapSSO('FAS')">
+        FAS (Q)</button>
+      <button role="button" name="capITbttn" class="btn btn-primary" (click)="changeCapSSO('GSA IT')">
+        GSA IT (I)</button>
+      <button role="button" name="capOCFObttn" class="btn btn-primary" (click)="changeCapSSO('OCFO')">
+        OCFO (B)</button>
+      <button role="button" name="capPBSbttn" class="btn btn-primary" (click)="changeCapSSO('PBS')">
+        PBS (P)</button>
+
+      <button role="button" name="capBttn" class="btn btn-primary mx-3" (click)="backToMainCap()" [hidden]="!ssoTable">
+        Back to All Capabilities</button>
+    </div>
 
     <!-- Main Capabilities Table -->
-    <table id="capTable"></table>
+    <div class="row justify-content-center">
+      <table id="capTable"></table>
+    </div>
   </div>
 </div>
