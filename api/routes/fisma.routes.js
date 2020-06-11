@@ -10,7 +10,10 @@ router.route('/:id')
     .get(fismaCtrl.findOne);
 
 // Children
-router.route('/:id/applications/')
+router.route('/:id/applications')
     .get(fismaCtrl.findApplications);
+
+router.route('/retired')
+    .get(fismaCtrl.findRetired);
 
 module.exports = router;

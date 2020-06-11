@@ -15,6 +15,7 @@ declare var $: any;
 export class FismaComponent implements OnInit {
 
   row: Object = <any>{};
+  retiredTable: boolean = false;
 
   constructor(
     private location: Location,
@@ -167,5 +168,40 @@ export class FismaComponent implements OnInit {
   dateFormatter(value, row, index, field) {
     return formatDate(value, 'yyyy-MM-dd', 'en-US');
   };
+
+  // Update table to Retire Systems
+  showRetired() {
+    this.retiredTable = true;  // Expose main table button after RISSO button is pressed
+
+    this.columnDefs.push({
+      field: 'InactiveDate',
+      title: 'Inactive Date',
+      sortable: true,
+      formatter: this.dateFormatter
+    })
+
+    // Change columns, filename, and url
+    $('#fismaTable').bootstrapTable('refreshOptions', {
+      columns: this.columnDefs,
+      exportOptions: {
+        fileName: this.sharedService.fileNameFmt('GSA_Retired_FISMA_Systems')
+      },
+      url: this.location.prepareExternalUrl('/api/fisma/retired')
+    });
+  }
+
+  backToMainFisma() {
+    this.retiredTable = false;  // Hide main button
+
+    // Change back to default
+    this.columnDefs.pop();
+    $('#fismaTable').bootstrapTable('refreshOptions', {
+      columns: this.columnDefs,
+      exportOptions: {
+        fileName: this.sharedService.fileNameFmt('GSA_FISMA_Systems_Inventory')
+      },
+      url: this.location.prepareExternalUrl('/api/fisma')
+    });
+  }
 
 }
