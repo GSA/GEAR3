@@ -39,6 +39,7 @@ import { TimeComponent } from './applications/time/time.component';
 //// Security
 import { FismaComponent } from './security/fisma/fisma.component';
 import { FismaModalComponent } from './components/modals/fisma-modal/fisma-modal.component';
+import { FismaPocsComponent } from './security/fisma-pocs/fisma-pocs.component';
 
 // Services
 import { ModalsService } from './services/modals/modals.service';
@@ -72,7 +73,8 @@ import { SharedService } from './services/shared/shared.service';
     TimeComponent,
     
     FismaComponent,
-    FismaModalComponent
+    FismaModalComponent,
+    FismaPocsComponent
   ],
   imports: [
     AppRoutingModule,

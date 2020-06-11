@@ -22,6 +22,7 @@ import { TimeComponent } from './applications/time/time.component';
 
 // Security
 import { FismaComponent } from './security/fisma/fisma.component';
+import { FismaPocsComponent } from './security/fisma-pocs/fisma-pocs.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -40,6 +41,7 @@ const routes: Routes = [
   { path: 'applications_TIME', component: TimeComponent },
 
   { path: 'FISMA', component: FismaComponent },
+  { path: 'FISMA_POC', component: FismaPocsComponent },
 
   {  // Catch-all Redirect to Home
     path: '**',
