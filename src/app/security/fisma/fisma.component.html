@@ -8,7 +8,7 @@
     <!-- Help Button -->
     <a tabindex="0" class="col-1 btn btn-sm text-black-50 btn-info float-right" role="button" data-toggle="popover"
       data-trigger="focus" data-placement="auto" data-html="true" title="Help Using this Table"
-      data-content="<b>Details:</b> Left click on a row within the table to view additional details.
+      data-content="<b>Details:</b> <b><i>DOUBLE</i></b> left click on a row within the table to view additional details.
         <br><br>
         <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
         <br><br>
@@ -26,7 +26,13 @@
     </a>
   </div>
 
-  <div class="row card-body bg-light card-text justify-content-center">
-    <table id="fismaTable"></table>
+  <div class="card-body bg-light card-text">
+    <div class="row justify-content-end">
+      *DOUBLE left click on table row for detail view. Links in table are clickable.
+    </div>
+
+    <div class="row justify-content-center">
+      <table id="fismaTable"></table>
+    </div>
   </div>
 </div>

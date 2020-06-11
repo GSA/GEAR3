@@ -117,7 +117,8 @@ export class FismaPocsComponent implements OnInit {
   }, {
     field: 'Email',
     title: 'Email',
-    sortable: true
+    sortable: true,
+    formatter: this.emailFormatter
   }];
 
   ngOnInit(): void {
@@ -126,9 +127,14 @@ export class FismaPocsComponent implements OnInit {
       data: [],
     }));
 
+    $('#rissoPOCTable').bootstrapTable($.extend(this.pocTableOptions, {
+      columns: this.rissoColumnDefs,
+      data: [],
+    }));
+
     // Method to handle click events on the FISMA POC table
     $(document).ready(
-      $('#fismaPOCTable').on('click-row.bs.table', function (e, row) {
+      $('#fismaPOCTable').on('dbl-click-row.bs.table', function (e, row) {
         // console.log("FISMA POC Table Clicked Row: ", row);  // Debug
 
         this.modalService.updateDetails(row, 'fisma');
@@ -187,8 +193,8 @@ export class FismaPocsComponent implements OnInit {
               
               // Format email into a HTML link
               if (tmpObj.email) {
-                linkStr += '<a class="no-propagation" target="_blank" href="' +
-                tmpObj.email + '">' + ' ' + tmpObj.email + '</a><br>'
+                linkStr += '<a href="https://mail.google.com/mail/?view=cm&fs=1&to=' +
+                tmpObj.email + '" target="_blank">' + ' ' + tmpObj.email + '</a><br>'
               }
               
               // Format number into phone format
@@ -209,13 +215,17 @@ export class FismaPocsComponent implements OnInit {
     return pocs.join('<br><br>');
   }
 
+  emailFormatter (value, row, index, field) {
+    return '<a href="https://mail.google.com/mail/?view=cm&fs=1&to=' +
+    value + '" target="_blank">' + ' ' + value + '</a>'
+  }
+
   // Update table to RISSO POCs
   showRISSOs() {
     this.rissoTable = true;  // Expose main table button after RISSO button is pressed
 
     // Change columns, filename, and url
-    $('#fismaPOCTable').bootstrapTable('refreshOptions', {
-      columns: this.rissoColumnDefs,
+    $('#rissoPOCTable').bootstrapTable('refreshOptions', {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt('GSA_RISSO_POCs')
       },
@@ -225,15 +235,6 @@ export class FismaPocsComponent implements OnInit {
 
   backToMainFisma() {
     this.rissoTable = false;  // Hide main button
-
-    // Back to default
-    $('#fismaPOCTable').bootstrapTable('refreshOptions', {
-      columns: this.pocColumnDefs,
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt('GSA_FISMA_POCs')
-      },
-      url: this.location.prepareExternalUrl('/api/fisma')
-    });
   }
 
 }
