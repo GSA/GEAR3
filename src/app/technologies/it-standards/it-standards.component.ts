@@ -15,6 +15,7 @@ declare var $: any;
 export class ItStandardsComponent implements OnInit {
 
   row: Object = <any>{};
+  filteredTable: boolean = false;
 
   constructor(
     private location: Location,
@@ -121,6 +122,33 @@ export class ItStandardsComponent implements OnInit {
       }.bind(this)
     ));
 
+  }
+
+  // Update table from filter buttons
+  changeFilter(field: string, term: string) {
+    this.filteredTable = true;  // Filters are on, expose main table button
+    var filter = {};
+    filter[field] = term;
+
+    // Set cloud field to visible if filtering by cloud enabled
+    $('#itStandardsTable').bootstrapTable('filterBy', filter);
+    $('#itStandardsTable').bootstrapTable('refreshOptions', {
+      exportOptions: {
+        fileName: this.sharedService.fileNameFmt('GSA_' + term + '_IT_Standards')
+      }
+    })
+  }
+
+  backToMainIT() {
+    this.filteredTable = false;  // Hide main button
+
+    // Remove filters and back to default
+    $('#itStandardsTable').bootstrapTable('filterBy', {});
+    $('#itStandardsTable').bootstrapTable('refreshOptions', {
+      exportOptions: {
+        fileName: this.sharedService.fileNameFmt('GSA_IT_Standards')
+      }
+    });
   }
 
 }
