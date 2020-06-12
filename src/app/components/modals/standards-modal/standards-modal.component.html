@@ -1,0 +1,87 @@
+<!-- IT Standard Detail Modal -->
+<div class="modal fade" id="itStandardDetail" tabindex="-1" role="dialog" aria-labelledby="itStandTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-xl">
+    <div class="modal-content">
+      <div class="modal-header bg-info">
+        <h5 class="modal-title text-white" id="itStandTitle">
+          <i class="fas fa-microchip"></i>
+          {{ itStandard.Name }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <!-- Tabs -->
+        <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#itStandOverview">
+              Overview</a></li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#itStandRelatedApps">
+              Business Applications Using This Standard</a></li>
+        </ul>
+
+        <!-- Tab Panes -->
+        <div class="tab-content mt-3">
+          <div class="tab-pane fade show active" id="itStandOverview">
+            <h4>Description</h4>
+            <p>{{ itStandard.Description }}</p>
+            <br>
+
+            <h4>Technology Overview</h4>
+            <table id="itStandDetailTable" class="table table-borderless table-striped table-dark rounded-lg w-50 mx-auto">
+              <thead>
+              <tr>
+                  <th><h5>Attribute</h5></th>
+                  <th><h5>Value</h5></th>
+              </tr>
+              </thead>
+              
+              <tbody>
+              <tr>
+                <td><i class="fa fa-calendar-alt"></i>Approval Expiration Date</td>
+                <td>{{ itStandard.ApprovalExpirationDate }}</td>
+              </tr>
+              <tr>
+                <td><i class="far fa-list-alt"></i>Category</td>
+                <td>{{ itStandard.Category }}</td>
+              </tr>
+              <tr>
+                <td><i class="fa fa-tag"></i>Comments</td>
+                <td>{{ itStandard.Comments }}</td>
+              </tr>
+              <tr>
+                <td><i class="fa fa-user"></i>POC</td>
+                <td>{{ itStandard.POC }}</td>
+              </tr>
+              <tr>
+                <td><i class="fa fa-door-open"></i>POC Org</td>
+                <td>{{ itStandard.POCorg }}</td>
+              </tr>
+              <tr>
+                <td><i class="far fa-comment"></i>Reference Document</td>
+                <td>
+                  <a href="{{ itStandard.ReferenceDocuments }}" target="_blank">
+                    {{ itStandard.ReferenceDocuments }}</a>
+                  <div [hidden]="itStandard.ReferenceDocuments">None</div>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+
+            <div class="float-right">Last Updated: {{ itStandard.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}</div>
+          </div>
+          <!-- End of Overview Pane -->
+
+          <div class="tab-pane fade show" id="itStandRelatedApps">
+            <table id="itRelAppsTable"></table>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="modal-footer"></div>
+    </div>
+  </div>
+</div>

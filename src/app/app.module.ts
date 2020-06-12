@@ -41,6 +41,10 @@ import { FismaComponent } from './security/fisma/fisma.component';
 import { FismaModalComponent } from './components/modals/fisma-modal/fisma-modal.component';
 import { FismaPocsComponent } from './security/fisma-pocs/fisma-pocs.component';
 
+// Technologies
+import { ItStandardsComponent } from './technologies/it-standards/it-standards.component';
+import { StandardsModalComponent } from './components/modals/standards-modal/standards-modal.component';
+
 // Services
 import { ModalsService } from './services/modals/modals.service';
 import { SharedService } from './services/shared/shared.service';
@@ -74,7 +78,10 @@ import { SharedService } from './services/shared/shared.service';
     
     FismaComponent,
     FismaModalComponent,
-    FismaPocsComponent
+    FismaPocsComponent,
+
+    ItStandardsComponent,
+    StandardsModalComponent
   ],
   imports: [
     AppRoutingModule,

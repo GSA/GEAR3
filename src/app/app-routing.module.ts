@@ -24,6 +24,9 @@ import { TimeComponent } from './applications/time/time.component';
 import { FismaComponent } from './security/fisma/fisma.component';
 import { FismaPocsComponent } from './security/fisma-pocs/fisma-pocs.component';
 
+// Technologies
+import { ItStandardsComponent } from './technologies/it-standards/it-standards.component';
+
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'about', component: AboutComponent },
@@ -42,6 +45,8 @@ const routes: Routes = [
 
   { path: 'FISMA', component: FismaComponent },
   { path: 'FISMA_POC', component: FismaPocsComponent },
+
+  { path: 'it_standards', component: ItStandardsComponent },
 
   {  // Catch-all Redirect to Home
     path: '**',
