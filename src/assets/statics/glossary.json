@@ -1,0 +1,102 @@
+[
+  {
+    "Term": "Agile Approach to Federal Enterprise Architecture",
+    "Definition": "Agile is a term in Information Technology (IT) circles today that essentially means growth happens with small, iterative, customer-centric steps that produce results quickly. Agile EA is an approach to architecture development that is focused on small EA deliverables with the needs of the customer in mind. When starting to build (or rebuild) an agency’s architecture, start small with one aspect that would benefit the stakeholders, and put something together. It doesn’t have to be complete and polished, and actually shouldn’t be. Each draft and subsequent improvement should be based on what will best fit the stakeholder’s most immediate needs. The architecture should not be developed to serve the enterprise architect."
+  },
+  {
+    "Term": "Architecture",
+    "Definition": "The structure of components, their inter-relationships, and the principles and guidelines governing their design and evolution overtime."
+  },
+  {
+    "Term": "BRM",
+    "Definition": "The Business Reference Model (BRM) describes an organization through a taxonomy of common mission and support service areas instead of through a stove-piped organizational view, thereby promoting intra- and inter-agency collaboration. (FEAF)"
+  },
+  {
+    "Term": "Business Application",
+    "Definition": "An Application is a piece of software which a customer uses to perform at least one business capability within GSA. \nGSA applications have these characteristics:\n- Requires funding (costs including: planning/project management, ATO, security scanning/monitoring, infrastructure/hosting support, change requests, FTE hours)\n- Responsible POCs (business, technical, organizational)\n- Uses / processes data (including business intelligence)\n- Deployed on production environment (deployed on server)\n- Supported by technologies/IT Tools (database, servers, programming language)\n"
+  },
+  {
+    "Term": "Business Architecture",
+    "Definition": "A description of the structure and interaction between the business strategy, organization, functions, business processes, and information needs.  In practical terms, the Business Architecture is also often necessary as a means of demonstrating the business value of subsequent architecture work to key stakeholders, and the return on investment to those stakeholders from supporting and participating in the subsequent work."
+  },
+  {
+    "Term": "Business Function",
+    "Definition": "A function that delivers business capabilities closely aligned to an organization, but not necessarily explicitly governed by the organization.   In FEAF, it is defined as a function that describes what the Federal government does at an aggregated level, using the budget function classification codes provided in OMB Circular A-11"
+  },
+  {
+    "Term": "Business Service",
+    "Definition": "It is a service that supports business capabilities through an explicitly deﬁned interface and is explicitly governed by an organization."
+  },
+  {
+    "Term": "Capability",
+    "Definition": "An ability that an organization, person, or system possesses.  Capabilities are typically expressed in general and high-level terms and typically require a combination of organization, people, processes, and technology to achieve . For example, marketing, customer contact, or outbound telemarketing."
+  },
+  {
+    "Term": "Capability Architecture",
+    "Definition": "A highly detailed description of the architectural approach to realize a particular solution or solution aspect."
+  },
+  {
+    "Term": "Capability Based Planning",
+    "Definition": "Capability based planning is the planning, engineering, and deliver y of strategic business capabilities to the enterprise. It is business-driven and business-led and combines the requisite efforts of all lines of business to achieve the desired capability.  Capability-based planning accommodates most, if not all, of the corporate business models and is especially useful in organizations where a latent capability to respond (e.g., an emergency preparedness unit) is required and the same resources are involved in multiple capabilities.Often the need for these capabilities are discovered and reﬁned using business scenarios.  From an enterprise architecture and IT perspective, capability-based planning is a powerful mechanism to ensure that the strategic business plan drives the enterprise from a top-down approach. It is also adaptable with capability engineering to leverage emerging bottom-up innovations."
+  },
+  {
+    "Term": "Cloud",
+    "Definition": "Cloud indicates the hosting location of the data. If the data are not on Cloud, the Hosting Provider is GSA. Otherwise, if the data are on cloud, the Hosting Provider is an external provider."
+  },
+  {
+    "Term": "FISMA",
+    "Definition": "FISMA is the abbreviation for Federal Information Security Modernization Act, please visit here for additional information."
+  },
+  {
+    "Term": "Framework",
+    "Definition": "A structure for content or process that can be used as a tool to structure the thinking, ensuring consistency and completeness."
+  },
+  {
+    "Term": "Gap",
+    "Definition": "A statement of difference between two states. Used in the context of gap analysis, where the difference between the Baseline and Target Architecture is identiﬁed."
+  },
+  {
+    "Term": "Governance",
+    "Definition": "The discipline of monitoring, managing, and steering a business (or IS/IT landscape) to deliver the business outcome required."
+  },
+  {
+    "Term": "Informational Website",
+    "Definition": "An Informational Website is intended to represent a non-interactive presentation of information."
+  },
+  {
+    "Term": "Mission Sector",
+    "Definition": "Identifies the ten business areas of the Federal Government in the Common Approach to EA (FEAF)"
+  },
+  {
+    "Term": "Model",
+    "Definition": "A representation of a subject of interest. A model provides a smaller scale, simpliﬁed, and/or abstract representation of the subject matter.  A model is constructed as a ‘‘means to an end’’. In the context of enterprise architecture, the subject matter is a whole or part of the enterprise and the end is the ability that address the needs of particular stakeholders."
+  },
+  {
+    "Term": "Parent System",
+    "Definition": "A set of interdependent business applications forming a larger, logical whole to provide specific capabilities (i.e., Acquisition, Human Relations, Financial Management).  The child business applications within the parent system can share similar supporting technologies and can influence one another (directly or indirectly) in order to fulfil the identified business need.\n"
+  },
+  {
+    "Term": "Platform",
+    "Definition": "Refers to a capability used to provide a set of common services the enterprise uses to build business applications.  Unlike applications, platforms do not support a unique set of business functions: instead the platform is an enabler for supporting all business functions within an enterprise.  Within cloud terminology this is often referred to as Platform as a Service (PAAS) or Software as a Service (SaaS). \n"
+  },
+  {
+    "Term": "Requirement",
+    "Definition": "A statement of need that must be met by a particular architecture or work package."
+  },
+  {
+    "Term": "Roadmap",
+    "Definition": "An abstracted plan for business or technology change, typically operating across multiple disciplines over multiple years.   Normally used in the phrases Technology Roadmap, Architecture Roadmap, etc."
+  },
+  {
+    "Term": "Service",
+    "Definition": "Further describes what the Federal government does at a secondary or component level  (FEAF)."
+  },
+  {
+    "Term": "Technology",
+    "Definition": "A Technology is intended to describe those component parts of Business Applications that work together to deliver a business capability."
+  },
+  {
+    "Term": "Tool",
+    "Definition": "Refers to a collection of software which provides an interface to the business user and relays instructions to software that supports and/or performs at least one business function i.e., data entry, data processing, updating, query and reporting for an organization’s information systems.  An application must have a unique set of supported business functions, responsible POCs (business, technical, organizational), constituent tools/technologies (databases, servers, other software), managed data sets, funding sources, and users. An application’s costs should include all infrastructure and planning/project management costs directly associated with that application (FISMA, ATO, security scanning/monitoring, infrastructure/hosting support, change requests, FTE hours)."
+  }
+]
