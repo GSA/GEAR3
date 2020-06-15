@@ -6,6 +6,7 @@ import { HomeComponent } from './main/home/home.component';
 import { AboutComponent } from './main/about/about.component';
 import { AssistTechComponent } from './main/assist-tech/assist-tech.component';
 import { FormsGlossaryComponent } from './main/forms-glossary/forms-glossary.component';
+import { VideosComponent } from './main/videos/videos.component';
 
 // Strategy
 import { FrameworkComponent } from './strategy/framework/framework.component';
@@ -48,7 +49,9 @@ const routes: Routes = [
   { path: 'FISMA_POC', component: FismaPocsComponent },
 
   { path: 'it_standards', component: ItStandardsComponent },
+  
   { path: 'forms_glossary', component: FormsGlossaryComponent },
+  { path: 'videos', component: VideosComponent },
 
   {  // Catch-all Redirect to Home
     path: '**',

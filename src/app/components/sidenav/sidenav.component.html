@@ -149,12 +149,25 @@
 
       <!-- Access Forms & Glossary -->
       <li>
-        <a routerLink="forms_glossary" (click)="_opened=true"
+        <a routerLink="forms_glossary"
           class="bg-info list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
             Access Forms & Glossary
             <span class="submenu-icon ml-auto">
-              <i class="fab fa-wpforms fa-lg"></i>
+              <i class="fab fa-wpforms fa-lg fa-fw"></i>  <!-- For some reason, this needs a fixed width to properly align-->
+            </span>
+          </div>
+        </a>
+      </li>
+
+      <!-- Videos -->
+      <li>
+        <a routerLink="videos"
+          class="bg-info list-group-item list-group-item-action flex-column align-items-start">
+          <div class="d-flex w-100 justify-content-start align-items-center">
+            Quick Tutorial Videos
+            <span class="submenu-icon ml-auto">
+              <i class="fas fa-video fa-lg"></i>
             </span>
           </div>
         </a>
