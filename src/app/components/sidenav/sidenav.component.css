@@ -1,6 +1,7 @@
 /* Sidebar */
 ng-sidebar-container {
-  height: 91vh;  /* and position needed to render sidebar properly */
+  height: 92.2%;  /* and position needed to render sidebar properly */
+  margin-bottom: 20px;
   position: absolute;
   z-index: 100;  /* Behind the top navbar */
   overflow-y: auto;  /* Scrollable contents if viewport is shorter than content. */
@@ -8,5 +9,12 @@ ng-sidebar-container {
 
 /* Side Menu item*/
 ng-sidebar .list-group a {
-    color: white;
+  color: white;
+}
+
+/* Fix GEAR Manager Login footer to bottom */
+.sidebar-footer {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
 }
