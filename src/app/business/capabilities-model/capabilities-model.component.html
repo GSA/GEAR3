@@ -24,7 +24,7 @@
     <!-- Graph Searchbar -->
     <!-- <div class="input-group col-lg-3 ml-auto">
       <input type="text" class="form-control" placeholder="Search Capability Names"
-        id="capSearchField" ng-model="searchKey" ng-keydown="$event.keyCode === 13 && search()"/>
+        id="capSearchField" [(ngModel)]="searchKey" ng-keydown="$event.keyCode === 13 && search()"/>
       <div class="input-group-btn">
         <button class="btn btn-primary" (click)="search()">
           <span class="fa fa-search"></span>
@@ -32,7 +32,7 @@
       </div>
     </div> -->
 
-    <!-- Capability Graph -->
-    <div id="busCapGraph"></div>
+    <!-- Business Capability Graph -->
+    <div #busCapGraph></div>
   </div>
 </div>
