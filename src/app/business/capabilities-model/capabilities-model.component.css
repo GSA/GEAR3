@@ -1,0 +1,17 @@
+#busCapGraph {
+  margin-top: 150px;
+}
+
+#capDetail {
+  display: none;
+  width: 70%;
+  height: auto;
+  position: absolute;
+  top: 85px;
+  left: 25px;
+}
+
+#capDetailLink,
+#capDetailClose {
+  cursor: pointer;
+}

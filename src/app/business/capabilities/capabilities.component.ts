@@ -21,7 +21,7 @@ export class CapabilitiesComponent implements OnInit {
     private location: Location,
     private sharedService: SharedService,
     private modalService: ModalsService) {
-      this.modalService.currentInvest.subscribe(row => this.row = row);
+      this.modalService.currentCap.subscribe(row => this.row = row);
   }
 
   // Capabilities Table Options

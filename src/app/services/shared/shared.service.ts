@@ -42,6 +42,11 @@ export class SharedService {
       catchError(this.handleError<Capability[]>('Capabilities', []))
     );
   };
+  public getOneCapability(id: number): Observable<Capability[]> {
+    return this.http.get<Capability[]>(this.capUrl + '/' + String(id)).pipe(
+      catchError(this.handleError<Capability[]>('Capability', []))
+    );
+  };
 
   //// Error Handler for API calls
   private handleError<T>(operation: string = 'operation', result?: T) {

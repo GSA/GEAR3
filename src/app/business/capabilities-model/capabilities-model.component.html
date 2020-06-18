@@ -21,6 +21,9 @@
   </div>
 
   <div class="row card-body bg-light card-text">
+    <!-- Business Capability Graph -->
+    <div #busCapGraph id="busCapGraph"></div>
+
     <!-- Graph Searchbar -->
     <!-- <div class="input-group col-lg-3 ml-auto">
       <input type="text" class="form-control" placeholder="Search Capability Names"
@@ -32,7 +35,19 @@
       </div>
     </div> -->
 
-    <!-- Business Capability Graph -->
-    <div #busCapGraph></div>
+    <!-- Detail Card -->
+    <div id="capDetail" class="card">
+      <div id="capDetailheader" class="row card-header bg-success my-auto">
+        <h4 id="capName" class="white-text"></h4>
+        <div class="ml-auto">
+          <span id='capDetailLink' class="far fa-file-alt fa-lg"
+            data-toggle="tooltip" title="Click to view capability details"></span>
+          <span id='capDetailClose' class="fa fa-times fa-lg ml-3"
+            data-toggle="tooltip" title="Close this box"></span>
+        </div>
+      </div>
+      <div id="capDetailbody" class="card-body"></div>
+    </div>
+
   </div>
 </div>
