@@ -31,10 +31,12 @@ export class CapabilitiesModelComponent implements OnInit {
   private parentCap: string = 'Manage GSA';
   private capTree: any = {};
   public highlightColor: string = '#ff4136';
-  private i: number = 0;
 
   private treemap: any;
   private vis: any;
+
+  public searchKey: string;
+  private finalSearchPath;
 
   constructor(
     public location: Location,
@@ -139,28 +141,28 @@ export class CapabilitiesModelComponent implements OnInit {
       });
 
       // Set Fifth-Level Children
-      // this.capTree.children.forEach(firstLevelCap => {
-      //   firstLevelCap.children.forEach(secondLevelCap => {
-      //     secondLevelCap.children.forEach(thirdLevelCap => {
-      //       thirdLevelCap.children.forEach(fourthLevelCap => {
+      this.capTree.children.forEach(firstLevelCap => {
+        firstLevelCap.children.forEach(secondLevelCap => {
+          secondLevelCap.children.forEach(thirdLevelCap => {
+            thirdLevelCap.children.forEach(fourthLevelCap => {
 
-      //         this.caps.forEach(cap => {
-      //           if (cap.Parent == fourthLevelCap.name) {
-      //             fourthLevelCap.children.push({
-      //               identity: cap.ID,
-      //               name: cap.Name,
-      //               description: cap.Description,
-      //               referenceNum: cap.ReferenceNum,
-      //               // parent: fourthLevelCap,
-      //               children: []
-      //             });
-      //           }
-      //         });
-      //       });
+              this.caps.forEach(cap => {
+                if (cap.Parent == fourthLevelCap.name) {
+                  fourthLevelCap.children.push({
+                    identity: cap.ID,
+                    name: cap.Name,
+                    description: cap.Description,
+                    referenceNum: cap.ReferenceNum,
+                    // parent: fourthLevelCap,
+                    children: []
+                  });
+                }
+              });
+            });
 
-      //     });
-      //   });
-      // });
+          });
+        });
+      });
 
       // console.log("CapTree: ", this.capTree);  // Debug
       // Create graph after retrieving data and computing tree
@@ -168,13 +170,15 @@ export class CapabilitiesModelComponent implements OnInit {
     });
   } // End of getCapData
 
+  // Example taken from https://bl.ocks.org/d3noob/1a96af738c89b88723eb63456beb6510
   private createGraph () {
     var margin: any = { top: 20, bottom: 20, left: 120, right: 120 };
+    var i: number = 0;
 
     // Set margins
     const element = this.graphContainer.nativeElement;
     var width = 1750 - element.offsetWidth - margin.left - margin.right;
-    var height = 800 - element.offsetHeight - margin.top - margin.bottom;
+    var height = 1000 - element.offsetHeight - margin.top - margin.bottom;
 
     // Set tree mapping object
     this.treemap = d3.tree().size([height, width]);
@@ -190,6 +194,7 @@ export class CapabilitiesModelComponent implements OnInit {
     this.root = d3.hierarchy(this.capTree, function(d) { return d.children; });
     this.root.x0 = height / 2;
     this.root.y0 = 0;
+    this.root.descendants().forEach((d, i) => { d.id = i; });  // Set ids for each node
 
     // Sort Nodes
     this.root.sort(function(a, b) {
@@ -234,76 +239,92 @@ export class CapabilitiesModelComponent implements OnInit {
     var treeData = this.treemap(this.root);
   
     // Compute the new tree layout.
-    var nodes = treeData.descendants(),
+    var nodes = treeData.descendants().reverse(),
         links = treeData.descendants().slice(1);
   
     // Normalize for fixed-depth.
     //// Change static number to expand or contract graph
-    nodes.forEach(function(d){ d.y = d.depth * 300});
+    nodes.forEach(function(d){ d.y = d.depth * 280});
   
     // ****************** Nodes section ***************************
   
     // Update the nodes
     var node = this.vis.selectAll('g.node')
-      .data(nodes, function(d: any) {return d.id || (d.id = ++this.i); });
+      .data(nodes, function(d) { return d.id });
   
     // Enter any new nodes at the parent's previous position.
     var nodeEnter = node.enter().append('g')
-      .attr('class', 'node')
+      .attr("class", "node")
       .attr("transform", function() {
         return "translate(" + source.y0 + "," + source.x0 + ")";
       })
+
       // Toggle children on click and re-render
-      .on('click', function(d) {
+      .on("click", function(d) {
+        // console.log("Clicked Node: ", d);  // Debug
         this.toggle(d);
         this.update(d);
       }.bind(this))
-      .on("mouseover", function(d) {
-        d3.select("#capDetail").style("display", "block");  // Show detail card
 
+      // Show detail card on hoverover
+      .on("mouseover", function(d) {
+        d3.select("#capDetail")
+          .style("display", "block");  // Show detail card
         d3.select("#capName")
           .text(d.data.name + " (" + d.data.referenceNum + ")");  // Set Name
-        d3.select("#capDetailbody").text(d.data.description);  // Set Description
+        d3.select("#capDetailbody")
+          .text(d.data.description);  // Set Description
 
         selectedCap = d.data.identity;  // Save selected node id for links
       });
   
     // Add Circle for the nodes
     nodeEnter.append('circle')
-      .attr('class', 'node')
-      .attr('r', 1e-6)
-      .style("fill", function(d: any) {
+      .attr("class", "node")
+      .attr("r", 1e-6)
+      .style("fill", function(d) {
           return d._children ? "lightsteelblue" : "#fff";
       })
-      .style("stroke", "steelblue")
+      .style("stroke", function(d) {
+        if (d.selected) {
+          return this.highlightColor;
+        } else {
+          return "steelblue"
+        }
+      }.bind(this))
       .style("stroke-width", "2.5px");
   
     // Add labels for the nodes
     nodeEnter.append('text')
       // Adjust x coordinate when at end of tree
       .attr("x", function(d) {
-        return d.children || d._children ? 0 : 15;
+        return d.children || d._children ? -15 : 15;
       })
 
       // Move labels above circle
-      .attr("dy", function(d) {
-        return d.children || d._children ? "-1em" :
-          "0.35em";
-      })
-
-      // Add an id to later select node during search
-      .attr("id", function(d) {
-        return "textnode-" + d.data.identity;
-      })
+      .attr("dy", "0.35em")
 
       // Anchor text at middle with children and at start without
       .attr("text-anchor", function(d) {
-          return d.children || d._children ? "middle" : "start";
+          return d.children || d._children ? "end" : "start";
       })
 
       // Display node name for text
       .text(function(d) { return d.data.name; })
-      .attr("font-size", '0.8rem');
+      .attr("font-size", "0.75rem")
+      .attr("fill", function(d) {
+        if (d.selected) {
+          return this.highlightColor;
+        } else {
+          return "black"
+        }
+      }.bind(this))
+
+      // Create white surrounding on text for easier reading over lines
+      .clone(true).lower()
+      .attr("stroke-linejoin", "round")
+      .attr("stroke-width", 3)
+      .attr("stroke", "white");
 
     // UPDATE
     var nodeUpdate = nodeEnter.merge(node);
@@ -317,31 +338,22 @@ export class CapabilitiesModelComponent implements OnInit {
   
     // Update the node attributes and style
     nodeUpdate.select('circle.node')
-      .attr('r', 6)
-      .style("fill", function(d: any) {
-        if (d.selected) {
-          return this.highlightColor;
-        } else if (d._children) {
+      .attr("r", 6)
+      .style("fill", function(d) {
+        if (d._children) {
           return "lightsteelblue";
         } else {
           return "#fff";
         }
       })
-      .attr('cursor', 'pointer');
-      // .style("stroke", function(d: any) {
-      //   if (d.selected) {
-      //     return this.highlightColor;
-      //   }
-      // });
-
-    // nodeUpdate.select("text")
-    //   .style("fill-opacity", 1)
-    //   .style("fill", function(d: any) {
-    //     if (d.selected) {
-    //       return this.highlightColor;
-    //     }
-    //   });
-  
+      .style("stroke", function(d) {
+        if (d.selected) {
+          return this.highlightColor;
+        } else {
+          return "steelblue"
+        }
+      }.bind(this))
+      .attr("cursor", "pointer")
   
     // Remove any exiting nodes
     var nodeExit = node.exit().transition()
@@ -353,28 +365,34 @@ export class CapabilitiesModelComponent implements OnInit {
   
     // On exit reduce the node circles size to 0
     nodeExit.select('circle')
-      .attr('r', 1e-6);
+      .attr("r", 1e-6);
   
     // On exit reduce the opacity of text labels
     nodeExit.select('text')
-      .style('fill-opacity', 1e-6);
+      .style("fill-opacity", 1e-6);
   
     // ****************** links section ***************************
   
     // Update the links...
     var link = this.vis.selectAll('path.link')
-      .data(links, function(d: any) { return d.id; });
+      .data(links, function(d) { return d.id; });
   
     // Enter any new links at the parent's previous position.
     var linkEnter = link.enter().insert('path', "g")
       .attr("class", "link")
-      .attr('d', function(d){
+      .attr("d", function(d){
         var o = {x: source.x0, y: source.y0}
         return diagonal(o, o)
       })
-      .attr('fill', 'none')
-      .attr('stroke', '#CCC')
-      .attr('stroke-width', '3px');
+      .attr("fill", "none")
+      .attr("stroke", function(d) {
+        if (d.selected) {
+          return this.highlightColor;
+        } else {
+          return "#ccc"
+        }
+      }.bind(this))
+      .attr("stroke-width", "3px");
   
     // UPDATE
     var linkUpdate = linkEnter.merge(link);
@@ -382,12 +400,14 @@ export class CapabilitiesModelComponent implements OnInit {
     // Transition back to the parent element position
     linkUpdate.transition()
       .duration(duration)
-      .attr('d', function(d){ return diagonal(d, d.parent) })
-      // .style("stroke", function(d) {
-      //   if (d.target.selected) {
-      //     return this.highlightColor;
-      //   }
-      // });
+      .attr("d", function(d){ return diagonal(d, d.parent) })
+      .attr("stroke", function(d) {
+        if (d.selected) {
+          return this.highlightColor;
+        } else {
+          return "#ccc"
+        }
+      }.bind(this));
   
     // Remove any exiting links
     var linkExit = link.exit().transition()
@@ -399,7 +419,7 @@ export class CapabilitiesModelComponent implements OnInit {
       .remove();
   
     // Store the old positions for transition.
-    nodes.forEach(function(d: any){
+    nodes.forEach(function(d){
       d.x0 = d.x;
       d.y0 = d.y;
     });
@@ -444,5 +464,92 @@ export class CapabilitiesModelComponent implements OnInit {
     });
 
   }  // End of update
+
+  public search = (event) => {
+    // Clear and reset tree between searches
+    this.clearSearch();
+
+    // Search when enter is pressed
+    if (event.key === "Enter") {
+      // console.log("Searching: ", this.searchKey); // Debug
+      
+      var term = this.searchKey.toUpperCase();
+
+      // Reset variables
+      var paths = [];
+
+      // Search through all children
+      this.root.children.forEach(searchChildren, term);
+
+      // If 'paths' is empty, nothing was found
+      if (paths.length != 0) {
+        this.finalSearchPath = openPaths(paths);
+
+        console.log("Final Search Paths: ", this.finalSearchPath);  // Debug
+        this.update(this.root);
+      } else {
+        alert(this.searchKey + " not found!");
+      }
+
+      function searchChildren(d) {
+        d.selected = false;
+        var patt = new RegExp("\\b" + this, "i");
+
+        paths.push(d);  // We assume this path is the right one
+
+        if (d.data.name.match(patt) != null) {
+
+          // Avoid duplication
+          if (!paths.includes(d)) {
+            paths.push(d);
+          }
+
+          d.selected = true;
+        } else {
+          paths.pop()  // Drop path if it's not correct
+        }
+
+        if (d.children)
+          d.children.forEach(searchChildren, this);
+        else if (d._children)
+          d._children.forEach(searchChildren, this);
+
+      };
+
+      function openPaths(paths) {
+        for (var index = 0; index < paths.length; index++) {
+          paths[index].selected = true;
+
+          //if children are hidden: open them, otherwise: don't do anything
+          if (paths[index]._children) {
+            paths[index].children = paths[index]._children;
+            paths[index]._children = null;
+          }
+          
+          // Include parent if not already in the path
+          if (paths[index].parent.data.name != 'Manage GSA' && !paths.includes(paths[index].parent)) {
+            paths.push(paths[index].parent);
+          }
+        }
+
+        return paths;
+      };
+
+    }
+  }  // End of search
+
+  public clearSearch() {
+    // Unselect all that were in the final search path if there was one
+    if (this.finalSearchPath) {
+      for (var index = 0; index < this.finalSearchPath.length; index++) {
+        this.finalSearchPath[index].selected = false;
+      }
+      this.finalSearchPath = undefined;
+    }
+
+    // Only show first level children and render
+    this.root.children.forEach(this.collapse);
+    this.update(this.root);
+  }
 
 }
