@@ -1,14 +1,9 @@
-#orgChart {
-  margin-top: 150px;
-}
-
 #orgDetail {
   display: none;
-  width: 50%;
+  width: 70%;
   height: auto;
-  position: fixed;
-  top: 14%;
-  left: 6%;
+  position: sticky;
+  top: 0;
 }
 
 #orgExtLink,

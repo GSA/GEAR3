@@ -1,14 +1,9 @@
-#busCapGraph {
-  margin-top: 150px;
-}
-
 #capDetail {
   display: none;
   width: 70%;
   height: auto;
-  position: absolute;
-  top: 85px;
-  left: 25px;
+  position: sticky;
+  top: 0;
 }
 
 #capDetailLink,

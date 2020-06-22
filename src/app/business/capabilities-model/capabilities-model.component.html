@@ -22,19 +22,6 @@
   </div>
 
   <div class="row card-body bg-light card-text">
-    <!-- Graph Searchbar -->
-    <div class="input-group col-lg-3 ml-auto">
-      <input [(ngModel)]="searchKey" type="text" class="form-control" placeholder="Search Capability Names"
-        id="capSearchField" (keydown)="search($event)"/>
-      <div class="input-group-btn">
-        <button class="btn btn-primary" (click)="clearSearch()">
-          <i class="far fa-trash-alt fa-lg"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- Business Capability Graph -->
-    <div #busCapGraph id="busCapGraph"></div>
 
     <!-- Detail Card -->
     <div id="capDetail" class="card">
@@ -49,6 +36,20 @@
       </div>
       <div id="capDetailbody" class="card-body"></div>
     </div>
+
+    <!-- Graph Searchbar -->
+    <div class="input-group col-lg-3 ml-auto">
+      <input [(ngModel)]="searchKey" type="text" class="form-control" placeholder="Search Capability Names"
+        id="capSearchField" (keydown)="search($event)"/>
+      <div class="input-group-btn">
+        <button class="btn btn-primary" (click)="clearSearch()">
+          <i class="far fa-trash-alt fa-lg"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Business Capability Graph -->
+    <div #busCapGraph id="busCapGraph"></div>
 
   </div>
 </div>

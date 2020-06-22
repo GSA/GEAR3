@@ -22,20 +22,7 @@
   </div>
 
   <div class="row card-body bg-light card-text">
-    <!-- Searchbar -->
-    <div class="input-group col-lg-3 ml-auto">
-      <input [(ngModel)]="searchKey" type="text" class="form-control" placeholder="Search Org Names"
-        id="orgSearchField" (keydown)="search($event)"/>
-      <div class="input-group-btn">
-        <button class="btn btn-primary" (click)="clearSearch()">
-          <i class="far fa-trash-alt fa-lg"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- OrganizationChart -->
-    <div #orgChart id="orgChart"></div>
-
+    
     <!-- Detail Card -->
     <div id="orgDetail" class="card">
       <div id="orgDetailheader" class="row card-header bg-success my-auto">
@@ -51,6 +38,21 @@
       </div>
       <div id="orgDetailbody" class="card-body"></div>
     </div>
+    
+    <!-- Searchbar -->
+    <div class="input-group col-lg-3 ml-auto">
+      <input [(ngModel)]="searchKey" type="text" class="form-control" placeholder="Search Org Names"
+        id="orgSearchField" (keydown)="search($event)"/>
+      <div class="input-group-btn">
+        <button class="btn btn-primary" (click)="clearSearch()">
+          <i class="far fa-trash-alt fa-lg"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- OrganizationChart -->
+    <div #orgChart id="orgChart"></div>
+
 
   </div>
 </div>
