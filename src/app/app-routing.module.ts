@@ -15,6 +15,7 @@ import { InvestmentsComponent } from './strategy/investments/investments.compone
 // Business
 import { CapabilitiesModelComponent } from './business/capabilities-model/capabilities-model.component';
 import { CapabilitiesComponent } from './business/capabilities/capabilities.component';
+import { OrganizationsChartComponent } from './business/organizations-chart/organizations-chart.component';
 import { OrganizationsComponent } from './business/organizations/organizations.component';
 
 // Applications
@@ -39,6 +40,7 @@ const routes: Routes = [
 
   { path: 'capabilities_model', component: CapabilitiesModelComponent },
   { path: 'capabilities', component: CapabilitiesComponent },
+  { path: 'org_chart', component: OrganizationsChartComponent },
   { path: 'organizations', component: OrganizationsComponent },
 
   { path: 'systems', component: SystemsComponent },

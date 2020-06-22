@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs/internal/Subscription';
 import { catchError } from 'rxjs/operators';
 
 import { Capability } from 'api/models/capabilities.model';
+import { Organization } from 'api/models/organizations.model';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,9 @@ export class SharedService {
 
   // Capabilities API
   capUrl: string = this.location.prepareExternalUrl('/api/capabilities');
+
+  // Organizations API
+  orgUrl: string = this.location.prepareExternalUrl('/api/organizations');
 
   constructor(
     private http: HttpClient,
@@ -35,6 +39,7 @@ export class SharedService {
     return name + '-' + currentDate;
   };
 
+
   // API Calls
   //// Capabilities API
   public getCapabilities(): Observable<Capability[]> {
@@ -47,6 +52,19 @@ export class SharedService {
       catchError(this.handleError<Capability[]>('Capability', []))
     );
   };
+
+  //// Organizations API
+  public getOrganizations(): Observable<Organization[]> {
+    return this.http.get<Organization[]>(this.orgUrl).pipe(
+      catchError(this.handleError<Organization[]>('Organizations', []))
+    );
+  };
+  public getOneOrg(id: number): Observable<Organization[]> {
+    return this.http.get<Organization[]>(this.orgUrl + '/' + String(id)).pipe(
+      catchError(this.handleError<Organization[]>('Organization', []))
+    );
+  };
+
 
   //// Error Handler for API calls
   private handleError<T>(operation: string = 'operation', result?: T) {

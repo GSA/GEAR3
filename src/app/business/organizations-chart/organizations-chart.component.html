@@ -1,0 +1,56 @@
+<div class="card bg-light">
+  <div class="row card-header text-white bg-dark text-center">
+    <h3 class="card-title col-11 mb-0 align-self-center">
+      <span class="my-auto">
+        <i class="fas fa-sitemap"></i>
+        GSA Organizations Chart</span>
+    </h3>
+    <!-- Help Button -->
+    <a tabindex="0" class="col-1 btn btn-sm text-black-50 btn-info float-right" role="button" data-toggle="popover"
+      data-trigger="focus" data-placement="auto" data-html="true" title="Help Using this Table"
+      data-content="<b>Hover:</b> Hover over a circle next to an organization to see its description. 
+        In the pop-up window, click the <i class='far fa-file-alt'></i> icon to see additional information about the organization 
+        or click the <i class='fa fa-times'></i> icon to close the window.
+        <br><br>
+        <b>Click:</b> Left click on the circle next to an organization to see the next level of the organizations. (Not all levels are displayed for ease of use).
+        <br><br>
+        <b>Search:</b> The search box below can search for any of the organization display names and expand the chart to the nodes that match. 
+        Enter your desired term into the search bar and press <i>Enter</i>. You will get an alert if no matching term is found.
+        Click the <i class='far fa-trash-alt fa-lg'></i> icon to clear the search box and return to the normal chart.">
+      <i class="far fa-question-circle fa-2x text-white"></i>
+    </a>
+  </div>
+
+  <div class="row card-body bg-light card-text">
+    <!-- Searchbar -->
+    <div class="input-group col-lg-3 ml-auto">
+      <input [(ngModel)]="searchKey" type="text" class="form-control" placeholder="Search Org Names"
+        id="orgSearchField" (keydown)="search($event)"/>
+      <div class="input-group-btn">
+        <button class="btn btn-primary" (click)="clearSearch()">
+          <i class="far fa-trash-alt fa-lg"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- OrganizationChart -->
+    <div #orgChart id="orgChart"></div>
+
+    <!-- Detail Card -->
+    <div id="orgDetail" class="card">
+      <div id="orgDetailheader" class="row card-header bg-success my-auto">
+        <h4 id="orgName" class="white-text"></h4>
+        <div class="ml-auto">
+          <a id="orgExtLink" target="_blank" class="fas fa-external-link-alt fa-lg"
+            data-toggle="tooltip" title="Click to open external link to website"></a>
+          <span id="orgDetailLink" class="far fa-file-alt fa-lg mx-4"
+            data-toggle="tooltip" title="Click to view organization details"></span>
+          <span id="orgDetailClose" class="fa fa-times fa-lg"
+            data-toggle="tooltip" title="Close this box"></span>
+        </div>
+      </div>
+      <div id="orgDetailbody" class="card-body"></div>
+    </div>
+
+  </div>
+</div>

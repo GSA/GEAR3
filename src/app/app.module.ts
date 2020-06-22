@@ -29,6 +29,8 @@ import { InvestmentsModalComponent } from './components/modals/investments-modal
 import { CapabilitiesModelComponent } from './business/capabilities-model/capabilities-model.component';
 import { CapabilitiesComponent } from './business/capabilities/capabilities.component';
 import { CapabilitiesModalComponent } from './components/modals/capabilities-modal/capabilities-modal.component';
+
+import { OrganizationsChartComponent } from './business/organizations-chart/organizations-chart.component';
 import { OrganizationsComponent } from './business/organizations/organizations.component';
 import { OrganizationsModalComponent } from './components/modals/organizations-modal/organizations-modal.component';
 
@@ -72,6 +74,7 @@ import { SharedService } from './services/shared/shared.service';
     CapabilitiesModelComponent,
     CapabilitiesComponent,
     CapabilitiesModalComponent,
+    OrganizationsChartComponent,
     OrganizationsComponent,
     OrganizationsModalComponent,
     
