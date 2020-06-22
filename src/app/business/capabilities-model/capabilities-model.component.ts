@@ -149,6 +149,10 @@ export class CapabilitiesModelComponent implements OnInit {
                     name: cap.Name,
                     description: cap.Description,
                     referenceNum: cap.ReferenceNum,
+<<<<<<< HEAD
+=======
+                    // parent: fourthLevelCap,
+>>>>>>> b9e8ea587b8ad47954332a8097256f96bf46f753
                     children: []
                   });
                 }
