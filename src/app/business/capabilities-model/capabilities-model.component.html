@@ -15,34 +15,35 @@
         <b>Click:</b> Left click on the circle next to an capabilities to see the next level of the capabilities. (Not all capabilities have another level).
         <br><br>
         <b>Search:</b> The search box below can search for any of the capabilities display names and expand the chart to the nodes that match. 
-        Enter your desired term into the search bar and press <i>Enter</i> or click the magnifying glass. You will get an alert if no matching term is found.">
+        Enter your desired term into the search bar and press <i>Enter</i>. You will get an alert if no matching term is found.
+        Click the <i class='far fa-trash-alt fa-lg'></i> icon to clear the search box and return to the normal chart.">
       <i class="far fa-question-circle fa-2x text-white"></i>
     </a>
   </div>
 
   <div class="row card-body bg-light card-text">
-    <!-- Business Capability Graph -->
-    <div #busCapGraph id="busCapGraph"></div>
-
     <!-- Graph Searchbar -->
-    <!-- <div class="input-group col-lg-3 ml-auto">
-      <input type="text" class="form-control" placeholder="Search Capability Names"
-        id="capSearchField" [(ngModel)]="searchKey" ng-keydown="$event.keyCode === 13 && search()"/>
+    <div class="input-group col-lg-3 ml-auto">
+      <input [(ngModel)]="searchKey" type="text" class="form-control" placeholder="Search Capability Names"
+        id="capSearchField" (keydown)="search($event)"/>
       <div class="input-group-btn">
-        <button class="btn btn-primary" (click)="search()">
-          <span class="fa fa-search"></span>
+        <button class="btn btn-primary" (click)="clearSearch()">
+          <i class="far fa-trash-alt fa-lg"></i>
         </button>
       </div>
-    </div> -->
+    </div>
+
+    <!-- Business Capability Graph -->
+    <div #busCapGraph id="busCapGraph"></div>
 
     <!-- Detail Card -->
     <div id="capDetail" class="card">
       <div id="capDetailheader" class="row card-header bg-success my-auto">
         <h4 id="capName" class="white-text"></h4>
         <div class="ml-auto">
-          <span id='capDetailLink' class="far fa-file-alt fa-lg"
+          <span id="capDetailLink" class="far fa-file-alt fa-lg"
             data-toggle="tooltip" title="Click to view capability details"></span>
-          <span id='capDetailClose' class="fa fa-times fa-lg ml-3"
+          <span id="capDetailClose" class="fa fa-times fa-lg ml-3"
             data-toggle="tooltip" title="Close this box"></span>
         </div>
       </div>
