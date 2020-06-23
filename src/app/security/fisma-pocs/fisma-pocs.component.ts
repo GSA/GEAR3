@@ -30,7 +30,7 @@ export class FismaPocsComponent implements OnInit {
     idTable: 'advSearchFismaTable',
     buttonsClass: 'info',
     cache: true,
-    classes: "table table-bordered table-striped table-hover table-dark",
+    classes: "table table-bordered table-striped table-hover table-dark clickable-table",
     showColumns: true,
     showExport: true,
     exportDataType: 'all',

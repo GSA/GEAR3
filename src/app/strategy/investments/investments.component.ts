@@ -31,7 +31,7 @@ export class InvestmentsComponent implements OnInit {
     idTable: 'advSearchInvestTable',
     buttonsClass: 'info',
     cache: true,
-    classes: "table table-bordered table-striped table-hover table-dark",
+    classes: "table table-bordered table-striped table-hover table-dark clickable-table",
     showColumns: true,
     showExport: true,
     exportDataType: 'all',

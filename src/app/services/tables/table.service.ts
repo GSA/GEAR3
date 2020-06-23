@@ -18,7 +18,7 @@ export class TableService {
     idTable: 'advSearchInvestRelAppsTable',
     buttonsClass: 'info',
     cache: true,
-    classes: "table table-bordered table-striped table-hover table-light",
+    classes: "table table-bordered table-striped table-hover table-light clickable-table",
     showColumns: true,
     showExport: true,
     exportDataType: 'all',

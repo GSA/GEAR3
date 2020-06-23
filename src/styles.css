@@ -67,6 +67,10 @@ table.table-dark h5 {
   color: #fff;
 }
 
+.clickable-table {
+  cursor: pointer;
+}
+
 /* Separate icons from text when in tables */
 table svg {
   margin-right: 10px;

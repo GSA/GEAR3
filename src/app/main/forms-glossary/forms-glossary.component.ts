@@ -20,7 +20,7 @@ export class FormsGlossaryComponent implements OnInit {
   formsTableOptions: {} = {
     advancedSearch: false,
     cache: true,
-    classes: "table table-bordered table-striped table-hover table-dark",
+    classes: "table table-bordered table-striped table-hover table-dark clickable-table",
     showColumns: false,
     showExport: false,
     pagination: false,

@@ -32,7 +32,7 @@ export class CapabilitiesComponent implements OnInit {
     idTable: 'advSearchCapTable',
     buttonsClass: 'info',
     cache: true,
-    classes: "table table-bordered table-striped table-hover table-dark",
+    classes: "table table-bordered table-striped table-hover table-dark clickable-table",
     showColumns: false,
     showExport: true,
     exportDataType: 'all',
