@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { ModalsService } from '../../../services/modals/modals.service';
 import { SharedService } from '../../../services/shared/shared.service';
+import { TableService } from '../../../services/tables/table.service';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -17,7 +18,8 @@ export class ApplicationsModalComponent implements OnInit {
 
   constructor(
     private modalService: ModalsService,
-    private sharedService: SharedService) { }
+    private sharedService: SharedService,
+    private tableService: TableService) { }
 
   // TIME Report Table Options
   timeTableOptions: {} = {
@@ -25,7 +27,7 @@ export class ApplicationsModalComponent implements OnInit {
     // idTable: 'advSearchAppTimeTable',
     buttonsClass: 'info',
     cache: true,
-    classes: "table table-bordered table-striped table-hover table-light",
+    classes: "table table-bordered table-striped table-light",
     showColumns: false,
     showExport: true,
     exportDataType: 'all',
@@ -196,6 +198,27 @@ export class ApplicationsModalComponent implements OnInit {
       columns: this.appTechColumnDefs,
       data: [],
     }));
+
+
+    // Method to handle click events on the Related Capabilities table
+    $(document).ready(
+      $('#appCapTable').on('click-row.bs.table', function (e, row) {
+        // Hide First Modal before showing new modal
+        $('#appsDetail').modal('hide');
+        
+        this.tableService.capsTableClick(row);
+      }.bind(this)
+    ));
+
+    // Method to handle click events on the Related Technologies table
+    $(document).ready(
+      $('#appTechTable').on('click-row.bs.table', function (e, row) {
+        // Hide First Modal before showing new modal
+        $('#appsDetail').modal('hide');
+        
+        this.tableService.itStandTableClick(row);
+      }.bind(this)
+    ));
   }
   
 

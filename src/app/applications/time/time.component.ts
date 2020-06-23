@@ -3,6 +3,7 @@ import { Location } from '@angular/common';
 
 import { ModalsService } from '../../services/modals/modals.service';
 import { SharedService } from '../../services/shared/shared.service';
+import { TableService } from '../../services/tables/table.service';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -18,8 +19,9 @@ export class TimeComponent implements OnInit {
 
   constructor(
     private location: Location,
+    private modalService: ModalsService,
     private sharedService: SharedService,
-    private modalService: ModalsService) {
+    private tableService: TableService) {
       this.modalService.currentSys.subscribe(row => this.row = row);
   }
 
@@ -76,7 +78,8 @@ export class TimeComponent implements OnInit {
     field: 'ParentSystem',
     title: 'Parent System',
     sortable: true,
-    visible: false
+    visible: false,
+    formatter: this.sharedService.systemFormatter
   }, {
     field: 'CUI',
     title: 'CUI',
@@ -183,36 +186,7 @@ export class TimeComponent implements OnInit {
     // Method to handle click events on the Systems table
     $(document).ready(
       $('#timeTable').on('click-row.bs.table', function (e, row) {
-        // console.log("TIME Table Clicked Row: ", row);  // Debug
-
-        this.modalService.updateDetails(row, 'application');
-        $('#appsDetail').modal('show');
-
-        // Update TIME report table in detail modal with clicked application
-        $('#appTimeTable').bootstrapTable('refreshOptions', {
-          exportOptions: {
-            fileName: this.sharedService.fileNameFmt(row.Name + '-TIME_Report')
-          },
-          data: [row]
-        });
-
-        // Update related capabilities table in detail modal with clicked application
-        $('#appCapTable').bootstrapTable('refreshOptions', {
-          exportOptions: {
-            fileName: this.sharedService.fileNameFmt(row.Name + '-Related_Capabilities')
-          },
-          url: this.location.prepareExternalUrl('/api/applications/'
-           + String(row.ID) + '/capabilities')
-        });
-
-        // Update related technologies table in detail modal with clicked application
-        $('#appTechTable').bootstrapTable('refreshOptions', {
-          exportOptions: {
-            fileName: this.sharedService.fileNameFmt(row.Name + '-Related_Technologies')
-          },
-          url: this.location.prepareExternalUrl('/api/applications/'
-           + String(row.ID) + '/technologies')
-        });
+        this.tableService.appsTableClick(row);
       }.bind(this)
     ));
 

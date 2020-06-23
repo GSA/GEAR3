@@ -88,4 +88,15 @@ export class SharedService {
     return finalVal;
   };
   
+  //// Systems
+  public systemFormatter(value, row, index, field) {
+    var finalVal = value;
+
+    if (value == '' || value == undefined) {
+      finalVal = "N/A";
+    }
+
+    return finalVal;
+  };
+
 }

@@ -3,6 +3,7 @@ import { formatDate, Location } from '@angular/common';
 
 import { ModalsService } from '../../services/modals/modals.service';
 import { SharedService } from '../../services/shared/shared.service';
+import { TableService } from '../../services/tables/table.service';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -19,8 +20,9 @@ export class FismaComponent implements OnInit {
 
   constructor(
     private location: Location,
+    private modalService: ModalsService,
     private sharedService: SharedService,
-    private modalService: ModalsService) {
+    private tableService: TableService) {
       this.modalService.currentFismaSys.subscribe(row => this.row = row);
   }
 
@@ -127,20 +129,7 @@ export class FismaComponent implements OnInit {
     // Method to handle click events on the FISMA Systems table
     $(document).ready(
       $('#fismaTable').on('dbl-click-row.bs.table', function (e, row) {
-        // console.log("FISMA System Table Clicked Row: ", row);  // Debug
-
-        this.modalService.updateDetails(row, 'fisma');
-        $('#fismaDetail').modal('show');
-
-        // Update related apps table in detail modal with clicked FISMA system
-        $('#fismaCertAppsTable').bootstrapTable('refreshOptions', {
-          exportOptions: {
-            fileName: this.sharedService.fileNameFmt(row.Name + '-Certified_Apps')
-          },
-          url: this.location.prepareExternalUrl('/api/fisma/' 
-            + String(row.ID) + '/applications')
-        })
-
+        this.tableService.fismaTableClick(row);
       }.bind(this)
     ));
 

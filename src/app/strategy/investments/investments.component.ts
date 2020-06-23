@@ -3,6 +3,7 @@ import { Location } from '@angular/common';
 
 import { ModalsService } from '../../services/modals/modals.service';
 import { SharedService } from '../../services/shared/shared.service';
+import { TableService } from '../../services/tables/table.service';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -18,8 +19,9 @@ export class InvestmentsComponent implements OnInit {
 
   constructor(
     private location: Location,
+    private modalService: ModalsService,
     private sharedService: SharedService,
-    private modalService: ModalsService) {
+    private tableService: TableService) {
       this.modalService.currentInvest.subscribe(row => this.row = row);
   }
 
@@ -94,20 +96,7 @@ export class InvestmentsComponent implements OnInit {
     // Method to handle click events on the Investments table
     $(document).ready(
       $('#investTable').on('click-row.bs.table', function (e, row) {
-        // console.log("Investment Table Clicked Row: ", row);  // Debug
-
-        this.modalService.updateDetails(row, 'investment');
-        $('#investDetail').modal('show');
-
-        // Update related apps table in detail modal with clicked investment
-        $('#investRelAppsTable').bootstrapTable('refreshOptions', {
-          exportOptions: {
-            fileName: this.sharedService.fileNameFmt(row.Name + '-Related_Apps')
-          },
-          url: this.location.prepareExternalUrl('/api/investments/' 
-            + String(row.ID) + '/applications')
-        })
-
+        this.tableService.investTableClick(row);
       }.bind(this)
     ));
 

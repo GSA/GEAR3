@@ -3,6 +3,7 @@ import { Location } from '@angular/common';
 
 import { ModalsService } from '../../services/modals/modals.service';
 import { SharedService } from '../../services/shared/shared.service';
+import { TableService } from '../../services/tables/table.service';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -19,8 +20,9 @@ export class CapabilitiesComponent implements OnInit {
 
   constructor(
     private location: Location,
+    private modalService: ModalsService,
     private sharedService: SharedService,
-    private modalService: ModalsService) {
+    private tableService: TableService) {
       this.modalService.currentCap.subscribe(row => this.row = row);
   }
 
@@ -104,19 +106,7 @@ export class CapabilitiesComponent implements OnInit {
     // Method to handle click events on the capabilities table
     $(document).ready(
       $('#capTable').on('click-row.bs.table', function (e, row) {
-        // console.log("Capability Table Clicked Row: ", row);  // Debug
-
-        this.modalService.updateDetails(row, 'capability');
-        $('#capabilityDetail').modal('show');
-
-        // Update related apps table in detail modal with clicked capabilities
-        $('#capSupportAppsTable').bootstrapTable('refreshOptions', {
-          exportOptions: {
-            fileName: this.sharedService.fileNameFmt(row.Name + '-Supporting_Apps')
-          },
-          url: this.location.prepareExternalUrl('/api/capabilities/' 
-            + String(row.ID) + '/applications')
-        })
+        this.tableService.capsTableClick(row);
       }.bind(this))
     );
   }

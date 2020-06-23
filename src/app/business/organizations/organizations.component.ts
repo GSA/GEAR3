@@ -3,6 +3,7 @@ import { Location } from '@angular/common';
 
 import { ModalsService } from '../../services/modals/modals.service';
 import { SharedService } from '../../services/shared/shared.service';
+import { TableService } from '../../services/tables/table.service';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -18,8 +19,9 @@ export class OrganizationsComponent implements OnInit {
 
   constructor(
     private location: Location,
+    private modalService: ModalsService,
     private sharedService: SharedService,
-    private modalService: ModalsService) {
+    private tableService: TableService) {
       this.modalService.currentInvest.subscribe(row => this.row = row);
   }
 
@@ -76,20 +78,7 @@ export class OrganizationsComponent implements OnInit {
     // Method to handle click events on the organization table
     $(document).ready(
       $('#orgTable').on('click-row.bs.table', function (e, row) {
-        // console.log("Organization Table Clicked Row: ", row);  // Debug
-
-        this.modalService.updateDetails(row, 'organization');
-        $('#organizationDetail').modal('show');
-
-        // Update related apps table in detail modal with clicked organization
-        $('#orgAppsTable').bootstrapTable('refreshOptions', {
-          exportOptions: {
-            fileName: this.sharedService.fileNameFmt(row.Name + '-Organizational_Apps')
-          },
-          url: this.location.prepareExternalUrl('/api/organizations/' 
-            + String(row.ID) + '/applications')
-        })
-
+        this.tableService.orgsTableClick(row);
       }.bind(this)
     ));
 

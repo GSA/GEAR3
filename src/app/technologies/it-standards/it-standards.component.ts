@@ -3,6 +3,7 @@ import { Location } from '@angular/common';
 
 import { ModalsService } from '../../services/modals/modals.service';
 import { SharedService } from '../../services/shared/shared.service';
+import { TableService } from '../../services/tables/table.service';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -19,8 +20,9 @@ export class ItStandardsComponent implements OnInit {
 
   constructor(
     private location: Location,
+    private modalService: ModalsService,
     private sharedService: SharedService,
-    private modalService: ModalsService) {
+    private tableService: TableService) {
       this.modalService.currentITStand.subscribe(row => this.row = row);
   }
 
@@ -105,20 +107,7 @@ export class ItStandardsComponent implements OnInit {
     // Method to handle click events on the Investments table
     $(document).ready(
       $('#itStandardsTable').on('click-row.bs.table', function (e, row) {
-        // console.log("IT Standard Table Clicked Row: ", row);  // Debug
-
-        this.modalService.updateDetails(row, 'it-standard');
-        $('#itStandardDetail').modal('show');
-
-        // Update related apps table in detail modal with clicked investment
-        $('#itRelAppsTable').bootstrapTable('refreshOptions', {
-          exportOptions: {
-            fileName: this.sharedService.fileNameFmt(row.Name + '-Related_Apps')
-          },
-          url: this.location.prepareExternalUrl('/api/it_standards/' 
-            + String(row.ID) + '/applications')
-        })
-
+        this.tableService.itStandTableClick(row);
       }.bind(this)
     ));
 

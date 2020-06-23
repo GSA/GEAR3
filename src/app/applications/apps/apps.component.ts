@@ -3,12 +3,13 @@ import { Location } from '@angular/common';
 
 import { ModalsService } from '../../services/modals/modals.service';
 import { SharedService } from '../../services/shared/shared.service';
+import { TableService } from '../../services/tables/table.service';
 
 // Declare jQuery symbol
 declare var $: any;
 
 @Component({
-  selector: 'app-apps',
+  selector: 'apps',
   templateUrl: './apps.component.html',
   styleUrls: ['./apps.component.css']
 })
@@ -19,8 +20,9 @@ export class AppsComponent implements OnInit {
 
   constructor(
     private location: Location,
+    private modalService: ModalsService,
     private sharedService: SharedService,
-    private modalService: ModalsService) {
+    private tableService: TableService) {
       this.modalService.currentSys.subscribe(row => this.row = row);
   }
 
@@ -109,7 +111,7 @@ export class AppsComponent implements OnInit {
     field: 'System',
     title: 'Parent System',
     sortable: true,
-    formatter: this.systemFormatter
+    formatter: this.sharedService.systemFormatter
   }, {
     field: 'HostingProvider',
     title: 'Hosting Provider',
@@ -134,8 +136,9 @@ export class AppsComponent implements OnInit {
     title: 'FISMA System',
     sortable: true,
     visible: false,
-    formatter: this.systemFormatter
-  }, //{
+    formatter: this.sharedService.systemFormatter
+  },
+  //{
   //   field: 'HelpDesk',
   //   title: 'Help Desk',
   //   sortable: true,
@@ -195,7 +198,7 @@ export class AppsComponent implements OnInit {
     field: 'System',
     title: 'Parent System',
     sortable: true,
-    formatter: this.systemFormatter
+    formatter: this.sharedService.systemFormatter
   }, {
     field: 'HostingProvider',
     title: 'Hosting Provider',
@@ -220,7 +223,7 @@ export class AppsComponent implements OnInit {
     title: 'FISMA System',
     sortable: true,
     visible: false,
-    formatter: this.systemFormatter
+    formatter: this.sharedService.systemFormatter
   }, {
     field: 'RetiredYear',
     title: 'Retired Year (CY)',
@@ -247,51 +250,11 @@ export class AppsComponent implements OnInit {
     // Method to handle click events on the Applications table
     $(document).ready(
       $('#appsTable').on('click-row.bs.table', function (e, row) {
-        // console.log("Applications Table Clicked Row: ", row);  // Debug
-
-        this.modalService.updateDetails(row, 'application');
-        $('#appsDetail').modal('show');
-
-        // Update TIME report table in detail modal with clicked application
-        $('#appTimeTable').bootstrapTable('refreshOptions', {
-          exportOptions: {
-            fileName: this.sharedService.fileNameFmt(row.Name + '-TIME_Report')
-          },
-          data: [row]
-        });
-
-        // Update related capabilities table in detail modal with clicked application
-        $('#appCapTable').bootstrapTable('refreshOptions', {
-          exportOptions: {
-            fileName: this.sharedService.fileNameFmt(row.Name + '-Related_Capabilities')
-          },
-          url: this.location.prepareExternalUrl('/api/applications/'
-           + String(row.ID) + '/capabilities')
-        });
-
-        // Update related technologies table in detail modal with clicked application
-        $('#appTechTable').bootstrapTable('refreshOptions', {
-          exportOptions: {
-            fileName: this.sharedService.fileNameFmt(row.Name + '-Related_Technologies')
-          },
-          url: this.location.prepareExternalUrl('/api/applications/'
-           + String(row.ID) + '/technologies')
-        });
+        this.tableService.appsTableClick(row);
       }.bind(this),
     ));
 
   }
-
-  // Data Formatters
-  private systemFormatter(value, row, index, field) {
-    var finalVal = value;
-
-    if (value == '' || value == undefined) {
-      finalVal = "N/A";
-    }
-
-    return finalVal;
-  };
 
   // Update table, filtering by SSO
   changeFilter(field: string, term: string) {

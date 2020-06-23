@@ -3,6 +3,7 @@ import { Location } from '@angular/common';
 
 import { ModalsService } from '../../services/modals/modals.service';
 import { SharedService } from '../../services/shared/shared.service';
+import { TableService } from '../../services/tables/table.service';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -18,8 +19,9 @@ export class SystemsComponent implements OnInit {
 
   constructor(
     private location: Location,
+    private modalService: ModalsService,
     private sharedService: SharedService,
-    private modalService: ModalsService) {
+    private tableService: TableService) {
       this.modalService.currentSys.subscribe(row => this.row = row);
   }
 
@@ -72,20 +74,7 @@ export class SystemsComponent implements OnInit {
     // Method to handle click events on the Systems table
     $(document).ready(
       $('#systemTable').on('click-row.bs.table', function (e, row) {
-        // console.log("Parent Systems Table Clicked Row: ", row);  // Debug
-
-        this.modalService.updateDetails(row, 'system');
-        $('#systemDetail').modal('show');
-
-        // Update related apps table in detail modal with clicked parent system
-        $('#childAppsTable').bootstrapTable('refreshOptions', {
-          exportOptions: {
-            fileName: this.sharedService.fileNameFmt(row.Name + '-Child_Apps')
-          },
-          url: this.location.prepareExternalUrl('/api/parentsystems/' 
-            + String(row.ID) + '/applications')
-        })
-
+        this.tableService.systemsTableClick(row);
       }.bind(this)
     ));
 
