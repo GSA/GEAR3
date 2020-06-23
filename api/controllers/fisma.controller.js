@@ -18,7 +18,7 @@ function findOne (req, res, next) {
     next();
   } else {
     var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_fisma_archer.sql')).toString() +
-      " WHERE obj_fisma_archer.`ex:GEAR_ID` = ? GROUP BY archer.`ex:GEAR_ID`;"; 
+      " WHERE archer.`ex:GEAR_ID` = ? GROUP BY archer.`ex:GEAR_ID`;"; 
     var params = [req.params.id];
 
     res = ctrl.sendQuery(query, 'individual FISMA System', res, params);
