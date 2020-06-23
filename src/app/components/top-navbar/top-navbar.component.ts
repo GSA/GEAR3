@@ -1,5 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
+import { Router } from '@angular/router';
+
 import { SharedService } from '../../services/shared/shared.service';
+
+// Declare jQuery symbol
+declare var $: any;
 
 @Component({
   selector: 'top-navbar',
@@ -8,15 +14,32 @@ import { SharedService } from '../../services/shared/shared.service';
 })
 export class TopNavbarComponent implements OnInit {
 
+  public searchKW: string = '';
+
   constructor(
-    private sharedService: SharedService
-  ) { }
+    private location: Location,
+    private router: Router,
+    private sharedService: SharedService) { }
 
   ngOnInit(): void {
   }
 
-  toggleSidebar(){
+  toggleSidebar () {
     this.sharedService.toggleClick();    
+  }
+
+  globalSearch (event) {
+    if (event.key === "Enter" || event.type === "click") {
+      // Update related apps table in detail modal with clicked investment
+      $('#globalSearchTable').bootstrapTable('refreshOptions', {
+        exportOptions: {
+          fileName: this.sharedService.fileNameFmt('Global_Search-' + this.searchKW)
+        },
+        url: this.location.prepareExternalUrl('/api/search/' + this.searchKW)
+      })
+
+      this.router.navigate([`/search`]);
+    }
   }
 
 }

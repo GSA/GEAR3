@@ -15,6 +15,7 @@ import { SidenavComponent } from './components/sidenav/sidenav.component';
 
 //// Main
 import { HomeComponent } from './main/home/home.component';
+import { GlobalSearchComponent } from './main/global-search/global-search.component';
 import { AboutComponent } from './main/about/about.component';
 import { AssistTechComponent } from './main/assist-tech/assist-tech.component';
 import { FormsGlossaryComponent } from './main/forms-glossary/forms-glossary.component';
@@ -62,6 +63,7 @@ import { SharedService } from './services/shared/shared.service';
     SidenavComponent,
     
     HomeComponent,
+    GlobalSearchComponent,
     AboutComponent,
     AssistTechComponent,
     FormsGlossaryComponent,

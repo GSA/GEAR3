@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 // Main
 import { HomeComponent } from './main/home/home.component';
+import { GlobalSearchComponent } from './main/global-search/global-search.component';
 import { AboutComponent } from './main/about/about.component';
 import { AssistTechComponent } from './main/assist-tech/assist-tech.component';
 import { FormsGlossaryComponent } from './main/forms-glossary/forms-glossary.component';
@@ -32,6 +33,7 @@ import { ItStandardsComponent } from './technologies/it-standards/it-standards.c
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
+  { path: 'search', component: GlobalSearchComponent },
   { path: 'about', component: AboutComponent },
   { path: 'assist_tech', component: AssistTechComponent },
 

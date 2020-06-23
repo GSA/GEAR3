@@ -13,12 +13,11 @@
 
   <!-- Global Search -->
   <form class="form-inline mr-sm-2" role="search">
-    <input type="search" name="globalSearchField" ng-model="searchkw" class="form-control mr-sm-2"
-      placeholder="Global Search">
-    <!-- href="#!/search/{{searchkw}}" -->
-    <a type="submit" class="btn btn-light btn-sm my-2 my-sm-0">
+    <input type="search" name="globalSearchField" [(ngModel)]="searchKW" class="form-control mr-sm-2"
+      placeholder="Global Search" (keydown)="globalSearch($event)">
+    <button class="btn btn-light btn-sm my-2 my-sm-0" (click)="globalSearch($event)">
       <i class="fas fa-search fa-lg"></i>
-    </a>
+    </button>
   </form>
 
   <!-- Right Side Links -->

@@ -5,8 +5,13 @@ import { Observable, of } from "rxjs";
 import { Subscription } from 'rxjs/internal/Subscription';
 import { catchError } from 'rxjs/operators';
 
+import { Application } from 'api/models/applications.model';
 import { Capability } from 'api/models/capabilities.model';
+import { FISMA } from 'api/models/fisma.model';
+import { Investment } from 'api/models/investments.model';
+import { ITStandards } from 'api/models/it-standards.model';
 import { Organization } from 'api/models/organizations.model';
+import { ParentSystem } from 'api/models/parentsystems.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,11 +22,26 @@ export class SharedService {
   toggleEmitter = new EventEmitter();
   subsVar: Subscription;
 
+  // Applications API
+  appUrl: string = this.location.prepareExternalUrl('/api/applications');
+
   // Capabilities API
   capUrl: string = this.location.prepareExternalUrl('/api/capabilities');
 
+  // FISMA API
+  fismaUrl: string = this.location.prepareExternalUrl('/api/fisma');
+
+  // Investment API
+  investUrl: string = this.location.prepareExternalUrl('/api/investments');
+
   // Organizations API
   orgUrl: string = this.location.prepareExternalUrl('/api/organizations');
+  
+  // Parent System API
+  sysUrl: string = this.location.prepareExternalUrl('/api/parentsystems');
+
+  // IT Standards API
+  techUrl: string = this.location.prepareExternalUrl('/api/it_standards');
 
   constructor(
     private http: HttpClient,
@@ -41,15 +61,51 @@ export class SharedService {
 
 
   // API Calls
+  //// Applications API
+  public getApplications(): Observable<Application[]> {
+    return this.http.get<Application[]>(this.appUrl).pipe(
+      catchError(this.handleError<Application[]>('Applications', []))
+    );
+  };
+  public getOneApp(id: number): Observable<Application[]> {
+    return this.http.get<Application[]>(this.appUrl + '/' + String(id)).pipe(
+      catchError(this.handleError<Application[]>('Application', []))
+    );
+  };
+
   //// Capabilities API
   public getCapabilities(): Observable<Capability[]> {
     return this.http.get<Capability[]>(this.capUrl).pipe(
       catchError(this.handleError<Capability[]>('Capabilities', []))
     );
   };
-  public getOneCapability(id: number): Observable<Capability[]> {
+  public getOneCap(id: number): Observable<Capability[]> {
     return this.http.get<Capability[]>(this.capUrl + '/' + String(id)).pipe(
       catchError(this.handleError<Capability[]>('Capability', []))
+    );
+  };
+
+  //// FISMA API
+  public getFISMA(): Observable<FISMA[]> {
+    return this.http.get<FISMA[]>(this.fismaUrl).pipe(
+      catchError(this.handleError<FISMA[]>('FISMA Systems', []))
+    );
+  };
+  public getOneFISMASys(id: number): Observable<FISMA[]> {
+    return this.http.get<FISMA[]>(this.fismaUrl + '/' + String(id)).pipe(
+      catchError(this.handleError<FISMA[]>('FISMA System', []))
+    );
+  };
+
+  //// Investment API
+  public getInvestments(): Observable<Investment[]> {
+    return this.http.get<Investment[]>(this.investUrl).pipe(
+      catchError(this.handleError<Investment[]>('Investments', []))
+    );
+  };
+  public getOneInvest(id: number): Observable<Investment[]> {
+    return this.http.get<Investment[]>(this.investUrl + '/' + String(id)).pipe(
+      catchError(this.handleError<Investment[]>('Investment', []))
     );
   };
 
@@ -62,6 +118,30 @@ export class SharedService {
   public getOneOrg(id: number): Observable<Organization[]> {
     return this.http.get<Organization[]>(this.orgUrl + '/' + String(id)).pipe(
       catchError(this.handleError<Organization[]>('Organization', []))
+    );
+  };
+
+  //// Parent Systems API
+  public getSystems(): Observable<ParentSystem[]> {
+    return this.http.get<ParentSystem[]>(this.sysUrl).pipe(
+      catchError(this.handleError<ParentSystem[]>('Parent Systems', []))
+    );
+  };
+  public getOneSys(id: number): Observable<ParentSystem[]> {
+    return this.http.get<ParentSystem[]>(this.sysUrl + '/' + String(id)).pipe(
+      catchError(this.handleError<ParentSystem[]>('Parent System', []))
+    );
+  };
+
+  //// Technologies API
+  public getTechnologies(): Observable<ITStandards[]> {
+    return this.http.get<ITStandards[]>(this.techUrl).pipe(
+      catchError(this.handleError<ITStandards[]>('IT Standards', []))
+    );
+  };
+  public getOneTech(id: number): Observable<ITStandards[]> {
+    return this.http.get<ITStandards[]>(this.techUrl + '/' + String(id)).pipe(
+      catchError(this.handleError<ITStandards[]>('IT Standard', []))
     );
   };
 

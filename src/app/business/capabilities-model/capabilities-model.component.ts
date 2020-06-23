@@ -437,7 +437,7 @@ export class CapabilitiesModelComponent implements OnInit {
     // When detail link is clicked
     capDetail.on("click", function() {
       // Grab data for selected node
-      this.sharedService.getOneCapability(selectedCap).subscribe((data: any[]) => {
+      this.sharedService.getOneCap(selectedCap).subscribe((data: any[]) => {
         var capData = data[0];
         this.modalService.updateDetails(capData, 'capability');
         $('#capabilityDetail').modal('show');

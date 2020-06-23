@@ -13,7 +13,7 @@ const org = require(routesPath + 'organizations.routes');
 const parentSys = require(routesPath + 'parentsystems.routes');
 const poc = require(routesPath + 'pocs.routes');
 // const mng = require('./managerpage');
-// const search = require('./search');
+const search = require(routesPath + 'search.routes');
 
 const router = express.Router();
 
@@ -29,6 +29,6 @@ router.use('/organizations', org);
 router.use('/parentsystems', parentSys);
 router.use('/pocs', poc);
 // router.use('/managerpage', mng);
-// router.use('/search', search);
+router.use('/search', search);
 
 module.exports = router;
