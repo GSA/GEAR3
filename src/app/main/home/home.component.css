@@ -1,0 +1,17 @@
+.jumbotron {
+  background-image: url('https://wallpaperplay.com/walls/full/6/e/3/197055.jpg');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.jumbotron-heading {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.card-body {
+  background-color: #f7f7f9;
+}
+
+img {
+  width: 10%;
+}
