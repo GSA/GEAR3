@@ -63,7 +63,8 @@ export class CapabilitiesComponent implements OnInit {
   }, {
     field: 'Description',
     title: 'Description',
-    sortable: true
+    sortable: true,
+    formatter: this.sharedService.descFormatter
   }, {
     field: 'Parent',
     title: 'Parent',
@@ -82,7 +83,8 @@ export class CapabilitiesComponent implements OnInit {
   }, {
     field: 'Description',
     title: 'Description',
-    sortable: true
+    sortable: true,
+    formatter: this.sharedService.descFormatter
   }, {
     field: 'ParentCap',
     title: 'Parent',

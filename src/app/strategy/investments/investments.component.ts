@@ -58,7 +58,8 @@ export class InvestmentsComponent implements OnInit {
   }, {
     field: 'Description',
     title: 'Description',
-    sortable: true
+    sortable: true,
+    formatter: this.sharedService.descFormatter
   }, {
     field: 'Type',
     title: 'Type',

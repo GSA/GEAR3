@@ -59,7 +59,8 @@ export class ItStandardsComponent implements OnInit {
   }, {
     field: 'Description',
     title: 'Description',
-    sortable: true
+    sortable: true,
+    formatter: this.sharedService.descFormatter
   }, {
     field: 'Category',
     title: 'Category',

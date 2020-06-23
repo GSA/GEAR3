@@ -122,7 +122,8 @@ export class ApplicationsModalComponent implements OnInit {
   }, {
     field: 'Description',
     title: 'Description',
-    sortable: true
+    sortable: true,
+    formatter: this.sharedService.descFormatter
   }, {
     field: 'ParentCap',
     title: 'Parent Capability'
@@ -159,7 +160,8 @@ export class ApplicationsModalComponent implements OnInit {
   }, {
     field: 'Description',
     title: 'Description',
-    sortable: true
+    sortable: true,
+    formatter: this.sharedService.descFormatter
   }, {
     field: 'Status',
     title: 'Status',

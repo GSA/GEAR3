@@ -58,7 +58,8 @@ export class SystemsComponent implements OnInit {
   }, {
     field: 'Description',
     title: 'Description',
-    sortable: true
+    sortable: true,
+    formatter: this.sharedService.descFormatter
   }, {
     field: 'SSO',
     title: 'SSO',

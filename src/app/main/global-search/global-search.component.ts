@@ -15,7 +15,9 @@ export class GlobalSearchComponent implements OnInit {
   
   public searchKW;
 
-  constructor(private tableService: TableService) { }
+  constructor(
+    private sharedService: SharedService,
+    private tableService: TableService) { }
 
   // Global Search Table Options
   tableOptions: {} = {
@@ -47,7 +49,8 @@ export class GlobalSearchComponent implements OnInit {
   {
     field: 'Description',
     title: 'Description',
-    sortable: true
+    sortable: true,
+    formatter: this.sharedService.descFormatter
   },
   {
     field: 'GEAR_Type',

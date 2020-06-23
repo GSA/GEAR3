@@ -47,7 +47,8 @@ export class TableService {
   }, {
     field: 'Description',
     title: 'Description',
-    sortable: true
+    sortable: true,
+    formatter: this.sharedService.descFormatter
   }, {
     field: 'SSOShort',
     title: 'SSO',
