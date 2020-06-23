@@ -29,7 +29,8 @@
         <div class="tab-content mt-3">
           <div class="tab-pane fade show active" id="appOverview">
             <h4>Alias</h4>
-            <p>{{ application.Alias }}</p>
+            <p [hidden]="!application.Alias">{{ application.Alias }}</p>
+            <p [hidden]="application.Alias">None</p>
             <br><br>
 
             <h4>Description</h4>
