@@ -110,6 +110,11 @@ export class FismaComponent implements OnInit {
     sortable: true,
     visible: false
   }, {
+    field: 'SystemLevel',
+    title: 'System Level',
+    sortable: true,
+    visible: false
+  }, {
     field: 'RelatedArtifacts',
     title: 'Related Artifacts',
     formatter: this.relArtifactsFormatter
