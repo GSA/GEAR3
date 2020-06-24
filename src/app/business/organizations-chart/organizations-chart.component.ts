@@ -271,24 +271,7 @@ export class OrganizationsChartComponent implements OnInit {
         // console.log("Clicked Node: ", d);  // Debug
         this.toggle(d);
         this.update(d);
-      }.bind(this))
-
-      // Show detail card on hoverover
-      .on("mouseover", function(d) {
-        d3.select("#orgDetail")
-          .style("display", "block");  // Show detail card
-        
-        d3.select("#orgExtLink")
-          .style("display", function() {  // Show external link if available
-            return d.data.link ? "inline" : "none"
-          });
-        d3.select("#orgName")
-          .text(d.data.name);  // Set Name
-        d3.select("#orgDetailbody")
-          .text(d.data.description);  // Set Description
-
-        selectedOrg = d;  // Save selected node for links
-      });
+      }.bind(this));
   
     // Add Circle for the nodes
     nodeEnter.append('circle')
@@ -366,6 +349,24 @@ export class OrganizationsChartComponent implements OnInit {
         }
       }.bind(this))
       .attr("cursor", "pointer")
+
+      // Show detail card on hoverover
+      .on("mouseover", function(d) {
+        d3.select("#orgDetail")
+          .style("display", "block");  // Show detail card
+        
+        d3.select("#orgExtLink")
+          .style("display", function() {  // Show external link if available
+            return d.data.link ? "inline" : "none"
+          });
+        d3.select("#orgName")
+          .text(d.data.name);  // Set Name
+        d3.select("#orgDetailbody")
+          .text(d.data.description);  // Set Description
+
+        // console.log("Hovered Node: ", d);  // Debug
+        selectedOrg = d;  // Save selected node for links
+      });
   
     // Remove any exiting nodes
     var nodeExit = node.exit().transition()
@@ -460,6 +461,8 @@ export class OrganizationsChartComponent implements OnInit {
 
     // When detail link is clicked
     orgDetail.on("click", function() {
+      // console.log("Selected Node: ", selectedCap);  // Debug
+
       // Grab data for selected node
       this.sharedService.getOneOrg(selectedOrg.data.identity).subscribe((data: any[]) => {
         var orgData = data[0];
