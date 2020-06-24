@@ -1,5 +1,5 @@
-<div class="card bg-light">
-  <div class="row card-header text-white bg-dark text-center">
+<div class="card">
+  <div class="row card-header text-white bg-teal text-center">
     <h3 class="card-title col-11 mb-0 align-self-center">
       <span class="my-auto">
         <i class="fas fa-microchip"></i>
@@ -26,8 +26,8 @@
     </a>
   </div>
 
-  <div class="card-body bg-light card-text">
-    <div class="row justify-content-center">
+  <div class="row card-body card-text justify-content-center">
+    <div>
       <!-- Filter Buttons -->
       <span class="my-auto mr-3">Filters:</span>
       <button role="button" name="itDesktopBttn" class="btn btn-primary" (click)="changeFilter('DeploymentType', 'Desktop')">
@@ -45,8 +45,6 @@
     </div>
 
     <!-- Main IT Standards Table -->
-    <div class="row justify-content-center">
-      <table id="itStandardsTable"></table>
-    </div>
+    <table id="itStandardsTable"></table>
   </div>
 </div>

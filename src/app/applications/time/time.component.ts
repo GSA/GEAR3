@@ -39,6 +39,9 @@ export class TimeComponent implements OnInit {
       fileName: this.sharedService.fileNameFmt('Business_App_TIME_Report')
     },
     exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
+    headerStyle: function (column) {
+      return { classes: 'bg-danger' }
+    },
     pagination: true,
     showPaginationSwitch: true,
     search: true,

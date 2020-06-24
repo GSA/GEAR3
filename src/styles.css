@@ -88,3 +88,17 @@ table ul {
   padding-inline-start: 0;
   margin-bottom: 0;
 }
+
+/* Softer Card Background Color */
+.card-body {
+  background-color: #ededed !important;
+}
+
+/* Custom Colors */
+.bg-royal-blue {
+  background-color: #2b60de !important;
+}
+
+.bg-teal {
+  background-color: #008080 !important;
+}

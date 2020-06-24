@@ -2,7 +2,7 @@
 <div class="modal fade" id="appsDetail" tabindex="-1" role="dialog" aria-labelledby="appTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
     <div class="modal-content">
-      <div class="modal-header bg-info">
+      <div class="modal-header bg-danger">
         <h5 class="modal-title text-white" id="appTitle">
           <i class="fas fa-desktop"></i>
           {{ application.Name }}</h5>
@@ -45,7 +45,7 @@
             <br>
 
             <table id="appBusinessTable" class="table table-borderless table-striped table-dark rounded-lg w-50 mx-auto">
-              <thead>
+              <thead class="bg-danger">
               <tr>
                   <th><h5>Attribute</h5></th>
                   <th><h5>Value</h5></th>
@@ -122,7 +122,7 @@
             <br>
 
             <table id="techAttrTable" class="table table-borderless table-striped table-dark rounded-lg w-50 mx-auto">
-              <thead>
+              <thead class="bg-danger">
               <tr>
                   <th><h5>Attribute</h5></th>
                   <th><h5>Value</h5></th>

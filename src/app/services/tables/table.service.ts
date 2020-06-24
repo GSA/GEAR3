@@ -23,7 +23,7 @@ export class TableService {
     showExport: true,
     exportDataType: 'all',
     exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
-    headerStyle: function (column) {return {classes: 'bg-dark text-white'}},
+    headerStyle: function (column) {return {classes: 'bg-danger text-white'}},
     pagination: true,
     showPaginationSwitch: true,
     search: true,

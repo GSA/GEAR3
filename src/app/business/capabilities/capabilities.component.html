@@ -1,5 +1,5 @@
-<div class="card bg-light border-0">
-  <div class="row card-header text-white bg-dark text-center">
+<div class="card">
+  <div class="row card-header text-white bg-royal-blue text-center">
     <h3 class="card-title col-11 mb-0 align-self-center">
       <span class="my-auto">
         <i class="fas fa-project-diagram"></i>
@@ -24,8 +24,8 @@
     </a>
   </div>
 
-  <div class="card-body bg-light border-0 card-text">
-    <div class="row justify-content-center">
+  <div class="row card-body card-text justify-content-center">
+    <div>
       <!-- Filter by SSO Buttons -->
       <span class="my-auto mr-3">Filters:</span>
       <button role="button" name="capFASbttn" class="btn btn-primary" (click)="changeCapSSO('FAS')">
@@ -42,8 +42,6 @@
     </div>
 
     <!-- Main Capabilities Table -->
-    <div class="row justify-content-center">
-      <table id="capTable"></table>
-    </div>
+    <table id="capTable"></table>
   </div>
 </div>
