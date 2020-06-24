@@ -264,19 +264,7 @@ export class CapabilitiesModelComponent implements OnInit {
         // console.log("Clicked Node: ", d);  // Debug
         this.toggle(d);
         this.update(d);
-      }.bind(this))
-
-      // Show detail card on hoverover
-      .on("mouseover", function(d) {
-        d3.select("#capDetail")
-          .style("display", "block");  // Show detail card
-        d3.select("#capName")
-          .text(d.data.name + " (" + d.data.referenceNum + ")");  // Set Name
-        d3.select("#capDetailbody")
-          .text(d.data.description);  // Set Description
-
-        selectedCap = d.data.identity;  // Save selected node id for links
-      });
+      }.bind(this));
   
     // Add Circle for the nodes
     nodeEnter.append('circle')
@@ -354,6 +342,19 @@ export class CapabilitiesModelComponent implements OnInit {
         }
       }.bind(this))
       .attr("cursor", "pointer")
+
+      // Show detail card on hoverover
+      .on("mouseover", function(d) {
+        d3.select("#capDetail")
+          .style("display", "block");  // Show detail card
+        d3.select("#capName")
+          .text(d.data.name + " (" + d.data.referenceNum + ")");  // Set Name
+        d3.select("#capDetailbody")
+          .text(d.data.description);  // Set Description
+        
+        // console.log("Hovered Node: ", d);  // Debug
+        selectedCap = d.data.identity;  // Save selected node id for links
+      });
   
     // Remove any exiting nodes
     var nodeExit = node.exit().transition()
@@ -441,6 +442,8 @@ export class CapabilitiesModelComponent implements OnInit {
 
     // When detail link is clicked
     capDetail.on("click", function() {
+      // console.log("Selected Node: ", selectedCap);  // Debug
+
       // Grab data for selected node
       this.sharedService.getOneCap(selectedCap).subscribe((data: any[]) => {
         var capData = data[0];
