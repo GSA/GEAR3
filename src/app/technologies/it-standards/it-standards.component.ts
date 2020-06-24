@@ -100,6 +100,11 @@ export class ItStandardsComponent implements OnInit {
   }];
 
   ngOnInit(): void {
+    // Enable popovers
+    $(function () {
+      $('[data-toggle="popover"]').popover()
+    })
+    
     $('#itStandardsTable').bootstrapTable($.extend(this.tableOptions, {
       columns: this.columnDefs,
       data: [],

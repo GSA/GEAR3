@@ -244,6 +244,11 @@ export class AppsComponent implements OnInit {
 
 
   ngOnInit(): void {
+    // Enable popovers
+    $(function () {
+      $('[data-toggle="popover"]').popover()
+    })
+    
     $('#appsTable').bootstrapTable($.extend(this.tableOptions, {
       columns: this.columnDefs,
       data: [],

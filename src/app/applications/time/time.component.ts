@@ -178,6 +178,11 @@ export class TimeComponent implements OnInit {
   }];
 
   ngOnInit(): void {
+    // Enable popovers
+    $(function () {
+      $('[data-toggle="popover"]').popover()
+    })
+    
     $('#timeTable').bootstrapTable($.extend(this.tableOptions, {
       columns: this.columnDefs,
       data: [],

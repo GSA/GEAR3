@@ -71,6 +71,11 @@ export class OrganizationsComponent implements OnInit {
     }];
 
   ngOnInit(): void {
+    // Enable popovers
+    $(function () {
+      $('[data-toggle="popover"]').popover()
+    })
+    
     $('#orgTable').bootstrapTable($.extend(this.tableOptions, {
       columns: this.columnDefs,
       data: [],

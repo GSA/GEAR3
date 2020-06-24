@@ -122,6 +122,11 @@ export class FismaPocsComponent implements OnInit {
   }];
 
   ngOnInit(): void {
+    // Enable popovers
+    $(function () {
+      $('[data-toggle="popover"]').popover()
+    })
+    
     $('#fismaPOCTable').bootstrapTable($.extend(this.pocTableOptions, {
       columns: this.pocColumnDefs,
       data: [],

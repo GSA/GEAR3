@@ -59,6 +59,11 @@ export class GlobalSearchComponent implements OnInit {
   }];
 
   ngOnInit(): void {
+    // Enable popovers
+    $(function () {
+      $('[data-toggle="popover"]').popover()
+    })
+    
     $('#globalSearchTable').bootstrapTable($.extend(this.tableOptions, {
       columns: this.columnDefs,
       data: [],

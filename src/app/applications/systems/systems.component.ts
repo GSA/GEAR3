@@ -67,6 +67,11 @@ export class SystemsComponent implements OnInit {
   }];
 
   ngOnInit(): void {
+    // Enable popovers
+    $(function () {
+      $('[data-toggle="popover"]').popover()
+    })
+    
     $('#systemTable').bootstrapTable($.extend(this.tableOptions, {
       columns: this.columnDefs,
       data: [],

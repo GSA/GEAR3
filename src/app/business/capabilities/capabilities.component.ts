@@ -100,6 +100,11 @@ export class CapabilitiesComponent implements OnInit {
   }];
 
   ngOnInit(): void {
+    // Enable popovers
+    $(function () {
+      $('[data-toggle="popover"]').popover()
+    })
+    
     $('#capTable').bootstrapTable($.extend(this.tableOptions, {
       columns: this.capColumnDefs,
       data: [],
