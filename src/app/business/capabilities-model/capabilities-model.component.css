@@ -2,11 +2,15 @@
   display: none;
   width: 70%;
   height: auto;
-  position: sticky;
-  top: 0;
+  position: absolute;
+  top: 7%;
 }
 
 #capDetailLink,
 #capDetailClose {
   cursor: pointer;
+}
+
+#busCapGraph {
+  margin-top: 7%;
 }

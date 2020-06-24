@@ -2,12 +2,16 @@
   display: none;
   width: 70%;
   height: auto;
-  position: sticky;
-  top: 0;
+  position: absolute;
+  top: 7%;
 }
 
 #orgExtLink,
 #orgDetailLink,
 #orgDetailClose {
   cursor: pointer;
+}
+
+#orgChart {
+  margin-top: 7%;
 }
