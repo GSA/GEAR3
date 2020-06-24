@@ -8,6 +8,10 @@
     "Definition": "The structure of components, their inter-relationships, and the principles and guidelines governing their design and evolution overtime."
   },
   {
+    "Term": "ATO",
+    "Definition": "Authority to Operate"
+  },
+  {
     "Term": "BRM",
     "Definition": "The Business Reference Model (BRM) describes an organization through a taxonomy of common mission and support service areas instead of through a stove-piped organizational view, thereby promoting intra- and inter-agency collaboration. (FEAF)"
   },
@@ -44,12 +48,52 @@
     "Definition": "Cloud indicates the hosting location of the data. If the data are not on Cloud, the Hosting Provider is GSA. Otherwise, if the data are on cloud, the Hosting Provider is an external provider."
   },
   {
+    "Term": "CUI",
+    "Definition": "Controlled Unclassified Information"
+  },
+  {
+    "Term": "CXO",
+    "Definition": "A catch-all term relating to four \"C-Level\" GSA organizations: the Office of the Chief Financial Officer (OCFO), the Office of Human Resource (OHRM), the Office of Administrative Services (OAS), and GSA IT"
+  },
+  {
+    "Term": "DM&E",
+    "Definition": "Development, Modernization, and Enhancement"
+  },
+  {
+    "Term": "EA",
+    "Definition": "Enterprise Architecture"
+  },
+  {
+    "Term": "EBC",
+    "Definition": "Executive Business Case"
+  },
+  {
+    "Term": "FEAF",
+    "Definition": "Federal Enterprise Architecture Framework"
+  },
+  {
+    "Term": "FIPS",
+    "Definition": "Federal Information Processing Standards"
+  },
+  {
     "Term": "FISMA",
-    "Definition": "FISMA is the abbreviation for Federal Information Security Modernization Act, please visit here for additional information."
+    "Definition": "Federal Information Security Modernization Act"
+  },
+  {
+    "Term": "FITARA",
+    "Definition": "Federal Information Technology Acquisition Reform Act"
   },
   {
     "Term": "Framework",
     "Definition": "A structure for content or process that can be used as a tool to structure the thinking, ensuring consistency and completeness."
+  },
+  {
+    "Term": "FTE",
+    "Definition": "Full-time Equivalent"
+  },
+  {
+    "Term": "FY",
+    "Definition": "Fiscal Year"
   },
   {
     "Term": "Gap",
@@ -64,6 +108,14 @@
     "Definition": "An Informational Website is intended to represent a non-interactive presentation of information."
   },
   {
+    "Term": "ISSM",
+    "Definition": "Information Systems Security Manager"
+  },
+  {
+    "Term": "ISSO",
+    "Definition": "Information Systems Security Officer"
+  },
+  {
     "Term": "Mission Sector",
     "Definition": "Identifies the ten business areas of the Federal Government in the Common Approach to EA (FEAF)"
   },
@@ -72,8 +124,20 @@
     "Definition": "A representation of a subject of interest. A model provides a smaller scale, simpliﬁed, and/or abstract representation of the subject matter.  A model is constructed as a ‘‘means to an end’’. In the context of enterprise architecture, the subject matter is a whole or part of the enterprise and the end is the ability that address the needs of particular stakeholders."
   },
   {
+    "Term": "O&M",
+    "Definition": "Operation and Maintenance"
+  },
+  {
+    "Term": "PaaS",
+    "Definition": "Platform-as-a-service is a type of cloud computing offering in which a service provider delivers a platform to clients, enabling them to develop, run, and manage business applications without the need to build and maintain the infrastructure such software development processes typically require."
+  },
+  {
     "Term": "Parent System",
     "Definition": "A set of interdependent business applications forming a larger, logical whole to provide specific capabilities (i.e., Acquisition, Human Relations, Financial Management).  The child business applications within the parent system can share similar supporting technologies and can influence one another (directly or indirectly) in order to fulfil the identified business need.\n"
+  },
+  {
+    "Term": "PII",
+    "Definition": "Personally Identifiable Information"
   },
   {
     "Term": "Platform",
@@ -84,19 +148,39 @@
     "Definition": "A statement of need that must be met by a particular architecture or work package."
   },
   {
+    "Term": "RISSO",
+    "Definition": "Regional Information Systems Security Officer"
+  },
+  {
     "Term": "Roadmap",
     "Definition": "An abstracted plan for business or technology change, typically operating across multiple disciplines over multiple years.   Normally used in the phrases Technology Roadmap, Architecture Roadmap, etc."
+  },
+  {
+    "Term": "SaaS",
+    "Definition": "Software as a service is a software licensing and delivery model in which software is licensed on a subscription basis and is centrally hosted. SaaS applications are also known as Web-based software, on-demand software and hosted software"
   },
   {
     "Term": "Service",
     "Definition": "Further describes what the Federal government does at a secondary or component level  (FEAF)."
   },
   {
+    "Term": "SSO",
+    "Definition": "Services and Staff Office"
+  },
+  {
     "Term": "Technology",
     "Definition": "A Technology is intended to describe those component parts of Business Applications that work together to deliver a business capability."
   },
   {
+    "Term": "TIME",
+    "Definition": "Tolerate, Invest, Migrate, or Eliminate. More info in the About tab at the top of the page, in the subsection Business Application Rationalization"
+  },
+  {
     "Term": "Tool",
     "Definition": "Refers to a collection of software which provides an interface to the business user and relays instructions to software that supports and/or performs at least one business function i.e., data entry, data processing, updating, query and reporting for an organization’s information systems.  An application must have a unique set of supported business functions, responsible POCs (business, technical, organizational), constituent tools/technologies (databases, servers, other software), managed data sets, funding sources, and users. An application’s costs should include all infrastructure and planning/project management costs directly associated with that application (FISMA, ATO, security scanning/monitoring, infrastructure/hosting support, change requests, FTE hours)."
+  },
+  {
+    "Term": "UII",
+    "Definition": "Unique Investment Identifier"
   }
 ]
