@@ -80,6 +80,10 @@
                 <td><i class="fa fa-calendar-alt"></i>Production Year</td>
                 <td>{{ application.ProdYear }}</td>
               </tr>
+              <tr [hidden]="!application.RetiredYear">
+                <td><i class="fa fa-calendar-alt"></i>Retired Year</td>
+                <td>{{ application.RetiredYear }}</td>
+              </tr>
               <tr>
                 <td><i class="fa fa-sitemap"></i>SSO</td>
                 <td>
