@@ -83,6 +83,11 @@ export class FormsGlossaryComponent implements OnInit {
   }]
 
   ngOnInit(): void {
+    // Enable popovers
+    $(function () {
+      $('[data-toggle="popover"]').popover()
+    })
+    
     $('#formsTable').bootstrapTable($.extend(this.formsTableOptions, {
       columns: this.formsColumnDefs,
       data: [],

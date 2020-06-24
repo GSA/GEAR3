@@ -45,6 +45,11 @@ export class OrganizationsChartComponent implements OnInit {
     public modalService: ModalsService) { }
 
   ngOnInit(): void {
+    // Enable popovers
+    $(function () {
+      $('[data-toggle="popover"]').popover()
+    })
+    
     this.getOrgData();
   }
   
