@@ -12,11 +12,11 @@ import { FormsGlossaryComponent } from './main/forms-glossary/forms-glossary.com
 import { FrameworkComponent } from './strategy/framework/framework.component';
 import { InvestmentsComponent } from './strategy/investments/investments.component';
 
-// Business
-import { CapabilitiesModelComponent } from './business/capabilities-model/capabilities-model.component';
-import { CapabilitiesComponent } from './business/capabilities/capabilities.component';
-import { OrganizationsChartComponent } from './business/organizations-chart/organizations-chart.component';
-import { OrganizationsComponent } from './business/organizations/organizations.component';
+// Enterprise
+import { CapabilitiesModelComponent } from './enterprise/capabilities-model/capabilities-model.component';
+import { CapabilitiesComponent } from './enterprise/capabilities/capabilities.component';
+import { OrganizationsChartComponent } from './enterprise/organizations-chart/organizations-chart.component';
+import { OrganizationsComponent } from './enterprise/organizations/organizations.component';
 
 // Applications
 import { SystemsComponent } from './applications/systems/systems.component';

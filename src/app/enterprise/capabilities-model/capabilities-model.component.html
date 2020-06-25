@@ -41,7 +41,7 @@
     <div class="input-group col-lg-3 ml-auto">
       <input [(ngModel)]="searchKey" type="text" class="form-control" placeholder="Search Capability Names"
         id="capSearchField" (keydown)="search($event)"/>
-      <div class="input-group-btn">
+      <div class="input-group-append">
         <button class="btn btn-primary" (click)="clearSearch()">
           <i class="far fa-trash-alt fa-lg"></i>
         </button>

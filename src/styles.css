@@ -58,6 +58,10 @@ a.email,
   font-size: 1rem;
 }
 
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: black !important;
+}
+
 /* Customize Table formatting */
 table h5 {
   margin-bottom: 0;

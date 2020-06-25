@@ -25,13 +25,13 @@ import { FrameworkComponent } from './strategy/framework/framework.component';
 import { InvestmentsComponent } from './strategy/investments/investments.component';
 import { InvestmentsModalComponent } from './components/modals/investments-modal/investments-modal.component';
 
-//// Business
-import { CapabilitiesModelComponent } from './business/capabilities-model/capabilities-model.component';
-import { CapabilitiesComponent } from './business/capabilities/capabilities.component';
+//// Enterprise
+import { CapabilitiesModelComponent } from './enterprise/capabilities-model/capabilities-model.component';
+import { CapabilitiesComponent } from './enterprise/capabilities/capabilities.component';
 import { CapabilitiesModalComponent } from './components/modals/capabilities-modal/capabilities-modal.component';
 
-import { OrganizationsChartComponent } from './business/organizations-chart/organizations-chart.component';
-import { OrganizationsComponent } from './business/organizations/organizations.component';
+import { OrganizationsChartComponent } from './enterprise/organizations-chart/organizations-chart.component';
+import { OrganizationsComponent } from './enterprise/organizations/organizations.component';
 import { OrganizationsModalComponent } from './components/modals/organizations-modal/organizations-modal.component';
 
 //// Applications
