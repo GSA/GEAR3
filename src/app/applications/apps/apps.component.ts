@@ -5,6 +5,9 @@ import { ModalsService } from '../../services/modals/modals.service';
 import { SharedService } from '../../services/shared/shared.service';
 import { TableService } from '../../services/tables/table.service';
 
+// Declare D3 library
+declare var d3: any;
+
 // Declare jQuery symbol
 declare var $: any;
 
@@ -17,6 +20,7 @@ export class AppsComponent implements OnInit {
 
   row: Object = <any>{};
   ssoTable: boolean = false;
+  interfaces: any[] = [];
 
   constructor(
     private location: Location,
@@ -259,6 +263,7 @@ export class AppsComponent implements OnInit {
     $(document).ready(
       $('#appsTable').on('click-row.bs.table', function (e, row) {
         this.tableService.appsTableClick(row);
+        this.getInterfaceData(row.ID);
       }.bind(this),
     ));
 
@@ -307,6 +312,25 @@ export class AppsComponent implements OnInit {
       columns: this.columnDefs,
       url: this.location.prepareExternalUrl('/api/applications')
     });
+  }
+
+  private getInterfaceData (appID: number) {
+    this.sharedService.getAppInterfaces(appID).subscribe((data: any[]) => {
+      this.interfaces = data;
+      this.createInterfaceChart(appID, this.interfaces);
+    });
+  }
+
+  private createInterfaceChart (appID: number, interfaces: any[]) {
+    console.log(appID, interfaces);
+    var CONTAINER_ID = 'interfaceChart',
+        SVG_ID = 'interfaceSVG';
+
+    interfaces.forEach(inter => {
+      if (inter.System1 == null) inter.System1 = 'None';
+      if (inter.System2 == null) inter.System2 = 'None';
+    });
+
   }
 
 }

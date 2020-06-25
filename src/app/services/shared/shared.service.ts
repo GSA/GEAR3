@@ -8,6 +8,7 @@ import { catchError } from 'rxjs/operators';
 import { Application } from 'api/models/applications.model';
 import { Capability } from 'api/models/capabilities.model';
 import { FISMA } from 'api/models/fisma.model';
+import { Interface } from 'api/models/interfaces.model';
 import { Investment } from 'api/models/investments.model';
 import { ITStandards } from 'api/models/it-standards.model';
 import { Organization } from 'api/models/organizations.model';
@@ -30,6 +31,7 @@ export class SharedService {
 
   // FISMA API
   fismaUrl: string = this.location.prepareExternalUrl('/api/fisma');
+
 
   // Investment API
   investUrl: string = this.location.prepareExternalUrl('/api/investments');
@@ -70,6 +72,12 @@ export class SharedService {
   public getOneApp(id: number): Observable<Application[]> {
     return this.http.get<Application[]>(this.appUrl + '/' + String(id)).pipe(
       catchError(this.handleError<Application[]>('Application', []))
+    );
+  };
+  //// Application Interfaces API
+  public getAppInterfaces(id: number): Observable<Interface[]> {
+    return this.http.get<Interface[]>(this.appUrl + '/' + String(id)).pipe(
+      catchError(this.handleError<Interface[]>('App Interfaces', []))
     );
   };
 

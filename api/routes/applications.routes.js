@@ -22,8 +22,8 @@ router.route('/:id/technologies/')
 // router.route('/:id/pocs/')
 //     .get(appCtrl.findPOCs);
 
-// router.route('/:id/interfaces/')
-//     .get(appCtrl.findInterfaces);
+router.route('/:id/interfaces/')
+    .get(appCtrl.findInterfaces);
 
 // router.route('/:id/interfacesv2/')
 //     .get(appCtrl.findInterfacesv2);

@@ -15,6 +15,7 @@ declare var $: any;
 export class ApplicationsModalComponent implements OnInit {
 
   application = <any>{};
+  interfaces: any[] = [];
 
   constructor(
     private modalService: ModalsService,

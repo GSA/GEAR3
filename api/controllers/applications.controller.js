@@ -57,10 +57,20 @@ function findTechnologies (req, res) {
   res = ctrl.sendQuery(query, 'related technologies for application', res, params);
 };
 
+function findInterfaces (req, res) {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_interfaces.sql')).toString() +
+  ` WHERE (inter.obj_application_Id = ? or inter.obj_application_Id1 = ?) AND appstat1.Keyname <> 'Retired'  AND appstat2.Keyname <> 'Retired';`;
+
+  var params = [req.params.id, req.params.id];
+
+  res = ctrl.sendQuery(query, 'related technologies for application', res, params);
+};
+
 module.exports = {
   findAll,
   findOne,
   findAllRetired,
   findCapabilities,
-  findTechnologies
+  findTechnologies,
+  findInterfaces
 };
