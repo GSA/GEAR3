@@ -18,10 +18,9 @@ function findOne (req, res, next) {
     next();
   } else {
     var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_pocs.sql')).toString() +
-      " WHERE poc.Id = ?;"; 
-    var params = [req.params.id];
+      ` WHERE poc.Id = ${req.params.id};`; 
 
-    res = ctrl.sendQuery(query, 'individual POC', res, params);
+    res = ctrl.sendQuery(query, 'individual POC', res);
   }
 };
 

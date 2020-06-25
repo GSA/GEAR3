@@ -16,18 +16,16 @@ function findAll (req, res) {
 
 function findOne (req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_technologies.sql')).toString() +
-    " WHERE tech.Id = ?;";
-  var params = [req.params.id];
+    ` WHERE tech.Id = ${req.params.id};`;
 
-  res = ctrl.sendQuery(query, 'individual IT Standard', res, params);
+  res = ctrl.sendQuery(query, 'individual IT Standard', res);
 };
 
 function findApplications (req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_applications.sql')).toString() +
-    " AND tech.Id = ? GROUP BY app.Id;";
-  var params = [req.params.id];
+    ` AND tech.Id = ${req.params.id} GROUP BY app.Id;`;
 
-  res = ctrl.sendQuery(query, 'applications using IT Standard', res, params);
+  res = ctrl.sendQuery(query, 'applications using IT Standard', res);
 };
 
 module.exports = {

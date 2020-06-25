@@ -14,10 +14,9 @@ function findAll (req, res) {
 
 function findOne (req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_application_full_suite.sql')).toString() +
-    " WHERE app.Application_or_Website LIKE 'Application' AND app.Id = ?;";
-  var params = [req.params.id];
+    ` WHERE app.Application_or_Website LIKE 'Application' AND app.Id = ${req.params.id};`;
 
-  res = ctrl.sendQuery(query, 'individual business application for TIME report', res, params);
+  res = ctrl.sendQuery(query, 'individual business application for TIME report', res);
 };
 
 module.exports = {

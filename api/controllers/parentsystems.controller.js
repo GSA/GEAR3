@@ -14,18 +14,16 @@ function findAll (req, res) {
 
 function findOne (req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_parent_systems.sql')).toString() +
-    " WHERE parentSys.Id = ?;";
-  var params = [req.params.id];
+    ` AND parentSys.Id = ${req.params.id};`;
 
-  res = ctrl.sendQuery(query, 'individual parent system', res, params);
+  res = ctrl.sendQuery(query, 'individual parent system', res);
 };
 
 function findApplications (req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_applications.sql')).toString() +
-    " AND app.obj_parent_system_Id = ? GROUP BY app.Id;";
-  var params = [req.params.id];
+    ` AND app.obj_parent_system_Id = ${req.params.id} GROUP BY app.Id;`;
 
-  res = ctrl.sendQuery(query, 'child applications for parent system', res, params);
+  res = ctrl.sendQuery(query, 'child applications for parent system', res);
 };
 
 module.exports = {
