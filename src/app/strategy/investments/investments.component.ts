@@ -39,9 +39,7 @@ export class InvestmentsComponent implements OnInit {
       fileName: this.sharedService.fileNameFmt('GSA_IT_Investments')
     },
     exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
-    headerStyle: function (column) {
-      return { classes: 'bg-success' }
-    },
+    headerStyle: function (column) { return { classes: 'bg-success' } },
     pagination: true,
     showPaginationSwitch: true,
     search: true,

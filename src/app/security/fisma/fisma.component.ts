@@ -40,9 +40,7 @@ export class FismaComponent implements OnInit {
       fileName: this.sharedService.fileNameFmt('GSA_FISMA_Systems_Inventory')
     },
     exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
-    headerStyle: function (column) {
-      return { classes: 'bg-warning' }
-    },
+    headerStyle: function (column) { return { classes: 'bg-warning' } },
     pagination: true,
     showPaginationSwitch: true,
     search: true,

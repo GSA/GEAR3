@@ -40,9 +40,7 @@ export class CapabilitiesComponent implements OnInit {
       fileName: this.sharedService.fileNameFmt('GSA_Business_Capabilities')
     },
     exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
-    headerStyle: function (column) {
-      return { classes: 'bg-royal-blue' }
-    },
+    headerStyle: function (column) { return { classes: 'bg-royal-blue' } },
     pagination: true,
     showPaginationSwitch: true,
     search: true,

@@ -40,9 +40,7 @@ export class AppsComponent implements OnInit {
       fileName: this.sharedService.fileNameFmt('GSA_Business_Apps')
     },
     exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
-    headerStyle: function (column) {
-      return { classes: 'bg-danger' }
-    },
+    headerStyle: function (column) { return { classes: 'bg-danger' } },
     pagination: true,
     showPaginationSwitch: true,
     search: true,

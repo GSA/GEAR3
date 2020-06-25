@@ -40,9 +40,7 @@ export class ItStandardsComponent implements OnInit {
       fileName: this.sharedService.fileNameFmt('GSA_IT_Standards')
     },
     exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
-    headerStyle: function (column) {
-      return { classes: 'bg-teal' }
-    },
+    headerStyle: function (column) { return { classes: 'bg-teal' } },
     pagination: true,
     showPaginationSwitch: true,
     search: true,
