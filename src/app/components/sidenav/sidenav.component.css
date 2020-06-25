@@ -1,7 +1,6 @@
 /* Sidebar */
 ng-sidebar-container {
-  height: 92.2%;  /* and position needed to render sidebar properly */
-  margin-bottom: 20px;
+  height: 92.3%;  /* and position needed to render sidebar properly */
   position: absolute;
   z-index: 100;  /* Behind the top navbar */
   overflow-y: auto;  /* Scrollable contents if viewport is shorter than content. */
