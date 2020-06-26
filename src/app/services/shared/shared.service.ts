@@ -24,26 +24,26 @@ export class SharedService {
   subsVar: Subscription;
 
   // Applications API
-  appUrl: string = this.location.prepareExternalUrl('/api/applications');
+  appUrl: string = this.internalURLFmt('/api/applications');
 
   // Capabilities API
-  capUrl: string = this.location.prepareExternalUrl('/api/capabilities');
+  capUrl: string = this.internalURLFmt('/api/capabilities');
 
   // FISMA API
-  fismaUrl: string = this.location.prepareExternalUrl('/api/fisma');
+  fismaUrl: string = this.internalURLFmt('/api/fisma');
 
 
   // Investment API
-  investUrl: string = this.location.prepareExternalUrl('/api/investments');
+  investUrl: string = this.internalURLFmt('/api/investments');
 
   // Organizations API
-  orgUrl: string = this.location.prepareExternalUrl('/api/organizations');
+  orgUrl: string = this.internalURLFmt('/api/organizations');
   
   // Parent System API
-  sysUrl: string = this.location.prepareExternalUrl('/api/parentsystems');
+  sysUrl: string = this.internalURLFmt('/api/parentsystems');
 
   // IT Standards API
-  techUrl: string = this.location.prepareExternalUrl('/api/it_standards');
+  techUrl: string = this.internalURLFmt('/api/it_standards');
 
   constructor(
     private http: HttpClient,
@@ -55,12 +55,16 @@ export class SharedService {
   };
 
   // File Name Formatting
-  public fileNameFmt (name: string) {
+  public fileNameFmt (name: string): string {
     // Append current date time to filename
     var currentDate = formatDate(Date.now(), 'MMM_dd_yyyy-HH_mm', 'en-US');
     return name + '-' + currentDate;
   };
 
+  // Format Internal URLs (without hash)
+  public internalURLFmt (url: string): string {
+    return this.location.prepareExternalUrl(url).replace('#', '');
+  };
 
   // API Calls
   //// Applications API

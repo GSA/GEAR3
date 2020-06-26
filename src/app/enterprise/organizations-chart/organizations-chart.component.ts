@@ -1,5 +1,4 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Location } from '@angular/common';
 
 import { ModalsService } from '../../services/modals/modals.service';
 import { SharedService } from '../../services/shared/shared.service';
@@ -40,9 +39,8 @@ export class OrganizationsChartComponent implements OnInit {
   private finalSearchPath;
 
   constructor(
-    public location: Location,
-    public sharedService: SharedService,
-    public modalService: ModalsService) { }
+    private sharedService: SharedService,
+    private modalService: ModalsService) { }
 
   ngOnInit(): void {
     // Enable popovers
@@ -474,7 +472,7 @@ export class OrganizationsChartComponent implements OnInit {
           exportOptions: {
             fileName: this.sharedService.fileNameFmt(orgData.Name + '-Organizational_Apps')
           },
-          url: this.location.prepareExternalUrl('/api/organizations/' 
+          url: this.sharedService.internalURLFmt('/api/organizations/' 
             + String(orgData.ID) + '/applications')
         })
       });

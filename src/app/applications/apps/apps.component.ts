@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 
 import { ModalsService } from '../../services/modals/modals.service';
 import { SharedService } from '../../services/shared/shared.service';
@@ -23,7 +22,6 @@ export class AppsComponent implements OnInit {
   interfaces: any[] = [];
 
   constructor(
-    private location: Location,
     private modalService: ModalsService,
     private sharedService: SharedService,
     private tableService: TableService) {
@@ -53,7 +51,7 @@ export class AppsComponent implements OnInit {
     sortName: 'Name',
     sortOrder: 'asc',
     showToggle: true,
-    url: this.location.prepareExternalUrl('/api/applications')
+    url: this.sharedService.internalURLFmt('/api/applications').replace('#', '')
   };
 
   // Apps Table Columns
@@ -295,7 +293,7 @@ export class AppsComponent implements OnInit {
       $('#appsTable').bootstrapTable('filterBy', {});
       $('#appsTable').bootstrapTable('refreshOptions', {
         columns: this.retiredColumnDefs,
-        url: this.location.prepareExternalUrl('/api/applications/applications_retired')
+        url: this.sharedService.internalURLFmt('/api/applications/applications_retired')
       });
 
     } else {
@@ -310,7 +308,7 @@ export class AppsComponent implements OnInit {
     $('#appsTable').bootstrapTable('filterBy', {});
     $('#appsTable').bootstrapTable('refreshOptions', {
       columns: this.columnDefs,
-      url: this.location.prepareExternalUrl('/api/applications')
+      url: this.sharedService.internalURLFmt('/api/applications')
     });
   }
 

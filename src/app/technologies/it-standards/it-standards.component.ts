@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 
 import { ModalsService } from '../../services/modals/modals.service';
 import { SharedService } from '../../services/shared/shared.service';
@@ -19,7 +18,6 @@ export class ItStandardsComponent implements OnInit {
   filteredTable: boolean = false;
 
   constructor(
-    private location: Location,
     private modalService: ModalsService,
     private sharedService: SharedService,
     private tableService: TableService) {
@@ -49,7 +47,7 @@ export class ItStandardsComponent implements OnInit {
     sortName: 'Name',
     sortOrder: 'asc',
     showToggle: true,
-    url: this.location.prepareExternalUrl('/api/it_standards')
+    url: this.sharedService.internalURLFmt('/api/it_standards')
   };
 
   // IT Standard Table Columns

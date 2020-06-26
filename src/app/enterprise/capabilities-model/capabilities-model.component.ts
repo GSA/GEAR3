@@ -1,5 +1,4 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Location } from '@angular/common';
 
 import { ModalsService } from '../../services/modals/modals.service';
 import { SharedService } from '../../services/shared/shared.service';
@@ -39,9 +38,8 @@ export class CapabilitiesModelComponent implements OnInit {
   private finalSearchPath;
 
   constructor(
-    public location: Location,
-    public sharedService: SharedService,
-    public modalService: ModalsService) { }
+    private sharedService: SharedService,
+    private modalService: ModalsService) { }
 
   ngOnInit(): void {
     // Enable popovers
@@ -455,7 +453,7 @@ export class CapabilitiesModelComponent implements OnInit {
           exportOptions: {
             fileName: this.sharedService.fileNameFmt(capData.Name + '-Supporting_Apps')
           },
-          url: this.location.prepareExternalUrl('/api/capabilities/' 
+          url: this.sharedService.internalURLFmt('/api/capabilities/' 
             + String(capData.ID) + '/applications')
         })
       });

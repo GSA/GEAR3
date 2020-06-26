@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Location } from '@angular/common';
 
 import { ModalsService } from '../modals/modals.service';
 import { SharedService } from '../shared/shared.service';
@@ -168,7 +167,6 @@ export class TableService {
 
 
   constructor(
-    private location: Location,
     private modalService: ModalsService,
     private sharedService: SharedService) { }
 
@@ -238,7 +236,7 @@ export class TableService {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(data.Name + '-Related_Capabilities')
       },
-      url: this.location.prepareExternalUrl('/api/applications/'
+      url: this.sharedService.internalURLFmt('/api/applications/'
        + String(data.ID) + '/capabilities')
     });
 
@@ -247,7 +245,7 @@ export class TableService {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(data.Name + '-Related_Technologies')
       },
-      url: this.location.prepareExternalUrl('/api/applications/'
+      url: this.sharedService.internalURLFmt('/api/applications/'
        + String(data.ID) + '/technologies')
     });
   }
@@ -264,7 +262,7 @@ export class TableService {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(data.Name + '-Supporting_Apps')
       },
-      url: this.location.prepareExternalUrl('/api/capabilities/' 
+      url: this.sharedService.internalURLFmt('/api/capabilities/' 
         + String(data.ID) + '/applications')
     })
   }
@@ -281,7 +279,7 @@ export class TableService {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(data.Name + '-Certified_Apps')
       },
-      url: this.location.prepareExternalUrl('/api/fisma/' 
+      url: this.sharedService.internalURLFmt('/api/fisma/' 
         + String(data.ID) + '/applications')
     })
   }
@@ -298,7 +296,7 @@ export class TableService {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(data.Name + '-Related_Apps')
       },
-      url: this.location.prepareExternalUrl('/api/investments/' 
+      url: this.sharedService.internalURLFmt('/api/investments/' 
         + String(data.ID) + '/applications')
     })
   }
@@ -315,7 +313,7 @@ export class TableService {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(data.Name + '-Related_Apps')
       },
-      url: this.location.prepareExternalUrl('/api/it_standards/' 
+      url: this.sharedService.internalURLFmt('/api/it_standards/' 
         + String(data.ID) + '/applications')
     })
   }
@@ -332,7 +330,7 @@ export class TableService {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(data.Name + '-Organizational_Apps')
       },
-      url: this.location.prepareExternalUrl('/api/organizations/' 
+      url: this.sharedService.internalURLFmt('/api/organizations/' 
         + String(data.ID) + '/applications')
     })
   }
@@ -349,7 +347,7 @@ export class TableService {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(data.Name + '-Child_Apps')
       },
-      url: this.location.prepareExternalUrl('/api/parentsystems/' 
+      url: this.sharedService.internalURLFmt('/api/parentsystems/' 
         + String(data.ID) + '/applications')
     })
   }

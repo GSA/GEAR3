@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 
 import { ModalsService } from '../../services/modals/modals.service';
 import { SharedService } from '../../services/shared/shared.service';
@@ -18,7 +17,6 @@ export class TimeComponent implements OnInit {
   row: Object = <any>{};
 
   constructor(
-    private location: Location,
     private modalService: ModalsService,
     private sharedService: SharedService,
     private tableService: TableService) {
@@ -48,7 +46,7 @@ export class TimeComponent implements OnInit {
     sortName: 'Name',
     sortOrder: 'asc',
     showToggle: true,
-    url: this.location.prepareExternalUrl('/api/apptime')
+    url: this.sharedService.internalURLFmt('/api/apptime')
   };
 
   // TIME Table Columns

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 
 import { SharedService } from '../../services/shared/shared.service';
@@ -17,7 +16,6 @@ export class TopNavbarComponent implements OnInit {
   public searchKW: string = '';
 
   constructor(
-    private location: Location,
     private router: Router,
     private sharedService: SharedService) { }
 
@@ -35,7 +33,7 @@ export class TopNavbarComponent implements OnInit {
         exportOptions: {
           fileName: this.sharedService.fileNameFmt('Global_Search-' + this.searchKW)
         },
-        url: this.location.prepareExternalUrl('/api/search/' + this.searchKW)
+        url: this.sharedService.internalURLFmt('/api/search/' + this.searchKW)
       })
 
       this.router.navigate([`/search`]);

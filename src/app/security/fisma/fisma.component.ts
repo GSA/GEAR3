@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { formatDate, Location } from '@angular/common';
+import { formatDate } from '@angular/common';
 
 import { ModalsService } from '../../services/modals/modals.service';
 import { SharedService } from '../../services/shared/shared.service';
@@ -19,7 +19,6 @@ export class FismaComponent implements OnInit {
   retiredTable: boolean = false;
 
   constructor(
-    private location: Location,
     private modalService: ModalsService,
     private sharedService: SharedService,
     private tableService: TableService) {
@@ -49,7 +48,7 @@ export class FismaComponent implements OnInit {
     sortName: 'Name',
     sortOrder: 'asc',
     showToggle: true,
-    url: this.location.prepareExternalUrl('/api/fisma')
+    url: this.sharedService.internalURLFmt('/api/fisma')
   };
 
   // FISMA System Table Columns
@@ -186,7 +185,7 @@ export class FismaComponent implements OnInit {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt('GSA_Retired_FISMA_Systems')
       },
-      url: this.location.prepareExternalUrl('/api/fisma/retired')
+      url: this.sharedService.internalURLFmt('/api/fisma/retired')
     });
   }
 
@@ -200,7 +199,7 @@ export class FismaComponent implements OnInit {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt('GSA_FISMA_Systems_Inventory')
       },
-      url: this.location.prepareExternalUrl('/api/fisma')
+      url: this.sharedService.internalURLFmt('/api/fisma')
     });
   }
 
