@@ -19,6 +19,7 @@ import { GlobalSearchComponent } from './main/global-search/global-search.compon
 import { AboutComponent } from './main/about/about.component';
 import { AssistTechComponent } from './main/assist-tech/assist-tech.component';
 import { FormsGlossaryComponent } from './main/forms-glossary/forms-glossary.component';
+import { GearManagerComponent } from './main/gear-manager/gear-manager.component';
 
 //// Strategy
 import { FrameworkComponent } from './strategy/framework/framework.component';
@@ -66,6 +67,7 @@ import { SharedService } from './services/shared/shared.service';
     AboutComponent,
     AssistTechComponent,
     FormsGlossaryComponent,
+    GearManagerComponent,
 
     FrameworkComponent,
     InvestmentsComponent,

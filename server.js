@@ -9,6 +9,7 @@ const bodyParser = require('body-parser'),
       
       jsonwebtoken = require('jsonwebtoken'),
       jwt = require('express-jwt'),
+      mysql = require('mysql2'),
       passport = require('passport'),
       passportJWT = require("passport-jwt"),
       SAMLStrategy = require('passport-saml').Strategy,
@@ -79,7 +80,7 @@ app.use('/api', api);
 /********************************************************************
 GEAR MANAGER GATEWAY
 ********************************************************************/
-app.get('/gear_manager', passport.authenticate('saml'), function (req, res) {
+app.get('/admin', passport.authenticate('saml'), function (req, res) {
   res.sendFile(path.join(__dirname, 'public', 'assets', 'admin', 'index.html'));
 });
 
@@ -171,7 +172,7 @@ app.post(samlConfig.path,
           // JWT TOKEN SIGNED HERE TO BE USED IN INLINE HTML PAGE NEXT
           const token = jsonwebtoken.sign(jwt, process.env.SECRET);
 
-          let adminRoute = (process.env.SAML_HOST === 'localhost') ? 'http://localhost:3000/admin/' : '/admin/';
+          let adminRoute = (process.env.SAML_HOST === 'localhost') ? 'http://localhost:3000/admin/#/' : '/admin/#/';
 
           html =
 `
