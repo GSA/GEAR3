@@ -5,21 +5,21 @@ const path = require('path');
 
 const queryPath = '../queries/';
 
-function findAll (req, res) {
+function findAll(req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_investments.sql')).toString() +
     ";";
-  
+
   res = ctrl.sendQuery(query, 'investments', res);
 };
 
-function findOne (req, res) {
+function findOne(req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_investments.sql')).toString() +
     ` AND invest.Id = ${req.params.id};`;  // Notice that there's already a WHERE clause in query
 
   res = ctrl.sendQuery(query, 'individual investment', res);
 };
 
-function findApplications (req, res) {
+function findApplications(req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_applications.sql')).toString() +
     ` AND app.obj_investment_Id = ${req.params.id} GROUP BY app.Id;`;
 

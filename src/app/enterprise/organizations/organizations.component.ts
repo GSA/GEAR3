@@ -20,7 +20,7 @@ export class OrganizationsComponent implements OnInit {
     private modalService: ModalsService,
     private sharedService: SharedService,
     private tableService: TableService) {
-      this.modalService.currentInvest.subscribe(row => this.row = row);
+    this.modalService.currentInvest.subscribe(row => this.row = row);
   }
 
   // Organizations Table Options
@@ -51,30 +51,30 @@ export class OrganizationsComponent implements OnInit {
 
   // Organizations Table Columns
   columnDefs: any[] = [{
-      field: 'Parent',
-      title: 'Parent',
-      sortable: true
-    }, {
-      field: 'DisplayName',
-      title: 'Short Name',
-      sortable: true
-    }, {
-      field: 'Name',
-      title: 'Organization Name',
-      sortable: true
-    }, {
-      field: 'Description',
-      title: 'Description',
-      sortable: true,
-      formatter: this.sharedService.descFormatter
-    }];
+    field: 'Parent',
+    title: 'Parent',
+    sortable: true
+  }, {
+    field: 'DisplayName',
+    title: 'Short Name',
+    sortable: true
+  }, {
+    field: 'Name',
+    title: 'Organization Name',
+    sortable: true
+  }, {
+    field: 'Description',
+    title: 'Description',
+    sortable: true,
+    formatter: this.sharedService.descFormatter
+  }];
 
   ngOnInit(): void {
     // Enable popovers
     $(function () {
       $('[data-toggle="popover"]').popover()
     })
-    
+
     $('#orgTable').bootstrapTable($.extend(this.tableOptions, {
       columns: this.columnDefs,
       data: [],
@@ -85,7 +85,7 @@ export class OrganizationsComponent implements OnInit {
       $('#orgTable').on('click-row.bs.table', function (e, row) {
         this.tableService.orgsTableClick(row);
       }.bind(this)
-    ));
+      ));
 
   }
 

@@ -21,7 +21,7 @@ export class ItStandardsComponent implements OnInit {
     private modalService: ModalsService,
     private sharedService: SharedService,
     private tableService: TableService) {
-      this.modalService.currentITStand.subscribe(row => this.row = row);
+    this.modalService.currentITStand.subscribe(row => this.row = row);
   }
 
   // IT Standard Table Options
@@ -103,7 +103,7 @@ export class ItStandardsComponent implements OnInit {
     $(function () {
       $('[data-toggle="popover"]').popover()
     })
-    
+
     $('#itStandardsTable').bootstrapTable($.extend(this.tableOptions, {
       columns: this.columnDefs,
       data: [],
@@ -114,7 +114,7 @@ export class ItStandardsComponent implements OnInit {
       $('#itStandardsTable').on('click-row.bs.table', function (e, row) {
         this.tableService.itStandTableClick(row);
       }.bind(this)
-    ));
+      ));
 
   }
 

@@ -22,7 +22,7 @@ export class TableService {
     showExport: true,
     exportDataType: 'all',
     exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
-    headerStyle: function (column) {return {classes: 'bg-danger text-white'}},
+    headerStyle: function (column) { return { classes: 'bg-danger text-white' } },
     pagination: true,
     showPaginationSwitch: true,
     search: true,
@@ -140,12 +140,12 @@ export class TableService {
     field: 'Status',
     title: 'Status',
     sortable: true
-  },  {
+  }, {
     field: 'ProdYear',
     title: 'Production Year',
     sortable: true,
     visible: false
-  },  {
+  }, {
     field: 'FISMASystem',
     title: 'FISMA System',
     sortable: true,
@@ -210,14 +210,14 @@ export class TableService {
           this.itStandTableClick(apiData[0]);
         });
         break;
-    
+
       default:
         break;
     }
   }
 
 
-  public appsTableClick (data: any) {
+  public appsTableClick(data: any) {
     // console.log("Applications Table Clicked Row: ", data);  // Debug
 
     this.modalService.updateDetails(data, 'application');
@@ -237,7 +237,7 @@ export class TableService {
         fileName: this.sharedService.fileNameFmt(data.Name + '-Related_Capabilities')
       },
       url: this.sharedService.internalURLFmt('/api/applications/'
-       + String(data.ID) + '/capabilities')
+        + String(data.ID) + '/capabilities')
     });
 
     // Update related technologies table in detail modal with clicked application
@@ -246,12 +246,12 @@ export class TableService {
         fileName: this.sharedService.fileNameFmt(data.Name + '-Related_Technologies')
       },
       url: this.sharedService.internalURLFmt('/api/applications/'
-       + String(data.ID) + '/technologies')
+        + String(data.ID) + '/technologies')
     });
   }
 
 
-  public capsTableClick (data: any) {
+  public capsTableClick(data: any) {
     // console.log("Capability Table Clicked Row: ", data);  // Debug
 
     this.modalService.updateDetails(data, 'capability');
@@ -262,13 +262,13 @@ export class TableService {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(data.Name + '-Supporting_Apps')
       },
-      url: this.sharedService.internalURLFmt('/api/capabilities/' 
+      url: this.sharedService.internalURLFmt('/api/capabilities/'
         + String(data.ID) + '/applications')
     })
   }
 
 
-  public fismaTableClick (data: any) {
+  public fismaTableClick(data: any) {
     // console.log("FISMA System Table Clicked Row: ", data);  // Debug
 
     this.modalService.updateDetails(data, 'fisma');
@@ -279,13 +279,13 @@ export class TableService {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(data.Name + '-Certified_Apps')
       },
-      url: this.sharedService.internalURLFmt('/api/fisma/' 
+      url: this.sharedService.internalURLFmt('/api/fisma/'
         + String(data.ID) + '/applications')
     })
   }
 
 
-  public investTableClick (data: any) {
+  public investTableClick(data: any) {
     // console.log("Investment Table Clicked Row: ", data);  // Debug
 
     this.modalService.updateDetails(data, 'investment');
@@ -296,13 +296,13 @@ export class TableService {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(data.Name + '-Related_Apps')
       },
-      url: this.sharedService.internalURLFmt('/api/investments/' 
+      url: this.sharedService.internalURLFmt('/api/investments/'
         + String(data.ID) + '/applications')
     })
   }
 
 
-  public itStandTableClick (data: any) {
+  public itStandTableClick(data: any) {
     // console.log("IT Standard Table Clicked Row: ", data);  // Debug
 
     this.modalService.updateDetails(data, 'it-standard');
@@ -313,13 +313,13 @@ export class TableService {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(data.Name + '-Related_Apps')
       },
-      url: this.sharedService.internalURLFmt('/api/it_standards/' 
+      url: this.sharedService.internalURLFmt('/api/it_standards/'
         + String(data.ID) + '/applications')
     })
   }
 
 
-  public orgsTableClick (data: any) {
+  public orgsTableClick(data: any) {
     // console.log("Organization Table Clicked Row: ", data);  // Debug
 
     this.modalService.updateDetails(data, 'organization');
@@ -330,13 +330,13 @@ export class TableService {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(data.Name + '-Organizational_Apps')
       },
-      url: this.sharedService.internalURLFmt('/api/organizations/' 
+      url: this.sharedService.internalURLFmt('/api/organizations/'
         + String(data.ID) + '/applications')
     })
   }
 
 
-  public systemsTableClick (data: any) {
+  public systemsTableClick(data: any) {
     // console.log("Parent Systems Table Clicked Row: ", data);  // Debug
 
     this.modalService.updateDetails(data, 'system');
@@ -347,7 +347,7 @@ export class TableService {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(data.Name + '-Child_Apps')
       },
-      url: this.sharedService.internalURLFmt('/api/parentsystems/' 
+      url: this.sharedService.internalURLFmt('/api/parentsystems/'
         + String(data.ID) + '/applications')
     })
   }

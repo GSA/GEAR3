@@ -1,22 +1,33 @@
 <!-- Container for sidebar(s) + page content -->
 <ng-sidebar-container (onBackdropClicked)="_onBackdropClicked()">
-  <ng-sidebar id="sidebar" [(opened)]="_opened" [mode]="_mode"
-    [keyClose]="_keyClose" [position]="_position" [dock]="_dock"
-    [dockedSize]="_dockedSize" [autoCollapseHeight]="_autoCollapseHeight"
+  <ng-sidebar id="sidebar"
+    [(opened)]="_opened"
+    [mode]="_mode"
+    [keyClose]="_keyClose"
+    [position]="_position"
+    [dock]="_dock"
+    [dockedSize]="_dockedSize"
+    [autoCollapseHeight]="_autoCollapseHeight"
     [autoCollapseWidth]="_autoCollapseWidth"
     [closeOnClickOutside]="_closeOnClickOutside"
     [closeOnClickBackdrop]="_closeOnClickBackdrop"
-    [showBackdrop]="_showBackdrop" [animate]="_animate" [trapFocus]="_trapFocus"
-    [autoFocus]="_autoFocus" [sidebarClass]="'w-15'" [ariaLabel]="'sideNavbar'"
-    (onOpenStart)="_onOpenStart()" (onOpened)="_onOpened()"
-    (onCloseStart)="_onCloseStart()" (onClosed)="_onClosed()"
+    [showBackdrop]="_showBackdrop"
+    [animate]="_animate"
+    [trapFocus]="_trapFocus"
+    [autoFocus]="_autoFocus"
+    [sidebarClass]="'w-15'"
+    [ariaLabel]="'sideNavbar'"
+    (onOpenStart)="_onOpenStart()"
+    (onOpened)="_onOpened()"
+    (onCloseStart)="_onCloseStart()"
+    (onClosed)="_onClosed()"
     (onTransitionEnd)="_onTransitionEnd()">
 
     <ul id="sideMenu" class="list-group">
       <!-- Strategy -->
       <li>
-        <a data-toggle="collapse" data-target="#strategyDropdown"
-          aria-controls="#strategyDropdown" aria-expanded="false" (click)="_opened=true"
+        <a data-toggle="collapse" data-target="#strategyDropdown" aria-controls="#strategyDropdown"
+          aria-expanded="false" (click)="_opened=true"
           class="bg-success list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
             IT Strategy
@@ -25,16 +36,13 @@
             </span>
           </div>
         </a>
-        <div id="strategyDropdown" aria-labelledby="strategyDropdown"
-          data-parent="#sideMenu" class="collapse sidebar-submenu">
-          <a routerLink="/strategic_framework"
-            class="bg-dark list-group-item list-group-item-action">
+        <div id="strategyDropdown" aria-labelledby="strategyDropdown" data-parent="#sideMenu"
+          class="collapse sidebar-submenu">
+          <a routerLink="/strategic_framework" class="bg-dark list-group-item list-group-item-action">
             IT Strategic Framework</a>
-          <a routerLink="/investments"
-            class="bg-dark list-group-item list-group-item-action">
+          <a routerLink="/investments" class="bg-dark list-group-item list-group-item-action">
             IT Investments</a>
-          <a href="https://insite.gsa.gov/directives-library/#GSAIT"
-            target="_blank"
+          <a href="https://insite.gsa.gov/directives-library/#GSAIT" target="_blank"
             class="bg-dark list-group-item list-group-item-action">
             IT Policies
             <i class="fas fa-external-link-alt"></i></a>
@@ -43,8 +51,8 @@
 
       <!-- Enterprise  -->
       <li>
-        <a data-toggle="collapse" data-target="#enterpriseDropdown"
-          aria-controls="#enterpriseDropdown" aria-expanded="false" (click)="_opened=true"
+        <a data-toggle="collapse" data-target="#enterpriseDropdown" aria-controls="#enterpriseDropdown"
+          aria-expanded="false" (click)="_opened=true"
           class="bg-royal-blue list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
             GSA Enterprise
@@ -53,27 +61,23 @@
             </span>
           </div>
         </a>
-        <div id="enterpriseDropdown" aria-labelledby="enterpriseDropdown"
-          data-parent="#sideMenu" class="collapse sidebar-submenu">
-          <a routerLink="/capabilities_model"
-            class="bg-dark list-group-item list-group-item-action">
+        <div id="enterpriseDropdown" aria-labelledby="enterpriseDropdown" data-parent="#sideMenu"
+          class="collapse sidebar-submenu">
+          <a routerLink="/capabilities_model" class="bg-dark list-group-item list-group-item-action">
             Business Capability Model</a>
-          <a routerLink="/capabilities"
-            class="bg-dark list-group-item list-group-item-action">
+          <a routerLink="/capabilities" class="bg-dark list-group-item list-group-item-action">
             Business Capability List</a>
-          <a routerLink="/org_chart"
-            class="bg-dark list-group-item list-group-item-action">
+          <a routerLink="/org_chart" class="bg-dark list-group-item list-group-item-action">
             Organization Chart</a>
-          <a routerLink="/organizations"
-            class="bg-dark list-group-item list-group-item-action">
+          <a routerLink="/organizations" class="bg-dark list-group-item list-group-item-action">
             Organization List</a>
         </div>
       </li>
 
       <!-- Business Applications -->
       <li>
-        <a data-toggle="collapse" data-target="#businessAppDropdown"
-          aria-controls="#businessAppDropdown" aria-expanded="false" (click)="_opened=true"
+        <a data-toggle="collapse" data-target="#businessAppDropdown" aria-controls="#businessAppDropdown"
+          aria-expanded="false" (click)="_opened=true"
           class="bg-danger list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
             Business Applications
@@ -82,24 +86,21 @@
             </span>
           </div>
         </a>
-        <div id="businessAppDropdown" aria-labelledby="businessAppDropdown"
-        data-parent="#sideMenu" class="collapse sidebar-submenu">
-          <a routerLink="/systems"
-            class="bg-dark list-group-item list-group-item-action">
+        <div id="businessAppDropdown" aria-labelledby="businessAppDropdown" data-parent="#sideMenu"
+          class="collapse sidebar-submenu">
+          <a routerLink="/systems" class="bg-dark list-group-item list-group-item-action">
             Parent Systems</a>
-          <a routerLink="/applications"
-            class="bg-dark list-group-item list-group-item-action">
+          <a routerLink="/applications" class="bg-dark list-group-item list-group-item-action">
             Business Applications</a>
-          <a routerLink="/applications_TIME"
-            class="bg-dark list-group-item list-group-item-action">
+          <a routerLink="/applications_TIME" class="bg-dark list-group-item list-group-item-action">
             Application TIME Report</a>
         </div>
       </li>
 
       <!-- Security -->
       <li>
-        <a data-toggle="collapse" data-target="#securityDropdown"
-          aria-controls="#securityDropdown" aria-expanded="false" (click)="_opened=true"
+        <a data-toggle="collapse" data-target="#securityDropdown" aria-controls="#securityDropdown"
+          aria-expanded="false" (click)="_opened=true"
           class="bg-warning list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
             Security
@@ -108,21 +109,19 @@
             </span>
           </div>
         </a>
-        <div id="securityDropdown" aria-labelledby="securityDropdown"
-        data-parent="#sideMenu" class="collapse sidebar-submenu">
-          <a routerLink="/FISMA"
-            class="bg-dark list-group-item list-group-item-action">
+        <div id="securityDropdown" aria-labelledby="securityDropdown" data-parent="#sideMenu"
+          class="collapse sidebar-submenu">
+          <a routerLink="/FISMA" class="bg-dark list-group-item list-group-item-action">
             FISMA Systems Inventory</a>
-          <a routerLink="/FISMA_POC"
-            class="bg-dark list-group-item list-group-item-action">
+          <a routerLink="/FISMA_POC" class="bg-dark list-group-item list-group-item-action">
             FISMA System POCs</a>
         </div>
       </li>
 
       <!-- Technologies -->
       <li>
-        <a data-toggle="collapse" data-target="#technologiesDropdown"
-          aria-controls="#technologiesDropdown" aria-expanded="false" (click)="_opened=true"
+        <a data-toggle="collapse" data-target="#technologiesDropdown" aria-controls="#technologiesDropdown"
+          aria-expanded="false" (click)="_opened=true"
           class="bg-teal list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
             Technologies
@@ -131,13 +130,11 @@
             </span>
           </div>
         </a>
-        <div id="technologiesDropdown" aria-labelledby="technologiesDropdown"
-        data-parent="#sideMenu" class="collapse sidebar-submenu">
-          <a routerLink="/it_standards"
-            class="bg-dark list-group-item list-group-item-action">
+        <div id="technologiesDropdown" aria-labelledby="technologiesDropdown" data-parent="#sideMenu"
+          class="collapse sidebar-submenu">
+          <a routerLink="/it_standards" class="bg-dark list-group-item list-group-item-action">
             IT Standards List</a>
-          <a href="https://insite.gsa.gov/portal/content/500499"
-            target="_blank"
+          <a href="https://insite.gsa.gov/portal/content/500499" target="_blank"
             class="bg-dark list-group-item list-group-item-action">
             IT Standards Approval Process
             <i class="fas fa-external-link-alt"></i></a>
@@ -154,7 +151,8 @@
           <div class="d-flex w-100 justify-content-start align-items-center">
             Access Forms & Glossary
             <span class="submenu-icon ml-auto">
-              <i class="fab fa-wpforms fa-lg fa-fw"></i>  <!-- For some reason, this needs a fixed width to properly align-->
+              <i class="fab fa-wpforms fa-lg fa-fw"></i>
+              <!-- For some reason, this needs a fixed width to properly align-->
             </span>
           </div>
         </a>

@@ -21,7 +21,7 @@ export class CapabilitiesComponent implements OnInit {
     private modalService: ModalsService,
     private sharedService: SharedService,
     private tableService: TableService) {
-      this.modalService.currentCap.subscribe(row => this.row = row);
+    this.modalService.currentCap.subscribe(row => this.row = row);
   }
 
   // Capabilities Table Options
@@ -103,7 +103,7 @@ export class CapabilitiesComponent implements OnInit {
     $(function () {
       $('[data-toggle="popover"]').popover()
     })
-    
+
     $('#capTable').bootstrapTable($.extend(this.tableOptions, {
       columns: this.capColumnDefs,
       data: [],

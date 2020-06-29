@@ -26,19 +26,19 @@ export class FismaModalComponent implements OnInit {
       columns: this.tableService.relAppsColumnDefs,
       data: [],
     }));
-    
+
     // Method to handle click events on the Certified Apps table
     $(document).ready(
       $('#fismaCertAppsTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#fismaDetail').modal('hide');
-        
+
         this.tableService.appsTableClick(row);
       }.bind(this)
-    ));
+      ));
   }
 
-  splitRelArtifacts (artifacts) {
+  splitRelArtifacts(artifacts) {
     var artObjs = [];
 
     if (artifacts) {
@@ -50,7 +50,7 @@ export class FismaModalComponent implements OnInit {
 
         tmpObj.name = pieces[0];
         tmpObj.link = pieces[1];
-        
+
         artObjs.push(tmpObj);
       }
     }
@@ -58,7 +58,7 @@ export class FismaModalComponent implements OnInit {
     return artObjs;
   }
 
-  splitFismaPOCInfo (p) {
+  splitFismaPOCInfo(p) {
     let poc = null;
     let poc1 = null;
     let pocs = [];

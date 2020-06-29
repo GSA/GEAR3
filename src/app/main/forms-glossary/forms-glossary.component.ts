@@ -87,7 +87,7 @@ export class FormsGlossaryComponent implements OnInit {
     $(function () {
       $('[data-toggle="popover"]').popover()
     })
-    
+
     $('#formsTable').bootstrapTable($.extend(this.formsTableOptions, {
       columns: this.formsColumnDefs,
       data: [],
@@ -107,7 +107,7 @@ export class FormsGlossaryComponent implements OnInit {
         window.open(row.Link);
 
       }.bind(this)
-    ));
+      ));
   }
 
 }

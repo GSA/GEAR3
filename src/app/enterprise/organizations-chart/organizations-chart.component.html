@@ -22,27 +22,26 @@
   </div>
 
   <div class="row card-body bg-light card-text">
-    
+
     <!-- Detail Card -->
     <div id="orgDetail" class="card">
       <div id="orgDetailheader" class="row card-header bg-royal-blue text-white my-auto">
         <h4 id="orgName" class="text-white"></h4>
         <div class="ml-auto">
-          <a id="orgExtLink" target="_blank" class="fas fa-external-link-alt fa-lg"
-            data-toggle="tooltip" title="Click to open external link to website"></a>
-          <span id="orgDetailLink" class="far fa-file-alt fa-lg mx-4"
-            data-toggle="tooltip" title="Click to view organization details"></span>
-          <span id="orgDetailClose" class="fa fa-times fa-lg"
-            data-toggle="tooltip" title="Close this box"></span>
+          <a id="orgExtLink" target="_blank" class="fas fa-external-link-alt fa-lg" data-toggle="tooltip"
+            title="Click to open external link to website"></a>
+          <span id="orgDetailLink" class="far fa-file-alt fa-lg mx-4" data-toggle="tooltip"
+            title="Click to view organization details"></span>
+          <span id="orgDetailClose" class="fa fa-times fa-lg" data-toggle="tooltip" title="Close this box"></span>
         </div>
       </div>
       <div id="orgDetailbody" class="card-body"></div>
     </div>
-    
+
     <!-- Searchbar -->
     <div class="input-group col-lg-3 ml-auto">
-      <input [(ngModel)]="searchKey" type="text" class="form-control" placeholder="Search Org Names"
-        id="orgSearchField" (keydown)="search($event)"/>
+      <input [(ngModel)]="searchKey" type="text" class="form-control" placeholder="Search Org Names" id="orgSearchField"
+        (keydown)="search($event)" />
       <div class="input-group-btn">
         <button class="btn btn-primary" (click)="clearSearch()">
           <i class="far fa-trash-alt fa-lg"></i>

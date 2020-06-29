@@ -35,7 +35,7 @@ export class InvestmentsModalComponent implements OnInit {
 
         this.tableService.appsTableClick(row);
       }.bind(this)
-    ));
+      ));
   }
 
 }

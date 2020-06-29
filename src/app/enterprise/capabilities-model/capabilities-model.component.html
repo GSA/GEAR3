@@ -28,10 +28,9 @@
       <div id="capDetailheader" class="row card-header bg-royal-blue text-white my-auto">
         <h4 id="capName" class="text-white"></h4>
         <div class="ml-auto">
-          <span id="capDetailLink" class="far fa-file-alt fa-lg"
-            data-toggle="tooltip" title="Click to view capability details"></span>
-          <span id="capDetailClose" class="fa fa-times fa-lg ml-3"
-            data-toggle="tooltip" title="Close this box"></span>
+          <span id="capDetailLink" class="far fa-file-alt fa-lg" data-toggle="tooltip"
+            title="Click to view capability details"></span>
+          <span id="capDetailClose" class="fa fa-times fa-lg ml-3" data-toggle="tooltip" title="Close this box"></span>
         </div>
       </div>
       <div id="capDetailbody" class="card-body"></div>
@@ -40,7 +39,7 @@
     <!-- Graph Searchbar -->
     <div class="input-group col-lg-3 ml-auto">
       <input [(ngModel)]="searchKey" type="text" class="form-control" placeholder="Search Capability Names"
-        id="capSearchField" (keydown)="search($event)"/>
+        id="capSearchField" (keydown)="search($event)" />
       <div class="input-group-append">
         <button class="btn btn-primary" (click)="clearSearch()">
           <i class="far fa-trash-alt fa-lg"></i>

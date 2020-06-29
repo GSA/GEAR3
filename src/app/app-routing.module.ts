@@ -53,7 +53,7 @@ const routes: Routes = [
   { path: 'FISMA_POC', component: FismaPocsComponent },
 
   { path: 'it_standards', component: ItStandardsComponent },
-  
+
   { path: 'forms_glossary', component: FormsGlossaryComponent },
 
   { path: 'gear_manager', component: GearManagerComponent },

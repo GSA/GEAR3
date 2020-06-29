@@ -38,7 +38,7 @@ export class SharedService {
 
   // Organizations API
   orgUrl: string = this.internalURLFmt('/api/organizations');
-  
+
   // Parent System API
   sysUrl: string = this.internalURLFmt('/api/parentsystems');
 
@@ -55,14 +55,14 @@ export class SharedService {
   };
 
   // File Name Formatting
-  public fileNameFmt (name: string): string {
+  public fileNameFmt(name: string): string {
     // Append current date time to filename
     var currentDate = formatDate(Date.now(), 'MMM_dd_yyyy-HH_mm', 'en-US');
     return name + '-' + currentDate;
   };
 
   // Format Internal URLs (without hash)
-  public internalURLFmt (url: string): string {
+  public internalURLFmt(url: string): string {
     return this.location.prepareExternalUrl(url).replace('#', '');
   };
 
@@ -184,11 +184,11 @@ export class SharedService {
     var finalVal = undefined;
 
     if (match != null) {  // Did it match?
-        finalVal = match[1];
+      finalVal = match[1];
     }
     return finalVal;
   };
-  
+
   //// Systems
   public systemFormatter(value, row, index, field) {
     var finalVal = value;

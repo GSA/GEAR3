@@ -30,17 +30,20 @@
     <div>
       <!-- Filter Buttons -->
       <span class="my-auto mr-3">Filters:</span>
-      <button role="button" name="itDesktopBttn" class="btn btn-primary" (click)="changeFilter('DeploymentType', 'Desktop')">
+      <button role="button" name="itDesktopBttn" class="btn btn-primary"
+        (click)="changeFilter('DeploymentType', 'Desktop')">
         Desktop</button>
-      <button role="button" name="itServerBttn" class="btn btn-primary" (click)="changeFilter('DeploymentType', 'Server')">
+      <button role="button" name="itServerBttn" class="btn btn-primary"
+        (click)="changeFilter('DeploymentType', 'Server')">
         Server</button>
-      
+
       <button role="button" name="itDeniedBttn" class="btn btn-primary ml-3" (click)="changeFilter('Status', 'Denied')">
         Denied</button>
       <button role="button" name="itSunsetBttn" class="btn btn-primary" (click)="changeFilter('Status', 'Sunsetting')">
         Sunsetting</button>
 
-      <button role="button" name="itBttn" class="btn btn-primary ml-3" (click)="backToMainIT()" [hidden]="!filteredTable">
+      <button role="button" name="itBttn" class="btn btn-primary ml-3" (click)="backToMainIT()"
+        [hidden]="!filteredTable">
         Back to All IT Standards</button>
     </div>
 

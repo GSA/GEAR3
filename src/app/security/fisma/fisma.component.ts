@@ -22,7 +22,7 @@ export class FismaComponent implements OnInit {
     private modalService: ModalsService,
     private sharedService: SharedService,
     private tableService: TableService) {
-      this.modalService.currentFismaSys.subscribe(row => this.row = row);
+    this.modalService.currentFismaSys.subscribe(row => this.row = row);
   }
 
   // FISMA System Table Options
@@ -130,7 +130,7 @@ export class FismaComponent implements OnInit {
     $(function () {
       $('[data-toggle="popover"]').popover()
     })
-    
+
     $('#fismaTable').bootstrapTable($.extend(this.tableOptions, {
       columns: this.columnDefs,
       data: [],
@@ -141,7 +141,7 @@ export class FismaComponent implements OnInit {
       $('#fismaTable').on('dbl-click-row.bs.table', function (e, row) {
         this.tableService.fismaTableClick(row);
       }.bind(this)
-    ));
+      ));
 
   }
 

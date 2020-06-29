@@ -8,16 +8,12 @@ router.route('/')
 
 router.route('/:id')
     .get(capabilitiesCtrl.findOne);
-   
+
 // Children
 router.route('/:id/applications')
     .get(capabilitiesCtrl.findApplications);
-    
+
 router.route('/sso/:name')
     .get(capabilitiesCtrl.findSSO);
-
-// special (reports, data viz, etc.)
-// router.route('/app-counts')
-//     .get(capabilityCtrl.findAppCounts);
 
 module.exports = router;

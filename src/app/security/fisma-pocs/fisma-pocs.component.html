@@ -31,14 +31,16 @@
       <!-- Filter by SSO Buttons -->
       <div class="offset-md-5">
         <span class="my-auto mr-3">Filters:</span>
-        <button role="button" name="fismaRISSObttn" class="btn btn-primary" (click)="showRISSOs()" [hidden]="rissoTable">
+        <button role="button" name="fismaRISSObttn" class="btn btn-primary" (click)="showRISSOs()"
+          [hidden]="rissoTable">
           RISSO POCs</button>
 
-        <button role="button" name="fismaPOCBttn" class="btn btn-primary" (click)="backToMainFisma()" [hidden]="!rissoTable">
+        <button role="button" name="fismaPOCBttn" class="btn btn-primary" (click)="backToMainFisma()"
+          [hidden]="!rissoTable">
           Back to System POCs</button>
       </div>
-      
-      <span class="my-auto ml-auto"  [hidden]="rissoTable">
+
+      <span class="my-auto ml-auto" [hidden]="rissoTable">
         *DOUBLE left click on table row for detail view. Links in table are clickable.
       </span>
     </div>

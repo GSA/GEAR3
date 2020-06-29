@@ -47,10 +47,10 @@ export class OrganizationsChartComponent implements OnInit {
     $(function () {
       $('[data-toggle="popover"]').popover()
     })
-    
+
     this.getOrgData();
   }
-  
+
   // Create Org Chart
   private getOrgData() {
     this.sharedService.getOrganizations().subscribe((data: any[]) => {
@@ -176,7 +176,7 @@ export class OrganizationsChartComponent implements OnInit {
   } // End of getOrgData
 
   // Example taken from https://bl.ocks.org/d3noob/1a96af738c89b88723eb63456beb6510
-  private createChart () {
+  private createChart() {
     var margin: any = { top: 20, bottom: 20, left: 120, right: 120 };
     var i: number = 0;
 
@@ -196,13 +196,13 @@ export class OrganizationsChartComponent implements OnInit {
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     // Set root with hierarchy tree
-    this.root = d3.hierarchy(this.orgTree, function(d) { return d.children; });
+    this.root = d3.hierarchy(this.orgTree, function (d) { return d.children; });
     this.root.x0 = height / 2;
     this.root.y0 = 0;
     this.root.descendants().forEach((d, i) => { d.id = i; });  // Set ids for each node
 
     // Sort Nodes
-    this.root.sort(function(a, b) {
+    this.root.sort(function (a, b) {
       return a.data.displayName.toLowerCase().localeCompare(b.data.displayName.toLowerCase());
     });
     // console.log("Root: ", this.root);  // Debug
@@ -242,43 +242,43 @@ export class OrganizationsChartComponent implements OnInit {
 
     // Assigns the x and y position for the nodes
     var treeData = this.treemap(this.root);
-  
+
     // Compute the new tree layout.
     var nodes = treeData.descendants().reverse(),
-        links = treeData.descendants().slice(1);
-  
+      links = treeData.descendants().slice(1);
+
     // Normalize for fixed-depth.
     //// Change static number to expand or contract graph
-    nodes.forEach(function(d){ d.y = d.depth * 280});
-  
+    nodes.forEach(function (d) { d.y = d.depth * 280 });
+
     // ****************** Nodes section ***************************
-  
+
     // Update the nodes
     var node = this.vis.selectAll('g.node')
-      .data(nodes, function(d) { return d.id });
-  
+      .data(nodes, function (d) { return d.id });
+
     // Enter any new nodes at the parent's previous position.
     var nodeEnter = node.enter().append('g')
       .attr("class", "node")
-      .attr("transform", function() {
+      .attr("transform", function () {
         return "translate(" + source.y0 + "," + source.x0 + ")";
       })
 
       // Toggle children on click and re-render
-      .on("click", function(d) {
+      .on("click", function (d) {
         // console.log("Clicked Node: ", d);  // Debug
         this.toggle(d);
         this.update(d);
       }.bind(this));
-  
+
     // Add Circle for the nodes
     nodeEnter.append('circle')
       .attr("class", "node")
       .attr("r", 1e-6)
-      .style("fill", function(d) {
-          return d._children ? "lightsteelblue" : "#fff";
+      .style("fill", function (d) {
+        return d._children ? "lightsteelblue" : "#fff";
       })
-      .style("stroke", function(d) {
+      .style("stroke", function (d) {
         if (d.selected) {
           return this.highlightColor;
         } else {
@@ -286,11 +286,11 @@ export class OrganizationsChartComponent implements OnInit {
         }
       }.bind(this))
       .style("stroke-width", "2.5px");
-  
+
     // Add labels for the nodes
     nodeEnter.append('text')
       // Adjust x coordinate when at end of tree
-      .attr("x", function(d) {
+      .attr("x", function (d) {
         return d.children || d._children ? -15 : 15;
       })
 
@@ -298,14 +298,14 @@ export class OrganizationsChartComponent implements OnInit {
       .attr("dy", "0.35em")
 
       // Anchor text at middle with children and at start without
-      .attr("text-anchor", function(d) {
-          return d.children || d._children ? "end" : "start";
+      .attr("text-anchor", function (d) {
+        return d.children || d._children ? "end" : "start";
       })
 
       // Display node name for text
-      .text(function(d) { return d.data.displayName; })
+      .text(function (d) { return d.data.displayName; })
       .attr("font-size", "0.75rem")
-      .attr("fill", function(d) {
+      .attr("fill", function (d) {
         if (d.selected) {
           return this.highlightColor;
         } else {
@@ -321,25 +321,25 @@ export class OrganizationsChartComponent implements OnInit {
 
     // UPDATE
     var nodeUpdate = nodeEnter.merge(node);
-  
+
     // Transition to the proper position for the node
     nodeUpdate.transition()
       .duration(duration)
-      .attr("transform", function(d) { 
-          return "translate(" + d.y + "," + d.x + ")";
-        });
-  
+      .attr("transform", function (d) {
+        return "translate(" + d.y + "," + d.x + ")";
+      });
+
     // Update the node attributes and style
     nodeUpdate.select('circle.node')
       .attr("r", 6)
-      .style("fill", function(d) {
+      .style("fill", function (d) {
         if (d._children) {
           return "lightsteelblue";
         } else {
           return "#fff";
         }
       })
-      .style("stroke", function(d) {
+      .style("stroke", function (d) {
         if (d.selected) {
           return this.highlightColor;
         } else {
@@ -349,12 +349,12 @@ export class OrganizationsChartComponent implements OnInit {
       .attr("cursor", "pointer")
 
       // Show detail card on hoverover
-      .on("mouseover", function(d) {
+      .on("mouseover", function (d) {
         d3.select("#orgDetail")
           .style("display", "block");  // Show detail card
-        
+
         d3.select("#orgExtLink")
-          .style("display", function() {  // Show external link if available
+          .style("display", function () {  // Show external link if available
             return d.data.link ? "inline" : "none"
           });
         d3.select("#orgName")
@@ -365,38 +365,38 @@ export class OrganizationsChartComponent implements OnInit {
         // console.log("Hovered Node: ", d);  // Debug
         selectedOrg = d;  // Save selected node for links
       });
-  
+
     // Remove any exiting nodes
     var nodeExit = node.exit().transition()
       .duration(duration)
-      .attr("transform", function(d) {
-          return "translate(" + source.y + "," + source.x + ")";
+      .attr("transform", function (d) {
+        return "translate(" + source.y + "," + source.x + ")";
       })
       .remove();
-  
+
     // On exit reduce the node circles size to 0
     nodeExit.select('circle')
       .attr("r", 1e-6);
-  
+
     // On exit reduce the opacity of text labels
     nodeExit.select('text')
       .style("fill-opacity", 1e-6);
-  
+
     // ****************** links section ***************************
-  
+
     // Update the links...
     var link = this.vis.selectAll('path.link')
-      .data(links, function(d) { return d.id; });
-  
+      .data(links, function (d) { return d.id; });
+
     // Enter any new links at the parent's previous position.
     var linkEnter = link.enter().insert('path', "g")
       .attr("class", "link")
-      .attr("d", function(d){
-        var o = {x: source.x0, y: source.y0}
+      .attr("d", function (d) {
+        var o = { x: source.x0, y: source.y0 }
         return diagonal(o, o)
       })
       .attr("fill", "none")
-      .attr("stroke", function(d) {
+      .attr("stroke", function (d) {
         if (d.selected) {
           return this.highlightColor;
         } else {
@@ -404,45 +404,45 @@ export class OrganizationsChartComponent implements OnInit {
         }
       }.bind(this))
       .attr("stroke-width", "3px");
-  
+
     // UPDATE
     var linkUpdate = linkEnter.merge(link);
-  
+
     // Transition back to the parent element position
     linkUpdate.transition()
       .duration(duration)
-      .attr("d", function(d){ return diagonal(d, d.parent) })
-      .attr("stroke", function(d) {
+      .attr("d", function (d) { return diagonal(d, d.parent) })
+      .attr("stroke", function (d) {
         if (d.selected) {
           return this.highlightColor;
         } else {
           return "#ccc"
         }
       }.bind(this));
-  
+
     // Remove any exiting links
     var linkExit = link.exit().transition()
       .duration(duration)
-      .attr('d', function(d) {
-        var o = {x: source.x, y: source.y}
+      .attr('d', function (d) {
+        var o = { x: source.x, y: source.y }
         return diagonal(o, o)
       })
       .remove();
-  
+
     // Store the old positions for transition.
-    nodes.forEach(function(d){
+    nodes.forEach(function (d) {
       d.x0 = d.x;
       d.y0 = d.y;
     });
-  
+
     // Creates a curved (diagonal) path from parent to the child nodes
     function diagonal(s, d) {
-  
+
       var path = `M ${s.y} ${s.x}
                   C ${(s.y + d.y) / 2} ${s.x},
                     ${(s.y + d.y) / 2} ${d.x},
                     ${d.y} ${d.x}`
-  
+
       return path
     }
 
@@ -452,13 +452,13 @@ export class OrganizationsChartComponent implements OnInit {
     var orgClose = d3.select('#orgDetailClose');
 
     // When external link is clicked
-    orgExtLink.on("click", function() {
+    orgExtLink.on("click", function () {
       console.log(selectedOrg);
       window.open(selectedOrg.data.link);
     });
 
     // When detail link is clicked
-    orgDetail.on("click", function() {
+    orgDetail.on("click", function () {
       // console.log("Selected Node: ", selectedCap);  // Debug
 
       // Grab data for selected node
@@ -472,14 +472,14 @@ export class OrganizationsChartComponent implements OnInit {
           exportOptions: {
             fileName: this.sharedService.fileNameFmt(orgData.Name + '-Organizational_Apps')
           },
-          url: this.sharedService.internalURLFmt('/api/organizations/' 
+          url: this.sharedService.internalURLFmt('/api/organizations/'
             + String(orgData.ID) + '/applications')
         })
       });
     }.bind(this));
 
     // When close window is clicked
-    orgClose.on("click", function(d) {
+    orgClose.on("click", function (d) {
       d3.select("#orgDetail").style("display", "none");
     });
 
@@ -492,7 +492,7 @@ export class OrganizationsChartComponent implements OnInit {
     // Search when enter is pressed
     if (event.key === "Enter") {
       // console.log("Searching: ", this.searchKey); // Debug
-      
+
       var term = this.searchKey.toUpperCase();
 
       // Reset variables
@@ -545,7 +545,7 @@ export class OrganizationsChartComponent implements OnInit {
             paths[index].children = paths[index]._children;
             paths[index]._children = null;
           }
-          
+
           // Include parent if not already in the path
           if (paths[index].parent.data.displayName != 'Administrator (A)' && !paths.includes(paths[index].parent)) {
             paths.push(paths[index].parent);

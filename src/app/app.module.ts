@@ -61,7 +61,7 @@ import { SharedService } from './services/shared/shared.service';
 
     TopNavbarComponent,
     SidenavComponent,
-    
+
     HomeComponent,
     GlobalSearchComponent,
     AboutComponent,
@@ -79,13 +79,13 @@ import { SharedService } from './services/shared/shared.service';
     OrganizationsChartComponent,
     OrganizationsComponent,
     OrganizationsModalComponent,
-    
+
     SystemsComponent,
     SystemsModalComponent,
     AppsComponent,
     ApplicationsModalComponent,
     TimeComponent,
-    
+
     FismaComponent,
     FismaModalComponent,
     FismaPocsComponent,

@@ -20,7 +20,7 @@ export class InvestmentsComponent implements OnInit {
     private modalService: ModalsService,
     private sharedService: SharedService,
     private tableService: TableService) {
-      this.modalService.currentInvest.subscribe(row => this.row = row);
+    this.modalService.currentInvest.subscribe(row => this.row = row);
   }
 
   // Investment Table Options
@@ -103,8 +103,8 @@ export class InvestmentsComponent implements OnInit {
       $('#investTable').on('click-row.bs.table', function (e, row) {
         this.tableService.investTableClick(row);
       }.bind(this)
-    ));
+      ));
 
   }
-  
+
 }

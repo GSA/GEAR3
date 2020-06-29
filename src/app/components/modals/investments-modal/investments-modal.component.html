@@ -10,7 +10,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      
+
       <div class="modal-body">
         <!-- Tabs -->
         <ul class="nav nav-tabs">
@@ -29,52 +29,58 @@
             <p>{{ investment.Description }}</p>
             <br>
 
-            <table id="investDetailTable" class="table table-borderless table-striped table-dark rounded-lg w-50 mx-auto">
+            <table id="investDetailTable"
+              class="table table-borderless table-striped table-dark rounded-lg w-50 mx-auto">
               <thead class="bg-success">
-              <tr>
-                  <th><h5>Attribute</h5></th>
-                  <th><h5>Value</h5></th>
-              </tr>
+                <tr>
+                  <th>
+                    <h5>Attribute</h5>
+                  </th>
+                  <th>
+                    <h5>Value</h5>
+                  </th>
+                </tr>
               </thead>
-              
+
               <tbody>
-              <tr>
-                <td><i class="fa fa-user"></i>Investment Manager</td>
-                <td>
-                    <a class="email text-white" href="https://mail.google.com/mail/?view=cm&fs=1&to={{ investment.InvManagerEmail }}"
-                    target="_blank">{{ investment.InvManager }}</a>
-                  <div [hidden]="investment.InvManager">
-                    None Provided
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><i class="fa fa-folder"></i>Investment Type</td>
-                <td>{{ investment.Type }}</td>
-              </tr>
-              <tr>
-                <td><i class="fa fa-tag"></i>Investment UII</td>
-                <td>{{ investment.UII }}</td>
-              </tr>
-              <tr>
-                <td><i class="fa fa-door-open"></i>SSO</td>
-                <td>{{ investment.SSO }}</td>
-              </tr>
-              <tr>
-                <td><i class="fa fa-th"></i>Primary Service Area</td>
-                <td>{{ investment.PSA }}</td>
-              </tr>
-              <tr>
-                <td><i class="fa fa-th-large"></i>Secondary Service Area #1</td>
-                <td>
-                  {{ investment.SSA }}
-                  <div [hidden]="investment.SSA">None</div>
-                </td>
-              </tr>
-              <tr>
-                <td><i class="far fa-comments"></i>Comments</td>
-                <td>{{ investment.Comments }}</td>
-              </tr>
+                <tr>
+                  <td><i class="fa fa-user"></i>Investment Manager</td>
+                  <td>
+                    <a class="email text-white"
+                      href="https://mail.google.com/mail/?view=cm&fs=1&to={{ investment.InvManagerEmail }}"
+                      target="_blank">{{ investment.InvManager }}</a>
+                    <div [hidden]="investment.InvManager">
+                      None Provided
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><i class="fa fa-folder"></i>Investment Type</td>
+                  <td>{{ investment.Type }}</td>
+                </tr>
+                <tr>
+                  <td><i class="fa fa-tag"></i>Investment UII</td>
+                  <td>{{ investment.UII }}</td>
+                </tr>
+                <tr>
+                  <td><i class="fa fa-door-open"></i>SSO</td>
+                  <td>{{ investment.SSO }}</td>
+                </tr>
+                <tr>
+                  <td><i class="fa fa-th"></i>Primary Service Area</td>
+                  <td>{{ investment.PSA }}</td>
+                </tr>
+                <tr>
+                  <td><i class="fa fa-th-large"></i>Secondary Service Area #1</td>
+                  <td>
+                    {{ investment.SSA }}
+                    <div [hidden]="investment.SSA">None</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><i class="far fa-comments"></i>Comments</td>
+                  <td>{{ investment.Comments }}</td>
+                </tr>
               </tbody>
             </table>
 

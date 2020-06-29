@@ -12,7 +12,7 @@ declare var $: any;
   styleUrls: ['./global-search.component.css']
 })
 export class GlobalSearchComponent implements OnInit {
-  
+
   public searchKW;
 
   constructor(
@@ -63,7 +63,7 @@ export class GlobalSearchComponent implements OnInit {
     $(function () {
       $('[data-toggle="popover"]').popover()
     })
-    
+
     $('#globalSearchTable').bootstrapTable($.extend(this.tableOptions, {
       columns: this.columnDefs,
       data: [],
@@ -74,7 +74,7 @@ export class GlobalSearchComponent implements OnInit {
       $('#globalSearchTable').on('click-row.bs.table', function (e, row) {
         this.tableService.globalSearchTableClick(row);
       }.bind(this)
-    ));
+      ));
 
   }
 

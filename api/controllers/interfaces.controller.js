@@ -5,7 +5,7 @@ const path = require('path');
 
 const queryPath = '../queries/';
 
-function findAll (req, res) {
+function findAll(req, res) {
   let filter = '';
   if (req.query.owner) {
     filter = ` 'WHERE ( owner1.Keyname LIKE '%${req.query.owner}%' or owner2.Keyname LIKE '%${req.query.owner}%') AND appstat1.Keyname <> 'Retired'  AND appstat2.Keyname <> 'Retired'  ORDER BY owner1.Keyname, owner2.Keyname;'`;

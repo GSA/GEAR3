@@ -22,11 +22,11 @@ export class TopNavbarComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  toggleSidebar () {
-    this.sharedService.toggleClick();    
+  toggleSidebar() {
+    this.sharedService.toggleClick();
   }
 
-  globalSearch (event) {
+  globalSearch(event) {
     if (event.key === "Enter" || event.type === "click") {
       // Update related apps table in detail modal with clicked investment
       $('#globalSearchTable').bootstrapTable('refreshOptions', {

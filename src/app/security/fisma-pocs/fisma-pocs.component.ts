@@ -19,7 +19,7 @@ export class FismaPocsComponent implements OnInit {
   constructor(
     private sharedService: SharedService,
     private modalService: ModalsService) {
-      this.modalService.currentFismaSys.subscribe(row => this.row = row);
+    this.modalService.currentFismaSys.subscribe(row => this.row = row);
   }
 
   // FISMA POC Table Options
@@ -124,7 +124,7 @@ export class FismaPocsComponent implements OnInit {
     $(function () {
       $('[data-toggle="popover"]').popover()
     })
-    
+
     $('#fismaPOCTable').bootstrapTable($.extend(this.pocTableOptions, {
       columns: this.pocColumnDefs,
       data: [],
@@ -148,16 +148,16 @@ export class FismaPocsComponent implements OnInit {
           exportOptions: {
             fileName: this.sharedService.fileNameFmt(row.Name + '-Certified_Apps')
           },
-          url: this.sharedService.internalURLFmt('/api/fisma/' 
+          url: this.sharedService.internalURLFmt('/api/fisma/'
             + String(row.ID) + '/applications')
         })
 
       }.bind(this)
-    ));
+      ));
 
   }
 
-  pocFormatter (value, row, index, field) {
+  pocFormatter(value, row, index, field) {
     const p = row.POC;
     let poc = null;
     let poc1 = null;
@@ -193,24 +193,24 @@ export class FismaPocsComponent implements OnInit {
             // Only continue if name exists
             if (tmpObj.name) {
               linkStr = tmpObj.name + '<br>';
-              
+
               // Format email into a HTML link
               if (tmpObj.email) {
                 linkStr += '<a href="https://mail.google.com/mail/?view=cm&fs=1&to=' +
-                tmpObj.email + '" target="_blank">' + ' ' + tmpObj.email + '</a><br>'
+                  tmpObj.email + '" target="_blank">' + ' ' + tmpObj.email + '</a><br>'
               }
-              
+
               // Format number into phone format
               if (tmpObj.phone) {
                 linkStr += tmpObj.phone.substring(0, 4) + '-' +
-                tmpObj.phone.substring(4, 7) + '-' +
-                tmpObj.phone.substring(7, 11) + '<br>'
+                  tmpObj.phone.substring(4, 7) + '-' +
+                  tmpObj.phone.substring(7, 11) + '<br>'
               }
-              
+
               pocs.push(linkStr);
             }
           }
-        } 
+        }
       }
     }
 
@@ -218,9 +218,9 @@ export class FismaPocsComponent implements OnInit {
     return pocs.join('<br><br>');
   }
 
-  emailFormatter (value, row, index, field) {
+  emailFormatter(value, row, index, field) {
     return '<a href="https://mail.google.com/mail/?view=cm&fs=1&to=' +
-    value + '" target="_blank">' + ' ' + value + '</a>'
+      value + '" target="_blank">' + ' ' + value + '</a>'
   }
 
   // Update table to RISSO POCs

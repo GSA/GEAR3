@@ -25,7 +25,7 @@ export class AppsComponent implements OnInit {
     private modalService: ModalsService,
     private sharedService: SharedService,
     private tableService: TableService) {
-      this.modalService.currentSys.subscribe(row => this.row = row);
+    this.modalService.currentSys.subscribe(row => this.row = row);
   }
 
   // Apps Table Options
@@ -251,7 +251,7 @@ export class AppsComponent implements OnInit {
     $(function () {
       $('[data-toggle="popover"]').popover()
     })
-    
+
     $('#appsTable').bootstrapTable($.extend(this.tableOptions, {
       columns: this.columnDefs,
       data: [],
@@ -263,7 +263,7 @@ export class AppsComponent implements OnInit {
         this.tableService.appsTableClick(row);
         this.getInterfaceData(row.ID);
       }.bind(this),
-    ));
+      ));
 
   }
 
@@ -287,7 +287,7 @@ export class AppsComponent implements OnInit {
         columns: cloudCols
       });
 
-    // Retired Apps Button
+      // Retired Apps Button
     } else if (field == 'Retired') {
       // Remove any filters and grab data from another API
       $('#appsTable').bootstrapTable('filterBy', {});
@@ -312,17 +312,17 @@ export class AppsComponent implements OnInit {
     });
   }
 
-  private getInterfaceData (appID: number) {
+  private getInterfaceData(appID: number) {
     this.sharedService.getAppInterfaces(appID).subscribe((data: any[]) => {
       this.interfaces = data;
       this.createInterfaceChart(appID, this.interfaces);
     });
   }
 
-  private createInterfaceChart (appID: number, interfaces: any[]) {
+  private createInterfaceChart(appID: number, interfaces: any[]) {
     console.log(appID, interfaces);
     var CONTAINER_ID = 'interfaceChart',
-        SVG_ID = 'interfaceSVG';
+      SVG_ID = 'interfaceSVG';
 
     interfaces.forEach(inter => {
       if (inter.System1 == null) inter.System1 = 'None';

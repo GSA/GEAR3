@@ -19,9 +19,6 @@ router.route('/:id/capabilities/')
 router.route('/:id/technologies/')
     .get(appCtrl.findTechnologies);
 
-// router.route('/:id/pocs/')
-//     .get(appCtrl.findPOCs);
-
 router.route('/:id/interfaces/')
     .get(appCtrl.findInterfaces);
 

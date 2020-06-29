@@ -32,10 +32,10 @@ export class CapabilitiesModalComponent implements OnInit {
       $('#capSupportAppsTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#capabilityDetail').modal('hide');
-        
+
         this.tableService.appsTableClick(row);
       }.bind(this)
-    ));
+      ));
   }
 
 }

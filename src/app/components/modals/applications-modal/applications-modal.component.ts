@@ -33,7 +33,7 @@ export class ApplicationsModalComponent implements OnInit {
     showExport: true,
     exportDataType: 'all',
     exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
-    headerStyle: function (column) {return {classes: 'bg-danger text-white'}},
+    headerStyle: function (column) { return { classes: 'bg-danger text-white' } },
     pagination: false,
     showPaginationSwitch: false,
     search: false,
@@ -100,7 +100,7 @@ export class ApplicationsModalComponent implements OnInit {
     showExport: true,
     exportDataType: 'all',
     exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
-    headerStyle: function (column) {return {classes: 'bg-royal-blue text-white'}},
+    headerStyle: function (column) { return { classes: 'bg-royal-blue text-white' } },
     pagination: false,
     showPaginationSwitch: false,
     search: true,
@@ -142,7 +142,7 @@ export class ApplicationsModalComponent implements OnInit {
     showExport: true,
     exportDataType: 'all',
     exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
-    headerStyle: function (column) {return {classes: 'bg-teal text-white'}},
+    headerStyle: function (column) { return { classes: 'bg-teal text-white' } },
     pagination: false,
     showPaginationSwitch: false,
     search: true,
@@ -208,24 +208,24 @@ export class ApplicationsModalComponent implements OnInit {
       $('#appCapTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#appsDetail').modal('hide');
-        
+
         this.tableService.capsTableClick(row);
       }.bind(this)
-    ));
+      ));
 
     // Method to handle click events on the Related Technologies table
     $(document).ready(
       $('#appTechTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#appsDetail').modal('hide');
-        
+
         this.tableService.itStandTableClick(row);
       }.bind(this)
-    ));
+      ));
   }
-  
 
-  splitPOCInfo (p) {
+
+  splitPOCInfo(p) {
     var pocs = null;
     var pocObjs = [];
 
@@ -244,7 +244,7 @@ export class ApplicationsModalComponent implements OnInit {
         pocObjs.push(tmpObj);
       })
     }
-    
+
     return pocObjs;
   }
 

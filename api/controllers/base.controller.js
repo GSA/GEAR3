@@ -1,6 +1,6 @@
 const sql = require("../db.js");
 
-function sendQuery (query, msg, response) {
+function sendQuery(query, msg, response) {
   sql.query(query, (error, data) => {
     if (error) {
       console.log("Error: ", error);

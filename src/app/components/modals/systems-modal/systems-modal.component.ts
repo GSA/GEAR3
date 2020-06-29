@@ -32,10 +32,10 @@ export class SystemsModalComponent implements OnInit {
       $('#childAppsTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#systemDetail').modal('hide');
-        
+
         this.tableService.appsTableClick(row);
       }.bind(this)
-    ));
+      ));
   }
 
 }

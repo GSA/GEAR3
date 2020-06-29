@@ -20,7 +20,7 @@ export class SystemsComponent implements OnInit {
     private modalService: ModalsService,
     private sharedService: SharedService,
     private tableService: TableService) {
-      this.modalService.currentSys.subscribe(row => this.row = row);
+    this.modalService.currentSys.subscribe(row => this.row = row);
   }
 
   // Systems Table Options
@@ -70,7 +70,7 @@ export class SystemsComponent implements OnInit {
     $(function () {
       $('[data-toggle="popover"]').popover()
     })
-    
+
     $('#systemTable').bootstrapTable($.extend(this.tableOptions, {
       columns: this.columnDefs,
       data: [],
@@ -81,7 +81,7 @@ export class SystemsComponent implements OnInit {
       $('#systemTable').on('click-row.bs.table', function (e, row) {
         this.tableService.systemsTableClick(row);
       }.bind(this)
-    ));
+      ));
 
   }
 

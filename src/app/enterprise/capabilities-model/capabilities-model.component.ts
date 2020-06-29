@@ -46,10 +46,10 @@ export class CapabilitiesModelComponent implements OnInit {
     $(function () {
       $('[data-toggle="popover"]').popover()
     })
-    
+
     this.getCapData();
   }
-  
+
   // Create Capability Model Graph
   private getCapData() {
     this.sharedService.getCapabilities().subscribe((data: any[]) => {
@@ -169,7 +169,7 @@ export class CapabilitiesModelComponent implements OnInit {
   } // End of getCapData
 
   // Example taken from https://bl.ocks.org/d3noob/1a96af738c89b88723eb63456beb6510
-  private createGraph () {
+  private createGraph() {
     var margin: any = { top: 20, bottom: 20, left: 120, right: 120 };
     var i: number = 0;
 
@@ -189,13 +189,13 @@ export class CapabilitiesModelComponent implements OnInit {
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     // Set root with hierarchy tree
-    this.root = d3.hierarchy(this.capTree, function(d) { return d.children; });
+    this.root = d3.hierarchy(this.capTree, function (d) { return d.children; });
     this.root.x0 = height / 2;
     this.root.y0 = 0;
     this.root.descendants().forEach((d, i) => { d.id = i; });  // Set ids for each node
 
     // Sort Nodes
-    this.root.sort(function(a, b) {
+    this.root.sort(function (a, b) {
       return a.data.referenceNum.localeCompare(b.data.referenceNum);
     });
     // console.log("Root: ", this.root);  // Debug
@@ -235,43 +235,43 @@ export class CapabilitiesModelComponent implements OnInit {
 
     // Assigns the x and y position for the nodes
     var treeData = this.treemap(this.root);
-  
+
     // Compute the new tree layout.
     var nodes = treeData.descendants().reverse(),
-        links = treeData.descendants().slice(1);
-  
+      links = treeData.descendants().slice(1);
+
     // Normalize for fixed-depth.
     //// Change static number to expand or contract graph
-    nodes.forEach(function(d){ d.y = d.depth * 280});
-  
+    nodes.forEach(function (d) { d.y = d.depth * 280 });
+
     // ****************** Nodes section ***************************
-  
+
     // Update the nodes
     var node = this.vis.selectAll('g.node')
-      .data(nodes, function(d) { return d.id });
-  
+      .data(nodes, function (d) { return d.id });
+
     // Enter any new nodes at the parent's previous position.
     var nodeEnter = node.enter().append('g')
       .attr("class", "node")
-      .attr("transform", function() {
+      .attr("transform", function () {
         return "translate(" + source.y0 + "," + source.x0 + ")";
       })
 
       // Toggle children on click and re-render
-      .on("click", function(d) {
+      .on("click", function (d) {
         // console.log("Clicked Node: ", d);  // Debug
         this.toggle(d);
         this.update(d);
       }.bind(this));
-  
+
     // Add Circle for the nodes
     nodeEnter.append('circle')
       .attr("class", "node")
       .attr("r", 1e-6)
-      .style("fill", function(d) {
-          return d._children ? "lightsteelblue" : "#fff";
+      .style("fill", function (d) {
+        return d._children ? "lightsteelblue" : "#fff";
       })
-      .style("stroke", function(d) {
+      .style("stroke", function (d) {
         if (d.selected) {
           return this.highlightColor;
         } else {
@@ -279,11 +279,11 @@ export class CapabilitiesModelComponent implements OnInit {
         }
       }.bind(this))
       .style("stroke-width", "2.5px");
-  
+
     // Add labels for the nodes
     nodeEnter.append('text')
       // Adjust x coordinate when at end of tree
-      .attr("x", function(d) {
+      .attr("x", function (d) {
         return d.children || d._children ? -15 : 15;
       })
 
@@ -291,14 +291,14 @@ export class CapabilitiesModelComponent implements OnInit {
       .attr("dy", "0.35em")
 
       // Anchor text at middle with children and at start without
-      .attr("text-anchor", function(d) {
-          return d.children || d._children ? "end" : "start";
+      .attr("text-anchor", function (d) {
+        return d.children || d._children ? "end" : "start";
       })
 
       // Display node name for text
-      .text(function(d) { return d.data.name; })
+      .text(function (d) { return d.data.name; })
       .attr("font-size", "0.75rem")
-      .attr("fill", function(d) {
+      .attr("fill", function (d) {
         if (d.selected) {
           return this.highlightColor;
         } else {
@@ -314,25 +314,25 @@ export class CapabilitiesModelComponent implements OnInit {
 
     // UPDATE
     var nodeUpdate = nodeEnter.merge(node);
-  
+
     // Transition to the proper position for the node
     nodeUpdate.transition()
       .duration(duration)
-      .attr("transform", function(d) { 
-          return "translate(" + d.y + "," + d.x + ")";
-        });
-  
+      .attr("transform", function (d) {
+        return "translate(" + d.y + "," + d.x + ")";
+      });
+
     // Update the node attributes and style
     nodeUpdate.select('circle.node')
       .attr("r", 6)
-      .style("fill", function(d) {
+      .style("fill", function (d) {
         if (d._children) {
           return "lightsteelblue";
         } else {
           return "#fff";
         }
       })
-      .style("stroke", function(d) {
+      .style("stroke", function (d) {
         if (d.selected) {
           return this.highlightColor;
         } else {
@@ -342,49 +342,49 @@ export class CapabilitiesModelComponent implements OnInit {
       .attr("cursor", "pointer")
 
       // Show detail card on hoverover
-      .on("mouseover", function(d) {
+      .on("mouseover", function (d) {
         d3.select("#capDetail")
           .style("display", "block");  // Show detail card
         d3.select("#capName")
           .text(d.data.name + " (" + d.data.referenceNum + ")");  // Set Name
         d3.select("#capDetailbody")
           .text(d.data.description);  // Set Description
-        
+
         // console.log("Hovered Node: ", d);  // Debug
         selectedCap = d.data.identity;  // Save selected node id for links
       });
-  
+
     // Remove any exiting nodes
     var nodeExit = node.exit().transition()
       .duration(duration)
-      .attr("transform", function(d) {
-          return "translate(" + source.y + "," + source.x + ")";
+      .attr("transform", function (d) {
+        return "translate(" + source.y + "," + source.x + ")";
       })
       .remove();
-  
+
     // On exit reduce the node circles size to 0
     nodeExit.select('circle')
       .attr("r", 1e-6);
-  
+
     // On exit reduce the opacity of text labels
     nodeExit.select('text')
       .style("fill-opacity", 1e-6);
-  
+
     // ****************** links section ***************************
-  
+
     // Update the links...
     var link = this.vis.selectAll('path.link')
-      .data(links, function(d) { return d.id; });
-  
+      .data(links, function (d) { return d.id; });
+
     // Enter any new links at the parent's previous position.
     var linkEnter = link.enter().insert('path', "g")
       .attr("class", "link")
-      .attr("d", function(d){
-        var o = {x: source.x0, y: source.y0}
+      .attr("d", function (d) {
+        var o = { x: source.x0, y: source.y0 }
         return diagonal(o, o)
       })
       .attr("fill", "none")
-      .attr("stroke", function(d) {
+      .attr("stroke", function (d) {
         if (d.selected) {
           return this.highlightColor;
         } else {
@@ -392,45 +392,45 @@ export class CapabilitiesModelComponent implements OnInit {
         }
       }.bind(this))
       .attr("stroke-width", "3px");
-  
+
     // UPDATE
     var linkUpdate = linkEnter.merge(link);
-  
+
     // Transition back to the parent element position
     linkUpdate.transition()
       .duration(duration)
-      .attr("d", function(d){ return diagonal(d, d.parent) })
-      .attr("stroke", function(d) {
+      .attr("d", function (d) { return diagonal(d, d.parent) })
+      .attr("stroke", function (d) {
         if (d.selected) {
           return this.highlightColor;
         } else {
           return "#ccc"
         }
       }.bind(this));
-  
+
     // Remove any exiting links
     var linkExit = link.exit().transition()
       .duration(duration)
-      .attr('d', function(d) {
-        var o = {x: source.x, y: source.y}
+      .attr('d', function (d) {
+        var o = { x: source.x, y: source.y }
         return diagonal(o, o)
       })
       .remove();
-  
+
     // Store the old positions for transition.
-    nodes.forEach(function(d){
+    nodes.forEach(function (d) {
       d.x0 = d.x;
       d.y0 = d.y;
     });
-  
+
     // Creates a curved (diagonal) path from parent to the child nodes
     function diagonal(s, d) {
-  
+
       var path = `M ${s.y} ${s.x}
                   C ${(s.y + d.y) / 2} ${s.x},
                     ${(s.y + d.y) / 2} ${d.x},
                     ${d.y} ${d.x}`
-  
+
       return path
     }
 
@@ -439,7 +439,7 @@ export class CapabilitiesModelComponent implements OnInit {
     var capClose = d3.select('#capDetailClose');
 
     // When detail link is clicked
-    capDetail.on("click", function() {
+    capDetail.on("click", function () {
       // console.log("Selected Node: ", selectedCap);  // Debug
 
       // Grab data for selected node
@@ -453,14 +453,14 @@ export class CapabilitiesModelComponent implements OnInit {
           exportOptions: {
             fileName: this.sharedService.fileNameFmt(capData.Name + '-Supporting_Apps')
           },
-          url: this.sharedService.internalURLFmt('/api/capabilities/' 
+          url: this.sharedService.internalURLFmt('/api/capabilities/'
             + String(capData.ID) + '/applications')
         })
       });
     }.bind(this));
 
     // When close window is clicked
-    capClose.on("click", function(d) {
+    capClose.on("click", function (d) {
       d3.select("#capDetail").style("display", "none");
     });
 
@@ -473,7 +473,7 @@ export class CapabilitiesModelComponent implements OnInit {
     // Search when enter is pressed
     if (event.key === "Enter") {
       // console.log("Searching: ", this.searchKey); // Debug
-      
+
       var term = this.searchKey.toUpperCase();
 
       // Reset variables
@@ -526,7 +526,7 @@ export class CapabilitiesModelComponent implements OnInit {
             paths[index].children = paths[index]._children;
             paths[index]._children = null;
           }
-          
+
           // Include parent if not already in the path
           if (paths[index].parent.data.name != 'Manage GSA' && !paths.includes(paths[index].parent)) {
             paths.push(paths[index].parent);

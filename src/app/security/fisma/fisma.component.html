@@ -31,13 +31,15 @@
       <!-- Retired Systems Button -->
       <div class="offset-md-5">
         <span class="my-auto mr-3">Filters:</span>
-        <button role="button" name="fismaRetiredBttn" class="btn btn-primary" (click)="showRetired()" [hidden]="retiredTable">
+        <button role="button" name="fismaRetiredBttn" class="btn btn-primary" (click)="showRetired()"
+          [hidden]="retiredTable">
           Retired FISMA Systems</button>
 
-        <button role="button" name="fismaBttn" class="btn btn-primary" (click)="backToMainFisma()" [hidden]="!retiredTable">
+        <button role="button" name="fismaBttn" class="btn btn-primary" (click)="backToMainFisma()"
+          [hidden]="!retiredTable">
           Back to Active FISMA Systems</button>
       </div>
-      
+
       <span class="my-auto ml-auto">
         *DOUBLE left click on table row for detail view. Links in table are clickable.
       </span>
