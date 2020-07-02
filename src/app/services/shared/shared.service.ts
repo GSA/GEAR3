@@ -5,6 +5,8 @@ import { Observable, of } from "rxjs";
 import { Subscription } from 'rxjs/internal/Subscription';
 import { catchError } from 'rxjs/operators';
 
+import { Globals } from '../../common/globals';
+
 import { Application } from 'api/models/applications.model';
 import { Capability } from 'api/models/capabilities.model';
 import { FISMA } from 'api/models/fisma.model';
@@ -32,7 +34,6 @@ export class SharedService {
   // FISMA API
   fismaUrl: string = this.internalURLFmt('/api/fisma');
 
-
   // Investment API
   investUrl: string = this.internalURLFmt('/api/investments');
 
@@ -45,7 +46,9 @@ export class SharedService {
   // IT Standards API
   techUrl: string = this.internalURLFmt('/api/it_standards');
 
+
   constructor(
+    private globals: Globals,
     private http: HttpClient,
     private location: Location) { }
 
@@ -165,6 +168,25 @@ export class SharedService {
       return of(result as T)
     };
   };
+
+
+  // JWT Handling
+  //// Set JWT on log in to be tracked when checking for authentication
+  public setJWTonLogIn(): void {
+    setTimeout(() => {
+      if (localStorage.getItem('jwt') !== null) {  // If successful set of JWT
+        this.globals.jwtToken = localStorage.getItem('jwt');
+      }
+    },
+      1000);  // Wait for 1 sec to propogate after logging in
+  }
+
+  //// Check if user is authenticated to GEAR Manager
+  public get loggedIn(): boolean {
+    console.log(`Browser JWT: ${localStorage.getItem('jwt')}, Saved JWT: ${this.globals.jwtToken}`)
+    return localStorage.getItem('jwt') !== null && localStorage.getItem('jwt') == this.globals.jwtToken;
+  };
+
 
   // Table Data Formatters
   //// For Long Descriptions

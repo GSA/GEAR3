@@ -55,6 +55,9 @@ import { StandardsModalComponent } from './components/modals/standards-modal/sta
 import { ModalsService } from './services/modals/modals.service';
 import { SharedService } from './services/shared/shared.service';
 
+// Global Variables
+import { Globals } from './common/globals';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -102,6 +105,7 @@ import { SharedService } from './services/shared/shared.service';
     SidebarModule.forRoot()
   ],
   providers: [
+    Globals,
     ModalsService,
     SharedService
   ],

@@ -162,12 +162,21 @@
 
     <!-- GEAR Manager Login -->
     <div class="sidebar-footer">
-      <a routerLink="/gear_manager"
+      <a routerLink="/gear_manager" [hidden]="checkAuth()"
         class="bg-info list-group-item list-group-item-action flex-column align-items-start text-white">
         <div class="d-flex w-100 justify-content-start align-items-center">
           GEAR Manager Login
           <span class="submenu-icon ml-auto">
             <i class="fa fa-sign-in-alt fa-lg"></i>
+          </span>
+        </div>
+      </a>
+      <a routerLink="/" [hidden]="!checkAuth()" (click)="logoutManager()"
+        class="bg-danger list-group-item list-group-item-action flex-column align-items-start text-white">
+        <div class="d-flex w-100 justify-content-start align-items-center">
+          GEAR Manager Logout
+          <span class="submenu-icon ml-auto">
+            <i class="fas fa-sign-out-alt fa-lg"></i>
           </span>
         </div>
       </a>
@@ -180,6 +189,16 @@
     <main role="main">
       <div class="container-fluid my-3">
         <div class="col-md-12">
+
+          <!-- Logged Out Notification -->
+          <div id="loggedOut" class="container toast hide rounded-lg w-25" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">
+            <div class="toast-header">
+              <i class="fas fa-sign-out-alt mr-2"></i>
+              <strong class="mr-auto text-warning">You have been logged out of GEAR Manager</strong>
+            </div>
+          </div>
+
+          <!-- Components Content -->
           <router-outlet></router-outlet>
         </div>
       </div>

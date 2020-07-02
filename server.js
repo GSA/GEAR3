@@ -1,25 +1,25 @@
 var dotenv = require('dotenv').config();  // .env Credentials
 
 const bodyParser = require('body-parser'),
-      cors = require('cors'),
-      express = require('express'),
+  cors = require('cors'),
+  express = require('express'),
 
-      http = require('http'),
-      path = require('path'),
-      
-      jsonwebtoken = require('jsonwebtoken'),
-      jwt = require('express-jwt'),
-      mysql = require('mysql2'),
-      passport = require('passport'),
-      passportJWT = require("passport-jwt"),
-      SAMLStrategy = require('passport-saml').Strategy,
-      
-      api = require('./api/index'),
-      
-      port = process.env.PORT || 3334,
-      
-      ExtractJWT = passportJWT.ExtractJwt,
-      JWTStrategy = passportJWT.Strategy;
+  http = require('http'),
+  path = require('path'),
+
+  jsonwebtoken = require('jsonwebtoken'),
+  jwt = require('express-jwt'),
+  mysql = require('mysql2'),
+  passport = require('passport'),
+  passportJWT = require("passport-jwt"),
+  SAMLStrategy = require('passport-saml').Strategy,
+
+  api = require('./api/index'),
+
+  port = process.env.PORT || 3000,
+
+  ExtractJWT = passportJWT.ExtractJwt,
+  JWTStrategy = passportJWT.Strategy;
 
 
 /********************************************************************
@@ -51,12 +51,12 @@ passport.use(new SAMLStrategy(samlConfig, (secureAuthProfile, cb) => {
 
 // PASSPORT JWT STRATEGY
 passport.use(new JWTStrategy({
-      jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-      secretOrKey   : process.env.SECRET
-    },
-    function (jwtPayload, cb) {
-      return cb(null, jwtPayload);
-    }
+  jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.SECRET
+},
+  function (jwtPayload, cb) {
+    return cb(null, jwtPayload);
+  }
 ));
 
 
@@ -75,14 +75,6 @@ const app = express()
 API Platform
 ********************************************************************/
 app.use('/api', api);
-
-
-/********************************************************************
-GEAR MANAGER GATEWAY
-********************************************************************/
-app.get('/admin', passport.authenticate('saml'), function (req, res) {
-  res.sendFile(path.join(__dirname, 'public', 'assets', 'admin', 'index.html'));
-});
 
 
 /********************************************************************
@@ -105,7 +97,7 @@ app.get('/beginAuth', passport.authenticate('saml'), (req, res) => {
   // change the client src to use /admin (no-hash) instead? Perhaps
   // it's needed while running the React app in dev b/c its proxy.
   const html =
-`
+    `
 <html>
 <body>
   <script>
@@ -147,7 +139,7 @@ app.post(samlConfig.path,
       (err, results, fields) => {
         if (err) {
           res.status(500);
-          res.json({error: err});
+          res.json({ error: err });
         }
         else {
           let html = ``;
@@ -166,16 +158,16 @@ app.post(samlConfig.path,
             un: results[0][0].Username,
             exp: Math.floor(Date.now() / 1000) + 60 * 60,
             scopes: results[0][0].PERMS,
-              auditID: results[0][0].AuditID
+            auditID: results[0][0].AuditID
           };
 
           // JWT TOKEN SIGNED HERE TO BE USED IN INLINE HTML PAGE NEXT
           const token = jsonwebtoken.sign(jwt, process.env.SECRET);
 
-          let adminRoute = (process.env.SAML_HOST === 'localhost') ? 'http://localhost:3000/admin/#/' : '/admin/#/';
+          let adminRoute = (process.env.SAML_HOST === 'localhost') ? 'http://localhost:3000/' : '/#/';
 
           html =
-`
+            `
 <html>
   <body>
     <em>Redirecting to GEAR Manager...</em>
@@ -206,7 +198,7 @@ START SERVER
 ********************************************************************/
 const server = http.createServer(app);
 
-server.listen(port, function() {
+server.listen(port, function () {
   console.log('Express server listening on port ' + server.address().port);
 })
 server.on('error', onError);
