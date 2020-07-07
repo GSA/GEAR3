@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 
+import { ApiService } from "../apis/api.service";
 import { ModalsService } from '../modals/modals.service';
 import { SharedService } from '../shared/shared.service';
 
@@ -167,6 +168,7 @@ export class TableService {
 
 
   constructor(
+    private apiService: ApiService,
     private modalService: ModalsService,
     private sharedService: SharedService) { }
 
@@ -176,37 +178,37 @@ export class TableService {
 
     switch (data.GEAR_Type) {
       case 'Application':
-        this.sharedService.getOneApp(data.Id).subscribe((apiData: any[]) => {
+        this.apiService.getOneApp(data.Id).subscribe((apiData: any[]) => {
           this.appsTableClick(apiData[0]);
         });
         break;
 
       case 'Capability':
-        this.sharedService.getOneCap(data.Id).subscribe((apiData: any[]) => {
+        this.apiService.getOneCap(data.Id).subscribe((apiData: any[]) => {
           this.capsTableClick(apiData[0]);
         });
         break;
 
       case 'FISMA':
-        this.sharedService.getOneFISMASys(data.Id).subscribe((apiData: any[]) => {
+        this.apiService.getOneFISMASys(data.Id).subscribe((apiData: any[]) => {
           this.fismaTableClick(apiData[0]);
         });
         break;
 
       case 'Investment':
-        this.sharedService.getOneInvest(data.Id).subscribe((apiData: any[]) => {
+        this.apiService.getOneInvest(data.Id).subscribe((apiData: any[]) => {
           this.investTableClick(apiData[0]);
         });
         break;
 
       case 'System':
-        this.sharedService.getOneSys(data.Id).subscribe((apiData: any[]) => {
+        this.apiService.getOneSys(data.Id).subscribe((apiData: any[]) => {
           this.systemsTableClick(apiData[0]);
         });
         break;
 
       case 'Technology':
-        this.sharedService.getOneTech(data.Id).subscribe((apiData: any[]) => {
+        this.apiService.getOneTech(data.Id).subscribe((apiData: any[]) => {
           this.itStandTableClick(apiData[0]);
         });
         break;

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
+import { ApiService } from "../../services/apis/api.service";
 import { ModalsService } from '../../services/modals/modals.service';
 import { SharedService } from '../../services/shared/shared.service';
 import { TableService } from '../../services/tables/table.service';
@@ -22,6 +23,7 @@ export class AppsComponent implements OnInit {
   interfaces: any[] = [];
 
   constructor(
+    private apiService: ApiService,
     private modalService: ModalsService,
     private sharedService: SharedService,
     private tableService: TableService) {
@@ -313,7 +315,7 @@ export class AppsComponent implements OnInit {
   }
 
   private getInterfaceData(appID: number) {
-    this.sharedService.getAppInterfaces(appID).subscribe((data: any[]) => {
+    this.apiService.getAppInterfaces(appID).subscribe((data: any[]) => {
       this.interfaces = data;
       this.createInterfaceChart(appID, this.interfaces);
     });

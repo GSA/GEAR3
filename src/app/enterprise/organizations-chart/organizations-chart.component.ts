@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
+import { ApiService } from 'src/app/services/apis/api.service';
 import { ModalsService } from '../../services/modals/modals.service';
 import { SharedService } from '../../services/shared/shared.service';
 
@@ -39,6 +40,7 @@ export class OrganizationsChartComponent implements OnInit {
   private finalSearchPath;
 
   constructor(
+    private apiService: ApiService,
     private sharedService: SharedService,
     private modalService: ModalsService) { }
 
@@ -53,7 +55,7 @@ export class OrganizationsChartComponent implements OnInit {
 
   // Create Org Chart
   private getOrgData() {
-    this.sharedService.getOrganizations().subscribe((data: any[]) => {
+    this.apiService.getOrganizations().subscribe((data: any[]) => {
       // console.log("Orgs: ", data);  // Debug
       this.orgs = data;
 
@@ -462,7 +464,7 @@ export class OrganizationsChartComponent implements OnInit {
       // console.log("Selected Node: ", selectedCap);  // Debug
 
       // Grab data for selected node
-      this.sharedService.getOneOrg(selectedOrg.data.identity).subscribe((data: any[]) => {
+      this.apiService.getOneOrg(selectedOrg.data.identity).subscribe((data: any[]) => {
         var orgData = data[0];
         this.modalService.updateDetails(orgData, 'organization');
         $('#organizationDetail').modal('show');

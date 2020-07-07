@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
+import { ApiService } from "../../services/apis/api.service";
 import { ModalsService } from '../../services/modals/modals.service';
 import { SharedService } from '../../services/shared/shared.service';
 
@@ -38,6 +39,7 @@ export class CapabilitiesModelComponent implements OnInit {
   private finalSearchPath;
 
   constructor(
+    private apiService: ApiService,
     private sharedService: SharedService,
     private modalService: ModalsService) { }
 
@@ -52,7 +54,7 @@ export class CapabilitiesModelComponent implements OnInit {
 
   // Create Capability Model Graph
   private getCapData() {
-    this.sharedService.getCapabilities().subscribe((data: any[]) => {
+    this.apiService.getCapabilities().subscribe((data: any[]) => {
       // console.log("Capabilities: ", data);  // Debug
       this.caps = data;
 
@@ -443,7 +445,7 @@ export class CapabilitiesModelComponent implements OnInit {
       // console.log("Selected Node: ", selectedCap);  // Debug
 
       // Grab data for selected node
-      this.sharedService.getOneCap(selectedCap).subscribe((data: any[]) => {
+      this.apiService.getOneCap(selectedCap).subscribe((data: any[]) => {
         var capData = data[0];
         this.modalService.updateDetails(capData, 'capability');
         $('#capabilityDetail').modal('show');
