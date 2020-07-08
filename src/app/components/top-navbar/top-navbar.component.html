@@ -7,8 +7,9 @@
 
   <a class="navbar-brand" routerLink="/">
     <i class="fas fa-cogs fa-lg"></i>
-    GSA EA Analytics & Reporting (GEAR) -
-    <span style="color: red">DEVELOPMENT ENVIRONMENT</span>
+    GSA EA Analytics & Reporting (GEAR)
+    <span style="color: red"> - DEVELOPMENT ENVIRONMENT</span>
+    <span *ngIf="checkAuth()" style="color: red"> **GEAR Manager Mode**</span>
   </a>
 
   <!-- Global Search -->

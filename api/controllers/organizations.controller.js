@@ -7,7 +7,7 @@ const queryPath = '../queries/';
 
 function findAll(req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_organizations.sql')).toString() +
-    ";";
+    " ORDER BY Name;";
 
   res = ctrl.sendQuery(query, 'organizations', res);
 };

@@ -9,8 +9,13 @@ router.route('/')
 router.route('/:id')
     .get(investmentCtrl.findOne);
 
-// Children
 router.route('/:id/applications/')
     .get(investmentCtrl.findApplications);
+
+router.route('/update/:id')
+    .put(investmentCtrl.update);
+
+router.route('/types')
+    .get(investmentCtrl.findTypes);
 
 module.exports = router;

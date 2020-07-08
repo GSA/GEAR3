@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { ModalsService } from '../../../services/modals/modals.service';
+import { SharedService } from "../../../services/shared/shared.service";
 import { TableService } from '../../../services/tables/table.service';
 
 // Declare jQuery symbol
@@ -17,6 +18,7 @@ export class InvestmentsModalComponent implements OnInit {
 
   constructor(
     private modalService: ModalsService,
+    private sharedService: SharedService,
     private tableService: TableService) { }
 
   ngOnInit(): void {
@@ -36,6 +38,17 @@ export class InvestmentsModalComponent implements OnInit {
         this.tableService.appsTableClick(row);
       }.bind(this)
       ));
+  }
+
+  checkAuth () {
+    return true; // this.sharedService.loggedIn;
+  }
+
+  investEdit () {
+    // Hide Detail Modal before showing Manager Modal
+    $('#investDetail').modal('hide');
+    this.sharedService.setInvestForm();
+    $('#investManager').modal('show');
   }
 
 }
