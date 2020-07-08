@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -47,13 +47,12 @@ import { FismaComponent } from './security/fisma/fisma.component';
 import { FismaModalComponent } from './components/modals/fisma-modal/fisma-modal.component';
 import { FismaPocsComponent } from './security/fisma-pocs/fisma-pocs.component';
 
-// Technologies
+//// Technologies
 import { ItStandardsComponent } from './technologies/it-standards/it-standards.component';
 import { StandardsModalComponent } from './components/modals/standards-modal/standards-modal.component';
 
-// Services
-import { ModalsService } from './services/modals/modals.service';
-import { SharedService } from './services/shared/shared.service';
+// GEAR Manager Modals
+import { InvestmentManagerComponent } from './components/manager-modals/investment-manager/investment-manager.component';
 
 // Global Variables
 import { Globals } from './common/globals';
@@ -94,7 +93,9 @@ import { Globals } from './common/globals';
     FismaPocsComponent,
 
     ItStandardsComponent,
-    StandardsModalComponent
+    StandardsModalComponent,
+
+    InvestmentManagerComponent
   ],
   imports: [
     AppRoutingModule,
@@ -102,12 +103,11 @@ import { Globals } from './common/globals';
     FormsModule,
     HttpClientModule,
     PdfViewerModule,
+    ReactiveFormsModule,
     SidebarModule.forRoot()
   ],
   providers: [
-    Globals,
-    ModalsService,
-    SharedService
+    Globals
   ],
   bootstrap: [AppComponent]
 })

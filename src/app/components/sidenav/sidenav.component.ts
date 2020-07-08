@@ -14,8 +14,8 @@ export class SidenavComponent implements OnInit {
   constructor(private sharedService: SharedService) { }
 
   ngOnInit(): void {
-    if (this.sharedService.subsVar == undefined) {
-      this.sharedService.subsVar = this.sharedService.toggleEmitter.subscribe(() => { this._toggleOpened(); });
+    if (this.sharedService.toggleSub == undefined) {
+      this.sharedService.toggleSub = this.sharedService.toggleEmitter.subscribe(() => { this._toggleOpened(); });
     }
   }
 

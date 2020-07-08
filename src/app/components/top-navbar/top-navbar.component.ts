@@ -40,4 +40,8 @@ export class TopNavbarComponent implements OnInit {
     }
   }
 
+  checkAuth () {
+    return this.sharedService.loggedIn;
+  }
+
 }

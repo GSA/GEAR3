@@ -11,7 +11,11 @@ export class SharedService {
 
   // Sidebar Toggle Service
   toggleEmitter = new EventEmitter();
-  subsVar: Subscription;
+  toggleSub: Subscription;
+
+  // Forms Emitter
+  investFormEmitter = new EventEmitter();
+  investFormSub: Subscription;
 
   constructor(
     private globals: Globals,
@@ -38,17 +42,15 @@ export class SharedService {
   // JWT Handling
   //// Set JWT on log in to be tracked when checking for authentication
   public setJWTonLogIn(): void {
+    if (localStorage.getItem('jwt') !== null) {  // If successful set of JWT
     setTimeout(() => {
-      if (localStorage.getItem('jwt') !== null) {  // If successful set of JWT
         this.globals.jwtToken = localStorage.getItem('jwt');
-      }
-    },
-      1000);  // Wait for 1 sec to propogate after logging in
+      }, 1000);  // Wait for 1 sec to propogate after logging in
+    }
   }
 
   //// Check if user is authenticated to GEAR Manager
   public get loggedIn(): boolean {
-    console.log(`Browser JWT: ${localStorage.getItem('jwt')}, Saved JWT: ${this.globals.jwtToken}`)
     return localStorage.getItem('jwt') !== null && localStorage.getItem('jwt') == this.globals.jwtToken;
   };
 
@@ -85,6 +87,12 @@ export class SharedService {
     }
 
     return finalVal;
+  };
+
+
+  // Set Investment Forms Default
+  public setInvestForm() {
+    this.investFormEmitter.emit();
   };
 
 }
