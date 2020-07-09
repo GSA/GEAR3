@@ -99,19 +99,19 @@ export class InvestmentManagerComponent implements OnInit {
     this.apiService.updateInvestment(this.investment.ID, this.investForm.value).toPromise()
       .then(res => {
         // Grab new data from database
-        this.apiService.getOneInvest(this.investment.ID)
-      })
+        this.apiService.getOneInvest(this.investment.ID).toPromise()
+          .then(data => {
+            // Refresh Table
+            $('#investTable').bootstrapTable('refresh');
 
-    // Grab new data from database
-    this.apiService.getOneInvest(this.investment.ID).toPromise()
-      .then(data => {
-        // Close Manager Modal and go back to showing Detail Modal
-        $('#investManager').modal('hide');
-        this.tableService.investTableClick(data[0]);
-        $('#investDetail').modal('show');
-      }), (error) => {
-        console.log("Promise rejected with " + JSON.stringify(error));
-      };
+            // Close Manager Modal and go back to showing Detail Modal
+            $('#investManager').modal('hide');
+            this.tableService.investTableClick(data[0]);
+            $('#investDetail').modal('show');
+          }), (error) => {
+            console.log("Promise rejected with " + JSON.stringify(error));
+          };
+      });
   }
 
 }
