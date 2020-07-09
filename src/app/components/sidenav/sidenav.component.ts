@@ -17,6 +17,16 @@ export class SidenavComponent implements OnInit {
     if (this.sharedService.toggleSub == undefined) {
       this.sharedService.toggleSub = this.sharedService.toggleEmitter.subscribe(() => { this._toggleOpened(); });
     }
+
+    $(document).ready( function () {
+      $('#loggedOut').on('show.bs.toast', function () {
+        $('#loggedOutCollapse').collapse('show')
+      });
+
+      $('#loggedOut').on('hide.bs.toast', function () {
+        $('#loggedOutCollapse').collapse('hide')
+      });
+    });
   }
 
   _opened: boolean = false;

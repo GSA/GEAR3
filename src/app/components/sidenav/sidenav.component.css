@@ -17,3 +17,8 @@ ng-sidebar .list-group a {
   width: 100%;
   bottom: 0;
 }
+
+/* Expand Width of Toast Notifications */
+.toast {
+  max-width: 50% !important;
+}
