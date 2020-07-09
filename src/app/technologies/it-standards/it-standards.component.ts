@@ -113,8 +113,8 @@ export class ItStandardsComponent implements OnInit {
     $(document).ready(
       $('#itStandardsTable').on('click-row.bs.table', function (e, row) {
         this.tableService.itStandTableClick(row);
-      }.bind(this)
-      ));
+      }.bind(this))
+    );
 
   }
 

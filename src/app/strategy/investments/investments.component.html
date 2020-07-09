@@ -27,6 +27,17 @@
   </div>
 
   <div class="row card-body card-text justify-content-center">
+    <div>
+      <!-- Filter Inactive -->
+      <span class="my-auto mr-3">Filters:</span>
+      <button role="button" name="investInactiveBttn" class="btn btn-primary" (click)="inactiveFilter()" [hidden]="filteredTable">
+        Inactive</button>
+
+      <button role="button" name="investBttn" class="btn btn-primary ml-3" (click)="backToMainInvest()" [hidden]="!filteredTable">
+        Back to All Active Investments</button>
+    </div>
+
+    <!-- Main Investments Table -->
     <table id="investTable"></table>
   </div>
 </div>

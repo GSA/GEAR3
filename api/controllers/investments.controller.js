@@ -17,7 +17,7 @@ function findOne(req, res, next) {
     next()
   } else {
     var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_investments.sql')).toString() +
-      ` AND invest.Id = ${req.params.id};`;  // Notice that there's already a WHERE clause in query
+      ` WHERE invest.Id = ${req.params.id};`;
 
     res = ctrl.sendQuery(query, 'individual investment', res);
   }
@@ -31,7 +31,7 @@ function findTypes(req, res) {
 
 function findApplications(req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_applications.sql')).toString() +
-    ` AND app.obj_investment_Id = ${req.params.id} GROUP BY app.Id;`;
+    ` AND app.obj_investment_Id = ${req.params.id} GROUP BY app.Id;`;  // Note that there's already a WHERE clause
 
   res = ctrl.sendQuery(query, 'application relations for investment', res);
 };

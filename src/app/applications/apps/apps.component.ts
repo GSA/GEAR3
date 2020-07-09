@@ -19,7 +19,7 @@ declare var $: any;
 export class AppsComponent implements OnInit {
 
   row: Object = <any>{};
-  ssoTable: boolean = false;
+  filteredTable: boolean = false;
   interfaces: any[] = [];
 
   constructor(
@@ -271,7 +271,7 @@ export class AppsComponent implements OnInit {
 
   // Update table, filtering by SSO
   changeFilter(field: string, term: string) {
-    this.ssoTable = true;  // SSO filters are on, expose main table button
+    this.filteredTable = true;  // SSO filters are on, expose main table button
     var filter = {};
     filter[field] = term;
 
@@ -304,7 +304,7 @@ export class AppsComponent implements OnInit {
   }
 
   backToMainApp() {
-    this.ssoTable = false;  // Hide main button
+    this.filteredTable = false;  // Hide main button
 
     // Remove filters and back to default
     $('#appsTable').bootstrapTable('filterBy', {});

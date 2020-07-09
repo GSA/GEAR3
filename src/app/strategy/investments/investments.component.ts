@@ -15,6 +15,7 @@ declare var $: any;
 export class InvestmentsComponent implements OnInit {
 
   row: Object = <any>{};
+  filteredTable: boolean = false;
 
   constructor(
     private modalService: ModalsService,
@@ -100,11 +101,41 @@ export class InvestmentsComponent implements OnInit {
 
     // Method to handle click events on the Investments table
     $(document).ready(
+      // Filter to only active investments
+      $('#investTable').bootstrapTable('filterBy', { Active: 'Yes' })
+    )
+
+    $(document).ready(
       $('#investTable').on('click-row.bs.table', function (e, row) {
         this.tableService.investTableClick(row);
-      }.bind(this)
-      ));
+      }.bind(this))
+    );
 
+  }
+
+
+  // Update table from filter buttons
+  inactiveFilter() {
+    this.filteredTable = true;  // Filters are on, expose main table button
+
+    $('#investTable').bootstrapTable('filterBy', { Active: 'No' });
+    $('#investTable').bootstrapTable('refreshOptions', {
+      exportOptions: {
+        fileName: this.sharedService.fileNameFmt('GSA_Inactive_IT_Investments')
+      }
+    })
+  }
+
+  backToMainInvest() {
+    this.filteredTable = false;  // Hide main button
+
+    // Remove filters and back to default
+    $('#investTable').bootstrapTable('filterBy', { Active: 'Yes' });
+    $('#investTable').bootstrapTable('refreshOptions', {
+      exportOptions: {
+        fileName: this.sharedService.fileNameFmt('GSA_IT_Investments')
+      }
+    });
   }
 
 }
