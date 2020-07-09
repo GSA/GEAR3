@@ -27,13 +27,25 @@
         <div class="tab-content mt-3">
           <div class="tab-pane fade show active" id="investMngrOverview">
             <form [formGroup]="investForm" class="container">
-              <div class="form-group">
-                <label for="investName">Investment Name</label>
-                <input type="text" class="form-control" id="investName" formControlName="investName"
-                  placeholder="Enter a Name" [value]="investment.Name">
-                <!-- <div class="invalid-feedback" *ngIf="!investForm.get('investName').valid">
-                  Need an Investment Name
-                </div> -->
+
+              <div class="row align-items-center justify-content-center">
+                <div class="form-group col-2 text-center mb-0">
+                  <label for="investStatus">Status</label>
+                  <div id="investStatus" class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="investStatusSwitch"
+                      formControlName="investStatus" [checked]="investment.Active === 1">
+                    <label class="custom-control-label" for="investStatusSwitch">Active</label>
+                  </div>
+                </div>
+
+                <div class="form-group col mb-0">
+                  <label for="investName">Investment Name</label>
+                  <input type="text" class="form-control" id="investName" formControlName="investName"
+                    placeholder="Enter a Name" [value]="investment.Name">
+                  <!-- <div class="invalid-feedback" *ngIf="!investForm.get('investName').valid">
+                    Need an Investment Name
+                  </div> -->
+                </div>
               </div>
 
               <div class="form-group">
@@ -46,18 +58,28 @@
                 <label for="invManager">Investment Manager</label>
                 <select class="form-control" id="invManager" formControlName="invManager">
                   <option *ngFor="let manager of managers" [value]="manager.ID"
-                    [selected]="manager.Name === this.investment.InvManager">{{ manager.Name }}</option>
+                    [selected]="manager.Name === investment.InvManager">{{ manager.Name }}</option>
                 </select>
               </div>
 
-              <div class="form-group">
-                <label for="investType">Type</label>
-                <div id="investType">
-                  <div class="custom-control custom-control-inline custom-radio" *ngFor="let type of types">
-                    <input class="custom-control-input" type="radio" id="investType{{ type.ID }}"
-                      [value]="type.ID" [checked]="type.Name === investment.Type" formControlName="investType">
-                    <label class="custom-control-label" for="investType{{ type.ID }}">{{ type.Name }}</label>
+              <div class="row align-items-center justify-content-center">
+                <div class="form-group col-8 text-center mb-0">
+                  <label for="investType">Type</label>
+                  <div id="investType">
+                    <div class="custom-control custom-control-inline custom-radio" *ngFor="let type of types">
+                      <input class="custom-control-input" type="radio" id="investType{{ type.ID }}" [value]="type.ID"
+                        [checked]="type.Name === investment.Type" formControlName="investType">
+                      <label class="custom-control-label" for="investType{{ type.ID }}">{{ type.Name }}</label>
+                    </div>
                   </div>
+                </div>
+
+                <div class="form-group col-2 mb-0">
+                  <label for="investBY">Budget Year</label>
+                  <select class="form-control" id="investBY" formControlName="investBY">
+                    <option *ngFor="let year of budgetYears" [value]="year" [selected]="year === investment.Budget_Year">
+                      {{ year }}</option>
+                  </select>
                 </div>
               </div>
 
