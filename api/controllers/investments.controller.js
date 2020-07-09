@@ -41,9 +41,11 @@ function update(req, res) {
     var data = req.body;
     var query = `UPDATE obj_investment
       SET Keyname               = '${data.investName}',
+        Active                  = ${data.investStatus},
         Description             = '${data.investDesc}',
         obj_poc_Id              = ${data.invManager},
         obj_investment_type_Id  = ${data.investType},
+        Budget_Year             = '${data.investBY}',
         UII                     = '${data.investUII}',
         obj_organization_Id     = ${data.investSSO},
         primary_service_area    = '${data.investPSA}',

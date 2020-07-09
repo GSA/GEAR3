@@ -18,10 +18,12 @@ declare var $: any;
 export class InvestmentManagerComponent implements OnInit {
 
   investForm: FormGroup = new FormGroup({
+    investStatus: new FormControl(null, [Validators.required]),
     investName: new FormControl(null, [Validators.required]),
     investDesc: new FormControl(null, [Validators.required]),
     invManager: new FormControl(null, [Validators.required]),
     investType: new FormControl(null, [Validators.required]),
+    investBY: new FormControl(null, [Validators.required]),
     investUII: new FormControl(null, [Validators.required]),
     investSSO: new FormControl(null, [Validators.required]),
     investPSA: new FormControl(),
@@ -32,6 +34,7 @@ export class InvestmentManagerComponent implements OnInit {
     investComments: new FormControl()
   });
 
+  budgetYears: string[] = ['BY18', 'BY19', 'BY20', 'BY21', 'BY22']
   investment = <any>{};
   managers: any[] = [];
   serviceAreas: any[] = [{ Name: 'None', ID: null }];
@@ -45,6 +48,7 @@ export class InvestmentManagerComponent implements OnInit {
     private tableService: TableService) { }
 
   ngOnInit(): void {
+    // Emit setFormDefaults for when edit button is pressed
     if (this.sharedService.investFormSub == undefined) {
       this.sharedService.investFormSub = this.sharedService.investFormEmitter.subscribe(() => { this.setFormDefaults(); });
     }
@@ -75,25 +79,42 @@ export class InvestmentManagerComponent implements OnInit {
   }
 
   setFormDefaults(): void {
+    // Adjust Status for rendering
+    if (this.investment.Active === 1) var status = true;
+    else var status = false;
+
     // Set default values for form with current values
     this.investForm.patchValue({
+      investStatus: status,
       investName: this.investment.Name,
       investDesc: this.investment.Description,
-      invManager: this.managers.find(element => element.Name === this.investment.InvManager).ID,
-      investType: this.types.find(element => element.Name === this.investment.Type).ID,
+      invManager: this.findInArrayID(this.managers, 'Name', this.investment.InvManager),
+      investType: this.findInArrayID(this.types, 'Name', this.investment.Type),
+      investBY: this.investment.Budget_Year,
       investUII: this.investment.UII,
-      investSSO: this.SSOs.find(element => element.Name === this.investment.SSO).ID,
-      investPSA: this.serviceAreas.find(element => element.Name === this.investment.PSA).ID,
-      investSSA: this.serviceAreas.find(element => element.Name === this.investment.SSA).ID,
-      // investSSA2: this.serviceAreas.find(element => element.Name === this.investment.sec_service_area2).ID,
-      // investSSA3: this.serviceAreas.find(element => element.Name === this.investment.sec_service_area3).ID,
-      // investSSA4: this.serviceAreas.find(element => element.Name === this.investment.sec_service_area4).ID,
+      investSSO: this.findInArrayID(this.SSOs, 'Name', this.investment.SSO),
+      investPSA: this.findInArrayID(this.serviceAreas, 'Name', this.investment.PSA),
+      investSSA: this.findInArrayID(this.serviceAreas, 'Name', this.investment.SSA),
+      // investSSA2: this.findInArrayID(this.serviceAreas, 'Name', this.investment.sec_service_area2),
+      // investSSA3: this.findInArrayID(this.serviceAreas, 'Name', this.investment.sec_service_area3),
+      // investSSA4: this.findInArrayID(this.serviceAreas, 'Name', this.investment.sec_service_area4),
       investComments: this.investment.Comments,
     });
   }
 
+  findInArrayID(array: any[], arrayKey: string, searchItem: any) {
+    var result: any = array.find(element => element[arrayKey] === searchItem);
+
+    if (result) return result.ID;
+    else return null
+  }
+
   submitForm() {
-    console.log('Form Submitted with values: ', this.investForm.value);  // Debug
+    // Adjust Status for saving
+    if (this.investForm.value.investStatus) this.investForm.value.investStatus = 1;
+    else this.investForm.value.investStatus = 2;
+
+    // console.log("Form values: ", this.investForm.value);  // Debug
 
     // Send new data to database
     this.apiService.updateInvestment(this.investment.ID, this.investForm.value).toPromise()
