@@ -1,5 +1,5 @@
 <div class="card bg-light">
-  <div class="row card-header text-white bg-dark text-center">
+  <div class="row card-header text-white bg-warning text-center">
     <h3 class="card-title col-11 mb-0 align-self-center">
       <span class="my-auto">
         <i class="fas fa-user-shield"></i>
@@ -26,33 +26,30 @@
     </a>
   </div>
 
-  <div class="card-body bg-light card-text">
-    <div class="row">
+  <div class="row card-body bg-light card-text justify-content-center">
+    <div class="row w-100">
       <!-- Filter by SSO Buttons -->
-      <div class="offset-md-5">
+      <div class="col text-right" [hidden]="rissoTable">
         <span class="my-auto mr-3">Filters:</span>
-        <button role="button" name="fismaRISSObttn" class="btn btn-primary" (click)="showRISSOs()"
-          [hidden]="rissoTable">
+        <button role="button" name="fismaRISSObttn" class="btn btn-primary" (click)="showRISSOs()">
           RISSO POCs</button>
-
-        <button role="button" name="fismaPOCBttn" class="btn btn-primary" (click)="backToMainFisma()"
-          [hidden]="!rissoTable">
-          Back to System POCs</button>
       </div>
 
-      <span class="my-auto ml-auto" [hidden]="rissoTable">
+      <button role="button" name="fismaPOCBttn" class="btn btn-primary mx-auto" (click)="backToMainFisma()"
+          [hidden]="!rissoTable">
+          Back to System POCs</button>
+
+      <div class="col my-auto text-right" [hidden]="rissoTable">
         *DOUBLE left click on table row for detail view. Links in table are clickable.
-      </span>
+      </div>
     </div>
 
     <!-- Main FISMA POC Table -->
-    <div class="row justify-content-center">
-      <div [hidden]="rissoTable">
-        <table id="fismaPOCTable"></table>
-      </div>
-      <div [hidden]="!rissoTable">
-        <table id="rissoPOCTable"></table>
-      </div>
+    <div [hidden]="rissoTable">
+      <table id="fismaPOCTable"></table>
+    </div>
+    <div [hidden]="!rissoTable">
+      <table id="rissoPOCTable"></table>
     </div>
 
   </div>

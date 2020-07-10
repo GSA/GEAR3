@@ -26,10 +26,10 @@
     </a>
   </div>
 
-  <div class="card-body card-text">
-    <div class="row">
+  <div class="row card-body card-text justify-content-center">
+    <div class="row w-100">
       <!-- Retired Systems Button -->
-      <div class="offset-md-5">
+      <div class="col text-right">
         <span class="my-auto mr-3">Filters:</span>
         <button role="button" name="fismaRetiredBttn" class="btn btn-primary" (click)="showRetired()"
           [hidden]="retiredTable">
@@ -39,15 +39,13 @@
           [hidden]="!retiredTable">
           Back to Active FISMA Systems</button>
       </div>
-
-      <span class="my-auto ml-auto">
+      
+      <div class="col my-auto text-right">
         *DOUBLE left click on table row for detail view. Links in table are clickable.
-      </span>
+      </div>
     </div>
 
     <!-- Main FISMA POC Table -->
-    <div class="row justify-content-center">
-      <table id="fismaTable"></table>
-    </div>
+    <table id="fismaTable"></table>
   </div>
 </div>
