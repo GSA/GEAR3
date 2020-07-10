@@ -4,6 +4,9 @@ import { Subscription } from 'rxjs/internal/Subscription';
 
 import { Globals } from '../../common/globals';
 
+// Declare jQuery symbol
+declare var $: any;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -45,6 +48,7 @@ export class SharedService {
     if (localStorage.getItem('jwt') !== null) {  // If successful set of JWT
     setTimeout(() => {
         this.globals.jwtToken = localStorage.getItem('jwt');
+        $('#loggedIn').toast('show');
       }, 1000);  // Wait for 1 sec to propogate after logging in
     }
   }

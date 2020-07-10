@@ -19,10 +19,18 @@ export class SidenavComponent implements OnInit {
     }
 
     $(document).ready( function () {
+      // Logged in collapse notification
+      $('#loggedIn').on('show.bs.toast', function () {
+        $('#loggedInCollapse').collapse('show')
+      });
+      $('#loggedIn').on('hide.bs.toast', function () {
+        $('#loggedInCollapse').collapse('hide')
+      });
+
+      // Logged out collapse notification
       $('#loggedOut').on('show.bs.toast', function () {
         $('#loggedOutCollapse').collapse('show')
       });
-
       $('#loggedOut').on('hide.bs.toast', function () {
         $('#loggedOutCollapse').collapse('hide')
       });

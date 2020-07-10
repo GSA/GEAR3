@@ -190,12 +190,22 @@
       <div class="container-fluid my-3">
         <div class="col-md-12">
 
+          <!-- Logged In Notification -->
+          <div id="loggedIn" class="container toast hide rounded-lg w-25" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">
+            <div id="loggedInCollapse" class="collapse">
+              <div class="toast-header">
+                <i class="fa fa-sign-in-alt mr-2"></i>
+                <strong class="mr-auto text-success">You have successfully logged into GEAR Manager!</strong>
+              </div>
+            </div>
+          </div>
+
           <!-- Logged Out Notification -->
           <div id="loggedOut" class="container toast hide rounded-lg w-25" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">
             <div id="loggedOutCollapse" class="collapse">
               <div class="toast-header">
                 <i class="fas fa-sign-out-alt mr-2"></i>
-                <strong class="mr-auto text-warning">You have been logged out of GEAR Manager</strong>
+                <strong class="mr-auto text-warning">You have been logged out of GEAR Manager!</strong>
               </div>
             </div>
           </div>
