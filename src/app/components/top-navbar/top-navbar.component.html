@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand navbar-dark bg-primary shadow-lg p-1">
 
   <!-- Side Navbar Toggle -->
-  <button (click)="toggleSidebar()" class="navbar-toggler mr-2" id="sidebarToggle">
+  <button (click)="sharedService.toggleClick()" class="navbar-toggler mr-2" id="sidebarToggle">
     <span class="navbar-toggler-icon"></span>
   </button>
 
@@ -9,7 +9,7 @@
     <i class="fas fa-cogs fa-lg"></i>
     GSA EA Analytics & Reporting (GEAR)
     <span style="color: red"> - DEVELOPMENT ENVIRONMENT</span>
-    <span *ngIf="checkAuth()" style="color: red"> **GEAR Manager Mode**</span>
+    <span *ngIf="sharedService.loggedIn" style="color: red"> **GEAR Manager Mode**</span>
   </a>
 
   <!-- Global Search -->

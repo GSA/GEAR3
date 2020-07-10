@@ -11,7 +11,7 @@ declare var $: any;
 })
 export class SidenavComponent implements OnInit {
 
-  constructor(private sharedService: SharedService) { }
+  constructor(public sharedService: SharedService) { }
 
   ngOnInit(): void {
     if (this.sharedService.toggleSub == undefined) {
@@ -75,10 +75,6 @@ export class SidenavComponent implements OnInit {
 
   _onBackdropClicked(): void {
     console.info('Backdrop clicked');
-  }
-
-  checkAuth () {
-    return this.sharedService.loggedIn;
   }
 
   logoutManager () {

@@ -117,7 +117,7 @@
       
       <div class="modal-footer">
         <div>Last Updated: {{ investment.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}</div>
-        <button  type="button" [hidden]="!checkAuth()" class="btn btn-info text-white" (click)="investEdit()">Edit This Item</button>
+        <button  type="button" [hidden]="!sharedService.loggedIn" class="btn btn-info text-white" (click)="investEdit()">Edit This Item</button>
       </div>
     </div>
   </div>

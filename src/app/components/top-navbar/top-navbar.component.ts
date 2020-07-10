@@ -17,13 +17,9 @@ export class TopNavbarComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private sharedService: SharedService) { }
+    public sharedService: SharedService) { }
 
   ngOnInit(): void {
-  }
-
-  toggleSidebar() {
-    this.sharedService.toggleClick();
   }
 
   globalSearch(event) {
@@ -38,10 +34,6 @@ export class TopNavbarComponent implements OnInit {
 
       this.router.navigate([`/search`]);
     }
-  }
-
-  checkAuth () {
-    return this.sharedService.loggedIn;
   }
 
 }

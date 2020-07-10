@@ -18,7 +18,7 @@ export class InvestmentsModalComponent implements OnInit {
 
   constructor(
     private modalService: ModalsService,
-    private sharedService: SharedService,
+    public sharedService: SharedService,
     private tableService: TableService) { }
 
   ngOnInit(): void {
@@ -38,10 +38,6 @@ export class InvestmentsModalComponent implements OnInit {
         this.tableService.appsTableClick(row);
       }.bind(this)
       ));
-  }
-
-  checkAuth () {
-    return this.sharedService.loggedIn;
   }
 
   investEdit () {
