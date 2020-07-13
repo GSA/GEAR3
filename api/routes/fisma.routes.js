@@ -6,14 +6,16 @@ const router = express.Router();
 router.route('/')
     .get(fismaCtrl.findAll);
 
-router.route('/:id')
+router.route('/get/:id')
     .get(fismaCtrl.findOne);
 
-// Children
-router.route('/:id/applications')
+router.route('/get/:id/applications')
     .get(fismaCtrl.findApplications);
 
 router.route('/retired')
     .get(fismaCtrl.findRetired);
+
+router.route('/update')
+    .put(fismaCtrl.updateAll);
 
 module.exports = router;

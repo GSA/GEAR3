@@ -148,7 +148,7 @@ export class FismaPocsComponent implements OnInit {
           exportOptions: {
             fileName: this.sharedService.fileNameFmt(row.Name + '-Certified_Apps')
           },
-          url: this.sharedService.internalURLFmt('/api/fisma/'
+          url: this.sharedService.internalURLFmt('/api/fisma/get/'
             + String(row.ID) + '/applications')
         })
 

@@ -281,7 +281,7 @@ export class TableService {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(data.Name + '-Certified_Apps')
       },
-      url: this.sharedService.internalURLFmt('/api/fisma/'
+      url: this.sharedService.internalURLFmt('/api/fisma/get/'
         + String(data.ID) + '/applications')
     })
   }
