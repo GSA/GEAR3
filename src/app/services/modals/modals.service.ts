@@ -34,6 +34,10 @@ export class ModalsService {
   private itStandSource = new Subject();
   currentITStand = this.itStandSource.asObservable();
 
+  // New Record Creation
+  private createRecordSource = new Subject();
+  currentCreate = this.createRecordSource.asObservable();
+
   constructor() { }
 
   updateDetails(row: {}, component: string) {
@@ -54,5 +58,9 @@ export class ModalsService {
     } else {
       console.log("Error: Not a valid component to update details");
     }
+  }
+
+  updateRecordCreation(bool: boolean) {
+    this.createRecordSource.next(bool);
   }
 }

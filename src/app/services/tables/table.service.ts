@@ -298,7 +298,7 @@ export class TableService {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(data.Name + '-Related_Apps')
       },
-      url: this.sharedService.internalURLFmt('/api/investments/'
+      url: this.sharedService.internalURLFmt('/api/investments/get/'
         + String(data.ID) + '/applications')
     })
   }

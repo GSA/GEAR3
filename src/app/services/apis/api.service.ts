@@ -106,8 +106,13 @@ export class ApiService {
     );
   };
   public getOneInvest(id: number): Observable<Investment[]> {
-    return this.http.get<Investment[]>(this.investUrl + '/' + String(id)).pipe(
+    return this.http.get<Investment[]>(this.investUrl + '/get/' + String(id)).pipe(
       catchError(this.handleError<Investment[]>('GET Investment', []))
+    );
+  };
+  public getLatestInvest(): Observable<Investment[]> {
+    return this.http.get<Investment[]>(this.investUrl + '/latest').pipe(
+      catchError(this.handleError<Investment[]>('GET Latest Investment', []))
     );
   };
   public updateInvestment(id: number, data: {}): Observable<Investment[]> {
@@ -119,6 +124,17 @@ export class ApiService {
 
     return this.http.put<Investment[]>(this.investUrl + '/update/' + String(id), data, httpOptions).pipe(
       catchError(this.handleError<Investment[]>('UPDATE Investment', []))
+    );
+  }
+  public createInvestment(data: {}): Observable<Investment[]> {
+    if (this.globals.jwtToken) {
+      var httpOptions = this.setHeaderOpts();
+    } else {
+      catchError(this.handleError<Investment[]>('CREATE Investment - No Authentication Token', []))
+    }
+
+    return this.http.post<Investment[]>(this.investUrl + '/create', data, httpOptions).pipe(
+      catchError(this.handleError<Investment[]>('CREATE Investment', []))
     );
   }
 

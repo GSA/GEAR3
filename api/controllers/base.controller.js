@@ -3,7 +3,7 @@ const sql = require("../db.js");
 function sendQuery(query, msg, response) {
   sql.query(query, (error, data) => {
     if (error) {
-      console.log("Error: ", error);
+      console.log(`DB Query Error while retrieving ${msg}: `, error);
       response.status(501).json({
         message:
           error.message || `DB Query Error while retrieving ${msg}`

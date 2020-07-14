@@ -4,6 +4,8 @@ import { ModalsService } from '../../services/modals/modals.service';
 import { SharedService } from '../../services/shared/shared.service';
 import { TableService } from '../../services/tables/table.service';
 
+import { Investment } from 'api/models/investments.model';
+
 // Declare jQuery symbol
 declare var $: any;
 
@@ -19,7 +21,7 @@ export class InvestmentsComponent implements OnInit {
 
   constructor(
     private modalService: ModalsService,
-    private sharedService: SharedService,
+    public sharedService: SharedService,
     private tableService: TableService) {
     this.modalService.currentInvest.subscribe(row => this.row = row);
   }
@@ -113,6 +115,18 @@ export class InvestmentsComponent implements OnInit {
 
   }
 
+
+  // Create new investment when in GEAR Manager mode
+  createInvestment() {
+    var emptyInvestment = new Investment;
+
+    // By default, set new record to active
+    emptyInvestment.Active = 1;
+    this.modalService.updateRecordCreation(true);
+    this.sharedService.setInvestForm();
+    this.modalService.updateDetails(emptyInvestment, 'investment');
+    $('#investManager').modal('show');
+  }
 
   // Update table from filter buttons
   inactiveFilter() {

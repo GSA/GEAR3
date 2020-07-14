@@ -3,7 +3,7 @@ export class Investment {
   public Name: string;
   public Description: string;
   public Comments: string;
-  public Active: string;
+  public Active: number;
   public Budget_Year: string;
   public UII: string;
   public CreateDTG: string;

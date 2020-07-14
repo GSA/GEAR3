@@ -175,6 +175,7 @@ app.post(samlConfig.path,
       const path = localStorage.redirectPath || '';
       delete localStorage.redirectPath;
       localStorage.jwt = '${token}';
+      localStorage.user = '${results[0][0].AuditID}';
       localStorage.samlEntryPoint = '${process.env.SAML_ENTRY_POINT}';
       window.location.replace('${adminRoute}' + path);
     </script>

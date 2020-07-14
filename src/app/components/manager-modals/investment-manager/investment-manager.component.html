@@ -6,7 +6,9 @@
       <div class="modal-header bg-success">
         <h5 class="modal-title text-white" id="investMngrTitle">
           <i class="fas fa-money-bill-wave"></i>
-          {{ investment.Name }} - <span class="text-primary">**EDITING**</span></h5>
+          <span *ngIf="investment.Name; else elseInvestName"> {{ investment.Name }} - <span class="text-primary">**EDITING**</span></span>
+          <ng-template #elseInvestName> Create New Investment</ng-template>
+        </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -39,10 +41,10 @@
                 </div>
 
                 <div class="form-group col mb-0">
-                  <label for="investName">Investment Name</label>
+                  <label for="investName">Investment Name<span class="text-danger">*</span></label>
                   <input type="text" class="form-control" id="investName" formControlName="investName"
-                    placeholder="Enter a Name" [value]="investment.Name">
-                  <!-- <div class="invalid-feedback" *ngIf="!investForm.get('investName').valid">
+                    placeholder="Enter a Name" [value]="investment.Name" required>
+                  <!-- <div class="invalid-feedback" *ngIf="investForm.get('investName').errors.required">
                     Need an Investment Name
                   </div> -->
                 </div>
@@ -55,8 +57,8 @@
               </div>
 
               <div class="form-group">
-                <label for="invManager">Investment Manager</label>
-                <select class="form-control" id="invManager" formControlName="invManager">
+                <label for="invManager">Investment Manager<span class="text-danger">*</span></label>
+                <select class="form-control" id="invManager" formControlName="invManager" required>
                   <option *ngFor="let manager of managers" [value]="manager.ID"
                     [selected]="manager.Name === investment.InvManager">{{ manager.Name }}</option>
                 </select>
@@ -64,7 +66,7 @@
 
               <div class="row align-items-center justify-content-center">
                 <div class="form-group col-8 text-center mb-0">
-                  <label for="investType">Type</label>
+                  <label for="investType">Type<span class="text-danger">*</span></label>
                   <div id="investType">
                     <div class="custom-control custom-control-inline custom-radio" *ngFor="let type of types">
                       <input class="custom-control-input" type="radio" id="investType{{ type.ID }}" [value]="type.ID"
@@ -75,8 +77,8 @@
                 </div>
 
                 <div class="form-group col-2 mb-0">
-                  <label for="investBY">Budget Year</label>
-                  <select class="form-control" id="investBY" formControlName="investBY">
+                  <label for="investBY">Budget Year<span class="text-danger">*</span></label>
+                  <select class="form-control" id="investBY" formControlName="investBY" required>
                     <option *ngFor="let year of budgetYears" [value]="year" [selected]="year === investment.Budget_Year">
                       {{ year }}</option>
                   </select>
@@ -84,14 +86,14 @@
               </div>
 
               <div class="form-group">
-                <label for="investUII">UII</label>
+                <label for="investUII">UII<span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="investUII" formControlName="investUII"
-                  placeholder="Enter the Investment's UII" [value]="investment.UII">
+                  placeholder="Enter the Investment's UII" [value]="investment.UII" required>
               </div>
 
               <div class="form-group">
-                <label for="investSSO">Owning SSO</label>
-                <select class="form-control" id="investSSO" formControlName="investSSO">
+                <label for="investSSO">Owning SSO<span class="text-danger">*</span></label>
+                <select class="form-control" id="investSSO" formControlName="investSSO" required>
                   <option *ngFor="let sso of SSOs" [value]="sso.ID" [selected]="sso.Name === investment.SSO">
                     {{ sso.Name }}</option>
                 </select>
@@ -155,9 +157,10 @@
       </div>
 
       <div class="modal-footer">
-        <div>Last Updated: {{ investment.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}</div>
-        <button type="submit" form="investForm" class="btn btn-info text-white" (click)="submitForm()">Save</button>
-        <!--  [disabled]="investForm.invalid" -->
+        <div class="text-danger mr-auto">* Required</div>
+        <div [hidden]="!investment.ChangeDTG">Last Updated: {{ investment.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}</div>
+        <button type="submit" form="investForm" class="btn btn-info text-white" (click)="submitForm()"
+          [disabled]="investForm.invalid">Save</button>
       </div>
     </div>
   </div>

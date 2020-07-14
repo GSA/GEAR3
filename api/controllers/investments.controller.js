@@ -12,21 +12,24 @@ function findAll(req, res) {
   res = ctrl.sendQuery(query, 'investments', res);
 };
 
-function findOne(req, res, next) {
-  if (req.params.id === 'types') {
-    next()
-  } else {
-    var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_investments.sql')).toString() +
-      ` WHERE invest.Id = ${req.params.id};`;
+function findOne(req, res) {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_investments.sql')).toString() +
+    ` WHERE invest.Id = ${req.params.id};`;
 
-    res = ctrl.sendQuery(query, 'individual investment', res);
-  }
+  res = ctrl.sendQuery(query, 'individual investment', res);
+};
+
+function findLatest(req, res, next) {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_investments.sql')).toString() +
+  ` ORDER BY invest.CreateDTG DESC LIMIT 1;`;
+  
+  res = ctrl.sendQuery(query, 'latest individual investment', res);
 };
 
 function findTypes(req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_investment_types.sql')).toString();
 
-  res = ctrl.sendQuery(query, 'investment types', res)
+  res = ctrl.sendQuery(query, 'investment types', res);
 }
 
 function findApplications(req, res) {
@@ -57,11 +60,46 @@ function update(req, res) {
   }
 }
 
+function create(req, res) {
+  if (req.headers.authorization) {
+    var data = req.body;
+    var query = `INSERT INTO obj_investment(
+      Keyname,
+      Active,
+      Description,
+      obj_poc_Id,
+      obj_investment_type_Id,
+      Budget_Year,
+      UII,
+      obj_organization_Id,
+      primary_service_area,
+      sec_serv_area1,
+      Comments,
+      ChangeAudit) VALUES (
+        '${data.investName}',
+        ${data.investStatus},
+        '${data.investDesc}',
+        ${data.invManager},
+        ${data.investType},
+        '${data.investBY}',
+        '${data.investUII}',
+        ${data.investSSO},
+        ${data.investPSA},
+        ${data.investSSA},
+        '${data.investComments}',
+        '${data.auditUser}');`
+
+    res = ctrl.sendQuery(query, 'create investment', res);
+  }
+}
+
 module.exports = {
   findAll,
   findOne,
+  findLatest,
   findTypes,
   findApplications,
 
-  update
+  update,
+  create
 };

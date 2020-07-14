@@ -46,8 +46,9 @@ export class SharedService {
   //// Set JWT on log in to be tracked when checking for authentication
   public setJWTonLogIn(): void {
     if (localStorage.getItem('jwt') !== null) {  // If successful set of JWT
-    setTimeout(() => {
+      setTimeout(() => {
         this.globals.jwtToken = localStorage.getItem('jwt');
+        this.globals.authUser = localStorage.getItem('user');
         $('#loggedIn').toast('show');
       }, 1000);  // Wait for 1 sec to propogate after logging in
     }

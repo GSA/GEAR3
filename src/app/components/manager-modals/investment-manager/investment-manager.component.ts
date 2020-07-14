@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpHeaders } from '@angular/common/http';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+
+import { Globals } from '../../../common/globals';
 
 import { ApiService } from '../../../services/apis/api.service';
 import { ModalsService } from '../../../services/modals/modals.service';
@@ -35,6 +36,7 @@ export class InvestmentManagerComponent implements OnInit {
   });
 
   budgetYears: string[] = ['BY18', 'BY19', 'BY20', 'BY21', 'BY22']
+  createBool: any;
   investment = <any>{};
   managers: any[] = [];
   serviceAreas: any[] = [{ Name: 'None', ID: null }];
@@ -43,6 +45,7 @@ export class InvestmentManagerComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
+    private globals: Globals,
     private modalService: ModalsService,
     private sharedService: SharedService,
     private tableService: TableService) { }
@@ -54,6 +57,7 @@ export class InvestmentManagerComponent implements OnInit {
     }
 
     this.modalService.currentInvest.subscribe(investment => this.investment = investment);
+    this.modalService.currentCreate.subscribe(createBool => this.createBool = createBool);
 
     // Populate Managers Options
     this.apiService.getPOCs().subscribe((data: any[]) => {
@@ -79,27 +83,34 @@ export class InvestmentManagerComponent implements OnInit {
   }
 
   setFormDefaults(): void {
-    // Adjust Status for rendering
-    if (this.investment.Active === 1) var status = true;
-    else var status = false;
+    // Only set status default for creating new record
+    if (this.createBool) {
+      this.investForm.patchValue({
+        investStatus: true
+      });
+    } else {
+      // Adjust Status for rendering
+      if (this.investment.Active === 1) var status = true;
+      else var status = false;
 
-    // Set default values for form with current values
-    this.investForm.patchValue({
-      investStatus: status,
-      investName: this.investment.Name,
-      investDesc: this.investment.Description,
-      invManager: this.findInArrayID(this.managers, 'Name', this.investment.InvManager),
-      investType: this.findInArrayID(this.types, 'Name', this.investment.Type),
-      investBY: this.investment.Budget_Year,
-      investUII: this.investment.UII,
-      investSSO: this.findInArrayID(this.SSOs, 'Name', this.investment.SSO),
-      investPSA: this.findInArrayID(this.serviceAreas, 'Name', this.investment.PSA),
-      investSSA: this.findInArrayID(this.serviceAreas, 'Name', this.investment.SSA),
-      // investSSA2: this.findInArrayID(this.serviceAreas, 'Name', this.investment.sec_service_area2),
-      // investSSA3: this.findInArrayID(this.serviceAreas, 'Name', this.investment.sec_service_area3),
-      // investSSA4: this.findInArrayID(this.serviceAreas, 'Name', this.investment.sec_service_area4),
-      investComments: this.investment.Comments,
-    });
+      // Set default values for form with current values
+      this.investForm.patchValue({
+        investStatus: status,
+        investName: this.investment.Name,
+        investDesc: this.investment.Description,
+        invManager: this.findInArrayID(this.managers, 'Name', this.investment.InvManager),
+        investType: this.findInArrayID(this.types, 'Name', this.investment.Type),
+        investBY: this.investment.Budget_Year,
+        investUII: this.investment.UII,
+        investSSO: this.findInArrayID(this.SSOs, 'Name', this.investment.SSO),
+        investPSA: this.findInArrayID(this.serviceAreas, 'Name', this.investment.PSA),
+        investSSA: this.findInArrayID(this.serviceAreas, 'Name', this.investment.SSA),
+        // investSSA2: this.findInArrayID(this.serviceAreas, 'Name', this.investment.sec_service_area2),
+        // investSSA3: this.findInArrayID(this.serviceAreas, 'Name', this.investment.sec_service_area3),
+        // investSSA4: this.findInArrayID(this.serviceAreas, 'Name', this.investment.sec_service_area4),
+        investComments: this.investment.Comments,
+      });
+    }
   }
 
   findInArrayID(array: any[], arrayKey: string, searchItem: any) {
@@ -110,29 +121,57 @@ export class InvestmentManagerComponent implements OnInit {
   }
 
   submitForm() {
-    // Adjust Status for saving
-    if (this.investForm.value.investStatus) this.investForm.value.investStatus = 1;
-    else this.investForm.value.investStatus = 2;
-
     // console.log("Form values: ", this.investForm.value);  // Debug
 
-    // Send new data to database
-    this.apiService.updateInvestment(this.investment.ID, this.investForm.value).toPromise()
-      .then(res => {
-        // Grab new data from database
-        this.apiService.getOneInvest(this.investment.ID).toPromise()
-          .then(data => {
-            // Refresh Table
-            $('#investTable').bootstrapTable('refresh');
+    if (this.investForm.valid) {
+      // Adjust Status for saving
+      if (this.investForm.value.investStatus) this.investForm.value.investStatus = 1;
+      else this.investForm.value.investStatus = 2;
 
-            // Close Manager Modal and go back to showing Detail Modal
-            $('#investManager').modal('hide');
-            this.tableService.investTableClick(data[0]);
-            $('#investDetail').modal('show');
-          }), (error) => {
-            console.log("Promise rejected with " + JSON.stringify(error));
-          };
-      });
+      // Adjust Comments
+      if (!this.investForm.value.investComments) this.investForm.value.investComments = 'N/A';
+
+      // Add username to payload
+      this.investForm.value.auditUser = this.globals.authUser;
+
+      // console.log("Form values before committing to database: ", this.investForm.value); // Debug
+
+      // Send data to database
+      if (this.createBool) {
+        // console.log("Creating new record");
+        this.apiService.createInvestment(this.investForm.value).toPromise()
+          .then(res => {
+            // Grab new data from database
+            this.apiService.getLatestInvest().toPromise()
+              .then(data => { this.investDetailRefresh(data) }),
+              (error) => {
+                console.log("Promise rejected with " + JSON.stringify(error));
+              };
+          });
+      } else {
+        this.apiService.updateInvestment(this.investment.ID, this.investForm.value).toPromise()
+          .then(res => {
+            // Grab new data from database
+            this.apiService.getOneInvest(this.investment.ID).toPromise()
+              .then(data => { this.investDetailRefresh(data) }),
+              (error) => {
+                console.log("Promise rejected with " + JSON.stringify(error));
+              };
+          });
+      }
+
+      this.modalService.updateRecordCreation(false);  // Reset Creation flag
+    }
+  }
+
+  investDetailRefresh(data: any) {
+    // Refresh Table
+    $('#investTable').bootstrapTable('refresh');
+
+    // Close Manager Modal and go back to showing Detail Modal
+    $('#investManager').modal('hide');
+    this.tableService.investTableClick(data[0]);
+    $('#investDetail').modal('show');
   }
 
 }
