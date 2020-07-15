@@ -32,13 +32,20 @@ export class InvestmentManagerComponent implements OnInit {
     // investSSA2: new FormControl(),
     // investSSA3: new FormControl(),
     // investSSA4: new FormControl(),
-    investComments: new FormControl()
+    investComments: new FormControl(),
+    investRelatedApps: new FormControl(),
+    deselectedApps: new FormControl()
   });
 
   budgetYears: string[] = ['BY18', 'BY19', 'BY20', 'BY21', 'BY22']
   createBool: any;
   investment = <any>{};
   managers: any[] = [];
+  appPool: any[] = [];
+  relatedApps: any[] = [];
+  notSelected: any[] = [];
+  selectedIDs: Set<any>;
+  deSelectedIDs: Set<any> = new Set();
   serviceAreas: any[] = [{ Name: 'None', ID: null }];
   SSOs: any[] = [];
   types: any[] = [];
@@ -93,23 +100,59 @@ export class InvestmentManagerComponent implements OnInit {
       if (this.investment.Active === 1) var status = true;
       else var status = false;
 
-      // Set default values for form with current values
-      this.investForm.patchValue({
-        investStatus: status,
-        investName: this.investment.Name,
-        investDesc: this.investment.Description,
-        invManager: this.findInArrayID(this.managers, 'Name', this.investment.InvManager),
-        investType: this.findInArrayID(this.types, 'Name', this.investment.Type),
-        investBY: this.investment.Budget_Year,
-        investUII: this.investment.UII,
-        investSSO: this.findInArrayID(this.SSOs, 'Name', this.investment.SSO),
-        investPSA: this.findInArrayID(this.serviceAreas, 'Name', this.investment.PSA),
-        investSSA: this.findInArrayID(this.serviceAreas, 'Name', this.investment.SSA),
-        // investSSA2: this.findInArrayID(this.serviceAreas, 'Name', this.investment.sec_service_area2),
-        // investSSA3: this.findInArrayID(this.serviceAreas, 'Name', this.investment.sec_service_area3),
-        // investSSA4: this.findInArrayID(this.serviceAreas, 'Name', this.investment.sec_service_area4),
-        investComments: this.investment.Comments,
+      // Populate Related Apps
+      this.apiService.getInvestApps(this.investment.ID).subscribe((data: any[]) => {
+        this.relatedApps = [];
+        // Only take ID and name
+        data.forEach(element => {
+          this.relatedApps.push({
+            ID: element.ID,
+            Name: element.Name
+          })
+        });
       });
+
+      // Populate All Apps Pool minus related apps
+      this.apiService.getApplications().toPromise()
+        .then((data: any[]) => {
+          this.appPool = [];
+          // Only take ID and name
+          data.forEach(element => {
+            // Include only apps that don't have investments yet
+            this.appPool.push({
+              ID: element.ID,
+              Name: element.Name,
+              InvestmentID: element.InvestmentID
+            })
+          });
+
+          // Take related apps IDs and remove them from the appPool list
+          this.selectedIDs = new Set(this.relatedApps.map(({ ID }) => ID));
+          this.notSelected = this.appPool.filter(({ ID }) => !this.selectedIDs.has(ID))
+                                         .filter(({ InvestmentID }) => !InvestmentID);
+
+          // Set default values for form with current values after resolving related apps
+          this.investForm.patchValue({
+            investStatus: status,
+            investName: this.investment.Name,
+            investDesc: this.investment.Description,
+            invManager: this.findInArrayID(this.managers, 'Name', this.investment.InvManager),
+            investType: this.findInArrayID(this.types, 'Name', this.investment.Type),
+            investBY: this.investment.Budget_Year,
+            investUII: this.investment.UII,
+            investSSO: this.findInArrayID(this.SSOs, 'Name', this.investment.SSO),
+            investPSA: this.findInArrayID(this.serviceAreas, 'Name', this.investment.PSA),
+            investSSA: this.findInArrayID(this.serviceAreas, 'Name', this.investment.SSA),
+            // investSSA2: this.findInArrayID(this.serviceAreas, 'Name', this.investment.sec_service_area2),
+            // investSSA3: this.findInArrayID(this.serviceAreas, 'Name', this.investment.sec_service_area3),
+            // investSSA4: this.findInArrayID(this.serviceAreas, 'Name', this.investment.sec_service_area4),
+            investComments: this.investment.Comments,
+            investRelatedApps: this.selectedIDs
+          });
+        }),
+        (error) => {
+          console.log("Getting applications rejected with " + JSON.stringify(error));
+        };
     }
   }
 
@@ -120,8 +163,40 @@ export class InvestmentManagerComponent implements OnInit {
     else return null
   }
 
+  poolToSelected () {
+    // Add to selected list
+    let poolVals = $('#investRelAppsPool').val().map(x => +x)
+    poolVals.forEach(val => {
+      this.deSelectedIDs.delete(val);
+      this.selectedIDs.add(val);
+    });
+    this.updateSelectLists();
+  }
+
+  selectedToPool () {
+    // Delete from selected list
+    let selectedVals = $('#investRelAppsSelect').val().map(x => +x)
+    selectedVals.forEach(val => {
+      this.deSelectedIDs.add(val);
+      this.selectedIDs.delete(val);
+    });
+    this.updateSelectLists();
+  }
+
+  updateSelectLists () {
+    // Update app pool and related apps lists of options
+    this.notSelected = this.appPool.filter(({ ID }) => !this.selectedIDs.has(ID));
+    this.relatedApps = this.appPool.filter(({ ID }) => this.selectedIDs.has(ID));
+
+    // Update form value with selected IDs
+    this.investForm.patchValue({
+      investRelatedApps: this.selectedIDs,
+      deselectedApps: this.deSelectedIDs
+    });
+  }
+
   submitForm() {
-    // console.log("Form values: ", this.investForm.value);  // Debug
+    // console.log("Form: ", this.investForm);  // Debug
 
     if (this.investForm.valid) {
       // Adjust Status for saving
@@ -134,11 +209,14 @@ export class InvestmentManagerComponent implements OnInit {
       // Add username to payload
       this.investForm.value.auditUser = this.globals.authUser;
 
+      // Change de/selected IDs to array from set
+      this.investForm.value.investRelatedApps = Array.from(this.investForm.value.investRelatedApps);
+      this.investForm.value.deselectedApps = Array.from(this.investForm.value.deselectedApps);
+
       // console.log("Form values before committing to database: ", this.investForm.value); // Debug
 
       // Send data to database
       if (this.createBool) {
-        // console.log("Creating new record");
         this.apiService.createInvestment(this.investForm.value).toPromise()
           .then(res => {
             // Grab new data from database

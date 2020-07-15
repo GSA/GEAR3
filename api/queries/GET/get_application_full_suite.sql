@@ -41,7 +41,7 @@ SELECT DISTINCT
   GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', apprat.fy, apprat.TIME_Val) SEPARATOR '; ') AS AppTime,
 
   obj_parent_system.Keyname           AS ParentSystem,
-  -- obj_investment.Keyname             AS Investment,
+  obj_investment.Id                   AS InvestmentID,
   obj_portfolio.Keyname               AS Portfolio,
   obj_fisma_archer.`ex:System_Name`   AS FISMASystem,
   app.CreateDTG,
@@ -55,7 +55,7 @@ FROM obj_application AS app
   
 LEFT JOIN obj_organization  AS org    ON app.obj_org_SSO_Id = org.Id
 LEFT JOIN obj_parent_system           ON app.obj_parent_system_Id = obj_parent_system.Id
--- LEFT JOIN obj_investment             ON app.obj_investment_Id = obj_investment.Id
+LEFT JOIN obj_investment              ON app.obj_investment_Id = obj_investment.Id
 LEFT JOIN obj_portfolio               ON app.obj_portfolio_Id = obj_portfolio.Id
 LEFT JOIN obj_fisma_archer            ON app.obj_fisma_Id = obj_fisma_archer.`ex:GEAR_ID`
 -- LEFT JOIN obj_app_platform           ON app.obj_app_platform_Id = obj_app_platform.Id

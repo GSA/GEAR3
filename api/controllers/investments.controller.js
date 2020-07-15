@@ -42,7 +42,23 @@ function findApplications(req, res) {
 function update(req, res) {
   if (req.headers.authorization) {
     var data = req.body;
-    var query = `UPDATE obj_investment
+
+    // Create string to update apps with investment or null when deselected
+    var appString = '';
+    if (data.investRelatedApps) {
+      data.investRelatedApps.forEach(appID => {
+        appString += `UPDATE obj_application SET obj_investment_Id=${req.params.id} WHERE Id=${appID}; `
+      });
+    }
+
+    if (data.deselectedApps) {
+      data.deselectedApps.forEach(appID => {
+        appString += `UPDATE obj_application SET obj_investment_Id=NULL WHERE Id=${appID}; `
+      });
+    }
+
+    var query = `SET FOREIGN_KEY_CHECKS=0;
+      UPDATE obj_investment
       SET Keyname               = '${data.investName}',
         Active                  = ${data.investStatus},
         Description             = '${data.investDesc}',
@@ -54,9 +70,15 @@ function update(req, res) {
         primary_service_area    = '${data.investPSA}',
         sec_serv_area1          = '${data.investSSA}',
         Comments                = '${data.investComments}'
-      WHERE Id = ${req.params.id}`
+      WHERE Id = ${req.params.id};
+      SET FOREIGN_KEY_CHECKS=1;
+      ${appString}`
 
     res = ctrl.sendQuery(query, 'update investment', res);
+  } else {
+    response.status(502).json({
+      message: "No authorization token present. Not allowed to update investments"
+    });
   }
 }
 
@@ -90,6 +112,10 @@ function create(req, res) {
         '${data.auditUser}');`
 
     res = ctrl.sendQuery(query, 'create investment', res);
+  } else {
+    response.status(502).json({
+      message: "No authorization token present. Not allowed to create investment"
+    });
   }
 }
 

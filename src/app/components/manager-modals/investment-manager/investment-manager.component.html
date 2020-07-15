@@ -26,9 +26,9 @@
         </ul>
 
         <!-- Tab Panes -->
-        <div class="tab-content mt-3">
-          <div class="tab-pane fade show active" id="investMngrOverview">
-            <form [formGroup]="investForm" class="container">
+        <form [formGroup]="investForm" class="container">
+          <div class="tab-content mt-3">
+            <div class="tab-pane fade show active" id="investMngrOverview">
 
               <div class="row align-items-center justify-content-center">
                 <div class="form-group col-2 text-center mb-0">
@@ -144,23 +144,42 @@
                 <textarea type="text" class="form-control" id="investComments" formControlName="investComments"
                   placeholder="Enter Any Additional Comments" rows="2" [value]="investment.Comments"></textarea>
               </div>
-            </form>
+              
+            </div>
+            <!-- End of Overview Pane -->
+            
+            <div class="tab-pane fade show" id="investMngrRelatedApps">
+              <h4>Related Business Applications</h4>
+              <div class="row">
+                <div class="form-group col-5">
+                  <label for="investRelAppsPool">Business Applications Pool</label>
+                  <select class="form-control" id="investRelAppsPool" size="27" multiple>
+                    <option *ngFor="let app of notSelected" [value]="app.ID">{{ app.Name }}</option>
+                  </select>
+                </div>
 
+                <div class="col-2 my-auto">
+                  <button class="btn btn-success w-100 mb-5" (click)="poolToSelected()">Move to<br>Selected <i class="fas fa-arrow-right  fa-lg"></i></button>
+                  <button class="btn btn-warning w-100" (click)="selectedToPool()"><i class="fas fa-arrow-left fa-lg"></i> Move to<br>Un-Selected</button>
+                </div>
+
+                <div class="form-group col-5">
+                  <label for="investRelAppsSelect">Selected</label>
+                  <select class="form-control" id="investRelAppsSelect" size="27" multiple>
+                    <option *ngFor="let app of relatedApps" [value]="app.ID">{{ app.Name }}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
           </div>
-          <!-- End of Overview Pane -->
-
-          <div class="tab-pane fade show" id="investMngrRelatedApps">
-            <!-- <table id="investRelAppsTable"></table> -->
-          </div>
-
-        </div>
+        </form>
       </div>
 
       <div class="modal-footer">
         <div class="text-danger mr-auto">* Required</div>
         <div [hidden]="!investment.ChangeDTG">Last Updated: {{ investment.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}</div>
-        <button type="submit" form="investForm" class="btn btn-info text-white" (click)="submitForm()"
-          [disabled]="investForm.invalid">Save</button>
+        <button type="submit" form="investForm" class="btn btn-info text-white" (click)="submitForm()">Save</button>
       </div>
     </div>
   </div>

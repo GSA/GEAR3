@@ -115,6 +115,16 @@ export class ApiService {
       catchError(this.handleError<Investment[]>('GET Latest Investment', []))
     );
   };
+  public getInvestTypes(): Observable<InvestmentType[]> {
+    return this.http.get<InvestmentType[]>(this.investTypeUrl).pipe(
+      catchError(this.handleError<InvestmentType[]>('GET Investment Types', []))
+    );
+  };
+  public getInvestApps(id: number): Observable<Application[]> {
+    return this.http.get<Application[]>(this.investUrl + '/get/' + String(id) + '/applications').pipe(
+      catchError(this.handleError<Application[]>('GET Investment Related Applications', []))
+    );
+  };
   public updateInvestment(id: number, data: {}): Observable<Investment[]> {
     if (this.globals.jwtToken) {
       var httpOptions = this.setHeaderOpts();
@@ -137,13 +147,6 @@ export class ApiService {
       catchError(this.handleError<Investment[]>('CREATE Investment', []))
     );
   }
-
-  //// Investment Types
-  public getInvestTypes(): Observable<InvestmentType[]> {
-    return this.http.get<InvestmentType[]>(this.investTypeUrl).pipe(
-      catchError(this.handleError<InvestmentType[]>('GET Investment Types', []))
-    );
-  };
 
   //// Organizations
   public getOrganizations(): Observable<Organization[]> {
