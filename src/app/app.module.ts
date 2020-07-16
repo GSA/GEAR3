@@ -74,6 +74,7 @@ import { Globals } from './common/globals';
     FrameworkComponent,
     InvestmentsComponent,
     InvestmentsModalComponent,
+    InvestmentManagerComponent,
 
     CapabilitiesModelComponent,
     CapabilitiesComponent,
@@ -94,8 +95,6 @@ import { Globals } from './common/globals';
 
     ItStandardsComponent,
     StandardsModalComponent,
-
-    InvestmentManagerComponent
   ],
   imports: [
     AppRoutingModule,

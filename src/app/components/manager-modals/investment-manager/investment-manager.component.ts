@@ -44,7 +44,7 @@ export class InvestmentManagerComponent implements OnInit {
   appPool: any[] = [];
   relatedApps: any[] = [];
   notSelected: any[] = [];
-  selectedIDs: Set<any>;
+  selectedIDs: Set<any> = new Set();
   deSelectedIDs: Set<any> = new Set();
   serviceAreas: any[] = [{ Name: 'None', ID: null }];
   SSOs: any[] = [];
@@ -95,6 +95,24 @@ export class InvestmentManagerComponent implements OnInit {
       this.investForm.patchValue({
         investStatus: true
       });
+
+      // Populate All Apps Pool
+      this.relatedApps = [];
+      this.apiService.getApplications().toPromise()
+        .then((data: any[]) => {
+          this.appPool = [];
+          // Only take ID and name
+          data.forEach(element => {
+            // Include only apps that don't have investments yet
+            this.appPool.push({
+              ID: element.ID,
+              Name: element.Name,
+              InvestmentID: element.InvestmentID
+            })
+          });
+          this.selectedIDs = new Set();
+          this.notSelected = this.appPool;
+        });
     } else {
       // Adjust Status for rendering
       if (this.investment.Active === 1) var status = true;
@@ -221,9 +239,18 @@ export class InvestmentManagerComponent implements OnInit {
           .then(res => {
             // Grab new data from database
             this.apiService.getLatestInvest().toPromise()
-              .then(data => { this.investDetailRefresh(data) }),
+              .then((data: any) => {
+                // Update with related apps after getting new ID
+                this.apiService.updateInvestment(data[0].ID, this.investForm.value).toPromise()
+                  .then(res => {
+                    this.investDetailRefresh(data[0]);
+                  }),
+                  (error) => {
+                    console.log("Update after creating investment rejected with " + JSON.stringify(error));
+                  };
+              }),
               (error) => {
-                console.log("Promise rejected with " + JSON.stringify(error));
+                console.log("Getting latest investment rejected with " + JSON.stringify(error));
               };
           });
       } else {
@@ -231,9 +258,9 @@ export class InvestmentManagerComponent implements OnInit {
           .then(res => {
             // Grab new data from database
             this.apiService.getOneInvest(this.investment.ID).toPromise()
-              .then(data => { this.investDetailRefresh(data) }),
+              .then(data => { this.investDetailRefresh(data[0]) }),
               (error) => {
-                console.log("Promise rejected with " + JSON.stringify(error));
+                console.log("GET Updated investment rejected with " + JSON.stringify(error));
               };
           });
       }
@@ -248,7 +275,7 @@ export class InvestmentManagerComponent implements OnInit {
 
     // Close Manager Modal and go back to showing Detail Modal
     $('#investManager').modal('hide');
-    this.tableService.investTableClick(data[0]);
+    this.tableService.investTableClick(data);
     $('#investDetail').modal('show');
   }
 

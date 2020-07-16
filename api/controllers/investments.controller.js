@@ -26,12 +26,6 @@ function findLatest(req, res, next) {
   res = ctrl.sendQuery(query, 'latest individual investment', res);
 };
 
-function findTypes(req, res) {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_investment_types.sql')).toString();
-
-  res = ctrl.sendQuery(query, 'investment types', res);
-}
-
 function findApplications(req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_applications.sql')).toString() +
     ` AND app.obj_investment_Id = ${req.params.id} GROUP BY app.Id;`;  // Note that there's already a WHERE clause
@@ -76,7 +70,7 @@ function update(req, res) {
 
     res = ctrl.sendQuery(query, 'update investment', res);
   } else {
-    response.status(502).json({
+    res.status(502).json({
       message: "No authorization token present. Not allowed to update investments"
     });
   }
@@ -113,19 +107,26 @@ function create(req, res) {
 
     res = ctrl.sendQuery(query, 'create investment', res);
   } else {
-    response.status(502).json({
+    res.status(502).json({
       message: "No authorization token present. Not allowed to create investment"
     });
   }
+}
+
+function findTypes(req, res) {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_investment_types.sql')).toString();
+
+  res = ctrl.sendQuery(query, 'investment types', res);
 }
 
 module.exports = {
   findAll,
   findOne,
   findLatest,
-  findTypes,
   findApplications,
-
+  
   update,
-  create
+  create,
+
+  findTypes
 };
