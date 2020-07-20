@@ -136,7 +136,6 @@ export class InvestmentManagerComponent implements OnInit {
           this.appPool = [];
           // Only take ID and name
           data.forEach(element => {
-            // Include only apps that don't have investments yet
             this.appPool.push({
               ID: element.ID,
               Name: element.Name,
@@ -145,6 +144,7 @@ export class InvestmentManagerComponent implements OnInit {
           });
 
           // Take related apps IDs and remove them from the appPool list
+          // to include only apps that don't have investments yet
           this.selectedIDs = new Set(this.relatedApps.map(({ ID }) => ID));
           this.notSelected = this.appPool.filter(({ ID }) => !this.selectedIDs.has(ID))
                                          .filter(({ InvestmentID }) => !InvestmentID);
@@ -172,14 +172,14 @@ export class InvestmentManagerComponent implements OnInit {
           console.log("Getting applications rejected with " + JSON.stringify(error));
         };
     }
-  }
+  };
 
   findInArrayID(array: any[], arrayKey: string, searchItem: any) {
     var result: any = array.find(element => element[arrayKey] === searchItem);
 
     if (result) return result.ID;
     else return null
-  }
+  };
 
   poolToSelected () {
     // Add to selected list
@@ -189,7 +189,7 @@ export class InvestmentManagerComponent implements OnInit {
       this.selectedIDs.add(val);
     });
     this.updateSelectLists();
-  }
+  };
 
   selectedToPool () {
     // Delete from selected list
@@ -199,7 +199,7 @@ export class InvestmentManagerComponent implements OnInit {
       this.selectedIDs.delete(val);
     });
     this.updateSelectLists();
-  }
+  };
 
   updateSelectLists () {
     // Update app pool and related apps lists of options
@@ -211,7 +211,7 @@ export class InvestmentManagerComponent implements OnInit {
       investRelatedApps: this.selectedIDs,
       deselectedApps: this.deSelectedIDs
     });
-  }
+  };
 
   submitForm() {
     // console.log("Form: ", this.investForm);  // Debug
@@ -267,7 +267,7 @@ export class InvestmentManagerComponent implements OnInit {
 
       this.modalService.updateRecordCreation(false);  // Reset Creation flag
     }
-  }
+  };
 
   investDetailRefresh(data: any) {
     // Refresh Table
@@ -277,6 +277,6 @@ export class InvestmentManagerComponent implements OnInit {
     $('#investManager').modal('hide');
     this.tableService.investTableClick(data);
     $('#investDetail').modal('show');
-  }
+  };
 
 }

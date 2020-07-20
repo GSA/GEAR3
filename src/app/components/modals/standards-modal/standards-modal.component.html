@@ -46,8 +46,12 @@
 
               <tbody>
                 <tr>
+                  <td><i class="fas fa-universal-access"></i>508 Compliance Status</td>
+                  <td>{{ itStandard.ComplianceStatus }}</td>
+                </tr>
+                <tr>
                   <td><i class="fa fa-calendar-alt"></i>Approval Expiration Date</td>
-                  <td>{{ itStandard.ApprovalExpirationDate }}</td>
+                  <td>{{ itStandard.ApprovalExpirationDate | date:'MMMM d, y' }}</td>
                 </tr>
                 <tr>
                   <td><i class="far fa-list-alt"></i>Category</td>
@@ -58,12 +62,28 @@
                   <td>{{ itStandard.Comments }}</td>
                 </tr>
                 <tr>
+                  <td><i class="fas fa-shipping-fast"></i>Deployment Type</td>
+                  <td>{{ itStandard.DeploymentType }}</td>
+                </tr>
+                <tr>
                   <td><i class="fa fa-user"></i>POC</td>
                   <td>{{ itStandard.POC }}</td>
                 </tr>
                 <tr>
                   <td><i class="fa fa-door-open"></i>POC Org</td>
                   <td>{{ itStandard.POCorg }}</td>
+                </tr>
+                <tr>
+                  <td><i class="fas fa-info-circle"></i>Status</td>
+                  <td>{{ itStandard.Status }}</td>
+                </tr>
+                <tr>
+                  <td><i class="fas fa-info-circle"></i>Type</td>
+                  <td>{{ itStandard.StandardType }}</td>
+                </tr>
+                <tr>
+                  <td><i class="fas fa-sitemap"></i>Vendor Standard Organization</td>
+                  <td>{{ itStandard.Vendor_Standard_Organization }}</td>
                 </tr>
                 <tr>
                   <td><i class="far fa-comment"></i>Reference Document</td>
@@ -76,7 +96,6 @@
               </tbody>
             </table>
 
-            <div class="float-right">Last Updated: {{ itStandard.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}</div>
           </div>
           <!-- End of Overview Pane -->
 
@@ -87,7 +106,10 @@
         </div>
       </div>
 
-      <div class="modal-footer"></div>
+      <div class="modal-footer">
+        <div class="float-right">Last Updated: {{ itStandard.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}</div>
+        <button  type="button" [hidden]="!sharedService.loggedIn" class="btn btn-info text-white" (click)="itStandEdit()">Edit This Item</button>
+      </div>
     </div>
   </div>
 </div>

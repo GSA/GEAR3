@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { ModalsService } from '../../../services/modals/modals.service';
+import { SharedService } from "../../../services/shared/shared.service";
 import { TableService } from '../../../services/tables/table.service';
 
 // Declare jQuery symbol
@@ -17,6 +18,7 @@ export class StandardsModalComponent implements OnInit {
 
   constructor(
     private modalService: ModalsService,
+    public sharedService: SharedService,
     private tableService: TableService) { }
 
   ngOnInit(): void {
@@ -36,6 +38,13 @@ export class StandardsModalComponent implements OnInit {
         this.tableService.appsTableClick(row);
       }.bind(this)
       ));
+  }
+
+  itStandEdit () {
+    // Hide Detail Modal before showing Manager Modal
+    $('#itStandardDetail').modal('hide');
+    this.sharedService.setITStandardsForm();
+    $('#itStandardsManager').modal('show');
   }
 
 }

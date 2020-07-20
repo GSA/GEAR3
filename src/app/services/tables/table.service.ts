@@ -208,7 +208,7 @@ export class TableService {
         break;
 
       case 'Technology':
-        this.apiService.getOneTech(data.Id).subscribe((apiData: any[]) => {
+        this.apiService.getOneITStandard(data.Id).subscribe((apiData: any[]) => {
           this.itStandTableClick(apiData[0]);
         });
         break;
@@ -315,7 +315,7 @@ export class TableService {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(data.Name + '-Related_Apps')
       },
-      url: this.sharedService.internalURLFmt('/api/it_standards/'
+      url: this.sharedService.internalURLFmt('/api/it_standards/get/'
         + String(data.ID) + '/applications')
     })
   }

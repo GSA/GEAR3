@@ -20,6 +20,9 @@ export class SharedService {
   investFormEmitter = new EventEmitter();
   investFormSub: Subscription;
 
+  itStandardsFormEmitter = new EventEmitter();
+  itStandardsFormSub: Subscription;
+
   constructor(
     private globals: Globals,
     private location: Location) { }
@@ -98,6 +101,11 @@ export class SharedService {
   // Set Investment Forms Default
   public setInvestForm() {
     this.investFormEmitter.emit();
+  };
+
+  // Set Investment Forms Default
+  public setITStandardsForm() {
+    this.itStandardsFormEmitter.emit();
   };
 
 }

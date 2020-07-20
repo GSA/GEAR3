@@ -68,7 +68,7 @@ LEFT JOIN zk_app_capabilities                     ON app.Id = zk_app_capabilitie
 LEFT JOIN obj_capability              AS cap      ON zk_app_capabilities.obj_capability_Id = cap.Id
 
 LEFT JOIN zk_application_technology               ON app.Id = zk_application_technology.obj_application_Id
-LEFT JOIN obj_technology_replacedby   AS tech     ON zk_application_technology.obj_technology_Id = tech.Id
+LEFT JOIN obj_technology              AS tech     ON zk_application_technology.obj_technology_Id = tech.Id
 
 LEFT JOIN zk_application_business_poc             ON app.Id = zk_application_business_poc.obj_application_Id
 LEFT JOIN obj_poc                     AS buspoc   ON zk_application_business_poc.obj_bus_poc_Id = buspoc.Id

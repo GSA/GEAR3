@@ -53,6 +53,7 @@ import { StandardsModalComponent } from './components/modals/standards-modal/sta
 
 // GEAR Manager Modals
 import { InvestmentManagerComponent } from './components/manager-modals/investment-manager/investment-manager.component';
+import { ItStandardManagerComponent } from './components/manager-modals/it-standard-manager/it-standard-manager.component';
 
 // Global Variables
 import { Globals } from './common/globals';
@@ -95,6 +96,7 @@ import { Globals } from './common/globals';
 
     ItStandardsComponent,
     StandardsModalComponent,
+    ItStandardManagerComponent
   ],
   imports: [
     AppRoutingModule,
