@@ -9,7 +9,6 @@ SELECT
   tech.Gold_Image_Comment,
   tech.Comments,
   tech.old_Id,
-  techorg.Display_Name                  AS POCorg,
   tech.Reference_Documents              AS ReferenceDocuments,
   tech.CreateDTG,
   tech.ChangeDTG,
@@ -17,14 +16,17 @@ SELECT
   obj_technology_status.Keyname         AS Status,
   obj_deployment_type.Keyname           AS DeploymentType,
   obj_standard_type.Keyname             AS StandardType,
-  GROUP_CONCAT(DISTINCT poc.keyname SEPARATOR ', ')                   AS POC,
-  GROUP_CONCAT(DISTINCT obj_standard_category.Keyname SEPARATOR ',')  AS Category
+  obj_508_compliance_status.Keyname     AS ComplianceStatus,
+  GROUP_CONCAT(DISTINCT poc.keyname SEPARATOR ', ')                     AS POC,
+  GROUP_CONCAT(DISTINCT techorg.Display_Name SEPARATOR ', ')            AS POCorg,
+  GROUP_CONCAT(DISTINCT obj_standard_category.Keyname SEPARATOR ', ')   AS Category
 
 FROM obj_technology AS tech
 
 LEFT JOIN obj_technology_status               ON tech.obj_technology_status_Id = obj_technology_status.Id
 LEFT JOIN obj_deployment_type                 ON tech.obj_deployment_type_Id = obj_deployment_type.Id
 LEFT JOIN obj_standard_type                   ON tech.obj_standard_type_Id = obj_standard_type.Id
+LEFT JOIN obj_508_compliance_status           ON tech.obj_508_compliance_status_Id = obj_508_compliance_status.Id
   
 LEFT JOIN zk_technology_poc                   ON tech.Id = zk_technology_poc.obj_technology_Id
 LEFT JOIN obj_poc           AS poc            ON zk_technology_poc.obj_poc_Id = poc.Id

@@ -110,3 +110,9 @@ table ul {
 .bg-silver {
   background-color: #C0C0C0 !important;
 }
+
+/* Date Picker Calendar Adjustments */
+.datepicker-inline,
+.table-condensed {
+  width: 100% !important;
+}

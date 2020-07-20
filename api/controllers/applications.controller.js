@@ -42,7 +42,7 @@ function findCapabilities(req, res) {
 };
 
 function findTechnologies(req, res) {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_technologies.sql')).toString() +
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
     ` WHERE obj_standard_type.Keyname LIKE '%Software%'
       AND obj_technology_status.Keyname NOT LIKE 'Sunsetting'
       AND obj_technology_status.Keyname NOT LIKE 'Not yet submitted'

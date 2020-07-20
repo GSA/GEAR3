@@ -7,7 +7,7 @@ const queryPath = '../queries/';
 
 function findAll(req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_pocs.sql')).toString() +
-    ";";
+    " ORDER BY poc.Keyname;";
 
   res = ctrl.sendQuery(query, 'Points of Contact', res);
 };

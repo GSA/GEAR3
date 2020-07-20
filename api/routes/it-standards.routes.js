@@ -6,11 +6,28 @@ const router = express.Router();
 router.route('/')
     .get(itsCtrl.findAll);
 
-router.route('/:id')
+router.route('/get/:id')
     .get(itsCtrl.findOne);
 
-// Children
-router.route('/:id/applications/')
+router.route('/get/:id/applications/')
     .get(itsCtrl.findApplications);
+
+router.route('/update/:id')
+    .put(itsCtrl.update);
+
+router.route('/508_compliance')
+    .get(itsCtrl.find508Compliance);
+
+router.route('/categories')
+    .get(itsCtrl.findCategories);
+
+router.route('/deployment_types')
+    .get(itsCtrl.findDeployTypes);
+
+router.route('/statuses')
+    .get(itsCtrl.findStatuses);
+
+router.route('/types')
+    .get(itsCtrl.findTypes);
 
 module.exports = router;

@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of } from "rxjs";
+import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { SharedService } from "../shared/shared.service";
+import { SharedService } from '../shared/shared.service';
 import { Globals } from '../../common/globals';
 
 import { Application } from 'api/models/applications.model';
@@ -11,8 +11,13 @@ import { Capability } from 'api/models/capabilities.model';
 import { FISMA } from 'api/models/fisma.model';
 import { Interface } from 'api/models/interfaces.model';
 import { Investment } from 'api/models/investments.model';
-import { InvestmentType } from "api/models/investment-types.model";
+import { InvestmentType } from 'api/models/investment-types.model';
 import { ITStandards } from 'api/models/it-standards.model';
+import { ITStandard508Status } from 'api/models/it-standards-508_statuses.model';
+import { ITStandardCategory } from 'api/models/it-standards-categories.model';
+import { ITStandardDeployTypes } from 'api/models/it-standards-deploy_types.model';
+import { ITStandardStatus } from 'api/models/it-standards-statuses.model';
+import { ITStandardTypes } from 'api/models/it-standards-types.model';
 import { Organization } from 'api/models/organizations.model';
 import { ParentSystem } from 'api/models/parentsystems.model';
 import { POC } from 'api/models/pocs.model';
@@ -184,17 +189,58 @@ export class ApiService {
     );
   };
 
-  //// Technologies
-  public getTechnologies(): Observable<ITStandards[]> {
+  //// IT-Standards
+  public getITStandards(): Observable<ITStandards[]> {
     return this.http.get<ITStandards[]>(this.techUrl).pipe(
       catchError(this.handleError<ITStandards[]>('GET IT Standards', []))
     );
   };
-  public getOneTech(id: number): Observable<ITStandards[]> {
-    return this.http.get<ITStandards[]>(this.techUrl + '/' + String(id)).pipe(
+  public getOneITStandard(id: number): Observable<ITStandards[]> {
+    return this.http.get<ITStandards[]>(this.techUrl + '/get/' + String(id)).pipe(
       catchError(this.handleError<ITStandards[]>('GET IT Standard', []))
     );
   };
+  public getITStandApps(id: number): Observable<Application[]> {
+    return this.http.get<Application[]>(this.investUrl + '/get/' + String(id) + '/applications').pipe(
+      catchError(this.handleError<Application[]>('GET IT Standard Related Applications', []))
+    );
+  };
+  public getITStand508Statuses(): Observable<ITStandard508Status[]> {
+    return this.http.get<ITStandard508Status[]>(this.techUrl + '/508_compliance').pipe(
+      catchError(this.handleError<ITStandard508Status[]>('GET IT Standard 508 Compliance Statuses', []))
+    );
+  };
+  public getITStandCategories(): Observable<ITStandardCategory[]> {
+    return this.http.get<ITStandardCategory[]>(this.techUrl + '/categories').pipe(
+      catchError(this.handleError<ITStandardCategory[]>('GET IT Standard Categories', []))
+    );
+  };
+  public getITStandDeploymentTypes(): Observable<ITStandardDeployTypes[]> {
+    return this.http.get<ITStandardDeployTypes[]>(this.techUrl + '/deployment_types').pipe(
+      catchError(this.handleError<ITStandardDeployTypes[]>('GET IT Standard Deployment Types', []))
+    );
+  };
+  public getITStandStatuses(): Observable<ITStandardStatus[]> {
+    return this.http.get<ITStandardStatus[]>(this.techUrl + '/statuses').pipe(
+      catchError(this.handleError<ITStandardStatus[]>('GET IT Standard Statuses', []))
+    );
+  };
+  public getITStandTypes(): Observable<ITStandardTypes[]> {
+    return this.http.get<ITStandardTypes[]>(this.techUrl + '/types').pipe(
+      catchError(this.handleError<ITStandardTypes[]>('GET IT Standard Types', []))
+    );
+  };
+  public updateITStandard(id: number, data: {}): Observable<ITStandards[]> {
+    if (this.globals.jwtToken) {
+      var httpOptions = this.setHeaderOpts();
+    } else {
+      catchError(this.handleError<ITStandards[]>('UPDATE IT Standard - No Authentication Token', []))
+    }
+
+    return this.http.put<ITStandards[]>(this.techUrl + '/update/' + String(id), data, httpOptions).pipe(
+      catchError(this.handleError<ITStandards[]>('UPDATE IT Standard', []))
+    );
+  }
 
 
   //// Error Handler for calls

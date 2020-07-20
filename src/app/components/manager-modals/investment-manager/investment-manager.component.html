@@ -6,7 +6,8 @@
       <div class="modal-header bg-success">
         <h5 class="modal-title text-white" id="investMngrTitle">
           <i class="fas fa-money-bill-wave"></i>
-          <span *ngIf="investment.Name; else elseInvestName"> {{ investment.Name }} - <span class="text-primary">**EDITING**</span></span>
+          <span *ngIf="investment.Name; else elseInvestName"> {{ investment.Name }} - <span
+              class="text-primary">**EDITING**</span></span>
           <ng-template #elseInvestName> Create New Investment</ng-template>
         </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -30,8 +31,7 @@
           <div class="tab-content mt-3">
             <div class="tab-pane fade show active" id="investMngrOverview">
 
-              <div class="row align-items-center justify-content-center">
-                
+              <div class="row align-items-center">
                 <div class="form-group col-2 text-center mb-0">
                   <label for="investStatus">Status</label>
                   <div id="investStatus" class="custom-control custom-switch">
@@ -80,7 +80,8 @@
                 <div class="form-group col-2 mb-0">
                   <label for="investBY">Budget Year<span class="text-danger">*</span></label>
                   <select class="form-control" id="investBY" formControlName="investBY" required>
-                    <option *ngFor="let year of budgetYears" [value]="year" [selected]="year === investment.Budget_Year">
+                    <option *ngFor="let year of budgetYears" [value]="year"
+                      [selected]="year === investment.Budget_Year">
                       {{ year }}</option>
                   </select>
                 </div>
@@ -145,10 +146,10 @@
                 <textarea type="text" class="form-control" id="investComments" formControlName="investComments"
                   placeholder="Enter Any Additional Comments" rows="2" [value]="investment.Comments"></textarea>
               </div>
-              
+
             </div>
             <!-- End of Overview Pane -->
-            
+
             <div class="tab-pane fade show" id="investMngrRelatedApps">
               <h4>Related Business Applications</h4>
               <div class="row">
@@ -160,8 +161,10 @@
                 </div>
 
                 <div class="col-2 my-auto">
-                  <button class="btn btn-success w-100 mb-5" (click)="poolToSelected()">Move to<br>Selected <i class="fas fa-arrow-right  fa-lg"></i></button>
-                  <button class="btn btn-warning w-100" (click)="selectedToPool()"><i class="fas fa-arrow-left fa-lg"></i> Move to<br>Un-Selected</button>
+                  <button class="btn btn-success w-100 mb-5" (click)="poolToSelected()">Move to<br>Selected <i
+                      class="fas fa-arrow-right  fa-lg"></i></button>
+                  <button class="btn btn-warning w-100" (click)="selectedToPool()"><i
+                      class="fas fa-arrow-left fa-lg"></i> Move to<br>Un-Selected</button>
                 </div>
 
                 <div class="form-group col-5">
@@ -173,7 +176,7 @@
               </div>
             </div>
             <!-- End of Related Business Apps Pane -->
-            
+
           </div>
         </form>
       </div>
@@ -183,6 +186,7 @@
         <div [hidden]="!investment.ChangeDTG">Last Updated: {{ investment.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}</div>
         <button type="submit" form="investForm" class="btn btn-info text-white" (click)="submitForm()">Save</button>
       </div>
+
     </div>
   </div>
 </div>
