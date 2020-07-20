@@ -61,8 +61,8 @@ function update(req, res) {
         Budget_Year             = '${data.investBY}',
         UII                     = '${data.investUII}',
         obj_organization_Id     = ${data.investSSO},
-        primary_service_area    = '${data.investPSA}',
-        sec_serv_area1          = '${data.investSSA}',
+        primary_service_area    = ${data.investPSA},
+        sec_serv_area1          = ${data.investSSA},
         Comments                = '${data.investComments}'
       WHERE Id = ${req.params.id};
       SET FOREIGN_KEY_CHECKS=1;
