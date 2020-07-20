@@ -88,9 +88,9 @@
                 <tr>
                   <td><i class="far fa-comment"></i>Reference Document</td>
                   <td>
-                    <a href="{{ itStandard.ReferenceDocuments }}" target="_blank">
+                    <a [hidden]="itStandard.ReferenceDocuments" href="{{ itStandard.ReferenceDocuments }}" target="_blank">
                       {{ itStandard.ReferenceDocuments }}</a>
-                    <div [hidden]="itStandard.ReferenceDocuments">None</div>
+                    <div [hidden]="!itStandard.ReferenceDocuments">None</div>
                   </td>
                 </tr>
               </tbody>
