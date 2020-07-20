@@ -42,7 +42,7 @@ function update(req, res) {
       data.itStandCategory.forEach(catID => {
         catString += `INSERT INTO zk_technology_standard_category (obj_standard_category_Id, obj_technology_Id) VALUES (${catID}, ${req.params.id}); `;
       });
-    }
+    };
 
     // Create string to update IT Standards POCs
     var pocString = '';
@@ -54,13 +54,20 @@ function update(req, res) {
       data.itStandPOC.forEach(pocID => {
         pocString += `INSERT INTO zk_technology_poc (obj_technology_Id, obj_poc_Id) VALUES (${req.params.id}, ${pocID}); `;
       });
-    }
+    };
+
+    // Null any empy text fields
+    if (!data.itStandDesc) { data.itStandDesc = 'NULL' }
+    else { data.itStandDesc = `'${data.itStandDesc}'`}
+
+    if (!data.itStandRefDocs) { data.itStandRefDocs = 'NULL' }
+    else { data.itStandRefDocs = `'${data.itStandRefDocs}'`}
 
     var query = `SET FOREIGN_KEY_CHECKS=0;
       UPDATE obj_technology
       SET Keyname                       = '${data.itStandName}',
         obj_technology_status_Id        = ${data.itStandStatus},
-        Description                     = '${data.itStandDesc}',
+        Description                     = ${data.itStandDesc},
         obj_standard_type_Id            = ${data.itStandType},
         obj_508_compliance_status_Id    = ${data.itStand508},
         Available_through_Myview        = '${data.itStandMyView}',
@@ -70,7 +77,7 @@ function update(req, res) {
         Gold_Image_Comment              = '${data.itStandGoldComment}',
         Approved_Status_Expiration_Date = '${data.itStandAprvExp}',
         Comments                        = '${data.itStandComments}',
-        Reference_documents             = '${data.itStandRefDocs}'
+        Reference_documents             = ${data.itStandRefDocs}
       WHERE Id = ${req.params.id};
       SET FOREIGN_KEY_CHECKS=1;
       ${catString}
