@@ -147,7 +147,7 @@ export class InvestmentManagerComponent implements OnInit {
           // to include only apps that don't have investments yet
           this.selectedIDs = new Set(this.relatedApps.map(({ ID }) => ID));
           this.notSelected = this.appPool.filter(({ ID }) => !this.selectedIDs.has(ID))
-                                         .filter(({ InvestmentID }) => !InvestmentID);
+            .filter(({ InvestmentID }) => !InvestmentID);
 
           // Set default values for form with current values after resolving related apps
           this.investForm.patchValue({
@@ -181,7 +181,7 @@ export class InvestmentManagerComponent implements OnInit {
     else return null
   };
 
-  poolToSelected () {
+  poolToSelected() {
     // Add to selected list
     let poolVals = $('#investRelAppsPool').val().map(x => +x)
     poolVals.forEach(val => {
@@ -191,7 +191,7 @@ export class InvestmentManagerComponent implements OnInit {
     this.updateSelectLists();
   };
 
-  selectedToPool () {
+  selectedToPool() {
     // Delete from selected list
     let selectedVals = $('#investRelAppsSelect').val().map(x => +x)
     selectedVals.forEach(val => {
@@ -201,7 +201,7 @@ export class InvestmentManagerComponent implements OnInit {
     this.updateSelectLists();
   };
 
-  updateSelectLists () {
+  updateSelectLists() {
     // Update app pool and related apps lists of options
     this.notSelected = this.appPool.filter(({ ID }) => !this.selectedIDs.has(ID));
     this.relatedApps = this.appPool.filter(({ ID }) => this.selectedIDs.has(ID));

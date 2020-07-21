@@ -19,10 +19,10 @@ function findOne(req, res) {
   res = ctrl.sendQuery(query, 'individual investment', res);
 };
 
-function findLatest(req, res, next) {
+function findLatest(req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_investments.sql')).toString() +
-  ` ORDER BY invest.CreateDTG DESC LIMIT 1;`;
-  
+    ` ORDER BY invest.CreateDTG DESC LIMIT 1;`;
+
   res = ctrl.sendQuery(query, 'latest individual investment', res);
 };
 
@@ -51,11 +51,18 @@ function update(req, res) {
       });
     }
 
+    // Null any empty text fields
+    if (!data.investDesc) { data.investDesc = 'NULL' }
+    else { data.investDesc = `'${data.investDesc}'` }
+
+    if (!data.investComments) { data.investComments = 'NULL' }
+    else { data.investComments = `'${data.investComments}'` }
+
     var query = `SET FOREIGN_KEY_CHECKS=0;
       UPDATE obj_investment
       SET Keyname               = '${data.investName}',
         Active                  = ${data.investStatus},
-        Description             = '${data.investDesc}',
+        Description             = ${data.investDesc},
         obj_poc_Id              = ${data.invManager},
         obj_investment_type_Id  = ${data.investType},
         Budget_Year             = '${data.investBY}',
@@ -63,7 +70,8 @@ function update(req, res) {
         obj_organization_Id     = ${data.investSSO},
         primary_service_area    = ${data.investPSA},
         sec_serv_area1          = ${data.investSSA},
-        Comments                = '${data.investComments}'
+        Comments                = ${data.investComments},
+        ChangeAudit             = '${data.auditUser}'
       WHERE Id = ${req.params.id};
       SET FOREIGN_KEY_CHECKS=1;
       ${appString}`
@@ -79,6 +87,14 @@ function update(req, res) {
 function create(req, res) {
   if (req.headers.authorization) {
     var data = req.body;
+
+    // Null any empty text fields
+    if (!data.investDesc) { data.investDesc = 'NULL' }
+    else { data.investDesc = `'${data.investDesc}'` }
+
+    if (!data.investComments) { data.investComments = 'NULL' }
+    else { data.investComments = `'${data.investComments}'` }
+
     var query = `INSERT INTO obj_investment(
       Keyname,
       Active,
@@ -91,10 +107,11 @@ function create(req, res) {
       primary_service_area,
       sec_serv_area1,
       Comments,
+      CreateAudit,
       ChangeAudit) VALUES (
         '${data.investName}',
         ${data.investStatus},
-        '${data.investDesc}',
+        ${data.investDesc},
         ${data.invManager},
         ${data.investType},
         '${data.investBY}',
@@ -102,7 +119,8 @@ function create(req, res) {
         ${data.investSSO},
         ${data.investPSA},
         ${data.investSSA},
-        '${data.investComments}',
+        ${data.investComments},
+        '${data.auditUser}',
         '${data.auditUser}');`
 
     res = ctrl.sendQuery(query, 'create investment', res);
@@ -124,7 +142,7 @@ module.exports = {
   findOne,
   findLatest,
   findApplications,
-  
+
   update,
   create,
 

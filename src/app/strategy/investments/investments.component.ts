@@ -118,7 +118,7 @@ export class InvestmentsComponent implements OnInit {
 
   // Create new investment when in GEAR Manager mode
   createInvestment() {
-    var emptyInvestment = new Investment;
+    var emptyInvestment = new Investment();
 
     // By default, set new record to active
     emptyInvestment.Active = 1;
