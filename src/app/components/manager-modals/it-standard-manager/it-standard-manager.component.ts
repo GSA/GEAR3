@@ -108,7 +108,6 @@ export class ItStandardManagerComponent implements OnInit {
   }
 
   setFormDefaults(): void {
-    console.log(this.itStandard);
     // Only set status default for creating new record
     if (this.createBool) {
       this.itStandardsForm.patchValue({
@@ -157,7 +156,8 @@ export class ItStandardManagerComponent implements OnInit {
         itStandGoldImg: goldImg,
         itStandGoldComment: this.itStandard.Gold_Image_Comment,
         itStandAprvExp: formatDate(this.aprvExpDate, 'yyyy-MM-dd', 'en-US'),
-        itStandComments: this.itStandard.Comments
+        itStandComments: this.itStandard.Comments,
+        itStandRefDocs: this.itStandard.ReferenceDocuments
       });
     }
   };
@@ -181,9 +181,13 @@ export class ItStandardManagerComponent implements OnInit {
       else this.itStandardsForm.value.itStandGoldImg = 'F';
 
       // Set Date from Date Picker
-      this.itStandardsForm.value.itStandAprvExp = formatDate($('#itStandAprvExp').datepicker('getFormattedDate'), 'yyyy-MM-dd', 'en-US');
+      if (this.itStandardsForm.value.itStandAprvExp) {
+        this.itStandardsForm.value.itStandAprvExp = formatDate($('#itStandAprvExp').datepicker('getFormattedDate'), 'yyyy-MM-dd', 'en-US');
+      }
 
-      // Adjust Comments
+      // Adjust for N/A text fields
+      if (!this.itStandardsForm.value.itStandVendorOrg) this.itStandardsForm.value.itStandVendorOrg = 'N/A';
+      if (!this.itStandardsForm.value.itStandGoldComment) this.itStandardsForm.value.itStandGoldComment = 'N/A';
       if (!this.itStandardsForm.value.itStandComments) this.itStandardsForm.value.itStandComments = 'N/A';
 
       // Add username to payload
@@ -193,15 +197,29 @@ export class ItStandardManagerComponent implements OnInit {
 
       // Send data to database
       if (this.createBool) {
-        // this.apiService.createITStandard(this.itStandardsForm.value).toPromise()
-        //   .then(res => {
-        //     // Grab new data from database
-        //     this.apiService.getLatestITStand().toPromise()
-        //       .then(data => { this.itStandDetailRefresh(data) }),
-        //       (error) => {
-        //         console.log("GET Latest IT Standard rejected with " + JSON.stringify(error));
-        //       };
-        //   });
+        this.apiService.createITStandard(this.itStandardsForm.value).toPromise()
+          .then(res => {
+            // Grab new data from database for ID
+            this.apiService.getLatestITStand().toPromise()
+              .then(data => {
+                // Update Categories and POCs with new ID
+                this.apiService.updateITStandard(data[0].ID, this.itStandardsForm.value).toPromise()
+                  .then(res => {
+                    // Now get all the complete new data
+                    this.apiService.getLatestITStand().toPromise()
+                      .then(data => { 
+                        // Then update the details modal
+                        this.itStandDetailRefresh(data[0])
+                      })
+                  }),
+                  (error) => {
+                    console.log("Update after creating IT Standard rejected with " + JSON.stringify(error));
+                  };
+              }),
+              (error) => {
+                console.log("GET Latest IT Standard rejected with " + JSON.stringify(error));
+              };
+          });
       } else {
         this.apiService.updateITStandard(this.itStandard.ID, this.itStandardsForm.value).toPromise()
           .then(res => {

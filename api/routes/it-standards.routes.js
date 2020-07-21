@@ -12,8 +12,14 @@ router.route('/get/:id')
 router.route('/get/:id/applications/')
     .get(itsCtrl.findApplications);
 
+router.route('/latest')
+    .get(itsCtrl.findLatest);
+
 router.route('/update/:id')
     .put(itsCtrl.update);
+
+router.route('/create')
+    .post(itsCtrl.create);
 
 router.route('/508_compliance')
     .get(itsCtrl.find508Compliance);

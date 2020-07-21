@@ -200,6 +200,11 @@ export class ApiService {
       catchError(this.handleError<ITStandards[]>('GET IT Standard', []))
     );
   };
+  public getLatestITStand(): Observable<ITStandards[]> {
+    return this.http.get<ITStandards[]>(this.techUrl + '/latest').pipe(
+      catchError(this.handleError<ITStandards[]>('GET Latest IT Standard', []))
+    );
+  };
   public getITStandApps(id: number): Observable<Application[]> {
     return this.http.get<Application[]>(this.investUrl + '/get/' + String(id) + '/applications').pipe(
       catchError(this.handleError<Application[]>('GET IT Standard Related Applications', []))
@@ -239,6 +244,17 @@ export class ApiService {
 
     return this.http.put<ITStandards[]>(this.techUrl + '/update/' + String(id), data, httpOptions).pipe(
       catchError(this.handleError<ITStandards[]>('UPDATE IT Standard', []))
+    );
+  }
+  public createITStandard(data: {}): Observable<ITStandards[]> {
+    if (this.globals.jwtToken) {
+      var httpOptions = this.setHeaderOpts();
+    } else {
+      catchError(this.handleError<ITStandards[]>('CREATE Standard - No Authentication Token', []))
+    }
+
+    return this.http.post<ITStandards[]>(this.techUrl + '/create', data, httpOptions).pipe(
+      catchError(this.handleError<ITStandards[]>('CREATE IT Standard', []))
     );
   }
 

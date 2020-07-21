@@ -21,6 +21,13 @@ function findOne(req, res) {
   res = ctrl.sendQuery(query, 'individual IT Standard', res);
 };
 
+function findLatest(req, res) {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
+    ` GROUP BY tech.Id ORDER BY tech.CreateDTG DESC LIMIT 1;`;
+
+  res = ctrl.sendQuery(query, 'latest individual IT Standard', res);
+};
+
 function findApplications(req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_applications.sql')).toString() +
     ` AND tech.Id = ${req.params.id} GROUP BY app.Id;`;
@@ -56,12 +63,15 @@ function update(req, res) {
       });
     };
 
-    // Null any empy text fields
+    // Null any empty text fields
+    if (!data.itStandAprvExp) { data.itStandAprvExp = 'NULL' }
+    else { data.itStandAprvExp = `'${data.itStandAprvExp}'` }
+
     if (!data.itStandDesc) { data.itStandDesc = 'NULL' }
-    else { data.itStandDesc = `'${data.itStandDesc}'`}
+    else { data.itStandDesc = `'${data.itStandDesc}'` }
 
     if (!data.itStandRefDocs) { data.itStandRefDocs = 'NULL' }
-    else { data.itStandRefDocs = `'${data.itStandRefDocs}'`}
+    else { data.itStandRefDocs = `'${data.itStandRefDocs}'` }
 
     var query = `SET FOREIGN_KEY_CHECKS=0;
       UPDATE obj_technology
@@ -75,9 +85,10 @@ function update(req, res) {
         obj_deployment_type_Id          = ${data.itStandDeployment},
         Gold_Image                      = '${data.itStandGoldImg}',
         Gold_Image_Comment              = '${data.itStandGoldComment}',
-        Approved_Status_Expiration_Date = '${data.itStandAprvExp}',
+        Approved_Status_Expiration_Date = ${data.itStandAprvExp},
         Comments                        = '${data.itStandComments}',
-        Reference_documents             = ${data.itStandRefDocs}
+        Reference_documents             = ${data.itStandRefDocs},
+        ChangeAudit                     = '${data.auditUser}'
       WHERE Id = ${req.params.id};
       SET FOREIGN_KEY_CHECKS=1;
       ${catString}
@@ -89,6 +100,60 @@ function update(req, res) {
   } else {
     res.status(502).json({
       message: "No authorization token present. Not allowed to update IT-Standards"
+    });
+  }
+}
+
+function create(req, res) {
+  if (req.headers.authorization) {
+    var data = req.body;
+
+    // Null any empty text fields
+    if (!data.itStandDesc) { data.itStandDesc = 'NULL' }
+    else { data.itStandDesc = `'${data.itStandDesc}'` }
+
+    if (!data.itStandAprvExp) { data.itStandAprvExp = 'NULL' }
+    else { data.itStandAprvExp = `'${data.itStandAprvExp}'` }
+
+    if (!data.itStandRefDocs) { data.itStandRefDocs = 'NULL' }
+    else { data.itStandRefDocs = `'${data.itStandRefDocs}'` }
+
+    var query = `INSERT INTO obj_technology(
+      Keyname,
+      Description,
+      Approved_Status_Expiration_Date,
+      Vendor_Standard_Organization,
+      Available_through_Myview,
+      Gold_Image,
+      Gold_Image_Comment,
+      Comments,
+      obj_technology_status_Id,
+      obj_deployment_type_Id,
+      obj_standard_type_Id,
+      obj_508_compliance_status_Id,
+      Reference_documents,
+      CreateAudit,
+      ChangeAudit) VALUES (
+        '${data.itStandName}',
+        ${data.itStandDesc},
+        ${data.itStandAprvExp},
+        '${data.itStandVendorOrg}',
+        '${data.itStandMyView}',
+        '${data.itStandGoldImg}',
+        '${data.itStandGoldComment}',
+        '${data.itStandComments}',
+        ${data.itStandStatus},
+        ${data.itStandDeployment},
+        ${data.itStandType},
+        ${data.itStand508},
+        ${data.itStandRefDocs},
+        '${data.auditUser}',
+        '${data.auditUser}');`
+
+    res = ctrl.sendQuery(query, 'create IT Standard', res);
+  } else {
+    res.status(502).json({
+      message: "No authorization token present. Not allowed to create IT Standard"
     });
   }
 }
@@ -126,9 +191,11 @@ function findTypes(req, res) {
 module.exports = {
   findAll,
   findOne,
+  findLatest,
   findApplications,
 
   update,
+  create,
 
   find508Compliance,
   findCategories,

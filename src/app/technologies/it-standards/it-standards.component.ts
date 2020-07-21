@@ -4,6 +4,8 @@ import { ModalsService } from '../../services/modals/modals.service';
 import { SharedService } from '../../services/shared/shared.service';
 import { TableService } from '../../services/tables/table.service';
 
+import { ITStandards } from 'api/models/it-standards.model';
+
 // Declare jQuery symbol
 declare var $: any;
 
@@ -19,7 +21,7 @@ export class ItStandardsComponent implements OnInit {
 
   constructor(
     private modalService: ModalsService,
-    private sharedService: SharedService,
+    public sharedService: SharedService,
     private tableService: TableService) {
     this.modalService.currentITStand.subscribe(row => this.row = row);
   }
@@ -116,6 +118,19 @@ export class ItStandardsComponent implements OnInit {
       }.bind(this))
     );
 
+  }
+
+
+  // Create new IT Standard when in GEAR Manager mode
+  createITStand() {
+    var emptyITStand = new ITStandards();
+
+    // By default, set new record status to "Pilot"
+    emptyITStand.Status = 'Pilot';
+    this.modalService.updateRecordCreation(true);
+    this.sharedService.setITStandardsForm();
+    this.modalService.updateDetails(emptyITStand, 'it-standard');
+    $('#itStandardsManager').modal('show');
   }
 
   // Update table from filter buttons

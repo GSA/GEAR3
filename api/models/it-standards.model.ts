@@ -1,19 +1,19 @@
 export class ITStandards {
-  public ID: number;
-  public Name: string;
-  public Description: string;
-  public ApprovalExpirationDate: Date;
-  public Vendor_Standard_Organization: string;
-  public Available_through_Myview: string;
-  public Gold_Image: string;
-  public Gold_Image_Comment: string;
-  public Comments: string;
-  public old_Id: string;
-  public POCorg: string;
-  public ReferenceDocuments: string;
-  public Status: string;
-  public Deploymenttype: string;
-  public StandardType: string;
-  public POC: string;
-  public Category: string;
+  public ID: number = null;
+  public Name: string = null;
+  public Description: string = null;
+  public ApprovalExpirationDate: Date = null;
+  public Vendor_Standard_Organization: string = null;
+  public Available_through_Myview: string = null;
+  public Gold_Image: string = null;
+  public Gold_Image_Comment: string = null;
+  public Comments: string = null;
+  public old_Id: string = null;
+  public POCorg: string = null;
+  public ReferenceDocuments: string = null;
+  public Status: string = null;
+  public Deploymenttype: string = null;
+  public StandardType: string = null;
+  public POC: string = null;
+  public Category: string = null;
 }
