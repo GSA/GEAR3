@@ -87,6 +87,11 @@ export class InvestmentManagerComponent implements OnInit {
     this.apiService.getInvestTypes().subscribe((data: any[]) => {
       this.types = data;
     });
+
+    // If the manager modal is exited, clear the create flag
+    $('#investManager').on('hide.bs.modal', function (e) {
+      this.modalService.updateRecordCreation(false);
+    }.bind(this));
   }
 
   setFormDefaults(): void {

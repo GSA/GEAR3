@@ -105,6 +105,11 @@ export class ItStandardManagerComponent implements OnInit {
         rightArrow: '<i class="fas fa-long-arrow-alt-right"></i>'
       }
     });
+
+    // If the manager modal is exited, clear the create flag
+    $('#itStandardsManager').on('hide.bs.modal', function (e) {
+      this.modalService.updateRecordCreation(false);
+    }.bind(this));
   }
 
   setFormDefaults(): void {

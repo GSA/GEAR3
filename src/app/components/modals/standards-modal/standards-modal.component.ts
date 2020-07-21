@@ -44,6 +44,7 @@ export class StandardsModalComponent implements OnInit {
     // Hide Detail Modal before showing Manager Modal
     $('#itStandardDetail').modal('hide');
     this.sharedService.setITStandardsForm();
+    this.modalService.updateDetails(this.itStandard, 'it-standard');
     $('#itStandardsManager').modal('show');
   }
 
