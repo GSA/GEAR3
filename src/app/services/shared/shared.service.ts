@@ -20,6 +20,9 @@ export class SharedService {
   investFormEmitter = new EventEmitter();
   investFormSub: Subscription;
 
+  systemFormEmitter = new EventEmitter();
+  systemFormSub: Subscription;
+
   itStandardsFormEmitter = new EventEmitter();
   itStandardsFormSub: Subscription;
 
@@ -42,6 +45,14 @@ export class SharedService {
   // Format Internal URLs (without hash)
   public internalURLFmt(url: string): string {
     return this.location.prepareExternalUrl(url).replace('#', '');
+  };
+
+  // Find in Array an Item by Key
+  findInArrayID(array: any[], arrayKey: string, searchItem: any) {
+    var result: any = array.find(element => element[arrayKey] === searchItem);
+
+    if (result) return result.ID;
+    else return null
   };
 
 
@@ -98,12 +109,15 @@ export class SharedService {
   };
 
 
-  // Set Investment Forms Default
+  // Set Forms Default
   public setInvestForm() {
     this.investFormEmitter.emit();
   };
 
-  // Set Investment Forms Default
+  public setSystemForm() {
+    this.systemFormEmitter.emit();
+  };
+
   public setITStandardsForm() {
     this.itStandardsFormEmitter.emit();
   };

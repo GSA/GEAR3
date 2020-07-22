@@ -12,17 +12,12 @@ function findAll(req, res) {
   res = ctrl.sendQuery(query, 'business applications', res);
 };
 
-function findOne(req, res, next) {
-  // Move to next function for retired applications
-  if (req.params.id === 'applications_retired') {
-    next();
-  } else {
-    var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_application_full_suite.sql')).toString() +
-      ` WHERE app.Id = ${req.params.id};`;
-    var params = [req.params.id];
+function findOne(req, res) {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_application_full_suite.sql')).toString() +
+    ` WHERE app.Id = ${req.params.id};`;
+  var params = [req.params.id];
 
-    res = ctrl.sendQuery(query, 'individual business application', res);
-  }
+  res = ctrl.sendQuery(query, 'individual business application', res);
 };
 
 function findAllRetired(req, res) {

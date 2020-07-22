@@ -25,6 +25,25 @@
   </div>
 
   <div class="row card-body card-text justify-content-center">
+    <div class="row w-100">
+      <!-- Add Button -->
+      <button role="button" name="addSystemBttn" class="btn btn-danger" (click)="createParentSystem()"
+        [hidden]="!sharedService.loggedIn">
+        <i class="fas fa-plus"></i>
+      </button>
+
+      <!-- Filters -->
+      <div class="offset-md-4">
+        <span class="my-auto mr-3">Filters:</span>
+        <button role="button" name="systemInactiveBttn" class="btn btn-primary" (click)="retiredFilter()" [hidden]="retiredTable">
+          Retired</button>
+
+        <button role="button" name="systemBttn" class="btn btn-primary ml-3" (click)="backToMainSystem()" [hidden]="!retiredTable">
+          Back to All Active Systems</button>
+      </div>
+    </div>
+
+    <!-- Main Parent Systems Table -->
     <table id="systemTable"></table>
   </div>
 </div>

@@ -33,7 +33,13 @@
             <p>{{ system.SSO }}</p>
             <br>
 
-            <div class="float-right">Last Updated: {{ system.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}</div>
+            <h4>Link</h4>
+            <a class="link" href="https://{{ system.URL }}" target="_blank">
+              {{ system.URL }}
+            </a>
+            <div [hidden]="system.URL">
+              None Provided
+            </div>
 
           </div>
 
@@ -44,7 +50,10 @@
         </div>
       </div>
 
-      <div class="modal-footer"></div>
+      <div class="modal-footer">
+        <div>Last Updated: {{ system.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}</div>
+        <button  type="button" [hidden]="!sharedService.loggedIn" class="btn btn-info text-white" (click)="systemEdit()">Edit This Item</button>
+      </div>
     </div>
   </div>
 </div>

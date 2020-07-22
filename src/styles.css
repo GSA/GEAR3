@@ -3,6 +3,7 @@
 /* Underline H4 Headers, email links, card links for easy distinction */
 h4,
 a.email,
+a.link,
 .card-link,
 .modal .modal-body table th {
   text-decoration: underline;

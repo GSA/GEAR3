@@ -38,6 +38,7 @@ import { OrganizationsModalComponent } from './components/modals/organizations-m
 //// Applications
 import { SystemsComponent } from './applications/systems/systems.component';
 import { SystemsModalComponent } from './components/modals/systems-modal/systems-modal.component';
+import { SystemManagerComponent } from './components/manager-modals/system-manager/system-manager.component';
 import { AppsComponent } from './applications/apps/apps.component';
 import { ApplicationsModalComponent } from './components/modals/applications-modal/applications-modal.component';
 import { TimeComponent } from './applications/time/time.component';
@@ -86,6 +87,7 @@ import { Globals } from './common/globals';
 
     SystemsComponent,
     SystemsModalComponent,
+    SystemManagerComponent,
     AppsComponent,
     ApplicationsModalComponent,
     TimeComponent,

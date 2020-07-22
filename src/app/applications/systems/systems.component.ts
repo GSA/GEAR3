@@ -4,6 +4,8 @@ import { ModalsService } from '../../services/modals/modals.service';
 import { SharedService } from '../../services/shared/shared.service';
 import { TableService } from '../../services/tables/table.service';
 
+import { ParentSystem } from 'api/models/parentsystems.model';
+
 // Declare jQuery symbol
 declare var $: any;
 
@@ -15,10 +17,11 @@ declare var $: any;
 export class SystemsComponent implements OnInit {
 
   row: Object = <any>{};
+  retiredTable: boolean = false;
 
   constructor(
     private modalService: ModalsService,
-    private sharedService: SharedService,
+    public sharedService: SharedService,
     private tableService: TableService) {
     this.modalService.currentSys.subscribe(row => this.row = row);
   }
@@ -76,6 +79,11 @@ export class SystemsComponent implements OnInit {
       data: [],
     }));
 
+    // Filter to only active parent systems
+    $(document).ready(
+      $('#systemTable').bootstrapTable('filterBy', { Status: 'Active' })
+    );
+
     // Method to handle click events on the Systems table
     $(document).ready(
       $('#systemTable').on('click-row.bs.table', function (e, row) {
@@ -83,6 +91,42 @@ export class SystemsComponent implements OnInit {
       }.bind(this)
       ));
 
+  }
+
+  // Create new parent system when in GEAR Manager mode
+  createParentSystem() {
+    var emptySystem = new ParentSystem();
+
+    // By default, set new record to active
+    emptySystem.Status = 'Active';
+    this.modalService.updateRecordCreation(true);
+    this.sharedService.setSystemForm();
+    this.modalService.updateDetails(emptySystem, 'system');
+    $('#systemManager').modal('show');
+  }
+
+  // Update table from filter buttons
+  retiredFilter() {
+    this.retiredTable = true;  // Filters are on, expose main table button
+
+    $('#systemTable').bootstrapTable('filterBy', { Status: 'Retired' });
+    $('#systemTable').bootstrapTable('refreshOptions', {
+      exportOptions: {
+        fileName: this.sharedService.fileNameFmt('GSA_Inactive_Parent_Systems')
+      }
+    })
+  }
+
+  backToMainSystem() {
+    this.retiredTable = false;  // Hide main button
+
+    // Remove filters and back to default
+    $('#systemTable').bootstrapTable('filterBy', { Status: 'Active' });
+    $('#systemTable').bootstrapTable('refreshOptions', {
+      exportOptions: {
+        fileName: this.sharedService.fileNameFmt('GSA_Parent_Systems')
+      }
+    });
   }
 
 }

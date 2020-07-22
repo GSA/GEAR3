@@ -41,6 +41,7 @@ SELECT DISTINCT
   GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', apprat.fy, apprat.TIME_Val) SEPARATOR '; ') AS AppTime,
 
   obj_parent_system.Keyname           AS ParentSystem,
+  obj_parent_system.Id                AS ParentSystemID,
   obj_investment.Id                   AS InvestmentID,
   obj_portfolio.Keyname               AS Portfolio,
   obj_fisma_archer.`ex:System_Name`   AS FISMASystem,

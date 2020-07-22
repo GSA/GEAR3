@@ -233,8 +233,12 @@ export class InvestmentManagerComponent implements OnInit {
       this.investForm.value.auditUser = this.globals.authUser;
 
       // Change de/selected IDs to array from set
-      this.investForm.value.investRelatedApps = Array.from(this.investForm.value.investRelatedApps);
-      this.investForm.value.deselectedApps = Array.from(this.investForm.value.deselectedApps);
+      if (this.investForm.value.investRelatedApps) {
+        this.investForm.value.investRelatedApps = Array.from(this.investForm.value.investRelatedApps);
+      };
+      if (this.investForm.value.deselectedApps) {
+        this.investForm.value.deselectedApps = Array.from(this.investForm.value.deselectedApps);
+      };
 
       // console.log("Form values before committing to database: ", this.investForm.value); // Debug
 

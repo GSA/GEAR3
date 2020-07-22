@@ -6,20 +6,19 @@ const router = express.Router();
 router.route('/')
     .get(appCtrl.findAll);
 
-router.route('/:id')
+router.route('/get/:id')
     .get(appCtrl.findOne);
 
 router.route('/applications_retired')
     .get(appCtrl.findAllRetired);
 
-// Children
-router.route('/:id/capabilities/')
+router.route('/get/:id/capabilities/')
     .get(appCtrl.findCapabilities);
 
-router.route('/:id/technologies/')
+router.route('/get/:id/technologies/')
     .get(appCtrl.findTechnologies);
 
-router.route('/:id/interfaces/')
+router.route('/get/:id/interfaces/')
     .get(appCtrl.findInterfaces);
 
 // router.route('/:id/interfacesv2/')

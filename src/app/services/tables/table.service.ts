@@ -238,7 +238,7 @@ export class TableService {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(data.Name + '-Related_Capabilities')
       },
-      url: this.sharedService.internalURLFmt('/api/applications/'
+      url: this.sharedService.internalURLFmt('/api/applications/get/'
         + String(data.ID) + '/capabilities')
     });
 
@@ -247,7 +247,7 @@ export class TableService {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(data.Name + '-Related_Technologies')
       },
-      url: this.sharedService.internalURLFmt('/api/applications/'
+      url: this.sharedService.internalURLFmt('/api/applications/get/'
         + String(data.ID) + '/technologies')
     });
   }
@@ -349,7 +349,7 @@ export class TableService {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(data.Name + '-Child_Apps')
       },
-      url: this.sharedService.internalURLFmt('/api/parentsystems/'
+      url: this.sharedService.internalURLFmt('/api/parentsystems/get/'
         + String(data.ID) + '/applications')
     })
   }

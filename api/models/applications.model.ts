@@ -33,6 +33,7 @@ export class Application {
   public POC: string;
   public AppTime: string;
   public ParentSystem: string;
+  public ParentSystemID: number;
   public InvestmentID: number;
   public Portfolio: string;
   public FISMASystem: string;

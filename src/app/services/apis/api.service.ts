@@ -69,16 +69,16 @@ export class ApiService {
     );
   };
   public getOneApp(id: number): Observable<Application[]> {
-    return this.http.get<Application[]>(this.appUrl + '/' + String(id)).pipe(
+    return this.http.get<Application[]>(this.appUrl + '/get/' + String(id)).pipe(
       catchError(this.handleError<Application[]>('GET Application', []))
     );
   };
-  //// Application Interfaces
   public getAppInterfaces(id: number): Observable<Interface[]> {
-    return this.http.get<Interface[]>(this.appUrl + '/' + String(id)).pipe(
+    return this.http.get<Interface[]>(this.appUrl + '/get/' + String(id) + '/interfaces').pipe(
       catchError(this.handleError<Interface[]>('GET App Interfaces', []))
     );
   };
+
 
   //// Capabilities
   public getCapabilities(): Observable<Capability[]> {
@@ -92,6 +92,7 @@ export class ApiService {
     );
   };
 
+
   //// FISMA
   public getFISMA(): Observable<FISMA[]> {
     return this.http.get<FISMA[]>(this.fismaUrl).pipe(
@@ -103,6 +104,7 @@ export class ApiService {
       catchError(this.handleError<FISMA[]>('GET FISMA System', []))
     );
   };
+
 
   //// Investment
   public getInvestments(): Observable<Investment[]> {
@@ -140,7 +142,7 @@ export class ApiService {
     return this.http.put<Investment[]>(this.investUrl + '/update/' + String(id), data, httpOptions).pipe(
       catchError(this.handleError<Investment[]>('UPDATE Investment', []))
     );
-  }
+  };
   public createInvestment(data: {}): Observable<Investment[]> {
     if (this.globals.jwtToken) {
       var httpOptions = this.setHeaderOpts();
@@ -151,7 +153,8 @@ export class ApiService {
     return this.http.post<Investment[]>(this.investUrl + '/create', data, httpOptions).pipe(
       catchError(this.handleError<Investment[]>('CREATE Investment', []))
     );
-  }
+  };
+
 
   //// Organizations
   public getOrganizations(): Observable<Organization[]> {
@@ -165,6 +168,7 @@ export class ApiService {
     );
   };
 
+
   //// Parent Systems
   public getSystems(): Observable<ParentSystem[]> {
     return this.http.get<ParentSystem[]>(this.sysUrl).pipe(
@@ -172,10 +176,43 @@ export class ApiService {
     );
   };
   public getOneSys(id: number): Observable<ParentSystem[]> {
-    return this.http.get<ParentSystem[]>(this.sysUrl + '/' + String(id)).pipe(
+    return this.http.get<ParentSystem[]>(this.sysUrl + '/get/' + String(id)).pipe(
       catchError(this.handleError<ParentSystem[]>('GET Parent System', []))
     );
   };
+  public getLatestSys(): Observable<ParentSystem[]> {
+    return this.http.get<ParentSystem[]>(this.sysUrl + '/latest').pipe(
+      catchError(this.handleError<ParentSystem[]>('GET Latest Parent System', []))
+    );
+  };
+  public getChildApps(id: number): Observable<Application[]> {
+    return this.http.get<Application[]>(this.sysUrl + '/get/' + String(id) + '/applications').pipe(
+      catchError(this.handleError<Application[]>('GET System Child Applications', []))
+    );
+  };
+  public updateParentSys(id: number, data: {}): Observable<ParentSystem[]> {
+    if (this.globals.jwtToken) {
+      var httpOptions = this.setHeaderOpts();
+    } else {
+      catchError(this.handleError<ParentSystem[]>('UPDATE Parent System - No Authentication Token', []))
+    }
+
+    return this.http.put<ParentSystem[]>(this.sysUrl + '/update/' + String(id), data, httpOptions).pipe(
+      catchError(this.handleError<ParentSystem[]>('UPDATE Parent System', []))
+    );
+  };
+  public createParentSys(data: {}): Observable<ParentSystem[]> {
+    if (this.globals.jwtToken) {
+      var httpOptions = this.setHeaderOpts();
+    } else {
+      catchError(this.handleError<ParentSystem[]>('CREATE Parent System - No Authentication Token', []))
+    }
+
+    return this.http.post<ParentSystem[]>(this.sysUrl + '/create', data, httpOptions).pipe(
+      catchError(this.handleError<ParentSystem[]>('CREATE Parent System', []))
+    );
+  };
+
 
   //// POCs
   public getPOCs(): Observable<POC[]> {
@@ -188,6 +225,7 @@ export class ApiService {
       catchError(this.handleError<POC[]>('GET POC', []))
     );
   };
+
 
   //// IT-Standards
   public getITStandards(): Observable<ITStandards[]> {
@@ -266,6 +304,7 @@ export class ApiService {
       return of(result as T)
     };
   };
+
 
   //// Set JWT into Header Options
   setHeaderOpts() {

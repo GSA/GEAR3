@@ -101,12 +101,12 @@ export class InvestmentsComponent implements OnInit {
       data: [],
     }));
 
-    // Method to handle click events on the Investments table
+    // Filter to only active investments
     $(document).ready(
-      // Filter to only active investments
       $('#investTable').bootstrapTable('filterBy', { Active: 1 })
-    )
+    );
 
+    // Method to handle click events on the Investments table
     $(document).ready(
       $('#investTable').on('click-row.bs.table', function (e, row) {
         this.tableService.investTableClick(row);
