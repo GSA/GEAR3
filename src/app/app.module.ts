@@ -51,7 +51,7 @@ import { FismaPocsComponent } from './security/fisma-pocs/fisma-pocs.component';
 
 //// Technologies
 import { ItStandardsComponent } from './technologies/it-standards/it-standards.component';
-import { StandardsModalComponent } from './components/modals/standards-modal/standards-modal.component';
+import { ItStandardsModalComponent } from './components/modals/it-standards-modal/it-standards-modal.component';
 
 // GEAR Manager Modals
 import { InvestmentManagerComponent } from './components/manager-modals/investment-manager/investment-manager.component';
@@ -99,7 +99,7 @@ import { Globals } from './common/globals';
     FismaPocsComponent,
 
     ItStandardsComponent,
-    StandardsModalComponent,
+    ItStandardsModalComponent,
     ItStandardManagerComponent
   ],
   imports: [

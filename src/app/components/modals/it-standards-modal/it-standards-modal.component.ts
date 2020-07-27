@@ -8,11 +8,11 @@ import { TableService } from '../../../services/tables/table.service';
 declare var $: any;
 
 @Component({
-  selector: 'standards-modal',
-  templateUrl: './standards-modal.component.html',
-  styleUrls: ['./standards-modal.component.css']
+  selector: 'it-standards-modal',
+  templateUrl: './it-standards-modal.component.html',
+  styleUrls: ['./it-standards-modal.component.css']
 })
-export class StandardsModalComponent implements OnInit {
+export class ItStandardsModalComponent implements OnInit {
 
   itStandard = <any>{};
 
