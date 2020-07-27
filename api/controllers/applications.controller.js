@@ -7,7 +7,7 @@ const queryPath = '../queries/';
 
 function findAll(req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_application_full_suite.sql')).toString() +
-    " WHERE org.Keyname <> 'External' AND obj_application_status.Keyname <> 'Retired' GROUP BY app.Id ORDER BY app.Keyname;";
+    " WHERE org.Keyname <> 'External' GROUP BY app.Id ORDER BY app.Keyname;";
 
   res = ctrl.sendQuery(query, 'business applications', res);
 };
@@ -18,6 +18,13 @@ function findOne(req, res) {
   var params = [req.params.id];
 
   res = ctrl.sendQuery(query, 'individual business application', res);
+};
+
+function findLatest(req, res) {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_application_full_suite.sql')).toString() +
+    ` GROUP BY app.Id ORDER BY app.CreateDTG DESC LIMIT 1;`;
+
+  res = ctrl.sendQuery(query, 'latest individual business application', res);
 };
 
 function findAllRetired(req, res) {
@@ -55,11 +62,179 @@ function findInterfaces(req, res) {
   res = ctrl.sendQuery(query, 'related technologies for application', res);
 };
 
+function update(req, res) {
+  if (req.headers.authorization) {
+    var data = req.body;
+
+    // Create string to update Business POCs
+    var pocString = '';
+    if (data.appBizPOC) {
+      // Delete any references first
+      pocString += `DELETE FROM zk_application_business_poc WHERE obj_application_Id=${req.params.id}; `;
+
+      // Insert new IDs
+      data.appBizPOC.forEach(pocID => {
+        pocString += `INSERT INTO zk_application_business_poc (obj_application_Id, obj_bus_poc_Id) VALUES (${req.params.id}, ${pocID}); `;
+      });
+    };
+
+    // Create string to update Technical POCs
+    if (data.appTechPOC) {
+      // Delete any references first
+      pocString += `DELETE FROM zk_application_technical_poc WHERE obj_application_Id=${req.params.id}; `;
+
+      // Insert new IDs
+      data.appBizPOC.forEach(pocID => {
+        pocString += `INSERT INTO zk_application_technical_poc (obj_application_Id, obj_tech_poc_Id) VALUES (${req.params.id}, ${pocID}); `;
+      });
+    };
+
+    // Create string to update technology-apps relationship
+    var techString = '';
+    if (data.relatedTech) {
+      // Delete any references first
+      techString += `DELETE FROM zk_application_technology WHERE obj_application_Id=${req.params.id}; `;
+
+      // Insert new IDs
+      data.relatedTech.forEach(techID => {
+        techString += `INSERT INTO zk_application_technology (obj_application_Id, obj_technology_Id) VALUES (${req.params.id}, ${techID}); `;
+      });
+    };
+
+    // Null any empty text fields
+    data.appDesc = emptyTextFieldHandler(data.appDesc);
+    data.appNotes = emptyTextFieldHandler(data.appNotes);
+    data.appCUI = emptyTextFieldHandler(data.appCUI);
+    data.appProdYr = emptyTextFieldHandler(data.appProdYr);
+    data.appRetiredYr = emptyTextFieldHandler(data.appRetiredYr);
+
+    var query = `SET FOREIGN_KEY_CHECKS=0;
+      UPDATE obj_application
+      SET obj_application_status_Id     = ${data.appStatus},
+        Keyname                         = '${data.appName}',
+        Description                     = ${data.appDesc},
+        Display_Name                    = '${data.appDisplayName}',
+        Application_Notes               = ${data.appNotes},
+
+        Unique_Identifier_Code          = '${data.appUID}',
+        CUI_Indicator                   = ${data.appCUI},
+        Production_Year                 = ${data.appProdYr},
+        Retired_Year                    = ${data.appRetiredYr},
+        obj_org_SSO_Id                  = ${data.appSSO},
+        App_Owning_Org                  = ${data.appOwner},
+
+        Cloud_Indicator                 = '${data.appCloud}',
+        Mobile_App_Indicator            = '${data.appMobile}',
+        obj_app_hostingprovider_Id      = ${data.appHost},
+        obj_fisma_Id                    = ${data.appFISMA},
+        obj_parent_system_Id            = ${data.appParent},
+
+        ChangeAudit                     = '${data.auditUser}'
+      WHERE Id = ${req.params.id};
+      SET FOREIGN_KEY_CHECKS=1;
+      ${pocString}
+      ${techString}`
+
+    res = ctrl.sendQuery(query, 'update business application', res);
+  } else {
+    res.status(502).json({
+      message: "No authorization token present. Not allowed to update business application"
+    });
+  }
+};
+
+function create(req, res) {
+  if (req.headers.authorization) {
+    var data = req.body;
+
+    // Null any empty text fields
+    data.appDesc = emptyTextFieldHandler(data.appDesc);
+    data.appNotes = emptyTextFieldHandler(data.appNotes);
+    data.appCUI = emptyTextFieldHandler(data.appCUI);
+    data.appProdYr = emptyTextFieldHandler(data.appProdYr);
+    data.appRetiredYr = emptyTextFieldHandler(data.appRetiredYr);
+
+    var query = `INSERT INTO obj_application(
+      obj_application_status_Id,
+      Keyname,
+      Description,
+      Display_Name,
+      Application_Notes,
+
+      Unique_Identifier_Code,
+      CUI_Indicator,
+      Production_Year,
+      Retired_Year,
+      obj_org_SSO_Id,
+      App_Owning_Org,
+
+      Cloud_Indicator,
+      Mobile_App_Indicator,
+      obj_app_hostingprovider_Id,
+      obj_fisma_Id,
+      obj_parent_system_Id,
+
+      CreateAudit,
+      ChangeAudit) VALUES (
+        ${data.appStatus},
+        '${data.appName}',
+        ${data.appDesc},
+        '${data.appDisplayName}',
+        ${data.appNotes},
+
+        '${data.appUID}',
+        ${data.appCUI},
+        ${data.appProdYr},
+        ${data.appRetiredYr},
+        ${data.appSSO},
+        ${data.appOwner},
+
+        '${data.appCloud}',
+        '${data.appMobile}',
+        ${data.appHost},
+        ${data.appFISMA},
+        ${data.appParent},
+
+        '${data.auditUser}',
+        '${data.auditUser}');`;
+
+    res = ctrl.sendQuery(query, 'create business application', res);
+  } else {
+    res.status(502).json({
+      message: "No authorization token present. Not allowed to create IT Standard"
+    });
+  }
+};
+
+function findStatuses(req, res) {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_application_statuses.sql')).toString();
+
+  res = ctrl.sendQuery(query, 'Application Statuses', res);
+};
+
+function findHosts(req, res) {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_application_host_providers.sql')).toString();
+
+  res = ctrl.sendQuery(query, 'Application Host Providers', res);
+};
+
+function emptyTextFieldHandler(content) {
+  if (!content) return 'NULL';
+  else return `'${content}'`;
+};
+
 module.exports = {
   findAll,
   findOne,
+  findLatest,
   findAllRetired,
   findCapabilities,
   findTechnologies,
-  findInterfaces
+  findInterfaces,
+
+  update,
+  create,
+
+  findStatuses,
+  findHosts
 };

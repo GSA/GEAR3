@@ -55,8 +55,8 @@ export class TimeComponent implements OnInit {
     title: 'Application Name',
     sortable: true
   }, {
-    field: 'Alias',
-    title: 'Alias',
+    field: 'DisplayName',
+    title: 'Display Name',
     sortable: true,
     visible: false
   }, {

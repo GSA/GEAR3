@@ -40,8 +40,8 @@ export class TableService {
     title: 'Business Application Name',
     sortable: true
   }, {
-    field: 'Alias',
-    title: 'Alias',
+    field: 'DisplayName',
+    title: 'Display Name',
     sortable: true,
     visible: false
   }, {
@@ -223,7 +223,7 @@ export class TableService {
     // console.log("Applications Table Clicked Row: ", data);  // Debug
 
     this.modalService.updateDetails(data, 'application');
-    $('#appsDetail').modal('show');
+    $('#appDetail').modal('show');
 
     // Update TIME report table in detail modal with clicked application
     $('#appTimeTable').bootstrapTable('refreshOptions', {

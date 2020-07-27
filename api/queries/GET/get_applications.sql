@@ -3,7 +3,7 @@ SELECT
   app.Keyname                     AS Name,
   app.Description                 AS Description,
   app.Display_Name                AS DisplayName,
-  app.Application_alias           AS Alias,
+  -- app.Application_alias           AS Alias,
   app.Cloud_Indicator             AS Cloud,
   app.Mobile_App_Indicator,
   app.Desktop_Indicator,

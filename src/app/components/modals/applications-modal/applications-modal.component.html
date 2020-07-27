@@ -1,5 +1,5 @@
 <!-- Applications Detail Modal -->
-<div class="modal fade" id="appsDetail" tabindex="-1" role="dialog" aria-labelledby="appTitle" aria-hidden="true">
+<div class="modal fade" id="appDetail" tabindex="-1" role="dialog" aria-labelledby="appTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
     <div class="modal-content">
       <div class="modal-header bg-danger">
@@ -31,15 +31,32 @@
         <!-- Tab Panes -->
         <div class="tab-content mt-3">
           <div class="tab-pane fade show active" id="appOverview">
-            <h4>Alias</h4>
-            <p [hidden]="!application.Alias">{{ application.Alias }}</p>
-            <p [hidden]="application.Alias">None</p>
-            <br><br>
+
+            <div class="row mb-4">
+              <div class="col">
+                <h4>Display Name</h4>
+                <p [hidden]="!application.DisplayName">{{ application.DisplayName }}</p>
+                <p [hidden]="application.DisplayName">None</p>
+              </div>
+
+              <div class="col">
+                <h4>Status</h4>
+                <p>{{ application.Status }}</p>
+              </div>
+
+              <div class="col">
+                <h4>Application or Website</h4>
+                <p>{{ application.Application_or_Website }}</p>
+              </div>
+            </div>
 
             <h4>Description</h4>
             <p>{{ application.Description }}</p>
+            <br><br>
 
-            <div class="float-right">Last Updated: {{ application.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}</div>
+            <h4>Application Notes</h4>
+            <p>{{ application.Application_Notes }}</p>
+            <p [hidden]="application.Application_Notes">None</p>
           </div>
           <!-- End of Overview Tab Pane -->
 
@@ -100,15 +117,11 @@
                   </td>
                 </tr>
                 <tr>
-                  <td><i class="fa fa-door-open"></i>Owning 2-Letter Org</td>
+                  <td><i class="fa fa-door-open"></i>Owning Org</td>
                   <td>
                     {{ application.Owner }}
                     <div [hidden]="application.Owner">None Provided</div>
                   </td>
-                </tr>
-                <tr>
-                  <td><i class="fa fa-info-circle"></i>Status</td>
-                  <td>{{ application.Status }}</td>
                 </tr>
               </tbody>
             </table>
@@ -150,6 +163,10 @@
                   <td><i class="fa fa-cloud"></i>Cloud</td>
                   <td>{{ application.Cloud }}</td>
                 </tr>
+                <!-- <tr>
+                  <td><i class="fas fa-desktop"></i>Desktop Indicator</td>
+                  <td>{{ application.Desktop_Indicator }}</td>
+                </tr> -->
                 <tr>
                   <td><i class="fa fa-shield-alt"></i>FISMA System</td>
                   <td>{{ application.FISMASystem }}</td>
@@ -157,6 +174,10 @@
                 <tr>
                   <td><i class="fa fa-building"></i>Hosting Provider</td>
                   <td>{{ application.HostingProvider }}</td>
+                </tr>
+                <tr>
+                  <td><i class="fas fa-mobile-alt"></i>Mobile App?</td>
+                  <td>{{ application.Mobile_App_Indicator }}</td>
                 </tr>
                 <tr [hidden]="application.ParentSystem">
                   <td><i class="fa fa-server"></i>Parent System</td>
@@ -202,7 +223,10 @@
       </div>
       <!-- End of Modal Body -->
 
-      <div class="modal-footer"></div>
+      <div class="modal-footer">
+        <div class="float-right">Last Updated: {{ application.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}</div>
+        <button  type="button" [hidden]="!sharedService.loggedIn" class="btn btn-info text-white" (click)="appEdit()">Edit This Item</button>
+      </div>
     </div>
   </div>
 </div>

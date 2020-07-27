@@ -3,10 +3,10 @@ SELECT DISTINCT
   app.Keyname                       AS Name,
   app.Description                   AS Description,
   app.Display_Name                  AS DisplayName,
-  app.Application_alias             AS Alias,
+  -- app.Application_alias             AS Alias,
   app.Cloud_Indicator               AS Cloud,
   app.Mobile_App_Indicator,
-  app.Desktop_Indicator,
+  -- app.Desktop_Indicator,
   -- app.Regional_Classification      AS RegionClassification,
   app.Application_or_Website,
   nou.Keyname                       AS Number_of_Users,
@@ -25,8 +25,8 @@ SELECT DISTINCT
   obj_application_status.Keyname    AS Status,
   org.Keyname                       AS SSO,
   org.Display_name                  AS SSOShort,
-  GROUP_CONCAT(DISTINCT owner.Keyname SEPARATOR ',')                                                            AS Owner,
-  GROUP_CONCAT(DISTINCT owner.Display_name SEPARATOR ',')                                                       AS OwnerShort,
+  owner.Keyname                     AS Owner,
+  owner.Display_name                AS OwnerShort,
   GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', buspoc.Keyname, buspoc.Email, busorg.Display_Name) SEPARATOR '; ')     AS BusinessPOC,
   GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', techpoc.Keyname, techpoc.Email, techorg.Display_Name) SEPARATOR '; ')  AS TechnicalPOC,
   GROUP_CONCAT(DISTINCT  buspoc.Keyname SEPARATOR ', ')                                                         AS BusPOC,
@@ -67,7 +67,7 @@ LEFT JOIN obj_tier          AS ot     ON app.Tier = ot.Id
 
 
 LEFT JOIN zk_application_owning_org  ON app.Id = zk_application_owning_org.obj_application_Id
-LEFT JOIN obj_organization AS owner  ON zk_application_owning_org.obj_org_owner_Id = owner.Id
+LEFT JOIN obj_organization AS owner  ON app.App_Owning_Org = owner.Id
 
 -- LEFT JOIN zk_application_replacedby ON app.Id = zk_application_replacedby.obj_application_Id
 -- LEFT JOIN obj_application AS replacedby ON zk_application_replacedby.obj_application_Id1 = replacedby.Id

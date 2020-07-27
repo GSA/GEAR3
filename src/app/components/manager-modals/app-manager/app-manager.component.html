@@ -1,0 +1,237 @@
+<!-- Application Manager Modal -->
+<div class="modal fade" id="appManager" tabindex="-1" role="dialog" aria-labelledby="appMngrTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-xl">
+    <div class="modal-content">
+      <div class="modal-header bg-danger">
+        <h5 class="modal-title text-white" id="appMngrTitle">
+          <i class="fas fa-money-bill-wave"></i>
+          <span *ngIf="application.Name; else elseAppName"> {{ application.Name }} - <span
+              class="text-primary">**EDITING**</span></span>
+          <ng-template #elseAppName> Create New Business Application</ng-template>
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Tabs -->
+        <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#appMngrOverview">
+              Overview</a></li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#appMngrBusiness">
+              Business</a></li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#appMngrTechnology">
+              Technology</a></li>
+        </ul>
+
+        <!-- Tab Panes -->
+        <form [formGroup]="appForm" class="container">
+          <div class="tab-content mt-3">
+            <div class="tab-pane fade show active" id="appMngrOverview">
+
+              <div class="row align-items-center">
+                <div class="form-group col-6">
+                  <label for="appDisplayName">Display Name or Alias<span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="appDisplayName" formControlName="appDisplayName"
+                    placeholder="Enter a Short Name or Alias" [value]="application.DisplayName">
+                </div>
+
+                <div class="form-group col-3">
+                  <label for="appStatus">Status<span class="text-danger">*</span></label>
+                  <select class="form-control" id="appStatus" formControlName="appStatus" required>
+                    <option *ngFor="let status of statuses" [value]="status.ID"
+                      [selected]="status.Name === application.Status">{{ status.Name }}</option>
+                  </select>
+                </div>
+
+                <div class="form-group col-3">
+                  <label for="appOrWeb">Application or Website<span class="text-danger">*</span></label>
+                  <select class="form-control" id="appOrWeb" formControlName="appOrWeb" required>
+                    <option value="Application" [selected]="application.Application_or_Website === 'Application'">Application</option>
+                    <option value="Website" [selected]="application.Application_or_Website === 'Website'">Website</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="appName">Full Application Name<span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="appName" formControlName="appName"
+                  placeholder="Enter a Name" [value]="application.Name" required>
+              </div>
+
+              <div class="form-group">
+                <label for="appDesc">Description</label>
+                <textarea type="text" class="form-control" id="appDesc" formControlName="appDesc"
+                  placeholder="Enter a Description" rows="5" [value]="application.Description"></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="appNotes">Application Notes</label>
+                <textarea type="text" class="form-control" id="appNotes" formControlName="appNotes"
+                  placeholder="Enter Additional Notes, if any" rows="2" [value]="application.Application_Notes"></textarea>
+              </div>
+
+            </div>
+            <!-- End of Overview Pane -->
+
+            <div class="tab-pane fade show" id="appMngrBusiness">
+              <div class="row">
+                <div class="form-group col">
+                  <label for="appUID">Application ID<span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="appUID" formControlName="appUID"
+                    placeholder="Ex: 1234-1234-1234567-1234" [value]="application.OMBUID" required>
+                </div>
+
+                <div class="form-group col">
+                  <label for="appCUI">CUI Indicator</label>
+                  <select class="form-control" id="appCUI" formControlName="appCUI">
+                    <option value="Yes" [selected]="application.CUI === 'Yes'">Yes</option>
+                    <option value="No" [selected]="application.CUI === 'No'">No</option>
+                    <option value="TBD" [selected]="application.CUI === 'TBD'">TBD</option>
+                  </select>
+                </div>
+
+                <div class="form-group col">
+                  <label for="appProdYr">Production Year</label>
+                  <input type="number" class="form-control" id="appProdYr" formControlName="appProdYr"
+                    placeholder="Ex: 2008" min="1950" max="3000" [value]="application.ProdYear">
+                </div>
+
+                <div class="form-group col">
+                  <label for="appRetiredYr">Retired Year</label>
+                  <input type="number" class="form-control" id="appRetiredYr" formControlName="appRetiredYr"
+                    placeholder="Ex: 2020" min="1950" max="3000" [value]="application.RetiredYear">
+                </div>
+              </div>
+
+              <div class="row align-items-center">
+                <div class="form-group col-5">
+                  <label for="appBizPOC">Business Point of Contact(s)<span class="text-danger">*</span></label>
+                  <select class="form-control" id="appBizPOC" formControlName="appBizPOC" multiple required>
+                    <option *ngFor="let poc of POCs" [value]="poc.ID" [selected]="pocMatch(poc.Name)">{{ poc.Name }}</option>
+                  </select>
+                </div>
+
+                <div class="form-group col-7">
+                  <label for="appOwner">Owning Org<span class="text-danger">*</span></label>
+                  <select class="form-control" id="appOwner" formControlName="appOwner" required>
+                    <option *ngFor="let org of orgs" [value]="org.ID" [selected]="org.Name === application.Owner">
+                      {{ org.Name }}</option>
+                  </select>
+                </div>
+              </div>
+
+            </div>
+            <!-- End of Business Pane -->
+
+            <div class="tab-pane fade show" id="appMngrTechnology">
+              <div class="row align-items-center">
+                <div class="form-group col-2 text-center mb-0">
+                  <label for="appCloud">Cloud Enabled?</label>
+                  <div id="appCloud" class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="appCloudSwitch"
+                      formControlName="appCloud" [checked]="application.Cloud === 'Yes'">
+                    <label class="custom-control-label" for="appCloudSwitch">Yes</label>
+                  </div>
+                </div>
+
+                <!-- <div class="form-group col-2 text-center mb-0">
+                  <label for="appDesktop">Desktop Indicator</label>
+                  <div id="appDesktop" class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="appDesktopSwitch"
+                      formControlName="appDesktop" [checked]="application.Mobile_App_Indicator === 'Yes'">
+                    <label class="custom-control-label" for="appDesktopSwitch">Yes</label>
+                  </div>
+                </div> -->
+
+                <div class="form-group col-2 text-center mb-0">
+                  <label for="appMobile">Mobile App?</label>
+                  <div id="appMobile" class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="appMobileSwitch"
+                      formControlName="appMobile" [checked]="application.Mobile_App_Indicator === 'Yes'">
+                    <label class="custom-control-label" for="appMobileSwitch">Yes</label>
+                  </div>
+                </div>
+
+                <div class="form-group col">
+                  <label for="appHost">Hosting Provider<span class="text-danger">*</span></label>
+                  <select class="form-control" id="appHost" formControlName="appHost" required>
+                    <option *ngFor="let host of hosts" [value]="host.ID"
+                      [selected]="application.HostingProvider === host.Name">{{ host.Name }}</option>
+                  </select>
+                </div>
+
+              </div>
+
+              <div class="row align-items-center">
+                <div class="form-group col-5">
+                  <label for="appTechPOC">Technical Point of Contact(s)<span class="text-danger">*</span></label>
+                  <select class="form-control" id="appTechPOC" formControlName="appTechPOC" multiple required>
+                    <option *ngFor="let poc of POCs" [value]="poc.ID" [selected]="pocMatch(poc.Name)">{{ poc.Name }}</option>
+                  </select>
+                </div>
+
+                <div class="form-group col">
+                  <label for="appFISMA">FISMA System</label>
+                  <select class="form-control" id="appFISMA" formControlName="appFISMA">
+                    <option *ngFor="let system of fismaSystems" [value]="system.ID"
+                      [selected]="application.FISMASystem === system.Name">{{ system.Name }}</option>
+                  </select>
+                </div>
+
+                <div class="form-group col">
+                  <label for="appParent">Parent System</label>
+                  <select class="form-control" id="appParent" formControlName="appParent" required>
+                    <option *ngFor="let system of parentSystems" [value]="system.ID"
+                      [selected]="application.ParentSystem === system.Name">{{ system.Name }}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="text-center mt-3">
+                <h4 class="justify-content-center">Related Technologies</h4>
+                <div class="row">
+                  <div class="form-group col-5">
+                    <label for="standardsPool">IT-Standards Pool</label>
+                    <select class="form-control" id="standardsPool" size="14" multiple>
+                      <option *ngFor="let tech of notSelected" [value]="tech.ID">{{ tech.Name }} - ({{ tech.Status }})</option>
+                    </select>
+                  </div>
+
+                  <div class="col-2 my-auto">
+                    <button class="btn btn-success w-100 mb-5" (click)="poolToSelected()">Move to<br>Selected <i
+                        class="fas fa-arrow-right  fa-lg"></i></button>
+                    <button class="btn btn-warning w-100" (click)="selectedToPool()"><i
+                        class="fas fa-arrow-left fa-lg"></i> Move to<br>Un-Selected</button>
+                  </div>
+
+                  <div class="form-group col-5">
+                    <label for="standardsSelect">Selected</label>
+                    <select class="form-control" id="standardsSelect" size="14" multiple>
+                      <option *ngFor="let tech of techRelations" [value]="tech.ID">{{ tech.Name }} - ({{ tech.Status }})</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <!-- End of Technology Pane -->
+
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <div class="text-danger mr-auto">* Required</div>
+        <div [hidden]="!application.ChangeDTG">Last Updated: {{ application.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}</div>
+        <button type="submit" form="appForm" class="btn btn-info text-white" (click)="submitForm()">Save</button>
+      </div>
+
+    </div>
+  </div>
+</div>

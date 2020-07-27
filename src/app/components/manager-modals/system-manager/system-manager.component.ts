@@ -90,7 +90,6 @@ export class SystemManagerComponent implements OnInit {
           this.notSelected = this.appPool;
         });
     } else {
-      console.log(this.system);
       // Adjust Status for rendering
       if (this.system.Status === 'Active') var status = true;
       else var status = false;

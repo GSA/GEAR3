@@ -19,7 +19,7 @@ export class ApplicationsModalComponent implements OnInit {
 
   constructor(
     private modalService: ModalsService,
-    private sharedService: SharedService,
+    public sharedService: SharedService,
     private tableService: TableService) { }
 
   // TIME Report Table Options
@@ -207,7 +207,7 @@ export class ApplicationsModalComponent implements OnInit {
     $(document).ready(
       $('#appCapTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
-        $('#appsDetail').modal('hide');
+        $('#appDetail').modal('hide');
 
         this.tableService.capsTableClick(row);
       }.bind(this)
@@ -217,11 +217,20 @@ export class ApplicationsModalComponent implements OnInit {
     $(document).ready(
       $('#appTechTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
-        $('#appsDetail').modal('hide');
+        $('#appDetail').modal('hide');
 
         this.tableService.itStandTableClick(row);
       }.bind(this)
       ));
+  }
+
+
+  appEdit () {
+    // Hide Detail Modal before showing Manager Modal
+    $('#appDetail').modal('hide');
+    this.sharedService.setAppForm();
+    this.modalService.updateDetails(this.application, 'application');
+    $('#appManager').modal('show');
   }
 
 

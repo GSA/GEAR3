@@ -25,26 +25,34 @@
   </div>
 
   <div class="row card-body card-text justify-content-center">
-    <div>
-      <!-- Filter by SSO Buttons -->
-      <span class="my-auto mr-3">Filters:</span>
-      <button role="button" name="appFASbttn" class="btn btn-primary" (click)="changeFilter('SSOShort', 'FAS (Q)')">
-        FAS (Q)</button>
-      <button role="button" name="appITbttn" class="btn btn-primary" (click)="changeFilter('SSOShort', 'GSA IT (I)')">
-        GSA IT (I)</button>
-      <button role="button" name="appOCFObttn" class="btn btn-primary" (click)="changeFilter('SSOShort', 'OCFO (B)')">
-        OCFO (B)</button>
-      <button role="button" name="appPBSbttn" class="btn btn-primary" (click)="changeFilter('SSOShort', 'PBS (P)')">
-        PBS (P)</button>
+    <div class="row w-100">
+      <!-- Add Button -->
+      <button role="button" name="addAppBttn" class="btn btn-danger" (click)="createApp()"
+        [hidden]="!sharedService.loggedIn">
+        <i class="fas fa-plus"></i>
+      </button>
 
-      <button role="button" name="appCloudBttn" class="btn btn-primary mx-3" (click)="changeFilter('Cloud', 'Yes')">
-        Cloud Enabled</button>
+      <!-- Filters -->
+      <div class="offset-md-3">
+        <span class="my-auto mr-3">Filters:</span>
+        <button role="button" name="appFASbttn" class="btn btn-primary" (click)="changeFilter('SSOShort', 'FAS (Q)')">
+          FAS (Q)</button>
+        <button role="button" name="appITbttn" class="btn btn-primary" (click)="changeFilter('SSOShort', 'GSA IT (I)')">
+          GSA IT (I)</button>
+        <button role="button" name="appOCFObttn" class="btn btn-primary" (click)="changeFilter('SSOShort', 'OCFO (B)')">
+          OCFO (B)</button>
+        <button role="button" name="appPBSbttn" class="btn btn-primary" (click)="changeFilter('SSOShort', 'PBS (P)')">
+          PBS (P)</button>
 
-      <button role="button" name="appRetiredBttn" class="btn btn-primary" (click)="changeFilter('Retired', '')">
-        Retired Apps</button>
+        <button role="button" name="appCloudBttn" class="btn btn-primary mx-3" (click)="changeFilter('Cloud', 'Yes')">
+          Cloud Enabled</button>
 
-      <button role="button" name="appBttn" class="btn btn-primary ml-3" (click)="backToMainApp()" [hidden]="!filteredTable">
-        Back to All Active Applications</button>
+        <button role="button" name="appRetiredBttn" class="btn btn-primary" (click)="changeFilter('Retired', '')">
+          Retired Apps</button>
+
+        <button role="button" name="appBttn" class="btn btn-primary ml-3" (click)="backToMainApp()" [hidden]="!filteredTable">
+          Back to All Active Applications</button>
+      </div>
     </div>
 
     <!-- Main Apps Table -->

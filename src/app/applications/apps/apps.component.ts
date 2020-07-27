@@ -5,8 +5,7 @@ import { ModalsService } from '../../services/modals/modals.service';
 import { SharedService } from '../../services/shared/shared.service';
 import { TableService } from '../../services/tables/table.service';
 
-// Declare D3 library
-declare var d3: any;
+import { Application } from 'api/models/applications.model';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -25,7 +24,7 @@ export class AppsComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private modalService: ModalsService,
-    private sharedService: SharedService,
+    public sharedService: SharedService,
     private tableService: TableService) {
     this.modalService.currentSys.subscribe(row => this.row = row);
   }
@@ -53,7 +52,7 @@ export class AppsComponent implements OnInit {
     sortName: 'Name',
     sortOrder: 'asc',
     showToggle: true,
-    url: this.sharedService.internalURLFmt('/api/applications').replace('#', '')
+    url: this.sharedService.internalURLFmt('/api/applications')
   };
 
   // Apps Table Columns
@@ -86,11 +85,11 @@ export class AppsComponent implements OnInit {
     visible: false
   }, {
     field: 'OwnerShort',
-    title: 'Two Letter Org (Short)',
+    title: 'Owning Org (Short)',
     sortable: true
   }, {
     field: 'Owner',
-    title: 'Two Letter Org (Long)',
+    title: 'Owning Org (Long)',
     sortable: true,
     visible: false
   }, {
@@ -129,6 +128,18 @@ export class AppsComponent implements OnInit {
     sortable: true,
     visible: false
   }, {
+    field: 'Mobile_App_Indicator',
+    title: 'Mobile App?',
+    sortable: true,
+    visible: false
+  },
+  // {
+  //   field: 'Desktop_Indicator',
+  //   title: 'Desktop Indicator',
+  //   sortable: true,
+  //   visible: false
+  // },
+  {
     field: 'Status',
     title: 'Status',
     sortable: true
@@ -155,56 +166,80 @@ export class AppsComponent implements OnInit {
     title: 'Application ID',
     sortable: true,
     visible: false
+  }, {
+    field: 'Application_or_Website',
+    title: 'Application or Website',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'Application_Notes',
+    title: 'Application Notes',
+    sortable: false,
+    visible: false
   }];
 
   // Retired Apps Table Column Definitions
   retiredColumnDefs: any[] = [{
+    field: 'DisplayName',
+    title: 'Display Name',
+    sortable: true
+  }, {
     field: 'Name',
     title: 'Application Name',
     sortable: true
-  }, {
-    field: 'Alias',
-    title: 'Alias',
-    sortable: true,
-    visible: false
   }, {
     field: 'Description',
     title: 'Description',
     sortable: true,
     formatter: this.sharedService.descFormatter
   }, {
-    field: 'SSO',
+    field: 'SSOShort',
     title: 'SSO',
     sortable: true
+  }, {
+    field: 'SSO',
+    title: 'SSO (Long)',
+    sortable: true,
+    visible: false
   }, {
     field: 'CUI',
     title: 'CUI',
     sortable: true,
     visible: false
   }, {
-    field: 'Owner',
-    title: 'Two Letter Org (Long)',
-    sortable: true,
-    visible: false
-  }, {
     field: 'OwnerShort',
-    title: 'Two Letter Org (Short)',
+    title: 'Owning Org (Short)',
+    sortable: true
+  }, {
+    field: 'Owner',
+    title: 'Owning Org (Long)',
     sortable: true,
     visible: false
   }, {
-    field: 'BusinessPOC',
+    field: 'BusPOC',
     title: 'Business POC',
     sortable: true,
     visible: false
   }, {
-    field: 'TechnicalPOC',
+    field: 'BusOrg',
+    title: 'Business POC Org',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'TechPOC',
     title: 'Technical POC',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'TechOrg',
+    title: 'Technical POC Org',
     sortable: true,
     visible: false
   }, {
     field: 'System',
     title: 'Parent System',
     sortable: true,
+    visible: false,
     formatter: this.sharedService.systemFormatter
   }, {
     field: 'HostingProvider',
@@ -217,33 +252,56 @@ export class AppsComponent implements OnInit {
     sortable: true,
     visible: false
   }, {
+    field: 'Mobile_App_Indicator',
+    title: 'Mobile App?',
+    sortable: true,
+    visible: false
+  },
+  // {
+  //   field: 'Desktop_Indicator',
+  //   title: 'Desktop Indicator',
+  //   sortable: true,
+  //   visible: false
+  // },
+  {
     field: 'Status',
     title: 'Status',
     sortable: true
   }, {
     field: 'ProdYear',
     title: 'Production Year',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'FismaSystem',
-    title: 'FISMA System',
-    sortable: true,
-    visible: false,
-    formatter: this.sharedService.systemFormatter
+    sortable: true
   }, {
     field: 'RetiredYear',
     title: 'Retired Year (CY)',
     sortable: true
   }, {
+    field: 'FISMASystem',
+    title: 'FISMA System',
+    sortable: true,
+    visible: false,
+    formatter: this.sharedService.systemFormatter
+  },
+  //{
+  //   field: 'HelpDesk',
+  //   title: 'Help Desk',
+  //   sortable: true,
+  //   visible: false
+  // },
+  {
     field: 'OMBUID',
     title: 'Application ID',
     sortable: true,
     visible: false
   }, {
-    field: 'Replacedby',
-    title: 'Application Replaced By',
+    field: 'Application_or_Website',
+    title: 'Application or Website',
     sortable: true,
+    visible: false
+  }, {
+    field: 'Application_Notes',
+    title: 'Application Notes',
+    sortable: false,
     visible: false
   }];
 
@@ -259,6 +317,13 @@ export class AppsComponent implements OnInit {
       data: [],
     }));
 
+    // Filter by only non-retired
+    $(document).ready(
+      $('#appsTable').bootstrapTable('filterBy', {
+          Status: ['Candidate', 'Pre-Production', 'Production']
+      })
+    );
+
     // Method to handle click events on the Applications table
     $(document).ready(
       $('#appsTable').on('click-row.bs.table', function (e, row) {
@@ -267,6 +332,19 @@ export class AppsComponent implements OnInit {
       }.bind(this),
       ));
 
+  }
+
+
+  // Create new application when in GEAR Manager mode
+  createApp() {
+    var emptyApp = new Application();
+
+    // By default, set new record to active
+    emptyApp.Status = 'Pre-Production';
+    this.modalService.updateRecordCreation(true);
+    this.sharedService.setAppForm();
+    this.modalService.updateDetails(emptyApp, 'application');
+    $('#appManager').modal('show');
   }
 
   // Update table, filtering by SSO
@@ -322,7 +400,7 @@ export class AppsComponent implements OnInit {
   }
 
   private createInterfaceChart(appID: number, interfaces: any[]) {
-    console.log(appID, interfaces);
+    // console.log(appID, interfaces);
     var CONTAINER_ID = 'interfaceChart',
       SVG_ID = 'interfaceSVG';
 

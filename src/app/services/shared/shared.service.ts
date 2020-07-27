@@ -23,6 +23,9 @@ export class SharedService {
   systemFormEmitter = new EventEmitter();
   systemFormSub: Subscription;
 
+  appFormEmitter = new EventEmitter();
+  appFormSub: Subscription;
+
   itStandardsFormEmitter = new EventEmitter();
   itStandardsFormSub: Subscription;
 
@@ -116,6 +119,10 @@ export class SharedService {
 
   public setSystemForm() {
     this.systemFormEmitter.emit();
+  };
+
+  public setAppForm() {
+    this.appFormEmitter.emit();
   };
 
   public setITStandardsForm() {

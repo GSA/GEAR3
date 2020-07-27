@@ -42,6 +42,7 @@ import { SystemManagerComponent } from './components/manager-modals/system-manag
 import { AppsComponent } from './applications/apps/apps.component';
 import { ApplicationsModalComponent } from './components/modals/applications-modal/applications-modal.component';
 import { TimeComponent } from './applications/time/time.component';
+import { AppManagerComponent } from './components/manager-modals/app-manager/app-manager.component';
 
 //// Security
 import { FismaComponent } from './security/fisma/fisma.component';
@@ -91,6 +92,7 @@ import { Globals } from './common/globals';
     AppsComponent,
     ApplicationsModalComponent,
     TimeComponent,
+    AppManagerComponent,
 
     FismaComponent,
     FismaModalComponent,

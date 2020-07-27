@@ -94,15 +94,13 @@ function update(req, res) {
       ${catString}
       ${pocString}`
 
-    console.log(query);
-
     res = ctrl.sendQuery(query, 'update IT Standard', res);
   } else {
     res.status(502).json({
       message: "No authorization token present. Not allowed to update IT-Standards"
     });
   }
-}
+};
 
 function create(req, res) {
   if (req.headers.authorization) {
@@ -156,7 +154,7 @@ function create(req, res) {
       message: "No authorization token present. Not allowed to create IT Standard"
     });
   }
-}
+};
 
 function find508Compliance(req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standard_508_status.sql')).toString();

@@ -21,6 +21,21 @@ router.route('/get/:id/technologies/')
 router.route('/get/:id/interfaces/')
     .get(appCtrl.findInterfaces);
 
+router.route('/latest')
+    .get(appCtrl.findLatest);
+
+router.route('/update/:id')
+    .put(appCtrl.update);
+
+router.route('/create')
+    .post(appCtrl.create);
+
+router.route('/statuses')
+    .get(appCtrl.findStatuses);
+
+router.route('/host_providers')
+    .get(appCtrl.findHosts);
+
 // router.route('/:id/interfacesv2/')
 //     .get(appCtrl.findInterfacesv2);
 
