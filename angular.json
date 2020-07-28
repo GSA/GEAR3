@@ -44,7 +44,7 @@
               "node_modules/tableexport.jquery.plugin/libs/html2canvas/html2canvas.min.js",
               "node_modules/tableexport.jquery.plugin/tableExport.min.js",
               "node_modules/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js",
-              "node_modules/bootstrap-table/dist/extensions/toolbar/bootstrap-table-toolbar.js"
+              "node_modules/bootstrap-table/dist/extensions/toolbar/bootstrap-table-toolbar.min.js"
             ]
           },
           "configurations": {

@@ -51,26 +51,26 @@ export class TimeComponent implements OnInit {
 
   // TIME Table Columns
   columnDefs: any[] = [{
-    field: 'Name',
-    title: 'Application Name',
-    sortable: true
-  }, {
     field: 'DisplayName',
     title: 'Display Name',
     sortable: true,
     visible: false
+  }, {
+    field: 'Name',
+    title: 'Application Name',
+    sortable: true
   }, {
     field: 'SSO',
     title: 'SSO',
     visible: false,
     sortable: true
   }, {
-    field: 'Owner',
-    title: 'Two Letter Org (Short)',
+    field: 'OwnerShort',
+    title: 'Owning Org (Short)',
     sortable: true,
   }, {
-    field: 'OwnerLongName',
-    title: 'Two Letter Org (Long)',
+    field: 'Owner',
+    title: 'Owning Org (Long)',
     visible: false,
     sortable: true
   }, {

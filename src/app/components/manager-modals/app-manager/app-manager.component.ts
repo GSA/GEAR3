@@ -40,7 +40,15 @@ export class AppManagerComponent implements OnInit {
     appTechPOC: new FormControl(null, [Validators.required]),
     appFISMA: new FormControl(),
     appParent: new FormControl(),
-    relatedTech: new FormControl()
+    relatedTech: new FormControl(),
+    TIMEFY19: new FormControl(null, [Validators.required]),
+    TIMEFY20: new FormControl(null, [Validators.required]),
+    TIMEFY21: new FormControl(null, [Validators.required]),
+    TIMEFY22: new FormControl(null, [Validators.required]),
+    TIMEFY23: new FormControl(null, [Validators.required]),
+    TIMEFY24: new FormControl(null, [Validators.required]),
+    TIMEFY25: new FormControl(null, [Validators.required]),
+    TIMENotes: new FormControl()
   });
 
   application = <any>{};
@@ -57,6 +65,9 @@ export class AppManagerComponent implements OnInit {
   notSelected: any[] = [];
   selectedIDs: Set<any> = new Set();
   deSelectedIDs: Set<any> = new Set();
+
+  TIMEYears = ['FY19', 'FY20', 'FY21', 'FY22', 'FY23', 'FY24', 'FY25'];
+  TIMEValues = ['T1', 'T2', 'T3', 'I', 'M1', 'M2', 'E', 'TBD', 'N/A'];
 
   constructor(
     private apiService: ApiService,
@@ -203,7 +214,15 @@ export class AppManagerComponent implements OnInit {
             appTechPOC: techPocIDs,
             appFISMA: this.sharedService.findInArrayID(this.fismaSystems, 'Name', this.application.FISMASystem),
             appParent: this.application.ParentSystemID,
-            relatedTech: this.selectedIDs
+            relatedTech: this.selectedIDs,
+            TIMEFY19: this.sharedService.FYFormatter(null, this.application, null, 'FY19'),
+            TIMEFY20: this.sharedService.FYFormatter(null, this.application, null, 'FY20'),
+            TIMEFY21: this.sharedService.FYFormatter(null, this.application, null, 'FY21'),
+            TIMEFY22: this.sharedService.FYFormatter(null, this.application, null, 'FY22'),
+            TIMEFY23: this.sharedService.FYFormatter(null, this.application, null, 'FY23'),
+            TIMEFY24: this.sharedService.FYFormatter(null, this.application, null, 'FY24'),
+            TIMEFY25: this.sharedService.FYFormatter(null, this.application, null, 'FY25'),
+            TIMENotes: this.application.TIME_Notes
           });
         }),
         (error) => {
@@ -340,6 +359,13 @@ export class AppManagerComponent implements OnInit {
     };
 
     return null;
+  }
+
+  timeMatch(year, timeVal) {
+    var selectedVal = this.sharedService.FYFormatter(null, this.application, null, year)
+
+    if (timeVal === selectedVal) return true;
+    return false;
   }
 
   appDetailRefresh(data: any) {

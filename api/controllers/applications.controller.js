@@ -101,12 +101,40 @@ function update(req, res) {
       });
     };
 
+    // Create string to update TIME
+    var timeString = '';
+    for (const [key, value] of Object.entries(data)) {
+      // Pull TIME fields and make sure they're not null
+      if (key.includes('TIMEFY') && data[key]) {
+        var year = key.split('TIME')[1]
+
+        // Insert new IDs or update if already exists
+        timeString += `INSERT INTO obj_application_rationalization(
+          obj_application_Id,
+          FY,
+          TIME_Val,
+          CreateAudit,
+          ChangeAudit,
+          Keyname) VALUES (
+            ${req.params.id},
+            '${year}',
+            '${value}',
+            '${data.auditUser}',
+            '${data.auditUser}',
+            '${data.appName}')
+          ON DUPLICATE KEY UPDATE
+            TIME_Val = '${value}',
+            ChangeAudit = '${data.auditUser}'; `;
+      };
+    };
+
     // Null any empty text fields
     data.appDesc = emptyTextFieldHandler(data.appDesc);
     data.appNotes = emptyTextFieldHandler(data.appNotes);
     data.appCUI = emptyTextFieldHandler(data.appCUI);
     data.appProdYr = emptyTextFieldHandler(data.appProdYr);
     data.appRetiredYr = emptyTextFieldHandler(data.appRetiredYr);
+    data.TIMENotes = emptyTextFieldHandler(data.TIMENotes);
 
     var query = `SET FOREIGN_KEY_CHECKS=0;
       UPDATE obj_application
@@ -129,11 +157,14 @@ function update(req, res) {
         obj_fisma_Id                    = ${data.appFISMA},
         obj_parent_system_Id            = ${data.appParent},
 
+        TIME_Notes                      = ${data.TIMENotes},
+
         ChangeAudit                     = '${data.auditUser}'
       WHERE Id = ${req.params.id};
       SET FOREIGN_KEY_CHECKS=1;
       ${pocString}
-      ${techString}`
+      ${techString}
+      ${timeString}`
 
     res = ctrl.sendQuery(query, 'update business application', res);
   } else {
@@ -153,6 +184,7 @@ function create(req, res) {
     data.appCUI = emptyTextFieldHandler(data.appCUI);
     data.appProdYr = emptyTextFieldHandler(data.appProdYr);
     data.appRetiredYr = emptyTextFieldHandler(data.appRetiredYr);
+    data.TIMENotes = emptyTextFieldHandler(data.TIMENotes);
 
     var query = `INSERT INTO obj_application(
       obj_application_status_Id,
@@ -174,6 +206,8 @@ function create(req, res) {
       obj_fisma_Id,
       obj_parent_system_Id,
 
+      TIME_Notes,
+
       CreateAudit,
       ChangeAudit) VALUES (
         ${data.appStatus},
@@ -194,6 +228,8 @@ function create(req, res) {
         ${data.appHost},
         ${data.appFISMA},
         ${data.appParent},
+
+        ${data.TIMENotes},
 
         '${data.auditUser}',
         '${data.auditUser}');`;

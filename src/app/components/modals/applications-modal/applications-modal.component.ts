@@ -65,6 +65,7 @@ export class ApplicationsModalComponent implements OnInit {
   }, {
     field: 'FY18',
     title: 'FY18',
+    visible: false,
     formatter: this.sharedService.FYFormatter
   }, {
     field: 'FY19',
@@ -81,7 +82,18 @@ export class ApplicationsModalComponent implements OnInit {
   }, {
     field: 'FY22',
     title: 'FY22',
-    visible: false,
+    formatter: this.sharedService.FYFormatter
+  }, {
+    field: 'FY23',
+    title: 'FY23',
+    formatter: this.sharedService.FYFormatter
+  }, {
+    field: 'FY24',
+    title: 'FY24',
+    formatter: this.sharedService.FYFormatter
+  }, {
+    field: 'FY25',
+    title: 'FY25',
     formatter: this.sharedService.FYFormatter
   }, {
     field: 'TIME_Notes',

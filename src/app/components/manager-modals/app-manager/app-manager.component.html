@@ -27,6 +27,9 @@
           <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#appMngrTechnology">
               Technology</a></li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#appMngrTIME">
+              TIME Analysis</a></li>
         </ul>
 
         <!-- Tab Panes -->
@@ -221,6 +224,32 @@
 
             </div>
             <!-- End of Technology Pane -->
+
+            <div class="tab-pane fade show text-center" id="appMngrTIME">
+
+              <div class="row justify-content-center">
+                <ng-template ngFor let-year [ngForOf]="TIMEYears">
+                  <div class="form-group col-2">
+                    <label for="TIME{{ year }}">{{ year }}<span class="text-danger">*</span></label>
+                    <select class="form-control" id="TIME{{ year }}" formControlName="TIME{{ year }}" required>
+                      <option *ngFor="let TIME of TIMEValues" [value]="TIME" [selected]="timeMatch('FY19', TIME)">
+                        {{ TIME }}</option>
+                    </select>
+                  </div>
+                </ng-template>
+              </div>
+
+              
+              <div class="row justify-content-center">
+                <div class="form-group w-75 mt-3">
+                  <label for="TIMENotes">TIME Notes</label>
+                  <textarea type="text" class="form-control" id="TIMENotes" formControlName="TIMENotes"
+                    placeholder="Enter Notes on Rational of Roadmap" rows="2" [value]="application.TIME_Notes"></textarea>
+                </div>
+              </div>
+
+            </div>
+            <!-- End of TIME Pane -->
 
           </div>
         </form>
