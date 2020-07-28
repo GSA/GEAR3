@@ -88,7 +88,7 @@
                   </td>
                   <td>
                     <ul>
-                      <li *ngFor="let p of splitPOCInfo(application.BusinessPOC)">
+                      <li *ngFor="let p of sharedService.splitPOCInfo(application.BusinessPOC)">
                         <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ p.email }}" target="_blank">
                           {{ p.name }}</a>
                         <span [hidden]="!p.org">, {{ p.org }}</span>
@@ -191,7 +191,7 @@
                   </td>
                   <td>
                     <ul>
-                      <li *ngFor="let p of splitPOCInfo(application.TechnicalPOC)">
+                      <li *ngFor="let p of sharedService.splitPOCInfo(application.TechnicalPOC)">
                         <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ p.email }}" target="_blank">
                           {{ p.name }}</a>
                         <span [hidden]="!p.org">, {{ p.org }}</span>

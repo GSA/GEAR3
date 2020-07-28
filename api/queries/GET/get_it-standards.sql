@@ -17,8 +17,7 @@ SELECT
   obj_deployment_type.Keyname           AS DeploymentType,
   obj_standard_type.Keyname             AS StandardType,
   obj_508_compliance_status.Keyname     AS ComplianceStatus,
-  GROUP_CONCAT(DISTINCT poc.keyname SEPARATOR ', ')                     AS POC,
-  GROUP_CONCAT(DISTINCT techorg.Display_Name SEPARATOR ', ')            AS POCorg,
+  GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', poc.Keyname, poc.Email, org.Display_Name) SEPARATOR '; ')     AS POC,
   GROUP_CONCAT(DISTINCT obj_standard_category.Keyname SEPARATOR ', ')   AS Category
 
 FROM obj_technology AS tech
@@ -30,7 +29,7 @@ LEFT JOIN obj_508_compliance_status           ON tech.obj_508_compliance_status_
   
 LEFT JOIN zk_technology_poc                   ON tech.Id = zk_technology_poc.obj_technology_Id
 LEFT JOIN obj_poc           AS poc            ON zk_technology_poc.obj_poc_Id = poc.Id
-LEFT JOIN obj_organization  AS techorg        ON poc.obj_organization_Id = techorg.Id
+LEFT JOIN obj_organization  AS org            ON poc.obj_organization_Id = org.Id
 
 LEFT JOIN zk_technology_standard_category     ON tech.Id = zk_technology_standard_category.obj_technology_Id
 LEFT JOIN obj_standard_category               ON zk_technology_standard_category.obj_standard_category_Id = obj_standard_category.Id 

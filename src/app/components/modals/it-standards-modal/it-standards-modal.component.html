@@ -67,11 +67,16 @@
                 </tr>
                 <tr>
                   <td><i class="fa fa-user"></i>POC</td>
-                  <td>{{ itStandard.POC }}</td>
-                </tr>
-                <tr>
-                  <td><i class="fa fa-door-open"></i>POC Org</td>
-                  <td>{{ itStandard.POCorg }}</td>
+                  <td>
+                    <ul>
+                      <li *ngFor="let p of sharedService.splitPOCInfo(itStandard.POC)">
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ p.email }}" target="_blank">
+                          {{ p.name }}</a>
+                        <span [hidden]="!p.org">, {{ p.org }}</span>
+                        <span [hidden]="p.org">, No Org Provided</span>
+                      </li>
+                    </ul>
+                  </td>
                 </tr>
                 <tr>
                   <td><i class="fas fa-info-circle"></i>Status</td>
@@ -88,7 +93,8 @@
                 <tr>
                   <td><i class="far fa-comment"></i>Reference Document</td>
                   <td>
-                    <a [hidden]="!itStandard.ReferenceDocuments" href="{{ itStandard.ReferenceDocuments }}" target="_blank">
+                    <a [hidden]="!itStandard.ReferenceDocuments" href="{{ itStandard.ReferenceDocuments }}"
+                      target="_blank">
                       {{ itStandard.ReferenceDocuments }}</a>
                     <div [hidden]="itStandard.ReferenceDocuments">None</div>
                   </td>
@@ -108,7 +114,8 @@
 
       <div class="modal-footer">
         <div class="float-right">Last Updated: {{ itStandard.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}</div>
-        <button  type="button" [hidden]="!sharedService.loggedIn" class="btn btn-info text-white" (click)="itStandEdit()">Edit This Item</button>
+        <button type="button" [hidden]="!sharedService.loggedIn" class="btn btn-info text-white"
+          (click)="itStandEdit()">Edit This Item</button>
       </div>
     </div>
   </div>

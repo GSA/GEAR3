@@ -58,6 +58,30 @@ export class SharedService {
     else return null
   };
 
+  // Split POC info when multiple are given in a field
+  splitPOCInfo(p) {
+    var pocs = null;
+    var pocObjs = [];
+
+    if (p) {
+      pocs = p.split(';');
+
+      pocs = pocs.map((poc, tmpObj) => {
+        let pieces = poc.split(',');
+
+        tmpObj = {
+          name: pieces[0],
+          email: pieces[1],
+          org: pieces[2]
+        }
+
+        pocObjs.push(tmpObj);
+      })
+    }
+
+    return pocObjs;
+  }
+
 
   // JWT Handling
   //// Set JWT on log in to be tracked when checking for authentication
