@@ -60,7 +60,7 @@
           </div>
           <!-- End of Overview Tab Pane -->
 
-          <div class="tab-pane fade show" id="businessRelated">
+          <div class="tab-pane fade" id="businessRelated">
             <h4 class="text-center">Business Overview</h4>
             <br>
 
@@ -129,7 +129,12 @@
 
             <!-- App Roadmap/TIME Report -->
             <div>
-              <h4 class="text-center">Business Application Roadmap</h4>
+              <div class="text-center">
+                <h4>Business Application Roadmap</h4>
+                <!-- TIME Definitions Link -->
+                <a [routerLink]="['/about', '#appRat']" target="_blank">TIME Value Definitions</a>
+              </div>
+
               <table id="appTimeTable"></table>
             </div>
             <br>
@@ -142,7 +147,7 @@
           </div>
           <!-- End of Business Tab Pane -->
 
-          <div class="tab-pane fade show" id="technologyRelated">
+          <div class="tab-pane fade" id="technologyRelated">
             <h4 class="text-center">Technical Overview</h4>
             <br>
 
@@ -212,7 +217,7 @@
           </div>
           <!-- End of Technology Tab Pane -->
 
-          <div class="tab-pane fade show" id="appInterfaces">
+          <div class="tab-pane fade" id="appInterfaces">
             <!-- Interfaces Chord Graph -->
             <div id="interfaceChart"></div>
           </div>

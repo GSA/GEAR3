@@ -47,7 +47,6 @@ export class AppManagerComponent implements OnInit {
     TIMEFY22: new FormControl(null, [Validators.required]),
     TIMEFY23: new FormControl(null, [Validators.required]),
     TIMEFY24: new FormControl(null, [Validators.required]),
-    TIMEFY25: new FormControl(null, [Validators.required]),
     TIMENotes: new FormControl()
   });
 
@@ -66,7 +65,7 @@ export class AppManagerComponent implements OnInit {
   selectedIDs: Set<any> = new Set();
   deSelectedIDs: Set<any> = new Set();
 
-  TIMEYears = ['FY19', 'FY20', 'FY21', 'FY22', 'FY23', 'FY24', 'FY25'];
+  TIMEYears = ['FY19', 'FY20', 'FY21', 'FY22', 'FY23', 'FY24'];
   TIMEValues = ['T1', 'T2', 'T3', 'I', 'M1', 'M2', 'E', 'TBD', 'N/A'];
 
   constructor(
@@ -221,7 +220,6 @@ export class AppManagerComponent implements OnInit {
             TIMEFY22: this.sharedService.FYFormatter(null, this.application, null, 'FY22'),
             TIMEFY23: this.sharedService.FYFormatter(null, this.application, null, 'FY23'),
             TIMEFY24: this.sharedService.FYFormatter(null, this.application, null, 'FY24'),
-            TIMEFY25: this.sharedService.FYFormatter(null, this.application, null, 'FY25'),
             TIMENotes: this.application.TIME_Notes
           });
         }),

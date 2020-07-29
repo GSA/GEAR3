@@ -35,6 +35,7 @@ const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'search', component: GlobalSearchComponent },
   { path: 'about', component: AboutComponent },
+  { path: 'about/:tab', component: AboutComponent },
   { path: 'assist_tech', component: AssistTechComponent },
 
   { path: 'strategic_framework', component: FrameworkComponent },

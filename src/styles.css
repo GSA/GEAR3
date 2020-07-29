@@ -26,7 +26,11 @@ a.link,
 
 /* Make tab borders thicker */
 .nav-tabs {
-  border-bottom: 4px solid #eceeef;
+  border-bottom: 2px solid rgba(26,26,26,0.5) !important;
+}
+
+.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+  border-color: rgba(26,26,26,0.5) rgba(26,26,26,0.5) rgba(26,26,26,0.5) !important;
 }
 
 .nav-tabs .nav-item {

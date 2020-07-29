@@ -82,7 +82,7 @@
             </div>
             <!-- End of Overview Pane -->
 
-            <div class="tab-pane fade show" id="appMngrBusiness">
+            <div class="tab-pane fade" id="appMngrBusiness">
               <div class="row">
                 <div class="form-group col">
                   <label for="appUID">Application ID<span class="text-danger">*</span></label>
@@ -132,7 +132,7 @@
             </div>
             <!-- End of Business Pane -->
 
-            <div class="tab-pane fade show" id="appMngrTechnology">
+            <div class="tab-pane fade" id="appMngrTechnology">
               <div class="row align-items-center">
                 <div class="form-group col-2 text-center mb-0">
                   <label for="appCloud">Cloud Enabled?</label>
@@ -225,7 +225,11 @@
             </div>
             <!-- End of Technology Pane -->
 
-            <div class="tab-pane fade show text-center" id="appMngrTIME">
+            <div class="tab-pane fade text-center" id="appMngrTIME">
+              <!-- TIME Definitions Link -->
+              <div class="row">
+                <a class="link mb-3 float-left" [routerLink]="['/about', '#appRat']" target="_blank">TIME Value Definitions</a>
+              </div>
 
               <div class="row justify-content-center">
                 <ng-template ngFor let-year [ngForOf]="TIMEYears">
