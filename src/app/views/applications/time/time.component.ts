@@ -194,6 +194,13 @@ export class TimeComponent implements OnInit {
       }.bind(this)
       ));
 
+    // Filter by only non-retired
+    $(document).ready(
+      $('#timeTable').bootstrapTable('filterBy', {
+          Status: ['Candidate', 'Pre-Production', 'Production']
+      })
+    );
+
   }
 
 }
