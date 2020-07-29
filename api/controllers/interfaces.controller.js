@@ -5,7 +5,7 @@ const path = require('path');
 
 const queryPath = '../queries/';
 
-function findAll(req, res) {
+exports.findAll = (req, res) => {
   let filter = '';
   if (req.query.owner) {
     filter = ` 'WHERE ( owner1.Keyname LIKE '%${req.query.owner}%' or owner2.Keyname LIKE '%${req.query.owner}%') AND appstat1.Keyname <> 'Retired'  AND appstat2.Keyname <> 'Retired'  ORDER BY owner1.Keyname, owner2.Keyname;'`;
@@ -20,8 +20,4 @@ function findAll(req, res) {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_interfaces.sql')).toString() + filter;
 
   res = ctrl.sendQuery(query, 'interfaces', res);
-};
-
-module.exports = {
-  findAll
 };

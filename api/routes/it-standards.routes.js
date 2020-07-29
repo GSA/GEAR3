@@ -4,36 +4,36 @@ const itsCtrl = require('../controllers/it-standards.controller');
 const router = express.Router();
 
 router.route('/')
-    .get(itsCtrl.findAll);
+  .get(itsCtrl.findAll);
 
 router.route('/get/:id')
-    .get(itsCtrl.findOne);
+  .get(itsCtrl.findOne);
 
 router.route('/get/:id/applications/')
-    .get(itsCtrl.findApplications);
+  .get(itsCtrl.findApplications);
 
 router.route('/latest')
-    .get(itsCtrl.findLatest);
+  .get(itsCtrl.findLatest);
 
 router.route('/update/:id')
-    .put(itsCtrl.update);
+  .put(itsCtrl.update);
 
 router.route('/create')
-    .post(itsCtrl.create);
+  .post(itsCtrl.create);
 
 router.route('/508_compliance')
-    .get(itsCtrl.find508Compliance);
+  .get(itsCtrl.find508Compliance);
 
 router.route('/categories')
-    .get(itsCtrl.findCategories);
+  .get(itsCtrl.findCategories);
 
 router.route('/deployment_types')
-    .get(itsCtrl.findDeployTypes);
+  .get(itsCtrl.findDeployTypes);
 
 router.route('/statuses')
-    .get(itsCtrl.findStatuses);
+  .get(itsCtrl.findStatuses);
 
 router.route('/types')
-    .get(itsCtrl.findTypes);
+  .get(itsCtrl.findTypes);
 
 module.exports = router;

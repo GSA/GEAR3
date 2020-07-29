@@ -5,35 +5,35 @@ const path = require('path');
 
 const queryPath = '../queries/';
 
-function findAll(req, res) {
+exports.findAll = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_fisma_archer.sql')).toString() +
     " WHERE archer.`ex:Inactive_Date` IS NULL GROUP BY archer.`ex:GEAR_ID`;";
 
   res = ctrl.sendQuery(query, 'FISMA Systems', res);
 };
 
-function findOne(req, res,) {
+exports.findOne = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_fisma_archer.sql')).toString() +
     ` WHERE archer.\`ex:GEAR_ID\` = ${req.params.id} GROUP BY archer.\`ex:GEAR_ID\`;`;
 
   res = ctrl.sendQuery(query, 'individual FISMA System', res);
 };
 
-function findApplications(req, res) {
+exports.findApplications = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_applications.sql')).toString() +
     ` AND app.obj_fisma_Id = ${req.params.id} GROUP BY app.Id;`;
 
   res = ctrl.sendQuery(query, 'certified applications for FISMA System', res);
 };
 
-function findRetired(req, res) {
+exports.findRetired = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_fisma_archer.sql')).toString() +
     " WHERE archer.`ex:Inactive_Date` IS NOT NULL GROUP BY archer.`ex:GEAR_ID`;";
 
   res = ctrl.sendQuery(query, 'retired FISMA Systems', res);
 };
 
-function updateAll(req, res) {
+exports.updateAll = (req, res) => {
   console.log("Updating FISMA table");
 
   var query = "SET FOREIGN_KEY_CHECKS=0; TRUNCATE TABLE obj_fisma_archer; ";
@@ -63,8 +63,8 @@ function updateAll(req, res) {
         if (value === 'true') element[key] = "'Active'";
         else element[key] = "'Inactive'";
 
-      // If SN field includes name or in the array of name fields
       } else if (nameFields.includes(key)) {
+        // If SN field includes name or in the array of name fields
         // Parse name out of string
         // console.log(`Key: ${key}, "Value: ${value}`);  // Debug
         const regex = /^([a-zA-Z \-()]+) - /;
@@ -73,7 +73,7 @@ function updateAll(req, res) {
       }
 
       else element[key] = `'${value}'`;
-    }
+    };
 
     query += `INSERT INTO obj_fisma_archer 
         (\`ex:GEAR_ID\`,
@@ -188,18 +188,9 @@ function updateAll(req, res) {
       ${element.u_systemlevel},
       -- ${element.u_parent_system},
       ${element.u_fisma_reportable}); `;
-  }
+  };
 
   query += " SET FOREIGN_KEY_CHECKS=1;";
   // console.log("Final query string: ", query); // Debug
   res = ctrl.sendQuery(query, 'Loading into FISMA Archer Table', res);
-};
-
-module.exports = {
-  findAll,
-  findOne,
-  findApplications,
-  findRetired,
-
-  updateAll
 };

@@ -5,14 +5,14 @@ const path = require('path');
 
 const queryPath = '../queries/';
 
-function findAll(req, res) {
+exports.findAll = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_application_full_suite.sql')).toString() +
     " WHERE org.Keyname <> 'External' GROUP BY app.Id ORDER BY app.Keyname;";
 
   res = ctrl.sendQuery(query, 'business applications', res);
 };
 
-function findOne(req, res) {
+exports.findOne = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_application_full_suite.sql')).toString() +
     ` WHERE app.Id = ${req.params.id};`;
   var params = [req.params.id];
@@ -20,21 +20,21 @@ function findOne(req, res) {
   res = ctrl.sendQuery(query, 'individual business application', res);
 };
 
-function findLatest(req, res) {
+exports.findLatest = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_application_full_suite.sql')).toString() +
     ` GROUP BY app.Id ORDER BY app.CreateDTG DESC LIMIT 1;`;
 
   res = ctrl.sendQuery(query, 'latest individual business application', res);
 };
 
-function findAllRetired(req, res) {
+exports.findAllRetired = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_application_full_suite.sql')).toString() +
     " WHERE app.Application_or_Website LIKE 'Application' AND app.Retired_Year IS NOT NULL GROUP BY app.Id;";
 
   res = ctrl.sendQuery(query, 'retired business applications', res);
 };
 
-function findCapabilities(req, res) {
+exports.findCapabilities = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_capabilities.sql')).toString() +
     ` LEFT JOIN zk_app_capabilities           ON cap.Id = zk_app_capabilities.obj_capability_Id
     LEFT JOIN obj_application       AS app    ON zk_app_capabilities.obj_application_Id = app.Id
@@ -43,7 +43,7 @@ function findCapabilities(req, res) {
   res = ctrl.sendQuery(query, 'related capabilities for application', res);
 };
 
-function findTechnologies(req, res) {
+exports.findTechnologies = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
     ` WHERE obj_standard_type.Keyname LIKE '%Software%'
       AND obj_technology_status.Keyname NOT LIKE 'Sunsetting'
@@ -55,14 +55,14 @@ function findTechnologies(req, res) {
   res = ctrl.sendQuery(query, 'related technologies for application', res);
 };
 
-function findInterfaces(req, res) {
+exports.findInterfaces = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_interfaces.sql')).toString() +
     ` WHERE (inter.obj_application_Id = ${req.params.id} or inter.obj_application_Id1 = ${req.params.id}) AND appstat1.Keyname <> 'Retired'  AND appstat2.Keyname <> 'Retired';`;
 
   res = ctrl.sendQuery(query, 'related technologies for application', res);
 };
 
-function update(req, res) {
+exports.update = (req, res) => {
   if (req.headers.authorization) {
     var data = req.body;
 
@@ -129,12 +129,12 @@ function update(req, res) {
     };
 
     // Null any empty text fields
-    data.appDesc = emptyTextFieldHandler(data.appDesc);
-    data.appNotes = emptyTextFieldHandler(data.appNotes);
-    data.appCUI = emptyTextFieldHandler(data.appCUI);
-    data.appProdYr = emptyTextFieldHandler(data.appProdYr);
-    data.appRetiredYr = emptyTextFieldHandler(data.appRetiredYr);
-    data.TIMENotes = emptyTextFieldHandler(data.TIMENotes);
+    data.appDesc = ctrl.emptyTextFieldHandler(data.appDesc);
+    data.appNotes = ctrl.emptyTextFieldHandler(data.appNotes);
+    data.appCUI = ctrl.emptyTextFieldHandler(data.appCUI);
+    data.appProdYr = ctrl.emptyTextFieldHandler(data.appProdYr);
+    data.appRetiredYr = ctrl.emptyTextFieldHandler(data.appRetiredYr);
+    data.TIMENotes = ctrl.emptyTextFieldHandler(data.TIMENotes);
 
     var query = `SET FOREIGN_KEY_CHECKS=0;
       UPDATE obj_application
@@ -174,17 +174,17 @@ function update(req, res) {
   }
 };
 
-function create(req, res) {
+exports.create = (req, res) => {
   if (req.headers.authorization) {
     var data = req.body;
 
     // Null any empty text fields
-    data.appDesc = emptyTextFieldHandler(data.appDesc);
-    data.appNotes = emptyTextFieldHandler(data.appNotes);
-    data.appCUI = emptyTextFieldHandler(data.appCUI);
-    data.appProdYr = emptyTextFieldHandler(data.appProdYr);
-    data.appRetiredYr = emptyTextFieldHandler(data.appRetiredYr);
-    data.TIMENotes = emptyTextFieldHandler(data.TIMENotes);
+    data.appDesc = ctrl.emptyTextFieldHandler(data.appDesc);
+    data.appNotes = ctrl.emptyTextFieldHandler(data.appNotes);
+    data.appCUI = ctrl.emptyTextFieldHandler(data.appCUI);
+    data.appProdYr = ctrl.emptyTextFieldHandler(data.appProdYr);
+    data.appRetiredYr = ctrl.emptyTextFieldHandler(data.appRetiredYr);
+    data.TIMENotes = ctrl.emptyTextFieldHandler(data.TIMENotes);
 
     var query = `INSERT INTO obj_application(
       obj_application_status_Id,
@@ -242,35 +242,14 @@ function create(req, res) {
   }
 };
 
-function findStatuses(req, res) {
+exports.findStatuses = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_application_statuses.sql')).toString();
 
   res = ctrl.sendQuery(query, 'Application Statuses', res);
 };
 
-function findHosts(req, res) {
+exports.findHosts = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_application_host_providers.sql')).toString();
 
   res = ctrl.sendQuery(query, 'Application Host Providers', res);
-};
-
-function emptyTextFieldHandler(content) {
-  if (!content) return 'NULL';
-  else return `'${content}'`;
-};
-
-module.exports = {
-  findAll,
-  findOne,
-  findLatest,
-  findAllRetired,
-  findCapabilities,
-  findTechnologies,
-  findInterfaces,
-
-  update,
-  create,
-
-  findStatuses,
-  findHosts
 };

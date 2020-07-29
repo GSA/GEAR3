@@ -1,6 +1,6 @@
 const sql = require("../db.js");
 
-function sendQuery(query, msg, response) {
+exports.sendQuery = (query, msg, response) => {
   sql.query(query, (error, data) => {
     if (error) {
       console.log(`DB Query Error while executing ${msg}: `, error);
@@ -17,4 +17,7 @@ function sendQuery(query, msg, response) {
   return response;
 }
 
-module.exports = { sendQuery }
+exports.emptyTextFieldHandler = (content) => {
+  if (!content) return 'NULL';
+  else return `'${content}'`;
+};

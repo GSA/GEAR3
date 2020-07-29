@@ -4,24 +4,24 @@ const investmentCtrl = require('../controllers/investments.controller');
 const router = express.Router();
 
 router.route('/')
-    .get(investmentCtrl.findAll);
+  .get(investmentCtrl.findAll);
 
 router.route('/get/:id')
-    .get(investmentCtrl.findOne);
+  .get(investmentCtrl.findOne);
 
 router.route('/get/:id/applications/')
-    .get(investmentCtrl.findApplications);
+  .get(investmentCtrl.findApplications);
 
 router.route('/latest')
-    .get(investmentCtrl.findLatest);
+  .get(investmentCtrl.findLatest);
 
 router.route('/update/:id')
-    .put(investmentCtrl.update);
+  .put(investmentCtrl.update);
 
 router.route('/create')
-    .post(investmentCtrl.create);
+  .post(investmentCtrl.create);
 
 router.route('/types')
-    .get(investmentCtrl.findTypes);
+  .get(investmentCtrl.findTypes);
 
 module.exports = router;

@@ -139,7 +139,7 @@ export class ApiService {
     );
   };
   public getOneCap(id: number): Observable<Capability[]> {
-    return this.http.get<Capability[]>(this.capUrl + '/' + String(id)).pipe(
+    return this.http.get<Capability[]>(this.capUrl + '/get/' + String(id)).pipe(
       catchError(this.handleError<Capability[]>('GET Capability', []))
     );
   };
@@ -215,7 +215,7 @@ export class ApiService {
     );
   };
   public getOneOrg(id: number): Observable<Organization[]> {
-    return this.http.get<Organization[]>(this.orgUrl + '/' + String(id)).pipe(
+    return this.http.get<Organization[]>(this.orgUrl + '/get/' + String(id)).pipe(
       catchError(this.handleError<Organization[]>('GET Organization', []))
     );
   };
@@ -273,7 +273,7 @@ export class ApiService {
     );
   };
   public getPOC(id: number): Observable<POC[]> {
-    return this.http.get<POC[]>(this.pocUrl + '/' + String(id)).pipe(
+    return this.http.get<POC[]>(this.pocUrl + '/get/' + String(id)).pipe(
       catchError(this.handleError<POC[]>('GET POC', []))
     );
   };

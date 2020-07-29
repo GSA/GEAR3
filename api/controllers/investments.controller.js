@@ -5,35 +5,35 @@ const path = require('path');
 
 const queryPath = '../queries/';
 
-function findAll(req, res) {
+exports.findAll = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_investments.sql')).toString() +
     ";";
 
   res = ctrl.sendQuery(query, 'investments', res);
 };
 
-function findOne(req, res) {
+exports.findOne = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_investments.sql')).toString() +
     ` WHERE invest.Id = ${req.params.id};`;
 
   res = ctrl.sendQuery(query, 'individual investment', res);
 };
 
-function findLatest(req, res) {
+exports.findLatest = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_investments.sql')).toString() +
     ` ORDER BY invest.CreateDTG DESC LIMIT 1;`;
 
   res = ctrl.sendQuery(query, 'latest individual investment', res);
 };
 
-function findApplications(req, res) {
+exports.findApplications = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_applications.sql')).toString() +
     ` AND app.obj_investment_Id = ${req.params.id} GROUP BY app.Id;`;  // Note that there's already a WHERE clause
 
   res = ctrl.sendQuery(query, 'application relations for investment', res);
 };
 
-function update(req, res) {
+exports.update = (req, res) => {
   if (req.headers.authorization) {
     var data = req.body;
 
@@ -43,20 +43,17 @@ function update(req, res) {
       data.investRelatedApps.forEach(appID => {
         appString += `UPDATE obj_application SET obj_investment_Id=${req.params.id} WHERE Id=${appID}; `
       });
-    }
+    };
 
     if (data.deselectedApps) {
       data.deselectedApps.forEach(appID => {
         appString += `UPDATE obj_application SET obj_investment_Id=NULL WHERE Id=${appID}; `
       });
-    }
+    };
 
     // Null any empty text fields
-    if (!data.investDesc) { data.investDesc = 'NULL' }
-    else { data.investDesc = `'${data.investDesc}'` }
-
-    if (!data.investComments) { data.investComments = 'NULL' }
-    else { data.investComments = `'${data.investComments}'` }
+    data.investDesc = ctrl.emptyTextFieldHandler(data.investDesc);
+    data.investComments = ctrl.emptyTextFieldHandler(data.investComments);
 
     var query = `SET FOREIGN_KEY_CHECKS=0;
       UPDATE obj_investment
@@ -82,18 +79,15 @@ function update(req, res) {
       message: "No authorization token present. Not allowed to update investments"
     });
   }
-}
+};
 
-function create(req, res) {
+exports.create = (req, res) => {
   if (req.headers.authorization) {
     var data = req.body;
 
     // Null any empty text fields
-    if (!data.investDesc) { data.investDesc = 'NULL' }
-    else { data.investDesc = `'${data.investDesc}'` }
-
-    if (!data.investComments) { data.investComments = 'NULL' }
-    else { data.investComments = `'${data.investComments}'` }
+    data.investDesc = ctrl.emptyTextFieldHandler(data.investDesc);
+    data.investComments = ctrl.emptyTextFieldHandler(data.investComments);
 
     var query = `INSERT INTO obj_investment(
       Keyname,
@@ -128,23 +122,11 @@ function create(req, res) {
     res.status(502).json({
       message: "No authorization token present. Not allowed to create investment"
     });
-  }
-}
+  };
+};
 
-function findTypes(req, res) {
+exports.findTypes = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_investment_types.sql')).toString();
 
   res = ctrl.sendQuery(query, 'investment types', res);
-}
-
-module.exports = {
-  findAll,
-  findOne,
-  findLatest,
-  findApplications,
-
-  update,
-  create,
-
-  findTypes
 };

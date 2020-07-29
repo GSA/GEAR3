@@ -4,21 +4,21 @@ const sysCtrl = require('../controllers/parentsystems.controller');
 const router = express.Router();
 
 router.route('/')
-    .get(sysCtrl.findAll);
+  .get(sysCtrl.findAll);
 
 router.route('/get/:id')
-    .get(sysCtrl.findOne);
+  .get(sysCtrl.findOne);
 
 router.route('/get/:id/applications')
-    .get(sysCtrl.findApplications);
+  .get(sysCtrl.findApplications);
 
 router.route('/latest')
-    .get(sysCtrl.findLatest);
+  .get(sysCtrl.findLatest);
 
 router.route('/update/:id')
-    .put(sysCtrl.update);
+  .put(sysCtrl.update);
 
 router.route('/create')
-    .post(sysCtrl.create);
+  .post(sysCtrl.create);
 
 module.exports = router;

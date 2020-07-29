@@ -5,7 +5,7 @@ const path = require('path');
 
 const queryPath = '../queries/';
 
-function findAll(req, res) {
+exports.findAll = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
     ` WHERE obj_standard_type.Keyname LIKE 'Software'
       AND obj_technology_status.Keyname NOT LIKE 'Not yet submitted'
@@ -14,28 +14,28 @@ function findAll(req, res) {
   res = ctrl.sendQuery(query, 'IT Standards', res);
 };
 
-function findOne(req, res) {
+exports.findOne = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
     ` WHERE tech.Id = ${req.params.id};`;
 
   res = ctrl.sendQuery(query, 'individual IT Standard', res);
 };
 
-function findLatest(req, res) {
+exports.findLatest = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
     ` GROUP BY tech.Id ORDER BY tech.CreateDTG DESC LIMIT 1;`;
 
   res = ctrl.sendQuery(query, 'latest individual IT Standard', res);
 };
 
-function findApplications(req, res) {
+exports.findApplications = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_applications.sql')).toString() +
     ` AND tech.Id = ${req.params.id} GROUP BY app.Id;`;
 
   res = ctrl.sendQuery(query, 'applications using IT Standard', res);
 };
 
-function update(req, res) {
+exports.update = (req, res) => {
   if (req.headers.authorization) {
     var data = req.body;
 
@@ -64,14 +64,9 @@ function update(req, res) {
     };
 
     // Null any empty text fields
-    if (!data.itStandAprvExp) { data.itStandAprvExp = 'NULL' }
-    else { data.itStandAprvExp = `'${data.itStandAprvExp}'` }
-
-    if (!data.itStandDesc) { data.itStandDesc = 'NULL' }
-    else { data.itStandDesc = `'${data.itStandDesc}'` }
-
-    if (!data.itStandRefDocs) { data.itStandRefDocs = 'NULL' }
-    else { data.itStandRefDocs = `'${data.itStandRefDocs}'` }
+    data.itStandDesc = ctrl.emptyTextFieldHandler(data.itStandDesc);
+    data.itStandAprvExp = ctrl.emptyTextFieldHandler(data.itStandAprvExp);
+    data.itStandRefDocs = ctrl.emptyTextFieldHandler(data.itStandRefDocs);
 
     var query = `SET FOREIGN_KEY_CHECKS=0;
       UPDATE obj_technology
@@ -102,19 +97,14 @@ function update(req, res) {
   }
 };
 
-function create(req, res) {
+exports.create = (req, res) => {
   if (req.headers.authorization) {
     var data = req.body;
 
     // Null any empty text fields
-    if (!data.itStandDesc) { data.itStandDesc = 'NULL' }
-    else { data.itStandDesc = `'${data.itStandDesc}'` }
-
-    if (!data.itStandAprvExp) { data.itStandAprvExp = 'NULL' }
-    else { data.itStandAprvExp = `'${data.itStandAprvExp}'` }
-
-    if (!data.itStandRefDocs) { data.itStandRefDocs = 'NULL' }
-    else { data.itStandRefDocs = `'${data.itStandRefDocs}'` }
+    data.itStandDesc = ctrl.emptyTextFieldHandler(data.itStandDesc);
+    data.itStandAprvExp = ctrl.emptyTextFieldHandler(data.itStandAprvExp);
+    data.itStandRefDocs = ctrl.emptyTextFieldHandler(data.itStandRefDocs);
 
     var query = `INSERT INTO obj_technology(
       Keyname,
@@ -156,48 +146,32 @@ function create(req, res) {
   }
 };
 
-function find508Compliance(req, res) {
+exports.find508Compliance = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standard_508_status.sql')).toString();
 
   res = ctrl.sendQuery(query, '508 Compliance Statuses', res);
 };
 
-function findCategories(req, res) {
+exports.findCategories = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standard_categories.sql')).toString();
 
   res = ctrl.sendQuery(query, 'IT Standard Categories', res);
 };
 
-function findDeployTypes(req, res) {
+exports.findDeployTypes = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standard_deploy_types.sql')).toString();
 
   res = ctrl.sendQuery(query, 'IT Standard Deployment Types', res);
 };
 
-function findStatuses(req, res) {
+exports.findStatuses = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standard_statuses.sql')).toString();
 
   res = ctrl.sendQuery(query, 'IT Standard Statuses', res);
 };
 
-function findTypes(req, res) {
+exports.findTypes = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standard_types.sql')).toString();
 
   res = ctrl.sendQuery(query, 'IT Standard Types', res);
-};
-
-module.exports = {
-  findAll,
-  findOne,
-  findLatest,
-  findApplications,
-
-  update,
-  create,
-
-  find508Compliance,
-  findCategories,
-  findDeployTypes,
-  findStatuses,
-  findTypes
 };
