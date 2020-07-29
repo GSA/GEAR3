@@ -145,16 +145,6 @@ export class TimeComponent implements OnInit {
     visible: false,
     formatter: this.sharedService.FYFormatter
   }, {
-    field: 'FY25',
-    title: 'FY25',
-    visible: false,
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'FY26',
-    title: 'FY26',
-    visible: false,
-    formatter: this.sharedService.FYFormatter
-  }, {
     field: 'Notes',
     title: 'Notes',
     visible: false,

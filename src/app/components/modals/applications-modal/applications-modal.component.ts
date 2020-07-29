@@ -92,10 +92,6 @@ export class ApplicationsModalComponent implements OnInit {
     title: 'FY24',
     formatter: this.sharedService.FYFormatter
   }, {
-    field: 'FY25',
-    title: 'FY25',
-    formatter: this.sharedService.FYFormatter
-  }, {
     field: 'TIME_Notes',
     title: 'Notes'
   }];
