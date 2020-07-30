@@ -43,8 +43,8 @@ export class ItStandardsModalComponent implements OnInit {
   itStandEdit () {
     // Hide Detail Modal before showing Manager Modal
     $('#itStandardDetail').modal('hide');
-    this.sharedService.setITStandardsForm();
     this.modalService.updateDetails(this.itStandard, 'it-standard');
+    this.sharedService.setITStandardsForm();
     $('#itStandardsManager').modal('show');
   }
 

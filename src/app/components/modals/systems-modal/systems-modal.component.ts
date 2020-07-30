@@ -43,8 +43,8 @@ export class SystemsModalComponent implements OnInit {
   systemEdit () {
     // Hide Detail Modal before showing Manager Modal
     $('#systemDetail').modal('hide');
-    this.sharedService.setSystemForm();
     this.modalService.updateDetails(this.system, 'system');
+    this.sharedService.setSystemForm();
     $('#systemManager').modal('show');
   }
 
