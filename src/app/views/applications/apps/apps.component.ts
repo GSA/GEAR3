@@ -385,7 +385,7 @@ export class AppsComponent implements OnInit {
     this.filteredTable = false;  // Hide main button
 
     // Remove filters and back to default
-    $('#appsTable').bootstrapTable('filterBy', {});
+    $('#appsTable').bootstrapTable('filterBy', { Status: ['Candidate', 'Pre-Production', 'Production'] });
     $('#appsTable').bootstrapTable('refreshOptions', {
       columns: this.columnDefs,
       url: this.sharedService.internalURLFmt('/api/applications')
