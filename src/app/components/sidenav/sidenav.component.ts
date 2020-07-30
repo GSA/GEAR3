@@ -18,7 +18,7 @@ export class SidenavComponent implements OnInit {
       this.sharedService.toggleSub = this.sharedService.toggleEmitter.subscribe(() => { this._toggleOpened(); });
     }
 
-    $(document).ready( function () {
+    $(document).ready(function () {
       // Logged in collapse notification
       $('#loggedIn').on('show.bs.toast', function () {
         $('#loggedInCollapse').collapse('show')
@@ -85,7 +85,7 @@ export class SidenavComponent implements OnInit {
     console.info('Backdrop clicked');
   }
 
-  logoutManager () {
+  logoutManager() {
     localStorage.removeItem('jwt');
     $('#loggedOut').toast('show');
   }

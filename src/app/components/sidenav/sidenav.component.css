@@ -1,17 +1,23 @@
 /* Sidebar */
+
 ng-sidebar-container {
-  height: 92.3%;  /* and position needed to render sidebar properly */
+  /* Position needed to render sidebar properly */
+  height: 92.3%;
   position: absolute;
-  z-index: 100;  /* Behind the top navbar */
-  overflow-y: auto;  /* Scrollable contents if viewport is shorter than content. */
+  /* Behind the top navbar */
+  z-index: 100;
+  /* Scrollable contents if viewport is shorter than content. */
+  overflow-y: auto;
 }
 
 /* Side Menu item*/
+
 ng-sidebar .list-group a {
   color: white;
 }
 
 /* Fix GEAR Manager Login footer to bottom */
+
 .sidebar-footer {
   position: absolute;
   width: 100%;
@@ -19,6 +25,7 @@ ng-sidebar .list-group a {
 }
 
 /* Expand Width of Toast Notifications */
+
 .toast {
   max-width: 50% !important;
 }
