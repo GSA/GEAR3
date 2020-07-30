@@ -455,7 +455,7 @@ export class CapabilitiesModelComponent implements OnInit {
           exportOptions: {
             fileName: this.sharedService.fileNameFmt(capData.Name + '-Supporting_Apps')
           },
-          url: this.sharedService.internalURLFmt('/api/capabilities/'
+          url: this.sharedService.internalURLFmt('/api/capabilities/get/'
             + String(capData.ID) + '/applications')
         })
       });

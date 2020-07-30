@@ -474,7 +474,7 @@ export class OrganizationsChartComponent implements OnInit {
           exportOptions: {
             fileName: this.sharedService.fileNameFmt(orgData.Name + '-Organizational_Apps')
           },
-          url: this.sharedService.internalURLFmt('/api/organizations/'
+          url: this.sharedService.internalURLFmt('/api/organizations/get/'
             + String(orgData.ID) + '/applications')
         })
       });
