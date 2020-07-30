@@ -7,6 +7,15 @@ import { SharedService } from '../shared/shared.service';
 // Declare jQuery symbol
 declare var $: any;
 
+interface ClickOptions {
+  data: any,
+  update: string,
+  detailModalID: string,
+  appsTableID: string,
+  exportName: string,
+  apiString: string
+};
+
 @Injectable({
   providedIn: 'root'
 })
@@ -215,15 +224,20 @@ export class TableService {
 
       default:
         break;
-    }
+    };
   }
 
 
   public appsTableClick(data: any) {
-    // console.log("Applications Table Clicked Row: ", data);  // Debug
-
-    this.modalService.updateDetails(data, 'application');
-    $('#appDetail').modal('show');
+    var options: ClickOptions = {
+      data: data,
+      update: 'application',
+      detailModalID: '#appDetail',
+      appsTableID: null,
+      exportName: null,
+      apiString: null
+    };
+    this.clickMethod(options);
 
     // Update TIME report table in detail modal with clicked application
     $('#appTimeTable').bootstrapTable('refreshOptions', {
@@ -234,124 +248,121 @@ export class TableService {
     });
 
     // Update related capabilities table in detail modal with clicked application
-    $('#appCapTable').bootstrapTable('refreshOptions', {
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt(data.Name + '-Related_Capabilities')
-      },
-      url: this.sharedService.internalURLFmt('/api/applications/get/'
-        + String(data.ID) + '/capabilities')
-    });
+    this.updateRelatedTable(
+      '#appCapTable',
+      data.Name + '-Related_Capabilities',
+      '/api/applications/get/' + String(data.ID) + '/capabilities'
+      );
 
     // Update related technologies table in detail modal with clicked application
-    $('#appTechTable').bootstrapTable('refreshOptions', {
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt(data.Name + '-Related_Technologies')
-      },
-      url: this.sharedService.internalURLFmt('/api/applications/get/'
-        + String(data.ID) + '/technologies')
-    });
+    this.updateRelatedTable(
+      '#appTechTable',
+      data.Name + '-Related_Technologies',
+      '/api/applications/get/' + String(data.ID) + '/technologies'
+      );
   }
 
 
   public capsTableClick(data: any) {
-    // console.log("Capability Table Clicked Row: ", data);  // Debug
-
-    this.modalService.updateDetails(data, 'capability');
-    $('#capabilityDetail').modal('show');
-
-    // Update related apps table in detail modal with clicked capabilities
-    $('#capSupportAppsTable').bootstrapTable('refreshOptions', {
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt(data.Name + '-Supporting_Apps')
-      },
-      url: this.sharedService.internalURLFmt('/api/capabilities/'
-        + String(data.ID) + '/applications')
-    })
+    var options: ClickOptions = {
+      data: data,
+      update: 'capability',
+      detailModalID: '#capabilityDetail',
+      appsTableID: '#capSupportAppsTable',
+      exportName: data.Name + '-Supporting_Apps',
+      apiString: '/api/capabilities/get/'
+    };
+    this.clickMethod(options);
   }
 
 
   public fismaTableClick(data: any) {
-    // console.log("FISMA System Table Clicked Row: ", data);  // Debug
-
-    this.modalService.updateDetails(data, 'fisma');
-    $('#fismaDetail').modal('show');
-
-    // Update related apps table in detail modal with clicked FISMA system
-    $('#fismaCertAppsTable').bootstrapTable('refreshOptions', {
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt(data.Name + '-Certified_Apps')
-      },
-      url: this.sharedService.internalURLFmt('/api/fisma/get/'
-        + String(data.ID) + '/applications')
-    })
+    var options: ClickOptions = {
+      data: data,
+      update: 'fisma',
+      detailModalID: '#fismaDetail',
+      appsTableID: '#fismaCertAppsTable',
+      exportName: data.Name + '-Certified_Apps',
+      apiString: '/api/fisma/get/'
+    };
+    this.clickMethod(options);
   }
 
 
   public investTableClick(data: any) {
-    // console.log("Investment Table Clicked Row: ", data);  // Debug
-
-    this.modalService.updateDetails(data, 'investment');
-    $('#investDetail').modal('show');
-
-    // Update related apps table in detail modal with clicked investment
-    $('#investRelAppsTable').bootstrapTable('refreshOptions', {
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt(data.Name + '-Related_Apps')
-      },
-      url: this.sharedService.internalURLFmt('/api/investments/get/'
-        + String(data.ID) + '/applications')
-    })
+    var options: ClickOptions = {
+      data: data,
+      update: 'investment',
+      detailModalID: '#investDetail',
+      appsTableID: '#investRelAppsTable',
+      exportName: data.Name + '-Related_Apps',
+      apiString: '/api/investments/get/'
+    };
+    this.clickMethod(options);
   }
 
 
   public itStandTableClick(data: any) {
-    // console.log("IT Standard Table Clicked Row: ", data);  // Debug
-
-    this.modalService.updateDetails(data, 'it-standard');
-    $('#itStandardDetail').modal('show');
-
-    // Update related apps table in detail modal with clicked investment
-    $('#itRelAppsTable').bootstrapTable('refreshOptions', {
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt(data.Name + '-Related_Apps')
-      },
-      url: this.sharedService.internalURLFmt('/api/it_standards/get/'
-        + String(data.ID) + '/applications')
-    })
+    var options: ClickOptions = {
+      data: data,
+      update: 'it-standard',
+      detailModalID: '#itStandardDetail',
+      appsTableID: '#itRelAppsTable',
+      exportName: data.Name + '-Related_Apps',
+      apiString: '/api/it_standards/get/'
+    };
+    this.clickMethod(options);
   }
 
 
   public orgsTableClick(data: any) {
-    // console.log("Organization Table Clicked Row: ", data);  // Debug
-
-    this.modalService.updateDetails(data, 'organization');
-    $('#organizationDetail').modal('show');
-
-    // Update related apps table in detail modal with clicked organization
-    $('#orgAppsTable').bootstrapTable('refreshOptions', {
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt(data.Name + '-Organizational_Apps')
-      },
-      url: this.sharedService.internalURLFmt('/api/organizations/'
-        + String(data.ID) + '/applications')
-    })
+    var options: ClickOptions = {
+      data: data,
+      update: 'organization',
+      detailModalID: '#organizationDetail',
+      appsTableID: '#orgAppsTable',
+      exportName: data.Name + '-Organizational_Apps',
+      apiString: '/api/organizations/get/'
+    };
+    this.clickMethod(options);
   }
 
 
   public systemsTableClick(data: any) {
-    // console.log("Parent Systems Table Clicked Row: ", data);  // Debug
+    var options: ClickOptions = {
+      data: data,
+      update: 'system',
+      detailModalID: '#systemDetail',
+      appsTableID: '#childAppsTable',
+      exportName: data.Name + '-Child_Apps',
+      apiString: '/api/parentsystems/get/'
+    };
+    this.clickMethod(options);
+  }
 
-    this.modalService.updateDetails(data, 'system');
-    $('#systemDetail').modal('show');
+  private clickMethod(options: ClickOptions) {
+    // console.log("Clicked Row Data: ", options.data);  // Debug
 
-    // Update related apps table in detail modal with clicked parent system
-    $('#childAppsTable').bootstrapTable('refreshOptions', {
+    this.modalService.updateDetails(options.data, options.update);
+    $(options.detailModalID).modal('show');
+
+    // Update related apps table in detail modal with clicked data
+    if (options.appsTableID) {
+      this.updateRelatedTable(
+        options.appsTableID,
+        options.exportName,
+        options.apiString + String(options.data.ID) + '/applications'
+        );
+    };
+  }
+
+  private updateRelatedTable(tableID: string, exportName: string, apiString: string) {
+    $(tableID).bootstrapTable('refreshOptions', {
       exportOptions: {
-        fileName: this.sharedService.fileNameFmt(data.Name + '-Child_Apps')
+        fileName: this.sharedService.fileNameFmt(exportName)
       },
-      url: this.sharedService.internalURLFmt('/api/parentsystems/get/'
-        + String(data.ID) + '/applications')
-    })
+      url: this.sharedService.internalURLFmt(apiString)
+    });
   }
 
 }
