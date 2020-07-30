@@ -154,8 +154,7 @@ export class FismaComponent implements OnInit {
 
       arts = arts.map((artifact, tmpObj) => {
         let pieces = artifact.split(',');
-        let linkStr = '<a class="no-propagation" target="_blank" href="' +
-          pieces[1] + '">' + ' ' + pieces[0] + '</a>'
+        let linkStr = `<a target="_blank" rel="noopener" href="${pieces[1]}">${pieces[0]}</a>`
 
         artLinks.push(linkStr);
       })

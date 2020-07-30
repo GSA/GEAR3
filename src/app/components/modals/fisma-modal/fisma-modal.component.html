@@ -78,7 +78,7 @@
                       <td>
                         <ul>
                           <li *ngFor="let artifact of splitRelArtifacts(fisma.RelatedArtifacts)">
-                            <a href="{{ artifact.link }}" target="_blank">
+                            <a href="{{ artifact.link }}" target="_blank" rel="noopener">
                               {{ artifact.name }}</a>
                           </li>
                         </ul>

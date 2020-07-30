@@ -70,7 +70,7 @@
                   <td>
                     <ul>
                       <li *ngFor="let p of sharedService.splitPOCInfo(itStandard.POC)">
-                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ p.email }}" target="_blank">
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ p.email }}" target="_blank" rel="noopener">
                           {{ p.name }}</a>
                         <span [hidden]="!p.org">, {{ p.org }}</span>
                         <span [hidden]="p.org">, No Org Provided</span>
@@ -94,7 +94,7 @@
                   <td><i class="far fa-comment"></i>Reference Document</td>
                   <td>
                     <a [hidden]="!itStandard.ReferenceDocuments" href="{{ itStandard.ReferenceDocuments }}"
-                      target="_blank">
+                      target="_blank" rel="noopener">
                       {{ itStandard.ReferenceDocuments }}</a>
                     <div [hidden]="itStandard.ReferenceDocuments">None</div>
                   </td>
