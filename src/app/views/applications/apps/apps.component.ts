@@ -320,7 +320,7 @@ export class AppsComponent implements OnInit {
     // Filter by only non-retired
     $(document).ready(
       $('#appsTable').bootstrapTable('filterBy', {
-          Status: ['Candidate', 'Pre-Production', 'Production']
+        Status: ['Candidate', 'Pre-Production', 'Production']
       })
     );
 
