@@ -21,7 +21,7 @@ export class AboutComponent implements OnInit, OnDestroy {
       this.tab = params['tab'];
 
       $('.nav-tabs a[href="' + this.tab + '"]').tab('show');
-   });
+    });
   }
 
   ngOnDestroy() {

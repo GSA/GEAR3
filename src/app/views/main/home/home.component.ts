@@ -16,7 +16,7 @@ export class HomeComponent implements OnInit {
   }
 
   // Set JWT when Logging in
-  setJWT () {
+  setJWT() {
     this.sharedService.setJWTonLogIn();
   }
 
