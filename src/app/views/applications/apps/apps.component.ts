@@ -342,8 +342,8 @@ export class AppsComponent implements OnInit {
     // By default, set new record to active
     emptyApp.Status = 'Pre-Production';
     this.modalService.updateRecordCreation(true);
-    this.sharedService.setAppForm();
     this.modalService.updateDetails(emptyApp, 'application');
+    this.sharedService.setAppForm();
     $('#appManager').modal('show');
   }
 
