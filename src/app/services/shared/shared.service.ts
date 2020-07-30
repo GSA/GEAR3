@@ -67,7 +67,7 @@ export class SharedService {
       pocs = p.split(';');
 
       pocs = pocs.map((poc, tmpObj) => {
-        let pieces = poc.split(',');
+        let pieces = poc.split(', ');
 
         tmpObj = {
           name: pieces[0],
