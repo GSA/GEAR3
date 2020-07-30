@@ -69,6 +69,7 @@ export class SystemManagerComponent implements OnInit {
 
   setFormDefaults(): void {
     if (this.createBool) {
+      this.systemForm.reset();  // Clear any erroneous values if any
       this.systemForm.patchValue({
         sysStatus: 'Active'
       });

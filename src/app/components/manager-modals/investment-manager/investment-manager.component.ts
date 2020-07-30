@@ -97,6 +97,7 @@ export class InvestmentManagerComponent implements OnInit {
   setFormDefaults(): void {
     // Only set status default for creating new record
     if (this.createBool) {
+      this.investForm.reset();  // Clear any erroneous values if any
       this.investForm.patchValue({
         investStatus: true
       });

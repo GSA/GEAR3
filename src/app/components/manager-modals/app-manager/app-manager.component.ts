@@ -112,6 +112,7 @@ export class AppManagerComponent implements OnInit {
   setFormDefaults(): void {
     // Only set status default for creating new record
     if (this.createBool) {
+      this.appForm.reset();  // Clear any erroneous values if any
       this.appForm.patchValue({
         appStatus: 1
       });

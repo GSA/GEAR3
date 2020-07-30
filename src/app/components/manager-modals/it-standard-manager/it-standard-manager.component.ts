@@ -115,6 +115,7 @@ export class ItStandardManagerComponent implements OnInit {
   setFormDefaults(): void {
     // Only set status default for creating new record
     if (this.createBool) {
+      this.itStandardsForm.reset();  // Clear any erroneous values if any
       this.itStandardsForm.patchValue({
         itStandStatus: 2
       });
