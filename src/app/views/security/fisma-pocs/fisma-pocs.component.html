@@ -31,7 +31,7 @@
 
   <div class="row card-body bg-light card-text justify-content-center">
     <div class="row w-100">
-      <!-- Filter by SSO Buttons -->
+      <!-- Filters -->
       <div class="col text-right" [hidden]="rissoTable">
         <span class="my-auto mr-3">Filters:</span>
         <button role="button" name="fismaRISSObttn" class="btn btn-primary" (click)="showRISSOs()">
@@ -47,7 +47,7 @@
       </div>
     </div>
 
-    <!-- Main FISMA POC Table -->
+    <!-- Main Table -->
     <div [hidden]="rissoTable">
       <table id="fismaPOCTable"></table>
     </div>
