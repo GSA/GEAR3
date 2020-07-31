@@ -25,30 +25,21 @@ export class CapabilitiesComponent implements OnInit {
   }
 
   // Capabilities Table Options
-  tableOptions: {} = {
+  tableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: true,
-    idTable: 'advSearchCapTable',
-    buttonsClass: 'info',
-    cache: true,
-    classes: "table table-bordered table-striped table-hover table-dark clickable-table",
+    idTable: 'CapTable',
+    classes: "table-hover table-dark clickable-table",
     showColumns: false,
     showExport: true,
-    exportDataType: 'all',
-    exportOptions: {
-      fileName: this.sharedService.fileNameFmt('GSA_Business_Capabilities')
-    },
-    exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
-    headerStyle: function (column) { return { classes: 'bg-royal-blue' } },
+    exportFileName: 'GSA_Business_Capabilities',
+    headerStyle: "bg-royal-blue",
     pagination: true,
-    showPaginationSwitch: true,
     search: true,
-    showSearchClearButton: true,
-    searchOnEnterKey: true,
     sortName: 'ReferenceNum',
     sortOrder: 'asc',
     showToggle: true,
     url: this.sharedService.internalURLFmt('/api/capabilities')
-  };
+  });
 
   // Capabilities Table Columns
   capColumnDefs: any[] = [{

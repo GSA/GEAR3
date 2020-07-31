@@ -27,7 +27,7 @@ export class TopNavbarComponent implements OnInit {
       // Update related apps table in detail modal with clicked investment
       $('#globalSearchTable').bootstrapTable('refreshOptions', {
         exportOptions: {
-          fileName: this.sharedService.fileNameFmt('Global_Search-' + this.searchKW)
+          fileName: this.sharedService.fileNameFmt('GEAR_Global_Search-' + this.searchKW)
         },
         url: this.sharedService.internalURLFmt('/api/search/' + this.searchKW)
       })

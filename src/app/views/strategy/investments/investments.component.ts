@@ -27,30 +27,21 @@ export class InvestmentsComponent implements OnInit {
   }
 
   // Investment Table Options
-  tableOptions: {} = {
+  tableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: true,
-    idTable: 'advSearchInvestTable',
-    buttonsClass: 'info',
-    cache: true,
-    classes: "table table-bordered table-striped table-hover table-dark clickable-table",
+    idTable: 'InvestTable',
+    classes: "table-hover table-dark clickable-table",
     showColumns: true,
     showExport: true,
-    exportDataType: 'all',
-    exportOptions: {
-      fileName: this.sharedService.fileNameFmt('GSA_IT_Investments')
-    },
-    exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
-    headerStyle: function (column) { return { classes: 'bg-success' } },
+    exportFileName: 'GSA_IT_Investments',
+    headerStyle: "bg-success",
     pagination: true,
-    showPaginationSwitch: true,
     search: true,
-    showSearchClearButton: true,
-    searchOnEnterKey: true,
     sortName: 'Name',
     sortOrder: 'asc',
     showToggle: true,
     url: this.sharedService.internalURLFmt('/api/investments')
-  };
+  });
 
   // Investments Table Columns
   columnDefs: any[] = [{

@@ -20,25 +20,21 @@ export class GlobalSearchComponent implements OnInit {
     private tableService: TableService) { }
 
   // Global Search Table Options
-  tableOptions: {} = {
+  tableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: true,
-    idTable: 'advSearchGlobalTable',
-    buttonsClass: 'info',
-    cache: true,
-    classes: "table table-bordered table-striped table-hover table-dark clickable-table",
+    idTable: 'GlobalTable',
+    classes: "table-hover table-dark clickable-table",
     showColumns: false,
     showExport: true,
-    exportDataType: 'all',
-    exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
+    exportFileName: null,
+    headerStyle: "bg-royal-blue",
     pagination: true,
-    showPaginationSwitch: true,
     search: true,
-    showSearchClearButton: true,
-    searchOnEnterKey: true,
     sortName: 'Name',
     sortOrder: 'asc',
-    showToggle: true
-  };
+    showToggle: true,
+    url: null
+  });
 
   // Global Search Table Columns
   columnDefs: any[] = [{

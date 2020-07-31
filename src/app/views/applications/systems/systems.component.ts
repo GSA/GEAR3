@@ -27,30 +27,21 @@ export class SystemsComponent implements OnInit {
   }
 
   // Systems Table Options
-  tableOptions: {} = {
+  tableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: true,
-    idTable: 'advSearchSystemTable',
-    buttonsClass: 'info',
-    cache: true,
-    classes: "table table-bordered table-striped table-hover table-dark clickable-table",
+    idTable: 'SystemTable',
+    classes: "table-hover table-dark clickable-table",
     showColumns: false,
     showExport: true,
-    exportDataType: 'all',
-    exportOptions: {
-      fileName: this.sharedService.fileNameFmt('GSA_Parent_Systems')
-    },
-    exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
-    headerStyle: function (column) { return { classes: 'bg-danger' } },
+    exportFileName: 'GSA_Parent_Systems',
+    headerStyle: "bg-danger",
     pagination: true,
-    showPaginationSwitch: true,
     search: true,
-    showSearchClearButton: true,
-    searchOnEnterKey: true,
     sortName: 'Name',
     sortOrder: 'asc',
     showToggle: true,
     url: this.sharedService.internalURLFmt('/api/parentsystems')
-  };
+  });
 
   // Systems Table Columns
   columnDefs: any[] = [{

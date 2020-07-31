@@ -26,30 +26,21 @@ export class FismaComponent implements OnInit {
   }
 
   // FISMA System Table Options
-  tableOptions: {} = {
+  tableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: true,
-    idTable: 'advSearchFismaTable',
-    buttonsClass: 'info',
-    cache: true,
-    classes: "table table-bordered table-striped table-hover table-dark clickable-table",
+    idTable: 'FismaTable',
+    classes: "table-hover table-dark clickable-table",
     showColumns: true,
     showExport: true,
-    exportDataType: 'all',
-    exportOptions: {
-      fileName: this.sharedService.fileNameFmt('GSA_FISMA_Systems_Inventory')
-    },
-    exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
-    headerStyle: function (column) { return { classes: 'bg-warning' } },
+    exportFileName: 'GSA_FISMA_Systems_Inventory',
+    headerStyle: "bg-warning",
     pagination: true,
-    showPaginationSwitch: true,
     search: true,
-    showSearchClearButton: true,
-    searchOnEnterKey: true,
     sortName: 'Name',
     sortOrder: 'asc',
     showToggle: true,
     url: this.sharedService.internalURLFmt('/api/fisma')
-  };
+  });
 
   // FISMA System Table Columns
   columnDefs: any[] = [{

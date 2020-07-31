@@ -22,26 +22,21 @@ interface ClickOptions {
 export class TableService {
 
   // Apps Related Table Options
-  public relAppsTableOptions: {} = {
+  public relAppsTableOptions: {} = this.createTableOptions({
     advancedSearch: true,
-    idTable: 'advSearchInvestRelAppsTable',
-    buttonsClass: 'info',
-    cache: true,
-    classes: "table table-bordered table-striped table-hover table-light clickable-table",
+    idTable: 'RelAppsTable',
+    classes: "table-hover table-light clickable-table",
     showColumns: true,
     showExport: true,
-    exportDataType: 'all',
-    exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
-    headerStyle: function (column) { return { classes: 'bg-danger text-white' } },
+    exportFileName: null,
+    headerStyle: "bg-danger text-white",
     pagination: true,
-    showPaginationSwitch: true,
     search: true,
-    showSearchClearButton: true,
-    searchOnEnterKey: true,
     sortName: 'Name',
     sortOrder: 'asc',
     showToggle: true,
-  };
+    url: null
+  });
 
   // Apps Related Table Columns
   public relAppsColumnDefs: any[] = [{
@@ -182,6 +177,39 @@ export class TableService {
     private sharedService: SharedService) { }
 
 
+  public createTableOptions(definitions: any): {} {
+    return {
+      advancedSearch: definitions.advancedSearch,
+      idTable: 'advSearch' + definitions.idTable,
+      buttonsClass: 'info',
+      cache: true,
+      classes: "table table-bordered table-striped " + definitions.classes,
+      showColumns: definitions.showColumns,
+
+      showExport: definitions.showExport,
+      exportDataType: 'all',
+      exportOptions: {
+        fileName: this.sharedService.fileNameFmt(definitions.exportFileName)
+      },
+      exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
+
+      headerStyle: function (column) { return { classes: definitions.headerStyle } },
+
+      pagination: definitions.pagination,
+      showPaginationSwitch: definitions.pagination,
+
+      search: definitions.search,
+      showSearchClearButton: definitions.search,
+      searchOnEnterKey: definitions.search,
+
+      sortName: definitions.sortName,
+      sortOrder: definitions.sortOrder,
+      showToggle: definitions.showToggle,
+      url: definitions.url
+    };
+  };
+
+
   public globalSearchTableClick(data: any) {
     // console.log("Global Search Table Clicked Row: ", data);  // Debug
 
@@ -252,14 +280,14 @@ export class TableService {
       '#appCapTable',
       data.Name + '-Related_Capabilities',
       '/api/applications/get/' + String(data.ID) + '/capabilities'
-      );
+    );
 
     // Update related technologies table in detail modal with clicked application
     this.updateRelatedTable(
       '#appTechTable',
       data.Name + '-Related_Technologies',
       '/api/applications/get/' + String(data.ID) + '/technologies'
-      );
+    );
   }
 
 
@@ -352,7 +380,7 @@ export class TableService {
         options.appsTableID,
         options.exportName,
         options.apiString + String(options.data.ID) + '/applications'
-        );
+      );
     };
   }
 

@@ -27,30 +27,21 @@ export class ItStandardsComponent implements OnInit {
   }
 
   // IT Standard Table Options
-  tableOptions: {} = {
+  tableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: true,
-    idTable: 'advSearchITStandardTable',
-    buttonsClass: 'info',
-    cache: true,
-    classes: "table table-bordered table-striped table-hover table-dark clickable-table",
+    idTable: 'ITStandardTable',
+    classes: "table-hover table-dark clickable-table",
     showColumns: true,
     showExport: true,
-    exportDataType: 'all',
-    exportOptions: {
-      fileName: this.sharedService.fileNameFmt('GSA_IT_Standards')
-    },
-    exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
-    headerStyle: function (column) { return { classes: 'bg-teal' } },
+    exportFileName: 'GSA_IT_Standards',
+    headerStyle: "bg-teal",
     pagination: true,
-    showPaginationSwitch: true,
     search: true,
-    showSearchClearButton: true,
-    searchOnEnterKey: true,
     sortName: 'Name',
     sortOrder: 'asc',
     showToggle: true,
     url: this.sharedService.internalURLFmt('/api/it_standards')
-  };
+  });
 
   // IT Standard Table Columns
   columnDefs: any[] = [{

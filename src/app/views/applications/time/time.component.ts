@@ -24,30 +24,21 @@ export class TimeComponent implements OnInit {
   }
 
   // TIME Table Options
-  tableOptions: {} = {
+  tableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: true,
-    idTable: 'advSearchTimeTable',
-    buttonsClass: 'info',
-    cache: true,
-    classes: "table table-bordered table-striped table-hover table-dark clickable-table",
+    idTable: 'TimeTable',
+    classes: "table-hover table-dark clickable-table",
     showColumns: true,
     showExport: true,
-    exportDataType: 'all',
-    exportOptions: {
-      fileName: this.sharedService.fileNameFmt('Business_App_TIME_Report')
-    },
-    exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
-    headerStyle: function (column) { return { classes: 'bg-danger' } },
+    exportFileName: 'Business_Apps_TIME_Report',
+    headerStyle: "bg-danger",
     pagination: true,
-    showPaginationSwitch: true,
     search: true,
-    showSearchClearButton: true,
-    searchOnEnterKey: true,
     sortName: 'Name',
     sortOrder: 'asc',
     showToggle: true,
     url: this.sharedService.internalURLFmt('/api/apptime')
-  };
+  });
 
   // TIME Table Columns
   columnDefs: any[] = [{

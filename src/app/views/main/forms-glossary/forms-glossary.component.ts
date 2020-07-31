@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { SharedService } from '../../../services/shared/shared.service';
+import { TableService } from '../../../services/tables/table.service';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -14,23 +15,26 @@ export class FormsGlossaryComponent implements OnInit {
 
   row: Object = <any>{};
 
-  constructor(private sharedService: SharedService) { }
+  constructor(
+    private sharedService: SharedService,
+    private tableService: TableService) { }
 
   // Forms Table Options
-  formsTableOptions: {} = {
+  formsTableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: false,
-    cache: true,
-    classes: "table table-bordered table-striped table-hover table-dark clickable-table",
+    idTable: null,
+    classes: "table-hover table-dark clickable-table",
     showColumns: false,
     showExport: false,
+    exportFileName: null,
+    headerStyle: null,
     pagination: false,
-    showPaginationSwitch: false,
     search: false,
     sortName: 'Title',
     sortOrder: 'asc',
     showToggle: false,
     url: '../../assets/statics/accessforms.json'
-  };
+  });
 
   // Forms Table Columns
   formsColumnDefs: any[] = [{
@@ -48,28 +52,21 @@ export class FormsGlossaryComponent implements OnInit {
   }];
 
   // Glossary Table Options
-  glossTableOptions: {} = {
+  glossTableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: false,
-    buttonsClass: 'info',
-    cache: true,
-    classes: "table table-bordered table-striped table-hover table-dark",
+    idTable: null,
+    classes: "table-hover table-dark",
     showColumns: false,
     showExport: true,
-    exportDataType: 'all',
-    exportOptions: {
-      fileName: this.sharedService.fileNameFmt('GEAR_Glossary')
-    },
-    exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
+    exportFileName: 'GEAR_Glossary',
+    headerStyle: null,
     pagination: true,
-    showPaginationSwitch: true,
     search: true,
-    showSearchClearButton: true,
-    searchOnEnterKey: true,
     sortName: 'Term',
     sortOrder: 'asc',
     showToggle: true,
     url: '../../assets/statics/glossary.json'
-  };
+  });
 
   // Glossary Table Columns
   glossColumnDefs: any[] = [{

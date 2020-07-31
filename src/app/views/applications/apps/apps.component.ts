@@ -30,30 +30,21 @@ export class AppsComponent implements OnInit {
   }
 
   // Apps Table Options
-  tableOptions: {} = {
+  tableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: true,
-    idTable: 'advSearchAppsTable',
-    buttonsClass: 'info',
-    cache: true,
-    classes: "table table-bordered table-striped table-hover table-dark clickable-table",
+    idTable: 'AppsTable',
+    classes: "table-hover table-dark clickable-table",
     showColumns: true,
     showExport: true,
-    exportDataType: 'all',
-    exportOptions: {
-      fileName: this.sharedService.fileNameFmt('GSA_Business_Apps')
-    },
-    exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
-    headerStyle: function (column) { return { classes: 'bg-danger' } },
+    exportFileName: 'GSA_Business_Apps',
+    headerStyle: "bg-danger",
     pagination: true,
-    showPaginationSwitch: true,
     search: true,
-    showSearchClearButton: true,
-    searchOnEnterKey: true,
     sortName: 'Name',
     sortOrder: 'asc',
     showToggle: true,
     url: this.sharedService.internalURLFmt('/api/applications')
-  };
+  });
 
   // Apps Table Columns
   columnDefs: any[] = [{

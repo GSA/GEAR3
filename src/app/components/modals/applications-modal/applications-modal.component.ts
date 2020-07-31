@@ -23,23 +23,21 @@ export class ApplicationsModalComponent implements OnInit {
     private tableService: TableService) { }
 
   // TIME Report Table Options
-  timeTableOptions: {} = {
+  timeTableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: false,
-    // idTable: 'advSearchAppTimeTable',
-    buttonsClass: 'info',
-    cache: true,
-    classes: "table table-bordered table-striped table-light",
+    idTable: null,
+    classes: "table-light",
     showColumns: false,
     showExport: true,
-    exportDataType: 'all',
-    exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
-    headerStyle: function (column) { return { classes: 'bg-danger text-white' } },
+    exportFileName: null,
+    headerStyle: "bg-danger text-white",
     pagination: false,
-    showPaginationSwitch: false,
     search: false,
-    showSearchClearButton: false,
-    searchOnEnterKey: false
-  };
+    sortName: null,
+    sortOrder: null,
+    showToggle: false,
+    url: null
+  });
 
   // TIME Report Table Columns
   timeColumnDefs: any[] = [{
@@ -98,26 +96,21 @@ export class ApplicationsModalComponent implements OnInit {
 
 
   // Related Capabilities Table Options
-  appCapTableOptions: {} = {
-    advancedSearch: false,
-    // idTable: 'advSearchAppCapTable',
-    buttonsClass: 'info',
-    cache: true,
-    classes: "table table-bordered table-striped table-hover table-light clickable-table",
+  appCapTableOptions: {} = this.tableService.createTableOptions({
+    advancedSearch: true,
+    idTable: null,
+    classes: "table-hover table-light clickable-table",
     showColumns: false,
     showExport: true,
-    exportDataType: 'all',
-    exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
-    headerStyle: function (column) { return { classes: 'bg-royal-blue text-white' } },
+    exportFileName: null,
+    headerStyle: "bg-royal-blue text-white",
     pagination: false,
-    showPaginationSwitch: false,
     search: true,
-    showSearchClearButton: true,
-    searchOnEnterKey: true,
     sortName: 'ReferenceNum',
     sortOrder: 'asc',
-    showToggle: true
-  };
+    showToggle: true,
+    url: null
+  });
 
   // Related Capabilities Table Columns
   appCapColumnDefs: any[] = [{
@@ -140,26 +133,21 @@ export class ApplicationsModalComponent implements OnInit {
 
 
   // Related Technologies Table Options
-  appTechTableOptions: {} = {
+  appTechTableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: false,
-    // idTable: 'advSearchAppTechTable',
-    buttonsClass: 'info',
-    cache: true,
-    classes: "table table-bordered table-striped table-hover table-light clickable-table",
+    idTable: null,
+    classes: "table-hover table-light clickable-table",
     showColumns: true,
     showExport: true,
-    exportDataType: 'all',
-    exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
-    headerStyle: function (column) { return { classes: 'bg-teal text-white' } },
+    exportFileName: null,
+    headerStyle: "bg-teal text-white",
     pagination: false,
-    showPaginationSwitch: false,
     search: true,
-    showSearchClearButton: true,
-    searchOnEnterKey: true,
     sortName: 'Name',
     sortOrder: 'asc',
-    showToggle: true
-  };
+    showToggle: true,
+    url: null
+  });
 
   // Related Technologies Table Columns
   appTechColumnDefs: any[] = [{
@@ -233,7 +221,7 @@ export class ApplicationsModalComponent implements OnInit {
   }
 
 
-  appEdit () {
+  appEdit() {
     // Hide Detail Modal before showing Manager Modal
     $('#appDetail').modal('hide');
     this.modalService.updateDetails(this.application, 'application');

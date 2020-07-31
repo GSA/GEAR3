@@ -24,30 +24,21 @@ export class OrganizationsComponent implements OnInit {
   }
 
   // Organizations Table Options
-  tableOptions: {} = {
+  tableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: true,
-    idTable: 'advSearchOrgTable',
-    buttonsClass: 'info',
-    cache: true,
-    classes: "table table-bordered table-striped table-hover table-dark clickable-table",
+    idTable: 'OrgTable',
+    classes: "table-hover table-dark clickable-table",
     showColumns: false,
     showExport: true,
-    exportDataType: 'all',
-    exportOptions: {
-      fileName: this.sharedService.fileNameFmt('GSA_Business_Capabilities')
-    },
-    exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
-    headerStyle: function (column) { return { classes: 'bg-royal-blue' } },
+    exportFileName: 'GSA_Organizations',
+    headerStyle: "bg-royal-blue",
     pagination: true,
-    showPaginationSwitch: true,
     search: true,
-    showSearchClearButton: true,
-    searchOnEnterKey: true,
     sortName: 'Parent',
     sortOrder: 'asc',
     showToggle: true,
     url: this.sharedService.internalURLFmt('/api/organizations')
-  };
+  });
 
   // Organizations Table Columns
   columnDefs: any[] = [{

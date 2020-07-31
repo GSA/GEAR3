@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { ModalsService } from '../../../services/modals/modals.service';
 import { SharedService } from '../../../services/shared/shared.service';
+import { TableService } from '../../../services/tables/table.service';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -18,35 +19,27 @@ export class FismaPocsComponent implements OnInit {
 
   constructor(
     private sharedService: SharedService,
-    private modalService: ModalsService) {
+    private modalService: ModalsService,
+    private tableService: TableService) {
     this.modalService.currentFismaSys.subscribe(row => this.row = row);
   }
 
   // FISMA POC Table Options
-  pocTableOptions: {} = {
+  pocTableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: true,
-    idTable: 'advSearchFismaTable',
-    buttonsClass: 'info',
-    cache: true,
-    classes: "table table-bordered table-striped table-hover table-dark clickable-table",
+    idTable: 'FismaPOCTable',
+    classes: "table-hover table-dark clickable-table",
     showColumns: true,
     showExport: true,
-    exportDataType: 'all',
-    exportOptions: {
-      fileName: this.sharedService.fileNameFmt('GSA_FISMA_POCs')
-    },
-    exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
-    headerStyle: function (column) { return { classes: 'bg-warning' } },
+    exportFileName: 'GSA_FISMA_POCs',
+    headerStyle: "bg-warning",
     pagination: true,
-    showPaginationSwitch: true,
     search: true,
-    showSearchClearButton: true,
-    searchOnEnterKey: true,
     sortName: 'Name',
     sortOrder: 'asc',
     showToggle: true,
     url: this.sharedService.internalURLFmt('/api/fisma')
-  };
+  });
 
   // FISMA POC Table Columns
   pocColumnDefs: any[] = [{
