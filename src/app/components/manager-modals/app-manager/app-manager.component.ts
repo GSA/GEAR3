@@ -63,7 +63,6 @@ export class AppManagerComponent implements OnInit {
   techRelations: any[] = [];
   notSelected: any[] = [];
   selectedIDs: Set<any> = new Set();
-  deSelectedIDs: Set<any> = new Set();
 
   TIMEYears = ['FY19', 'FY20', 'FY21', 'FY22', 'FY23', 'FY24'];
   TIMEValues = ['T1', 'T2', 'T3', 'I', 'M1', 'M2', 'E', 'TBD', 'N/A'];
@@ -234,7 +233,6 @@ export class AppManagerComponent implements OnInit {
     // Add to selected list
     let poolVals = $('#standardsPool').val().map(x => +x)
     poolVals.forEach(val => {
-      this.deSelectedIDs.delete(val);
       this.selectedIDs.add(val);
     });
     this.updateSelectLists();
@@ -244,7 +242,6 @@ export class AppManagerComponent implements OnInit {
     // Delete from selected list
     let selectedVals = $('#standardsSelect').val().map(x => +x)
     selectedVals.forEach(val => {
-      this.deSelectedIDs.add(val);
       this.selectedIDs.delete(val);
     });
     this.updateSelectLists();
@@ -257,8 +254,7 @@ export class AppManagerComponent implements OnInit {
 
     // Update form value with selected IDs
     this.appForm.patchValue({
-      sysChildApps: this.selectedIDs,
-      deselectedApps: this.deSelectedIDs
+      sysChildApps: this.selectedIDs
     });
   };
 
