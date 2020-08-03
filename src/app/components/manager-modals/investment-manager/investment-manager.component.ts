@@ -160,16 +160,16 @@ export class InvestmentManagerComponent implements OnInit {
             investStatus: status,
             investName: this.investment.Name,
             investDesc: this.investment.Description,
-            invManager: this.findInArrayID(this.managers, 'Name', this.investment.InvManager),
-            investType: this.findInArrayID(this.types, 'Name', this.investment.Type),
+            invManager: this.sharedService.findInArrayID(this.managers, 'Name', this.investment.InvManager),
+            investType: this.sharedService.findInArrayID(this.types, 'Name', this.investment.Type),
             investBY: this.investment.Budget_Year,
             investUII: this.investment.UII,
-            investSSO: this.findInArrayID(this.SSOs, 'Name', this.investment.SSO),
-            investPSA: this.findInArrayID(this.serviceAreas, 'Name', this.investment.PSA),
-            investSSA: this.findInArrayID(this.serviceAreas, 'Name', this.investment.SSA),
-            // investSSA2: this.findInArrayID(this.serviceAreas, 'Name', this.investment.sec_service_area2),
-            // investSSA3: this.findInArrayID(this.serviceAreas, 'Name', this.investment.sec_service_area3),
-            // investSSA4: this.findInArrayID(this.serviceAreas, 'Name', this.investment.sec_service_area4),
+            investSSO: this.sharedService.findInArrayID(this.SSOs, 'Name', this.investment.SSO),
+            investPSA: this.sharedService.findInArrayID(this.serviceAreas, 'Name', this.investment.PSA),
+            investSSA: this.sharedService.findInArrayID(this.serviceAreas, 'Name', this.investment.SSA),
+            // investSSA2: this.sharedService.findInArrayID(this.serviceAreas, 'Name', this.investment.sec_service_area2),
+            // investSSA3: this.sharedService.findInArrayID(this.serviceAreas, 'Name', this.investment.sec_service_area3),
+            // investSSA4: this.sharedService.findInArrayID(this.serviceAreas, 'Name', this.investment.sec_service_area4),
             investComments: this.investment.Comments,
             investRelatedApps: this.selectedIDs
           });
@@ -178,13 +178,6 @@ export class InvestmentManagerComponent implements OnInit {
           console.log("Getting applications rejected with " + JSON.stringify(error));
         };
     }
-  };
-
-  findInArrayID(array: any[], arrayKey: string, searchItem: any) {
-    var result: any = array.find(element => element[arrayKey] === searchItem);
-
-    if (result) return result.ID;
-    else return null
   };
 
   poolToSelected() {

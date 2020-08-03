@@ -50,7 +50,7 @@ export class ItStandardManagerComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private globals: Globals,
-    private modalService: ModalsService,
+    public modalService: ModalsService,
     private sharedService: SharedService,
     private tableService: TableService) { }
 
@@ -120,6 +120,7 @@ export class ItStandardManagerComponent implements OnInit {
         itStandStatus: 2
       });
     } else {
+      console.log(this.itStandard);
       // Set Approval Expiration Date on Date Picker
       this.aprvExpDate = new Date(this.itStandard.ApprovalExpirationDate);
       $('#itStandAprvExp').datepicker('setDate', this.aprvExpDate);
@@ -127,8 +128,10 @@ export class ItStandardManagerComponent implements OnInit {
       // Parse and find IDs for list of POCs
       var pocIDs = [];
       if (this.itStandard.POC) {
-        this.itStandard.POC.split(', ').forEach(poc => {
-          pocIDs.push(this.findInArrayID(this.POCs, 'Name', poc))
+        this.itStandard.POC.split('; ').forEach(poc => {
+          // Index 0 has name of POC
+          let pocName = poc.split(', ')[0]
+          pocIDs.push(this.sharedService.findInArrayID(this.POCs, 'Name', pocName));
         });
       };
 
@@ -143,22 +146,22 @@ export class ItStandardManagerComponent implements OnInit {
       var categoryIDs = [];
       if (this.itStandard.Category) {
         this.itStandard.Category.split(', ').forEach(cat => {
-          categoryIDs.push(this.findInArrayID(this.categories, 'Name', cat))
+          categoryIDs.push(this.sharedService.findInArrayID(this.categories, 'Name', cat))
         });
       };
 
       // Set default values for form with current values
       this.itStandardsForm.patchValue({
-        itStandStatus: this.findInArrayID(this.statuses, 'Name', this.itStandard.Status),
+        itStandStatus: this.sharedService.findInArrayID(this.statuses, 'Name', this.itStandard.Status),
         itStandName: this.itStandard.Name,
         itStandPOC: pocIDs,
         itStandDesc: this.itStandard.Description,
-        itStandType: this.findInArrayID(this.types, 'Name', this.itStandard.StandardType),
+        itStandType: this.sharedService.findInArrayID(this.types, 'Name', this.itStandard.StandardType),
         itStandCategory: categoryIDs,
-        itStand508: this.findInArrayID(this.compliance, 'Name', this.itStandard.ComplianceStatus),
+        itStand508: this.sharedService.findInArrayID(this.compliance, 'Name', this.itStandard.ComplianceStatus),
         itStandMyView: myView,
         itStandVendorOrg: this.itStandard.Vendor_Standard_Organization,
-        itStandDeployment:this.findInArrayID(this.deploymentTypes, 'Name', this.itStandard.DeploymentType),
+        itStandDeployment: this.sharedService.findInArrayID(this.deploymentTypes, 'Name', this.itStandard.DeploymentType),
         itStandGoldImg: goldImg,
         itStandGoldComment: this.itStandard.Gold_Image_Comment,
         itStandAprvExp: formatDate(this.aprvExpDate, 'yyyy-MM-dd', 'en-US'),
@@ -168,15 +171,8 @@ export class ItStandardManagerComponent implements OnInit {
     }
   };
 
-  findInArrayID(array: any[], arrayKey: string, searchItem: any) {
-    var result: any = array.find(element => element[arrayKey] === searchItem);
-
-    if (result) return result.ID;
-    else return null
-  };
-
   submitForm() {
-    console.log("Form: ", this.itStandardsForm);  // Debug
+    // console.log("Form: ", this.itStandardsForm);  // Debug
 
     if (this.itStandardsForm.valid) {
       // Adjust MyView & Gold Image for saving
@@ -213,7 +209,7 @@ export class ItStandardManagerComponent implements OnInit {
                   .then(res => {
                     // Now get all the complete new data
                     this.apiService.getLatestITStand().toPromise()
-                      .then(data => { 
+                      .then(data => {
                         // Then update the details modal
                         this.itStandDetailRefresh(data[0])
                       })
@@ -240,20 +236,6 @@ export class ItStandardManagerComponent implements OnInit {
 
       this.modalService.updateRecordCreation(false);  // Reset Creation flag
     }
-  }
-
-  pocMatch (pocName) {
-    if (this.itStandard.POC) {
-      return this.itStandard.POC.includes(pocName)
-    }
-    return false;
-  }
-
-  categoryMatch (categoryName) {
-    if (this.itStandard.Category) {
-      return this.itStandard.Category.includes(categoryName)
-    }
-    return false;
   }
 
   itStandDetailRefresh(data: any) {

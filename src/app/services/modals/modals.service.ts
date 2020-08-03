@@ -40,7 +40,7 @@ export class ModalsService {
 
   constructor() { }
 
-  updateDetails(row: {}, component: string) {
+  public updateDetails(row: {}, component: string) {
     if (component == 'investment') {
       this.investSource.next(row);
     } else if (component == 'capability') {
@@ -60,7 +60,16 @@ export class ModalsService {
     }
   }
 
-  updateRecordCreation(bool: boolean) {
+  // For setting creation flag
+  public updateRecordCreation(bool: boolean) {
     this.createRecordSource.next(bool);
   }
+
+  public nameMatch(stringToMatch: string, name: string) {
+    if (stringToMatch) {
+      return stringToMatch.includes(name);
+    }
+    return false;
+  }
+
 }

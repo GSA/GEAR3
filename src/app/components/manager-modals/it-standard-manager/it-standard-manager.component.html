@@ -6,7 +6,8 @@
       <div class="modal-header bg-success">
         <h5 class="modal-title text-white" id="itStandMngrTitle">
           <i class="fas fa-microchip"></i>
-          <span *ngIf="itStandard.Name; else elseITStandName"> {{ itStandard.Name }} - <span class="text-primary">**EDITING**</span></span>
+          <span *ngIf="itStandard.Name; else elseITStandName"> {{ itStandard.Name }} - <span
+              class="text-primary">**EDITING**</span></span>
           <ng-template #elseITStandName> Create New IT-Standard</ng-template>
         </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -31,8 +32,8 @@
                 <div class="form-group col-3">
                   <label for="itStandStatus">Status<span class="text-danger">*</span></label>
                   <select class="form-control" id="itStandStatus" formControlName="itStandStatus" required>
-                  <option *ngFor="let status of statuses" [value]="status.ID"
-                    [selected]="status.Name === itStandard.Status">{{ status.Name }}</option>
+                    <option *ngFor="let status of statuses" [value]="status.ID"
+                      [selected]="status.Name === itStandard.Status">{{ status.Name }}</option>
                   </select>
                 </div>
 
@@ -45,7 +46,8 @@
                 <div class="form-group col-3">
                   <label for="itStandPOC">POC(s)<span class="text-danger">*</span></label>
                   <select class="form-control" id="itStandPOC" formControlName="itStandPOC" multiple required>
-                    <option *ngFor="let poc of POCs" [value]="poc.ID" [selected]="pocMatch(poc.Name)">{{ poc.Name }}</option>
+                    <option *ngFor="let poc of POCs" [value]="poc.ID"
+                      [selected]="modalService.nameMatch(itStandard.POC, poc.Name)">{{ poc.Name }}</option>
                   </select>
                 </div>
               </div>
@@ -69,9 +71,11 @@
 
                     <div class="form-group col-5">
                       <label for="itStandCategory">Category<span class="text-danger">*</span></label>
-                      <select class="form-control" id="itStandCategory" formControlName="itStandCategory" multiple required>
+                      <select class="form-control" id="itStandCategory" formControlName="itStandCategory" multiple
+                        required>
                         <option *ngFor="let category of categories" [value]="category.ID"
-                          [selected]="categoryMatch(category.Name)">{{ category.Name }}</option>
+                          [selected]="modalService.nameMatch(itStandard.Category, category.Name)">{{ category.Name }}
+                        </option>
                       </select>
                     </div>
 
@@ -121,8 +125,9 @@
 
                     <div class="form-group col-9">
                       <label for="itStandGoldComment">Gold Image Comment</label>
-                      <input type="text" class="form-control" id="itStandGoldComment" formControlName="itStandGoldComment"
-                        placeholder="Enter a Comment about the Gold Image" [value]="itStandard.Gold_Image_Comment">
+                      <input type="text" class="form-control" id="itStandGoldComment"
+                        formControlName="itStandGoldComment" placeholder="Enter a Comment about the Gold Image"
+                        [value]="itStandard.Gold_Image_Comment">
                     </div>
                   </div>
                 </div>
@@ -131,7 +136,7 @@
                   <label for="itStandAprvExp">Approval Expiration Date</label>
                   <div id="itStandAprvExp"></div>
                 </div>
-                
+
               </div>
 
               <div class="form-group">
@@ -147,15 +152,17 @@
               </div>
             </div>
             <!-- End of Overview Pane -->
-            
+
           </div>
         </form>
       </div>
 
       <div class="modal-footer">
         <div class="text-danger mr-auto">* Required</div>
-        <div [hidden]="!itStandard.ChangeDTG">Last Updated: {{ itStandard.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}</div>
-        <button type="submit" form="itStandardsForm" class="btn btn-info text-white" (click)="submitForm()">Save</button>
+        <div [hidden]="!itStandard.ChangeDTG">Last Updated: {{ itStandard.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}
+        </div>
+        <button type="submit" form="itStandardsForm" class="btn btn-info text-white"
+          (click)="submitForm()">Save</button>
       </div>
 
     </div>

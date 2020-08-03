@@ -70,7 +70,7 @@ export class AppManagerComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private globals: Globals,
-    private modalService: ModalsService,
+    public modalService: ModalsService,
     private sharedService: SharedService,
     private tableService: TableService) { }
 
@@ -330,13 +330,6 @@ export class AppManagerComponent implements OnInit {
       this.modalService.updateRecordCreation(false);  // Reset Creation flag
     }
   };
-
-  pocMatch(pocName) {
-    if (this.application.BusPOC) {
-      return this.application.BusPOC.includes(pocName)
-    }
-    return false;
-  }
 
   findSSO(org) {
     // Loop through each org

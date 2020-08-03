@@ -141,12 +141,12 @@ export class TimeComponent implements OnInit {
     visible: false,
     sortable: true
   }, {
-    field: 'BusinessPOC',
+    field: 'BusPOC',
     title: 'Business POC',
     visible: false,
     sortable: true
   }, {
-    field: 'TechnicalPOC',
+    field: 'TechPOC',
     title: 'Technical POC',
     visible: false,
     sortable: true

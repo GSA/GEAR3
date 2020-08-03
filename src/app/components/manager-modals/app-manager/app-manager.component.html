@@ -1,6 +1,5 @@
 <!-- Application Manager Modal -->
-<div class="modal fade" id="appManager" tabindex="-1" role="dialog" aria-labelledby="appMngrTitle"
-  aria-hidden="true">
+<div class="modal fade" id="appManager" tabindex="-1" role="dialog" aria-labelledby="appMngrTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
     <div class="modal-content">
       <div class="modal-header bg-danger">
@@ -55,8 +54,10 @@
                 <div class="form-group col-3">
                   <label for="appOrWeb">Application or Website<span class="text-danger">*</span></label>
                   <select class="form-control" id="appOrWeb" formControlName="appOrWeb" required>
-                    <option value="Application" [selected]="application.Application_or_Website === 'Application'">Application</option>
-                    <option value="Website" [selected]="application.Application_or_Website === 'Website'">Website</option>
+                    <option value="Application" [selected]="application.Application_or_Website === 'Application'">
+                      Application</option>
+                    <option value="Website" [selected]="application.Application_or_Website === 'Website'">Website
+                    </option>
                   </select>
                 </div>
               </div>
@@ -76,7 +77,8 @@
               <div class="form-group">
                 <label for="appNotes">Application Notes</label>
                 <textarea type="text" class="form-control" id="appNotes" formControlName="appNotes"
-                  placeholder="Enter Additional Notes, if any" rows="2" [value]="application.Application_Notes"></textarea>
+                  placeholder="Enter Additional Notes, if any" rows="2"
+                  [value]="application.Application_Notes"></textarea>
               </div>
 
             </div>
@@ -116,7 +118,8 @@
                 <div class="form-group col-5">
                   <label for="appBizPOC">Business Point of Contact(s)<span class="text-danger">*</span></label>
                   <select class="form-control" id="appBizPOC" formControlName="appBizPOC" multiple required>
-                    <option *ngFor="let poc of POCs" [value]="poc.ID" [selected]="pocMatch(poc.Name)">{{ poc.Name }}</option>
+                    <option *ngFor="let poc of POCs" [value]="poc.ID"
+                      [selected]="modalService.nameMatch(application.BusPOC, poc.Name)">{{ poc.Name }}</option>
                   </select>
                 </div>
 
@@ -137,8 +140,8 @@
                 <div class="form-group col-2 text-center mb-0">
                   <label for="appCloud">Cloud Enabled?</label>
                   <div id="appCloud" class="custom-control custom-switch">
-                    <input type="checkbox" class="custom-control-input" id="appCloudSwitch"
-                      formControlName="appCloud" [checked]="application.Cloud === 'Yes'">
+                    <input type="checkbox" class="custom-control-input" id="appCloudSwitch" formControlName="appCloud"
+                      [checked]="application.Cloud === 'Yes'">
                     <label class="custom-control-label" for="appCloudSwitch">Yes</label>
                   </div>
                 </div>
@@ -155,8 +158,8 @@
                 <div class="form-group col-2 text-center mb-0">
                   <label for="appMobile">Mobile App?</label>
                   <div id="appMobile" class="custom-control custom-switch">
-                    <input type="checkbox" class="custom-control-input" id="appMobileSwitch"
-                      formControlName="appMobile" [checked]="application.Mobile_App_Indicator === 'Yes'">
+                    <input type="checkbox" class="custom-control-input" id="appMobileSwitch" formControlName="appMobile"
+                      [checked]="application.Mobile_App_Indicator === 'Yes'">
                     <label class="custom-control-label" for="appMobileSwitch">Yes</label>
                   </div>
                 </div>
@@ -175,7 +178,8 @@
                 <div class="form-group col-5">
                   <label for="appTechPOC">Technical Point of Contact(s)<span class="text-danger">*</span></label>
                   <select class="form-control" id="appTechPOC" formControlName="appTechPOC" multiple required>
-                    <option *ngFor="let poc of POCs" [value]="poc.ID" [selected]="pocMatch(poc.Name)">{{ poc.Name }}</option>
+                    <option *ngFor="let poc of POCs" [value]="poc.ID"
+                      [selected]="modalService.nameMatch(application.TechPOC, poc.Name)">{{ poc.Name }}</option>
                   </select>
                 </div>
 
@@ -202,7 +206,8 @@
                   <div class="form-group col-5">
                     <label for="standardsPool">IT-Standards Pool</label>
                     <select class="form-control" id="standardsPool" size="14" multiple>
-                      <option *ngFor="let tech of notSelected" [value]="tech.ID">{{ tech.Name }} - ({{ tech.Status }})</option>
+                      <option *ngFor="let tech of notSelected" [value]="tech.ID">
+                        {{ tech.Name }} - ({{ tech.Status }})</option>
                     </select>
                   </div>
 
@@ -216,7 +221,8 @@
                   <div class="form-group col-5">
                     <label for="standardsSelect">Selected</label>
                     <select class="form-control" id="standardsSelect" size="14" multiple>
-                      <option *ngFor="let tech of techRelations" [value]="tech.ID">{{ tech.Name }} - ({{ tech.Status }})</option>
+                      <option *ngFor="let tech of techRelations" [value]="tech.ID">
+                        {{ tech.Name }} - ({{ tech.Status }})</option>
                     </select>
                   </div>
                 </div>
@@ -228,7 +234,8 @@
             <div class="tab-pane fade text-center" id="appMngrTIME">
               <!-- TIME Definitions Link -->
               <div class="row">
-                <a class="link mb-3 float-left" [routerLink]="['/about', '#appRat']" target="_blank">TIME Value Definitions</a>
+                <a class="link mb-3 float-left" [routerLink]="['/about', '#appRat']" target="_blank">
+                  TIME Value Definitions</a>
               </div>
 
               <div class="row justify-content-center">
@@ -243,12 +250,12 @@
                 </ng-template>
               </div>
 
-              
               <div class="row justify-content-center">
                 <div class="form-group w-75 mt-3">
                   <label for="TIMENotes">TIME Notes</label>
                   <textarea type="text" class="form-control" id="TIMENotes" formControlName="TIMENotes"
-                    placeholder="Enter Notes on Rational of Roadmap" rows="2" [value]="application.TIME_Notes"></textarea>
+                    placeholder="Enter Notes on Rational of Roadmap" rows="2"
+                    [value]="application.TIME_Notes"></textarea>
                 </div>
               </div>
 
@@ -261,7 +268,9 @@
 
       <div class="modal-footer">
         <div class="text-danger mr-auto">* Required</div>
-        <div [hidden]="!application.ChangeDTG">Last Updated: {{ application.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}</div>
+        <div [hidden]="!application.ChangeDTG">
+          Last Updated: {{ application.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}
+        </div>
         <button type="submit" form="appForm" class="btn btn-info text-white" (click)="submitForm()">Save</button>
       </div>
 
