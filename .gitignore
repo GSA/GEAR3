@@ -4,6 +4,7 @@
 # sensitive data
 .env
 /iisnode
+/certs
 
 #--------------------------
 
