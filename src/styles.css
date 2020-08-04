@@ -10,8 +10,8 @@ a.link,
 }
 
 /* More Width Classes */
-.w-15 {
-  width: 15% !important;
+.w-20 {
+  width: 20% !important;
 }
 .w-80 {
   width: 80% !important;
@@ -21,6 +21,59 @@ a.link,
 @media (min-width: 1200px) {
   .modal-xl {
     max-width: 80% !important;
+  }
+}
+
+.submenu-icon {
+  padding-left: 0.5rem;
+  margin-left: auto;
+}
+
+@media (max-width: 1199.98px) {
+  .navbar-expand-xl2 > .container,
+  .navbar-expand-xl2 > .container-fluid, .navbar-expand-xl2 > .container-sm, .navbar-expand-xl2 > .container-md, .navbar-expand-xl2 > .container-lg, .navbar-expand-xl2 > .container-xl {
+    padding-right: 0;
+    padding-left: 0;
+  }
+}
+
+@media (min-width: 1500px) {
+  .navbar-expand-xl2 {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-flow: row nowrap;
+            flex-flow: row nowrap;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+  }
+  .navbar-expand-xl2 .navbar-nav {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+  }
+  .navbar-expand-xl2 .navbar-nav .dropdown-menu {
+    position: absolute;
+  }
+  .navbar-expand-xl2 .navbar-nav .nav-link {
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+  }
+  .navbar-expand-xl2 > .container,
+  .navbar-expand-xl2 > .container-fluid, .navbar-expand-xl2 > .container-sm, .navbar-expand-xl2 > .container-md, .navbar-expand-xl2 > .container-lg, .navbar-expand-xl2 > .container-xl {
+    -ms-flex-wrap: nowrap;
+        flex-wrap: nowrap;
+  }
+  .navbar-expand-xl2 .navbar-collapse {
+    display: -webkit-box !important;
+    display: -ms-flexbox !important;
+    display: flex !important;
+    -ms-flex-preferred-size: auto;
+        flex-basis: auto;
+  }
+  .navbar-expand-xl2 .navbar-toggler {
+    display: none;
   }
 }
 

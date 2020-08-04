@@ -2,7 +2,6 @@
 
 ng-sidebar-container {
   /* Position needed to render sidebar properly */
-  height: 92.3%;
   position: absolute;
   /* Behind the top navbar */
   z-index: 100;
@@ -14,6 +13,12 @@ ng-sidebar-container {
 
 ng-sidebar .list-group a {
   color: white;
+}
+
+/* Give some more space for the text and icons */
+
+.list-group-item {
+  padding-right: 15px;
 }
 
 /* Fix GEAR Manager Login footer to bottom */

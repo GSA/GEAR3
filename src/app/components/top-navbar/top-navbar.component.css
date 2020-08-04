@@ -5,3 +5,7 @@
 .nav-item.dropdown:hover>.dropdown-menu {
   display: block;
 }
+
+#contactDropdown {
+  cursor: pointer;
+}

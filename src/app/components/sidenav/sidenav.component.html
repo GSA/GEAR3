@@ -15,7 +15,7 @@
     [animate]="_animate"
     [trapFocus]="_trapFocus"
     [autoFocus]="_autoFocus"
-    [sidebarClass]="'w-15'"
+    [sidebarClass]="'w-20'"
     [ariaLabel]="'sideNavbar'"
     (onOpenStart)="_onOpenStart()"
     (onOpened)="_onOpened()"
@@ -31,8 +31,8 @@
           class="bg-success list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
             IT Strategy
-            <span class="submenu-icon ml-auto">
-              <i class="fas fa-puzzle-piece fa-lg"></i>
+            <span class="submenu-icon">
+              <i class="fas fa-puzzle-piece fa-lg fa-fw"></i>
             </span>
           </div>
         </a>
@@ -56,8 +56,8 @@
           class="bg-royal-blue list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
             GSA Enterprise
-            <span class="submenu-icon ml-auto">
-              <i class="fas fa-sitemap fa-lg"></i>
+            <span class="submenu-icon">
+              <i class="fas fa-sitemap fa-lg fa-fw"></i>
             </span>
           </div>
         </a>
@@ -81,8 +81,8 @@
           class="bg-danger list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
             Business Applications
-            <span class="submenu-icon ml-auto">
-              <i class="fas fa-laptop fa-lg"></i>
+            <span class="submenu-icon">
+              <i class="fas fa-laptop fa-lg fa-fw"></i>
             </span>
           </div>
         </a>
@@ -104,8 +104,8 @@
           class="bg-warning list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
             Security
-            <span class="submenu-icon ml-auto">
-              <i class="fas fa-shield-alt fa-lg"></i>
+            <span class="submenu-icon">
+              <i class="fas fa-shield-alt fa-lg fa-fw"></i>
             </span>
           </div>
         </a>
@@ -125,8 +125,8 @@
           class="bg-teal list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
             Technologies
-            <span class="submenu-icon ml-auto">
-              <i class="fas fa-microchip fa-lg"></i>
+            <span class="submenu-icon">
+              <i class="fas fa-microchip fa-lg fa-fw"></i>
             </span>
           </div>
         </a>
@@ -150,8 +150,8 @@
           class="bg-info list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
             Access Forms & Glossary
-            <span class="submenu-icon ml-auto">
-              <i class="fab fa-wpforms fa-lg fa-fw"></i>
+            <span class="submenu-icon">
+              <i class="fab fa-wpforms fa-lg fa-fw fa-fw"></i>
               <!-- For some reason, this needs a fixed width to properly align-->
             </span>
           </div>
@@ -166,8 +166,8 @@
         class="bg-info list-group-item list-group-item-action flex-column align-items-start text-white">
         <div class="d-flex w-100 justify-content-start align-items-center">
           GEAR Manager Login
-          <span class="submenu-icon ml-auto">
-            <i class="fa fa-sign-in-alt fa-lg"></i>
+          <span class="submenu-icon">
+            <i class="fa fa-sign-in-alt fa-lg fa-fw"></i>
           </span>
         </div>
       </a>
@@ -175,8 +175,8 @@
         class="bg-danger list-group-item list-group-item-action flex-column align-items-start text-white">
         <div class="d-flex w-100 justify-content-start align-items-center">
           GEAR Manager Logout
-          <span class="submenu-icon ml-auto">
-            <i class="fas fa-sign-out-alt fa-lg"></i>
+          <span class="submenu-icon">
+            <i class="fas fa-sign-out-alt fa-lg fa-fw"></i>
           </span>
         </div>
       </a>
@@ -195,7 +195,7 @@
             aria-atomic="true" data-delay="3000">
             <div id="loggedInCollapse" class="collapse">
               <div class="toast-header">
-                <i class="fa fa-sign-in-alt mr-2"></i>
+                <i class="fa fa-sign-in-alt mr-2 fa-fw"></i>
                 <strong class="mr-auto text-success">You have successfully logged into GEAR Manager!</strong>
               </div>
             </div>
@@ -206,7 +206,7 @@
             aria-atomic="true" data-delay="3000">
             <div id="loggedOutCollapse" class="collapse">
               <div class="toast-header">
-                <i class="fas fa-sign-out-alt mr-2"></i>
+                <i class="fas fa-sign-out-alt mr-2 fa-fw"></i>
                 <strong class="mr-auto text-warning">You have been logged out of GEAR Manager!</strong>
               </div>
             </div>
