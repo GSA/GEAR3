@@ -27,7 +27,7 @@ export class GlobalSearchComponent implements OnInit {
     showColumns: false,
     showExport: true,
     exportFileName: null,
-    headerStyle: "bg-royal-blue",
+    headerStyle: null,
     pagination: true,
     search: true,
     sortName: 'Name',
