@@ -99,6 +99,13 @@
                   </td>
                 </tr> -->
                 <tr>
+                  <td><i class="fas fa-info-circle"></i>Status</td>
+                  <td *ngIf="investment.Active === 'True'; else elseInvestStatus">Active</td>
+                  <ng-template #elseInvestStatus>
+                    <td>Inactive</td>
+                  </ng-template>
+                </tr>
+                <tr>
                   <td><i class="far fa-comments"></i>Comments</td>
                   <td>{{ investment.Comments }}</td>
                 </tr>
@@ -107,17 +114,18 @@
 
           </div>
           <!-- End of Overview Pane -->
-          
+
           <div class="tab-pane fade" id="investRelatedApps">
             <table id="investRelAppsTable"></table>
           </div>
-          
+
         </div>
       </div>
-      
+
       <div class="modal-footer">
         <div>Last Updated: {{ investment.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}</div>
-        <button  type="button" [hidden]="!sharedService.loggedIn" class="btn btn-info text-white" (click)="investEdit()">Edit This Item</button>
+        <button type="button" [hidden]="!sharedService.loggedIn" class="btn btn-info text-white"
+          (click)="investEdit()">Edit This Item</button>
       </div>
     </div>
   </div>
