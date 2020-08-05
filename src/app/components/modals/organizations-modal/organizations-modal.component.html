@@ -37,6 +37,10 @@
             <h4>Parent Organization</h4>
             {{ org.Parent }}
             <p [hidden]="org.Parent">None</p>
+            <br><br>
+
+            <h4>Link</h4>
+            <a href="{{ org.Link }}" target="_blank" rel="noopener">{{ org.Link }}</a>
           </div>
 
           <div class="tab-pane fade" id="orgApps">
