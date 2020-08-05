@@ -65,7 +65,7 @@
             <br>
 
             <table id="appBusinessTable"
-              class="table table-borderless table-striped table-dark rounded-lg w-50 mx-auto">
+              class="table table-borderless table-striped table-dark rounded-lg w-75 mx-auto">
               <thead class="bg-danger">
                 <tr>
                   <th>
@@ -151,7 +151,7 @@
             <h4 class="text-center">Technical Overview</h4>
             <br>
 
-            <table id="techAttrTable" class="table table-borderless table-striped table-dark rounded-lg w-50 mx-auto">
+            <table id="techAttrTable" class="table table-borderless table-striped table-dark rounded-lg w-75 mx-auto">
               <thead class="bg-danger">
                 <tr>
                   <th>
@@ -230,7 +230,8 @@
 
       <div class="modal-footer">
         <div class="float-right">Last Updated: {{ application.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}</div>
-        <button  type="button" [hidden]="!sharedService.loggedIn" class="btn btn-info text-white" (click)="appEdit()">Edit This Item</button>
+        <button type="button" [hidden]="!sharedService.loggedIn" class="btn btn-info text-white"
+          (click)="appEdit()">Edit This Item</button>
       </div>
     </div>
   </div>
