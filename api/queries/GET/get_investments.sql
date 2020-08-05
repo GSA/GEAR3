@@ -2,7 +2,7 @@ SELECT DISTINCT invest.Id                         AS ID,
   invest.Keyname                                  AS Name,
   invest.Description,
   invest.Comments,
-  invest.Active,
+  IF (invest.Active = 1, 'True', 'False')			    AS Active,
   invest.Budget_Year,
   invest.UII,
   invest.CreateDTG,
@@ -32,4 +32,3 @@ FROM obj_investment AS invest
   LEFT JOIN obj_capability        AS sec_service_area2    ON invest.sec_serv_area2 = sec_service_area2.Id
   LEFT JOIN obj_capability        AS sec_service_area3    ON invest.sec_serv_area3 = sec_service_area3.Id
   LEFT JOIN obj_capability        AS sec_service_area4    ON invest.sec_serv_area4 = sec_service_area4.Id
-  LEFT JOIN obj_investment_active AS invact               ON invest.Active = invact.Id

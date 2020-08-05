@@ -94,7 +94,7 @@ export class InvestmentsComponent implements OnInit {
 
     // Filter to only active investments
     $(document).ready(
-      $('#investTable').bootstrapTable('filterBy', { Active: 1 })
+      $('#investTable').bootstrapTable('filterBy', { Active: 'True' })
     );
 
     // Method to handle click events on the Investments table
@@ -112,7 +112,7 @@ export class InvestmentsComponent implements OnInit {
     var emptyInvestment = new Investment();
 
     // By default, set new record to active
-    emptyInvestment.Active = 1;
+    emptyInvestment.Active = true;
     this.modalService.updateRecordCreation(true);
     this.sharedService.setInvestForm();
     this.modalService.updateDetails(emptyInvestment, 'investment');
@@ -123,7 +123,7 @@ export class InvestmentsComponent implements OnInit {
   inactiveFilter() {
     this.filteredTable = true;  // Filters are on, expose main table button
 
-    $('#investTable').bootstrapTable('filterBy', { Active: 2 });
+    $('#investTable').bootstrapTable('filterBy', { Active: 'False' });
     $('#investTable').bootstrapTable('refreshOptions', {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt('GSA_Inactive_IT_Investments')
@@ -135,7 +135,7 @@ export class InvestmentsComponent implements OnInit {
     this.filteredTable = false;  // Hide main button
 
     // Remove filters and back to default
-    $('#investTable').bootstrapTable('filterBy', { Active: 1 });
+    $('#investTable').bootstrapTable('filterBy', { Active: 'True' });
     $('#investTable').bootstrapTable('refreshOptions', {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt('GSA_IT_Investments')

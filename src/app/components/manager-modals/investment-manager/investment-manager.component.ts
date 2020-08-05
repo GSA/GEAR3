@@ -120,10 +120,6 @@ export class InvestmentManagerComponent implements OnInit {
           this.notSelected = this.appPool;
         });
     } else {
-      // Adjust Status for rendering
-      if (this.investment.Active === 1) var status = true;
-      else var status = false;
-
       // Populate Related Apps
       this.apiService.getInvestApps(this.investment.ID).subscribe((data: any[]) => {
         this.relatedApps = [];
@@ -216,10 +212,6 @@ export class InvestmentManagerComponent implements OnInit {
     // console.log("Form: ", this.investForm);  // Debug
 
     if (this.investForm.valid) {
-      // Adjust Status for saving
-      if (this.investForm.value.investStatus) this.investForm.value.investStatus = 1;
-      else this.investForm.value.investStatus = 2;
-
       // Adjust Comments
       if (!this.investForm.value.investComments) this.investForm.value.investComments = 'N/A';
 

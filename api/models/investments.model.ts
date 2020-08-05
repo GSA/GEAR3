@@ -3,7 +3,7 @@ export class Investment {
   public Name: string = null;
   public Description: string = null;
   public Comments: string = null;
-  public Active: number = null;
+  public Active: boolean = null;
   public Budget_Year: string = null;
   public UII: string = null;
   public CreateDTG: string = null;
