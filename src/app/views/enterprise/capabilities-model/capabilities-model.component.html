@@ -26,7 +26,7 @@
   <div class="row card-body bg-light card-text">
 
     <!-- Detail Card -->
-    <div id="capDetail" class="card">
+    <div id="capDetail" class="card col-7">
       <div id="capDetailheader" class="row card-header bg-royal-blue text-white my-auto">
         <h4 id="capName" class="text-white"></h4>
         <div class="ml-auto">
@@ -35,11 +35,11 @@
           <span id="capDetailClose" class="fa fa-times fa-lg ml-3" data-toggle="tooltip" title="Close this box"></span>
         </div>
       </div>
-      <div id="capDetailbody" class="card-body"></div>
+      <div id="capDetailbody" class="row card-body"></div>
     </div>
 
     <!-- Graph Searchbar -->
-    <div class="input-group col-lg-3 ml-auto">
+    <div class="input-group col-4 ml-auto">
       <input [(ngModel)]="searchKey" type="text" class="form-control" placeholder="Search Capability Names"
         id="capSearchField" (keydown)="search($event)" />
       <div class="input-group-append">
