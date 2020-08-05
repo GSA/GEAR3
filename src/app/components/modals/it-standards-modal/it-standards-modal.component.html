@@ -68,14 +68,7 @@
                 <tr>
                   <td><i class="fa fa-user"></i>POC</td>
                   <td>
-                    <ul>
-                      <li *ngFor="let p of sharedService.splitPOCInfo(itStandard.POC)">
-                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ p.email }}" target="_blank" rel="noopener">
-                          {{ p.name }}</a>
-                        <span [hidden]="!p.org">, {{ p.org }}</span>
-                        <span [hidden]="p.org">, No Org Provided</span>
-                      </li>
-                    </ul>
+                    <ul [innerHTML]="sharedService.renderPOCInfo(itStandard.POC)"></ul>
                   </td>
                 </tr>
                 <tr>

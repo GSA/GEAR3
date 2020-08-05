@@ -220,7 +220,6 @@ export class ApplicationsModalComponent implements OnInit {
       ));
   }
 
-
   appEdit() {
     // Hide Detail Modal before showing Manager Modal
     $('#appDetail').modal('hide');

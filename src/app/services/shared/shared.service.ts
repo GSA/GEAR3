@@ -58,6 +58,23 @@ export class SharedService {
     else return null
   };
 
+  // Have to render POC info separately as anchor links dont work with ngFor
+  renderPOCInfo(pocString: string) {
+    let POCs = this.splitPOCInfo(pocString)
+    let html = ''
+
+    POCs.forEach(p => {
+      html += `<li>
+        <a href="https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=${p.email}" target="_blank"
+          rel="noopener">${p.name}</a>`;
+
+      if (p.org) html += `, ${p.org}`;
+      else html += ", No Org Provided";
+      html += "</li>";
+    });
+    return html;
+  }
+
   // Split POC info when multiple are given in a field
   splitPOCInfo(p) {
     var pocs = null;
