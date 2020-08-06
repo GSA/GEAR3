@@ -57,6 +57,11 @@
             <h4>Application Notes</h4>
             <p>{{ application.Application_Notes }}</p>
             <p [hidden]="application.Application_Notes">None</p>
+            <br><br>
+
+            <h4>Reference Document</h4>
+            <a class="link" href="{{ application.Reference_Document }}" target="_blank" rel="noopener">{{ application.Reference_Document }}</a>
+            <p [hidden]="application.Reference_Document">None</p>
           </div>
           <!-- End of Overview Tab Pane -->
 

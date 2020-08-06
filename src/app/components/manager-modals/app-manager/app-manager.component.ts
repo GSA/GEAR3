@@ -25,6 +25,7 @@ export class AppManagerComponent implements OnInit {
     appDisplayName: new FormControl(null, [Validators.required]),
     appDesc: new FormControl(),
     appNotes: new FormControl(),
+    appRefDoc: new FormControl(),
 
     appUID: new FormControl(null, [Validators.required]),
     appCUI: new FormControl(),
@@ -198,6 +199,7 @@ export class AppManagerComponent implements OnInit {
             appDisplayName: this.application.DisplayName,
             appDesc: this.application.Description,
             appNotes: this.application.Application_Notes,
+            appRefDoc: this.application.Reference_Document,
 
             appUID: this.application.OMBUID,
             appCUI: this.application.CUI,

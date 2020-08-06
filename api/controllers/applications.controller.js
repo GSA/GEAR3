@@ -143,6 +143,7 @@ exports.update = (req, res) => {
         Description                     = ${data.appDesc},
         Display_Name                    = '${data.appDisplayName}',
         Application_Notes               = ${data.appNotes},
+        Reference_Document              = '${data.appRefDoc}',
 
         Unique_Identifier_Code          = '${data.appUID}',
         CUI_Indicator                   = ${data.appCUI},
@@ -192,6 +193,7 @@ exports.create = (req, res) => {
       Description,
       Display_Name,
       Application_Notes,
+      Reference_Document,
 
       Unique_Identifier_Code,
       CUI_Indicator,
@@ -215,6 +217,7 @@ exports.create = (req, res) => {
         ${data.appDesc},
         '${data.appDisplayName}',
         ${data.appNotes},
+        '${data.appRefDoc}',
 
         '${data.appUID}',
         ${data.appCUI},
