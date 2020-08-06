@@ -210,42 +210,42 @@ export class TableService {
   };
 
 
-  public globalSearchTableClick(data: any) {
+  public globalSearchTableClick(searchData: any) {
     // console.log("Global Search Table Clicked Row: ", data);  // Debug
 
-    switch (data.GEAR_Type) {
+    switch (searchData.GEAR_Type) {
       case 'Application':
-        this.apiService.getOneApp(data.Id).subscribe((apiData: any[]) => {
+        this.apiService.getOneApp(searchData.Id).subscribe((apiData: any[]) => {
           this.appsTableClick(apiData[0]);
         });
         break;
 
       case 'Capability':
-        this.apiService.getOneCap(data.Id).subscribe((apiData: any[]) => {
+        this.apiService.getOneCap(searchData.Id).subscribe((apiData: any[]) => {
           this.capsTableClick(apiData[0]);
         });
         break;
 
       case 'FISMA':
-        this.apiService.getOneFISMASys(data.Id).subscribe((apiData: any[]) => {
+        this.apiService.getOneFISMASys(searchData.Id).subscribe((apiData: any[]) => {
           this.fismaTableClick(apiData[0]);
         });
         break;
 
       case 'Investment':
-        this.apiService.getOneInvest(data.Id).subscribe((apiData: any[]) => {
+        this.apiService.getOneInvest(searchData.Id).subscribe((apiData: any[]) => {
           this.investTableClick(apiData[0]);
         });
         break;
 
       case 'System':
-        this.apiService.getOneSys(data.Id).subscribe((apiData: any[]) => {
+        this.apiService.getOneSys(searchData.Id).subscribe((apiData: any[]) => {
           this.systemsTableClick(apiData[0]);
         });
         break;
 
       case 'Technology':
-        this.apiService.getOneITStandard(data.Id).subscribe((apiData: any[]) => {
+        this.apiService.getOneITStandard(searchData.Id).subscribe((apiData: any[]) => {
           this.itStandTableClick(apiData[0]);
         });
         break;
