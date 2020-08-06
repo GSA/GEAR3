@@ -114,7 +114,7 @@ export class AppManagerComponent implements OnInit {
     if (this.createBool) {
       this.appForm.reset();  // Clear any erroneous values if any
       this.appForm.patchValue({
-        appStatus: 1
+        appStatus: true
       });
 
       // Populate All IT Standards Pool
@@ -184,13 +184,6 @@ export class AppManagerComponent implements OnInit {
             });
           };
 
-          // Adjust cloud & mobile statuses for rendering
-          if (this.application.Cloud === 'Yes') var cloudStatus = true;
-          else var cloudStatus = false;
-
-          if (this.application.Mobile_App_Indicator === 'Yes') var mobileStatus = true;
-          else var mobileStatus = false;
-
           // Set default values for form with current values after resolving related apps
           this.appForm.patchValue({
             appStatus: this.sharedService.findInArrayID(this.statuses, 'Name', this.application.Status),
@@ -208,9 +201,9 @@ export class AppManagerComponent implements OnInit {
             appBizPOC: bizPocIDs,
             appOwner: this.sharedService.findInArrayID(this.orgs, 'Name', this.application.Owner),
 
-            appCloud: cloudStatus,
+            appCloud: (this.application.Cloud == 'Yes'),
             // appDesktop: this.application.Desktop_Indicator,
-            appMobile: mobileStatus,
+            appMobile: (this.application.Mobile_App_Indicator == 'Yes'),
             appHost: this.sharedService.findInArrayID(this.hosts, 'Name', this.application.HostingProvider),
             appTechPOC: techPocIDs,
             appFISMA: this.sharedService.findInArrayID(this.fismaSystems, 'Name', this.application.FISMASystem),
@@ -282,13 +275,6 @@ export class AppManagerComponent implements OnInit {
         }
       };
       this.appForm.value.appSSO = this.findSSO(ownerName);
-
-      // Adjust cloud & mobile statuses for saving
-      if (this.appForm.value.appCloud) this.appForm.value.appCloud = 'Yes';
-      else this.appForm.value.appCloud = 'No';
-
-      if (this.appForm.value.appMobile) this.appForm.value.appMobile = 'Yes';
-      else this.appForm.value.appMobile = 'No';
 
       // console.log("Form values before committing to database: ", this.appForm.value); // Debug
 

@@ -153,7 +153,7 @@ export class InvestmentManagerComponent implements OnInit {
 
           // Set default values for form with current values after resolving related apps
           this.investForm.patchValue({
-            investStatus: status,
+            investStatus: (this.investment.Active == 'True'),
             investName: this.investment.Name,
             investDesc: this.investment.Description,
             invManager: this.sharedService.findInArrayID(this.managers, 'Name', this.investment.InvManager),

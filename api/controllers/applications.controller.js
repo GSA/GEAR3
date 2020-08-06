@@ -152,8 +152,8 @@ exports.update = (req, res) => {
         obj_org_SSO_Id                  = ${data.appSSO},
         App_Owning_Org                  = ${data.appOwner},
 
-        Cloud_Indicator                 = '${data.appCloud}',
-        Mobile_App_Indicator            = '${data.appMobile}',
+        Cloud_Indicator                 = ${data.appCloud},
+        Mobile_App_Indicator            = ${data.appMobile},
         obj_app_hostingprovider_Id      = ${data.appHost},
         obj_fisma_Id                    = ${data.appFISMA},
         obj_parent_system_Id            = ${data.appParent},
