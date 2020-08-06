@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
+import { ApiService } from '../../../services/apis/api.service';
 import { ModalsService } from '../../../services/modals/modals.service';
 import { SharedService } from '../../../services/shared/shared.service';
 import { TableService } from '../../../services/tables/table.service';
@@ -18,6 +19,7 @@ export class ApplicationsModalComponent implements OnInit {
   interfaces: any[] = [];
 
   constructor(
+    private apiService: ApiService,
     private modalService: ModalsService,
     public sharedService: SharedService,
     private tableService: TableService) { }
@@ -218,6 +220,13 @@ export class ApplicationsModalComponent implements OnInit {
         this.tableService.itStandTableClick(row);
       }.bind(this)
       ));
+  }
+
+  openInvest(ID: number) {
+    this.apiService.getOneInvest(ID).subscribe((apiData: any[]) => {
+      $('#appDetail').modal('hide');
+      this.tableService.investTableClick(apiData[0]);
+    });
   }
 
   appEdit() {

@@ -151,6 +151,13 @@ table ul {
   margin-bottom: 0;
 }
 
+/* Cursor pointer for html tables that can be clicked on */
+td.pointer {
+  cursor: pointer;
+  font-size: 0.765625rem;
+  text-transform: uppercase;
+}
+
 /* Softer Card Background Color */
 .card-body {
   background-color: #ededed !important;

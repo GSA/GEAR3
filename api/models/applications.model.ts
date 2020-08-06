@@ -34,6 +34,7 @@ export class Application {
   public AppTime: string = null;
   public ParentSystem: string = null;
   public ParentSystemID: number = null;
+  public Investment: string = null;
   public InvestmentID: number = null;
   public Portfolio: string = null;
   public FISMASystem: string = null;

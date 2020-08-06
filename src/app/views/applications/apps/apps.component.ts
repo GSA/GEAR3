@@ -145,6 +145,11 @@ export class AppsComponent implements OnInit {
     sortable: true,
     visible: false,
     formatter: this.sharedService.systemFormatter
+  }, {
+    field: 'Investment',
+    title: 'Investment Name',
+    sortable: true,
+    visible: false
   },
   //{
   //   field: 'HelpDesk',

@@ -99,6 +99,10 @@
                   <td><i class="fa fa-bookmark"></i>CUI Indicator</td>
                   <td>{{ application.CUI }}</td>
                 </tr>
+                <tr [hidden]="!application.Investment">
+                  <td><i class="fas fa-money-bill-wave"></i>Investment</td>
+                  <td class="btn-outline-success pointer" (click)=openInvest(application.InvestmentID)>{{ application.Investment }}</td>
+                </tr>
                 <tr>
                   <td><i class="fa fa-calendar-alt"></i>Production Year</td>
                   <td>{{ application.ProdYear }}</td>

@@ -42,6 +42,7 @@ SELECT DISTINCT
 
   obj_parent_system.Keyname           AS ParentSystem,
   obj_parent_system.Id                AS ParentSystemID,
+  obj_investment.Keyname              AS Investment,
   obj_investment.Id                   AS InvestmentID,
   obj_portfolio.Keyname               AS Portfolio,
   obj_fisma_archer.`ex:System_Name`   AS FISMASystem,
