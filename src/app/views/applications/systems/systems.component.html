@@ -1,13 +1,13 @@
 <div class="card">
   <div class="row card-header text-white bg-danger text-center">
-    <h3 class="card-title col-11 mb-0 align-self-center">
+    <h3 class="card-title col-12 position-absolute mb-0 align-self-center">
       <span class="my-auto">
         <i class="fas fa-server"></i>
         GSA Parent Systems</span>
     </h3>
     <!-- Help Button -->
     <a tabindex="0"
-      class="col-1 btn btn-sm text-black-50 btn-info float-right d-flex align-items-center justify-content-center"
+      class="col-1 btn btn-sm text-black-50 btn-info ml-auto d-flex align-items-center justify-content-center"
       role="button" data-toggle="popover" data-trigger="focus" data-placement="auto" data-html="true"
       title="Help Using this Table" data-content="<b>Details:</b> Left click on a row within the table to view additional details.
         <br><br>
@@ -29,13 +29,13 @@
   <div class="row card-body card-text justify-content-center">
     <div class="row w-100">
       <!-- Add Button -->
-      <button role="button" name="addSystemBttn" class="btn btn-danger" (click)="createParentSystem()"
+      <button role="button" name="addSystemBttn" class="btn btn-danger position-absolute" (click)="createParentSystem()"
         [hidden]="!sharedService.loggedIn">
         <i class="fas fa-plus"></i>
       </button>
 
       <!-- Filters -->
-      <div class="offset-md-4">
+      <div class="mx-auto">
         <span class="my-auto mr-3">Filters:</span>
         <button role="button" name="systemInactiveBttn" class="btn btn-primary" (click)="retiredFilter()"
           [hidden]="retiredTable">Retired</button>
