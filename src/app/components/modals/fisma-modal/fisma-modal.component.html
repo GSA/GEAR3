@@ -76,12 +76,7 @@
                         <i class="fa fa-file-alt"></i>Related Artifacts
                       </td>
                       <td>
-                        <ul>
-                          <li *ngFor="let artifact of splitRelArtifacts(fisma.RelatedArtifacts)">
-                            <a href="{{ artifact.link }}" target="_blank" rel="noopener">
-                              {{ artifact.name }}</a>
-                          </li>
-                        </ul>
+                        <ul [innerHTML]="renderRelArtifacts(fisma.RelatedArtifacts)"></ul>
                       </td>
                     </tr>
                     <tr>
@@ -124,29 +119,10 @@
                     </tr>
                   </thead>
 
-
-                  <tbody>
-                    <tr *ngFor="let p of splitFismaPOCInfo(fisma.POC)">
-                      <td>{{ p.type }}</td>
-                      <td>{{ p.name }}</td>
-
-                      <td *ngIf="p.phone; else elsePhone">
-                        {{ p.phone.substring(0, 4) }}-{{ p.phone.substring(4, 7) }}-{{ p.phone.substring(7, 11) }}
-                      </td>
-                      <ng-template #elsePhone>
-                        <td>None</td>
-                      </ng-template>
-
-                      <td *ngIf="p.email; else elseEmail"><a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ p.Email }}">
-                        {{ p.email }}</a>
-                      </td>
-                      <ng-template #elseEmail>
-                        <td>None</td>
-                      </ng-template>
-                    </tr>
-                  </tbody>
+                  <tbody [innerHTML]="renderFismaPOCInfo(fisma.POC)"></tbody>
                 </table>
               </div>
+              <!-- End ofPoints of Contact Table -->
             </div>
           </div>
           <!-- End of Overview Tab Pane -->
