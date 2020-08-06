@@ -36,6 +36,3 @@ FROM obj_technology AS tech
 
   LEFT JOIN zk_application_technology           ON tech.Id = zk_application_technology.obj_technology_Id
   LEFT JOIN obj_application   AS app            ON zk_application_technology.obj_application_Id = app.Id
-
-  LEFT JOIN zk_technology_reference_documents   ON tech.Id = zk_technology_reference_documents.obj_technology_Id
-  LEFT JOIN obj_reference_documents             ON zk_technology_reference_documents.obj_reference_documents_Id = obj_reference_documents.Id
