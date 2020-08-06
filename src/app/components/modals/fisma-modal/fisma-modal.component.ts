@@ -38,7 +38,20 @@ export class FismaModalComponent implements OnInit {
       ));
   }
 
-  splitRelArtifacts(artifacts) {
+  // Have to render artifacts info separately as anchor links dont work with ngFor
+  renderRelArtifacts(artifactString: string) {
+    let artifacts = this.splitRelArtifacts(artifactString)
+    let html = ''
+
+    artifacts.forEach(artifact => {
+      html += `<li>
+        <a href="${artifact.link}" target="_blank" rel="noopener">${artifact.name}</a>
+      </li>`;
+    });
+    return html;
+  }
+
+  private splitRelArtifacts(artifacts) {
     var artObjs = [];
 
     if (artifacts) {
@@ -58,7 +71,33 @@ export class FismaModalComponent implements OnInit {
     return artObjs;
   }
 
-  splitFismaPOCInfo(p) {
+  // Have to render POC info separately as anchor links dont work with ngFor
+  renderFismaPOCInfo(pocString: string) {
+    let POCs = this.splitFismaPOCInfo(pocString)
+    let html = ''
+
+    POCs.forEach(p => {
+      html += `<tr>
+        <td>${p.type}</td>
+        <td>${p.name}</td>`
+
+      if (p.phone) html += `<td>
+          ${p.phone.substring(0, 4)}-${p.phone.substring(4, 7)}-${p.phone.substring(7, 11)}
+        </td>`
+      else html += "<td>None</td>"
+
+      if (p.email) html += `<td>
+        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=${p.Email}" target="_blank" rel="noopener">
+          ${p.email}</a>
+      </td>`
+      else html += "<td>None</td>"
+
+      html += "</tr>"
+    });
+    return html;
+  }
+
+  private splitFismaPOCInfo(p) {
     let poc = null;
     let poc1 = null;
     let pocs = [];
