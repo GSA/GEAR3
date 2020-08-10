@@ -3,6 +3,7 @@ var dotenv = require('dotenv').config();  // .env Credentials
 const bodyParser = require('body-parser'),
   cors = require('cors'),
   express = require('express'),
+  fs = require('fs');
 
   http = require('http'),
   path = require('path'),
@@ -133,6 +134,12 @@ app.post(samlConfig.path,
       user: process.env.DB_USER,
       password: process.env.DB_PASS,
       database: process.env.ACL_DB,
+      port: 3306,
+      ssl: {
+        ca: fs.readFileSync('./certs/ca.pem'),
+        key: fs.readFileSync('./certs/client-key.pem'),
+        cert: fs.readFileSync('./certs/client-cert.pem')
+      },
     });
     db.connect();
     db.query(`CALL acl.get_user_perms('${samlProfile.nameID}');`,
