@@ -60,7 +60,8 @@
             <br><br>
 
             <h4>Reference Document</h4>
-            <a class="link" href="{{ application.Reference_Document }}" target="_blank" rel="noopener">{{ application.Reference_Document }}</a>
+            <a class="link" href="{{ application.Reference_Document }}" target="_blank"
+              rel="noopener">{{ application.Reference_Document }}</a>
             <p [hidden]="application.Reference_Document">None</p>
           </div>
           <!-- End of Overview Tab Pane -->
@@ -99,9 +100,13 @@
                   <td><i class="fa fa-bookmark"></i>CUI Indicator</td>
                   <td>{{ application.CUI }}</td>
                 </tr>
-                <tr [hidden]="!application.Investment">
+                <tr>
                   <td><i class="fas fa-money-bill-wave"></i>Investment</td>
-                  <td class="btn-outline-success pointer" (click)=openInvest(application.InvestmentID)>{{ application.Investment }}</td>
+                  <td *ngIf="application.Investment; else investElse" class="btn-outline-success pointer"
+                    (click)="openRelated(application.InvestmentID, 'investment')">{{ application.Investment }}</td>
+                  <ng-template #investElse>
+                    <td>None Designated</td>
+                  </ng-template>
                 </tr>
                 <tr>
                   <td><i class="fa fa-calendar-alt"></i>Production Year</td>
@@ -115,15 +120,16 @@
                   <td><i class="fa fa-sitemap"></i>SSO</td>
                   <td>
                     {{ application.SSO }}
-                    <div [hidden]="application.SSO">None Provided</div>
+                    <div [hidden]="application.SSO">None Designated</div>
                   </td>
                 </tr>
                 <tr>
                   <td><i class="fa fa-door-open"></i>Owning Org</td>
-                  <td>
-                    {{ application.Owner }}
-                    <div [hidden]="application.Owner">None Provided</div>
-                  </td>
+                  <td *ngIf="application.Owner; else ownerElse" class="btn-outline-royal-blue pointer"
+                    (click)="openRelated(application.OwnerID, 'org')">{{ application.Owner }}</td>
+                  <ng-template #ownerElse>
+                    <td>None Designated</td>
+                  </ng-template>
                 </tr>
               </tbody>
             </table>
@@ -176,7 +182,11 @@
                 </tr> -->
                 <tr>
                   <td><i class="fa fa-shield-alt"></i>FISMA System</td>
-                  <td>{{ application.FISMASystem }}</td>
+                  <td *ngIf="application.FISMASystem; else fismaElse" class="btn-outline-warning pointer"
+                    (click)="openRelated(application.FISMASystemID, 'fisma')">{{ application.FISMASystem }}</td>
+                  <ng-template #fismaElse>
+                    <td>None Designated</td>
+                  </ng-template>
                 </tr>
                 <tr>
                   <td><i class="fa fa-building"></i>Hosting Provider</td>
@@ -186,11 +196,13 @@
                   <td><i class="fas fa-mobile-alt"></i>Mobile App?</td>
                   <td>{{ application.Mobile_App_Indicator }}</td>
                 </tr>
-                <tr [hidden]="application.ParentSystem">
+                <tr>
                   <td><i class="fa fa-server"></i>Parent System</td>
-                  <td>
-                    {{ application.ParentSystem }}
-                  </td>
+                  <td *ngIf="application.ParentSystem; else systemElse" class="btn-outline-danger pointer"
+                    (click)="openRelated(application.ParentSystemID, 'parent')">{{ application.ParentSystem }}</td>
+                  <ng-template #systemElse>
+                    <td>None Designated</td>
+                  </ng-template>
                 </tr>
                 <tr>
                   <td class="align-middle">

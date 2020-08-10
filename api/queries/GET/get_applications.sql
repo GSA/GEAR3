@@ -28,6 +28,7 @@ SELECT
 
   GROUP_CONCAT(DISTINCT owner.Keyname SEPARATOR ',')                                      AS Owner,
   GROUP_CONCAT(DISTINCT owner.Display_name SEPARATOR ',')                                 AS OwnerShort,
+  GROUP_CONCAT(DISTINCT owner.Id SEPARATOR ',')                                           AS OwnerID,
   GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', buspoc.Keyname, buspoc.Email) SEPARATOR '; ')    AS BusinessPOC,
   GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', techpoc.Keyname, techpoc.Email) SEPARATOR '; ')  AS TechnicalPOC,
   GROUP_CONCAT(DISTINCT  buspoc.Keyname SEPARATOR ', ')                                   AS BusPOC,
@@ -44,6 +45,7 @@ SELECT
   obj_investment.Id                 AS InvestmentID,
   obj_portfolio.Keyname             AS Portfolio,
   obj_fisma_archer.`ex:System_Name` AS FISMASystem,
+  obj_fisma_archer.`ex:GEAR_ID`     AS FISMASystemID,
   app.CreateDTG,
   app.ChangeDTG,
   app.CreateAudit,

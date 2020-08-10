@@ -24,6 +24,7 @@ export class Application {
   public SSOShort: string = null;
   public Owner: string = null;
   public OwnerShort: string = null;
+  public OwnerID: number = null;
   public BusinessPOC: string = null;
   public TechnicalPOC: string = null;
   public BusPOC: string = null;
@@ -38,6 +39,7 @@ export class Application {
   public InvestmentID: number = null;
   public Portfolio: string = null;
   public FISMASystem: string = null;
+  public FISMASystemID: number = null;
   public CreateDTG: string = null;
   public ChangeDTG: string = null;
 }

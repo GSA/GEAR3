@@ -168,6 +168,40 @@ td.pointer {
   background-color: #2b60de !important;
 }
 
+.btn-outline-royal-blue {
+  color: #2b60de;
+  border-color: #2b60de;
+}
+
+.btn-outline-royal-blue:hover {
+  color: #fff;
+  background-color: #2b60de;
+  border-color: #2b60de;
+}
+
+.btn-outline-royal-blue:focus, .btn-outline-royal-blue.focus {
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(43, 96, 222, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(43, 96, 222, 0.5);
+}
+
+.btn-outline-royal-blue.disabled, .btn-outline-royal-blue:disabled {
+  color: #2b60de;
+  background-color: transparent;
+}
+
+.btn-outline-royal-blue:not(:disabled):not(.disabled):active, .btn-outline-royal-blue:not(:disabled):not(.disabled).active,
+.show > .btn-outline-royal-blue.dropdown-toggle {
+  color: #fff;
+  background-color: #2b60de;
+  border-color: #2b60de;
+}
+
+.btn-outline-royal-blue:not(:disabled):not(.disabled):active:focus, .btn-outline-royal-blue:not(:disabled):not(.disabled).active:focus,
+.show > .btn-outline-royal-blue.dropdown-toggle:focus {
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(43, 96, 222, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(43, 96, 222, 0.5);
+}
+
 .bg-teal {
   background-color: #008080 !important;
 }

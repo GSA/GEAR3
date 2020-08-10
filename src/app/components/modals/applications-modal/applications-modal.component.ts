@@ -222,11 +222,26 @@ export class ApplicationsModalComponent implements OnInit {
       ));
   }
 
-  openInvest(ID: number) {
-    this.apiService.getOneInvest(ID).subscribe((apiData: any[]) => {
-      $('#appDetail').modal('hide');
-      this.tableService.investTableClick(apiData[0]);
-    });
+  openRelated(ID: number, type: string) {
+    $('#appDetail').modal('hide');
+
+    if (type === 'investment') {
+      this.apiService.getOneInvest(ID).subscribe((apiData: any[]) => {
+        this.tableService.investTableClick(apiData[0]);
+      });
+    } else if (type === 'parent') {
+      this.apiService.getOneSys(ID).subscribe((apiData: any[]) => {
+        this.tableService.systemsTableClick(apiData[0]);
+      });
+    } else if (type === 'org') {
+      this.apiService.getOneOrg(ID).subscribe((apiData: any[]) => {
+        this.tableService.orgsTableClick(apiData[0]);
+      });
+    } else if (type === 'fisma') {
+      this.apiService.getOneFISMASys(ID).subscribe((apiData: any[]) => {
+        this.tableService.fismaTableClick(apiData[0]);
+      });
+    }
   }
 
   appEdit() {

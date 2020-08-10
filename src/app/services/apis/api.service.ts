@@ -152,7 +152,7 @@ export class ApiService {
     );
   };
   public getOneFISMASys(id: number): Observable<FISMA[]> {
-    return this.http.get<FISMA[]>(this.fismaUrl + '/' + String(id)).pipe(
+    return this.http.get<FISMA[]>(this.fismaUrl + '/get/' + String(id)).pipe(
       catchError(this.handleError<FISMA[]>('GET FISMA System', []))
     );
   };
