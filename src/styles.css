@@ -9,6 +9,14 @@ a.link,
   text-decoration: underline;
 }
 
+/* Bold has got to be bolder than what the theme gives */
+b,
+strong,
+.font-weight-bold {
+  font-weight: 900 !important;
+  color: #1a1a1a !important;
+}
+
 /* More Width Classes */
 .w-15 {
   width: 15% !important;
