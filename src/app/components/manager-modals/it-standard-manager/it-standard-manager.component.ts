@@ -64,34 +64,22 @@ export class ItStandardManagerComponent implements OnInit {
     this.modalService.currentCreate.subscribe(createBool => this.createBool = createBool);
 
     // Populate Statuses
-    this.apiService.getITStandStatuses().subscribe((data: any[]) => {
-      this.statuses = data;
-    });
+    this.apiService.getITStandStatuses().subscribe((data: any[]) => { this.statuses = data });
 
     // Populate POC Options
-    this.apiService.getPOCs().subscribe((data: any[]) => {
-      this.POCs = data;
-    });
+    this.apiService.getPOCs().subscribe((data: any[]) => { this.POCs = data });
 
     // Populate Standard Types
-    this.apiService.getITStandTypes().subscribe((data: any[]) => {
-      this.types = data;
-    });
+    this.apiService.getITStandTypes().subscribe((data: any[]) => { this.types = data });
 
     // Populate Categories
-    this.apiService.getITStandCategories().subscribe((data: any[]) => {
-      this.categories = data;
-    });
+    this.apiService.getITStandCategories().subscribe((data: any[]) => { this.categories = data });
 
     // Populate 508 Compliance Statuses
-    this.apiService.getITStand508Statuses().subscribe((data: any[]) => {
-      this.compliance = data;
-    });
+    this.apiService.getITStand508Statuses().subscribe((data: any[]) => { this.compliance = data });
 
     // Populate Deployment Types
-    this.apiService.getITStandDeploymentTypes().subscribe((data: any[]) => {
-      this.deploymentTypes = data;
-    });
+    this.apiService.getITStandDeploymentTypes().subscribe((data: any[]) => { this.deploymentTypes = data });
 
     // Instantiate the date picker
     $('#itStandAprvExp').datepicker({

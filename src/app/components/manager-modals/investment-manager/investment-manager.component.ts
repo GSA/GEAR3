@@ -67,14 +67,10 @@ export class InvestmentManagerComponent implements OnInit {
     this.modalService.currentCreate.subscribe(createBool => this.createBool = createBool);
 
     // Populate Managers Options
-    this.apiService.getPOCs().subscribe((data: any[]) => {
-      this.managers = data;
-    });
+    this.apiService.getPOCs().subscribe((data: any[]) => { this.managers = data });
 
     // Populate Service Areas
-    this.apiService.getCapabilities().subscribe((data: any[]) => {
-      this.serviceAreas = this.serviceAreas.concat(data);
-    })
+    this.apiService.getCapabilities().subscribe((data: any[]) => { this.serviceAreas = this.serviceAreas.concat(data) });
 
     // Populate SSOs
     this.apiService.getOrganizations().subscribe((data: any[]) => {
@@ -84,9 +80,7 @@ export class InvestmentManagerComponent implements OnInit {
     });
 
     // Populate Types
-    this.apiService.getInvestTypes().subscribe((data: any[]) => {
-      this.types = data;
-    });
+    this.apiService.getInvestTypes().subscribe((data: any[]) => { this.types = data });
 
     // If the manager modal is exited, clear the create flag
     $('#investManager').on('hide.bs.modal', function (e) {
