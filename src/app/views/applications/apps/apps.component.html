@@ -2,8 +2,10 @@
   <div class="row card-header text-white bg-danger text-center">
     <h3 class="card-title col-12 position-absolute mb-0 align-self-center">
       <span class="my-auto">
-        <i class="fas fa-desktop"></i>
-        GSA Business Applications</span>
+        <i class="fas fa-desktop mr-2"></i> 
+        <span [hidden]="filteredTable">Active GSA </span>
+        <span [hidden]="!filteredTable" [innerHTML]="filterTitle"></span>
+        Business Applications</span>
     </h3>
     <!-- Help Button -->
     <a tabindex="0"
@@ -36,7 +38,7 @@
 
       <!-- Filters -->
       <div class="mx-auto">
-        <span class="my-auto mr-3">Filters:</span>
+        <span class="my-auto mr-3">Filter Buttons:</span>
         <button role="button" name="appFASbttn" class="btn btn-primary" (click)="changeFilter('SSOShort', 'FAS (Q)')">
           FAS (Q)</button>
         <button role="button" name="appITbttn" class="btn btn-primary" (click)="changeFilter('SSOShort', 'GSA IT (I)')">

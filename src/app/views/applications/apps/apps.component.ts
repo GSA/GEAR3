@@ -20,6 +20,7 @@ export class AppsComponent implements OnInit {
 
   row: Object = <any>{};
   filteredTable: boolean = false;
+  filterTitle: string = '';
   interfaces: any[] = [];
 
   constructor(
@@ -364,26 +365,21 @@ export class AppsComponent implements OnInit {
         columns: cloudCols
       });
 
-      // Retired Apps Button
-    } else if (field == 'Retired') {
-      // Remove any filters and grab data from another API
-      $('#appsTable').bootstrapTable('filterBy', {});
-      $('#appsTable').bootstrapTable('refreshOptions', {
-        columns: this.retiredColumnDefs,
-        url: this.sharedService.internalURLFmt('/api/applications/applications_retired')
-      });
-
+      this.filterTitle = "Cloud Enabled ";
     } else {
       $('#appsTable').bootstrapTable('filterBy', filter);
 
       if (term === 'Retired') var columnsDef = this.retiredColumnDefs;
       else var columnsDef = this.columnDefs;
       $('#appsTable').bootstrapTable('refreshOptions', { columns: columnsDef });
+
+      this.filterTitle = `${term} `;
     }
   }
 
   backToMainApp() {
     this.filteredTable = false;  // Hide main button
+    this.filterTitle = '';
 
     // Remove filters and back to default
     $('#appsTable').bootstrapTable('filterBy', { Status: ['Candidate', 'Pre-Production', 'Production'] });

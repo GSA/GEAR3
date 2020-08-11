@@ -2,7 +2,9 @@
   <div class="row card-header text-white bg-success text-center">
     <h3 class="card-title col-12 position-absolute mb-0 align-self-center">
       <span class="my-auto">
-        <i class="fas fa-money-bill-wave"></i>
+        <i class="fas fa-money-bill-wave mr-2"></i>
+        <span [hidden]="!filteredTable">Inactive </span>
+        <span [hidden]="filteredTable">Active </span>
         GSA IT Investments</span>
     </h3>
     <!-- Help Button -->
@@ -36,7 +38,7 @@
 
       <!-- Filters -->
       <div class="mx-auto">
-        <span class="my-auto mr-3">Filters:</span>
+        <span class="my-auto mr-3">Filter Buttons:</span>
         <button role="button" name="investInactiveBttn" class="btn btn-primary" (click)="inactiveFilter()"
           [hidden]="filteredTable">Inactive</button>
 

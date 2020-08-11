@@ -2,8 +2,10 @@
   <div class="row card-header text-white bg-warning text-center">
     <h3 class="card-title col-12 position-absolute mb-0 align-self-center">
       <span class="my-auto">
-        <i class="fas fa-shield-alt"></i>
-        GSA FISMA <span [hidden]="!retiredTable">Retired</span> System Inventory</span>
+        <i class="fas fa-shield-alt mr-2"></i>GSA 
+        <span [hidden]="retiredTable">Active </span>
+        <span [hidden]="!retiredTable">Retired </span>
+        FISMA System Inventory</span>
     </h3>
     <!-- Help Button -->
     <a tabindex="0"
@@ -31,7 +33,7 @@
     <div class="w-100">
       <!-- Filters -->
       <div class="text-center">
-        <span class="my-auto mr-3">Filters:</span>
+        <span class="my-auto mr-3">Filter Buttons:</span>
         <button role="button" name="fismaRetiredBttn" class="btn btn-primary" (click)="showRetired()"
           [hidden]="retiredTable">Retired FISMA Systems</button>
 

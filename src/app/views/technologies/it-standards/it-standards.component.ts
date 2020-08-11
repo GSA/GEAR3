@@ -18,6 +18,7 @@ export class ItStandardsComponent implements OnInit {
 
   row: Object = <any>{};
   filteredTable: boolean = false;
+  filterTitle: string = '';
 
   constructor(
     private modalService: ModalsService,
@@ -136,7 +137,9 @@ export class ItStandardsComponent implements OnInit {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt('GSA_' + term + '_IT_Standards')
       }
-    })
+    });
+
+    this.filterTitle = `${term} `;
   }
 
   backToMainIT() {
@@ -149,6 +152,8 @@ export class ItStandardsComponent implements OnInit {
         fileName: this.sharedService.fileNameFmt('GSA_IT_Standards')
       }
     });
+
+    this.filterTitle = '';
   }
 
 }

@@ -2,8 +2,10 @@
   <div class="row card-header text-white bg-royal-blue text-center">
     <h3 class="card-title col-12 position-absolute mb-0 align-self-center">
       <span class="my-auto">
-        <i class="fas fa-project-diagram"></i>
-        GSA Business Capabilities List</span>
+        <i class="fas fa-project-diagram mr-2"></i> 
+        <span [hidden]="ssoTable">GSA </span>
+        <span [hidden]="!ssoTable" [innerHTML]="filterTitle"></span>
+        Business Capabilities List</span>
     </h3>
     <!-- Help Button -->
     <a tabindex="0"
@@ -29,7 +31,7 @@
   <div class="row card-body card-text justify-content-center">
     <div>
       <!-- Filters -->
-      <span class="my-auto mr-3">Filters:</span>
+      <span class="my-auto mr-3">Filter Buttons:</span>
       <button role="button" name="capFASbttn" class="btn btn-primary" (click)="changeCapSSO('FAS')">
         FAS (Q)</button>
       <button role="button" name="capITbttn" class="btn btn-primary" (click)="changeCapSSO('GSA IT')">

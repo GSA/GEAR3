@@ -16,6 +16,7 @@ export class CapabilitiesComponent implements OnInit {
 
   row: Object = <any>{};
   ssoTable: boolean = false;
+  filterTitle: string = '';
 
   constructor(
     private modalService: ModalsService,
@@ -119,7 +120,9 @@ export class CapabilitiesComponent implements OnInit {
         fileName: this.sharedService.fileNameFmt('GSA_Business_Capabilities_by_SSO')
       },
       url: this.sharedService.internalURLFmt('/api/capabilities/sso/' + sso)
-    })
+    });
+
+    this.filterTitle = `${sso} `;
   }
 
   backToMainCap() {
@@ -132,7 +135,9 @@ export class CapabilitiesComponent implements OnInit {
         fileName: this.sharedService.fileNameFmt('GSA_Business_Capabilities')
       },
       url: this.sharedService.internalURLFmt('/api/capabilities')
-    })
+    });
+
+    this.filterTitle = '';
   }
 
 }

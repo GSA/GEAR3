@@ -2,8 +2,10 @@
   <div class="row card-header text-white bg-teal text-center">
     <h3 class="card-title col-12 position-absolute mb-0 align-self-center">
       <span class="my-auto">
-        <i class="fas fa-microchip"></i>
-        GSA IT Standards</span>
+        <i class="fas fa-microchip mr-2"></i> 
+        <span [hidden]="filteredTable">All GSA </span>
+        <span [hidden]="!filteredTable" [innerHTML]="filterTitle"></span>
+        IT Standards</span>
     </h3>
     <!-- Help Button -->
     <a tabindex="0"
@@ -36,7 +38,7 @@
 
       <!-- Filters -->
       <div class="mx-auto">
-        <span class="my-auto mr-3">Filters:</span>
+        <span class="my-auto mr-3">Filter Buttons:</span>
         <button role="button" name="itDesktopBttn" class="btn btn-primary"
           (click)="changeFilter('DeploymentType', 'Desktop')">Desktop</button>
         <button role="button" name="itServerBttn" class="btn btn-primary"

@@ -2,7 +2,9 @@
   <div class="row card-header text-white bg-danger text-center">
     <h3 class="card-title col-12 position-absolute mb-0 align-self-center">
       <span class="my-auto">
-        <i class="fas fa-server"></i>
+        <i class="fas fa-server mr-2"></i>
+        <span [hidden]="!retiredTable">Retired </span>
+        <span [hidden]="retiredTable">Active </span>
         GSA Parent Systems</span>
     </h3>
     <!-- Help Button -->
@@ -36,7 +38,7 @@
 
       <!-- Filters -->
       <div class="mx-auto">
-        <span class="my-auto mr-3">Filters:</span>
+        <span class="my-auto mr-3">Filter Buttons:</span>
         <button role="button" name="systemInactiveBttn" class="btn btn-primary" (click)="retiredFilter()"
           [hidden]="retiredTable">Retired</button>
 
