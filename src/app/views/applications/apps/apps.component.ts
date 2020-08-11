@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import * as lodash from "lodash";
 
 import { ApiService } from "../../../services/apis/api.service";
 import { ModalsService } from '../../../services/modals/modals.service';
@@ -351,7 +352,7 @@ export class AppsComponent implements OnInit {
 
     // Set cloud field to visible if filtering by cloud enabled
     if (field == 'Cloud') {
-      var cloudCols = this.columnDefs;
+      var cloudCols = lodash.cloneDeep(this.columnDefs);
       for (let index = 0; index < cloudCols.length; index++) {
         const column = cloudCols[index];
         if (column['field'] == 'Cloud') {
@@ -374,6 +375,10 @@ export class AppsComponent implements OnInit {
 
     } else {
       $('#appsTable').bootstrapTable('filterBy', filter);
+
+      if (term === 'Retired') var columnsDef = this.retiredColumnDefs;
+      else var columnsDef = this.columnDefs;
+      $('#appsTable').bootstrapTable('refreshOptions', { columns: columnsDef });
     }
   }
 
@@ -384,7 +389,6 @@ export class AppsComponent implements OnInit {
     $('#appsTable').bootstrapTable('filterBy', { Status: ['Candidate', 'Pre-Production', 'Production'] });
     $('#appsTable').bootstrapTable('refreshOptions', {
       columns: this.columnDefs,
-      url: this.sharedService.internalURLFmt('/api/applications')
     });
   }
 
