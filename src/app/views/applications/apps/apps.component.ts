@@ -106,7 +106,7 @@ export class AppsComponent implements OnInit {
     sortable: true,
     visible: false
   }, {
-    field: 'System',
+    field: 'ParentSystem',
     title: 'Parent System',
     sortable: true,
     formatter: this.sharedService.systemFormatter

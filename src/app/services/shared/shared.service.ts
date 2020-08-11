@@ -145,9 +145,7 @@ export class SharedService {
   public systemFormatter(value, row, index, field) {
     var finalVal = value;
 
-    if (value == '' || value == undefined) {
-      finalVal = "N/A";
-    }
+    if (value == '' || value == undefined) { finalVal = "N/A" };
 
     return finalVal;
   };
