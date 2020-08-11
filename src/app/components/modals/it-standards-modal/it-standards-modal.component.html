@@ -72,12 +72,12 @@
                   </td>
                 </tr>
                 <tr>
-                  <td><i class="fas fa-info-circle"></i>Status</td>
-                  <td>{{ itStandard.Status }}</td>
+                  <td><i class="fas fa-info-circle"></i>Standard Type</td>
+                  <td>{{ itStandard.StandardType }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fas fa-info-circle"></i>Type</td>
-                  <td>{{ itStandard.StandardType }}</td>
+                  <td><i class="fas fa-info-circle"></i>Status</td>
+                  <td>{{ itStandard.Status }}</td>
                 </tr>
                 <tr>
                   <td><i class="fas fa-sitemap"></i>Vendor Standard Organization</td>
@@ -86,10 +86,10 @@
                 <tr>
                   <td><i class="far fa-comment"></i>Reference Document</td>
                   <td>
-                    <a [hidden]="!itStandard.ReferenceDocuments" href="{{ itStandard.ReferenceDocuments }}"
+                    <a [hidden]="!itStandard.ReferenceDocument" href="{{ itStandard.ReferenceDocument }}"
                       target="_blank" rel="noopener">
-                      {{ itStandard.ReferenceDocuments }}</a>
-                    <div [hidden]="itStandard.ReferenceDocuments">None</div>
+                      {{ itStandard.ReferenceDocument }}</a>
+                    <div [hidden]="itStandard.ReferenceDocument">None</div>
                   </td>
                 </tr>
               </tbody>

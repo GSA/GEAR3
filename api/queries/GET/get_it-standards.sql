@@ -9,7 +9,7 @@ SELECT
   tech.Gold_Image_Comment,
   tech.Comments,
   tech.old_Id,
-  tech.Reference_Documents              AS ReferenceDocuments,
+  tech.Reference_Documents              AS ReferenceDocument,
   tech.CreateDTG,
   tech.ChangeDTG,
 

@@ -63,8 +63,16 @@ export class ItStandardsComponent implements OnInit {
     title: 'Status',
     sortable: true
   }, {
+    field: 'StandardType',
+    title: 'Standard Type',
+    sortable: true
+  }, {
     field: 'DeploymentType',
     title: 'Deployment Type',
+    sortable: true
+  }, {
+    field: 'ComplianceStatus',
+    title: '508 Compliance',
     sortable: true
   }, {
     field: 'POC',
@@ -80,11 +88,6 @@ export class ItStandardsComponent implements OnInit {
     field: 'Comments',
     title: 'Comments',
     sortable: true
-  }, {
-    field: 'ReferenceDocuments',
-    title: 'Reference Documents',
-    sortable: true,
-    visible: false
   }, {
     field: 'ApprovalExpirationDate',
     title: 'Approval Expiration Date',
