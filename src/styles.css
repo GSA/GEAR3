@@ -176,6 +176,12 @@ td.pointer {
   background-color: #2b60de !important;
 }
 
+a.bg-royal-blue:hover, a.bg-royal-blue:focus,
+button.bg-royal-blue:hover,
+button.bg-royal-blue:focus {
+  background-color: #214599 !important;
+}
+
 .btn-outline-royal-blue {
   color: #2b60de;
   border-color: #2b60de;
@@ -212,6 +218,12 @@ td.pointer {
 
 .bg-teal {
   background-color: #008080 !important;
+}
+
+a.bg-teal:hover, a.bg-teal:focus,
+button.bg-teal:hover,
+button.bg-teal:focus {
+  background-color: #076464 !important;
 }
 
 .bg-silver {
