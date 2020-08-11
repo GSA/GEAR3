@@ -155,7 +155,7 @@ export class FismaComponent implements OnInit {
   };
 
   dateFormatter(value, row, index, field) {
-    if (value) return formatDate(value, 'yyyy-MM-dd', 'en-US');
+    if (value) return formatDate(value, 'MMM. dd, yyyy', 'en-US');
   };
 
   // Update table to Retire Systems

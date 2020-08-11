@@ -107,10 +107,12 @@ export class TimeComponent implements OnInit {
   }, {
     field: 'FY18',
     title: 'FY18',
+    visible: false,
     formatter: this.sharedService.FYFormatter
   }, {
     field: 'FY19',
     title: 'FY19',
+    visible: false,
     formatter: this.sharedService.FYFormatter
   }, {
     field: 'FY20',
@@ -128,12 +130,10 @@ export class TimeComponent implements OnInit {
   }, {
     field: 'FY23',
     title: 'FY23',
-    visible: false,
     formatter: this.sharedService.FYFormatter
   }, {
     field: 'FY24',
     title: 'FY24',
-    visible: false,
     formatter: this.sharedService.FYFormatter
   }, {
     field: 'Notes',

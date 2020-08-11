@@ -70,6 +70,7 @@ export class ApplicationsModalComponent implements OnInit {
   }, {
     field: 'FY19',
     title: 'FY19',
+    visible: false,
     formatter: this.sharedService.FYFormatter
   }, {
     field: 'FY20',
