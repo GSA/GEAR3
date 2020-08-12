@@ -8,7 +8,7 @@
   <a class="navbar-brand" routerLink="/">
     <i class="fas fa-cogs fa-lg"></i>
     GSA EA Analytics & Reporting (GEAR)
-    <span style="color: red"> - DEVELOPMENT ENVIRONMENT</span>
+    <span [innerHTML]="envName"></span>
     <span *ngIf="sharedService.loggedIn" style="color: red"> **GEAR Manager Mode**</span>
   </a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
+import { environment } from '../../../environments/environment';
+
 import { SharedService } from '../../services/shared/shared.service';
 
 // Declare jQuery symbol
@@ -13,11 +15,16 @@ declare var $: any;
 })
 export class TopNavbarComponent implements OnInit {
 
+  public envName: string = '';
   public searchKW: string = '';
 
   constructor(
     private router: Router,
-    public sharedService: SharedService) { }
+    public sharedService: SharedService) {
+      if (environment.name !== 'Production') {
+        this.envName = `<span class="text-danger"> - ${environment.name.toUpperCase()} ENVIRONMENT</span>`;
+      };
+    }
 
   ngOnInit(): void {
   }
