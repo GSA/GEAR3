@@ -8,6 +8,7 @@ const bodyParser = require('body-parser'),
   http = require('http'),
   path = require('path'),
 
+  dbCredentials = require("./api/db.js").dbCredentials;
   jsonwebtoken = require('jsonwebtoken'),
   jwt = require('express-jwt'),
   mysql = require('mysql2'),
@@ -129,18 +130,7 @@ app.post(samlConfig.path,
   (req, res) => {
 
     const samlProfile = req.user;
-    const db = mysql.createConnection({
-      host: process.env.DB_HOST,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASS,
-      database: process.env.ACL_DB,
-      port: 3306,
-      ssl: {
-        ca: fs.readFileSync('./certs/ca.pem'),
-        key: fs.readFileSync('./certs/client-key.pem'),
-        cert: fs.readFileSync('./certs/client-cert.pem')
-      },
-    });
+    const db = mysql.createConnection(dbCredentials);
     db.connect();
     db.query(`CALL acl.get_user_perms('${samlProfile.nameID}');`,
       (err, results, fields) => {

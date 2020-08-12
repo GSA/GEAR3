@@ -3,7 +3,7 @@ const fs = require('fs');
 const mysql = require('mysql2');
 
 // Connection Credentials
-const connection = mysql.createConnection({
+dbCredentials = {
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
@@ -15,12 +15,16 @@ const connection = mysql.createConnection({
     cert: fs.readFileSync('./certs/client-cert.pem')
   },
   multipleStatements: true
-})
+};
 
 // Create DB Connection
+const connection = mysql.createConnection(dbCredentials)
 connection.connect(error => {
   if (error) throw error;
   console.log("Successfully connected to MySQL database.");
 });
 
-module.exports = connection;
+module.exports = {
+  dbCredentials: dbCredentials,
+  connection: connection
+};

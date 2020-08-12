@@ -1,4 +1,4 @@
-const sql = require("../db.js");
+const sql = require("../db.js").connection;
 
 exports.sendQuery = (query, msg, response) => {
   sql.query(query, (error, data) => {
