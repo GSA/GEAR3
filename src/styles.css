@@ -166,11 +166,6 @@ td.pointer {
   text-transform: uppercase;
 }
 
-/* Softer Card Background Color */
-.card-body {
-  background-color: #ededed !important;
-}
-
 /* Custom Colors */
 .bg-royal-blue {
   background-color: #2b60de !important;
