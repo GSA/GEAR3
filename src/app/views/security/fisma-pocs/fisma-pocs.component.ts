@@ -190,7 +190,7 @@ export class FismaPocsComponent implements OnInit {
 
               // Format email into a HTML link
               if (tmpObj.email) {
-                linkStr += `<a href="https://mail.google.com/mail/?view=cm&fs=1&to=${tmpObj.email}
+                linkStr += `<a href="https://mail.google.com/mail/?view=cm&fs=1&to=${tmpObj.email}"
                   target="_blank" rel="noopener">${tmpObj.email}</a><br>`
               }
 
@@ -213,7 +213,7 @@ export class FismaPocsComponent implements OnInit {
   }
 
   emailFormatter(value, row, index, field) {
-    return `<a href="https://mail.google.com/mail/?view=cm&fs=1&to=${value} target="_blank" rel="noopener">${value}</a>`
+    return `<a href="https://mail.google.com/mail/?view=cm&fs=1&to=${value}" target="_blank" rel="noopener">${value}</a>`
   }
 
   // Update table to RISSO POCs
