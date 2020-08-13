@@ -1,8 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
-import { ApiService } from "../../../services/apis/api.service";
-import { ModalsService } from '../../../services/modals/modals.service';
-import { SharedService } from '../../../services/shared/shared.service';
+import { ApiService } from "@services/apis/api.service";
+import { ModalsService } from '@services/modals/modals.service';
+import { SharedService } from '@services/shared/shared.service';
 
 // Declare D3 library
 declare var d3: any;

@@ -3,34 +3,34 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { SharedService } from '../shared/shared.service';
-import { Globals } from '../../common/globals';
+import { SharedService } from '@services/shared/shared.service';
+import { Globals } from '@common/globals';
 
 // Models
-import { Application } from 'api/models/applications.model';
-import { ApplicationStatus } from 'api/models/application-statuses.model';
-import { Interface } from 'api/models/interfaces.model';
-import { HostProvider } from 'api/models/application_host_providers';
+import { Application } from '@api/models/applications.model';
+import { ApplicationStatus } from '@api/models/application-statuses.model';
+import { Interface } from '@api/models/interfaces.model';
+import { HostProvider } from '@api/models/application_host_providers';
 
-import { Capability } from 'api/models/capabilities.model';
+import { Capability } from '@api/models/capabilities.model';
 
-import { FISMA } from 'api/models/fisma.model';
+import { FISMA } from '@api/models/fisma.model';
 
-import { Investment } from 'api/models/investments.model';
-import { InvestmentType } from 'api/models/investment-types.model';
+import { Investment } from '@api/models/investments.model';
+import { InvestmentType } from '@api/models/investment-types.model';
 
-import { ITStandards } from 'api/models/it-standards.model';
-import { ITStandard508Status } from 'api/models/it-standards-508_statuses.model';
-import { ITStandardCategory } from 'api/models/it-standards-categories.model';
-import { ITStandardDeployTypes } from 'api/models/it-standards-deploy_types.model';
-import { ITStandardStatus } from 'api/models/it-standards-statuses.model';
-import { ITStandardTypes } from 'api/models/it-standards-types.model';
+import { ITStandards } from '@api/models/it-standards.model';
+import { ITStandard508Status } from '@api/models/it-standards-508_statuses.model';
+import { ITStandardCategory } from '@api/models/it-standards-categories.model';
+import { ITStandardDeployTypes } from '@api/models/it-standards-deploy_types.model';
+import { ITStandardStatus } from '@api/models/it-standards-statuses.model';
+import { ITStandardTypes } from '@api/models/it-standards-types.model';
 
-import { Organization } from 'api/models/organizations.model';
+import { Organization } from '@api/models/organizations.model';
 
-import { ParentSystem } from 'api/models/parentsystems.model';
+import { ParentSystem } from '@api/models/parentsystems.model';
 
-import { POC } from 'api/models/pocs.model';
+import { POC } from '@api/models/pocs.model';
 
 @Injectable({
   providedIn: 'root'

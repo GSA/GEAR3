@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 
-import { ModalsService } from '../../../services/modals/modals.service';
-import { SharedService } from '../../../services/shared/shared.service';
-import { TableService } from '../../../services/tables/table.service';
+import { ModalsService } from '@services/modals/modals.service';
+import { SharedService } from '@services/shared/shared.service';
+import { TableService } from '@services/tables/table.service';
 
-import { ITStandards } from 'api/models/it-standards.model';
+import { ITStandards } from '@api/models/it-standards.model';
 
 // Declare jQuery symbol
 declare var $: any;

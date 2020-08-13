@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { formatDate } from '@angular/common';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
-import { Globals } from '../../../common/globals';
+import { Globals } from '@common/globals';
 
-import { ApiService } from '../../../services/apis/api.service';
-import { ModalsService } from '../../../services/modals/modals.service';
-import { SharedService } from "../../../services/shared/shared.service";
-import { TableService } from "../../../services/tables/table.service";
+import { ApiService } from '@services/apis/api.service';
+import { ModalsService } from '@services/modals/modals.service';
+import { SharedService } from "@services/shared/shared.service";
+import { TableService } from "@services/tables/table.service";
 
 // Declare jQuery symbol
 declare var $: any;

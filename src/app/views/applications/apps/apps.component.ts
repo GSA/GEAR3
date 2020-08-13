@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import * as lodash from "lodash";
 
-import { ApiService } from "../../../services/apis/api.service";
-import { ModalsService } from '../../../services/modals/modals.service';
-import { SharedService } from '../../../services/shared/shared.service';
-import { TableService } from '../../../services/tables/table.service';
+import { ApiService } from "@services/apis/api.service";
+import { ModalsService } from '@services/modals/modals.service';
+import { SharedService } from '@services/shared/shared.service';
+import { TableService } from '@services/tables/table.service';
 
-import { Application } from 'api/models/applications.model';
+import { Application } from '@api/models/applications.model';
 
 // Declare jQuery symbol
 declare var $: any;

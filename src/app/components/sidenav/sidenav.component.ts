@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SharedService } from '../../services/shared/shared.service';
+import { SharedService } from '@services/shared/shared.service';
 
 // Declare jQuery symbol
 declare var $: any;

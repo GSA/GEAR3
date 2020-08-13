@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 
-import { ApiService } from "../apis/api.service";
-import { ModalsService } from '../modals/modals.service';
-import { SharedService } from '../shared/shared.service';
+import { ApiService } from "@services/apis/api.service";
+import { ModalsService } from '@services/modals/modals.service';
+import { SharedService } from '@services/shared/shared.service';
 
 // Declare jQuery symbol
 declare var $: any;

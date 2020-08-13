@@ -2,7 +2,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { formatDate, Location } from '@angular/common';
 import { Subscription } from 'rxjs/internal/Subscription';
 
-import { Globals } from '../../common/globals';
+import { Globals } from '@common/globals';
 
 // Declare jQuery symbol
 declare var $: any;

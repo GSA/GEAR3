@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { environment } from '../../../environments/environment';
+import { environment } from '@environments/environment';
 
-import { SharedService } from '../../services/shared/shared.service';
+import { SharedService } from '@services/shared/shared.service';
 
 // Declare jQuery symbol
 declare var $: any;
