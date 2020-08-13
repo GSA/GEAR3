@@ -36,6 +36,11 @@ export class FismaModalComponent implements OnInit {
         this.tableService.appsTableClick(row);
       }.bind(this)
       ));
+
+    // Revert back to overview tab when modal goes away
+    $('#fismaDetail').on('hidden.bs.modal', function (e) {
+      $("#fismaTabs li:first-child a").tab('show');
+    });
   }
 
   // Have to render artifacts info separately as anchor links dont work with ngFor

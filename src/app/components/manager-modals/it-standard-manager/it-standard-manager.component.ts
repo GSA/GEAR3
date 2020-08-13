@@ -95,8 +95,9 @@ export class ItStandardManagerComponent implements OnInit {
     });
 
     // If the manager modal is exited, clear the create flag
-    $('#itStandardsManager').on('hide.bs.modal', function (e) {
+    $('#itStandardsManager').on('hidden.bs.modal', function (e) {
       this.modalService.updateRecordCreation(false);
+      $("#itStandMngrTabs li:first-child a").tab('show');
     }.bind(this));
   }
 

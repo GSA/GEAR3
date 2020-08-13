@@ -221,6 +221,11 @@ export class ApplicationsModalComponent implements OnInit {
         this.tableService.itStandTableClick(row);
       }.bind(this)
       ));
+
+    // Revert back to overview tab when modal goes away
+    $('#appDetail').on('hidden.bs.modal', function (e) {
+      $("#appTabs li:first-child a").tab('show');
+    });
   }
 
   openRelated(ID: number, type: string) {

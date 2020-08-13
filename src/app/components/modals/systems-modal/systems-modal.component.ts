@@ -38,6 +38,11 @@ export class SystemsModalComponent implements OnInit {
         this.tableService.appsTableClick(row);
       }.bind(this)
       ));
+
+    // Revert back to overview tab when modal goes away
+    $('#systemDetail').on('hidden.bs.modal', function (e) {
+      $("#systemTabs li:first-child a").tab('show');
+    });
   }
 
   systemEdit () {

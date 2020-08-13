@@ -104,8 +104,9 @@ export class AppManagerComponent implements OnInit {
     this.apiService.getSystems().subscribe((data: any[]) => { this.parentSystems = data; });
 
     // If the manager modal is exited, clear the create flag
-    $('#appManager').on('hide.bs.modal', function (e) {
+    $('#appManager').on('hidden.bs.modal', function (e) {
       this.modalService.updateRecordCreation(false);
+      $("#appMngrTabs li:first-child a").tab('show');
     }.bind(this));
   }
 

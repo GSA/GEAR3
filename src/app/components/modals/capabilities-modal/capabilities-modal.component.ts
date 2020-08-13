@@ -36,6 +36,11 @@ export class CapabilitiesModalComponent implements OnInit {
         this.tableService.appsTableClick(row);
       }.bind(this)
       ));
+
+    // Revert back to overview tab when modal goes away
+    $('#capabilityDetail').on('hidden.bs.modal', function (e) {
+      $("#capTabs li:first-child a").tab('show');
+    });
   }
 
 }

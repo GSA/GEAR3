@@ -62,8 +62,9 @@ export class SystemManagerComponent implements OnInit {
     });
 
     // If the manager modal is exited, clear the create flag
-    $('#systemManager').on('hide.bs.modal', function (e) {
+    $('#systemManager').on('hidden.bs.modal', function (e) {
       this.modalService.updateRecordCreation(false);
+      $("#systemMngrTabs li:first-child a").tab('show');
     }.bind(this));
   }
 

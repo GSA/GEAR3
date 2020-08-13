@@ -38,6 +38,11 @@ export class ItStandardsModalComponent implements OnInit {
         this.tableService.appsTableClick(row);
       }.bind(this)
       ));
+
+    // Revert back to overview tab when modal goes away
+    $('#itStandardDetail').on('hidden.bs.modal', function (e) {
+      $("#itStandTabs li:first-child a").tab('show');
+    });
   }
 
   itStandEdit () {
