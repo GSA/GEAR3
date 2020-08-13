@@ -33,7 +33,7 @@ export class FormsGlossaryComponent implements OnInit {
     sortName: 'Title',
     sortOrder: 'asc',
     showToggle: false,
-    url: '../../assets/statics/accessforms.json'
+    url: '/assets/statics/accessforms.json'
   });
 
   // Forms Table Columns
@@ -65,7 +65,7 @@ export class FormsGlossaryComponent implements OnInit {
     sortName: 'Term',
     sortOrder: 'asc',
     showToggle: true,
-    url: '../../assets/statics/glossary.json'
+    url: '/assets/statics/glossary.json'
   });
 
   // Glossary Table Columns

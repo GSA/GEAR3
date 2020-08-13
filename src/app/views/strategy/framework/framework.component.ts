@@ -12,6 +12,6 @@ export class FrameworkComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  frameworkSrc = "../../assets/img/GSA IT Strategic Framework.pdf"
+  frameworkSrc = "/assets/img/GSA IT Strategic Framework.pdf"
 
 }
