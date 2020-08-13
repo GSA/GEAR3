@@ -240,8 +240,10 @@ function onListening() {
   console.log('Listening on ' + bind);
 }
 
-// Function to get FISMA info from ServiceNow API
-// everyday at 20:00 Eastern Time
+/*
+ * Function to get FISMA info from ServiceNow API
+ * everyday at 20:00 Eastern Time
+*/
 const request = require('request');
 const cron = require('node-cron');
 const fetch = require("node-fetch");
