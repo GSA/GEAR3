@@ -30,6 +30,15 @@
 
   <div class="row card-body card-text justify-content-center">
     <div class="row w-100">
+      <!-- Parent System Definition Popover -->
+      <a tabindex="0" class="btn btn-sm btn-info text-white position-absolute" role="button" data-toggle="popover"
+        data-trigger="focus" data-placement="auto" data-html="true" title="" data-content="A parent application is based upon 
+        a hierarchical system or organization where applications are ranked one above the other according to status, authority 
+        or access point.  From one application (parent) you have access to other child applications.
+        <img src='/assets/img/parent_systems.png'>">
+        Parent System Definition
+      </a>
+
       <!-- Add Button -->
       <button role="button" name="addAppBttn" class="btn btn-danger position-absolute" (click)="createApp()"
         [hidden]="!sharedService.loggedIn">
