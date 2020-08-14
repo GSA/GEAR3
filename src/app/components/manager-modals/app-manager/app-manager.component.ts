@@ -55,7 +55,12 @@ export class AppManagerComponent implements OnInit {
   application = <any>{};
   createBool: any;
   statuses: any[];
-  POCs: any[] = [];
+
+  POCs: any = [];
+  pocsLoading = false;
+  pocsBuffer = [];
+  bufferSize = 50;
+
   orgs: any[] = [];
   hosts: any[] = [];
   fismaSystems: any[] = [];
@@ -89,7 +94,12 @@ export class AppManagerComponent implements OnInit {
     this.apiService.getAppStatuses().subscribe((data: any[]) => { this.statuses = data; });
 
     // Populate POCs
-    this.apiService.getPOCs().subscribe((data: any[]) => { this.POCs = data; });
+    this.pocsLoading = true;
+    this.apiService.getPOCs().subscribe((data: any[]) => {
+      this.POCs = data;
+      this.pocsBuffer = this.POCs.slice(0, this.bufferSize);
+      this.pocsLoading = false;
+    });
 
     // Populate Orgs
     this.apiService.getOrganizations().subscribe((data: any[]) => { this.orgs = data; });

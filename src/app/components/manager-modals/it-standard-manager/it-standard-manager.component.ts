@@ -40,9 +40,18 @@ export class ItStandardManagerComponent implements OnInit {
   itStandard = <any>{};
   createBool: any;
   statuses: any[];
-  POCs: any[] = [];
+
+  POCs: any = [];
+  pocsLoading = false;
+  pocsBuffer = [];
+  bufferSize = 50;
+
   types: any[] = [];
-  categories: any[] = [];
+
+  categories: any = [];
+  catsLoading = false;
+  catsBuffer = [];
+
   compliance: any[] = [];
   deploymentTypes: any[] = [];
   aprvExpDate: Date;
@@ -67,13 +76,23 @@ export class ItStandardManagerComponent implements OnInit {
     this.apiService.getITStandStatuses().subscribe((data: any[]) => { this.statuses = data });
 
     // Populate POC Options
-    this.apiService.getPOCs().subscribe((data: any[]) => { this.POCs = data });
+    this.pocsLoading = true;
+    this.apiService.getPOCs().subscribe((data: any[]) => {
+      this.POCs = data;
+      this.pocsBuffer = this.POCs.slice(0, this.bufferSize);
+      this.pocsLoading = false;
+    });
 
     // Populate Standard Types
     this.apiService.getITStandTypes().subscribe((data: any[]) => { this.types = data });
 
     // Populate Categories
-    this.apiService.getITStandCategories().subscribe((data: any[]) => { this.categories = data });
+    this.catsLoading = true;
+    this.apiService.getITStandCategories().subscribe((data: any[]) => {
+      this.categories = data;
+      this.catsBuffer = this.POCs.slice(0, this.bufferSize);
+      this.catsLoading = false;
+    });
 
     // Populate 508 Compliance Statuses
     this.apiService.getITStand508Statuses().subscribe((data: any[]) => { this.compliance = data });

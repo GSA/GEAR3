@@ -65,11 +65,30 @@ export class ModalsService {
     this.createRecordSource.next(bool);
   }
 
-  public nameMatch(stringToMatch: string, name: string) {
-    if (stringToMatch) {
-      return stringToMatch.includes(name);
+  onScrollToEnd(buffer: any, bufferSize: number = 50, fullList: [], loading: boolean) {
+    this.fetchMore(buffer, bufferSize, fullList, loading);
+  };
+
+  onScroll({ end }, buffer: any, bufferSize: number = 50, fullList: [], loading: boolean) {
+    let numberOfItemsFromEndBeforeFetchingMore = 10;
+    if (loading || fullList.length <= buffer.length) {
+      return;
     }
-    return false;
+
+    if (end + numberOfItemsFromEndBeforeFetchingMore >= buffer.length) {
+      this.fetchMore(buffer, bufferSize, fullList, loading);
+    }
+  }
+
+  private fetchMore(buffer: any, bufferSize: number = 50, fullList: [], loading: boolean) {
+    const len = buffer.length;
+    const more = fullList.slice(len, bufferSize + len);
+    loading = true;
+    // using timeout here to simulate backend API delay
+    setTimeout(() => {
+      loading = false;
+      buffer = buffer.concat(more);
+    }, 100);
   }
 
 }

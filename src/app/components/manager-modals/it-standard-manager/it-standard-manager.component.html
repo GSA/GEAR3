@@ -45,10 +45,25 @@
 
                 <div class="form-group col-3">
                   <label for="itStandPOC">POC(s)<span class="text-danger">*</span></label>
-                  <select class="form-control" id="itStandPOC" formControlName="itStandPOC" multiple required>
-                    <option *ngFor="let poc of POCs" [value]="poc.ID"
-                      [selected]="modalService.nameMatch(itStandard.POC, poc.Name)">{{ poc.Name }}</option>
-                  </select>
+                  <ng-select id="itStandPOC" formControlName="itStandPOC"
+                    [items]="POCs"
+                    [multiple]="true"
+                    appendTo="#itStandardsManager"
+                    bindLabel="Name"
+                    bindValue="ID"
+                    clearAllText="Clear All"
+                    [clearSearchOnAdd]="true"
+                    [closeOnSelect]="false"
+                    [loading]="pocsLoading"
+                    placeholder="Search & Select POCs Here"
+                    [virtualScroll]="true"
+                    (scroll)="modalService.onScroll($event, pocsBuffer, bufferSize, POCs, pocsLoading)"
+                    (scrollToEnd)="modalService.onScrollToEnd(pocsBuffer, bufferSize, POCs, pocsLoading)"
+                    required>
+                    <ng-template ng-header-tmp>
+                      <small class="form-text text-muted">Loaded {{ pocsBuffer.length }} of {{ POCs.length }}</small>
+                    </ng-template>
+                  </ng-select>
                 </div>
               </div>
 
@@ -71,12 +86,25 @@
 
                     <div class="form-group col-5">
                       <label for="itStandCategory">Category<span class="text-danger">*</span></label>
-                      <select class="form-control" id="itStandCategory" formControlName="itStandCategory" multiple
+                      <ng-select id="itStandCategory" formControlName="itStandCategory"
+                        [items]="categories"
+                        [multiple]="true"
+                        appendTo="#itStandardsManager"
+                        bindLabel="Name"
+                        bindValue="ID"
+                        clearAllText="Clear All"
+                        [clearSearchOnAdd]="true"
+                        [closeOnSelect]="false"
+                        [loading]="pocsLoading"
+                        placeholder="Search & Select POCs Here"
+                        [virtualScroll]="true"
+                        (scroll)="modalService.onScroll($event, catsBuffer, bufferSize, categories, catsLoading)"
+                        (scrollToEnd)="modalService.onScrollToEnd(catsBuffer, bufferSize, categories, catsLoading)"
                         required>
-                        <option *ngFor="let category of categories" [value]="category.ID"
-                          [selected]="modalService.nameMatch(itStandard.Category, category.Name)">{{ category.Name }}
-                        </option>
-                      </select>
+                        <ng-template ng-header-tmp>
+                          <small class="form-text text-muted">Loaded {{ catsBuffer.length }} of {{ categories.length }}</small>
+                        </ng-template>
+                      </ng-select>
                     </div>
 
                     <div class="form-group col-4 my-auto">
