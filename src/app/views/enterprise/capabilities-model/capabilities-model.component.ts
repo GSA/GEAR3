@@ -3,6 +3,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ApiService } from "@services/apis/api.service";
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
+import { TableService } from '@services/tables/table.service';
 
 // Declare D3 library
 declare var d3: any;
@@ -40,8 +41,9 @@ export class CapabilitiesModelComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
+    private modalService: ModalsService,
     private sharedService: SharedService,
-    private modalService: ModalsService) { }
+    private tableService: TableService) { }
 
   ngOnInit(): void {
     // Enable popovers
@@ -447,17 +449,7 @@ export class CapabilitiesModelComponent implements OnInit {
       // Grab data for selected node
       this.apiService.getOneCap(selectedCap).subscribe((data: any[]) => {
         var capData = data[0];
-        this.modalService.updateDetails(capData, 'capability');
-        $('#capabilityDetail').modal('show');
-
-        // Update related apps table in detail modal with clicked capabilities
-        $('#capSupportAppsTable').bootstrapTable('refreshOptions', {
-          exportOptions: {
-            fileName: this.sharedService.fileNameFmt(capData.Name + '-Supporting_Apps')
-          },
-          url: this.sharedService.internalURLFmt('/api/capabilities/get/'
-            + String(capData.ID) + '/applications')
-        })
+        this.tableService.capsTableClick(capData);
       });
     }.bind(this));
 

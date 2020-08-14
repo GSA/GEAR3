@@ -3,6 +3,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
+import { TableService } from '@services/tables/table.service';
 
 // Declare D3 library
 declare var d3: any;
@@ -41,8 +42,9 @@ export class OrganizationsChartComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
+    private modalService: ModalsService,
     private sharedService: SharedService,
-    private modalService: ModalsService) { }
+    private tableService: TableService) { }
 
   ngOnInit(): void {
     // Enable popovers
@@ -466,17 +468,7 @@ export class OrganizationsChartComponent implements OnInit {
       // Grab data for selected node
       this.apiService.getOneOrg(selectedOrg.data.identity).subscribe((data: any[]) => {
         var orgData = data[0];
-        this.modalService.updateDetails(orgData, 'organization');
-        $('#organizationDetail').modal('show');
-
-        // Update related apps table in detail modal with clicked organization
-        $('#orgAppsTable').bootstrapTable('refreshOptions', {
-          exportOptions: {
-            fileName: this.sharedService.fileNameFmt(orgData.Name + '-Organizational_Apps')
-          },
-          url: this.sharedService.internalURLFmt('/api/organizations/get/'
-            + String(orgData.ID) + '/applications')
-        })
+        this.tableService.orgsTableClick(orgData);
       });
     }.bind(this));
 
