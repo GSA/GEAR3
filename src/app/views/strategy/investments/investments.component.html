@@ -1,5 +1,5 @@
 <div class="card">
-  <div class="row card-header text-white bg-success text-center">
+  <div class="card-header text-white bg-success text-center">
     <h3 class="card-title col-12 position-absolute mb-0 align-self-center">
       <span class="my-auto">
         <i class="fas fa-money-bill-wave mr-2"></i>
@@ -28,10 +28,10 @@
     </a>
   </div>
 
-  <div class="row card-body card-text justify-content-center">
+  <div class="card-body card-text justify-content-center">
     <div class="row w-100">
       <!-- Add Button -->
-      <button role="button" name="addInvestBttn" class="btn btn-success position-absolute" (click)="createInvestment()"
+      <button role="button" name="addInvestBttn" class="btn btn-success position-absolute ml-3" (click)="createInvestment()"
         [hidden]="!sharedService.loggedIn">
         <i class="fas fa-plus"></i>
       </button>

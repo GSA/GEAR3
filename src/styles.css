@@ -18,6 +18,9 @@ strong,
 }
 
 /* More Width Classes */
+.w-11 {
+  width: 11% !important;
+}
 .w-15 {
   width: 15% !important;
 }
@@ -223,6 +226,12 @@ button.bg-teal:focus {
 
 .bg-silver {
   background-color: #C0C0C0 !important;
+}
+
+/* For buttons with these classes, correctly place them */
+a.position-absolute.float-right {
+  position: absolute;
+  right: 2%;
 }
 
 /* Date Picker Calendar Adjustments */
