@@ -9,7 +9,7 @@ import { Globals } from '@common/globals';
 // Models
 import { Application } from '@api/models/applications.model';
 import { ApplicationStatus } from '@api/models/application-statuses.model';
-import { Interface } from '@api/models/interfaces.model';
+import { DataFlow } from '@api/models/dataflow.model';
 import { HostProvider } from '@api/models/application_host_providers';
 
 import { Capability } from '@api/models/capabilities.model';
@@ -43,6 +43,9 @@ export class ApiService {
   // Capabilities
   capUrl: string = this.sharedService.internalURLFmt('/api/capabilities');
 
+  // Data Flow
+  dataFlowUrl: string = this.sharedService.internalURLFmt('/api/data_flow')
+  
   // FISMA
   fismaUrl: string = this.sharedService.internalURLFmt('/api/fisma');
 
@@ -93,11 +96,6 @@ export class ApiService {
       catchError(this.handleError<ITStandards[]>('GET App Related Technologies', []))
     );
   };
-  public getAppInterfaces(id: number): Observable<Interface[]> {
-    return this.http.get<Interface[]>(this.appUrl + '/get/' + String(id) + '/interfaces').pipe(
-      catchError(this.handleError<Interface[]>('GET App Interfaces', []))
-    );
-  };
   public getAppStatuses(): Observable<ApplicationStatus[]> {
     return this.http.get<ApplicationStatus[]>(this.appUrl + '/statuses').pipe(
       catchError(this.handleError<ApplicationStatus[]>('GET Application Statuses', []))
@@ -141,6 +139,19 @@ export class ApiService {
   public getOneCap(id: number): Observable<Capability[]> {
     return this.http.get<Capability[]>(this.capUrl + '/get/' + String(id)).pipe(
       catchError(this.handleError<Capability[]>('GET Capability', []))
+    );
+  };
+
+
+  //// Data Flow
+  public getDataFlows(): Observable<DataFlow[]> {
+    return this.http.get<DataFlow[]>(this.dataFlowUrl).pipe(
+      catchError(this.handleError<DataFlow[]>('GET Data Flows', []))
+    );
+  };
+  public getOneDataFlow(id: number): Observable<DataFlow[]> {
+    return this.http.get<DataFlow[]>(this.dataFlowUrl + '/get/' + String(id)).pipe(
+      catchError(this.handleError<DataFlow[]>('GET Data Flow', []))
     );
   };
 

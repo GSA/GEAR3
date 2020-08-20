@@ -23,9 +23,9 @@
           <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#technologyRelated">
               Technology</a></li>
-          <li class="nav-item" [hidden]="!interfaces.length">
-            <a class="nav-link" data-toggle="tab" href="#appInterfaces">
-              Interfaces</a></li>
+          <li class="nav-item" [hidden]="interfaces.length">
+            <a class="nav-link" data-toggle="tab" href="#appDataFlow">
+              Data Flow</a></li>
         </ul>
 
         <!-- Tab Panes -->
@@ -234,11 +234,11 @@
           </div>
           <!-- End of Technology Tab Pane -->
 
-          <div class="tab-pane fade" id="appInterfaces">
-            <!-- Interfaces Chord Graph -->
-            <div id="interfaceChart"></div>
+          <div class="tab-pane fade" id="appDataFlow">
+            <!-- Data Flow Sankey Diagram -->
+            <div id="dataFlowChart"></div>
           </div>
-          <!-- End of Interfaces Tab Pane -->
+          <!-- End of Data Flow Tab Pane -->
 
         </div>
         <!-- End of Tab Panes -->

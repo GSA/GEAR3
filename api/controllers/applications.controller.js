@@ -55,13 +55,6 @@ exports.findTechnologies = (req, res) => {
   res = ctrl.sendQuery(query, 'related technologies for application', res);
 };
 
-exports.findInterfaces = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_interfaces.sql')).toString() +
-    ` WHERE (inter.obj_application_Id = ${req.params.id} or inter.obj_application_Id1 = ${req.params.id}) AND appstat1.Keyname <> 'Retired'  AND appstat2.Keyname <> 'Retired';`;
-
-  res = ctrl.sendQuery(query, 'related technologies for application', res);
-};
-
 exports.update = (req, res) => {
   if (req.headers.authorization) {
     var data = req.body;

@@ -8,6 +8,10 @@ import { TableService } from '@services/tables/table.service';
 
 import { Application } from '@api/models/applications.model';
 
+// Declare D3 & Sankey library
+declare var d3: any;
+import * as d3Sankey from 'src/assets/d3-sankey-circular/d3-sankey-circular.js';
+
 // Declare jQuery symbol
 declare var $: any;
 
@@ -389,21 +393,61 @@ export class AppsComponent implements OnInit {
   }
 
   private getInterfaceData(appID: number) {
-    this.apiService.getAppInterfaces(appID).subscribe((data: any[]) => {
+    this.apiService.getOneDataFlow(appID).subscribe((data: any[]) => {
       this.interfaces = data;
-      this.createInterfaceChart(appID, this.interfaces);
+      this.createDataFlowChart(appID, this.interfaces);
     });
   }
 
-  private createInterfaceChart(appID: number, interfaces: any[]) {
-    // console.log(appID, interfaces);
-    var CONTAINER_ID = 'interfaceChart',
-      SVG_ID = 'interfaceSVG';
+  private createDataFlowChart(appID: number, interfaces: any[]) {
+    console.log(appID, interfaces);  // Debug
 
-    interfaces.forEach(inter => {
-      if (inter.System1 == null) inter.System1 = 'None';
-      if (inter.System2 == null) inter.System2 = 'None';
+    var CONTAINER_ID = '#dataFlowChart',
+      SVG_ID = 'dataflowSVG',
+      units = "Connections",
+
+      // set the dimensions and margins of the graph
+      margin = {top: 10, right: 10, bottom: 10, left: 10},
+      width = 700 - margin.left - margin.right,
+      height = 300 - margin.top - margin.bottom,
+      nodeWidth = 36,
+      nodePadding = 40;
+
+    if (document.getElementById(SVG_ID)) {
+      return false;
+    };
+
+    // load the data
+    //set up graph in same style as original example but empty
+    var graph = {
+      "nodes": [],
+      "links": []
+    };
+
+    this.interfaces.forEach(function (d) {
+      graph.nodes.push({
+        "name": d.srcApp,
+        "id": d.srcAppID
+      });
+      graph.nodes.push({
+        "name": d.destApp,
+        "id": d.destAppID
+      });
+      graph.links.push({
+        "source": d.srcApp,
+        "target": d.destApp,
+        "sourceId": d.srcAppID,
+        "targetId": d.destAppID
+      });
     });
+
+    // return only the distinct / unique nodes
+    graph.nodes = Array.from(new Set(graph.nodes.map(node => node.name)))
+      .map(name => {
+        return graph.nodes.find(node => node.name === name)
+      });
+
+    console.log("graph: ", graph);  // Debug
 
   }
 

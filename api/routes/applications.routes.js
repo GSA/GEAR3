@@ -15,9 +15,6 @@ router.route('/get/:id/capabilities')
 router.route('/get/:id/technologies')
   .get(appCtrl.findTechnologies);
 
-router.route('/get/:id/interfaces')
-  .get(appCtrl.findInterfaces);
-
 router.route('/applications_retired')
   .get(appCtrl.findAllRetired);
 
@@ -35,8 +32,5 @@ router.route('/statuses')
 
 router.route('/host_providers')
   .get(appCtrl.findHosts);
-
-// router.route('/:id/interfacesv2/')
-//     .get(appCtrl.findInterfacesv2);
 
 module.exports = router;
