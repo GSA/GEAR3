@@ -131,6 +131,7 @@ exports.update = (req, res) => {
     // Null any empty text fields
     data.appDesc = ctrl.emptyTextFieldHandler(data.appDesc);
     data.appNotes = ctrl.emptyTextFieldHandler(data.appNotes);
+    data.appRefDoc = ctrl.emptyTextFieldHandler(data.appRefDoc);
     data.appCUI = ctrl.emptyTextFieldHandler(data.appCUI);
     data.appProdYr = ctrl.emptyTextFieldHandler(data.appProdYr);
     data.appRetiredYr = ctrl.emptyTextFieldHandler(data.appRetiredYr);
@@ -143,7 +144,7 @@ exports.update = (req, res) => {
         Description                     = ${data.appDesc},
         Display_Name                    = '${data.appDisplayName}',
         Application_Notes               = ${data.appNotes},
-        Reference_Document              = '${data.appRefDoc}',
+        Reference_Document              = ${data.appRefDoc},
 
         Unique_Identifier_Code          = '${data.appUID}',
         CUI_Indicator                   = ${data.appCUI},
@@ -182,6 +183,7 @@ exports.create = (req, res) => {
     // Null any empty text fields
     data.appDesc = ctrl.emptyTextFieldHandler(data.appDesc);
     data.appNotes = ctrl.emptyTextFieldHandler(data.appNotes);
+    data.appRefDoc = ctrl.emptyTextFieldHandler(data.appRefDoc);
     data.appCUI = ctrl.emptyTextFieldHandler(data.appCUI);
     data.appProdYr = ctrl.emptyTextFieldHandler(data.appProdYr);
     data.appRetiredYr = ctrl.emptyTextFieldHandler(data.appRetiredYr);
@@ -217,7 +219,7 @@ exports.create = (req, res) => {
         ${data.appDesc},
         '${data.appDisplayName}',
         ${data.appNotes},
-        '${data.appRefDoc}',
+        ${data.appRefDoc},
 
         '${data.appUID}',
         ${data.appCUI},
