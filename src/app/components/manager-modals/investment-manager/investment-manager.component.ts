@@ -50,6 +50,8 @@ export class InvestmentManagerComponent implements OnInit {
   SSOs: any[] = [];
   types: any[] = [];
 
+  investCertify: boolean = false;
+
   constructor(
     private apiService: ApiService,
     private globals: Globals,
@@ -85,6 +87,7 @@ export class InvestmentManagerComponent implements OnInit {
     // If the manager modal is exited, clear the create flag
     $('#investManager').on('hidden.bs.modal', function (e) {
       this.modalService.updateRecordCreation(false);
+      this.investCertify = false;
       $("#investMngrTabs li:first-child a").tab('show');
     }.bind(this));
   }

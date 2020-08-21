@@ -83,7 +83,8 @@ exports.update = (req, res) => {
         Approved_Status_Expiration_Date = ${data.itStandAprvExp},
         Comments                        = '${data.itStandComments}',
         Reference_documents             = ${data.itStandRefDocs},
-        ChangeAudit                     = '${data.auditUser}'
+        ChangeAudit                     = '${data.auditUser}',
+        ChangeDTG                       = NOW()
       WHERE Id = ${req.params.id};
       SET FOREIGN_KEY_CHECKS=1;
       ${catString}

@@ -40,7 +40,7 @@
                 <div class="form-group col-6">
                   <label for="appDisplayName">Display Name or Alias<span class="text-danger">*</span></label>
                   <input type="text" class="form-control" id="appDisplayName" formControlName="appDisplayName"
-                    placeholder="Enter a Short Name or Alias" [value]="application.DisplayName">
+                    placeholder="Enter a Short Name or Alias" [value]="application.DisplayName" required>
                 </div>
 
                 <div class="form-group col-3">
@@ -228,7 +228,7 @@
 
                 <div class="form-group col">
                   <label for="appParent">Parent System</label>
-                  <select class="form-control" id="appParent" formControlName="appParent" required>
+                  <select class="form-control" id="appParent" formControlName="appParent">
                     <option *ngFor="let system of parentSystems" [value]="system.ID"
                       [selected]="application.ParentSystem === system.Name">{{ system.Name }}</option>
                   </select>
@@ -303,10 +303,18 @@
 
       <div class="modal-footer">
         <div class="text-danger mr-auto">* Required</div>
-        <div [hidden]="!application.ChangeDTG">
+        <div [hidden]="!application.ChangeDTG" class="position-absolute center">
           Last Updated: {{ application.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}
         </div>
-        <button type="submit" form="appForm" class="btn btn-info text-white" (click)="submitForm()">Save</button>
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox" class="custom-control-input" id="appCertifyCheck" [(ngModel)]="appCertify">
+          <label class="custom-control-label" for="appCertifyCheck">
+            <span class="text-danger">*</span>
+            I certify all data is correct and up-to-date
+          </label>
+        </div>
+        <button type="submit" form="appForm" class="btn btn-info text-white" (click)="submitForm()"
+          [disabled]="!(appCertify && appForm.valid)">Save</button>
       </div>
 
     </div>

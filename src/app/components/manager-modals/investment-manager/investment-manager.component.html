@@ -71,7 +71,7 @@
                   <div id="investType">
                     <div class="custom-control custom-control-inline custom-radio" *ngFor="let type of types">
                       <input class="custom-control-input" type="radio" id="investType{{ type.ID }}" [value]="type.ID"
-                        [checked]="type.Name === investment.Type" formControlName="investType">
+                        [checked]="type.Name === investment.Type" formControlName="investType" required>
                       <label class="custom-control-label" for="investType{{ type.ID }}">{{ type.Name }}</label>
                     </div>
                   </div>
@@ -183,8 +183,18 @@
 
       <div class="modal-footer">
         <div class="text-danger mr-auto">* Required</div>
-        <div [hidden]="!investment.ChangeDTG">Last Updated: {{ investment.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}</div>
-        <button type="submit" form="investForm" class="btn btn-info text-white" (click)="submitForm()">Save</button>
+        <div [hidden]="!investment.ChangeDTG" class="position-absolute center">
+          Last Updated: {{ investment.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}
+        </div>
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox" class="custom-control-input" id="investCertifyCheck" [(ngModel)]="investCertify">
+          <label class="custom-control-label" for="investCertifyCheck">
+            <span class="text-danger">*</span>
+            I certify all data is correct and up-to-date
+          </label>
+        </div>
+        <button type="submit" form="investForm" class="btn btn-info text-white" (click)="submitForm()"
+          [disabled]="!(investCertify && investForm.valid)">Save</button>
       </div>
 
     </div>

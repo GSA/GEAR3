@@ -62,7 +62,8 @@ exports.update = (req, res) => {
         Description             = ${data.sysDesc},
         URL                     = ${data.sysLink},
         obj_organization_Id     = ${data.sysSSO},
-        ChangeAudit             = '${data.auditUser}'
+        ChangeAudit             = '${data.auditUser}',
+        ChangeDTG               = NOW()
       WHERE Id = ${req.params.id};
       SET FOREIGN_KEY_CHECKS=1;
       ${appString}`

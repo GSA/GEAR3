@@ -68,7 +68,8 @@ exports.update = (req, res) => {
         primary_service_area    = ${data.investPSA},
         sec_serv_area1          = ${data.investSSA},
         Comments                = ${data.investComments},
-        ChangeAudit             = '${data.auditUser}'
+        ChangeAudit             = '${data.auditUser}',
+        ChangeDTG               = NOW()
       WHERE Id = ${req.params.id};
       SET FOREIGN_KEY_CHECKS=1;
       ${appString}`

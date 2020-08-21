@@ -38,6 +38,8 @@ export class SystemManagerComponent implements OnInit {
   selectedIDs: Set<any> = new Set();
   deSelectedIDs: Set<any> = new Set();
 
+  parentCertify: boolean = false;
+
   constructor(
     private apiService: ApiService,
     private globals: Globals,
@@ -64,6 +66,7 @@ export class SystemManagerComponent implements OnInit {
     // If the manager modal is exited, clear the create flag
     $('#systemManager').on('hidden.bs.modal', function (e) {
       this.modalService.updateRecordCreation(false);
+      this.parentCertify = false;
       $("#systemMngrTabs li:first-child a").tab('show');
     }.bind(this));
   }

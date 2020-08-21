@@ -187,10 +187,18 @@
 
       <div class="modal-footer">
         <div class="text-danger mr-auto">* Required</div>
-        <div [hidden]="!itStandard.ChangeDTG">Last Updated: {{ itStandard.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}
+        <div [hidden]="!itStandard.ChangeDTG" class="position-absolute center">
+          Last Updated: {{ itStandard.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}
         </div>
-        <button type="submit" form="itStandardsForm" class="btn btn-info text-white"
-          (click)="submitForm()">Save</button>
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox" class="custom-control-input" id="itStandCertifyCheck" [(ngModel)]="itStandCertify">
+          <label class="custom-control-label" for="itStandCertifyCheck">
+            <span class="text-danger">*</span>
+            I certify all data is correct and up-to-date
+          </label>
+        </div>
+        <button type="submit" form="itStandardsForm" class="btn btn-info text-white" (click)="submitForm()"
+          [disabled]="!(itStandCertify && itStandardsForm.valid)">Save</button>
       </div>
 
     </div>

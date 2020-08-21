@@ -104,8 +104,18 @@
 
       <div class="modal-footer">
         <div class="text-danger mr-auto">* Required</div>
-        <div [hidden]="!system.ChangeDTG">Last Updated: {{ system.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}</div>
-        <button type="submit" form="systemForm" class="btn btn-info text-white" (click)="submitForm()">Save</button>
+        <div [hidden]="!system.ChangeDTG" class="position-absolute center">
+          Last Updated: {{ system.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}
+        </div>
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox" class="custom-control-input" id="parentCertifyCheck" [(ngModel)]="parentCertify">
+          <label class="custom-control-label" for="parentCertifyCheck">
+            <span class="text-danger">*</span>
+            I certify all data is correct and up-to-date
+          </label>
+        </div>
+        <button type="submit" form="systemForm" class="btn btn-info text-white" (click)="submitForm()"
+          [disabled]="!(parentCertify && systemForm.valid)">Save</button>
       </div>
 
     </div>

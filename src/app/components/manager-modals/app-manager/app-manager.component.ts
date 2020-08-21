@@ -74,6 +74,8 @@ export class AppManagerComponent implements OnInit {
   TIMEYears = ['FY19', 'FY20', 'FY21', 'FY22', 'FY23', 'FY24'];
   TIMEValues = ['T1', 'T2', 'T3', 'I', 'M1', 'M2', 'E', 'TBD', 'N/A'];
 
+  appCertify: boolean = false;
+
   constructor(
     private apiService: ApiService,
     private globals: Globals,
@@ -116,6 +118,7 @@ export class AppManagerComponent implements OnInit {
     // If the manager modal is exited, clear the create flag
     $('#appManager').on('hidden.bs.modal', function (e) {
       this.modalService.updateRecordCreation(false);
+      this.appCertify = false;
       $("#appMngrTabs li:first-child a").tab('show');
     }.bind(this));
   }

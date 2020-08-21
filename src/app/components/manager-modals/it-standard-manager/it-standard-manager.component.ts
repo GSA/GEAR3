@@ -56,6 +56,8 @@ export class ItStandardManagerComponent implements OnInit {
   deploymentTypes: any[] = [];
   aprvExpDate: Date;
 
+  itStandCertify: boolean = false;
+
   constructor(
     private apiService: ApiService,
     private globals: Globals,
@@ -116,6 +118,7 @@ export class ItStandardManagerComponent implements OnInit {
     // If the manager modal is exited, clear the create flag
     $('#itStandardsManager').on('hidden.bs.modal', function (e) {
       this.modalService.updateRecordCreation(false);
+      this.itStandCertify = false;
       $("#itStandMngrTabs li:first-child a").tab('show');
     }.bind(this));
   }

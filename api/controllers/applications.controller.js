@@ -154,7 +154,8 @@ exports.update = (req, res) => {
 
         TIME_Notes                      = ${data.TIMENotes},
 
-        ChangeAudit                     = '${data.auditUser}'
+        ChangeAudit                     = '${data.auditUser}',
+        ChangeDTG                       = NOW()
       WHERE Id = ${req.params.id};
       SET FOREIGN_KEY_CHECKS=1;
       ${pocString}

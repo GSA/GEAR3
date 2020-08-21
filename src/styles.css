@@ -234,6 +234,11 @@ a.position-absolute.float-right {
   right: 2%;
 }
 
+.position-absolute.center {
+  left: 50%;
+  transform: translate(-50%);
+}
+
 /* Date Picker Calendar Adjustments */
 .datepicker-inline,
 .table-condensed {
