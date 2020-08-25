@@ -40,7 +40,7 @@ strong,
   margin-left: auto;
 }
 
-@media (max-width: 1199.98px) {
+@media (max-width: 1856px) {
   .navbar-expand-xl2 > .container,
   .navbar-expand-xl2 > .container-fluid, .navbar-expand-xl2 > .container-sm, .navbar-expand-xl2 > .container-md, .navbar-expand-xl2 > .container-lg, .navbar-expand-xl2 > .container-xl {
     padding-right: 0;
@@ -48,7 +48,7 @@ strong,
   }
 }
 
-@media (min-width: 1500px) {
+@media (min-width: 1856px) {
   .navbar-expand-xl2 {
     -webkit-box-orient: horizontal;
     -webkit-box-direction: normal;
