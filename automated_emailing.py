@@ -1,22 +1,19 @@
+import datetime
+from smtplib import SMTP
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from pandas.io.json import json_normalize
+import pandas as pd
+import mysql.connector
+import requests
+import dateutil.relativedelta
 import os
 import sys
 from dotenv import load_dotenv
 load_dotenv()
 
-import datetime 
-import dateutil.relativedelta
-import requests
 
-import mysql.connector
-import pandas as pd
-from pandas.io.json import json_normalize
-
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from smtplib import SMTP
-
-
-#----- Environment Variables -----
+# ----- Environment Variables -----
 env = os.getenv("ENVIRONMENT")
 
 # Database credentials
@@ -33,7 +30,7 @@ smtp_port = os.getenv("SMTP_PORT")
 dev_email = os.getenv("DEV_EMAIL")
 
 
-#----- Global Parameters -----
+# ----- Global Parameters -----
 
 # URLs for GEAR
 if env == 'production':
@@ -52,14 +49,14 @@ gear_manager = gear + "#/gear_manager"
 app_api_addr = gear + 'api/applications'
 tech_api_addr = gear + 'api/it_standards'
 
-# Current link for the form to request access to GEAR Manager 
+# Current link for the form to request access to GEAR Manager
 gear_form = "https://docs.google.com/forms/d/e/1FAIpQLSdmvOEESbKRJ5z4GnOw9hMqWIAI8m5H8I0-tB4zU3mc3aeYPA/viewform?usp=sf_link"
 
 if env == 'production':
     # Email address that you want to send the email from (can even be a made up address like no-reply@gsa.gov)
     from_email = "ea_planning@gsa.gov"
 
-    # email address that you want replies to go to 
+    # Email address that you want replies to go to
     reply_email = "ea_planning@gsa.gov"
 else:
     # Set from and reply emails to dev_email
@@ -70,16 +67,26 @@ else:
 log_loc = "./log/"
 
 
-#----- Functions -----
+# ----- Functions -----
 
-# Generic Email Function
 def send_email(subject: str, to_email: str, txt_msg: str, html_msg: str) -> None:
+    """
+    Send email through GSA's Gmail SMTP server
+
+    Inputs:
+      subject (str): Subject line
+      to_email (str): Email address receiving the email
+      txt_msg (str): Text-only version of the email being sent
+      html_msg (str): HTML version of the email being sent
+    Output:
+      None
+    """
     message = MIMEMultipart("alternative")
     message["Subject"] = subject
     message["From"] = from_email
     message["To"] = to_email
     message["Reply-to"] = reply_email
-    
+
     text = f"""\
         Hi,
         {txt_msg}
@@ -87,7 +94,40 @@ def send_email(subject: str, to_email: str, txt_msg: str, html_msg: str) -> None
 
     html = f"""\
         <html>
-          <head></head>
+          <head>
+            <style>
+              body {{
+                  margin: 0;
+                  font-family: Helvetica;
+              }}
+              table.dataframe {{
+                  border-collapse: collapse;
+                  border: none;
+              }}
+              table.dataframe tr {{
+                  border: none;
+              }}
+              table.dataframe td, table.dataframe th {{
+                  margin: 0;
+                  border: 1px solid white;
+                  padding-left: 0.25em;
+                  padding-right: 0.25em;
+              }}
+              table.dataframe th:not(:empty) {{
+                  background-color: #fec;
+                  text-align: left;
+                  font-weight: normal;
+              }}
+              table.dataframe tr:nth-child(2) th:empty {{
+                  border-left: none;
+                  border-right: 1px dashed #888;
+              }}
+              table.dataframe td {{
+                  border: 2px solid #ccf;
+                  background-color: #f4f4ff;
+              }}
+            </style>
+          </head>
           <body>
             {html_msg}
           </body>
@@ -102,112 +142,164 @@ def send_email(subject: str, to_email: str, txt_msg: str, html_msg: str) -> None
     # The email client will try to render the last part first
     message.attach(part1)
     message.attach(part2)
-    
+
     # Create secure connection with server and send email
     server = SMTP(smtp_server, smtp_port)
     server.sendmail(from_email, reply_email, message.as_string())
 
 
-# Error Email to dev_email if something went wrong
 def error_email(env: str, err_msg: str) -> None:
+    """
+    Error email to dev_email notifying that something went wrong
+
+    Inputs:
+      env (str): Server environment that the error occurred on
+      err_msg (str): Error message to include in the body of the email
+    Output:
+      None
+    """
     subject = f"Error in Automation on the {env.capitalize()} Server"
     text = err_msg
     html = f"<p>{err_msg}</p>"
-    
-    send_email(subject = subject,
-               to_email = dev_email,
-               txt_msg = text,
-               html_msg = html)
-    
-    
+
+    send_email(subject=subject,
+               to_email=dev_email,
+               txt_msg=text,
+               html_msg=html)
+
+
 def send_email_for_poc(poc_df: pd.DataFrame, data: pd.DataFrame,
                        app_tech: str, poc_id: int) -> None:
+    """
+    Compose email for POC respective to app or technology
+
+    Inputs:
+      poc_df (pd.DataFrame): Dataframe of POC info
+      data (pd.DataFrame): Dataframe consisting of app or technology data
+      app_tech (str): Flag denoting 'app' or 'tech'
+      poc_id (int): ID of POC of interest
+    Output:
+      None
+    """
     # Pull out the POC's records
     subset = poc_df[poc_df['POC_ID'] == poc_id].reset_index()
-    
+
     # Not all apps will be in data, because we got rid of inactive or recently updated apps
     if app_tech == 'app':
-        id_list = [id for id in set(subset['Application_ID']) if id in set(data['ID'])]
-        name_list = [name for name in set(subset['Application']) if name in set(data['Name'])]
+        name_list = sorted([name for name in set(
+            subset['Application']) if name in set(data['Name'])])
     else:
-        id_list = [id for id in set(subset['Technology_ID']) if id in set(data['ID'])]
-        name_list = [name for name in set(subset['Technology']) if name in set(data['Name'])]
+        name_list = sorted([name for name in set(
+            subset['Technology']) if name in set(data['Name'])])
 
     # If no data tied to POC, don't send an email
-    if len(id_list) == 0:
+    if len(name_list) == 0:
         return
 
     # Create empty data frame
-    output = pd.DataFrame(columns = ['value'])
-    
+    output = pd.DataFrame(columns=['value'])
+
     # Fill with data
-    for my_id in id_list:
-        sub = data[data['ID'] == my_id].T
-        sub.columns = ['value']
-        output = output.append(sub)
-        # add empty row in between applications
-        row = pd.Series({'value': ''}, name = '')
-        output = output.append(row)
+    table_html = ''
+    for i, name in enumerate(name_list):
+        if i < 5:  # Only preview the first 5 items
+            table_html += f"<h2>{name}</h2>\n"
+            output = data[data['Name'] == name].T
+            output.columns = ['value']
+            table_html += f"{output.to_html(header=False)}\n<br>"
 
     # Compose and send message
     poc_name = subset.loc[0, 'Name'].split()[0]
     poc_email = subset.loc[0, 'Email']
-    html_df = output.to_html(header = False)
-    subject = f"Action Required: Update Your {'Application' if app_tech == 'app' else 'Technology'} in GEAR"
-    
+    subject = f"Action Required: Update Your {'Application(s)' if app_tech == 'app' else 'Technology(ies)'} in GEAR"
+
     text = f"""\
         Hi {poc_name},
-        You're currently listed as a point of contact for one or more {'applications' if app_tech == 'app' else 'technologies'} in GEAR. Please 
-        visit GEAR Manager to view your {'application' if app_tech == 'app' else 'technology'} details and make any necessary edits. If you 
-        don't have access to GEAR Manager, please request access using the form in the "GEAR Manager"
-        tab on the GEAR site. If you have any questions, or if you are no longer a POC, please reply to this email so 
-        that we may update our records. Thank you!
+        You're currently listed as a point of contact for one or more {'applications' if app_tech == 'app' else 'technologies'} in GEAR. 
+        These automated emails are to ensure the data in GEAR is kept up-to-date as much as possible. It will help the enterprise plan and 
+        work as efficiently as possible based on this data. Follow these steps to edit or ceritfy that everything is correct:
+
+        1) Please log in to GEAR Manager ({gear_manager}) and navigate to the {'"Business Applications"' if app_tech == 'app' else '"IT Standards"'} section.
+        3) Find your {'application(s)' if app_tech == 'app' else 'technology(ies)'} using the search box just above the table.
+        4) Click on the respective row on the table.
+        5) On the bottom right of the popup window, click "Edit this Item".
+        6) Make any necessary edits to any of the inputs on the form or certify that all the information is correct if no changes are needed. Ensure
+           that you have filled out all the required fields and check the "Certify" box before saving.
+        
+        If you don't have access to GEAR Manager, please request access using the form from this URL ({gear_form}). 
+        If you have any questions, or if you are no longer a POC, please reply to this email so that we may update our records. These automated 
+        emails are to facilitate keeping data in GEAR up-to-date as much as possible to help the enterprise plan and work as efficiently as possible. 
+        
+        Regards,
+        The Enterprise Architecture Team (IDRA)
         """
-    
+
     html = f"""\
-        <html>
-          <head> </head>
-          <body>
-            <p>Hi {poc_name},
-              <br><br>
-              You're currently listed as a point of contact for the following application(s) in
-              <a href={gear}>GEAR</a>:
-              <ul>"""
-    
+        <p>Hi {poc_name},
+          <br><br>
+          You're currently listed as a point of contact for the following {'application(s)' if app_tech == 'app' else 'technology(ies)'} in
+          <a href={gear}>GEAR</a> that haven't been updated in the past 6 months:
+        </p>
+        <ul>"""
+
     for name in name_list:
         html += f"""\
-                <li>{name}</li>
-            """
-    
-    html += f"""\
-              </ul>
-              Please look over the current information below. If you find anything
-              to be incorrect, log in to <a href = {gear_manager}>GEAR manager</a> to edit your application.
-              If you don't have access to GEAR Manager, request access <a href = {gear_form}>here</a>.
-              If you are no longer a point of contact, please respond to this email so that we may update our records. 
-              <br><br>
-              Sincerely,
-              <br> The Enterprise Architecture Team (IDRA)
-            </p>
-            <div>{html_df}</div>
-          </body>
-        </html>
+        <li>{name}</li>
         """
-    
-    send_email(subject = subject,
-               to_email = poc_email,
-               txt_msg = text,
-               html_msg = html)
-    
-    # Write log of when email was sent
-    write_log(f"Email sent to {poc_name} ({poc_email}) for {'application(s)' if app_tech == 'app' else 'technology(ies)'}")
-    
 
-# Get POC Info from Database
-def get_pocs(app_tech: str):
+    html += f"""\
+        </ul>
+        <p>
+          At the bottom of the email, you will find a preview of data for your {'application(s)' if app_tech == 'app' else 'technology(ies)'}. 
+          These automated emails are to ensure the data in GEAR is kept up-to-date as much as possible. It will help the enterprise plan and 
+          work as efficiently as possible based on this data. Follow these steps to edit or ceritfy that everything is correct:
+        </p>
+
+        <ol>
+          <li>Please log in to <a href={gear_manager}>GEAR Manager</a> and navigate to the 
+              <b>{'"Business Applications"' if app_tech == 'app' else '"IT Standards"'}</b> section.
+          </li>
+          <li>Find your {'application(s)' if app_tech == 'app' else 'technology(ies)'} using the search box just above the table.</li>
+          <li>Click on the respective row on the table.</li>
+          <li>On the bottom right of the popup window, click <b>"Edit this Item"</b>.</li>
+          <li>Make any necessary edits to any of the inputs on the form or certify that all the information is correct if no changes are needed. 
+            <b>Ensure that you have filled out all the required fields and check the "Certify" box before saving</b>.
+          </li>
+        </ol>
+
+        <p>
+          If you don't have access to GEAR Manager, request access <a href={gear_form}>here</a>. If you are no longer a point of contact, please 
+          respond to this email so that we may update our records.
+          <br><br>
+          Regards,
+          <br>
+          The Enterprise Architecture Team (IDRA)
+        </p>
+        <div>{table_html}</div>
+        """
+
+    send_email(subject=subject,
+               to_email=poc_email,
+               txt_msg=text,
+               html_msg=html)
+
+    # Write log of when email was sent
+    write_log(
+        f"Email sent to {poc_name} ({poc_email}) for {'application(s)' if app_tech == 'app' else 'technology(ies)'}")
+
+
+def get_pocs(app_tech: str) -> pd.DataFrame:
+    """
+    Get POC info from database
+
+    Inputs:
+      app_tech (str): Flag denoting 'app' or 'tech'
+    Output:
+      pd.DataFrame: Dataframe of POCs connected to apps or technologies
+    """
     # Business and Technical POCs for Applications
     if app_tech == 'app':
-        # This pulls out a table where each business poc and application pair has its own line 
+        # This pulls out a table where each business poc and application pair has its own line
         business = pd.read_sql("""
             SELECT 
             poc.Id       AS POC_ID,
@@ -223,9 +315,9 @@ def get_pocs(app_tech: str):
             
             WHERE app.obj_application_status_Id <> 3
                 AND app.ChangeDTG <= (now() - interval 6 month);
-            """, con = cnx)
-        
-        # Same for technical pocs 
+            """, con=cnx)
+
+        # Same for technical pocs
         technical = pd.read_sql("""
             SELECT 
             poc.Id       AS POC_ID,
@@ -241,10 +333,10 @@ def get_pocs(app_tech: str):
             
             WHERE app.obj_application_status_Id <> 3
                 AND app.ChangeDTG <= (now() - interval 6 month);
-            """, con = cnx)
-        
-        return business.append(technical, ignore_index = True)
-    
+            """, con=cnx)
+
+        return business.append(technical, ignore_index=True)
+
     # POCs for IT Standards
     else:
         pocs = pd.read_sql("""
@@ -262,24 +354,24 @@ def get_pocs(app_tech: str):
 
             WHERE tech.obj_technology_status_Id not in (1, 8, 9)
                 AND tech.ChangeDTG <= (now() - interval 6 month);
-            """, con = cnx)
-        
+            """, con=cnx)
+
         return pocs
 
 
 def get_old_data(api_string: str, app_tech: str) -> pd.DataFrame:
     """
     Retrieve Application or IT Standards that have not been updated in the past 6 months
-    
+
     Inputs:
-        api_string (str): 
-        app_tech (str):
-        
+        api_string (str): Path to respective GEAR API
+        app_tech (str): Flag denoting 'app' or 'tech'
+
     Output:
-        pd.DataFrame: 
+        pd.DataFrame: App or technology dataframe
     """
     response = requests.get(api_string)
-    
+
     if response.status_code == 200:
         data = json_normalize(response.json())
         data['ChangeDTG'] = pd.to_datetime(data['ChangeDTG'])
@@ -291,48 +383,76 @@ def get_old_data(api_string: str, app_tech: str) -> pd.DataFrame:
         error_email(env, error_msg)
         write_log(error_msg)
         sys.exit(error_msg)
-        
+
     if app_tech == 'app':
         # Filter out Retired and Nulls
         data = data[data['Status'] != 'Retired']
+
+        cols = ['Application_Notes', 'Application_or_Website', 'BusinessPOC', 'CUI', 'Cloud', 'Description', 'DisplayName', 'FISMASystem', 'HostingProvider', 'ID',
+                'Investment', 'Mobile_App_Indicator', 'Name', 'OMBUID', 'Owner', 'ParentSystem', 'ProdYear', 'Reference_Document', 'SSO', 'Status', 'TechnicalPOC', 'URL']
     else:
         # Filter only Active and not Nulls
-        data = data[~data['Status'].isin(['Sunsetting', 'Not yet submitted', 'Denied'])]
-        
+        data = data[~data['Status'].isin(
+            ['Sunsetting', 'Not yet submitted', 'Denied'])]
+
+        # Format expiration date column
+        data.loc[data['ApprovalExpirationDate'].notnull(), 'ApprovalExpirationDate'] = pd.to_datetime(
+            data.loc[data['ApprovalExpirationDate'].notnull(), 'ApprovalExpirationDate']).dt.strftime("%b %d, %Y")
+
+        cols = ['ApprovalExpirationDate', 'Available_through_Myview', 'Category', 'Comments', 'ComplianceStatus', 'DeploymentType',
+                'Description', 'Gold_Image', 'Gold_Image_Comment', 'ID', 'Name', 'POC', 'ReferenceDocument', 'StandardType', 'Status', 'Vendor_Standard_Organization']
+
     # Only keep items that have not been updated in the last months
     now = datetime.datetime.now()
-    six_months = now + dateutil.relativedelta.relativedelta(months = -6)
+    six_months = now + dateutil.relativedelta.relativedelta(months=-6)
     data = data[data['ChangeDTG'] < six_months]
+    data = data[cols]  # Filter out only needed columns
 
-    return data.reset_index(drop = True)
+    return data.reset_index(drop=True)
 
 
-# Connect to Database
 def db_connect() -> mysql.connector.connection.MySQLConnection:
+    """
+    Connect to GEAR MySQL Database
+
+    Inputs:
+        None
+
+    Output:
+        mysql.connector.connection.MySQLConnection: MySQLConnection Object
+    """
     # Change to secure DB when deployed
-    return mysql.connector.connect(host = db_host,
-                                  database = default_schema,
-    #                               ssl_ca = './certs/ca.pem',
-    #                               ssl_cert = './certs/client-cert.pem',
-    #                               ssl_key = './certs/client-key.pem',
-                                  user = db_user,
-                                  password = db_pass)
+    return mysql.connector.connect(host=db_host,
+                                   database=default_schema,
+                                   # ssl_ca = './certs/ca.pem',
+                                   # ssl_cert = './certs/client-cert.pem',
+                                   # ssl_key = './certs/client-key.pem',
+                                   user=db_user,
+                                   password=db_pass)
 
 
 def write_log(log_msg: str) -> None:
+    """
+    Write logging messages to a log file
+
+    Inputs:
+        log_msg (str): Desired log message
+
+    Output:
+        None
+    """
     current_date = datetime.datetime.now().strftime("%Y-%b-%d")
     now = datetime.datetime.now().strftime("%Y-%b-%d %H:%M:%S")
     file_name = f"{log_loc}email_automation-{current_date}.txt"
-    
+
     if os.path.exists(file_name):
-        append_write = 'a' # append if already exists
+        append_write = 'a'  # append if already exists
     else:
         os.makedirs(log_loc, exist_ok=True)
-        append_write = 'w' # make a new file if not
-    
+        append_write = 'w'  # make a new file if not
+
     with open(file_name, append_write) as log_file:
         log_file.write(f"{now}: {log_msg}\n")
-
 
 
 # Main Function
@@ -342,16 +462,18 @@ def main() -> None:
     tech_pocs = get_pocs('tech')
     if app_pocs is not None or tech_pocs is not None:
         write_log("Successfully Grabbed POC Data")
-    
+
     # For non-production, pick email to replace with dev_email in order to test
     if env != 'production':
         app_replace_email = None
-        
+
         # Find a name in both lists
         for name in set(app_pocs['Name']):
             if name in set(tech_pocs['Name']):
-                app_replace_email = tech_replace_email = app_pocs[app_pocs['Name'] == name].iloc[0]['Email']
-                app_replace_id = tech_replace_id = app_pocs[app_pocs['Name'] == name].iloc[0]['POC_ID']
+                app_replace_email = tech_replace_email = app_pocs[app_pocs['Name']
+                                                                  == name].iloc[0]['Email']
+                app_replace_id = tech_replace_id = app_pocs[app_pocs['Name']
+                                                            == name].iloc[0]['POC_ID']
                 break
 
         # If none found, take the first
@@ -361,22 +483,22 @@ def main() -> None:
 
             tech_replace_email = tech_pocs.loc[0, 'Email']
             tech_replace_id = tech_pocs.loc[0, 'POC_ID']
-            
 
     # Get data older than 6 months
     app_data = get_old_data(app_api_addr, 'app')
     tech_data = get_old_data(tech_api_addr, 'tech')
     if app_data is not None or tech_data is not None:
         write_log("Successfully Grabbed App & Tech Data")
-        
-    
+
     # For testing purposes
     if env != 'production':
         # Replace POC email with dev email and send one email
-        app_pocs = app_pocs.replace(to_replace=app_replace_email, value=dev_email)
+        app_pocs = app_pocs.replace(
+            to_replace=app_replace_email, value=dev_email)
         send_email_for_poc(app_pocs, app_data, 'app', app_replace_id)
 
-        tech_pocs = tech_pocs.replace(to_replace=tech_replace_email, value=dev_email)
+        tech_pocs = tech_pocs.replace(
+            to_replace=tech_replace_email, value=dev_email)
         send_email_for_poc(tech_pocs, tech_data, 'tech', tech_replace_id)
 
     # For actual emailing in production
@@ -388,23 +510,23 @@ def main() -> None:
         # Email IT STandards POCs
         for tech_poc_id in set(tech_pocs['POC_ID']):
             send_email_for_poc(tech_pocs, tech_data, 'tech', tech_poc_id)
-    
-    
+
+
 if __name__ == "__main__":
     write_log("----- Starting Automated Emailing -----")
-    
+
     # If any environment variables are missing, abort and write log file
     if None in [env, db_host, default_schema, db_user, db_pass,
                 smtp_server, smtp_port, dev_email]:
         error_msg = "At least one environment variable is missing for automated emailing. Aborting automated emailing"
         write_log(error_msg)
         sys.exit(error_msg)
-        
+
     write_log(f"Environment: {env}")
-    
+
     # Connect to Database
     cnx = db_connect()
-    
+
     # Error when connection to database fails
     if not cnx.is_connected():
         error_msg = "Connection to database failed. Please check connection credentials or network connection. Aborting automated emailing"
@@ -414,8 +536,8 @@ if __name__ == "__main__":
         sys.exit(error_msg)
     else:
         write_log(f"Connection to Database Successful from {env} to {db_host}")
-    
+
     # Now ready for main function
     main()
-    
+
     write_log("----- Finished Emailing POCs -----")
