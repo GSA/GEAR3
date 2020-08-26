@@ -11,15 +11,15 @@ declare var $: any;
 export class AppComponent implements OnInit {
   title = 'gear3';
 
-  ngOnInit(){
+  ngOnInit() {
     // Pad main Module by how big the top navbar is
     $(document).ready(this.setNavOffsets);
     $(window).resize(this.setNavOffsets);
 
     // Anything with rotate class, rotate to opposite side when clicked
-    $(".rotate").click(function(){
-      $(this).toggleClass("opposite")  ; 
-     })
+    $(".rotate").click(function () {
+      $(this).toggleClass("opposite");
+    })
 
   }
 
