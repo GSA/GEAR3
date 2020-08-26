@@ -248,3 +248,16 @@ a.position-absolute.float-right {
 .table-condensed {
   width: 100% !important;
 }
+
+/* Rotation Animation */
+.rotate{
+  -moz-transition: all 0.2s linear;
+  -webkit-transition: all 0.2s linear;
+  transition: all 0.2s linear;
+}
+
+.rotate.opposite{
+  -moz-transform:rotate(180deg);
+  -webkit-transform:rotate(180deg);
+  transform:rotate(180deg);
+}

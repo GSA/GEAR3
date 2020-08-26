@@ -1,8 +1,8 @@
 <nav class="navbar navbar-expand-xl2 fixed-top navbar-dark bg-primary shadow-lg p-1" id="topNav" role="navigation">
 
   <!-- Side Navbar Toggle -->
-  <button (click)="sharedService.toggleClick()" class="navbar-toggler mr-2" id="sidebarToggle"
-    aria-label="Toggle Side Navigation"><span class="navbar-toggler-icon"></span>
+  <button (click)="sharedService.toggleClick()" class="navbar-toggler mr-2 rotate" id="sidebarToggle"
+    aria-label="Toggle Side Navigation"><i class="fas fa-angle-right"></i>
   </button>
 
   <a class="navbar-brand" routerLink="/">
@@ -11,7 +11,7 @@
     <span [innerHTML]="envName"></span>
     <span *ngIf="sharedService.loggedIn" style="color: red"> **GEAR Manager Mode**</span>
   </a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+  <button class="navbar-toggler rotate" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle Top Navigation">
     <i class="fas fa-angle-down"></i>
   </button>
