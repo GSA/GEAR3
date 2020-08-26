@@ -132,6 +132,10 @@ strong,
 }
 
 /* Customize Table formatting */
+table {
+  table-layout: fixed;
+}
+
 table h5 {
   margin-bottom: 0;
 }

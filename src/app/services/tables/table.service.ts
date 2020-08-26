@@ -52,7 +52,7 @@ export class TableService {
     field: 'Description',
     title: 'Description',
     sortable: true,
-    formatter: this.sharedService.descFormatter
+    class: 'text-truncate'
   }, {
     field: 'SSOShort',
     title: 'SSO',

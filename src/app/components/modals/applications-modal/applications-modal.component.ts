@@ -128,7 +128,7 @@ export class ApplicationsModalComponent implements OnInit {
     field: 'Description',
     title: 'Description',
     sortable: true,
-    formatter: this.sharedService.descFormatter
+    class: 'text-truncate'
   }, {
     field: 'ParentCap',
     title: 'Parent Capability'
@@ -161,7 +161,7 @@ export class ApplicationsModalComponent implements OnInit {
     field: 'Description',
     title: 'Description',
     sortable: true,
-    formatter: this.sharedService.descFormatter
+    class: 'text-truncate'
   }, {
     field: 'Status',
     title: 'Status',

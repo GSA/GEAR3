@@ -53,7 +53,7 @@ export class ItStandardsComponent implements OnInit {
     field: 'Description',
     title: 'Description',
     sortable: true,
-    formatter: this.sharedService.descFormatter
+    class: 'text-truncate'
   }, {
     field: 'Category',
     title: 'Category',

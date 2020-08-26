@@ -57,7 +57,7 @@ export class OrganizationsComponent implements OnInit {
     field: 'Description',
     title: 'Description',
     sortable: true,
-    formatter: this.sharedService.descFormatter
+    class: 'text-truncate'
   }];
 
   ngOnInit(): void {

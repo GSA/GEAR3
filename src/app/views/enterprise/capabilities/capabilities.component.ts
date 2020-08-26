@@ -55,7 +55,7 @@ export class CapabilitiesComponent implements OnInit {
     field: 'Description',
     title: 'Description',
     sortable: true,
-    formatter: this.sharedService.descFormatter
+    class: 'text-truncate'
   }, {
     field: 'Parent',
     title: 'Parent',
@@ -75,7 +75,7 @@ export class CapabilitiesComponent implements OnInit {
     field: 'Description',
     title: 'Description',
     sortable: true,
-    formatter: this.sharedService.descFormatter
+    class: 'text-truncate'
   }, {
     field: 'ParentCap',
     title: 'Parent',

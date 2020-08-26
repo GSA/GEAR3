@@ -119,15 +119,6 @@ export class SharedService {
 
 
   // Table Data Formatters
-  //// For Long Descriptions
-  public descFormatter(value, row, index, field) {
-    var threshold = 180;
-    if (value !== null) {
-      if (value.length > threshold) return value.substring(0, threshold) + "...";
-      else return value;
-    }
-  };
-
   //// Fiscal Year Breakdown
   public FYFormatter(value, row, index, field) {
     var appTime = row.AppTime;
