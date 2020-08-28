@@ -23,7 +23,7 @@
           <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#technologyRelated">
               Technology</a></li>
-          <li class="nav-item" [hidden]="interfaces.length">
+          <li class="nav-item" [hidden]="!interfaces.length">
             <a class="nav-link" data-toggle="tab" href="#appDataFlow">
               Data Flow</a></li>
         </ul>
@@ -236,7 +236,7 @@
 
           <div class="tab-pane fade" id="appDataFlow">
             <!-- Data Flow Sankey Diagram -->
-            <div id="dataFlowChart"></div>
+            <div id="dataFlowChart" class="text-center"></div>
           </div>
           <!-- End of Data Flow Tab Pane -->
 

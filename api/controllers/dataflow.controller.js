@@ -14,7 +14,7 @@ exports.findAll = (req, res) => {
 
 exports.findOne = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_dataflow.sql')).toString() +
-    ` WHERE inter.obj_application_Id = ${req.params.id} OR inter.obj_application_Id1 = ${req.params.id};`;
+    ` WHERE inter.obj_application_Id = ${req.params.id};`;
 
   res = ctrl.sendQuery(query, 'interface', res);
 };

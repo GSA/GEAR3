@@ -10,7 +10,7 @@ import { Application } from '@api/models/applications.model';
 
 // Declare D3 & Sankey library
 declare var d3: any;
-import * as d3Sankey from 'src/assets/d3-sankey-circular/d3-sankey-circular.js';
+import * as d3Sankey from 'd3-sankey';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -395,27 +395,64 @@ export class AppsComponent implements OnInit {
   private getInterfaceData(appID: number) {
     this.apiService.getOneDataFlow(appID).subscribe((data: any[]) => {
       this.interfaces = data;
-      this.createDataFlowChart(appID, this.interfaces);
+      this.modalService.updateDetails(this.interfaces, 'data-flow');
+      if (this.interfaces.length) this.createDataFlowChart(appID);  // If there is interface data, create the flow chart
     });
   }
 
-  private createDataFlowChart(appID: number, interfaces: any[]) {
-    console.log(appID, interfaces);  // Debug
+  private createDataFlowChart(appID: number) {
+    // console.log(appID, this.interfaces);  // Debug
 
     var CONTAINER_ID = '#dataFlowChart',
       SVG_ID = 'dataflowSVG',
       units = "Connections",
 
-      // set the dimensions and margins of the graph
-      margin = {top: 10, right: 10, bottom: 10, left: 10},
-      width = 700 - margin.left - margin.right,
-      height = 300 - margin.top - margin.bottom,
+      // Set the dimensions and margins of the graph
+      margin = { top: 20, right: 20, bottom: 20, left: 20 },
+      width = 960,
+      height = 500,
       nodeWidth = 36,
       nodePadding = 40;
 
     if (document.getElementById(SVG_ID)) {
       return false;
     };
+
+    // Append the svg object to the body of the page
+    var svg = d3.select(CONTAINER_ID).append("svg")
+      .attr('width', width)
+      .attr('height', height);
+
+    var g = svg.append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
+    // Format variables
+    var formatNumber = d3.format(",.0f"),    // zero decimal places
+      format = function (d) { return formatNumber(d) + " " + units; },
+      color = d3.scaleOrdinal()
+        .range(['#9dc6d8', '#00b3ca', '#7dd0b6', '#1d4e89',
+          '#d2b29b', '#e38690', '#f69256', '#ead98b', '#965251',
+          '#c6cccc', '#e5dfef', '#fbdce0', '#cbefe7', '#fffdce',
+          '#d7ffdd',
+        ]);
+
+    // Set the sankey diagram properties
+    var sankey = d3Sankey.sankey()
+      .nodeWidth(nodeWidth)
+      .nodePadding(nodePadding)
+      .size([width - margin.left - margin.right,
+      height - margin.top - margin.bottom])
+      .nodeId(function (d: any) {
+        return d.name;
+      });
+
+    var link = g.append("g")
+      .attr("class", "link")
+      .selectAll("path");
+
+    var node = g.append("g")
+      .attr("class", "node")
+      .selectAll("g");
 
     // load the data
     //set up graph in same style as original example but empty
@@ -437,7 +474,8 @@ export class AppsComponent implements OnInit {
         "source": d.srcApp,
         "target": d.destApp,
         "sourceId": d.srcAppID,
-        "targetId": d.destAppID
+        "targetId": d.destAppID,
+        "value": 1
       });
     });
 
@@ -447,8 +485,56 @@ export class AppsComponent implements OnInit {
         return graph.nodes.find(node => node.name === name)
       });
 
-    console.log("graph: ", graph);  // Debug
+    // console.log("graph: ", graph);  // Debug
 
+    sankey(graph);
+
+    // Add in the links
+    link = link.data(graph.links)
+      .enter().append("path")
+      .attr("d", d3Sankey.sankeyLinkHorizontal())
+      .style("fill", "none")
+      // Change path color by target
+      .style("stroke", function (d: any) {
+        return d.color = color(d.targetId);
+      })
+      .style("stroke-opacity", 0.7)
+      // Path width is default or width if value is valid
+      .style("stroke-width", function (d: any) {
+        return Math.max(15, d.width);
+      });
+
+    // Add the link titles
+    link.append("title")
+      .text(function (d: any) {
+        return d.source.name + " → " +
+          d.target.name + "\n" + format(d.value)
+      });
+
+    // Add in the nodes
+    node = node.data(graph.nodes)
+      .enter().append("g");
+
+    // add the rectangles for the nodes
+    node.append("rect")
+      .attr("x", function (d) { return d.x0; }) //Use original sankey defined positions
+      .attr("y", function (d) { return d.y0 - (Math.max(30, d.height) / 2); }) //Use force defined positions
+      .attr("height", function (d) { return Math.max(30, d.height); })
+      .attr("width", function (d) { return d.x1 - d.x0; })
+      .style("fill", function (d) { return color(d.id); })
+      .style("opacity", 0.5)
+      .style("stroke", "white");
+
+    // add in the title for the nodes
+    node.append("text")
+      .attr("x", function (d) { return d.x0 - 6; })
+      .attr("y", function (d) { return d.y0 + ((d.y1 - d.y0) / 2); })
+      .attr("dy", "0.35em")
+      .attr("text-anchor", "end")
+      .text(function (d) { return d.name; })
+      .filter(function (d) { return d.x0 < width / 2; })
+      .attr("x", function (d) { return d.x1 + 6; })
+      .attr("text-anchor", "start");
   }
 
 }

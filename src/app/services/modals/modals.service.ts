@@ -26,6 +26,10 @@ export class ModalsService {
   private appSource = new Subject();
   currentApp = this.appSource.asObservable();
 
+  // Data Flow
+  private dataFlowSource = new Subject();
+  currentDataFlow = this.dataFlowSource.asObservable();
+
   // FiSMA System
   private fismaSysSource = new Subject();
   currentFismaSys = this.fismaSysSource.asObservable();
@@ -51,6 +55,8 @@ export class ModalsService {
       this.sysSource.next(row);
     } else if (component == 'application') {
       this.appSource.next(row);
+    } else if (component == 'data-flow') {
+      this.dataFlowSource.next(row);
     } else if (component == 'fisma') {
       this.fismaSysSource.next(row);
     } else if (component == 'it-standard') {

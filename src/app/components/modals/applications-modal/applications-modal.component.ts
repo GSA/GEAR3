@@ -16,7 +16,7 @@ declare var $: any;
 export class ApplicationsModalComponent implements OnInit {
 
   application = <any>{};
-  interfaces: any[] = [];
+  interfaces: any = [];
 
   constructor(
     private apiService: ApiService,
@@ -185,6 +185,7 @@ export class ApplicationsModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.modalService.currentApp.subscribe(application => this.application = application);
+    this.modalService.currentDataFlow.subscribe(dataFlow => this.interfaces = dataFlow);
 
     $('#appTimeTable').bootstrapTable($.extend(this.timeTableOptions, {
       columns: this.timeColumnDefs,
@@ -225,6 +226,7 @@ export class ApplicationsModalComponent implements OnInit {
     // Revert back to overview tab when modal goes away
     $('#appDetail').on('hidden.bs.modal', function (e) {
       $("#appTabs li:first-child a").tab('show');
+      this.interfaces = [];
     });
   }
 
