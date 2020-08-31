@@ -1,8 +1,8 @@
 #orgDetail {
   display: none;
   height: auto;
-  position: sticky;
-  top: 7%;
+  position: fixed;
+  top: 10;
 }
 
 #orgExtLink, #orgDetailLink, #orgDetailClose {
@@ -12,4 +12,8 @@
 #orgSearchField {
   height: 48px;
   border: 3px solid black;
+}
+
+#busCapGraph {
+  margin-top: 13%;
 }

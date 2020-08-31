@@ -1,8 +1,8 @@
 #capDetail {
   display: none;
   height: auto;
-  position: sticky;
-  top: 7%;
+  position: fixed;
+  top: 10;
 }
 
 #capDetailLink, #capDetailClose {
@@ -12,4 +12,8 @@
 #capSearchField {
   height: 48px;
   border: 3px solid black;
+}
+
+#busCapGraph {
+  margin-top: 13%;
 }
