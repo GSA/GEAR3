@@ -1,8 +1,12 @@
 #capDetail {
-  display: none;
+  visibility: hidden;
+  opacity: 0;
   height: auto;
   position: fixed;
   top: 10;
+  -moz-transition: all 0.3s linear;
+  -webkit-transition: all 0.3s linear;
+  transition: all 0.3s linear;
 }
 
 #capDetailLink, #capDetailClose {
@@ -15,5 +19,7 @@
 }
 
 #busCapGraph {
-  margin-top: 13%;
+  -moz-transition: all 0.3s linear;
+  -webkit-transition: all 0.3s linear;
+  transition: all 0.3s linear;
 }

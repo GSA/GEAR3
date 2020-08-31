@@ -1,8 +1,12 @@
 #orgDetail {
-  display: none;
+  visibility: hidden;
+  opacity: 0;
   height: auto;
   position: fixed;
   top: 10;
+  -moz-transition: all 0.3s linear;
+  -webkit-transition: all 0.3s linear;
+  transition: all 0.3s linear;
 }
 
 #orgExtLink, #orgDetailLink, #orgDetailClose {
@@ -14,6 +18,8 @@
   border: 3px solid black;
 }
 
-#busCapGraph {
-  margin-top: 13%;
+#orgChart {
+  -moz-transition: all 0.3s linear;
+  -webkit-transition: all 0.3s linear;
+  transition: all 0.3s linear;
 }

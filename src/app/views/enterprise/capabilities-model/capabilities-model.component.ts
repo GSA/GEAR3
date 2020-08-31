@@ -180,7 +180,7 @@ export class CapabilitiesModelComponent implements OnInit {
     // Set margins
     const element = this.graphContainer.nativeElement;
     var width = 1750 - element.offsetWidth - margin.left - margin.right;
-    var height = 1000 - element.offsetHeight - margin.top - margin.bottom;
+    var height = 1200 - element.offsetHeight - margin.top - margin.bottom;
 
     // Set tree mapping object
     this.treemap = d3.tree().size([height, width]);
@@ -348,11 +348,15 @@ export class CapabilitiesModelComponent implements OnInit {
       // Show detail card on hoverover
       .on("mouseover", function (d) {
         d3.select("#capDetail")
-          .style("display", "block");  // Show detail card
+          .style("visibility", "visible")   // Show detail card
+          .style("opacity", "1");
         d3.select("#capName")
           .text(d.data.name + " (" + d.data.referenceNum + ")");  // Set Name
         d3.select("#capDetailbody")
           .text(d.data.description);  // Set Description
+
+        d3.select("#busCapGraph")
+          .style("transform", "translateY(13%)");
 
         // console.log("Hovered Node: ", d);  // Debug
         selectedCap = d.data.identity;  // Save selected node id for links
@@ -455,7 +459,10 @@ export class CapabilitiesModelComponent implements OnInit {
 
     // When close window is clicked
     capClose.on("click", function (d) {
-      d3.select("#capDetail").style("display", "none");
+      d3.select("#capDetail")
+        .style("visibility", "hidden")
+        .style("opacity", "0");
+      d3.select("#busCapGraph").style("transform", null);
     });
 
   }  // End of update

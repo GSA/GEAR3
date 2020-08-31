@@ -187,7 +187,7 @@ export class OrganizationsChartComponent implements OnInit {
     // Set margins
     const element = this.graphContainer.nativeElement;
     var width = 1750 - element.offsetWidth - margin.left - margin.right;
-    var height = 1000 - element.offsetHeight - margin.top - margin.bottom;
+    var height = 1200 - element.offsetHeight - margin.top - margin.bottom;
 
     // Set tree mapping object
     this.treemap = d3.tree().size([height, width]);
@@ -355,7 +355,8 @@ export class OrganizationsChartComponent implements OnInit {
       // Show detail card on hoverover
       .on("mouseover", function (d) {
         d3.select("#orgDetail")
-          .style("display", "block");  // Show detail card
+        .style("visibility", "visible")   // Show detail card
+        .style("opacity", "1");
 
         d3.select("#orgExtLink")
           .style("display", function () {  // Show external link if available
@@ -365,6 +366,9 @@ export class OrganizationsChartComponent implements OnInit {
           .text(d.data.name);  // Set Name
         d3.select("#orgDetailbody")
           .text(d.data.description);  // Set Description
+
+        d3.select("#orgChart")
+          .style("transform", "translateY(13%)");
 
         // console.log("Hovered Node: ", d);  // Debug
         selectedOrg = d;  // Save selected node for links
@@ -474,7 +478,10 @@ export class OrganizationsChartComponent implements OnInit {
 
     // When close window is clicked
     orgClose.on("click", function (d) {
-      d3.select("#orgDetail").style("display", "none");
+      d3.select("#orgDetail")
+        .style("visibility", "hidden")
+        .style("opacity", "0");
+      d3.select("#orgChart").style("transform", null);
     });
 
   }  // End of update
