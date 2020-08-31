@@ -243,6 +243,13 @@ a.position-absolute.float-right {
   transform: translate(-50%);
 }
 
+.help-btn {
+  position: absolute;
+  top: 0;
+  right: 1%;
+  transform: translateY(25%);
+}
+
 /* Date Picker Calendar Adjustments */
 .datepicker-inline,
 .table-condensed {

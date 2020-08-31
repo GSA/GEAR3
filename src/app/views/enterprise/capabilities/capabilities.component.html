@@ -1,15 +1,16 @@
 <div class="card">
   <div class="card-header text-white bg-royal-blue text-center">
-    <h3 class="card-title col-12 position-absolute mb-0 align-self-center">
-      <span class="my-auto">
+    <h3 class="card-title col-12 mb-0">
+      <span>
         <i class="fas fa-project-diagram mr-2"></i> 
         <span [hidden]="ssoTable">GSA </span>
         <span [hidden]="!ssoTable" [innerHTML]="filterTitle"></span>
-        Business Capabilities List</span>
+        Business Capabilities List
+      </span>
     </h3>
     <!-- Help Button -->
     <a tabindex="0"
-      class="col-1 btn btn-sm btn-info text-white ml-auto d-flex align-items-center justify-content-center"
+      class="btn btn-sm btn-info text-white shadow help-btn d-flex align-items-center justify-content-center"
       role="button" data-toggle="popover" data-trigger="focus" data-placement="auto" data-html="true"
       title="Help Using this Table" data-content="<b>Details:</b> Left click on a row within the table to view additional details.
         <br><br>
