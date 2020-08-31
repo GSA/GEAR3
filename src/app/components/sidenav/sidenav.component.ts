@@ -58,6 +58,7 @@ export class SidenavComponent implements OnInit {
 
   _onOpenStart(): void {
     console.info('Sidebar opening');
+    $(".navbar-toggler.rotate").addClass("opposite");  // Rotate arrow inward
   }
 
   _onOpened(): void {
@@ -71,6 +72,8 @@ export class SidenavComponent implements OnInit {
     $('#businessAppDropdown').collapse('hide');
     $('#securityDropdown').collapse('hide');
     $('#technologiesDropdown').collapse('hide');
+
+    $(".navbar-toggler.rotate").removeClass("opposite");  // Rotate arrow outward
   }
 
   _onClosed(): void {

@@ -1,34 +1,34 @@
 /* You can add global styles to this file, and also import other style files */
 
 /* Underline H4 Headers, email links, card links for easy distinction */
-h4,
-a.email,
-a.link,
-.card-link,
-.modal .modal-body table th {
+
+h4, a.email, a.link, .card-link, .modal .modal-body table th {
   text-decoration: underline;
 }
 
 /* Bold has got to be bolder than what the theme gives */
-b,
-strong,
-.font-weight-bold {
+
+b, strong, .font-weight-bold {
   font-weight: 900 !important;
   color: #1a1a1a !important;
 }
 
 /* More Width Classes */
+
 .w-11 {
   width: 11% !important;
 }
+
 .w-15 {
   width: 15% !important;
 }
+
 .w-80 {
   width: 80% !important;
 }
 
 /* Make xl modals bigger */
+
 @media (min-width: 1200px) {
   .modal-xl {
     max-width: 80% !important;
@@ -41,8 +41,7 @@ strong,
 }
 
 @media (max-width: 1856px) {
-  .navbar-expand-xl2 > .container,
-  .navbar-expand-xl2 > .container-fluid, .navbar-expand-xl2 > .container-sm, .navbar-expand-xl2 > .container-md, .navbar-expand-xl2 > .container-lg, .navbar-expand-xl2 > .container-xl {
+  .navbar-expand-xl2>.container, .navbar-expand-xl2>.container-fluid, .navbar-expand-xl2>.container-sm, .navbar-expand-xl2>.container-md, .navbar-expand-xl2>.container-lg, .navbar-expand-xl2>.container-xl {
     padding-right: 0;
     padding-left: 0;
   }
@@ -52,17 +51,17 @@ strong,
   .navbar-expand-xl2 {
     -webkit-box-orient: horizontal;
     -webkit-box-direction: normal;
-        -ms-flex-flow: row nowrap;
-            flex-flow: row nowrap;
+    -ms-flex-flow: row nowrap;
+    flex-flow: row nowrap;
     -webkit-box-pack: start;
-        -ms-flex-pack: start;
-            justify-content: flex-start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
   }
   .navbar-expand-xl2 .navbar-nav {
     -webkit-box-orient: horizontal;
     -webkit-box-direction: normal;
-        -ms-flex-direction: row;
-            flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
   }
   .navbar-expand-xl2 .navbar-nav .dropdown-menu {
     position: absolute;
@@ -71,17 +70,16 @@ strong,
     padding-right: 0.5rem;
     padding-left: 0.5rem;
   }
-  .navbar-expand-xl2 > .container,
-  .navbar-expand-xl2 > .container-fluid, .navbar-expand-xl2 > .container-sm, .navbar-expand-xl2 > .container-md, .navbar-expand-xl2 > .container-lg, .navbar-expand-xl2 > .container-xl {
+  .navbar-expand-xl2>.container, .navbar-expand-xl2>.container-fluid, .navbar-expand-xl2>.container-sm, .navbar-expand-xl2>.container-md, .navbar-expand-xl2>.container-lg, .navbar-expand-xl2>.container-xl {
     -ms-flex-wrap: nowrap;
-        flex-wrap: nowrap;
+    flex-wrap: nowrap;
   }
   .navbar-expand-xl2 .navbar-collapse {
     display: -webkit-box !important;
     display: -ms-flexbox !important;
     display: flex !important;
     -ms-flex-preferred-size: auto;
-        flex-basis: auto;
+    flex-basis: auto;
   }
   .navbar-expand-xl2 .navbar-toggler {
     display: none;
@@ -89,12 +87,13 @@ strong,
 }
 
 /* Make tab borders thicker */
+
 .nav-tabs {
-  border-bottom: 2px solid rgba(26,26,26,0.5) !important;
+  border-bottom: 2px solid rgba(26, 26, 26, 0.5) !important;
 }
 
 .nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
-  border-color: rgba(26,26,26,0.5) rgba(26,26,26,0.5) rgba(26,26,26,0.5) !important;
+  border-color: rgba(26, 26, 26, 0.5) rgba(26, 26, 26, 0.5) rgba(26, 26, 26, 0.5) !important;
 }
 
 .nav-tabs .nav-item {
@@ -109,7 +108,7 @@ strong,
   margin-top: -4px;
 }
 
-.nav-tabs > li > a.active {
+.nav-tabs>li>a.active {
   color: #fff !important;
   background-color: #1F9BCF !important;
 }
@@ -119,6 +118,7 @@ strong,
 }
 
 /* Increase popover font size */
+
 .popover-header {
   font-size: 1.25rem;
 }
@@ -127,11 +127,13 @@ strong,
   font-size: 1rem;
 }
 
-::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+::-webkit-input-placeholder {
+  /* Chrome/Opera/Safari */
   color: black !important;
 }
 
 /* Customize Table formatting */
+
 table {
   table-layout: fixed;
 }
@@ -149,17 +151,20 @@ table.table-dark h5 {
 }
 
 /* Separate icons from text when in tables */
+
 table svg {
   margin-right: 10px;
 }
 
 /* Links in dark tables should be white and underlined */
+
 table.table-dark a {
   color: #fff;
   text-decoration: underline;
 }
 
 /* Unordered lists in tables shouldn't have bullets */
+
 table ul {
   list-style-type: none;
   padding-inline-start: 0;
@@ -167,6 +172,7 @@ table ul {
 }
 
 /* Cursor pointer for html tables that can be clicked on */
+
 td.pointer {
   cursor: pointer;
   font-size: 0.765625rem;
@@ -174,13 +180,12 @@ td.pointer {
 }
 
 /* Custom Colors */
+
 .bg-royal-blue {
   background-color: #2b60de !important;
 }
 
-a.bg-royal-blue:hover, a.bg-royal-blue:focus,
-button.bg-royal-blue:hover,
-button.bg-royal-blue:focus {
+a.bg-royal-blue:hover, a.bg-royal-blue:focus, button.bg-royal-blue:hover, button.bg-royal-blue:focus {
   background-color: #214599 !important;
 }
 
@@ -197,7 +202,7 @@ button.bg-royal-blue:focus {
 
 .btn-outline-royal-blue:focus, .btn-outline-royal-blue.focus {
   -webkit-box-shadow: 0 0 0 0.2rem rgba(43, 96, 222, 0.5);
-          box-shadow: 0 0 0 0.2rem rgba(43, 96, 222, 0.5);
+  box-shadow: 0 0 0 0.2rem rgba(43, 96, 222, 0.5);
 }
 
 .btn-outline-royal-blue.disabled, .btn-outline-royal-blue:disabled {
@@ -205,26 +210,22 @@ button.bg-royal-blue:focus {
   background-color: transparent;
 }
 
-.btn-outline-royal-blue:not(:disabled):not(.disabled):active, .btn-outline-royal-blue:not(:disabled):not(.disabled).active,
-.show > .btn-outline-royal-blue.dropdown-toggle {
+.btn-outline-royal-blue:not(:disabled):not(.disabled):active, .btn-outline-royal-blue:not(:disabled):not(.disabled).active, .show>.btn-outline-royal-blue.dropdown-toggle {
   color: #fff;
   background-color: #2b60de;
   border-color: #2b60de;
 }
 
-.btn-outline-royal-blue:not(:disabled):not(.disabled):active:focus, .btn-outline-royal-blue:not(:disabled):not(.disabled).active:focus,
-.show > .btn-outline-royal-blue.dropdown-toggle:focus {
+.btn-outline-royal-blue:not(:disabled):not(.disabled):active:focus, .btn-outline-royal-blue:not(:disabled):not(.disabled).active:focus, .show>.btn-outline-royal-blue.dropdown-toggle:focus {
   -webkit-box-shadow: 0 0 0 0.2rem rgba(43, 96, 222, 0.5);
-          box-shadow: 0 0 0 0.2rem rgba(43, 96, 222, 0.5);
+  box-shadow: 0 0 0 0.2rem rgba(43, 96, 222, 0.5);
 }
 
 .bg-teal {
   background-color: #008080 !important;
 }
 
-a.bg-teal:hover, a.bg-teal:focus,
-button.bg-teal:hover,
-button.bg-teal:focus {
+a.bg-teal:hover, a.bg-teal:focus, button.bg-teal:hover, button.bg-teal:focus {
   background-color: #076464 !important;
 }
 
@@ -233,6 +234,7 @@ button.bg-teal:focus {
 }
 
 /* For buttons with these classes, correctly place them */
+
 a.position-absolute.float-right {
   position: absolute;
   right: 2%;
@@ -251,20 +253,21 @@ a.position-absolute.float-right {
 }
 
 /* Date Picker Calendar Adjustments */
-.datepicker-inline,
-.table-condensed {
+
+.datepicker-inline, .table-condensed {
   width: 100% !important;
 }
 
 /* Rotation Animation */
-.rotate{
+
+.rotate {
   -moz-transition: all 0.2s linear;
   -webkit-transition: all 0.2s linear;
   transition: all 0.2s linear;
 }
 
-.rotate.opposite{
-  -moz-transform:rotate(180deg);
-  -webkit-transform:rotate(180deg);
-  transform:rotate(180deg);
+.rotate.opposite {
+  -moz-transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+  transform: rotate(180deg);
 }

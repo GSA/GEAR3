@@ -16,11 +16,6 @@ export class AppComponent implements OnInit {
     $(document).ready(this.setNavOffsets);
     $(window).resize(this.setNavOffsets);
 
-    // Anything with rotate class, rotate to opposite side when clicked
-    $(".rotate").click(function () {
-      $(this).toggleClass("opposite");
-    })
-
   }
 
   setNavOffsets() {
