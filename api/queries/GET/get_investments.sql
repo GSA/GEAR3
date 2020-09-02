@@ -17,6 +17,7 @@ SELECT DISTINCT invest.Id                         AS ID,
   sec_service_area3.Keyname                       AS sec_service_area3,
   sec_service_area4.Keyname                       AS sec_service_area4,
   obj_organization.Keyname                        AS SSO,
+  obj_organization.Display_Name                   AS SSOShort,
   obj_poc.Keyname                                 AS InvManager,
   obj_poc.Email                                   AS InvManagerEmail,
   concat_ws(',', obj_poc.Keyname, obj_poc.email)  AS POC

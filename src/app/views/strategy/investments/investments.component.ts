@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
+import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
@@ -18,55 +19,11 @@ export class InvestmentsComponent implements OnInit {
 
   row: Object = <any>{};
   filteredTable: boolean = false;
+  tableTitle: string = '';
 
-  single = [
-    {
-      "name": "FAS (Q)",
-      "value": 38
-    },
-    {
-      "name": "PBS (P)",
-      "value": 23
-    },
-    {
-      "name": "GSA IT (I)",
-      "value": 15
-    },
-    {
-      "name": "Gov'twide Policy (M)",
-      "value": 15
-    },
-    {
-      "name": "HRM (C)",
-      "value": 6
-    },
-    {
-      "name": "CFO (B)",
-      "value": 6
-    },
-    {
-      "name": "Admin Svcs (H)",
-      "value": 3
-    },
-    {
-      "name": "Inspct Gnrl (J)",
-      "value": 1
-    },
-    {
-      "name": "Deputy CIO (ID)",
-      "value": 1
-    }
-  ];
-  view: any[] = [];
-  label: string = 'Total Investments'
-
-  // options
-  gradient: boolean = true;
-  showLegend: boolean = true;
-  showLabels: boolean = true;
-  isDoughnut: boolean = false;
-
-  colorScheme = {
+  vizData: any[] = [];
+  vizLabel: string = 'Total Active Investments'
+  colorScheme: {} = {
     domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5']
   };
 
@@ -118,6 +75,11 @@ export class InvestmentsComponent implements OnInit {
     title: 'SSO',
     sortable: true
   }, {
+    field: 'SSOShort',
+    title: 'SSO (Short)',
+    sortable: true,
+    visible: false
+  }, {
     field: 'PSA',
     title: 'Primary Service Area',
     sortable: true
@@ -156,6 +118,29 @@ export class InvestmentsComponent implements OnInit {
       }.bind(this))
     );
 
+    // Get Investment data for visuals
+    this.apiService.getInvestments().subscribe((data: any[]) => {
+      // Get counts by SSO
+      var counts = data.reduce((p, c) => {
+        var name = c.SSOShort;
+        if (!p.hasOwnProperty(name)) {
+          p[name] = 0;
+        }
+        // Only count if Active
+        if (c.Active === 'True') p[name]++;
+        return p;
+      }, {});
+
+      // Resolve the counts into an object and sort by value
+      this.vizData = Object.keys(counts).map(k => {
+        return { name: k, value: counts[k] };
+      })
+        .sort(function(a, b) {
+          return b.value - a.value;
+      });
+    });
+
+
   }
 
 
@@ -174,6 +159,10 @@ export class InvestmentsComponent implements OnInit {
   // Update table from filter buttons
   inactiveFilter() {
     this.filteredTable = true;  // Filters are on, expose main table button
+    this.tableTitle = 'Inactive';
+
+    // Hide visualization when on inactive items
+    $('#investViz').collapse('hide');
 
     $('#investTable').bootstrapTable('filterBy', { Active: 'False' });
     $('#investTable').bootstrapTable('refreshOptions', {
@@ -185,6 +174,9 @@ export class InvestmentsComponent implements OnInit {
 
   backToMainInvest() {
     this.filteredTable = false;  // Hide main button
+    this.tableTitle = '';
+
+    $('#investViz').collapse('show');
 
     // Remove filters and back to default
     $('#investTable').bootstrapTable('filterBy', { Active: 'True' });
@@ -195,16 +187,16 @@ export class InvestmentsComponent implements OnInit {
     });
   }
 
-  onSelect(data): void {
-    console.log('Item clicked', JSON.parse(JSON.stringify(data)));
-  }
+  onSelect(chartData): void {
+    this.filteredTable = true;  // Filters are on, expose main table button
+    this.tableTitle = chartData.name;
 
-  onActivate(data): void {
-    console.log('Activate', JSON.parse(JSON.stringify(data)));
+    // Filter by SSO clicked on visualization
+    $('#investTable').bootstrapTable('filterBy', { SSOShort: chartData.name });
+    $('#investTable').bootstrapTable('refreshOptions', {
+      exportOptions: {
+        fileName: this.sharedService.fileNameFmt('GSA_IT_Investments-' + chartData.name)
+      }
+    });
   }
-
-  onDeactivate(data): void {
-    console.log('Deactivate', JSON.parse(JSON.stringify(data)));
-  }
-
 }
