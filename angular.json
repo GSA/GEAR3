@@ -23,6 +23,7 @@
               "src/assets"
             ],
             "styles": [
+              "src/custom-theme.scss",
               "src/styles.css",
               "src/assets/fontawesome-free-5.13.0-web/css/all.min.css",
               "src/assets/bootstrap-theme/bootstrap.min.css",

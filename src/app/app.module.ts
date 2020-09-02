@@ -9,6 +9,8 @@ import { AppComponent } from './app.component';
 
 import { SidebarModule } from 'ng-sidebar';  // Sidebar Module
 import { PdfViewerModule } from 'ng2-pdf-viewer';  // PDF Viewer
+import { NgxChartsModule } from '@swimlane/ngx-charts'; // Visualizations
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // Components
 import { TopNavbarComponent } from './components/top-navbar/top-navbar.component';
@@ -105,10 +107,12 @@ import { Globals } from './common/globals';
   ],
   imports: [
     AppRoutingModule,
+    BrowserAnimationsModule,
     BrowserModule,
     FormsModule,
     HttpClientModule,
     NgSelectModule,
+    NgxChartsModule,
     PdfViewerModule,
     ReactiveFormsModule,
     SidebarModule.forRoot()

@@ -29,7 +29,20 @@
     </a>
   </div>
 
-  <div class="card-body card-text justify-content-center">
+  <div class="card-body card-text">
+    <!-- Visualizations -->
+    <div class="row col-12 h-25 mt-3 mb-5 justify-content-center">
+      <ngx-charts-advanced-pie-chart
+        [scheme]="colorScheme"
+        [results]="single"
+        [gradient]="gradient"
+        [label]="label"
+        (select)="onSelect($event)"
+        (activate)="onActivate($event)"
+        (deactivate)="onDeactivate($event)">
+      </ngx-charts-advanced-pie-chart>
+    </div>
+
     <div class="row w-100">
       <!-- Add Button -->
       <button role="button" name="addInvestBttn" class="btn btn-success position-absolute ml-3" (click)="createInvestment()"

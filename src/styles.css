@@ -271,3 +271,5 @@ a.position-absolute.float-right {
   -webkit-transform: rotate(180deg);
   transform: rotate(180deg);
 }
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

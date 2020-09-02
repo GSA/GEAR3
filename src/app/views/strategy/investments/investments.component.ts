@@ -19,6 +19,57 @@ export class InvestmentsComponent implements OnInit {
   row: Object = <any>{};
   filteredTable: boolean = false;
 
+  single = [
+    {
+      "name": "FAS (Q)",
+      "value": 38
+    },
+    {
+      "name": "PBS (P)",
+      "value": 23
+    },
+    {
+      "name": "GSA IT (I)",
+      "value": 15
+    },
+    {
+      "name": "Gov'twide Policy (M)",
+      "value": 15
+    },
+    {
+      "name": "HRM (C)",
+      "value": 6
+    },
+    {
+      "name": "CFO (B)",
+      "value": 6
+    },
+    {
+      "name": "Admin Svcs (H)",
+      "value": 3
+    },
+    {
+      "name": "Inspct Gnrl (J)",
+      "value": 1
+    },
+    {
+      "name": "Deputy CIO (ID)",
+      "value": 1
+    }
+  ];
+  view: any[] = [];
+  label: string = 'Total Investments'
+
+  // options
+  gradient: boolean = true;
+  showLegend: boolean = true;
+  showLabels: boolean = true;
+  isDoughnut: boolean = false;
+
+  colorScheme = {
+    domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5']
+  };
+
   constructor(
     private modalService: ModalsService,
     public sharedService: SharedService,
@@ -141,6 +192,18 @@ export class InvestmentsComponent implements OnInit {
         fileName: this.sharedService.fileNameFmt('GSA_IT_Investments')
       }
     });
+  }
+
+  onSelect(data): void {
+    console.log('Item clicked', JSON.parse(JSON.stringify(data)));
+  }
+
+  onActivate(data): void {
+    console.log('Activate', JSON.parse(JSON.stringify(data)));
+  }
+
+  onDeactivate(data): void {
+    console.log('Deactivate', JSON.parse(JSON.stringify(data)));
   }
 
 }
