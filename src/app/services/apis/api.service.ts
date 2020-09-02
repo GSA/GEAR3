@@ -40,6 +40,9 @@ export class ApiService {
   // Applications
   appUrl: string = this.sharedService.internalURLFmt('/api/applications');
 
+  // App TIME
+  timeUrl: string = this.sharedService.internalURLFmt('/api/apptime');
+
   // Capabilities
   capUrl: string = this.sharedService.internalURLFmt('/api/capabilities');
 
@@ -48,6 +51,9 @@ export class ApiService {
   
   // FISMA
   fismaUrl: string = this.sharedService.internalURLFmt('/api/fisma');
+
+  // Global Search
+  globalSearchUrl: string = this.sharedService.internalURLFmt('/api/search/');
 
   // Investment
   investUrl: string = this.sharedService.internalURLFmt('/api/investments');

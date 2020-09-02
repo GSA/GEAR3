@@ -49,7 +49,7 @@ export class AppsComponent implements OnInit {
     sortName: 'Name',
     sortOrder: 'asc',
     showToggle: true,
-    url: this.sharedService.internalURLFmt('/api/applications')
+    url: this.apiService.appUrl
   });
 
   // Apps Table Columns

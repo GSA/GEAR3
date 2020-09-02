@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
+import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
@@ -20,6 +21,7 @@ export class SystemsComponent implements OnInit {
   retiredTable: boolean = false;
 
   constructor(
+    private apiService: ApiService,
     private modalService: ModalsService,
     public sharedService: SharedService,
     private tableService: TableService) {
@@ -40,7 +42,7 @@ export class SystemsComponent implements OnInit {
     sortName: 'Name',
     sortOrder: 'asc',
     showToggle: true,
-    url: this.sharedService.internalURLFmt('/api/parentsystems')
+    url: this.apiService.sysUrl
   });
 
   // Systems Table Columns

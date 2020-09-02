@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
+import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
@@ -17,6 +18,7 @@ export class OrganizationsComponent implements OnInit {
   row: Object = <any>{};
 
   constructor(
+    private apiService: ApiService,
     private modalService: ModalsService,
     private sharedService: SharedService,
     private tableService: TableService) {
@@ -37,7 +39,7 @@ export class OrganizationsComponent implements OnInit {
     sortName: 'Parent',
     sortOrder: 'asc',
     showToggle: true,
-    url: this.sharedService.internalURLFmt('/api/organizations')
+    url: this.apiService.orgUrl
   });
 
   // Organizations Table Columns

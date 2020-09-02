@@ -71,6 +71,7 @@ export class InvestmentsComponent implements OnInit {
   };
 
   constructor(
+    private apiService: ApiService,
     private modalService: ModalsService,
     public sharedService: SharedService,
     private tableService: TableService) {
@@ -91,7 +92,7 @@ export class InvestmentsComponent implements OnInit {
     sortName: 'Name',
     sortOrder: 'asc',
     showToggle: true,
-    url: this.sharedService.internalURLFmt('/api/investments')
+    url: this.apiService.investUrl
   });
 
   // Investments Table Columns

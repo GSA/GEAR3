@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
+import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
@@ -18,6 +19,7 @@ export class FismaPocsComponent implements OnInit {
   rissoTable: boolean = false;
 
   constructor(
+    private apiService: ApiService,
     private sharedService: SharedService,
     private modalService: ModalsService,
     private tableService: TableService) {
@@ -38,7 +40,7 @@ export class FismaPocsComponent implements OnInit {
     sortName: 'Name',
     sortOrder: 'asc',
     showToggle: true,
-    url: this.sharedService.internalURLFmt('/api/fisma')
+    url: this.apiService.fismaUrl
   });
 
   // FISMA POC Table Columns
@@ -142,8 +144,7 @@ export class FismaPocsComponent implements OnInit {
           exportOptions: {
             fileName: this.sharedService.fileNameFmt(row.Name + '-Certified_Apps')
           },
-          url: this.sharedService.internalURLFmt('/api/fisma/get/'
-            + String(row.ID) + '/applications')
+          url: this.apiService.fismaUrl + '/get/' + String(row.ID) + '/applications'
         })
 
       }.bind(this)
@@ -225,7 +226,7 @@ export class FismaPocsComponent implements OnInit {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt('GSA_RISSO_POCs')
       },
-      url: this.sharedService.internalURLFmt('/api/pocs/risso')
+      url: this.apiService.pocUrl + '/risso'
     });
   }
 

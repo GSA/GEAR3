@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 
 import { environment } from '@environments/environment';
 
+import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
 
 // Declare jQuery symbol
@@ -19,6 +20,7 @@ export class TopNavbarComponent implements OnInit {
   public searchKW: string = '';
 
   constructor(
+    private apiService: ApiService,
     private router: Router,
     public sharedService: SharedService) {
       if (environment.name !== 'Production') {
@@ -36,7 +38,7 @@ export class TopNavbarComponent implements OnInit {
         exportOptions: {
           fileName: this.sharedService.fileNameFmt('GEAR_Global_Search-' + this.searchKW)
         },
-        url: this.sharedService.internalURLFmt('/api/search/' + this.searchKW)
+        url: this.apiService.globalSearchUrl + this.searchKW
       })
 
       this.router.navigate([`/search`]);

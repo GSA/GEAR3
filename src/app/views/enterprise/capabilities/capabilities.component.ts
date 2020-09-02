@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
+import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
@@ -19,6 +20,7 @@ export class CapabilitiesComponent implements OnInit {
   filterTitle: string = '';
 
   constructor(
+    private apiService: ApiService,
     private modalService: ModalsService,
     private sharedService: SharedService,
     private tableService: TableService) {
@@ -39,7 +41,7 @@ export class CapabilitiesComponent implements OnInit {
     sortName: 'ReferenceNum',
     sortOrder: 'asc',
     showToggle: true,
-    url: this.sharedService.internalURLFmt('/api/capabilities')
+    url: this.apiService.capUrl
   });
 
   // Capabilities Table Columns
@@ -119,7 +121,7 @@ export class CapabilitiesComponent implements OnInit {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt('GSA_Business_Capabilities_by_SSO')
       },
-      url: this.sharedService.internalURLFmt('/api/capabilities/sso/' + sso)
+      url: this.apiService.capUrl + '/sso/' + sso
     });
 
     this.filterTitle = `${sso} `;
@@ -134,7 +136,7 @@ export class CapabilitiesComponent implements OnInit {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt('GSA_Business_Capabilities')
       },
-      url: this.sharedService.internalURLFmt('/api/capabilities')
+      url: this.apiService.capUrl
     });
 
     this.filterTitle = '';
