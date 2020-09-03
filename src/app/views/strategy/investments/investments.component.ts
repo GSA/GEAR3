@@ -192,7 +192,10 @@ export class InvestmentsComponent implements OnInit {
     this.tableTitle = chartData.name;
 
     // Filter by SSO clicked on visualization
-    $('#investTable').bootstrapTable('filterBy', { SSOShort: chartData.name });
+    $('#investTable').bootstrapTable('filterBy', {
+      Active: 'True',
+      SSOShort: chartData.name
+    });
     $('#investTable').bootstrapTable('refreshOptions', {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt('GSA_IT_Investments-' + chartData.name)
