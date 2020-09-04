@@ -369,7 +369,7 @@ export class AppsComponent implements OnInit {
         columns: cloudCols
       });
 
-      this.filterTitle = "Cloud Enabled ";
+      this.filterTitle = "Cloud Enabled";
     } else {
       $('#appsTable').bootstrapTable('filterBy', filter);
 
@@ -377,7 +377,7 @@ export class AppsComponent implements OnInit {
       else var columnsDef = this.columnDefs;
       $('#appsTable').bootstrapTable('refreshOptions', { columns: columnsDef });
 
-      this.filterTitle = `${term} `;
+      this.filterTitle = term;
     }
   }
 

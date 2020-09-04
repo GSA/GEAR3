@@ -3,7 +3,7 @@
     <h3 class="card-title col-12 mb-0">
       <span>
         <i class="fas fa-money-bill-wave mr-2"></i>
-        <span [hidden]="!filteredTable">{{ tableTitle }} </span>
+        <span [hidden]="!filteredTable">{{ filtertitle }} </span>
         <span [hidden]="filteredTable">Active </span>
         IT Investments
       </span>
@@ -31,7 +31,7 @@
 
   <div class="card-body card-text">
     <!-- Visualizations -->
-    <div id="investViz" class="row justify-content-center collapse show" style="height: 300px;" [hidden]="tableTitle == 'Inactive'">
+    <div id="investViz" class="row justify-content-center collapse show" style="height: 300px;" [hidden]="filtertitle == 'Inactive'">
       <ngx-charts-advanced-pie-chart
         [scheme]="colorScheme"
         [results]="vizData"
