@@ -39,7 +39,7 @@ export class InvestmentsComponent implements OnInit {
   tableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: true,
     idTable: 'InvestTable',
-    classes: "table-hover table-dark clickable-table",
+    classes: "table-hover table-dark clickable-table fixed-table",
     showColumns: true,
     showExport: true,
     exportFileName: 'GSA_IT_Investments',

@@ -31,7 +31,7 @@ export class CapabilitiesComponent implements OnInit {
   tableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: true,
     idTable: 'CapTable',
-    classes: "table-hover table-dark clickable-table",
+    classes: "table-hover table-dark clickable-table fixed-table",
     showColumns: false,
     showExport: true,
     exportFileName: 'GSA_Business_Capabilities',

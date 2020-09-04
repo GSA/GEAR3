@@ -32,7 +32,7 @@ export class SystemsComponent implements OnInit {
   tableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: true,
     idTable: 'SystemTable',
-    classes: "table-hover table-dark clickable-table",
+    classes: "table-hover table-dark clickable-table fixed-table",
     showColumns: false,
     showExport: true,
     exportFileName: 'GSA_Parent_Systems',

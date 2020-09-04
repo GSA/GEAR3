@@ -134,7 +134,7 @@ b, strong, .font-weight-bold {
 
 /* Customize Table formatting */
 
-table {
+.fixed-table {
   table-layout: fixed;
 }
 

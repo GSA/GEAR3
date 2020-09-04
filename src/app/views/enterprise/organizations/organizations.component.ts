@@ -29,7 +29,7 @@ export class OrganizationsComponent implements OnInit {
   tableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: true,
     idTable: 'OrgTable',
-    classes: "table-hover table-dark clickable-table",
+    classes: "table-hover table-dark clickable-table fixed-table",
     showColumns: false,
     showExport: true,
     exportFileName: 'GSA_Organizations',
