@@ -3,8 +3,8 @@
     <h3 class="card-title col-12 mb-0">
       <span>
         <i class="fas fa-desktop mr-2"></i>
+        <span [hidden]="!filteredTable">{{ filtertitle }} </span>
         <span [hidden]="filteredTable">Active GSA </span>
-        <span [hidden]="!filteredTable" [innerHTML]="filterTitle"></span>
         Business Applications
       </span>
     </h3>
@@ -29,7 +29,17 @@
     </a>
   </div>
 
-  <div class="card-body card-text justify-content-center">
+  <div class="card-body card-text">
+    <!-- Visualizations -->
+    <div id="appViz" class="row justify-content-center collapse show" style="height: 300px;" [hidden]="tableTitle == 'Inactive'">
+      <ngx-charts-advanced-pie-chart
+        [scheme]="colorScheme"
+        [results]="vizData"
+        [label]="vizLabel"
+        (select)="onSelect($event)">
+      </ngx-charts-advanced-pie-chart>
+    </div>
+
     <div class="row w-100">
       <!-- Parent System Definition Popover -->
       <a tabindex="0" class="btn btn-sm btn-info text-white position-absolute float-right w-11" role="button" data-toggle="popover"
