@@ -27,6 +27,12 @@ export class AppsComponent implements OnInit {
   filterTitle: string = '';
   interfaces: any[] = [];
 
+  vizData: any[] = [];
+  vizLabel: string = 'Total Active Applications'
+  colorScheme: {} = {
+    domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5']
+  };
+
   constructor(
     private apiService: ApiService,
     private modalService: ModalsService,
@@ -334,6 +340,31 @@ export class AppsComponent implements OnInit {
       }.bind(this),
       ));
 
+
+    // Get Investment data for visuals
+    this.apiService.getApplications().subscribe((data: any[]) => {
+      // Get counts by SSO
+      var counts = data.reduce((p, c) => {
+        var name = c.SSOShort;
+        if (!p.hasOwnProperty(name)) {
+          p[name] = 0;
+        }
+        // Only count if Status is not retiredx
+        if (['Candidate', 'Pre-Production', 'Production'].includes(c.Status)) p[name]++;
+        return p;
+      }, {});
+
+      // Resolve the counts into an object and sort by value
+      this.vizData = Object.keys(counts).map(k => {
+        return { name: k, value: counts[k] };
+      })
+        .sort(function (a, b) {
+          return b.value - a.value;
+        });
+
+      // console.log(this.vizData);  // Debug
+    });
+
   }
 
 
@@ -354,6 +385,9 @@ export class AppsComponent implements OnInit {
     this.filteredTable = true;  // SSO filters are on, expose main table button
     var filter = {};
     filter[field] = term;
+
+    // Hide visualization when on alternative filters
+    $('#appViz').collapse('hide');
 
     // Set cloud field to visible if filtering by cloud enabled
     if (field == 'Cloud') {
@@ -385,10 +419,28 @@ export class AppsComponent implements OnInit {
     this.filteredTable = false;  // Hide main button
     this.filterTitle = '';
 
+    $('#appViz').collapse('show');
+
     // Remove filters and back to default
     $('#appsTable').bootstrapTable('filterBy', { Status: ['Candidate', 'Pre-Production', 'Production'] });
     $('#appsTable').bootstrapTable('refreshOptions', {
       columns: this.columnDefs,
+    });
+  }
+
+  onSelect(chartData): void {
+    this.filteredTable = true;  // Filters are on, expose main table button
+    this.filterTitle = chartData.name;
+
+    // Filter by SSO clicked on visualization
+    $('#appsTable').bootstrapTable('filterBy', {
+      Status: ['Candidate', 'Pre-Production', 'Production'],
+      SSOShort: chartData.name
+    });
+    $('#appsTable').bootstrapTable('refreshOptions', {
+      exportOptions: {
+        fileName: this.sharedService.fileNameFmt('GSA_Business_Apps-' + chartData.name)
+      }
     });
   }
 

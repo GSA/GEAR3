@@ -3,7 +3,7 @@
     <h3 class="card-title col-12 mb-0">
       <span>
         <i class="fas fa-desktop mr-2"></i>
-        <span [hidden]="!filteredTable">{{ filtertitle }} </span>
+        <span [hidden]="!filteredTable">{{ filterTitle }} </span>
         <span [hidden]="filteredTable">Active GSA </span>
         Business Applications
       </span>
@@ -31,7 +31,7 @@
 
   <div class="card-body card-text">
     <!-- Visualizations -->
-    <div id="appViz" class="row justify-content-center collapse show" style="height: 300px;" [hidden]="tableTitle == 'Inactive'">
+    <div id="appViz" class="row justify-content-center collapse show" style="height: 300px;" [hidden]="filterTitle == 'Inactive'">
       <ngx-charts-advanced-pie-chart
         [scheme]="colorScheme"
         [results]="vizData"
@@ -58,19 +58,9 @@
 
       <!-- Filters -->
       <div class="mx-auto">
-        <span class="my-auto mr-3">Filter Buttons:</span>
-        <button role="button" name="appFASbttn" class="btn btn-primary" (click)="changeFilter('SSOShort', 'FAS (Q)')">
-          FAS (Q)</button>
-        <button role="button" name="appITbttn" class="btn btn-primary" (click)="changeFilter('SSOShort', 'GSA IT (I)')">
-          GSA IT (I)</button>
-        <button role="button" name="appOCFObttn" class="btn btn-primary" (click)="changeFilter('SSOShort', 'OCFO (B)')">
-          OCFO (B)</button>
-        <button role="button" name="appPBSbttn" class="btn btn-primary" (click)="changeFilter('SSOShort', 'PBS (P)')">
-          PBS (P)</button>
-
+        <span class="my-auto mr-3">Add'l Filter Buttons:</span>
         <button role="button" name="appCloudBttn" class="btn btn-primary mx-3" (click)="changeFilter('Cloud', 'Yes')">
           Cloud Enabled</button>
-
         <button role="button" name="appRetiredBttn" class="btn btn-primary" (click)="changeFilter('Status', 'Retired')">
           Retired Apps</button>
 

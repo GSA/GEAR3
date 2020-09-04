@@ -19,7 +19,7 @@ export class InvestmentsComponent implements OnInit {
 
   row: Object = <any>{};
   filteredTable: boolean = false;
-  filtertitle: string = '';
+  filterTitle: string = '';
 
   vizData: any[] = [];
   vizLabel: string = 'Total Active Investments'
@@ -138,6 +138,8 @@ export class InvestmentsComponent implements OnInit {
         .sort(function (a, b) {
           return b.value - a.value;
         });
+
+      // console.log(this.vizData);  // Debug
     });
 
 
@@ -159,7 +161,7 @@ export class InvestmentsComponent implements OnInit {
   // Update table from filter buttons
   inactiveFilter() {
     this.filteredTable = true;  // Filters are on, expose main table button
-    this.filtertitle = 'Inactive';
+    this.filterTitle = 'Inactive';
 
     // Hide visualization when on inactive items
     $('#investViz').collapse('hide');
@@ -174,7 +176,7 @@ export class InvestmentsComponent implements OnInit {
 
   backToMainInvest() {
     this.filteredTable = false;  // Hide main button
-    this.filtertitle = '';
+    this.filterTitle = '';
 
     $('#investViz').collapse('show');
 
@@ -189,7 +191,7 @@ export class InvestmentsComponent implements OnInit {
 
   onSelect(chartData): void {
     this.filteredTable = true;  // Filters are on, expose main table button
-    this.filtertitle = chartData.name;
+    this.filterTitle = chartData.name;
 
     // Filter by SSO clicked on visualization
     $('#investTable').bootstrapTable('filterBy', {
