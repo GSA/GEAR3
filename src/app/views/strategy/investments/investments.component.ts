@@ -135,9 +135,9 @@ export class InvestmentsComponent implements OnInit {
       this.vizData = Object.keys(counts).map(k => {
         return { name: k, value: counts[k] };
       })
-        .sort(function(a, b) {
+        .sort(function (a, b) {
           return b.value - a.value;
-      });
+        });
     });
 
 

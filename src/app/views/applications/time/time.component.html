@@ -27,7 +27,25 @@
     </a>
   </div>
 
-  <div class="card-body card-text justify-content-center">
+  <div class="card-body card-text">
+    <!-- Visualizations -->
+    <div id="timeViz" class="row justify-content-center" style="height: 300px;">
+      <ngx-charts-bar-vertical-stacked *ngIf="vizData"
+        [scheme]="colorScheme"
+        [results]="vizData"
+        [xAxis]="showXAxis"
+        [yAxis]="showYAxis"
+        [legend]="showLegend"
+        [legendTitle]="legendTitle"
+        [showXAxisLabel]="showXAxisLabel"
+        [showYAxisLabel]="showYAxisLabel"
+        [xAxisLabel]="xAxisLabel"
+        [yAxisLabel]="yAxisLabel"
+        [animations]="animations"
+        (select)="onSelect($event)">
+      </ngx-charts-bar-vertical-stacked>
+    </div>
+
     <div class="row w-100">
       <!-- TIME Definitions Link -->
       <a type="button" class="btn btn-sm btn-info text-white ml-3" [routerLink]="['/about', '#appRat']">
