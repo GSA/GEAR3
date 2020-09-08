@@ -187,10 +187,10 @@
 
       <div class="modal-footer">
         <div class="text-danger mr-auto">* Required</div>
-        <div [hidden]="!itStandard.ChangeDTG" class="position-absolute center">
-          Last Updated: {{ itStandard.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}
+        <div [hidden]="!itStandard.ChangeDTG" class="position-absolute center text-center">
+          Last Updated:<br>{{ itStandard.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}
         </div>
-        <div class="custom-control custom-checkbox">
+        <div class="col-md-3 pl-0 ml-0 custom-control custom-checkbox text-right">
           <input type="checkbox" class="custom-control-input" id="itStandCertifyCheck" [(ngModel)]="itStandCertify">
           <label class="custom-control-label" for="itStandCertifyCheck">
             <span class="text-danger">*</span>

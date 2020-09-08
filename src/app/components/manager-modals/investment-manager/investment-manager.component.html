@@ -183,10 +183,10 @@
 
       <div class="modal-footer">
         <div class="text-danger mr-auto">* Required</div>
-        <div [hidden]="!investment.ChangeDTG" class="position-absolute center">
-          Last Updated: {{ investment.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}
+        <div [hidden]="!investment.ChangeDTG" class="position-absolute center text-center">
+          Last Updated:<br>{{ investment.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}
         </div>
-        <div class="custom-control custom-checkbox">
+        <div class="col-md-3 pl-0 ml-0 custom-control custom-checkbox text-right">
           <input type="checkbox" class="custom-control-input" id="investCertifyCheck" [(ngModel)]="investCertify">
           <label class="custom-control-label" for="investCertifyCheck">
             <span class="text-danger">*</span>
