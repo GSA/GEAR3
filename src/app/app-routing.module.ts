@@ -31,6 +31,9 @@ import { FismaPocsComponent } from './views/security/fisma-pocs/fisma-pocs.compo
 // Technologies
 import { ItStandardsComponent } from './views/technologies/it-standards/it-standards.component';
 
+// Enterprise Architecture
+import { GInvoicingComponent } from './views/architecture/g-invoicing/g-invoicing.component';
+
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'search', component: GlobalSearchComponent },
@@ -54,6 +57,8 @@ const routes: Routes = [
   { path: 'FISMA_POC', component: FismaPocsComponent },
 
   { path: 'it_standards', component: ItStandardsComponent },
+
+  { path: 'g_invoicing', component: GInvoicingComponent },
 
   { path: 'forms_glossary', component: FormsGlossaryComponent },
 

@@ -229,6 +229,14 @@ a.bg-teal:hover, a.bg-teal:focus, button.bg-teal:hover, button.bg-teal:focus {
   background-color: #076464 !important;
 }
 
+.bg-purple {
+  background-color: #800080 !important;
+}
+
+a.bg-purple:hover, a.bg-purple:focus, button.bg-purple:hover, button.bg-purple:focus {
+  background-color: #800080 !important;
+}
+
 .bg-silver {
   background-color: #C0C0C0 !important;
 }

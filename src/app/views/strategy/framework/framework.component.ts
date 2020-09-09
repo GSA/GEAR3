@@ -7,11 +7,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FrameworkComponent implements OnInit {
 
+  frameworkSrc = "/assets/img/GSA IT Strategic Framework.pdf"
+
   constructor() { }
 
   ngOnInit(): void {
   }
-
-  frameworkSrc = "/assets/img/GSA IT Strategic Framework.pdf"
 
 }

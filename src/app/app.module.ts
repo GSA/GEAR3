@@ -28,6 +28,7 @@ import { GearManagerComponent } from './views/main/gear-manager/gear-manager.com
 import { FrameworkComponent } from './views/strategy/framework/framework.component';
 import { InvestmentsComponent } from './views/strategy/investments/investments.component';
 import { InvestmentsModalComponent } from './components/modals/investments-modal/investments-modal.component';
+import { InvestmentManagerComponent } from './components/manager-modals/investment-manager/investment-manager.component';
 
 //// Enterprise
 import { CapabilitiesModelComponent } from './views/enterprise/capabilities-model/capabilities-model.component';
@@ -55,10 +56,10 @@ import { FismaPocsComponent } from './views/security/fisma-pocs/fisma-pocs.compo
 //// Technologies
 import { ItStandardsComponent } from './views/technologies/it-standards/it-standards.component';
 import { ItStandardsModalComponent } from './components/modals/it-standards-modal/it-standards-modal.component';
-
-// GEAR Manager Modals
-import { InvestmentManagerComponent } from './components/manager-modals/investment-manager/investment-manager.component';
 import { ItStandardManagerComponent } from './components/manager-modals/it-standard-manager/it-standard-manager.component';
+
+//// Enterprise Architecture
+import { GInvoicingComponent } from './views/architecture/g-invoicing/g-invoicing.component';
 
 // Global Variables
 import { Globals } from './common/globals';
@@ -103,7 +104,9 @@ import { Globals } from './common/globals';
 
     ItStandardsComponent,
     ItStandardsModalComponent,
-    ItStandardManagerComponent
+    ItStandardManagerComponent,
+    
+    GInvoicingComponent
   ],
   imports: [
     AppRoutingModule,

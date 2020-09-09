@@ -72,6 +72,7 @@ export class SidenavComponent implements OnInit {
     $('#businessAppDropdown').collapse('hide');
     $('#securityDropdown').collapse('hide');
     $('#technologiesDropdown').collapse('hide');
+    $('#eaDropdown').collapse('hide');
 
     $(".navbar-toggler.rotate").removeClass("opposite");  // Rotate arrow outward
   }
