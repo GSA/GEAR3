@@ -4,7 +4,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from pandas.io.json import json_normalize
 import pandas as pd
-import mysql.connector
+import sqlalchemy
+from sqlalchemy import create_engine
 import requests
 import dateutil.relativedelta
 import os
@@ -44,10 +45,6 @@ else:  # Ensure that the local server is running if developing locally
 
 # Link for accessing GEAR Manager
 gear_manager = gear + "#/gear_manager"
-
-# Link for APIs
-app_api_addr = gear + 'api/applications'
-tech_api_addr = gear + 'api/it_standards'
 
 # Current link for the form to request access to GEAR Manager
 gear_form = "https://docs.google.com/forms/d/e/1FAIpQLSdmvOEESbKRJ5z4GnOw9hMqWIAI8m5H8I0-tB4zU3mc3aeYPA/viewform?usp=sf_link"
@@ -148,12 +145,11 @@ def send_email(subject: str, to_email: str, txt_msg: str, html_msg: str) -> None
     server.sendmail(from_email, reply_email, message.as_string())
 
 
-def error_email(env: str, err_msg: str) -> None:
+def error_email(err_msg: str) -> None:
     """
     Error email to dev_email notifying that something went wrong
 
     Inputs:
-      env (str): Server environment that the error occurred on
       err_msg (str): Error message to include in the body of the email
     Output:
       None
@@ -215,8 +211,8 @@ def send_email_for_poc(poc_df: pd.DataFrame, data: pd.DataFrame,
 
     text = f"""\
         Hi {poc_name},
-        You're currently listed as a point of contact for one or more {'applications' if app_tech == 'app' else 'technologies'} in GEAR. 
-        These automated emails are to ensure the data in GEAR is kept up-to-date as much as possible. It will help the enterprise plan and 
+        You're currently listed as a point of contact for one or more {'applications' if app_tech == 'app' else 'technologies'} in GEAR.
+        These automated emails are to ensure the data in GEAR is kept up-to-date as much as possible. It will help the enterprise plan and
         work as efficiently as possible based on this data. Follow these steps to edit or ceritfy that everything is correct:
 
         1) Please log in to GEAR Manager ({gear_manager}) and navigate to the {'"Business Applications"' if app_tech == 'app' else '"IT Standards"'} section.
@@ -225,11 +221,11 @@ def send_email_for_poc(poc_df: pd.DataFrame, data: pd.DataFrame,
         5) On the bottom right of the popup window, click "Edit this Item".
         6) Make any necessary edits to any of the inputs on the form or certify that all the information is correct if no changes are needed. Ensure
            that you have filled out all the required fields and check the "Certify" box before saving.
-        
-        If you don't have access to GEAR Manager, please request access using the form from this URL ({gear_form}). 
-        If you have any questions, or if you are no longer a POC, please reply to this email so that we may update our records. These automated 
-        emails are to facilitate keeping data in GEAR up-to-date as much as possible to help the enterprise plan and work as efficiently as possible. 
-        
+
+        If you don't have access to GEAR Manager, please request access using the form from this URL ({gear_form}).
+        If you have any questions, or if you are no longer a POC, please reply to this email so that we may update our records. These automated
+        emails are to facilitate keeping data in GEAR up-to-date as much as possible to help the enterprise plan and work as efficiently as possible.
+
         Regards,
         The Enterprise Architecture Team (IDRA)
         """
@@ -250,25 +246,25 @@ def send_email_for_poc(poc_df: pd.DataFrame, data: pd.DataFrame,
     html += f"""\
         </ul>
         <p>
-          At the bottom of the email, you will find a preview of data for your {'application(s)' if app_tech == 'app' else 'technology(ies)'}. 
-          These automated emails are to ensure the data in GEAR is kept up-to-date as much as possible. It will help the enterprise plan and 
+          At the bottom of the email, you will find a preview of data for your {'application(s)' if app_tech == 'app' else 'technology(ies)'}.
+          These automated emails are to ensure the data in GEAR is kept up-to-date as much as possible. It will help the enterprise plan and
           work as efficiently as possible based on this data. Follow these steps to edit or ceritfy that everything is correct:
         </p>
 
         <ol>
-          <li>Please log in to <a href={gear_manager}>GEAR Manager</a> and navigate to the 
+          <li>Please log in to <a href={gear_manager}>GEAR Manager</a> and navigate to the
               <b>{'"Business Applications"' if app_tech == 'app' else '"IT Standards"'}</b> section.
           </li>
           <li>Find your {'application(s)' if app_tech == 'app' else 'technology(ies)'} using the search box just above the table.</li>
           <li>Click on the respective row on the table.</li>
           <li>On the bottom right of the popup window, click <b>"Edit this Item"</b>.</li>
-          <li>Make any necessary edits to any of the inputs on the form or certify that all the information is correct if no changes are needed. 
+          <li>Make any necessary edits to any of the inputs on the form or certify that all the information is correct if no changes are needed.
             <b>Ensure that you have filled out all the required fields and check the "Certify" box before saving</b>.
           </li>
         </ol>
 
         <p>
-          If you don't have access to GEAR Manager, request access <a href={gear_form}>here</a>. If you are no longer a point of contact, please 
+          If you don't have access to GEAR Manager, request access <a href={gear_form}>here</a>. If you are no longer a point of contact, please
           respond to this email so that we may update our records.
           <br><br>
           Regards,
@@ -301,9 +297,9 @@ def get_pocs(app_tech: str) -> pd.DataFrame:
     if app_tech == 'app':
         # This pulls out a table where each business poc and application pair has its own line
         business = pd.read_sql("""
-            SELECT 
+            SELECT
             poc.Id       AS POC_ID,
-            poc.Keyname  AS Name, 
+            poc.Keyname  AS Name,
             poc.Email    AS Email,
             app.Keyname  AS Application,
             app.Id       AS Application_ID
@@ -312,16 +308,16 @@ def get_pocs(app_tech: str) -> pd.DataFrame:
 
             RIGHT JOIN zk_application_business_poc ON poc.Id = zk_application_business_poc.obj_bus_poc_Id
             LEFT JOIN obj_application AS app       ON zk_application_business_poc.obj_application_Id = app.Id
-            
+
             WHERE app.obj_application_status_Id <> 3
                 AND app.ChangeDTG <= (now() - interval 6 month);
-            """, con=cnx)
+            """, con=connection)
 
         # Same for technical pocs
         technical = pd.read_sql("""
-            SELECT 
+            SELECT
             poc.Id       AS POC_ID,
-            poc.Keyname  AS Name, 
+            poc.Keyname  AS Name,
             poc.Email    AS Email,
             app.Keyname  AS Application,
             app.Id       AS Application_ID
@@ -330,19 +326,26 @@ def get_pocs(app_tech: str) -> pd.DataFrame:
 
             RIGHT JOIN zk_application_technical_poc ON poc.Id = zk_application_technical_poc.obj_tech_poc_Id
             LEFT JOIN obj_application AS app        ON zk_application_technical_poc.obj_application_Id = app.Id
-            
+
             WHERE app.obj_application_status_Id <> 3
                 AND app.ChangeDTG <= (now() - interval 6 month);
-            """, con=cnx)
+            """, con=connection)
 
-        return business.append(technical, ignore_index=True)
+        pocs = business.append(technical, ignore_index=True)
+
+        # Send error message if pocs are empty
+        if pocs.empty:
+            error_msg = "Business and Technical POCs for Applications could not be retrieved. Aborting..."
+            error_routine(error_msg)
+        else:
+            write_log("Successfully Retrieved Application POC Data")
 
     # POCs for IT Standards
     else:
         pocs = pd.read_sql("""
-            SELECT 
+            SELECT
             poc.Id       AS POC_ID,
-            poc.Keyname  AS Name, 
+            poc.Keyname  AS Name,
             poc.Email    AS Email,
             tech.Keyname AS Technology,
             tech.Id      AS Technology_ID
@@ -354,12 +357,19 @@ def get_pocs(app_tech: str) -> pd.DataFrame:
 
             WHERE tech.obj_technology_status_Id not in (1, 8, 9)
                 AND tech.ChangeDTG <= (now() - interval 6 month);
-            """, con=cnx)
+            """, con=connection)
 
-        return pocs
+        # Send error message if pocs are empty
+        if pocs.empty:
+            error_msg = "Technology POCs could not be retrieved. Aborting..."
+            error_routine(error_msg)
+        else:
+            write_log("Successfully Retrieved Technology POC Data")
+
+    return pocs
 
 
-def get_old_data(api_string: str, app_tech: str) -> pd.DataFrame:
+def get_old_data(app_tech: str) -> pd.DataFrame:
     """
     Retrieve Application or IT Standards that have not been updated in the past 6 months
 
@@ -370,19 +380,26 @@ def get_old_data(api_string: str, app_tech: str) -> pd.DataFrame:
     Output:
         pd.DataFrame: App or technology dataframe
     """
-    response = requests.get(api_string)
-
-    if response.status_code == 200:
-        data = json_normalize(response.json())
-        data['ChangeDTG'] = pd.to_datetime(data['ChangeDTG'])
+    # Get Query from APIs folder
+    if app_tech == 'app':
+        with open('./api/queries/GET/get_application_full_suite.sql') as reader:
+            query = reader.read() + " WHERE org.Keyname <> 'External' GROUP BY app.Id ORDER BY app.Keyname;"
     else:
+        with open('./api/queries/GET/get_it-standards.sql') as reader:
+            query = reader.read() + """
+            WHERE obj_standard_type.Keyname LIKE 'Software'
+                AND obj_technology_status.Keyname NOT LIKE 'Not yet submitted'
+            GROUP BY tech.Id;"""
+
+    data = pd.read_sql(query, con=connection)
+
+    if data.empty:
         error_msg = f"""Something went wrong with grabbing {app_tech} data.
-                        Please check the connection with the database or credentials.
-                        Aborting Emailing Automation.
-                        API Request {response.status_code} Error"""
-        error_email(env, error_msg)
-        write_log(error_msg)
-        sys.exit(error_msg)
+                        Please check the query strings or location of query files in API folder.
+                        Aborting Emailing Automation."""
+        error_routine(error_msg)
+    else:
+        data['ChangeDTG'] = pd.to_datetime(data['ChangeDTG'])
 
     if app_tech == 'app':
         # Filter out Retired and Nulls
@@ -411,24 +428,24 @@ def get_old_data(api_string: str, app_tech: str) -> pd.DataFrame:
     return data.reset_index(drop=True)
 
 
-def db_connect() -> mysql.connector.connection.MySQLConnection:
+def db_setup() -> sqlalchemy.engine:
     """
-    Connect to GEAR MySQL Database
+    Setup connection to GEAR MySQL Database
 
     Inputs:
         None
 
     Output:
-        mysql.connector.connection.MySQLConnection: MySQLConnection Object
+        sqlalchemy.engine: SQLAlchemy Engine Connection Object
     """
-    # Change to secure DB when deployed
-    return mysql.connector.connect(host=db_host,
-                                   database=default_schema,
-                                   # ssl_ca = './certs/ca.pem',
-                                   # ssl_cert = './certs/client-cert.pem',
-                                   # ssl_key = './certs/client-key.pem',
-                                   user=db_user,
-                                   password=db_pass)
+    ssl_args = {
+        'ssl_ca': './certs/ca.pem',
+        'ssl_cert': './certs/client-cert.pem',
+        'ssl_key': './certs/client-key.pem'
+    }
+    db_uri = f"mysql+mysqlconnector://{db_user}:{db_pass}@{db_host}/{default_schema}"
+
+    return create_engine(db_uri, connect_args=ssl_args, echo=True)
 
 
 def write_log(log_msg: str) -> None:
@@ -441,12 +458,13 @@ def write_log(log_msg: str) -> None:
     Output:
         None
     """
+    # Include Current Datetime of write
     current_date = datetime.datetime.now().strftime("%Y-%b-%d")
     now = datetime.datetime.now().strftime("%Y-%b-%d %H:%M:%S")
     file_name = f"{log_loc}email_automation-{current_date}.txt"
 
     if os.path.exists(file_name):
-        append_write = 'a'  # append if already exists
+        append_write = 'a'  # append if file already exists
     else:
         os.makedirs(log_loc, exist_ok=True)
         append_write = 'w'  # make a new file if not
@@ -455,13 +473,23 @@ def write_log(log_msg: str) -> None:
         log_file.write(f"{now}: {log_msg}\n")
 
 
+def error_routine(msg: str) -> None:
+    """
+    When an error occurs, send the error email, write the error message to log, and exit program
+
+    Inputs:
+        msg (str): Error message to write and show
+    """
+    error_email(msg)
+    write_log(msg + "\n\n")
+    sys.exit(msg)
+
+
 # Main Function
 def main() -> None:
     # Get POCs
     app_pocs = get_pocs('app')
     tech_pocs = get_pocs('tech')
-    if app_pocs is not None or tech_pocs is not None:
-        write_log("Successfully Grabbed POC Data")
 
     # For non-production, pick email to replace with dev_email in order to test
     if env != 'production':
@@ -485,8 +513,8 @@ def main() -> None:
             tech_replace_id = tech_pocs.loc[0, 'POC_ID']
 
     # Get data older than 6 months
-    app_data = get_old_data(app_api_addr, 'app')
-    tech_data = get_old_data(tech_api_addr, 'tech')
+    app_data = get_old_data('app')
+    tech_data = get_old_data('tech')
     if app_data is not None or tech_data is not None:
         write_log("Successfully Grabbed App & Tech Data")
 
@@ -525,19 +553,18 @@ if __name__ == "__main__":
     write_log(f"Environment: {env}")
 
     # Connect to Database
-    cnx = db_connect()
+    engine = db_setup()
 
-    # Error when connection to database fails
-    if not cnx.is_connected():
-        error_msg = "Connection to database failed. Please check connection credentials or network connection. Aborting automated emailing"
+    with engine.connect() as connection:
+        # write_log(f"Connection to Database Successful from {env} to {db_host}")
+        rs = connection.execute("SELECT 1 as is_alive")
 
-        write_log(error_msg)
-        error_email(env, error_msg)
-        sys.exit(error_msg)
-    else:
-        write_log(f"Connection to Database Successful from {env} to {db_host}")
+        # Error when connection to database fails
+        if rs is None:
+            error_msg = "Connection to database failed. Please check connection credentials or network connection. Aborting automated emailing"
+            error_routine(error_msg)
 
-    # Now ready for main function
-    main()
+        # Now ready for main function
+        main()
 
-    write_log("----- Finished Emailing POCs -----")
+    write_log("----- Finished Emailing POCs -----\n\n")
