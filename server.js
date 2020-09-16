@@ -294,3 +294,41 @@ const putData = async data => {
     console.log(error);
   };
 };
+
+/*
+ * Function to load POC data
+ * every Monday at 07:00 Eastern Time
+*/
+const fastcsv = require("fast-csv");
+
+cron.schedule('0 7 * * WED', () => {
+  let stream = fs.createReadStream("./pocs/GSA_Pocs.csv");
+  let pocCsv = [];
+  let csvStream = fastcsv
+    .parse()
+    .on("data", function(data) {
+      pocCsv.push(data);
+    })
+    .on("end", function() {
+      // remove the first line: header
+      pocCsv.shift();
+
+      // create a new connection to the database
+      const db = mysql.createConnection(dbCredentials);
+
+      // open the connection
+      db.connect(error => {
+        if (error) {
+          console.error(error);
+        } else {
+          let query =
+            "REPLACE INTO obj_ldap_poc (SamAccountName, FirstName, LastName, Email, Phone, OrgCode, Position, EmployeeType) VALUES ?";
+          db.query(query, [pocCsv], (error, response) => {
+            console.log(error || response);
+          });
+        }
+      });
+    });
+
+  stream.pipe(csvStream);
+});
