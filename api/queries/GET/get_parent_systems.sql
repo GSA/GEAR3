@@ -11,4 +11,4 @@ SELECT
 
 FROM obj_parent_system        AS parentSys
 
-  LEFT JOIN obj_organization  AS org ON parentSys.obj_organization_Id = org.Id
+LEFT JOIN obj_organization  AS org ON parentSys.obj_organization_Id = org.Id
