@@ -5,11 +5,11 @@ const bodyParser = require('body-parser'),
   express = require('express'),
   fs = require('fs');
 
-http = require('http'),
+  http = require('http'),
   path = require('path'),
 
   dbCredentials = require("./api/db.js").dbCredentials;
-jsonwebtoken = require('jsonwebtoken'),
+  jsonwebtoken = require('jsonwebtoken'),
   jwt = require('express-jwt'),
   mysql = require('mysql2'),
   passport = require('passport'),
@@ -306,10 +306,10 @@ cron.schedule('0 7 * * WED', () => {
   let pocCsv = [];
   let csvStream = fastcsv
     .parse()
-    .on("data", function (data) {
+    .on("data", function(data) {
       pocCsv.push(data);
     })
-    .on("end", function () {
+    .on("end", function() {
       // remove the first line: header
       pocCsv.shift();
 
@@ -322,7 +322,7 @@ cron.schedule('0 7 * * WED', () => {
           console.error(error);
         } else {
           let query =
-            "REPLACE INTO obj_ldap_poc (SamAccountName, FirstName, LastName, Email, Phone, OrgCode, Position, EmployeeType, Enabled) VALUES ?";
+            "REPLACE INTO obj_ldap_poc (SamAccountName, FirstName, LastName, Email, Phone, OrgCode, Position, EmployeeType) VALUES ?";
           db.query(query, [pocCsv], (error, response) => {
             console.log(error || response);
           });

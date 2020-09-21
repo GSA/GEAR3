@@ -29,13 +29,13 @@ SELECT
   GROUP_CONCAT(DISTINCT owner.Keyname SEPARATOR ',')                                      AS Owner,
   GROUP_CONCAT(DISTINCT owner.Display_name SEPARATOR ',')                                 AS OwnerShort,
   GROUP_CONCAT(DISTINCT owner.Id SEPARATOR ',')                                           AS OwnerID,
-  GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', CONCAT_WS(' ', buspoc.FirstName, buspoc.LastName), buspoc.Email, buspoc.OrgCode) SEPARATOR '; ')     AS BusinessPOC,
-  GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', CONCAT_WS(' ', techpoc.FirstName, techpoc.LastName), techpoc.Email, techpoc.OrgCode) SEPARATOR '; ')  AS TechnicalPOC,
-  GROUP_CONCAT(DISTINCT  CONCAT_WS(' ', buspoc.FirstName, buspoc.LastName) SEPARATOR ', ')                                    AS BusPOC,
-  GROUP_CONCAT(DISTINCT  CONCAT_WS(' ', techpoc.FirstName, techpoc.LastName) SEPARATOR ', ')                                  AS TechPOC,
+  GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', buspoc.Keyname, buspoc.Email) SEPARATOR '; ')    AS BusinessPOC,
+  GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', techpoc.Keyname, techpoc.Email) SEPARATOR '; ')  AS TechnicalPOC,
+  GROUP_CONCAT(DISTINCT  buspoc.Keyname SEPARATOR ', ')                                   AS BusPOC,
+  GROUP_CONCAT(DISTINCT  techpoc.Keyname SEPARATOR ', ')                                  AS TechPOC,
   
-  CONCAT_WS('*', CONCAT_WS(':', 'BusinessPOC', GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', CONCAT_WS(' ', buspoc.FirstName, buspoc.LastName), buspoc.Email) SEPARATOR '; ')) ,
-  CONCAT_WS(':', 'TechnicalPOC', GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', CONCAT_WS(' ', techpoc.FirstName, techpoc.LastName), techpoc.Email) SEPARATOR '; '))  ) AS POC,
+  CONCAT_WS('*', CONCAT_WS(':', 'BusinessPOC', GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', buspoc.Keyname, buspoc.Email) SEPARATOR '; ')) ,
+  CONCAT_WS(':', 'TechnicalPOC', GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', techpoc.Keyname, techpoc.Email) SEPARATOR '; '))  ) AS POC,
  
   GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', fy.Keyname, timeq.Keyname) SEPARATOR '; ')       AS AppTime,
 
@@ -75,10 +75,10 @@ FROM obj_application AS app
   LEFT JOIN obj_technology              AS tech     ON zk_application_technology.obj_technology_Id = tech.Id
 
   LEFT JOIN zk_application_business_poc             ON app.Id = zk_application_business_poc.obj_application_Id
-  LEFT JOIN obj_ldap_poc                AS buspoc   ON zk_application_business_poc.obj_ldap_SamAccountName = buspoc.SamAccountName
+  LEFT JOIN obj_poc                     AS buspoc   ON zk_application_business_poc.obj_bus_poc_Id = buspoc.Id
 
   LEFT JOIN zk_application_technical_poc            ON app.Id = zk_application_technical_poc.obj_application_Id
-  LEFT JOIN obj_ldap_poc                AS techpoc  ON zk_application_technical_poc.obj_ldap_SamAccountName = techpoc.SamAccountName
+  LEFT JOIN obj_poc                     AS techpoc  ON zk_application_technical_poc.obj_tech_poc_Id = techpoc.Id
 
   LEFT JOIN zk_application_time                     ON app.Id = zk_application_time.obj_application_Id
   LEFT JOIN obj_fy                      AS fy       ON zk_application_time.obj_fy_Id = fy.Id

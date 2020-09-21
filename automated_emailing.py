@@ -297,38 +297,38 @@ def get_pocs(app_tech: str) -> pd.DataFrame:
     if app_tech == 'app':
         # This pulls out a table where each business poc and application pair has its own line
         business = pd.read_sql("""
-          SELECT
-            poc.SamAccountName                            AS SamAccountName,
-            CONCAT_WS(' ', poc.FirstName, poc.LastName)   AS Name,
-            poc.Email                                     AS Email,
-            app.Keyname                                   AS Application,
-            app.Id                                        AS Application_ID
+            SELECT
+            poc.Id       AS POC_ID,
+            poc.Keyname  AS Name,
+            poc.Email    AS Email,
+            app.Keyname  AS Application,
+            app.Id       AS Application_ID
 
-          FROM obj_ldap_poc AS poc
+            FROM obj_poc AS poc
 
-          RIGHT JOIN zk_application_business_poc ON poc.SamAccountName = zk_application_business_poc.obj_ldap_SamAccountName
-          LEFT JOIN obj_application AS app       ON zk_application_business_poc.obj_application_Id = app.Id
+            RIGHT JOIN zk_application_business_poc ON poc.Id = zk_application_business_poc.obj_bus_poc_Id
+            LEFT JOIN obj_application AS app       ON zk_application_business_poc.obj_application_Id = app.Id
 
-          WHERE app.obj_application_status_Id <> 3
-            AND app.ChangeDTG <= (now() - interval 6 month);
+            WHERE app.obj_application_status_Id <> 3
+                AND app.ChangeDTG <= (now() - interval 6 month);
             """, con=connection)
 
         # Same for technical pocs
         technical = pd.read_sql("""
-          SELECT
-            poc.SamAccountName                            AS SamAccountName,
-            CONCAT_WS(' ', poc.FirstName, poc.LastName)   AS Name,
-            poc.Email                                     AS Email,
-            app.Keyname                                   AS Application,
-            app.Id                                        AS Application_ID
+            SELECT
+            poc.Id       AS POC_ID,
+            poc.Keyname  AS Name,
+            poc.Email    AS Email,
+            app.Keyname  AS Application,
+            app.Id       AS Application_ID
 
-          FROM obj_ldap_poc AS poc
+            from obj_poc AS poc
 
-          RIGHT JOIN zk_application_technical_poc ON poc.SamAccountName = zk_application_technical_poc.obj_ldap_SamAccountName
-          LEFT JOIN obj_application AS app        ON zk_application_technical_poc.obj_application_Id = app.Id
+            RIGHT JOIN zk_application_technical_poc ON poc.Id = zk_application_technical_poc.obj_tech_poc_Id
+            LEFT JOIN obj_application AS app        ON zk_application_technical_poc.obj_application_Id = app.Id
 
-          WHERE app.obj_application_status_Id <> 3
-            AND app.ChangeDTG <= (now() - interval 6 month);
+            WHERE app.obj_application_status_Id <> 3
+                AND app.ChangeDTG <= (now() - interval 6 month);
             """, con=connection)
 
         pocs = business.append(technical, ignore_index=True)
@@ -343,20 +343,20 @@ def get_pocs(app_tech: str) -> pd.DataFrame:
     # POCs for IT Standards
     else:
         pocs = pd.read_sql("""
-          SELECT
-            poc.SamAccountName                            AS SamAccountName,
-            CONCAT_WS(' ', poc.FirstName, poc.LastName)   AS Name,
-            poc.Email                                     AS Email,
-            tech.Keyname                                  AS Technology,
-            tech.Id                                       AS Technology_ID
+            SELECT
+            poc.Id       AS POC_ID,
+            poc.Keyname  AS Name,
+            poc.Email    AS Email,
+            tech.Keyname AS Technology,
+            tech.Id      AS Technology_ID
 
-          FROM obj_ldap_poc   AS poc
+            FROM obj_poc AS poc
 
-          RIGHT JOIN zk_technology_poc     ON poc.SamAccountName = zk_technology_poc.obj_ldap_SamAccountName
-          LEFT JOIN obj_technology AS tech ON zk_technology_poc.obj_technology_Id = tech.Id
+            RIGHT JOIN zk_technology_poc     ON poc.Id = zk_technology_poc.obj_poc_Id
+            LEFT JOIN obj_technology AS tech ON zk_technology_poc.obj_technology_Id = tech.Id
 
-          WHERE tech.obj_technology_status_Id not in (1, 8, 9)
-            AND tech.ChangeDTG <= (now() - interval 6 month);
+            WHERE tech.obj_technology_status_Id not in (1, 8, 9)
+                AND tech.ChangeDTG <= (now() - interval 6 month);
             """, con=connection)
 
         # Send error message if pocs are empty
