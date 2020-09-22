@@ -47,6 +47,8 @@ import { AppsComponent } from './views/applications/apps/apps.component';
 import { ApplicationsModalComponent } from './components/modals/applications-modal/applications-modal.component';
 import { TimeComponent } from './views/applications/time/time.component';
 import { AppManagerComponent } from './components/manager-modals/app-manager/app-manager.component';
+import { RecordsManagementComponent } from './views/applications/records-management/records-management.component';
+import { RecordsModalComponent } from './components/modals/records-modal/records-modal.component';
 
 //// Security
 import { FismaComponent } from './views/security/fisma/fisma.component';
@@ -97,6 +99,8 @@ import { Globals } from './common/globals';
     ApplicationsModalComponent,
     TimeComponent,
     AppManagerComponent,
+    RecordsManagementComponent,
+    RecordsModalComponent,
 
     FismaComponent,
     FismaModalComponent,

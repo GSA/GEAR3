@@ -1,0 +1,112 @@
+<!-- Record Detail Modal -->
+<div class="modal fade" id="recordDetail" tabindex="-1" role="dialog" aria-labelledby="recordTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-xl">
+    <div class="modal-content">
+      <div class="modal-header bg-danger">
+        <h5 class="modal-title text-white" id="recordTitle">
+          <i class="far fa-folder-open"></i>
+          {{ record.RecordTitle }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Tabs -->
+        <ul id="recordTabs" class="nav nav-tabs">
+          <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#recordsOverview">
+              Overview</a></li>
+        </ul>
+
+        <!-- Tab Panes -->
+        <div class="tab-content mt-3">
+          <div class="tab-pane fade show active" id="recordsOverview">
+            <h4>Description</h4>
+            <p>{{ record.Description }}</p>
+            <br>
+
+            <h4>Notes</h4>
+            <div>
+              <p>{{ record.Notes }}</p>
+            </div>
+            <div [hidden]="record.Notes">
+              None
+            </div>
+            <br>
+
+            <table id="recordDetailTable"
+              class="table table-borderless table-striped table-dark rounded-lg w-75 mx-auto">
+              <thead class="bg-danger">
+                <tr>
+                  <th>
+                    <h5>Attribute</h5>
+                  </th>
+                  <th>
+                    <h5>Value</h5>
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td><i class="fas fa-user-lock"></i>Disposition Authority</td>
+                  <td>{{ record.DispositionAuthority }}</td>
+                </tr>
+                <tr>
+                  <td><i class="fas fa-file-contract"></i>Disposition Instructions</td>
+                  <td>{{ record.DispositionInstructions }}</td>
+                </tr>
+                <tr>
+                  <td><i class="far fa-folder-open"></i>GRS Record</td>
+                  <td>{{ record.GRSRecord }}</td>
+                </tr>
+                <tr>
+                  <td><i class="fa fa-door-open"></i>Owning Org</td>
+                  <td>{{ record.Org }}</td>
+                </tr>
+                <tr>
+                  <td><i class="fa fa-info-circle"></i>PII</td>
+                  <td>{{ record.PII }}</td>
+                </tr>
+                <tr>
+                  <td><i class="fa fa-user-friends"></i>POC</td>
+                  <td>
+                    <a class="email text-white"
+                      href="https://mail.google.com/mail/?view=cm&fs=1&to={{ record.POCEmail }}"
+                      target="_blank" rel="noopener">{{ record.POC }}</a>
+                    <div [hidden]="record.POC">
+                      None Provided
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><i class="fas fa-align-justify"></i>Record Format</td>
+                  <td>{{ record.RecordFormat }}</td>
+                </tr>
+                <tr>
+                  <td><i class="fas fa-map-marker-alt"></i>Record Location</td>
+                  <td>{{ record.RecordLocation }}</td>
+                </tr>
+                <tr>
+                  <td><i class="fas fa-filter"></i>Subject</td>
+                  <td>{{ record.Subject }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- End of Overview Tab Pane -->
+
+        </div>
+        <!-- End of Tab Panes -->
+      </div>
+      <!-- End of Modal Body -->
+
+      <div class="modal-footer">
+        <div class="float-right">Last Updated: {{ record.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}</div>
+        <!-- <button type="button" [hidden]="!sharedService.loggedIn" class="btn btn-info text-white"
+          (click)="appEdit()">Edit This Item</button> -->
+      </div>
+    </div>
+  </div>
+</div>

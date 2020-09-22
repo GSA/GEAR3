@@ -10,7 +10,7 @@ import { Globals } from '@common/globals';
 import { Application } from '@api/models/applications.model';
 import { ApplicationStatus } from '@api/models/application-statuses.model';
 import { DataFlow } from '@api/models/dataflow.model';
-import { HostProvider } from '@api/models/application_host_providers';
+import { HostProvider } from '@api/models/application_host_providers.model';
 
 import { Capability } from '@api/models/capabilities.model';
 
@@ -31,6 +31,8 @@ import { Organization } from '@api/models/organizations.model';
 import { ParentSystem } from '@api/models/parentsystems.model';
 
 import { POC } from '@api/models/pocs.model';
+
+import { Record } from '@api/models/records.model'
 
 @Injectable({
   providedIn: 'root'
@@ -66,6 +68,9 @@ export class ApiService {
 
   // POCs
   pocUrl: string = this.sharedService.internalURLFmt('/api/pocs');
+
+  // Records Management
+  recordsUrl: string = this.sharedService.internalURLFmt('/api/records');
 
   // Parent System
   sysUrl: string = this.sharedService.internalURLFmt('/api/parentsystems');
@@ -292,6 +297,19 @@ export class ApiService {
   public getPOC(id: number): Observable<POC[]> {
     return this.http.get<POC[]>(this.pocUrl + '/get/' + String(id)).pipe(
       catchError(this.handleError<POC[]>('GET POC', []))
+    );
+  };
+
+
+  //// Records Management
+  public getRecords(): Observable<Record[]> {
+    return this.http.get<Record[]>(this.recordsUrl).pipe(
+      catchError(this.handleError<Record[]>('GET Records', []))
+    );
+  };
+  public getOneRecord(id: number): Observable<Record[]> {
+    return this.http.get<Record[]>(this.recordsUrl + 'get' + String(id)).pipe(
+      catchError(this.handleError<Record[]>('GET Record', []))
     );
   };
 

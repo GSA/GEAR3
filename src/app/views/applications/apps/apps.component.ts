@@ -341,7 +341,7 @@ export class AppsComponent implements OnInit {
       ));
 
 
-    // Get Investment data for visuals
+    // Get Application data for visuals
     this.apiService.getApplications().subscribe((data: any[]) => {
       // Get counts by SSO
       var counts = data.reduce((p, c) => {

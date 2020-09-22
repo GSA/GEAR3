@@ -11,6 +11,7 @@ const investment = require(routesPath + 'investments.routes');
 const org = require(routesPath + 'organizations.routes');
 const parentSys = require(routesPath + 'parentsystems.routes');
 const poc = require(routesPath + 'pocs.routes');
+const records = require(routesPath + 'records.routes');
 const search = require(routesPath + 'search.routes');
 
 const router = express.Router();
@@ -25,6 +26,7 @@ router.use('/investments', investment);
 router.use('/organizations', org);
 router.use('/parentsystems', parentSys);
 router.use('/pocs', poc);
+router.use('/records', records);
 router.use('/search', search);
 
 module.exports = router;
