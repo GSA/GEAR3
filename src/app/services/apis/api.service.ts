@@ -289,8 +289,8 @@ export class ApiService {
       catchError(this.handleError<POC[]>('GET POCs', []))
     );
   };
-  public getPOC(id: number): Observable<POC[]> {
-    return this.http.get<POC[]>(this.pocUrl + '/get/' + String(id)).pipe(
+  public getPOC(samName: string): Observable<POC[]> {
+    return this.http.get<POC[]>(this.pocUrl + '/get/' + String(samName)).pipe(
       catchError(this.handleError<POC[]>('GET POC', []))
     );
   };

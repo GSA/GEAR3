@@ -69,7 +69,6 @@ log_loc = "./log/"
 def send_email(subject: str, to_email: str, txt_msg: str, html_msg: str) -> None:
     """
     Send email through GSA's Gmail SMTP server
-
     Inputs:
       subject (str): Subject line
       to_email (str): Email address receiving the email
@@ -148,7 +147,6 @@ def send_email(subject: str, to_email: str, txt_msg: str, html_msg: str) -> None
 def error_email(err_msg: str) -> None:
     """
     Error email to dev_email notifying that something went wrong
-
     Inputs:
       err_msg (str): Error message to include in the body of the email
     Output:
@@ -168,7 +166,6 @@ def send_email_for_poc(poc_df: pd.DataFrame, data: pd.DataFrame,
                        app_tech: str, poc_id: int) -> None:
     """
     Compose email for POC respective to app or technology
-
     Inputs:
       poc_df (pd.DataFrame): Dataframe of POC info
       data (pd.DataFrame): Dataframe consisting of app or technology data
@@ -214,18 +211,15 @@ def send_email_for_poc(poc_df: pd.DataFrame, data: pd.DataFrame,
         You're currently listed as a point of contact for one or more {'applications' if app_tech == 'app' else 'technologies'} in GEAR.
         These automated emails are to ensure the data in GEAR is kept up-to-date as much as possible. It will help the enterprise plan and
         work as efficiently as possible based on this data. Follow these steps to edit or ceritfy that everything is correct:
-
         1) Please log in to GEAR Manager ({gear_manager}) and navigate to the {'"Business Applications"' if app_tech == 'app' else '"IT Standards"'} section.
         3) Find your {'application(s)' if app_tech == 'app' else 'technology(ies)'} using the search box just above the table.
         4) Click on the respective row on the table.
         5) On the bottom right of the popup window, click "Edit this Item".
         6) Make any necessary edits to any of the inputs on the form or certify that all the information is correct if no changes are needed. Ensure
            that you have filled out all the required fields and check the "Certify" box before saving.
-
         If you don't have access to GEAR Manager, please request access using the form from this URL ({gear_form}).
         If you have any questions, or if you are no longer a POC, please reply to this email so that we may update our records. These automated
         emails are to facilitate keeping data in GEAR up-to-date as much as possible to help the enterprise plan and work as efficiently as possible.
-
         Regards,
         The Enterprise Architecture Team (IDRA)
         """
@@ -250,7 +244,6 @@ def send_email_for_poc(poc_df: pd.DataFrame, data: pd.DataFrame,
           These automated emails are to ensure the data in GEAR is kept up-to-date as much as possible. It will help the enterprise plan and
           work as efficiently as possible based on this data. Follow these steps to edit or ceritfy that everything is correct:
         </p>
-
         <ol>
           <li>Please log in to <a href={gear_manager}>GEAR Manager</a> and navigate to the
               <b>{'"Business Applications"' if app_tech == 'app' else '"IT Standards"'}</b> section.
@@ -262,7 +255,6 @@ def send_email_for_poc(poc_df: pd.DataFrame, data: pd.DataFrame,
             <b>Ensure that you have filled out all the required fields and check the "Certify" box before saving</b>.
           </li>
         </ol>
-
         <p>
           If you don't have access to GEAR Manager, request access <a href={gear_form}>here</a>. If you are no longer a point of contact, please
           respond to this email so that we may update our records.
@@ -287,7 +279,6 @@ def send_email_for_poc(poc_df: pd.DataFrame, data: pd.DataFrame,
 def get_pocs(app_tech: str) -> pd.DataFrame:
     """
     Get POC info from database
-
     Inputs:
       app_tech (str): Flag denoting 'app' or 'tech'
     Output:
@@ -297,38 +288,32 @@ def get_pocs(app_tech: str) -> pd.DataFrame:
     if app_tech == 'app':
         # This pulls out a table where each business poc and application pair has its own line
         business = pd.read_sql("""
-            SELECT
-            poc.Id       AS POC_ID,
-            poc.Keyname  AS Name,
-            poc.Email    AS Email,
-            app.Keyname  AS Application,
-            app.Id       AS Application_ID
-
-            FROM obj_poc AS poc
-
-            RIGHT JOIN zk_application_business_poc ON poc.Id = zk_application_business_poc.obj_bus_poc_Id
-            LEFT JOIN obj_application AS app       ON zk_application_business_poc.obj_application_Id = app.Id
-
-            WHERE app.obj_application_status_Id <> 3
-                AND app.ChangeDTG <= (now() - interval 6 month);
+          SELECT
+            poc.SamAccountName                            AS SamAccountName,
+            CONCAT_WS(' ', poc.FirstName, poc.LastName)   AS Name,
+            poc.Email                                     AS Email,
+            app.Keyname                                   AS Application,
+            app.Id                                        AS Application_ID
+          FROM obj_ldap_poc AS poc
+          RIGHT JOIN zk_application_business_poc ON poc.SamAccountName = zk_application_business_poc.obj_ldap_SamAccountName
+          LEFT JOIN obj_application AS app       ON zk_application_business_poc.obj_application_Id = app.Id
+          WHERE app.obj_application_status_Id <> 3
+            AND app.ChangeDTG <= (now() - interval 6 month);
             """, con=connection)
 
         # Same for technical pocs
         technical = pd.read_sql("""
-            SELECT
-            poc.Id       AS POC_ID,
-            poc.Keyname  AS Name,
-            poc.Email    AS Email,
-            app.Keyname  AS Application,
-            app.Id       AS Application_ID
-
-            from obj_poc AS poc
-
-            RIGHT JOIN zk_application_technical_poc ON poc.Id = zk_application_technical_poc.obj_tech_poc_Id
-            LEFT JOIN obj_application AS app        ON zk_application_technical_poc.obj_application_Id = app.Id
-
-            WHERE app.obj_application_status_Id <> 3
-                AND app.ChangeDTG <= (now() - interval 6 month);
+          SELECT
+            poc.SamAccountName                            AS SamAccountName,
+            CONCAT_WS(' ', poc.FirstName, poc.LastName)   AS Name,
+            poc.Email                                     AS Email,
+            app.Keyname                                   AS Application,
+            app.Id                                        AS Application_ID
+          FROM obj_ldap_poc AS poc
+          RIGHT JOIN zk_application_technical_poc ON poc.SamAccountName = zk_application_technical_poc.obj_ldap_SamAccountName
+          LEFT JOIN obj_application AS app        ON zk_application_technical_poc.obj_application_Id = app.Id
+          WHERE app.obj_application_status_Id <> 3
+            AND app.ChangeDTG <= (now() - interval 6 month);
             """, con=connection)
 
         pocs = business.append(technical, ignore_index=True)
@@ -343,20 +328,17 @@ def get_pocs(app_tech: str) -> pd.DataFrame:
     # POCs for IT Standards
     else:
         pocs = pd.read_sql("""
-            SELECT
-            poc.Id       AS POC_ID,
-            poc.Keyname  AS Name,
-            poc.Email    AS Email,
-            tech.Keyname AS Technology,
-            tech.Id      AS Technology_ID
-
-            FROM obj_poc AS poc
-
-            RIGHT JOIN zk_technology_poc     ON poc.Id = zk_technology_poc.obj_poc_Id
-            LEFT JOIN obj_technology AS tech ON zk_technology_poc.obj_technology_Id = tech.Id
-
-            WHERE tech.obj_technology_status_Id not in (1, 8, 9)
-                AND tech.ChangeDTG <= (now() - interval 6 month);
+          SELECT
+            poc.SamAccountName                            AS SamAccountName,
+            CONCAT_WS(' ', poc.FirstName, poc.LastName)   AS Name,
+            poc.Email                                     AS Email,
+            tech.Keyname                                  AS Technology,
+            tech.Id                                       AS Technology_ID
+          FROM obj_ldap_poc   AS poc
+          RIGHT JOIN zk_technology_poc     ON poc.SamAccountName = zk_technology_poc.obj_ldap_SamAccountName
+          LEFT JOIN obj_technology AS tech ON zk_technology_poc.obj_technology_Id = tech.Id
+          WHERE tech.obj_technology_status_Id not in (1, 8, 9)
+            AND tech.ChangeDTG <= (now() - interval 6 month);
             """, con=connection)
 
         # Send error message if pocs are empty
@@ -372,11 +354,9 @@ def get_pocs(app_tech: str) -> pd.DataFrame:
 def get_old_data(app_tech: str) -> pd.DataFrame:
     """
     Retrieve Application or IT Standards that have not been updated in the past 6 months
-
     Inputs:
         api_string (str): Path to respective GEAR API
         app_tech (str): Flag denoting 'app' or 'tech'
-
     Output:
         pd.DataFrame: App or technology dataframe
     """
@@ -431,10 +411,8 @@ def get_old_data(app_tech: str) -> pd.DataFrame:
 def db_setup() -> sqlalchemy.engine:
     """
     Setup connection to GEAR MySQL Database
-
     Inputs:
         None
-
     Output:
         sqlalchemy.engine: SQLAlchemy Engine Connection Object
     """
@@ -451,10 +429,8 @@ def db_setup() -> sqlalchemy.engine:
 def write_log(log_msg: str) -> None:
     """
     Write logging messages to a log file
-
     Inputs:
         log_msg (str): Desired log message
-
     Output:
         None
     """
@@ -476,7 +452,6 @@ def write_log(log_msg: str) -> None:
 def error_routine(msg: str) -> None:
     """
     When an error occurs, send the error email, write the error message to log, and exit program
-
     Inputs:
         msg (str): Error message to write and show
     """

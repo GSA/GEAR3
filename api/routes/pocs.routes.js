@@ -6,7 +6,7 @@ const router = express.Router();
 router.route('/')
   .get(pocCtrl.findAll);
 
-router.route('/get/:id')
+router.route('/get/:samName')
   .get(pocCtrl.findOne);
 
 router.route('/risso')

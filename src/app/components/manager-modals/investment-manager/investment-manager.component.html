@@ -60,7 +60,7 @@
               <div class="form-group">
                 <label for="invManager">Investment Manager<span class="text-danger">*</span></label>
                 <select class="form-control" id="invManager" formControlName="invManager" required>
-                  <option *ngFor="let manager of managers" [value]="manager.ID"
+                  <option *ngFor="let manager of managers" [value]="manager.SamAccountName"
                     [selected]="manager.Name === investment.InvManager">{{ manager.Name }}</option>
                 </select>
               </div>
