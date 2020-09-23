@@ -23,7 +23,6 @@ import { OrganizationsComponent } from './views/enterprise/organizations/organiz
 import { SystemsComponent } from './views/applications/systems/systems.component';
 import { AppsComponent } from './views/applications/apps/apps.component';
 import { TimeComponent } from './views/applications/time/time.component';
-import { RecordsManagementComponent } from './views/applications/records-management/records-management.component';
 
 // Security
 import { FismaComponent } from './views/security/fisma/fisma.component';
@@ -53,7 +52,6 @@ const routes: Routes = [
   { path: 'systems', component: SystemsComponent },
   { path: 'applications', component: AppsComponent },
   { path: 'applications_TIME', component: TimeComponent },
-  { path: 'records_mgmt', component: RecordsManagementComponent },
 
   { path: 'FISMA', component: FismaComponent },
   { path: 'FISMA_POC', component: FismaPocsComponent },

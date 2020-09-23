@@ -13,7 +13,7 @@ interface ClickOptions {
   detailModalID: string,
   appsTableID: string,
   exportName: string,
-  appsApiStr: string
+  apiString: string
 };
 
 @Injectable({
@@ -263,7 +263,7 @@ export class TableService {
       detailModalID: '#appDetail',
       appsTableID: null,
       exportName: null,
-      appsApiStr: null
+      apiString: null
     };
     this.clickMethod(options);
 
@@ -298,7 +298,7 @@ export class TableService {
       detailModalID: '#capabilityDetail',
       appsTableID: '#capSupportAppsTable',
       exportName: data.Name + '-Supporting_Apps',
-      appsApiStr: '/api/capabilities/get/'
+      apiString: '/api/capabilities/get/'
     };
     this.clickMethod(options);
   }
@@ -311,7 +311,7 @@ export class TableService {
       detailModalID: '#fismaDetail',
       appsTableID: '#fismaCertAppsTable',
       exportName: data.Name + '-Certified_Apps',
-      appsApiStr: '/api/fisma/get/'
+      apiString: '/api/fisma/get/'
     };
     this.clickMethod(options);
   }
@@ -324,7 +324,7 @@ export class TableService {
       detailModalID: '#investDetail',
       appsTableID: '#investRelAppsTable',
       exportName: data.Name + '-Related_Apps',
-      appsApiStr: '/api/investments/get/'
+      apiString: '/api/investments/get/'
     };
     this.clickMethod(options);
   }
@@ -337,7 +337,7 @@ export class TableService {
       detailModalID: '#itStandardDetail',
       appsTableID: '#itRelAppsTable',
       exportName: data.Name + '-Related_Apps',
-      appsApiStr: '/api/it_standards/get/'
+      apiString: '/api/it_standards/get/'
     };
     this.clickMethod(options);
   }
@@ -350,20 +350,7 @@ export class TableService {
       detailModalID: '#organizationDetail',
       appsTableID: '#orgAppsTable',
       exportName: data.Name + '-Organizational_Apps',
-      appsApiStr: '/api/organizations/get/'
-    };
-    this.clickMethod(options);
-  }
-
-
-  public recordsTableClick(data: any) {
-    var options: ClickOptions = {
-      data: data,
-      update: 'record',
-      detailModalID: '#recordDetail',
-      appsTableID: null, // '#recordsAppsTable',
-      exportName: null, // data.RecordTitle + '-Related_Apps',
-      appsApiStr: null // '/api/records/get/'
+      apiString: '/api/organizations/get/'
     };
     this.clickMethod(options);
   }
@@ -376,7 +363,7 @@ export class TableService {
       detailModalID: '#systemDetail',
       appsTableID: '#childAppsTable',
       exportName: data.Name + '-Child_Apps',
-      appsApiStr: '/api/parentsystems/get/'
+      apiString: '/api/parentsystems/get/'
     };
     this.clickMethod(options);
   }
@@ -392,17 +379,17 @@ export class TableService {
       this.updateRelatedTable(
         options.appsTableID,
         options.exportName,
-        options.appsApiStr + String(options.data.ID) + '/applications'
+        options.apiString + String(options.data.ID) + '/applications'
       );
     };
   }
 
-  private updateRelatedTable(tableID: string, exportName: string, appsApiStr: string) {
+  private updateRelatedTable(tableID: string, exportName: string, apiString: string) {
     $(tableID).bootstrapTable('refreshOptions', {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(exportName)
       },
-      url: this.sharedService.internalURLFmt(appsApiStr)
+      url: this.sharedService.internalURLFmt(apiString)
     });
   }
 
