@@ -11,7 +11,7 @@
     <span [innerHTML]="envName"></span>
     <span *ngIf="sharedService.loggedIn" style="color: red"> **GEAR Manager Mode**</span>
   </a>
-  <button class="navbar-toggler rotate" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+  <button id="topNavToggle"(click)="toggleTopNavBttn()" class="navbar-toggler rotate" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle Top Navigation">
     <i class="fas fa-angle-down"></i>
   </button>

@@ -45,4 +45,9 @@ export class TopNavbarComponent implements OnInit {
     }
   }
 
+  // Toggle arrow rotation when top navbar collapse button is clicked
+  toggleTopNavBttn() {
+    $("#topNavToggle").toggleClass("opposite");
+  }
+
 }
