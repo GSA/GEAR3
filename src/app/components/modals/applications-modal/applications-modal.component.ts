@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
@@ -20,7 +22,9 @@ export class ApplicationsModalComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
+    private location: Location,
     private modalService: ModalsService,
+    private router: Router,
     public sharedService: SharedService,
     private tableService: TableService) { }
 
@@ -227,7 +231,11 @@ export class ApplicationsModalComponent implements OnInit {
     $('#appDetail').on('hidden.bs.modal', function (e) {
       $("#appTabs li:first-child a").tab('show');
       this.interfaces = [];
-    });
+
+      // Change URL back without ID after closing Modal
+      var truncatedURL = this.sharedService.coreURL(this.router.url);
+      this.location.replaceState(truncatedURL);
+    }.bind(this));
   }
 
   openRelated(ID: number, type: string) {

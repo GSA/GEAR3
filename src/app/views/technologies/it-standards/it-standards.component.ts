@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
@@ -23,7 +25,10 @@ export class ItStandardsComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
+    private location: Location,
     private modalService: ModalsService,
+    private route: ActivatedRoute,
+    private router: Router,
     public sharedService: SharedService,
     private tableService: TableService) {
     this.modalService.currentITStand.subscribe(row => this.row = row);
@@ -112,8 +117,22 @@ export class ItStandardsComponent implements OnInit {
     $(document).ready(
       $('#itStandardsTable').on('click-row.bs.table', function (e, row) {
         this.tableService.itStandTableClick(row);
+
+        // Change URL to include ID
+        var normalizedURL = this.sharedService.coreURL(this.router.url);
+        this.location.replaceState(`${normalizedURL}/${row.ID}`);
       }.bind(this))
     );
+
+    // Method to open details modal when referenced directly via URL
+    this.route.params.subscribe(params => {
+      var detailStandID = params['standardID'];
+      if (detailStandID) {
+        this.apiService.getOneITStandard(detailStandID).subscribe((data: any[]) => {
+          this.tableService.itStandTableClick(data[0]);
+        });
+      };
+    });
 
   }
 

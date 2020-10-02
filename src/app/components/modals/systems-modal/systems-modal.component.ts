@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from "@services/shared/shared.service";
@@ -17,7 +19,9 @@ export class SystemsModalComponent implements OnInit {
   system = <any>{};
 
   constructor(
+    private location: Location,
     private modalService: ModalsService,
+    private router: Router,
     public sharedService: SharedService,
     private tableService: TableService) { }
 
@@ -42,7 +46,11 @@ export class SystemsModalComponent implements OnInit {
     // Revert back to overview tab when modal goes away
     $('#systemDetail').on('hidden.bs.modal', function (e) {
       $("#systemTabs li:first-child a").tab('show');
-    });
+      
+      // Change URL back without ID after closing Modal
+      var truncatedURL = this.sharedService.coreURL(this.router.url);
+      this.location.replaceState(truncatedURL);
+    }.bind(this));
   }
 
   systemEdit () {

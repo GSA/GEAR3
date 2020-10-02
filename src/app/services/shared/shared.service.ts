@@ -159,4 +159,12 @@ export class SharedService {
     this.itStandardsFormEmitter.emit();
   };
 
+
+  // Only include the core URL path and no parameters
+  public coreURL(url) {
+    var re = new RegExp(/^\/\w*(?=\/\d*|$)/);
+    var match = re.exec(url);
+    return match[0];
+  };
+
 }

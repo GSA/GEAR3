@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as lodash from "lodash";
 
 import { ApiService } from "@services/apis/api.service";
@@ -35,7 +37,10 @@ export class AppsComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
+    private location: Location,
     private modalService: ModalsService,
+    private route: ActivatedRoute,
+    private router: Router, 
     public sharedService: SharedService,
     private tableService: TableService) {
     this.modalService.currentSys.subscribe(row => this.row = row);
@@ -337,11 +342,15 @@ export class AppsComponent implements OnInit {
       $('#appsTable').on('click-row.bs.table', function (e, row) {
         this.tableService.appsTableClick(row);
         this.getInterfaceData(row.ID);
+
+        // Change URL to include ID
+        var normalizedURL = this.sharedService.coreURL(this.router.url);
+        this.location.replaceState(`${normalizedURL}/${row.ID}`);
       }.bind(this),
       ));
 
 
-    // Get Investment data for visuals
+    // Get Application data for visuals
     this.apiService.getApplications().subscribe((data: any[]) => {
       // Get counts by SSO
       var counts = data.reduce((p, c) => {
@@ -349,7 +358,7 @@ export class AppsComponent implements OnInit {
         if (!p.hasOwnProperty(name)) {
           p[name] = 0;
         }
-        // Only count if Status is not retiredx
+        // Only count if Status is not retired
         if (['Candidate', 'Pre-Production', 'Production'].includes(c.Status)) p[name]++;
         return p;
       }, {});
@@ -365,6 +374,17 @@ export class AppsComponent implements OnInit {
       // console.log(this.vizData);  // Debug
     });
 
+    // Method to open details modal when referenced directly via URL
+    this.route.params.subscribe(params => {
+      var detailAppID = params['appID'];
+      if (detailAppID) {
+        this.apiService.getOneApp(detailAppID).subscribe((data: any[]) => {
+          var row = data[0];
+          this.tableService.appsTableClick(row);
+          this.getInterfaceData(row.ID);
+        });
+      };
+    });
   }
 
 

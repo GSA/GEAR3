@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
@@ -22,7 +24,10 @@ export class SystemsComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
+    private location: Location,
     private modalService: ModalsService,
+    private route: ActivatedRoute,
+    private router: Router,
     public sharedService: SharedService,
     private tableService: TableService) {
     this.modalService.currentSys.subscribe(row => this.row = row);
@@ -81,8 +86,22 @@ export class SystemsComponent implements OnInit {
     $(document).ready(
       $('#systemTable').on('click-row.bs.table', function (e, row) {
         this.tableService.systemsTableClick(row);
+
+        // Change URL to include ID
+        var normalizedURL = this.sharedService.coreURL(this.router.url);
+        this.location.replaceState(`${normalizedURL}/${row.ID}`);
       }.bind(this)
       ));
+
+    // Method to open details modal when referenced directly via URL
+    this.route.params.subscribe(params => {
+      var detailSysID = params['sysID'];
+      if (detailSysID) {
+        this.apiService.getOneSys(detailSysID).subscribe((data: any[]) => {
+          this.tableService.systemsTableClick(data[0]);
+        });
+      };
+    });
 
   }
 
