@@ -27,7 +27,8 @@ export class AppManagerComponent implements OnInit {
     appNotes: new FormControl(),
     appRefDoc: new FormControl(),
 
-    appUID: new FormControl(null, [Validators.required]),
+    appUID: new FormControl(null, [Validators.required,
+      Validators.pattern(/^\d{4}-\d{4}-\d{7}-\d{4}$/)]),
     appCUI: new FormControl(),
     appProdYr: new FormControl(),
     appRetiredYr: new FormControl(),

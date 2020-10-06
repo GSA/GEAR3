@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 
 @Injectable({
@@ -95,6 +96,10 @@ export class ModalsService {
       loading = false;
       buffer = buffer.concat(more);
     }, 100);
+  }
+
+  public fieldValidCheck(form: FormGroup, field: string) {
+    return form.controls[field].invalid && (form.controls[field].dirty || form.controls[field].touched);
   }
 
 }

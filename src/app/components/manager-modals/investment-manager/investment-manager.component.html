@@ -23,7 +23,7 @@
               Overview<span class="text-danger">*</span></a></li>
           <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#investMngrRelatedApps">
-              Related Business Applications<span class="text-danger">*</span></a></li>
+              Related Business Applications</a></li>
         </ul>
 
         <!-- Tab Panes -->
@@ -43,11 +43,13 @@
 
                 <div class="form-group col mb-0">
                   <label for="investName">Investment Name<span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="investName" formControlName="investName"
-                    placeholder="Enter a Name" [value]="investment.Name" required>
-                  <!-- <div class="invalid-feedback" *ngIf="investForm.get('investName').errors.required">
-                    Need an Investment Name
-                  </div> -->
+                  <input type="text" class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(investForm, 'investName')}" id="investName"
+                    formControlName="investName" placeholder="Enter a Name" [value]="investment.Name" required>
+                  <div *ngIf="modalService.fieldValidCheck(investForm, 'investName')">
+                    <div class="invalid-feedback" *ngIf="investForm.controls['investName'].errors.required">
+                      Investment Name Required
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -59,10 +61,16 @@
 
               <div class="form-group">
                 <label for="invManager">Investment Manager<span class="text-danger">*</span></label>
-                <select class="form-control" id="invManager" formControlName="invManager" required>
+                <select class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(investForm, 'invManager')}" id="invManager"
+                  formControlName="invManager" required>
                   <option *ngFor="let manager of managers" [value]="manager.ID"
                     [selected]="manager.Name === investment.InvManager">{{ manager.Name }}</option>
                 </select>
+                <div *ngIf="modalService.fieldValidCheck(investForm, 'invManager')">
+                  <div class="invalid-feedback" *ngIf="investForm.controls['invManager'].errors.required">
+                    Investment Manager Required
+              </div>
+                </div>
               </div>
 
               <div class="row align-items-center justify-content-center">
@@ -74,31 +82,53 @@
                         [checked]="type.Name === investment.Type" formControlName="investType" required>
                       <label class="custom-control-label" for="investType{{ type.ID }}">{{ type.Name }}</label>
                     </div>
+                    <div *ngIf="modalService.fieldValidCheck(investForm, 'investType')">
+                      <div class="invalid-feedback" *ngIf="investForm.controls['investType'].errors.required">
+                        Investment Type Required
+                  </div>
+                </div>
                   </div>
                 </div>
 
                 <div class="form-group col-2 mb-0">
                   <label for="investBY">Budget Year<span class="text-danger">*</span></label>
-                  <select class="form-control" id="investBY" formControlName="investBY" required>
+                  <select class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(investForm, 'investBY')}" id="investBY"
+                    formControlName="investBY" required>
                     <option *ngFor="let year of budgetYears" [value]="year"
                       [selected]="year === investment.Budget_Year">
                       {{ year }}</option>
                   </select>
+                  <div *ngIf="modalService.fieldValidCheck(investForm, 'investBY')">
+                    <div class="invalid-feedback" *ngIf="investForm.controls['investBY'].errors.required">
+                      Investment Budget Year Required
+                    </div>
+                  </div>
                 </div>
               </div>
 
               <div class="form-group">
                 <label for="investUII">UII<span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="investUII" formControlName="investUII"
-                  placeholder="Enter the Investment's UII" [value]="investment.UII" required>
+                <input type="text" class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(investForm, 'investUII')}" id="investUII"
+                  formControlName="investUII" placeholder="Enter the Investment's UII" [value]="investment.UII" required>
+                <div *ngIf="modalService.fieldValidCheck(investForm, 'investUII')">
+                  <div class="invalid-feedback" *ngIf="investForm.controls['investUII'].errors.required">
+                    Investment OMB Unique Identifier Required
+                  </div>
+                </div>
               </div>
 
               <div class="form-group">
                 <label for="investSSO">Owning SSO<span class="text-danger">*</span></label>
-                <select class="form-control" id="investSSO" formControlName="investSSO" required>
+                <select class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(investForm, 'investSSO')}" id="investSSO"
+                  formControlName="investSSO" required>
                   <option *ngFor="let sso of SSOs" [value]="sso.ID" [selected]="sso.Name === investment.SSO">
                     {{ sso.Name }}</option>
                 </select>
+                <div *ngIf="modalService.fieldValidCheck(investForm, 'investSSO')">
+                  <div class="invalid-feedback" *ngIf="investForm.controls['investSSO'].errors.required">
+                    Investment Owning SSO Required
+                  </div>
+                </div>
               </div>
 
               <div class="form-group">
