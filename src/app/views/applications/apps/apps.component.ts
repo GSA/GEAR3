@@ -490,6 +490,9 @@ export class AppsComponent implements OnInit {
       return false;
     };
 
+    // Make sure element is empty first
+    d3.select(CONTAINER_ID + "> svg").remove();
+
     // Append the svg object to the body of the page
     var svg = d3.select(CONTAINER_ID).append("svg")
       .attr('width', width)
@@ -585,7 +588,15 @@ export class AppsComponent implements OnInit {
 
     // Add in the nodes
     node = node.data(graph.nodes)
-      .enter().append("g");
+      .enter().append("g")
+      .on("click", function (d: any) {
+        //Open new modal when selecting app on interface graphic
+        $('#appDetail').modal('hide');
+
+        // Route to new app detail
+        window.location.href = `#/applications/${d.id}`;
+        window.location.reload();
+      }.bind(this));
 
     // add the rectangles for the nodes
     node.append("rect")
