@@ -7,7 +7,7 @@ const queryPath = '../queries/';
 
 exports.findAll = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_application_full_suite.sql')).toString() +
-    " WHERE org.Keyname <> 'External' GROUP BY app.Id ORDER BY app.Keyname;";
+    " WHERE org.Keyname <> 'External' AND obj_application_status.Keyname <> 'Retired' GROUP BY app.Id ORDER BY app.Keyname;";
 
   res = ctrl.sendQuery(query, 'business applications', res);
 };
