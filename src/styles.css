@@ -110,7 +110,7 @@ b, strong, .font-weight-bold {
 
 .nav-tabs>li>a.active {
   color: #fff !important;
-  background-color: #1F9BCF !important;
+  background-color: #027eb2 !important;
 }
 
 .bg-dark a.nav-link:not(.active) {

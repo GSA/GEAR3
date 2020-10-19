@@ -23,7 +23,7 @@
         <input type="search" name="globalSearchField" [(ngModel)]="searchKW" class="form-control mr-2"
           placeholder="Global Search" (keydown)="globalSearch($event)">
         <!-- Weird bug where if button isn't here, hitting enter will not execute and update search table at first. Leaving button here -->
-        <button class="btn btn-light form-control" (click)="globalSearch($event)">
+        <button name="globalSearchBttn" aria-label="Global Search Button" class="btn btn-light form-control" (click)="globalSearch($event)">
           <i class="fas fa-search fa-lg"></i>
         </button>
       </form>
@@ -32,11 +32,11 @@
     <!-- Right Side Links -->
     <ul class="navbar-nav ml-auto align-items-center">
       <li class="nav-item">
-        <a class="nav-link" routerLink="/about">About</a>
+        <a id="aboutBttn" class="nav-link" routerLink="/about">About</a>
       </li>
 
       <li class="nav-item">
-        <a class="nav-link" routerLink="/assist_tech">Assitive Technology</a>
+        <a id="assistTechBttn" class="nav-link" routerLink="/assist_tech">Assitive Technology</a>
       </li>
 
       <li class="nav-item dropdown">
