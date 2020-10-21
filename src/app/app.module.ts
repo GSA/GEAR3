@@ -23,6 +23,7 @@ import { AboutComponent } from './views/main/about/about.component';
 import { AssistTechComponent } from './views/main/assist-tech/assist-tech.component';
 import { FormsGlossaryComponent } from './views/main/forms-glossary/forms-glossary.component';
 import { GearManagerComponent } from './views/main/gear-manager/gear-manager.component';
+import { ManagerRequestComponent } from './views/main/manager-request/manager-request.component';
 
 //// Strategy
 import { FrameworkComponent } from './views/strategy/framework/framework.component';
@@ -77,6 +78,7 @@ import { Globals } from './common/globals';
     AssistTechComponent,
     FormsGlossaryComponent,
     GearManagerComponent,
+    ManagerRequestComponent,
 
     FrameworkComponent,
     InvestmentsComponent,

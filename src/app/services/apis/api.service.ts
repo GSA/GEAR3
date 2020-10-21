@@ -16,6 +16,8 @@ import { Capability } from '@api/models/capabilities.model';
 
 import { FISMA } from '@api/models/fisma.model';
 
+import { GearMngrRequest } from '@api/models/manager-request.model';
+
 import { Investment } from '@api/models/investments.model';
 import { InvestmentType } from '@api/models/investment-types.model';
 
@@ -48,7 +50,7 @@ export class ApiService {
 
   // Data Flow
   dataFlowUrl: string = this.sharedService.internalURLFmt('/api/data_flow')
-  
+
   // FISMA
   fismaUrl: string = this.sharedService.internalURLFmt('/api/fisma');
 
@@ -72,6 +74,9 @@ export class ApiService {
 
   // IT Standards
   techUrl: string = this.sharedService.internalURLFmt('/api/it_standards');
+
+  // GEAR Manager Request
+  mngrReqURL: string = this.sharedService.internalURLFmt('/api/manager_request');
 
 
   constructor(
@@ -383,6 +388,14 @@ export class ApiService {
         'Authorization': this.globals.jwtToken
       })
     };
+  }
+
+
+  // GEAR Manager Request
+  gearMngrRequest(requestData: {}): Observable<GearMngrRequest[]> {
+    return this.http.post<GearMngrRequest[]>(this.mngrReqURL, requestData).pipe(
+        catchError(this.handleError<GearMngrRequest[]>('CREATE GEAR Manager Request', []))
+      );
   }
 
 }

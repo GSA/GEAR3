@@ -39,8 +39,10 @@
               <div class="row align-items-center">
                 <div class="form-group col-6">
                   <label for="appDisplayName">Display Name or Alias<span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(appForm, 'appDisplayName')}" id="appDisplayName"
-                    formControlName="appDisplayName" placeholder="Enter a Short Name or Alias" [value]="application.DisplayName" required>
+                  <input type="text" class="form-control"
+                    [ngClass]="{'is-invalid': modalService.fieldValidCheck(appForm, 'appDisplayName')}"
+                    id="appDisplayName" formControlName="appDisplayName" placeholder="Enter a Short Name or Alias"
+                    [value]="application.DisplayName" required>
                   <div *ngIf="modalService.fieldValidCheck(appForm, 'appDisplayName')">
                     <div class="invalid-feedback" *ngIf="appForm.controls['appDisplayName'].errors.required">
                       Application Display Name/Alias Required
@@ -50,7 +52,8 @@
 
                 <div class="form-group col-3">
                   <label for="appStatus">Status<span class="text-danger">*</span></label>
-                  <select class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(appForm, 'appStatus')}" id="appStatus"
+                  <select class="form-control"
+                    [ngClass]="{'is-invalid': modalService.fieldValidCheck(appForm, 'appStatus')}" id="appStatus"
                     formControlName="appStatus" required>
                     <option *ngFor="let status of statuses" [value]="status.ID"
                       [selected]="status.Name === application.Status">{{ status.Name }}</option>
@@ -64,7 +67,8 @@
 
                 <div class="form-group col-3">
                   <label for="appOrWeb">Application or Website<span class="text-danger">*</span></label>
-                  <select class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(appForm, 'appOrWeb')}" id="appOrWeb"
+                  <select class="form-control"
+                    [ngClass]="{'is-invalid': modalService.fieldValidCheck(appForm, 'appOrWeb')}" id="appOrWeb"
                     formControlName="appOrWeb" required>
                     <option value="Application" [selected]="application.Application_or_Website === 'Application'">
                       Application</option>
@@ -81,7 +85,8 @@
 
               <div class="form-group">
                 <label for="appName">Full Application Name<span class="text-danger">*</span></label>
-                <input type="text" class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(appForm, 'appName')}" id="appName"
+                <input type="text" class="form-control"
+                  [ngClass]="{'is-invalid': modalService.fieldValidCheck(appForm, 'appName')}" id="appName"
                   formControlName="appName" placeholder="Enter a Name" [value]="application.Name" required>
                 <div *ngIf="modalService.fieldValidCheck(appForm, 'appName')">
                   <div class="invalid-feedback" *ngIf="appForm.controls['appName'].errors.required">
@@ -116,15 +121,18 @@
               <div class="row">
                 <div class="form-group col">
                   <label for="appUID">Application ID<span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(appForm, 'appUID')}" id="appUID"
-                    formControlName="appUID" placeholder="Ex: 1234-1234-1234567-1234" [value]="application.OMBUID" required>
+                  <input type="text" class="form-control"
+                    [ngClass]="{'is-invalid': modalService.fieldValidCheck(appForm, 'appUID')}" id="appUID"
+                    formControlName="appUID" placeholder="Ex: 1234-1234-1234567-1234" [value]="application.OMBUID"
+                    required>
                   <div *ngIf="modalService.fieldValidCheck(appForm, 'appUID')">
                     <div class="invalid-feedback" *ngIf="appForm.controls['appUID'].errors.required">
                       Application Unique Identifier Required
                     </div>
                     <div class="invalid-feedback" *ngIf="appForm.controls['appUID'].errors.pattern">
-                        Application Unique Identifier Needs to be in the Form of [4 digits]-[4 digits]-[7 digits]-[4 digits]
-                      </div>
+                      Application Unique Identifier Needs to be in the Form of [4 digits]-[4 digits]-[7 digits]-[4
+                      digits]
+                    </div>
                   </div>
                 </div>
 
@@ -153,21 +161,12 @@
               <div class="row align-items-center">
                 <div class="form-group col-5">
                   <label for="appBizPOC">Business Point of Contact(s)<span class="text-danger">*</span></label>
-                  <ng-select id="appBizPOC" formControlName="appBizPOC"
-                    [items]="POCs"
-                    [multiple]="true"
-                    appendTo="#appManager"
-                    bindLabel="Name"
-                    bindValue="ID"
-                    clearAllText="Clear All"
-                    [clearSearchOnAdd]="true"
-                    [closeOnSelect]="false"
-                    [loading]="pocsLoading"
-                    placeholder="Search & Select POCs Here"
-                    [virtualScroll]="true"
+                  <ng-select id="appBizPOC" formControlName="appBizPOC" [items]="POCs" [multiple]="true"
+                    appendTo="#appManager" bindLabel="Name" bindValue="ID" clearAllText="Clear All"
+                    [clearSearchOnAdd]="true" [closeOnSelect]="false" [loading]="pocsLoading"
+                    placeholder="Search & Select POCs Here" [virtualScroll]="true"
                     (scroll)="modalService.onScroll($event, pocsBuffer, bufferSize, POCs, pocsLoading)"
-                    (scrollToEnd)="modalService.onScrollToEnd(pocsBuffer, bufferSize, POCs, pocsLoading)"
-                    required>
+                    (scrollToEnd)="modalService.onScrollToEnd(pocsBuffer, bufferSize, POCs, pocsLoading)" required>
                     <ng-template ng-header-tmp>
                       <small class="form-text text-muted">Loaded {{ pocsBuffer.length }} of {{ POCs.length }}</small>
                     </ng-template>
@@ -181,7 +180,8 @@
 
                 <div class="form-group col-7">
                   <label for="appOwner">Owning Org<span class="text-danger">*</span></label>
-                  <select class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(appForm, 'appOwner')}" id="appOwner"
+                  <select class="form-control"
+                    [ngClass]="{'is-invalid': modalService.fieldValidCheck(appForm, 'appOwner')}" id="appOwner"
                     formControlName="appOwner" required>
                     <option *ngFor="let org of orgs" [value]="org.ID" [selected]="org.Name === application.Owner">
                       {{ org.Name }}</option>
@@ -238,21 +238,12 @@
               <div class="row align-items-center">
                 <div class="form-group col-5">
                   <label for="appTechPOC">Technical Point of Contact(s)<span class="text-danger">*</span></label>
-                  <ng-select id="appTechPOC" formControlName="appTechPOC"
-                    [items]="POCs"
-                    [multiple]="true"
-                    appendTo="#appManager"
-                    bindLabel="Name"
-                    bindValue="ID"
-                    clearAllText="Clear All"
-                    [clearSearchOnAdd]="true"
-                    [closeOnSelect]="false"
-                    [loading]="pocsLoading"
-                    placeholder="Search & Select POCs Here"
-                    [virtualScroll]="true"
+                  <ng-select id="appTechPOC" formControlName="appTechPOC" [items]="POCs" [multiple]="true"
+                    appendTo="#appManager" bindLabel="Name" bindValue="ID" clearAllText="Clear All"
+                    [clearSearchOnAdd]="true" [closeOnSelect]="false" [loading]="pocsLoading"
+                    placeholder="Search & Select POCs Here" [virtualScroll]="true"
                     (scroll)="modalService.onScroll($event, pocsBuffer, bufferSize, POCs, pocsLoading)"
-                    (scrollToEnd)="modalService.onScrollToEnd(pocsBuffer, bufferSize, POCs, pocsLoading)"
-                    required>
+                    (scrollToEnd)="modalService.onScrollToEnd(pocsBuffer, bufferSize, POCs, pocsLoading)" required>
                     <ng-template ng-header-tmp>
                       <small class="form-text text-muted">Loaded {{ pocsBuffer.length }} of {{ POCs.length }}</small>
                     </ng-template>
