@@ -44,12 +44,12 @@ export class AppManagerComponent implements OnInit {
     appParent: new FormControl(),
     relatedTech: new FormControl(),
 
-    TIMEFY19: new FormControl(null, [Validators.required]),
-    TIMEFY20: new FormControl(null, [Validators.required]),
-    TIMEFY21: new FormControl(null, [Validators.required]),
-    TIMEFY22: new FormControl(null, [Validators.required]),
-    TIMEFY23: new FormControl(null, [Validators.required]),
-    TIMEFY24: new FormControl(null, [Validators.required]),
+    TIMEFY19: new FormControl(),
+    TIMEFY20: new FormControl(),
+    TIMEFY21: new FormControl(),
+    TIMEFY22: new FormControl(),
+    TIMEFY23: new FormControl(),
+    TIMEFY24: new FormControl(),
     TIMENotes: new FormControl()
   });
 

@@ -313,8 +313,8 @@
               <div class="row justify-content-center">
                 <ng-template ngFor let-year [ngForOf]="TIMEYears">
                   <div class="form-group col-2">
-                    <label for="TIME{{ year }}">{{ year }}<span class="text-danger">*</span></label>
-                    <select class="form-control" id="TIME{{ year }}" formControlName="TIME{{ year }}" required>
+                    <label for="TIME{{ year }}">{{ year }}</label>
+                    <select class="form-control" id="TIME{{ year }}" formControlName="TIME{{ year }}">
                       <option *ngFor="let TIME of TIMEValues" [value]="TIME" [selected]="timeMatch('FY19', TIME)">
                         {{ TIME }}</option>
                     </select>

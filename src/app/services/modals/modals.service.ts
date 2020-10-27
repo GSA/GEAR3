@@ -99,7 +99,7 @@ export class ModalsService {
   }
 
   public fieldValidCheck(form: FormGroup, field: string) {
-    return form.controls[field].invalid && (form.controls[field].dirty || form.controls[field].touched);
+    return form.controls[field].invalid;
   }
 
 }
