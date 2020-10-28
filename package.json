@@ -63,6 +63,7 @@
     "save": "^2.4.0",
     "tableexport.jquery.plugin": "^1.10.20",
     "tslib": "^1.14.1",
+    "xml-crypto": "^2.0.0",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
