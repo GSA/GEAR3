@@ -388,14 +388,35 @@ export class ApiService {
         'Authorization': this.globals.jwtToken
       })
     };
-  }
+  };
 
 
   // GEAR Manager Request
-  gearMngrRequest(requestData: {}): Observable<GearMngrRequest[]> {
-    return this.http.post<GearMngrRequest[]>(this.mngrReqURL, requestData).pipe(
-        catchError(this.handleError<GearMngrRequest[]>('CREATE GEAR Manager Request', []))
+  gearMngrRequest(requestData: {}) {
+    return this.http.post(this.mngrReqURL, requestData).pipe(
+        catchError(this.handleError('CREATE GEAR Manager Request', []))
       );
-  }
+  };
+
+  // Send Email for GEAR Manager Request
+  mngrRequestSendEmail(requestData: {}) {
+    return this.http.post(this.mngrReqURL + '/manager_request_email', requestData).pipe(
+        catchError(this.handleError('SEND GEAR Manager Request Email', []))
+      );
+  };
+
+  // Accept GEAR Manager Request
+  mngrRequestAccept(requestData: {}) {
+    return this.http.put(this.mngrReqURL + '/accept', requestData).pipe(
+        catchError(this.handleError('ACCEPT GEAR Manager Request Email', []))
+      );
+  };
+
+  // Reject GEAR Manager Request
+  mngrRequestReject(requestData: {}) {
+    return this.http.put(this.mngrReqURL + '/reject', requestData).pipe(
+        catchError(this.handleError('REJECT GEAR Manager Request Email', []))
+      );
+  };
 
 }

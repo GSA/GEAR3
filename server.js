@@ -306,10 +306,10 @@ cron.schedule('0 7 * * WED', () => {
   let pocCsv = [];
   let csvStream = fastcsv
     .parse()
-    .on("data", function(data) {
+    .on("data", function (data) {
       pocCsv.push(data);
     })
-    .on("end", function() {
+    .on("end", function () {
       // remove the first line: header
       pocCsv.shift();
 
