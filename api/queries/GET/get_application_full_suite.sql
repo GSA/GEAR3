@@ -28,6 +28,9 @@ SELECT DISTINCT
   owner.Keyname                     AS Owner,
   owner.Display_name                AS OwnerShort,
   owner.Id                          AS OwnerID,
+  support.Keyname                   AS Support,
+  support.Display_name              AS SupportShort,
+  support.Id                        AS SupportID,
   GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', buspoc.Keyname, buspoc.Email, busorg.Display_Name) SEPARATOR '; ')     AS BusinessPOC,
   GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', techpoc.Keyname, techpoc.Email, techorg.Display_Name) SEPARATOR '; ')  AS TechnicalPOC,
   GROUP_CONCAT(DISTINCT  buspoc.Keyname SEPARATOR ', ')                                                         AS BusPOC,
@@ -57,31 +60,31 @@ SELECT DISTINCT
   
 FROM obj_application AS app
   
-  LEFT JOIN obj_organization  AS org    ON app.obj_org_SSO_Id = org.Id
-  LEFT JOIN obj_parent_system           ON app.obj_parent_system_Id = obj_parent_system.Id
-  LEFT JOIN obj_investment              ON app.obj_investment_Id = obj_investment.Id
-  LEFT JOIN obj_portfolio               ON app.obj_portfolio_Id = obj_portfolio.Id
-  LEFT JOIN obj_fisma_archer            ON app.obj_fisma_Id = obj_fisma_archer.`ex:GEAR_ID`
-  -- LEFT JOIN obj_app_platform           ON app.obj_app_platform_Id = obj_app_platform.Id
-  LEFT JOIN obj_app_hostingprovider     ON app.obj_app_hostingprovider_Id = obj_app_hostingprovider.Id
-  LEFT JOIN obj_application_status      ON app.obj_application_status_Id = obj_application_status.Id
-  LEFT JOIN obj_num_of_users  AS nou    ON app.Number_of_Users = nou.Id
-  LEFT JOIN obj_tier          AS ot     ON app.Tier = ot.Id
+  LEFT JOIN obj_organization AS org       ON app.obj_org_SSO_Id = org.Id
+  LEFT JOIN obj_parent_system             ON app.obj_parent_system_Id = obj_parent_system.Id
+  LEFT JOIN obj_investment                ON app.obj_investment_Id = obj_investment.Id
+  LEFT JOIN obj_portfolio                 ON app.obj_portfolio_Id = obj_portfolio.Id
+  LEFT JOIN obj_fisma_archer              ON app.obj_fisma_Id = obj_fisma_archer.`ex:GEAR_ID`
+  -- LEFT JOIN obj_app_platform             ON app.obj_app_platform_Id = obj_app_platform.Id
+  LEFT JOIN obj_app_hostingprovider       ON app.obj_app_hostingprovider_Id = obj_app_hostingprovider.Id
+  LEFT JOIN obj_application_status        ON app.obj_application_status_Id = obj_application_status.Id
+  LEFT JOIN obj_num_of_users AS nou       ON app.Number_of_Users = nou.Id
+  LEFT JOIN obj_tier         AS ot        ON app.Tier = ot.Id
 
-
-  LEFT JOIN zk_application_owning_org  ON app.Id = zk_application_owning_org.obj_application_Id
-  LEFT JOIN obj_organization AS owner  ON app.App_Owning_Org = owner.Id
+  LEFT JOIN zk_application_owning_org     ON app.Id = zk_application_owning_org.obj_application_Id
+  LEFT JOIN obj_organization AS owner     ON app.App_Owning_Org = owner.Id
+  LEFT JOIN obj_organization AS support   ON app.Support_Org = support.Id
 
   -- LEFT JOIN zk_application_replacedby ON app.Id = zk_application_replacedby.obj_application_Id
   -- LEFT JOIN obj_application AS replacedby ON zk_application_replacedby.obj_application_Id1 = replacedby.Id
 
-  LEFT JOIN zk_application_business_poc    ON app.Id = zk_application_business_poc.obj_application_Id
-  LEFT JOIN obj_poc          AS buspoc     ON zk_application_business_poc.obj_bus_poc_Id = buspoc.Id
-  LEFT JOIN obj_organization AS busorg     ON buspoc.obj_organization_Id = busorg.Id
+  LEFT JOIN zk_application_business_poc   ON app.Id = zk_application_business_poc.obj_application_Id
+  LEFT JOIN obj_poc          AS buspoc    ON zk_application_business_poc.obj_bus_poc_Id = buspoc.Id
+  LEFT JOIN obj_organization AS busorg    ON buspoc.obj_organization_Id = busorg.Id
 
-  LEFT JOIN zk_application_technical_poc   ON app.Id = zk_application_technical_poc.obj_application_Id
-  LEFT JOIN obj_poc          AS techpoc    ON zk_application_technical_poc.obj_tech_poc_Id = techpoc.Id
-  LEFT JOIN obj_organization AS techorg    ON techpoc.obj_organization_Id = techorg.Id
+  LEFT JOIN zk_application_technical_poc  ON app.Id = zk_application_technical_poc.obj_application_Id
+  LEFT JOIN obj_poc          AS techpoc   ON zk_application_technical_poc.obj_tech_poc_Id = techpoc.Id
+  LEFT JOIN obj_organization AS techorg   ON techpoc.obj_organization_Id = techorg.Id
 
   -- LEFT JOIN zk_application_time ON app.Id = zk_application_time.obj_application_Id
   -- LEFT JOIN obj_fy AS fy ON zk_application_time.obj_fy_Id = fy.Id

@@ -34,6 +34,7 @@ export class AppManagerComponent implements OnInit {
     appRetiredYr: new FormControl(),
     appBizPOC: new FormControl(null, [Validators.required]),
     appOwner: new FormControl(null, [Validators.required]),
+    appSupport: new FormControl(),
 
     appCloud: new FormControl(),
     // appDesktop: new FormControl(),
@@ -216,6 +217,7 @@ export class AppManagerComponent implements OnInit {
             appRetiredYr: this.application.RetiredYear,
             appBizPOC: bizPocIDs,
             appOwner: this.sharedService.findInArrayID(this.orgs, 'Name', this.application.Owner),
+            appSupport: this.sharedService.findInArrayID(this.orgs, 'Name', this.application.Support),
 
             appCloud: (this.application.Cloud == 'Yes'),
             // appDesktop: this.application.Desktop_Indicator,

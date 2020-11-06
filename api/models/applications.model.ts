@@ -25,6 +25,9 @@ export class Application {
   public Owner: string = null;
   public OwnerShort: string = null;
   public OwnerID: number = null;
+  public Support: string = null;
+  public SupportShort: string = null;
+  public SupportID: number = null;
   public BusinessPOC: string = null;
   public TechnicalPOC: string = null;
   public BusPOC: string = null;

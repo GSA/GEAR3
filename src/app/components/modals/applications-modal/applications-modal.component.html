@@ -131,6 +131,14 @@
                     <td>None Designated</td>
                   </ng-template>
                 </tr>
+                <tr>
+                  <td><i class="fa fa-door-open"></i>Supporting Org</td>
+                  <td *ngIf="application.Support; else supportElse" class="btn-outline-royal-blue pointer"
+                    (click)="openRelated(application.SupportID, 'org')">{{ application.Support }}</td>
+                  <ng-template #supportElse>
+                    <td>None Designated</td>
+                  </ng-template>
+                </tr>
               </tbody>
             </table>
             <br>

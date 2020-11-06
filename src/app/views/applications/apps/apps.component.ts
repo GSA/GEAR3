@@ -101,6 +101,16 @@ export class AppsComponent implements OnInit {
     sortable: true,
     visible: false
   }, {
+    field: 'SupportShort',
+    title: 'Supporting Org (Short)',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'Support',
+    title: 'Supporting Org (Long)',
+    sortable: true,
+    visible: false
+  }, {
     field: 'BusPOC',
     title: 'Business POC',
     sortable: true,
@@ -226,6 +236,15 @@ export class AppsComponent implements OnInit {
   }, {
     field: 'Owner',
     title: 'Owning Org (Long)',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'SupportShort',
+    title: 'Supporting Org (Short)',
+    sortable: true
+  }, {
+    field: 'Support',
+    title: 'Supporting Org (Long)',
     sortable: true,
     visible: false
   }, {

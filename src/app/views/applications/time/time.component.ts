@@ -89,6 +89,15 @@ export class TimeComponent implements OnInit {
     visible: false,
     sortable: true
   }, {
+    field: 'SupportShort',
+    title: 'Supporting Org (Short)',
+    sortable: true
+  }, {
+    field: 'Support',
+    title: 'Supporting Org (Long)',
+    sortable: true,
+    visible: false
+  }, {
     field: 'ParentSystem',
     title: 'Parent System',
     sortable: true,

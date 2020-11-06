@@ -159,7 +159,7 @@
               </div>
 
               <div class="row align-items-center">
-                <div class="form-group col-5">
+                <div class="form-group col-4">
                   <label for="appBizPOC">Business Point of Contact(s)<span class="text-danger">*</span></label>
                   <ng-select id="appBizPOC" formControlName="appBizPOC" [items]="POCs" [multiple]="true"
                     appendTo="#appManager" bindLabel="Name" bindValue="ID" clearAllText="Clear All"
@@ -178,7 +178,7 @@
                   </div>
                 </div>
 
-                <div class="form-group col-7">
+                <div class="form-group col-4">
                   <label for="appOwner">Owning Org<span class="text-danger">*</span></label>
                   <select class="form-control"
                     [ngClass]="{'is-invalid': modalService.fieldValidCheck(appForm, 'appOwner')}" id="appOwner"
@@ -192,6 +192,17 @@
                     </div>
                   </div>
                 </div>
+
+                <div class="form-group col-4">
+                  <label for="appSupport">Supporting Org</label>
+                  <select class="form-control"
+                    [ngClass]="{'is-invalid': modalService.fieldValidCheck(appForm, 'appSupport')}" id="appSupport"
+                    formControlName="appSupport">
+                    <option *ngFor="let org of orgs" [value]="org.ID" [selected]="org.Name === application.Support">
+                      {{ org.Name }}</option>
+                  </select>
+                </div>
+
               </div>
 
             </div>

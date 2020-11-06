@@ -29,6 +29,9 @@ SELECT
   GROUP_CONCAT(DISTINCT owner.Keyname SEPARATOR ',')                                      AS Owner,
   GROUP_CONCAT(DISTINCT owner.Display_name SEPARATOR ',')                                 AS OwnerShort,
   GROUP_CONCAT(DISTINCT owner.Id SEPARATOR ',')                                           AS OwnerID,
+  GROUP_CONCAT(DISTINCT support.Keyname SEPARATOR ',')                                    AS Support,
+  GROUP_CONCAT(DISTINCT support.Display_name SEPARATOR ',')                               AS SupportShort,
+  GROUP_CONCAT(DISTINCT support.Id SEPARATOR ',')                                         AS SupportID,
   GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', buspoc.Keyname, buspoc.Email) SEPARATOR '; ')    AS BusinessPOC,
   GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', techpoc.Keyname, techpoc.Email) SEPARATOR '; ')  AS TechnicalPOC,
   GROUP_CONCAT(DISTINCT  buspoc.Keyname SEPARATOR ', ')                                   AS BusPOC,
@@ -67,6 +70,7 @@ FROM obj_application AS app
 
   LEFT JOIN zk_application_owning_org               ON app.Id = zk_application_owning_org.obj_application_Id
   LEFT JOIN obj_organization            AS owner    ON zk_application_owning_org.obj_org_owner_Id = owner.Id
+  LEFT JOIN obj_organization            AS support  ON app.Support_Org = support.Id
 
   LEFT JOIN zk_app_capabilities                     ON app.Id = zk_app_capabilities.obj_application_Id
   LEFT JOIN obj_capability              AS cap      ON zk_app_capabilities.obj_capability_Id = cap.Id
