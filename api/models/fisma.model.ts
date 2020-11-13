@@ -14,6 +14,7 @@ export class FISMA {
   public ServiceType: string;
   public FISMASystemIdentifier: string;
   public InactiveDate: Date;
+  public Status: string;
   public Description: string;
   public SystemLevel: string;
   public Reportable: string;

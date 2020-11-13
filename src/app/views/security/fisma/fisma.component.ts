@@ -133,6 +133,13 @@ export class FismaComponent implements OnInit {
       data: [],
     }));
 
+    // Filter out "Pending" Status
+    $(document).ready(
+      $('#fismaTable').bootstrapTable('filterBy', {
+        Status: ['Active']
+      })
+    );
+
     // Method to handle click events on the FISMA Systems table
     $(document).ready(
       $('#fismaTable').on('dbl-click-row.bs.table', function (e, row) {
@@ -194,8 +201,12 @@ export class FismaComponent implements OnInit {
       columns: this.columnDefs,
       exportOptions: {
         fileName: this.sharedService.fileNameFmt('GSA_Retired_FISMA_Systems')
-      },
-      url: this.apiService.fismaUrl + '/retired'
+      }
+    });
+
+    // Filter to only "Inactive" Status
+    $('#fismaTable').bootstrapTable('filterBy', {
+      Status: ['Inactive']
     });
   }
 
@@ -208,8 +219,12 @@ export class FismaComponent implements OnInit {
       columns: this.columnDefs,
       exportOptions: {
         fileName: this.sharedService.fileNameFmt('GSA_FISMA_Systems_Inventory')
-      },
-      url: this.apiService.fismaUrl
+      }
+    });
+
+    // Filter back to "Active" Status
+    $('#fismaTable').bootstrapTable('filterBy', {
+      Status: ['Active']
     });
   }
 
