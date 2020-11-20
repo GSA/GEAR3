@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { formatDate } from '@angular/common';
+import { formatDate, Location } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
@@ -21,7 +22,10 @@ export class FismaComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
+    private location: Location,
     private modalService: ModalsService,
+    private route: ActivatedRoute,
+    private router: Router,
     private sharedService: SharedService,
     private tableService: TableService) {
     this.modalService.currentFismaSys.subscribe(row => this.row = row);
@@ -129,12 +133,33 @@ export class FismaComponent implements OnInit {
       data: [],
     }));
 
+    // Filter out "Pending" Status
+    $(document).ready(
+      $('#fismaTable').bootstrapTable('filterBy', {
+        Status: ['Active']
+      })
+    );
+
     // Method to handle click events on the FISMA Systems table
     $(document).ready(
       $('#fismaTable').on('dbl-click-row.bs.table', function (e, row) {
         this.tableService.fismaTableClick(row);
+
+        // Change URL to include ID
+        var normalizedURL = this.sharedService.coreURL(this.router.url);
+        this.location.replaceState(`${normalizedURL}/${row.ID}`);
       }.bind(this)
       ));
+
+      // Method to open details modal when referenced directly via URL
+      this.route.params.subscribe(params => {
+        var detailFismaID = params['fismaID'];
+        if (detailFismaID) {
+          this.apiService.getOneFISMASys(detailFismaID).subscribe((data: any[]) => {
+            this.tableService.fismaTableClick(data[0]);
+          });
+        };
+      });  
 
   }
 
@@ -176,8 +201,12 @@ export class FismaComponent implements OnInit {
       columns: this.columnDefs,
       exportOptions: {
         fileName: this.sharedService.fileNameFmt('GSA_Retired_FISMA_Systems')
-      },
-      url: this.apiService.fismaUrl + '/retired'
+      }
+    });
+
+    // Filter to only "Inactive" Status
+    $('#fismaTable').bootstrapTable('filterBy', {
+      Status: ['Inactive']
     });
   }
 
@@ -190,8 +219,12 @@ export class FismaComponent implements OnInit {
       columns: this.columnDefs,
       exportOptions: {
         fileName: this.sharedService.fileNameFmt('GSA_FISMA_Systems_Inventory')
-      },
-      url: this.apiService.fismaUrl
+      }
+    });
+
+    // Filter back to "Active" Status
+    $('#fismaTable').bootstrapTable('filterBy', {
+      Status: ['Active']
     });
   }
 

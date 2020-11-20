@@ -3,12 +3,12 @@ var dotenv = require('dotenv').config();  // .env Credentials
 const bodyParser = require('body-parser'),
   cors = require('cors'),
   express = require('express'),
-  fs = require('fs');
+  fs = require('fs'),
 
   http = require('http'),
   path = require('path'),
 
-  dbCredentials = require("./api/db.js").dbCredentials;
+  dbCredentials = require("./api/db.js").dbCredentials,
   jsonwebtoken = require('jsonwebtoken'),
   jwt = require('express-jwt'),
   mysql = require('mysql2'),

@@ -44,7 +44,7 @@
       <input [(ngModel)]="searchKey" type="text" class="form-control" placeholder="Search Capability Names"
         id="capSearchField" (keydown)="search($event)" />
       <div class="input-group-btn">
-        <button class="btn btn-primary" (click)="clearSearch(); searchKey = '';">
+        <button aria-label="ClearSearch" class="btn btn-primary" (click)="clearSearch(); searchKey = '';">
           <i class="far fa-trash-alt fa-lg"></i>
         </button>
       </div>

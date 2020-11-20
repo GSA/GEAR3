@@ -131,6 +131,14 @@
                     <td>None Designated</td>
                   </ng-template>
                 </tr>
+                <tr>
+                  <td><i class="fa fa-door-open"></i>Supporting Org</td>
+                  <td *ngIf="application.Support; else supportElse" class="btn-outline-royal-blue pointer"
+                    (click)="openRelated(application.SupportID, 'org')">{{ application.Support }}</td>
+                  <ng-template #supportElse>
+                    <td>None Designated</td>
+                  </ng-template>
+                </tr>
               </tbody>
             </table>
             <br>
@@ -140,7 +148,7 @@
               <div class="text-center">
                 <h4>Business Application Roadmap</h4>
                 <!-- TIME Definitions Link -->
-                <a type="button" class="btn btn-sm btn-info text-white" [routerLink]="['/about', '#appRat']"
+                <a type="button" class="btn btn-sm btn-info text-white" [routerLink]="['/about', 'appRat']"
                   target="_blank">TIME Value Definitions</a>
               </div>
 

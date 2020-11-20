@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 
 import { ModalsService } from '@services/modals/modals.service';
+import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 
 // Declare jQuery symbol
@@ -17,6 +20,9 @@ export class OrganizationsModalComponent implements OnInit {
 
   constructor(
     private modalService: ModalsService,
+    private location: Location,
+    private router: Router,
+    private sharedService: SharedService,
     private tableService: TableService) { }
 
   ngOnInit(): void {
@@ -40,7 +46,11 @@ export class OrganizationsModalComponent implements OnInit {
     // Revert back to overview tab when modal goes away
     $('#organizationDetail').on('hidden.bs.modal', function (e) {
       $("#orgTabs li:first-child a").tab('show');
-    });
+
+      // Change URL back without ID after closing Modal
+      var truncatedURL = this.sharedService.coreURL(this.router.url);
+      this.location.replaceState(truncatedURL);
+    }.bind(this));
   }
 
 }

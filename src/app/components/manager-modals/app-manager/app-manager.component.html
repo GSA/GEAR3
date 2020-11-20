@@ -39,33 +39,60 @@
               <div class="row align-items-center">
                 <div class="form-group col-6">
                   <label for="appDisplayName">Display Name or Alias<span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="appDisplayName" formControlName="appDisplayName"
-                    placeholder="Enter a Short Name or Alias" [value]="application.DisplayName" required>
+                  <input type="text" class="form-control"
+                    [ngClass]="{'is-invalid': modalService.fieldValidCheck(appForm, 'appDisplayName')}"
+                    id="appDisplayName" formControlName="appDisplayName" placeholder="Enter a Short Name or Alias"
+                    [value]="application.DisplayName" required>
+                  <div *ngIf="modalService.fieldValidCheck(appForm, 'appDisplayName')">
+                    <div class="invalid-feedback" *ngIf="appForm.controls['appDisplayName'].errors.required">
+                      Application Display Name/Alias Required
+                    </div>
+                  </div>
                 </div>
 
                 <div class="form-group col-3">
                   <label for="appStatus">Status<span class="text-danger">*</span></label>
-                  <select class="form-control" id="appStatus" formControlName="appStatus" required>
+                  <select class="form-control"
+                    [ngClass]="{'is-invalid': modalService.fieldValidCheck(appForm, 'appStatus')}" id="appStatus"
+                    formControlName="appStatus" required>
                     <option *ngFor="let status of statuses" [value]="status.ID"
                       [selected]="status.Name === application.Status">{{ status.Name }}</option>
                   </select>
+                  <div *ngIf="modalService.fieldValidCheck(appForm, 'appStatus')">
+                    <div class="invalid-feedback" *ngIf="appForm.controls['appStatus'].errors.required">
+                      Application Status Required
+                    </div>
+                  </div>
                 </div>
 
                 <div class="form-group col-3">
                   <label for="appOrWeb">Application or Website<span class="text-danger">*</span></label>
-                  <select class="form-control" id="appOrWeb" formControlName="appOrWeb" required>
+                  <select class="form-control"
+                    [ngClass]="{'is-invalid': modalService.fieldValidCheck(appForm, 'appOrWeb')}" id="appOrWeb"
+                    formControlName="appOrWeb" required>
                     <option value="Application" [selected]="application.Application_or_Website === 'Application'">
                       Application</option>
                     <option value="Website" [selected]="application.Application_or_Website === 'Website'">Website
                     </option>
                   </select>
+                  <div *ngIf="modalService.fieldValidCheck(appForm, 'appOrWeb')">
+                    <div class="invalid-feedback" *ngIf="appForm.controls['appOrWeb'].errors.required">
+                      Application or Website Indication Required
+                    </div>
+                  </div>
                 </div>
               </div>
 
               <div class="form-group">
                 <label for="appName">Full Application Name<span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="appName" formControlName="appName"
-                  placeholder="Enter a Name" [value]="application.Name" required>
+                <input type="text" class="form-control"
+                  [ngClass]="{'is-invalid': modalService.fieldValidCheck(appForm, 'appName')}" id="appName"
+                  formControlName="appName" placeholder="Enter a Name" [value]="application.Name" required>
+                <div *ngIf="modalService.fieldValidCheck(appForm, 'appName')">
+                  <div class="invalid-feedback" *ngIf="appForm.controls['appName'].errors.required">
+                    Application Name Required
+                  </div>
+                </div>
               </div>
 
               <div class="form-group">
@@ -94,8 +121,19 @@
               <div class="row">
                 <div class="form-group col">
                   <label for="appUID">Application ID<span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="appUID" formControlName="appUID"
-                    placeholder="Ex: 1234-1234-1234567-1234" [value]="application.OMBUID" required>
+                  <input type="text" class="form-control"
+                    [ngClass]="{'is-invalid': modalService.fieldValidCheck(appForm, 'appUID')}" id="appUID"
+                    formControlName="appUID" placeholder="Ex: 1234-1234-1234567-1234" [value]="application.OMBUID"
+                    required>
+                  <div *ngIf="modalService.fieldValidCheck(appForm, 'appUID')">
+                    <div class="invalid-feedback" *ngIf="appForm.controls['appUID'].errors.required">
+                      Application Unique Identifier Required
+                    </div>
+                    <div class="invalid-feedback" *ngIf="appForm.controls['appUID'].errors.pattern">
+                      Application Unique Identifier Needs to be in the Form of [4 digits]-[4 digits]-[7 digits]-[4
+                      digits]
+                    </div>
+                  </div>
                 </div>
 
                 <div class="form-group col">
@@ -121,36 +159,50 @@
               </div>
 
               <div class="row align-items-center">
-                <div class="form-group col-5">
+                <div class="form-group col-4">
                   <label for="appBizPOC">Business Point of Contact(s)<span class="text-danger">*</span></label>
-                  <ng-select id="appBizPOC" formControlName="appBizPOC"
-                    [items]="POCs"
-                    [multiple]="true"
-                    appendTo="#appManager"
-                    bindLabel="Name"
-                    bindValue="SamAccountName"
-                    clearAllText="Clear All"
-                    [clearSearchOnAdd]="true"
-                    [closeOnSelect]="false"
-                    [loading]="pocsLoading"
-                    placeholder="Search & Select POCs Here"
-                    [virtualScroll]="true"
+                  <ng-select id="appBizPOC" formControlName="appBizPOC" [items]="POCs" [multiple]="true"
+                    appendTo="#appManager" bindLabel="Name" bindValue="ID" clearAllText="Clear All"
+                    [clearSearchOnAdd]="true" [closeOnSelect]="false" [loading]="pocsLoading"
+                    placeholder="Search & Select POCs Here" [virtualScroll]="true"
                     (scroll)="modalService.onScroll($event, pocsBuffer, bufferSize, POCs, pocsLoading)"
-                    (scrollToEnd)="modalService.onScrollToEnd(pocsBuffer, bufferSize, POCs, pocsLoading)"
-                    required>
+                    (scrollToEnd)="modalService.onScrollToEnd(pocsBuffer, bufferSize, POCs, pocsLoading)" required>
                     <ng-template ng-header-tmp>
                       <small class="form-text text-muted">Loaded {{ pocsBuffer.length }} of {{ POCs.length }}</small>
                     </ng-template>
                   </ng-select>
+                  <div *ngIf="modalService.fieldValidCheck(appForm, 'appBizPOC')">
+                    <div class="invalid-feedback" *ngIf="appForm.controls['appBizPOC'].errors.required">
+                      At least One Business Point of Contact Required
+                    </div>
+                  </div>
                 </div>
 
-                <div class="form-group col-7">
+                <div class="form-group col-4">
                   <label for="appOwner">Owning Org<span class="text-danger">*</span></label>
-                  <select class="form-control" id="appOwner" formControlName="appOwner" required>
+                  <select class="form-control"
+                    [ngClass]="{'is-invalid': modalService.fieldValidCheck(appForm, 'appOwner')}" id="appOwner"
+                    formControlName="appOwner" required>
                     <option *ngFor="let org of orgs" [value]="org.ID" [selected]="org.Name === application.Owner">
                       {{ org.Name }}</option>
                   </select>
+                  <div *ngIf="modalService.fieldValidCheck(appForm, 'appOwner')">
+                    <div class="invalid-feedback" *ngIf="appForm.controls['appOwner'].errors.required">
+                      Owning Organization Required
+                    </div>
+                  </div>
                 </div>
+
+                <div class="form-group col-4">
+                  <label for="appSupport">Supporting Org</label>
+                  <select class="form-control"
+                    [ngClass]="{'is-invalid': modalService.fieldValidCheck(appForm, 'appSupport')}" id="appSupport"
+                    formControlName="appSupport">
+                    <option *ngFor="let org of orgs" [value]="org.ID" [selected]="org.Name === application.Support">
+                      {{ org.Name }}</option>
+                  </select>
+                </div>
+
               </div>
 
             </div>
@@ -197,25 +249,21 @@
               <div class="row align-items-center">
                 <div class="form-group col-5">
                   <label for="appTechPOC">Technical Point of Contact(s)<span class="text-danger">*</span></label>
-                  <ng-select id="appTechPOC" formControlName="appTechPOC"
-                    [items]="POCs"
-                    [multiple]="true"
-                    appendTo="#appManager"
-                    bindLabel="Name"
-                    bindValue="ID"
-                    clearAllText="Clear All"
-                    [clearSearchOnAdd]="true"
-                    [closeOnSelect]="false"
-                    [loading]="pocsLoading"
-                    placeholder="Search & Select POCs Here"
-                    [virtualScroll]="true"
+                  <ng-select id="appTechPOC" formControlName="appTechPOC" [items]="POCs" [multiple]="true"
+                    appendTo="#appManager" bindLabel="Name" bindValue="ID" clearAllText="Clear All"
+                    [clearSearchOnAdd]="true" [closeOnSelect]="false" [loading]="pocsLoading"
+                    placeholder="Search & Select POCs Here" [virtualScroll]="true"
                     (scroll)="modalService.onScroll($event, pocsBuffer, bufferSize, POCs, pocsLoading)"
-                    (scrollToEnd)="modalService.onScrollToEnd(pocsBuffer, bufferSize, POCs, pocsLoading)"
-                    required>
+                    (scrollToEnd)="modalService.onScrollToEnd(pocsBuffer, bufferSize, POCs, pocsLoading)" required>
                     <ng-template ng-header-tmp>
                       <small class="form-text text-muted">Loaded {{ pocsBuffer.length }} of {{ POCs.length }}</small>
                     </ng-template>
                   </ng-select>
+                  <div *ngIf="modalService.fieldValidCheck(appForm, 'appTechPOC')">
+                    <div class="invalid-feedback" *ngIf="appForm.controls['appTechPOC'].errors.required">
+                      At least One Technical Point of Contact Required
+                    </div>
+                  </div>
                 </div>
 
                 <div class="form-group col">
@@ -269,15 +317,15 @@
             <div class="tab-pane fade text-center" id="appMngrTIME">
               <!-- TIME Definitions Link -->
               <div class="row">
-                <a class="link mb-3 float-left" [routerLink]="['/about', '#appRat']" target="_blank">
+                <a class="link mb-3 float-left" [routerLink]="['/about', 'appRat']" target="_blank">
                   TIME Value Definitions</a>
               </div>
 
               <div class="row justify-content-center">
                 <ng-template ngFor let-year [ngForOf]="TIMEYears">
                   <div class="form-group col-2">
-                    <label for="TIME{{ year }}">{{ year }}<span class="text-danger">*</span></label>
-                    <select class="form-control" id="TIME{{ year }}" formControlName="TIME{{ year }}" required>
+                    <label for="TIME{{ year }}">{{ year }}</label>
+                    <select class="form-control" id="TIME{{ year }}" formControlName="TIME{{ year }}">
                       <option *ngFor="let TIME of TIMEValues" [value]="TIME" [selected]="timeMatch('FY19', TIME)">
                         {{ TIME }}</option>
                     </select>

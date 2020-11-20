@@ -64,12 +64,21 @@ export class TableService {
     visible: false
   }, {
     field: 'Owner',
-    title: 'Two Letter Org (Long)',
+    title: 'Owning Org (Long)',
     sortable: true,
     visible: false
   }, {
     field: 'OwnerShort',
-    title: 'Two Letter Org (Short)',
+    title: 'Owning Org (Short)',
+    sortable: true
+  }, {
+    field: 'Support',
+    title: 'Supporting Org (Long)',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'SupportShort',
+    title: 'Supportingr Org (Short)',
     sortable: true
   }, {
     field: 'BusPOC',

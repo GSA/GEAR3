@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as lodash from "lodash";
 
 import { ApiService } from "@services/apis/api.service";
@@ -35,7 +37,10 @@ export class AppsComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
+    private location: Location,
     private modalService: ModalsService,
+    private route: ActivatedRoute,
+    private router: Router, 
     public sharedService: SharedService,
     private tableService: TableService) {
     this.modalService.currentSys.subscribe(row => this.row = row);
@@ -93,6 +98,16 @@ export class AppsComponent implements OnInit {
   }, {
     field: 'Owner',
     title: 'Owning Org (Long)',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'SupportShort',
+    title: 'Supporting Org (Short)',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'Support',
+    title: 'Supporting Org (Long)',
     sortable: true,
     visible: false
   }, {
@@ -224,6 +239,15 @@ export class AppsComponent implements OnInit {
     sortable: true,
     visible: false
   }, {
+    field: 'SupportShort',
+    title: 'Supporting Org (Short)',
+    sortable: true
+  }, {
+    field: 'Support',
+    title: 'Supporting Org (Long)',
+    sortable: true,
+    visible: false
+  }, {
     field: 'BusPOC',
     title: 'Business POC',
     sortable: true,
@@ -337,11 +361,15 @@ export class AppsComponent implements OnInit {
       $('#appsTable').on('click-row.bs.table', function (e, row) {
         this.tableService.appsTableClick(row);
         this.getInterfaceData(row.ID);
+
+        // Change URL to include ID
+        var normalizedURL = this.sharedService.coreURL(this.router.url);
+        this.location.replaceState(`${normalizedURL}/${row.ID}`);
       }.bind(this),
       ));
 
 
-    // Get Investment data for visuals
+    // Get Application data for visuals
     this.apiService.getApplications().subscribe((data: any[]) => {
       // Get counts by SSO
       var counts = data.reduce((p, c) => {
@@ -349,7 +377,7 @@ export class AppsComponent implements OnInit {
         if (!p.hasOwnProperty(name)) {
           p[name] = 0;
         }
-        // Only count if Status is not retiredx
+        // Only count if Status is not retired
         if (['Candidate', 'Pre-Production', 'Production'].includes(c.Status)) p[name]++;
         return p;
       }, {});
@@ -365,6 +393,17 @@ export class AppsComponent implements OnInit {
       // console.log(this.vizData);  // Debug
     });
 
+    // Method to open details modal when referenced directly via URL
+    this.route.params.subscribe(params => {
+      var detailAppID = params['appID'];
+      if (detailAppID) {
+        this.apiService.getOneApp(detailAppID).subscribe((data: any[]) => {
+          var row = data[0];
+          this.tableService.appsTableClick(row);
+          this.getInterfaceData(row.ID);
+        });
+      };
+    });
   }
 
 
@@ -470,6 +509,9 @@ export class AppsComponent implements OnInit {
       return false;
     };
 
+    // Make sure element is empty first
+    d3.select(CONTAINER_ID + "> svg").remove();
+
     // Append the svg object to the body of the page
     var svg = d3.select(CONTAINER_ID).append("svg")
       .attr('width', width)
@@ -565,7 +607,15 @@ export class AppsComponent implements OnInit {
 
     // Add in the nodes
     node = node.data(graph.nodes)
-      .enter().append("g");
+      .enter().append("g")
+      .on("click", function (d: any) {
+        //Open new modal when selecting app on interface graphic
+        $('#appDetail').modal('hide');
+
+        // Route to new app detail
+        window.location.href = `#/applications/${d.id}`;
+        window.location.reload();
+      }.bind(this));
 
     // add the rectangles for the nodes
     node.append("rect")

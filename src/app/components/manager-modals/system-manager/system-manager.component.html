@@ -23,7 +23,7 @@
               Overview<span class="text-danger">*</span></a></li>
           <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#systemMngrChildApps">
-              Child Business Applications<span class="text-danger">*</span></a></li>
+              Child Business Applications</a></li>
         </ul>
 
         <!-- Tab Panes -->
@@ -43,8 +43,13 @@
 
                 <div class="form-group col mb-0">
                   <label for="sysName">Parent System Name<span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="sysName" formControlName="sysName"
-                    placeholder="Enter a Name" [value]="system.Name" required>
+                  <input type="text" class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(systemForm, 'sysName')}" id="sysName"
+                    formControlName="sysName" placeholder="Enter a Name" [value]="system.Name" required>
+                  <div *ngIf="modalService.fieldValidCheck(systemForm, 'sysName')">
+                    <div class="invalid-feedback" *ngIf="systemForm.controls['sysName'].errors.required">
+                      Parent System Name Required
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -56,10 +61,16 @@
 
               <div class="form-group">
                 <label for="sysSSO">Owning SSO<span class="text-danger">*</span></label>
-                <select class="form-control" id="sysSSO" formControlName="sysSSO" required>
+                <select class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(systemForm, 'sysSSO')}" id="sysSSO"
+                  formControlName="sysSSO" required>
                   <option *ngFor="let sso of SSOs" [value]="sso.ID" [selected]="sso.Name === system.SSO">
                     {{ sso.Name }}</option>
                 </select>
+                <div *ngIf="modalService.fieldValidCheck(systemForm, 'sysSSO')">
+                  <div class="invalid-feedback" *ngIf="systemForm.controls['sysName'].errors.required">
+                    Parent System Owning SSO Required
+                  </div>
+                </div>
               </div>
 
               <div class="form-group">

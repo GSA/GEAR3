@@ -110,7 +110,7 @@ b, strong, .font-weight-bold {
 
 .nav-tabs>li>a.active {
   color: #fff !important;
-  background-color: #1F9BCF !important;
+  background-color: #027eb2 !important;
 }
 
 .bg-dark a.nav-link:not(.active) {
@@ -279,5 +279,12 @@ a.position-absolute.float-right {
   -webkit-transform: rotate(180deg);
   transform: rotate(180deg);
 }
+
+/* Also display invalid feedback divs by default. Should control display through ngIf */
+
+.invalid-feedback {
+  display: block !important;
+}
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

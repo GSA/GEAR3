@@ -43,7 +43,7 @@ export class SystemManagerComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private globals: Globals,
-    private modalService: ModalsService,
+    public modalService: ModalsService,
     private sharedService: SharedService,
     private tableService: TableService) { }
 

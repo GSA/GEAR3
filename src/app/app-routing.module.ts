@@ -8,6 +8,7 @@ import { AboutComponent } from './views/main/about/about.component';
 import { AssistTechComponent } from './views/main/assist-tech/assist-tech.component';
 import { FormsGlossaryComponent } from './views/main/forms-glossary/forms-glossary.component';
 import { GearManagerComponent } from './views/main/gear-manager/gear-manager.component';
+import { ManagerRequestComponent } from './views/main/manager-request/manager-request.component';
 
 // Strategy
 import { FrameworkComponent } from './views/strategy/framework/framework.component';
@@ -43,26 +44,34 @@ const routes: Routes = [
 
   { path: 'strategic_framework', component: FrameworkComponent },
   { path: 'investments', component: InvestmentsComponent },
+  { path: 'investments/:investID', component: InvestmentsComponent },
 
   { path: 'capabilities_model', component: CapabilitiesModelComponent },
   { path: 'capabilities', component: CapabilitiesComponent },
+  { path: 'capabilities/:capID', component: CapabilitiesComponent },
   { path: 'org_chart', component: OrganizationsChartComponent },
   { path: 'organizations', component: OrganizationsComponent },
+  { path: 'organizations/:orgID', component: OrganizationsComponent },
 
   { path: 'systems', component: SystemsComponent },
+  { path: 'systems/:sysID', component: SystemsComponent },
   { path: 'applications', component: AppsComponent },
+  { path: 'applications/:appID', component: AppsComponent },
   { path: 'applications_TIME', component: TimeComponent },
 
   { path: 'FISMA', component: FismaComponent },
+  { path: 'FISMA/:fismaID', component: FismaComponent },
   { path: 'FISMA_POC', component: FismaPocsComponent },
 
   { path: 'it_standards', component: ItStandardsComponent },
+  { path: 'it_standards/:standardID', component: ItStandardsComponent },
 
   { path: 'g_invoicing', component: GInvoicingComponent },
 
   { path: 'forms_glossary', component: FormsGlossaryComponent },
 
   { path: 'gear_manager', component: GearManagerComponent },
+  { path: 'manager_request', component: ManagerRequestComponent },
 
   {  // Catch-all Redirect to Home
     path: '**',

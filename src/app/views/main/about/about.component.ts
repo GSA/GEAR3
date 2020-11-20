@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 // Declare jQuery symbol
@@ -9,23 +9,16 @@ declare var $: any;
   templateUrl: './about.component.html',
   styleUrls: ['./about.component.css']
 })
-export class AboutComponent implements OnInit, OnDestroy {
-
-  private tab: number;
-  private sub: any;
+export class AboutComponent implements OnInit {
 
   constructor(private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.sub = this.route.params.subscribe(params => {
-      this.tab = params['tab'];
+    this.route.params.subscribe(params => {
+      var tab = params['tab'];
 
-      $('.nav-tabs a[href="' + this.tab + '"]').tab('show');
+      $('.nav-tabs a[href="#' + tab + '"]').tab('show');
     });
-  }
-
-  ngOnDestroy() {
-    this.sub.unsubscribe();
   }
 
 }

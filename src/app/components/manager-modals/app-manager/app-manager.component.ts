@@ -27,12 +27,14 @@ export class AppManagerComponent implements OnInit {
     appNotes: new FormControl(),
     appRefDoc: new FormControl(),
 
-    appUID: new FormControl(null, [Validators.required]),
+    appUID: new FormControl(null, [Validators.required,
+      Validators.pattern(/^\d{4}-\d{4}-\d{7}-\d{4}/)]),
     appCUI: new FormControl(),
     appProdYr: new FormControl(),
     appRetiredYr: new FormControl(),
     appBizPOC: new FormControl(null, [Validators.required]),
     appOwner: new FormControl(null, [Validators.required]),
+    appSupport: new FormControl(),
 
     appCloud: new FormControl(),
     // appDesktop: new FormControl(),
@@ -43,12 +45,12 @@ export class AppManagerComponent implements OnInit {
     appParent: new FormControl(),
     relatedTech: new FormControl(),
 
-    TIMEFY19: new FormControl(null, [Validators.required]),
-    TIMEFY20: new FormControl(null, [Validators.required]),
-    TIMEFY21: new FormControl(null, [Validators.required]),
-    TIMEFY22: new FormControl(null, [Validators.required]),
-    TIMEFY23: new FormControl(null, [Validators.required]),
-    TIMEFY24: new FormControl(null, [Validators.required]),
+    TIMEFY19: new FormControl(),
+    TIMEFY20: new FormControl(),
+    TIMEFY21: new FormControl(),
+    TIMEFY22: new FormControl(),
+    TIMEFY23: new FormControl(),
+    TIMEFY24: new FormControl(),
     TIMENotes: new FormControl()
   });
 
@@ -214,7 +216,8 @@ export class AppManagerComponent implements OnInit {
             appProdYr: this.application.ProdYear,
             appRetiredYr: this.application.RetiredYear,
             appBizPOC: bizPocIDs,
-            appOwner: this.sharedService.findInArray(this.orgs, 'Name', this.application.Owner, 'ID'),
+            appOwner: this.sharedService.findInArrayID(this.orgs, 'Name', this.application.Owner),
+            appSupport: this.sharedService.findInArrayID(this.orgs, 'Name', this.application.Support),
 
             appCloud: (this.application.Cloud == 'Yes'),
             // appDesktop: this.application.Desktop_Indicator,

@@ -31,16 +31,27 @@
               <div class="row align-items-center">
                 <div class="form-group col-3">
                   <label for="itStandStatus">Status<span class="text-danger">*</span></label>
-                  <select class="form-control" id="itStandStatus" formControlName="itStandStatus" required>
+                  <select class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(itStandardsForm, 'itStandStatus')}" id="itStandStatus"
+                    formControlName="itStandStatus" required>
                     <option *ngFor="let status of statuses" [value]="status.ID"
                       [selected]="status.Name === itStandard.Status">{{ status.Name }}</option>
                   </select>
+                  <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'itStandStatus')">
+                    <div class="invalid-feedback" *ngIf="itStandardsForm.controls['itStandStatus'].errors.required">
+                      IT Standard Status Required
+                    </div>
+                  </div>
                 </div>
 
                 <div class="form-group col">
                   <label for="itStandName">IT-Standard Name<span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="itStandName" formControlName="itStandName"
-                    placeholder="Enter a Name" [value]="itStandard.Name" required>
+                  <input type="text" class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(itStandardsForm, 'itStandName')}" id="itStandName"
+                    formControlName="itStandName" placeholder="Enter a Name" [value]="itStandard.Name" required>
+                  <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'itStandName')">
+                    <div class="invalid-feedback" *ngIf="itStandardsForm.controls['itStandName'].errors.required">
+                      IT Standard Name Required
+                    </div>
+                  </div>
                 </div>
 
                 <div class="form-group col-3">
@@ -64,6 +75,11 @@
                       <small class="form-text text-muted">Loaded {{ pocsBuffer.length }} of {{ POCs.length }}</small>
                     </ng-template>
                   </ng-select>
+                  <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'itStandPOC')">
+                    <div class="invalid-feedback" *ngIf="itStandardsForm.controls['itStandPOC'].errors.required">
+                      At least One Business Point of Contact Required
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -78,10 +94,16 @@
                   <div class="row">
                     <div class="form-group col-3 my-auto">
                       <label for="itStandType">Type<span class="text-danger">*</span></label>
-                      <select class="form-control" id="itStandType" formControlName="itStandType" required>
+                      <select class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(itStandardsForm, 'itStandType')}" id="itStandType"
+                        formControlName="itStandType" required>
                         <option *ngFor="let type of types" [value]="type.ID"
                           [selected]="type.Name === itStandard.StandardType">{{ type.Name }}</option>
                       </select>
+                      <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'itStandType')">
+                        <div class="invalid-feedback" *ngIf="itStandardsForm.controls['itStandType'].errors.required">
+                          IT Standard Type Required
+                        </div>
+                      </div>
                     </div>
 
                     <div class="form-group col-5">
@@ -105,6 +127,11 @@
                           <small class="form-text text-muted">Loaded {{ catsBuffer.length }} of {{ categories.length }}</small>
                         </ng-template>
                       </ng-select>
+                      <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'itStandCategory')">
+                        <div class="invalid-feedback" *ngIf="itStandardsForm.controls['itStandCategory'].errors.required">
+                          IT Standard Category Required
+                        </div>
+                      </div>
                     </div>
 
                     <div class="form-group col-4 my-auto">
@@ -134,10 +161,16 @@
 
                     <div class="form-group col-4">
                       <label for="itStandDeployment">Deployment Type<span class="text-danger">*</span></label>
-                      <select class="form-control" id="itStandDeployment" formControlName="itStandDeployment" required>
+                      <select class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(itStandardsForm, 'itStandDeployment')}" id="itStandDeployment"
+                        formControlName="itStandDeployment" required>
                         <option *ngFor="let type of deploymentTypes" [value]="type.ID"
                           [selected]="type.Name === itStandard.DeploymentType">{{ type.Name }}</option>
                       </select>
+                      <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'itStandDeployment')">
+                        <div class="invalid-feedback" *ngIf="itStandardsForm.controls['itStandDeployment'].errors.required">
+                          IT Standard Deployment Type Required
+                        </div>
+                      </div>
                     </div>
                   </div>
 

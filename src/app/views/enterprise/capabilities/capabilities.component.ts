@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
@@ -21,7 +23,10 @@ export class CapabilitiesComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
+    private location: Location,
     private modalService: ModalsService,
+    private route: ActivatedRoute,
+    private router: Router,
     private sharedService: SharedService,
     private tableService: TableService) {
     this.modalService.currentCap.subscribe(row => this.row = row);
@@ -107,8 +112,23 @@ export class CapabilitiesComponent implements OnInit {
     $(document).ready(
       $('#capTable').on('click-row.bs.table', function (e, row) {
         this.tableService.capsTableClick(row);
+
+        // Change URL to include ID
+        var normalizedURL = this.sharedService.coreURL(this.router.url);
+        this.location.replaceState(`${normalizedURL}/${row.ID}`);
       }.bind(this))
     );
+
+    // Method to open details modal when referenced directly via URL
+    this.route.params.subscribe(params => {
+      var detailCapID = params['capID'];
+      if (detailCapID) {
+        this.apiService.getOneCap(detailCapID).subscribe((data: any[]) => {
+          this.tableService.capsTableClick(data[0]);
+        });
+      };
+    });
+  
   }
 
   // Update table, filtering by SSO

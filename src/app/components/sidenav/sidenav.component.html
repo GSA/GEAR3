@@ -26,7 +26,7 @@
     <ul id="sideMenu" class="list-group">
       <!-- Strategy -->
       <li>
-        <a data-toggle="collapse" data-target="#strategyDropdown" aria-controls="#strategyDropdown"
+        <a id="strategyBttn" data-toggle="collapse" data-target="#strategyDropdown" aria-controls="#strategyDropdown"
           aria-expanded="false" (click)="_opened=true"
           class="bg-success list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
@@ -51,7 +51,7 @@
 
       <!-- Enterprise  -->
       <li>
-        <a data-toggle="collapse" data-target="#enterpriseDropdown" aria-controls="#enterpriseDropdown"
+        <a id="enterpriseBttn" data-toggle="collapse" data-target="#enterpriseDropdown" aria-controls="#enterpriseDropdown"
           aria-expanded="false" (click)="_opened=true"
           class="bg-royal-blue list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
@@ -76,7 +76,7 @@
 
       <!-- Business Applications -->
       <li>
-        <a data-toggle="collapse" data-target="#businessAppDropdown" aria-controls="#businessAppDropdown"
+        <a id="businessBttn" data-toggle="collapse" data-target="#businessAppDropdown" aria-controls="#businessAppDropdown"
           aria-expanded="false" (click)="_opened=true"
           class="bg-danger list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
@@ -99,7 +99,7 @@
 
       <!-- Security -->
       <li>
-        <a data-toggle="collapse" data-target="#securityDropdown" aria-controls="#securityDropdown"
+        <a id="securityBttn" data-toggle="collapse" data-target="#securityDropdown" aria-controls="#securityDropdown"
           aria-expanded="false" (click)="_opened=true"
           class="bg-warning list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
@@ -120,7 +120,7 @@
 
       <!-- Technologies -->
       <li>
-        <a data-toggle="collapse" data-target="#technologiesDropdown" aria-controls="#technologiesDropdown"
+        <a id="technologyBttn" data-toggle="collapse" data-target="#technologiesDropdown" aria-controls="#technologiesDropdown"
           aria-expanded="false" (click)="_opened=true"
           class="bg-teal list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
@@ -143,7 +143,7 @@
 
       <!-- Enterprise Architecture -->
       <li>
-        <a data-toggle="collapse" data-target="#eaDropdown" aria-controls="#eaDropdown"
+        <a id="eaBttn" data-toggle="collapse" data-target="#eaDropdown" aria-controls="#eaDropdown"
           aria-expanded="false" (click)="_opened=true"
           class="bg-purple list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
@@ -165,8 +165,8 @@
 
       <!-- Access Forms & Glossary -->
       <li>
-        <a routerLink="/forms_glossary"
-          class="bg-info list-group-item list-group-item-action flex-column align-items-start">
+        <a id="formsBttn" routerLink="/forms_glossary" aria-label="Access Forms and Glossary"
+          tabindex="0" class="bg-info list-group-item list-group-item-action align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
             Access Forms & Glossary
             <span class="submenu-icon">
@@ -181,8 +181,8 @@
 
     <!-- GEAR Manager Login -->
     <div class="sidebar-footer">
-      <a routerLink="/gear_manager" [hidden]="sharedService.loggedIn"
-        class="bg-info list-group-item list-group-item-action flex-column align-items-start text-white">
+      <a name="managerLoginBttn" routerLink="/gear_manager" [hidden]="sharedService.loggedIn" aria-label="GEAR Manager Login"
+        tabindex="0" class="bg-info list-group-item list-group-item-action align-items-start text-white">
         <div class="d-flex w-100 justify-content-start align-items-center">
           GEAR Manager Login
           <span class="submenu-icon">
@@ -190,8 +190,8 @@
           </span>
         </div>
       </a>
-      <a routerLink="/" [hidden]="!sharedService.loggedIn" (click)="logoutManager()"
-        class="bg-danger list-group-item list-group-item-action flex-column align-items-start text-white">
+      <a name="managerLogoutBttn" routerLink="/" [hidden]="!sharedService.loggedIn" (click)="logoutManager()" tabindex="0"
+        aria-label="GEAR Manager Logout" class="bg-danger list-group-item list-group-item-action align-items-start text-white">
         <div class="d-flex w-100 justify-content-start align-items-center">
           GEAR Manager Logout
           <span class="submenu-icon">

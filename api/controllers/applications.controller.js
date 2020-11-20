@@ -7,7 +7,7 @@ const queryPath = '../queries/';
 
 exports.findAll = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_application_full_suite.sql')).toString() +
-    " WHERE org.Keyname <> 'External' GROUP BY app.Id ORDER BY app.Keyname;";
+    " WHERE org.Keyname <> 'External' AND obj_application_status.Keyname <> 'Retired' GROUP BY app.Id ORDER BY app.Keyname;";
 
   res = ctrl.sendQuery(query, 'business applications', res);
 };
@@ -145,6 +145,7 @@ exports.update = (req, res) => {
         Retired_Year                    = ${data.appRetiredYr},
         obj_org_SSO_Id                  = ${data.appSSO},
         App_Owning_Org                  = ${data.appOwner},
+        Support_Org                     = ${data.appSupport},
 
         Cloud_Indicator                 = ${data.appCloud},
         Mobile_App_Indicator            = ${data.appMobile},
@@ -197,6 +198,7 @@ exports.create = (req, res) => {
       Retired_Year,
       obj_org_SSO_Id,
       App_Owning_Org,
+      Support_Org,
 
       Cloud_Indicator,
       Mobile_App_Indicator,
@@ -221,6 +223,7 @@ exports.create = (req, res) => {
         ${data.appRetiredYr},
         ${data.appSSO},
         ${data.appOwner},
+        ${data.appSupport},
 
         '${data.appCloud}',
         '${data.appMobile}',
