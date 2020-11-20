@@ -135,7 +135,7 @@ export class SystemManagerComponent implements OnInit {
             sysStatus: status,
             sysName: this.system.Name,
             sysDesc: this.system.Description,
-            sysSSO: this.sharedService.findInArray(this.SSOs, 'Name', this.system.SSO, 'ID'),
+            sysSSO: this.sharedService.findInArrayID(this.SSOs, 'Name', this.system.SSO),
             sysLink: this.system.URL,
             sysChildApps: this.selectedIDs
           });

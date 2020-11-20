@@ -192,18 +192,18 @@ export class AppManagerComponent implements OnInit {
           var techPocIDs = [];
           if (this.application.BusPOC) {
             this.application.BusPOC.split(', ').forEach(poc => {
-              bizPocIDs.push(this.sharedService.findInArray(this.POCs, 'Name', poc, 'SamAccountName'))
+              bizPocIDs.push(this.sharedService.findInArrayID(this.POCs, 'Name', poc, 'SamAccountName'))
             });
           };
           if (this.application.TechPOC) {
             this.application.TechPOC.split(', ').forEach(poc => {
-              techPocIDs.push(this.sharedService.findInArray(this.POCs, 'Name', poc, 'SamAccountName'))
+              techPocIDs.push(this.sharedService.findInArrayID(this.POCs, 'Name', poc, 'SamAccountName'))
             });
           };
 
           // Set default values for form with current values after resolving related apps
           this.appForm.patchValue({
-            appStatus: this.sharedService.findInArray(this.statuses, 'Name', this.application.Status, 'ID'),
+            appStatus: this.sharedService.findInArrayID(this.statuses, 'Name', this.application.Status),
             appOrWeb: this.application.Application_or_Website,
             appName: this.application.Name,
             appDisplayName: this.application.DisplayName,
@@ -216,15 +216,15 @@ export class AppManagerComponent implements OnInit {
             appProdYr: this.application.ProdYear,
             appRetiredYr: this.application.RetiredYear,
             appBizPOC: bizPocIDs,
-            appOwner: this.sharedService.findInArrayID(this.orgs, 'Name', this.application.Owner),
-            appSupport: this.sharedService.findInArrayID(this.orgs, 'Name', this.application.Support),
+            appOwner: this.sharedService.findInArrayIDID(this.orgs, 'Name', this.application.Owner),
+            appSupport: this.sharedService.findInArrayIDID(this.orgs, 'Name', this.application.Support),
 
             appCloud: (this.application.Cloud == 'Yes'),
             // appDesktop: this.application.Desktop_Indicator,
             appMobile: (this.application.Mobile_App_Indicator == 'Yes'),
-            appHost: this.sharedService.findInArray(this.hosts, 'Name', this.application.HostingProvider, 'ID'),
+            appHost: this.sharedService.findInArrayID(this.hosts, 'Name', this.application.HostingProvider),
             appTechPOC: techPocIDs,
-            appFISMA: this.sharedService.findInArray(this.fismaSystems, 'Name', this.application.FISMASystem, 'ID'),
+            appFISMA: this.sharedService.findInArrayID(this.fismaSystems, 'Name', this.application.FISMASystem),
             appParent: this.application.ParentSystemID,
             relatedTech: this.selectedIDs,
             
