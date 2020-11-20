@@ -142,7 +142,7 @@ export class ItStandardManagerComponent implements OnInit {
         this.itStandard.POC.split('; ').forEach(poc => {
           // Index 0 has name of POC
           let pocName = poc.split(', ')[0]
-          pocIDs.push(this.sharedService.findInArrayID(this.POCs, 'Name', pocName, 'SamAccountName'));
+          pocIDs.push(this.sharedService.findInArray(this.POCs, 'Name', pocName, 'SamAccountName'));
         });
       };
 
@@ -157,22 +157,22 @@ export class ItStandardManagerComponent implements OnInit {
       var categoryIDs = [];
       if (this.itStandard.Category) {
         this.itStandard.Category.split(', ').forEach(cat => {
-          categoryIDs.push(this.sharedService.findInArrayID(this.categories, 'Name', cat))
+          categoryIDs.push(this.sharedService.findInArray(this.categories, 'Name', cat))
         });
       };
 
       // Set default values for form with current values
       this.itStandardsForm.patchValue({
-        itStandStatus: this.sharedService.findInArrayID(this.statuses, 'Name', this.itStandard.Status),
+        itStandStatus: this.sharedService.findInArray(this.statuses, 'Name', this.itStandard.Status),
         itStandName: this.itStandard.Name,
         itStandPOC: pocIDs,
         itStandDesc: this.itStandard.Description,
-        itStandType: this.sharedService.findInArrayID(this.types, 'Name', this.itStandard.StandardType),
+        itStandType: this.sharedService.findInArray(this.types, 'Name', this.itStandard.StandardType),
         itStandCategory: categoryIDs,
-        itStand508: this.sharedService.findInArrayID(this.compliance, 'Name', this.itStandard.ComplianceStatus),
+        itStand508: this.sharedService.findInArray(this.compliance, 'Name', this.itStandard.ComplianceStatus),
         itStandMyView: myView,
         itStandVendorOrg: this.itStandard.Vendor_Standard_Organization,
-        itStandDeployment: this.sharedService.findInArrayID(this.deploymentTypes, 'Name', this.itStandard.DeploymentType),
+        itStandDeployment: this.sharedService.findInArray(this.deploymentTypes, 'Name', this.itStandard.DeploymentType),
         itStandGoldImg: goldImg,
         itStandGoldComment: this.itStandard.Gold_Image_Comment,
         itStandAprvExp: formatDate(this.aprvExpDate, 'yyyy-MM-dd', 'en-US'),

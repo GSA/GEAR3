@@ -31,12 +31,12 @@ SELECT DISTINCT
   support.Keyname                   AS Support,
   support.Display_name              AS SupportShort,
   support.Id                        AS SupportID,
-  GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', buspoc.Keyname, buspoc.Email, busorg.Display_Name) SEPARATOR '; ')     AS BusinessPOC,
-  GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', techpoc.Keyname, techpoc.Email, techorg.Display_Name) SEPARATOR '; ')  AS TechnicalPOC,
-  GROUP_CONCAT(DISTINCT  buspoc.Keyname SEPARATOR ', ')                                                         AS BusPOC,
-  GROUP_CONCAT(DISTINCT  busorg.Display_Name SEPARATOR ', ')                                                    AS BusOrg,
-  GROUP_CONCAT(DISTINCT  techpoc.Keyname SEPARATOR ', ')                                                        AS TechPOC,
-  GROUP_CONCAT(DISTINCT  techorg.Display_Name SEPARATOR ', ')                                                   AS TechOrg,
+  GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', CONCAT_WS(' ', buspoc.FirstName, buspoc.LastName), buspoc.Email, buspoc.OrgCode) SEPARATOR '; ')      AS BusinessPOC,
+  GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', CONCAT_WS(' ', techpoc.FirstName, techpoc.LastName), techpoc.Email, techpoc.OrgCode) SEPARATOR '; ')  AS TechnicalPOC,
+  GROUP_CONCAT(DISTINCT  CONCAT_WS(' ', buspoc.FirstName, buspoc.LastName) SEPARATOR ', ')                 AS BusPOC,
+  GROUP_CONCAT(DISTINCT  buspoc.OrgCode SEPARATOR ', ')                                                    AS BusOrg,
+  GROUP_CONCAT(DISTINCT  CONCAT_WS(' ', techpoc.FirstName, techpoc.LastName) SEPARATOR ', ')               AS TechPOC,
+  GROUP_CONCAT(DISTINCT  techpoc.OrgCode SEPARATOR ', ')                                                   AS TechOrg,
   
   CONCAT_WS('*', CONCAT_WS(':', 'BusinessPOC', GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', CONCAT_WS(' ', buspoc.FirstName, buspoc.LastName), buspoc.Email, buspoc.OrgCode) SEPARATOR '; ')) ,
   CONCAT_WS(':', 'TechnicalPOC', GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', CONCAT_WS(' ', techpoc.FirstName, techpoc.LastName), techpoc.Email, techpoc.OrgCode) SEPARATOR '; '))  ) AS POC,
@@ -79,12 +79,10 @@ FROM obj_application AS app
 -- LEFT JOIN obj_application AS replacedby ON zk_application_replacedby.obj_application_Id1 = replacedby.Id
 
   LEFT JOIN zk_application_business_poc   ON app.Id = zk_application_business_poc.obj_application_Id
-  LEFT JOIN obj_poc          AS buspoc    ON zk_application_business_poc.obj_bus_poc_Id = buspoc.Id
-  LEFT JOIN obj_organization AS busorg    ON buspoc.obj_organization_Id = busorg.Id
+  LEFT JOIN obj_ldap_poc     AS buspoc    ON zk_application_business_poc.obj_ldap_SamAccountName = buspoc.SamAccountName
 
   LEFT JOIN zk_application_technical_poc  ON app.Id = zk_application_technical_poc.obj_application_Id
-  LEFT JOIN obj_poc          AS techpoc   ON zk_application_technical_poc.obj_tech_poc_Id = techpoc.Id
-  LEFT JOIN obj_organization AS techorg   ON techpoc.obj_organization_Id = techorg.Id
+  LEFT JOIN obj_ldap_poc     AS techpoc   ON zk_application_technical_poc.obj_ldap_SamAccountName = techpoc.SamAccountName
 
 -- LEFT JOIN zk_application_time ON app.Id = zk_application_time.obj_application_Id
 -- LEFT JOIN obj_fy AS fy ON zk_application_time.obj_fy_Id = fy.Id

@@ -162,7 +162,7 @@
                 <div class="form-group col-4">
                   <label for="appBizPOC">Business Point of Contact(s)<span class="text-danger">*</span></label>
                   <ng-select id="appBizPOC" formControlName="appBizPOC" [items]="POCs" [multiple]="true"
-                    appendTo="#appManager" bindLabel="Name" bindValue="ID" clearAllText="Clear All"
+                    appendTo="#appManager" bindLabel="Name" bindValue="SamAccountName" clearAllText="Clear All"
                     [clearSearchOnAdd]="true" [closeOnSelect]="false" [loading]="pocsLoading"
                     placeholder="Search & Select POCs Here" [virtualScroll]="true"
                     (scroll)="modalService.onScroll($event, pocsBuffer, bufferSize, POCs, pocsLoading)"
@@ -250,7 +250,7 @@
                 <div class="form-group col-5">
                   <label for="appTechPOC">Technical Point of Contact(s)<span class="text-danger">*</span></label>
                   <ng-select id="appTechPOC" formControlName="appTechPOC" [items]="POCs" [multiple]="true"
-                    appendTo="#appManager" bindLabel="Name" bindValue="ID" clearAllText="Clear All"
+                    appendTo="#appManager" bindLabel="Name" bindValue="SamAccountName" clearAllText="Clear All"
                     [clearSearchOnAdd]="true" [closeOnSelect]="false" [loading]="pocsLoading"
                     placeholder="Search & Select POCs Here" [virtualScroll]="true"
                     (scroll)="modalService.onScroll($event, pocsBuffer, bufferSize, POCs, pocsLoading)"

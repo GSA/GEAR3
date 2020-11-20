@@ -32,10 +32,10 @@ SELECT
   GROUP_CONCAT(DISTINCT support.Keyname SEPARATOR ',')                                    AS Support,
   GROUP_CONCAT(DISTINCT support.Display_name SEPARATOR ',')                               AS SupportShort,
   GROUP_CONCAT(DISTINCT support.Id SEPARATOR ',')                                         AS SupportID,
-  GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', buspoc.Keyname, buspoc.Email) SEPARATOR '; ')    AS BusinessPOC,
-  GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', techpoc.Keyname, techpoc.Email) SEPARATOR '; ')  AS TechnicalPOC,
-  GROUP_CONCAT(DISTINCT  buspoc.Keyname SEPARATOR ', ')                                   AS BusPOC,
-  GROUP_CONCAT(DISTINCT  techpoc.Keyname SEPARATOR ', ')                                  AS TechPOC,
+  GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', CONCAT_WS(' ', buspoc.FirstName, buspoc.LastName), buspoc.Email, buspoc.OrgCode) SEPARATOR '; ')     AS BusinessPOC,
+  GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', CONCAT_WS(' ', techpoc.FirstName, techpoc.LastName), techpoc.Email, techpoc.OrgCode) SEPARATOR '; ') AS TechnicalPOC,
+  GROUP_CONCAT(DISTINCT  CONCAT_WS(' ', buspoc.FirstName, buspoc.LastName) SEPARATOR ', ')                                                    AS BusPOC,
+  GROUP_CONCAT(DISTINCT  CONCAT_WS(' ', techpoc.FirstName, techpoc.LastName) SEPARATOR ', ')                                                  AS TechPOC,
   
   CONCAT_WS('*', CONCAT_WS(':', 'BusinessPOC', GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', CONCAT_WS(' ', buspoc.FirstName, buspoc.LastName), buspoc.Email) SEPARATOR '; ')) ,
   CONCAT_WS(':', 'TechnicalPOC', GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', CONCAT_WS(' ', techpoc.FirstName, techpoc.LastName), techpoc.Email) SEPARATOR '; '))  ) AS POC,
@@ -68,9 +68,9 @@ LEFT JOIN obj_application_status                  ON app.obj_application_status_
 LEFT JOIN obj_num_of_users            AS nou      ON app.Number_of_Users = nou.Id
 LEFT JOIN obj_tier                    AS ot       ON app.Tier = ot.Id
 
-  LEFT JOIN zk_application_owning_org               ON app.Id = zk_application_owning_org.obj_application_Id
-  LEFT JOIN obj_organization            AS owner    ON zk_application_owning_org.obj_org_owner_Id = owner.Id
-  LEFT JOIN obj_organization            AS support  ON app.Support_Org = support.Id
+LEFT JOIN zk_application_owning_org               ON app.Id = zk_application_owning_org.obj_application_Id
+LEFT JOIN obj_organization            AS owner    ON zk_application_owning_org.obj_org_owner_Id = owner.Id
+LEFT JOIN obj_organization            AS support  ON app.Support_Org = support.Id
 
 LEFT JOIN zk_app_capabilities                     ON app.Id = zk_app_capabilities.obj_application_Id
 LEFT JOIN obj_capability              AS cap      ON zk_app_capabilities.obj_capability_Id = cap.Id
