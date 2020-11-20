@@ -14,7 +14,6 @@ SELECT
   archer.`ex:Type_of_Service`                         AS ServiceType,
   archer.`ex:FISMA_System_Identifier`                 AS FISMASystemIdentifier, 
   archer.`ex:Inactive_Date`                           AS InactiveDate,
-  archer.`ex:Status`                                  AS Status,
   archer.`ex:Description`                             AS Description,
   archer.`ex:SystemLevel`                             AS SystemLevel,
   archer.`ex:FISMA_Reportable`                        AS Reportable,
