@@ -51,7 +51,7 @@ export class SharedService {
   };
 
   // Find in Array an Item by Key
-  findInArrayIDID(array: any[], arrayKey: string, searchItem: any) {
+  findInArrayID(array: any[], arrayKey: string, searchItem: any) {
     var result: any = array.find(element => element[arrayKey] === searchItem);
 
     if (result) return result.ID;
