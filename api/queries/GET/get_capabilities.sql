@@ -1,11 +1,11 @@
 SELECT
-  cap.capability_Id       AS ID,
-  cap.Capability_Name     AS Name,
-  cap.Capability_Ref_Id   AS ReferenceNum,
+  cap.Id                  AS ID,
+  cap.Keyname             AS Name,
   cap.Description,
-  cap.Capability_Level    AS Level,
-  parent.Capability_Name  AS Parent
+  cap.ReferenceNumber     AS ReferenceNum,
+  parent.Keyname          AS Parent,
+  cap.old_Id
 
 FROM obj_capability       AS cap
 
-LEFT JOIN obj_capability  AS parent ON cap.Parent_Id = parent.capability_Id
+  LEFT JOIN obj_capability  AS parent ON cap.Parent_Id = parent.Id
