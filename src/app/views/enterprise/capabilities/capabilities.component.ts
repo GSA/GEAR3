@@ -56,13 +56,17 @@ export class CapabilitiesComponent implements OnInit {
     sortable: true
   }, {
     field: 'Name',
-    title: 'Function Name',
+    title: 'Capability Name',
     sortable: true
   }, {
     field: 'Description',
     title: 'Description',
     sortable: true,
     class: 'text-truncate'
+  }, {
+    field: 'Level',
+    title: 'Level',
+    sortable: true
   }, {
     field: 'Parent',
     title: 'Parent',
@@ -76,13 +80,17 @@ export class CapabilitiesComponent implements OnInit {
     sortable: true
   }, {
     field: 'Name',
-    title: 'Function Name',
+    title: 'Capability Name',
     sortable: true
   }, {
     field: 'Description',
     title: 'Description',
     sortable: true,
     class: 'text-truncate'
+  }, {
+    field: 'Level',
+    title: 'Level',
+    sortable: true,
   }, {
     field: 'ParentCap',
     title: 'Parent',
