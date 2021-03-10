@@ -27,6 +27,12 @@ b, strong, .font-weight-bold {
   width: 80% !important;
 }
 
+/* More Height Classes */
+
+.h-20 {
+  height: 20% !important;
+}
+
 /* Make xl modals bigger */
 
 @media (min-width: 1200px) {
