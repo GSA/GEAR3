@@ -1,35 +1,17 @@
-SELECT DISTINCT invest.Id                         AS ID,
-  invest.Keyname                                  AS Name,
+SELECT DISTINCT invest.Investment_Id              AS ID,
+  invest.Unique_Investment_Identifier             AS UII,
+  invest.Investment_Name                          AS Name,
   invest.Description,
-  invest.Comments,
-  IF (invest.Active = 1, 'True', 'False')			    AS Active,
   invest.Budget_Year,
-  invest.UII,
-  invest.CreateDTG,
-  invest.ChangeDTG,
-  invest.CreateAudit,
-  invest.ChangeAudit,
-  invest.old_Id,
-  obj_investment_type.Keyname                     AS Type,
-  primary_service_area.Keyname                    AS PSA,
-  sec_service_area1.Keyname                       AS SSA,
-  sec_service_area2.Keyname                       AS sec_service_area2,
-  sec_service_area3.Keyname                       AS sec_service_area3,
-  sec_service_area4.Keyname                       AS sec_service_area4,
-  obj_organization.Keyname                        AS SSO,
-  obj_organization.Display_Name                   AS SSOShort,
-  obj_poc.Keyname                                 AS InvManager,
-  obj_poc.Email                                   AS InvManagerEmail,
-  concat_ws(',', obj_poc.Keyname, obj_poc.email)  AS POC
+  invest.Cloud_Computing_Alternatives_Evaluation  AS Cloud_Alt,
+  invest.Comments,
+  invest.Investment_Start_Year                    AS Start_Year,
+  invest.Investment_End_Year                      AS End_Year,
+  invest.Investment_Manager_Name                  AS InvManager,
+  invest.Investment_Status_Name                   AS Status,
+  invest.Investment_Type                          AS Type,
+  invest.IT_Portfolio,
+  invest.primary_service_area                     AS PSA,
+  invest.Updated_Date
 
 FROM obj_investment AS invest
-
-  LEFT JOIN obj_poc                                       ON invest.obj_poc_Id = obj_poc.Id
-  LEFT JOIN obj_investment_type                           ON invest.obj_investment_type_Id = obj_investment_type.Id
-  LEFT JOIN obj_investment_cost                           ON invest.Id = obj_investment_cost.obj_investment_Id
-  LEFT JOIN obj_organization                              ON invest.obj_organization_Id = obj_organization.Id
-  LEFT JOIN obj_capability        AS primary_service_area ON invest.primary_service_area = primary_service_area.Id
-  LEFT JOIN obj_capability        AS sec_service_area1    ON invest.sec_serv_area1 = sec_service_area1.Id
-  LEFT JOIN obj_capability        AS sec_service_area2    ON invest.sec_serv_area2 = sec_service_area2.Id
-  LEFT JOIN obj_capability        AS sec_service_area3    ON invest.sec_serv_area3 = sec_service_area3.Id
-  LEFT JOIN obj_capability        AS sec_service_area4    ON invest.sec_serv_area4 = sec_service_area4.Id

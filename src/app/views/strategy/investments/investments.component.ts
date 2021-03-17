@@ -22,9 +22,11 @@ export class InvestmentsComponent implements OnInit {
   row: Object = <any>{};
   filteredTable: boolean = false;
   filterTitle: string = '';
+  nonEliminatedTypes: any[] = ['No change in status', 'New'];
+  eliminatedTypes: any[] = ['Eliminated by funding', 'Eliminated by omission'];
 
   vizData: any[] = [];
-  vizLabel: string = 'Total Active Investments'
+  vizLabel: string = 'Total Non-Eliminated Investments'
   colorScheme: {} = {
     domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5']
   };
@@ -72,25 +74,44 @@ export class InvestmentsComponent implements OnInit {
     title: 'Type',
     sortable: true
   }, {
+    field: 'IT_Portfolio',
+    title: 'Part of IT Portfolio',
+    sortable: true
+  }, {
+    field: 'Budget_Year',
+    title: 'Budget Year',
+    sortable: true
+  }, {
     field: 'InvManager',
     title: 'Investment Manager',
     sortable: true
   }, {
-    field: 'SSO',
-    title: 'SSO',
+    field: 'Status',
+    title: 'Status',
     sortable: true
   }, {
-    field: 'SSOShort',
-    title: 'SSO (Short)',
+    field: 'Start_Year',
+    title: 'Start Year',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'End_Year',
+    title: 'End Year',
     sortable: true,
     visible: false
   }, {
     field: 'PSA',
     title: 'Primary Service Area',
-    sortable: true
+    sortable: true,
+    visible: false
   }, {
-    field: 'SSA',
-    title: 'Secondary Service Area',
+    field: 'Cloud_Alt',
+    title: 'Cloud Alt. Evaluation',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'Comments',
+    title: 'Comments',
     sortable: true,
     visible: false
   }, {
@@ -98,6 +119,10 @@ export class InvestmentsComponent implements OnInit {
     title: 'Investment UII',
     sortable: true,
     visible: false
+  }, {
+    field: 'Updated_Date',
+    title: 'Updated Date',
+    sortable: true
   }];
 
   ngOnInit(): void {
@@ -111,9 +136,9 @@ export class InvestmentsComponent implements OnInit {
       data: [],
     }));
 
-    // Filter to only active investments
+    // Filter to only non-eliminated investments
     $(document).ready(
-      $('#investTable').bootstrapTable('filterBy', { Active: 'True' })
+      $('#investTable').bootstrapTable('filterBy', { Status: this.nonEliminatedTypes })
     );
 
     // Method to handle click events on the Investments table
@@ -129,14 +154,14 @@ export class InvestmentsComponent implements OnInit {
 
     // Get Investment data for visuals
     this.apiService.getInvestments().subscribe((data: any[]) => {
-      // Get counts by SSO
+      // Get counts by Investment Type
       var counts = data.reduce((p, c) => {
-        var name = c.SSOShort;
+        var name = c.Type;
         if (!p.hasOwnProperty(name)) {
           p[name] = 0;
         }
-        // Only count if Active
-        if (c.Active === 'True') p[name]++;
+        // Only count if not eliminated
+        if (c.Status.includes('Eliminated') == false) p[name]++;
         return p;
       }, {});
 
@@ -165,29 +190,29 @@ export class InvestmentsComponent implements OnInit {
 
 
   // Create new investment when in GEAR Manager mode
-  createInvestment() {
-    var emptyInvestment = new Investment();
+  // createInvestment() {
+  //   var emptyInvestment = new Investment();
 
-    // By default, set new record to active
-    emptyInvestment.Active = true;
-    this.modalService.updateRecordCreation(true);
-    this.sharedService.setInvestForm();
-    this.modalService.updateDetails(emptyInvestment, 'investment');
-    $('#investManager').modal('show');
-  }
+  //   // By default, set new record to active
+  //   emptyInvestment.Active = true;
+  //   this.modalService.updateRecordCreation(true);
+  //   this.sharedService.setInvestForm();
+  //   this.modalService.updateDetails(emptyInvestment, 'investment');
+  //   $('#investManager').modal('show');
+  // }
 
   // Update table from filter buttons
-  inactiveFilter() {
+  eliminatedFilter() {
     this.filteredTable = true;  // Filters are on, expose main table button
-    this.filterTitle = 'Inactive';
+    this.filterTitle = 'Eliminated';
 
-    // Hide visualization when on inactive items
+    // Hide visualization when on eliminated items
     $('#investViz').collapse('hide');
 
-    $('#investTable').bootstrapTable('filterBy', { Active: 'False' });
+    $('#investTable').bootstrapTable('filterBy', { Status: this.eliminatedTypes });
     $('#investTable').bootstrapTable('refreshOptions', {
       exportOptions: {
-        fileName: this.sharedService.fileNameFmt('GSA_Inactive_IT_Investments')
+        fileName: this.sharedService.fileNameFmt('GSA_Eliminated_IT_Investments')
       }
     })
   }
@@ -199,7 +224,7 @@ export class InvestmentsComponent implements OnInit {
     $('#investViz').collapse('show');
 
     // Remove filters and back to default
-    $('#investTable').bootstrapTable('filterBy', { Active: 'True' });
+    $('#investTable').bootstrapTable('filterBy', { Status: this.nonEliminatedTypes });
     $('#investTable').bootstrapTable('refreshOptions', {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt('GSA_IT_Investments')
@@ -211,10 +236,10 @@ export class InvestmentsComponent implements OnInit {
     this.filteredTable = true;  // Filters are on, expose main table button
     this.filterTitle = chartData.name;
 
-    // Filter by SSO clicked on visualization
+    // Filter by Type clicked on visualization
     $('#investTable').bootstrapTable('filterBy', {
-      Active: 'True',
-      SSOShort: chartData.name
+      Status: this.nonEliminatedTypes,
+      Type: chartData.name
     });
     $('#investTable').bootstrapTable('refreshOptions', {
       exportOptions: {

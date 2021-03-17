@@ -17,9 +17,9 @@
           <li class="nav-item">
             <a class="nav-link active" data-toggle="tab" href="#investOverview">
               Overview</a></li>
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#investRelatedApps">
-              Related Business Applications</a></li>
+              Related Business Applications</a></li> -->
         </ul>
 
         <!-- Tab Panes -->
@@ -44,6 +44,26 @@
 
               <tbody>
                 <tr>
+                  <td><i class="far fa-calendar"></i>Budget Year</td>
+                  <td>{{ investment.Budget_Year }}</td>
+                </tr>
+                <tr>
+                  <td><i class="far fa-calendar-plus"></i>Start Year</td>
+                  <td>{{ investment.Start_Year }}</td>
+                </tr>
+                <tr>
+                  <td><i class="far fa-calendar-minus"></i>End Year</td>
+                  <td>{{ investment.End_Year }}</td>
+                </tr>
+                <tr>
+                  <td><i class="fas fa-cloud"></i>Cloud Alternatives Evaluation</td>
+                  <td>{{ investment.Cloud_Alt }}</td>
+                </tr>
+                <tr>
+                  <td><i class="far fa-comments"></i>Comments</td>
+                  <td>{{ investment.Comments }}</td>
+                </tr>
+                <tr>
                   <td><i class="fa fa-user"></i>Investment Manager</td>
                   <td>
                     <a class="email text-white"
@@ -63,51 +83,20 @@
                   <td>{{ investment.UII }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fa fa-door-open"></i>SSO</td>
-                  <td>{{ investment.SSO }}</td>
+                  <td><i class="far fa-folder-open"></i>Part of IT Portfolio</td>
+                  <td>{{ investment.IT_Portfolio }}</td>
                 </tr>
                 <tr>
                   <td><i class="fa fa-th"></i>Primary Service Area</td>
                   <td>{{ investment.PSA }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fa fa-th-large"></i>Secondary Service Area #1</td>
-                  <td>
-                    {{ investment.SSA }}
-                    <div [hidden]="investment.SSA">None</div>
-                  </td>
-                </tr>
-                <!-- <tr>
-                  <td><i class="fa fa-th-large"></i>Secondary Service Area #2</td>
-                  <td>
-                    {{ investment.sec_service_area2 }}
-                    <div [hidden]="investment.sec_service_area2">None</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td><i class="fa fa-th-large"></i>Secondary Service Area #3</td>
-                  <td>
-                    {{ investment.sec_service_area3 }}
-                    <div [hidden]="investment.sec_service_area3">None</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td><i class="fa fa-th-large"></i>Secondary Service Area #4</td>
-                  <td>
-                    {{ investment.sec_service_area4 }}
-                    <div [hidden]="investment.sec_service_area4">None</div>
-                  </td>
-                </tr> -->
-                <tr>
                   <td><i class="fas fa-info-circle"></i>Status</td>
-                  <td *ngIf="investment.Active === 'True'; else elseInvestStatus">Active</td>
-                  <ng-template #elseInvestStatus>
-                    <td>Inactive</td>
-                  </ng-template>
+                  <td>{{ investment.Status }}</td>
                 </tr>
                 <tr>
-                  <td><i class="far fa-comments"></i>Comments</td>
-                  <td>{{ investment.Comments }}</td>
+                  <td><i class="far fa-calendar-check"></i>Updated Date</td>
+                  <td>{{ investment.Updated_Date }}</td>
                 </tr>
               </tbody>
             </table>
@@ -122,11 +111,7 @@
         </div>
       </div>
 
-      <div class="modal-footer">
-        <div>Last Updated: {{ investment.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}</div>
-        <button type="button" [hidden]="!sharedService.loggedIn" class="btn btn-info text-white"
-          (click)="investEdit()">Edit This Item</button>
-      </div>
+      <div class="modal-footer"></div>
     </div>
   </div>
 </div>

@@ -53,12 +53,12 @@ export class InvestmentsModalComponent implements OnInit {
     }.bind(this));
   }
 
-  investEdit () {
-    // Hide Detail Modal before showing Manager Modal
-    $('#investDetail').modal('hide');
-    this.modalService.updateDetails(this.investment, 'investment');
-    this.sharedService.setInvestForm();
-    $('#investManager').modal('show');
-  }
+  // investEdit () {
+  //   // Hide Detail Modal before showing Manager Modal
+  //   $('#investDetail').modal('hide');
+  //   this.modalService.updateDetails(this.investment, 'investment');
+  //   this.sharedService.setInvestForm();
+  //   $('#investManager').modal('show');
+  // }
 
 }

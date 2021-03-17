@@ -9,19 +9,16 @@ router.route('/')
 router.route('/get/:id')
   .get(investmentCtrl.findOne);
 
-router.route('/get/:id/applications/')
-  .get(investmentCtrl.findApplications);
+// router.route('/get/:id/applications/')
+//   .get(investmentCtrl.findApplications);
 
-router.route('/latest')
-  .get(investmentCtrl.findLatest);
+// router.route('/latest')
+//   .get(investmentCtrl.findLatest);
 
-router.route('/update/:id')
-  .put(investmentCtrl.update);
+// router.route('/update/:id')
+//   .put(investmentCtrl.update);
 
-router.route('/create')
-  .post(investmentCtrl.create);
-
-router.route('/types')
-  .get(investmentCtrl.findTypes);
+// router.route('/create')
+//   .post(investmentCtrl.create);
 
 module.exports = router;
