@@ -124,4 +124,4 @@ exports.findOne = (req, res) => {
 //       message: "No authorization token present. Not allowed to create investment"
 //     });
 //   };
-};
+// };
