@@ -59,7 +59,7 @@ export class InvestmentsComponent implements OnInit {
     url: this.apiService.investUrl
   });
 
-  // Investments Table Columns
+  // Investments Main Table Columns
   columnDefs: any[] = [{
     field: 'Name',
     title: 'Investment Name',
@@ -122,6 +122,107 @@ export class InvestmentsComponent implements OnInit {
   }, {
     field: 'Updated_Date',
     title: 'Updated Date',
+    sortable: true
+  }];
+
+  // Previous Year Investments Table Columns
+  PYcolumnDefs: any[] = [{
+    field: 'UII',
+    title: 'Investment UII',
+    sortable: true
+  }, {
+    field: 'Name',
+    title: 'Investment Name',
+    sortable: true
+  }, {
+    field: 'Total_Spend_PY',
+    title: 'Total IT Spending ($ M): PY',
+    sortable: true
+  }, {
+    field: 'DME_Agency_Fund_PY',
+    title: 'DME Agency Funding ($ M): PY',
+    sortable: true
+  }, {
+    field: 'DME_Contributions_PY',
+    title: 'DME Contributions ($ M): PY',
+    sortable: true
+  }, {
+    field: 'OnM_Agency_Fund_PY',
+    title: 'O&M Agency Funding ($ M): PY',
+    sortable: true
+  }, {
+    field: 'OnM_Contributions_PY',
+    title: 'O&M Contributions ($ M): PY',
+    sortable: true
+  }];
+
+  // Current Year Investments Table Columns
+  CYcolumnDefs: any[] = [{
+    field: 'UII',
+    title: 'Investment UII',
+    sortable: true
+  }, {
+    field: 'Name',
+    title: 'Investment Name',
+    sortable: true
+  }, {
+    field: 'Total_Spend_CY',
+    title: 'Total IT Spending ($ M): CY',
+    sortable: true
+  }, {
+    field: 'DME_Agency_Fund_CY',
+    title: 'DME Agency Funding ($ M): CY',
+    sortable: true
+  }, {
+    field: 'DME_Contributions_CY',
+    title: 'DME Contributions ($ M): CY',
+    sortable: true
+  }, {
+    field: 'OnM_Agency_Fund_CY',
+    title: 'O&M Agency Funding ($ M): CY',
+    sortable: true
+  }, {
+    field: 'OnM_Contributions_CY',
+    title: 'O&M Contributions ($ M): CY',
+    sortable: true
+  }];
+
+  // Budget Year Investments Table Columns
+  BYcolumnDefs: any[] = [{
+    field: 'UII',
+    title: 'Investment UII',
+    sortable: true
+  }, {
+    field: 'Name',
+    title: 'Investment Name',
+    sortable: true
+  }, {
+    field: 'Total_Spend_BY',
+    title: 'Total IT Spending ($ M): BY',
+    sortable: true
+  }, {
+    field: 'DME_Agency_Fund_BY',
+    title: 'DME Agency Funding ($ M): BY',
+    sortable: true
+  }, {
+    field: 'DME_Contributions_BY',
+    title: 'DME Contributions ($ M): BY',
+    sortable: true
+  }, {
+    field: 'DME_Budget_Auth_BY',
+    title: 'DME Budget Authority Agency Funding ($ M): BY',
+    sortable: true
+  }, {
+    field: 'OnM_Agency_Fund_BY',
+    title: 'O&M Agency Funding ($ M): BY',
+    sortable: true
+  }, {
+    field: 'OnM_Contributions_BY',
+    title: 'O&M Contributions ($ M): BY',
+    sortable: true
+  }, {
+    field: 'OnM_Budget_Auth_BY',
+    title: 'O&M Budget Authority Agency Funding ($ M): BY',
     sortable: true
   }];
 
@@ -214,7 +315,55 @@ export class InvestmentsComponent implements OnInit {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt('GSA_Eliminated_IT_Investments')
       }
-    })
+    });
+  }
+
+  previousYearFilter() {
+    this.filteredTable = true;  // Filters are on, expose main table button
+    this.filterTitle = 'Previous Year';
+
+    // Hide visualization
+    $('#investViz').collapse('hide');
+
+    $('#investTable').bootstrapTable('filterBy', { });
+    $('#investTable').bootstrapTable('refreshOptions', {
+      columns: this.PYcolumnDefs,
+      exportOptions: {
+        fileName: this.sharedService.fileNameFmt('GSA_Previous_Year_IT_Investments')
+      }
+    });
+  }
+
+  currentYearFilter() {
+    this.filteredTable = true;  // Filters are on, expose main table button
+    this.filterTitle = 'Current Year';
+
+    // Hide visualization when on eliminated items
+    $('#investViz').collapse('hide');
+
+    $('#investTable').bootstrapTable('filterBy', { });
+    $('#investTable').bootstrapTable('refreshOptions', {
+      columns: this.CYcolumnDefs,
+      exportOptions: {
+        fileName: this.sharedService.fileNameFmt('GSA_Current_Year_IT_Investments')
+      }
+    });
+  }
+
+  budgetYearFilter() {
+    this.filteredTable = true;  // Filters are on, expose main table button
+    this.filterTitle = 'Budget Year';
+
+    // Hide visualization
+    $('#investViz').collapse('hide');
+
+    $('#investTable').bootstrapTable('filterBy', { });
+    $('#investTable').bootstrapTable('refreshOptions', {
+      columns: this.BYcolumnDefs,
+      exportOptions: {
+        fileName: this.sharedService.fileNameFmt('GSA_Budget_Year_IT_Investments')
+      }
+    });
   }
 
   backToMainInvest() {
@@ -226,6 +375,7 @@ export class InvestmentsComponent implements OnInit {
     // Remove filters and back to default
     $('#investTable').bootstrapTable('filterBy', { Status: this.nonEliminatedTypes });
     $('#investTable').bootstrapTable('refreshOptions', {
+      columns: this.columnDefs,
       exportOptions: {
         fileName: this.sharedService.fileNameFmt('GSA_IT_Investments')
       }

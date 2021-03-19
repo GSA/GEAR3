@@ -53,6 +53,10 @@
         <button role="button" name="investEliminatedBttn" class="btn btn-primary" (click)="eliminatedFilter()"
           [hidden]="filteredTable">Eliminated</button>
 
+        <button role="button" name="investPYBttn" class="btn btn-primary" (click)="previousYearFilter()">Previous Year Numbers</button>
+        <button role="button" name="investCYBttn" class="btn btn-primary" (click)="currentYearFilter()">Current Year Numbers</button>
+        <button role="button" name="investBYBttn" class="btn btn-primary" (click)="budgetYearFilter()">Budget Year Numbers</button>
+
         <button role="button" name="investBttn" class="btn btn-primary ml-3" (click)="backToMainInvest()"
           [hidden]="!filteredTable">Back to All Non-Eliminated Investments</button>
       </div>

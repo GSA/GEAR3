@@ -12,6 +12,24 @@ SELECT DISTINCT invest.Investment_Id              AS ID,
   invest.Investment_Type                          AS Type,
   invest.IT_Portfolio,
   invest.primary_service_area                     AS PSA,
-  invest.Updated_Date
+  invest.Updated_Date,
 
-FROM obj_investment AS invest
+  invest.`Total IT Spending FY2019 (PY) ($ M)`            AS Total_Spend_PY,
+  invest.`Total IT Spending FY2020 (CY) ($ M)`            AS Total_Spend_CY,
+  invest.`Total IT Spending FY2021 (BY) ($ M)`            AS Total_Spend_BY,
+  invest.`DME PY Agency Funding ($ M)`                    AS DME_Agency_Fund_PY,
+  invest.`DME PY Contributions ($ M)`                     AS DME_Contributions_PY,
+  invest.`DME CY Agency Funding ($ M)`                    AS DME_Agency_Fund_CY,
+  invest.`DME CY Contributions ($ M)`                     AS DME_Contributions_CY,
+  invest.`DME BY Agency Funding ($ M)`                    AS DME_Agency_Fund_BY,
+  invest.`DME BY Contributions ($ M)`                     AS DME_Contributions_BY,
+  invest.`DME BY Budget Authority Agency Funding ($ M)`   AS DME_Budget_Auth_BY,
+  invest.`O&M PY Agency Funding ($ M)`                    AS OnM_Agency_Fund_PY,
+  invest.`O&M PY Contributions ($ M)`                     AS OnM_Contributions_PY,
+  invest.`O&M CY Agency Funding ($ M)`                    AS OnM_Agency_Fund_CY,
+  invest.`O&M CY Contributions ($ M)`                     AS OnM_Contributions_CY,
+  invest.`O&M BY Agency Funding ($ M)`                    AS OnM_Agency_Fund_BY,
+  invest.`O&M BY Contributions ($ M)`                     AS OnM_Contributions_BY,
+  invest.`O&M BY Budget Authority Agency Funding ($ M)`   AS OnM_Budget_Auth_BY
+
+FROM obj_investments AS invest

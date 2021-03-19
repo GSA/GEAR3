@@ -14,4 +14,22 @@ export class Investment {
   public IT_Portfolio: string = null;
   public PSA: string = null;
   public Updated_Date: string = null;
+
+  public Total_Spend_PY: number = null;
+  public Total_Spend_CY: number = null;
+  public Total_Spend_BY: number = null;
+  public DME_Agency_Fund_PY: number = null;
+  public DME_Contributions_PY: number = null;
+  public DME_Agency_Fund_CY: number = null;
+  public DME_Contributions_CY: number = null;
+  public DME_Agency_Fund_BY: number = null;
+  public DME_Contributions_BY: number = null;
+  public DME_Budget_Auth_BY: number = null;
+  public OnM_Agency_Fund_PY: number = null;
+  public OnM_Contributions_PY: number = null;
+  public OnM_Agency_Fund_CY: number = null;
+  public OnM_Contributions_CY: number = null;
+  public OnM_Agency_Fund_BY: number = null;
+  public OnM_Contributions_BY: number = null;
+  public OnM_Budget_Auth_BY: number = null;
 }
