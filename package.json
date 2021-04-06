@@ -47,6 +47,7 @@
     "fast-csv": "^4.3.2",
     "jquery": "^3.5.1",
     "jsonwebtoken": "^8.5.1",
+    "ldapjs": "^2.2.4",
     "lodash": "^4.17.20",
     "mysql2": "^2.2.5",
     "ng-sidebar": "^9.4.2",
