@@ -1,7 +1,16 @@
 const sql = require("../db.js").connection;
+const sql_cowboy = require("../db.js").connection_cowboy;
 
 exports.sendQuery = (query, msg, response) => {
-  sql.query(query, (error, data) => {
+  return buildQuery(sql, query, msg, response);
+};
+
+exports.sendQuery_cowboy = (query, msg, response) => {
+  return buildQuery(sql_cowboy, query, msg, response);
+};
+
+function buildQuery(conn, query, msg, response) {
+  conn.query(query, (error, data) => {
     if (error) {
       console.log(`DB Query Error while executing ${msg}: `, error);
       response.status(501).json({
@@ -15,7 +24,7 @@ exports.sendQuery = (query, msg, response) => {
   });
 
   return response;
-}
+};
 
 exports.emptyTextFieldHandler = (content) => {
   if (!content) return 'NULL';
