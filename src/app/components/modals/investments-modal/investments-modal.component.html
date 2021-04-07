@@ -94,10 +94,6 @@
                   <td><i class="fas fa-info-circle"></i>Status</td>
                   <td>{{ investment.Status }}</td>
                 </tr>
-                <tr>
-                  <td><i class="far fa-calendar-check"></i>Updated Date</td>
-                  <td>{{ investment.Updated_Date }}</td>
-                </tr>
               </tbody>
             </table>
 
@@ -111,7 +107,9 @@
         </div>
       </div>
 
-      <div class="modal-footer"></div>
+      <div class="modal-footer">
+        <p class="font-weight-bold font-italic">Last Updated: {{ investment.Updated_Date | date:'MMM. dd, yyyy' }}</p>
+      </div>
     </div>
   </div>
 </div>
