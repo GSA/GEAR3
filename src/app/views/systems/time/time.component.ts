@@ -216,52 +216,52 @@ export class TimeComponent implements OnInit {
     );
 
     // Visualization data
-    this.apiService.getApplications().subscribe((data: any[]) => {
-      data = data.map(row => row.AppTime);
-      var yearTimeCount = {};
+    // this.apiService.getApplications().subscribe((data: any[]) => {
+    //   data = data.map(row => row.AppTime);
+    //   var yearTimeCount = {};
 
-      data.forEach(timeStr => {
-        if (timeStr != '') {  // Skip if empty string
-          let FYs = timeStr.split('; ');
+    //   data.forEach(timeStr => {
+    //     if (timeStr != '') {  // Skip if empty string
+    //       let FYs = timeStr.split('; ');
 
-          FYs.forEach(fy => {
-            let str = fy.split(', ');
-            let year = str[0];  // Fiscal Year for app
-            let value = str[1];  // Time value for corresponding fiscal year
+    //       FYs.forEach(fy => {
+    //         let str = fy.split(', ');
+    //         let year = str[0];  // Fiscal Year for app
+    //         let value = str[1];  // Time value for corresponding fiscal year
 
-            if (value === 'N/A' || !(['FY19', 'FY20', 'FY21', 'FY22', 'FY23'].includes(year))) return  // Do not count N/As or anything before FY19
-            if (!(year in yearTimeCount)) yearTimeCount[year] = {};  // If year does not exist, add it
-            if (!(value in yearTimeCount[year])) yearTimeCount[year][value] = 1;  // If time value for year does not exist, initialize to 1
-            else yearTimeCount[year][value]++;  // Else, increment time value for year by 1
-          });
-        };
-      });
+    //         if (value === 'N/A' || !(['FY19', 'FY20', 'FY21', 'FY22', 'FY23'].includes(year))) return  // Do not count N/As or anything before FY19
+    //         if (!(year in yearTimeCount)) yearTimeCount[year] = {};  // If year does not exist, add it
+    //         if (!(value in yearTimeCount[year])) yearTimeCount[year][value] = 1;  // If time value for year does not exist, initialize to 1
+    //         else yearTimeCount[year][value]++;  // Else, increment time value for year by 1
+    //       });
+    //     };
+    //   });
       
-      for (const [fy, timeCount] of Object.entries(yearTimeCount).sort()) {
-        let dataPoint = {};
+    //   for (const [fy, timeCount] of Object.entries(yearTimeCount).sort()) {
+    //     let dataPoint = {};
 
-        dataPoint['name'] = fy;
-        dataPoint['series'] = [];
+    //     dataPoint['name'] = fy;
+    //     dataPoint['series'] = [];
 
-        for (const [timeVal, count] of Object.entries(timeCount).sort()) {
-          let obj = {};
+    //     for (const [timeVal, count] of Object.entries(timeCount).sort()) {
+    //       let obj = {};
 
-          obj['name'] = timeVal;
-          obj['value'] = count;
+    //       obj['name'] = timeVal;
+    //       obj['value'] = count;
 
-          dataPoint['series'].push(obj);
-        };
-        this.vizData.push(dataPoint);
-      }
+    //       dataPoint['series'].push(obj);
+    //     };
+    //     this.vizData.push(dataPoint);
+    //   }
 
-      // For change detection to render chart after data has been processed
-      this.vizData = [...this.vizData];
+    //   // For change detection to render chart after data has been processed
+    //   this.vizData = [...this.vizData];
 
-      // Set color scheme for chart
-      this.colorScheme = this.colorSets.find(s => s.name === 'vivid');
+    //   // Set color scheme for chart
+    //   this.colorScheme = this.colorSets.find(s => s.name === 'vivid');
 
-      // console.log(this.vizData);  // Debug
-    });
+    //   // console.log(this.vizData);  // Debug
+    // });
     
   }
 

@@ -223,12 +223,6 @@ export class TableService {
     // console.log("Global Search Table Clicked Row: ", data);  // Debug
 
     switch (searchData.GEAR_Type) {
-      case 'Application':
-        this.apiService.getOneApp(searchData.Id).subscribe((apiData: any[]) => {
-          this.appsTableClick(apiData[0]);
-        });
-        break;
-
       case 'Capability':
         this.apiService.getOneCap(searchData.Id).subscribe((apiData: any[]) => {
           this.capsTableClick(apiData[0]);
@@ -262,41 +256,6 @@ export class TableService {
       default:
         break;
     };
-  }
-
-
-  public appsTableClick(data: any) {
-    var options: ClickOptions = {
-      data: data,
-      update: 'application',
-      detailModalID: '#appDetail',
-      appsTableID: null,
-      exportName: null,
-      apiString: null
-    };
-    this.clickMethod(options);
-
-    // Update TIME report table in detail modal with clicked application
-    $('#appTimeTable').bootstrapTable('refreshOptions', {
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt(data.Name + '-TIME_Report')
-      },
-      data: [data]
-    });
-
-    // Update related capabilities table in detail modal with clicked application
-    this.updateRelatedTable(
-      '#appCapTable',
-      data.Name + '-Related_Capabilities',
-      '/api/applications/get/' + String(data.ID) + '/capabilities'
-    );
-
-    // Update related technologies table in detail modal with clicked application
-    this.updateRelatedTable(
-      '#appTechTable',
-      data.Name + '-Related_Technologies',
-      '/api/applications/get/' + String(data.ID) + '/technologies'
-    );
   }
 
 
@@ -372,9 +331,31 @@ export class TableService {
       detailModalID: '#systemDetail',
       appsTableID: '#childAppsTable',
       exportName: data.Name + '-Child_Apps',
-      apiString: '/api/parentsystems/get/'
+      apiString: '/api/systems/get/'
     };
     this.clickMethod(options);
+
+    // Update TIME report table in detail modal with clicked application
+    // $('#appTimeTable').bootstrapTable('refreshOptions', {
+    //   exportOptions: {
+    //     fileName: this.sharedService.fileNameFmt(data.Name + '-TIME_Report')
+    //   },
+    //   data: [data]
+    // });
+
+    // // Update related capabilities table in detail modal with clicked application
+    // this.updateRelatedTable(
+    //   '#appCapTable',
+    //   data.Name + '-Related_Capabilities',
+    //   '/api/applications/get/' + String(data.ID) + '/capabilities'
+    // );
+
+    // // Update related technologies table in detail modal with clicked application
+    // this.updateRelatedTable(
+    //   '#appTechTable',
+    //   data.Name + '-Related_Technologies',
+    //   '/api/applications/get/' + String(data.ID) + '/technologies'
+    // );
   }
 
   private clickMethod(options: ClickOptions) {

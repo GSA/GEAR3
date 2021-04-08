@@ -17,14 +17,6 @@ export class SharedService {
   toggleSub: Subscription;
 
   // Forms Emitter
-  investFormEmitter = new EventEmitter();
-  investFormSub: Subscription;
-
-  systemFormEmitter = new EventEmitter();
-  systemFormSub: Subscription;
-
-  appFormEmitter = new EventEmitter();
-  appFormSub: Subscription;
 
   itStandardsFormEmitter = new EventEmitter();
   itStandardsFormSub: Subscription;
@@ -141,20 +133,13 @@ export class SharedService {
     return finalVal;
   };
 
+  //// Date
+  public dateFormatter(value, row, index, field) {
+    if (value) return formatDate(value, 'MMM. dd, yyyy', 'en-US');
+  };
+
 
   // Set Forms Default
-  public setInvestForm() {
-    this.investFormEmitter.emit();
-  };
-
-  public setSystemForm() {
-    this.systemFormEmitter.emit();
-  };
-
-  public setAppForm() {
-    this.appFormEmitter.emit();
-  };
-
   public setITStandardsForm() {
     this.itStandardsFormEmitter.emit();
   };

@@ -20,10 +20,9 @@ import { CapabilitiesComponent } from './views/enterprise/capabilities/capabilit
 import { OrganizationsChartComponent } from './views/enterprise/organizations-chart/organizations-chart.component';
 import { OrganizationsComponent } from './views/enterprise/organizations/organizations.component';
 
-// Applications
-import { SystemsComponent } from './views/applications/systems/systems.component';
-import { AppsComponent } from './views/applications/apps/apps.component';
-import { TimeComponent } from './views/applications/time/time.component';
+// Systems
+import { SystemsComponent } from './views/systems/systems/systems.component';
+import { TimeComponent } from './views/systems/time/time.component';
 
 // Security
 import { FismaComponent } from './views/security/fisma/fisma.component';
@@ -55,8 +54,6 @@ const routes: Routes = [
 
   { path: 'systems', component: SystemsComponent },
   { path: 'systems/:sysID', component: SystemsComponent },
-  { path: 'applications', component: AppsComponent },
-  { path: 'applications/:appID', component: AppsComponent },
   { path: 'applications_TIME', component: TimeComponent },
 
   { path: 'FISMA', component: FismaComponent },
