@@ -29,7 +29,6 @@ import { ManagerRequestComponent } from './views/main/manager-request/manager-re
 import { FrameworkComponent } from './views/strategy/framework/framework.component';
 import { InvestmentsComponent } from './views/strategy/investments/investments.component';
 import { InvestmentsModalComponent } from './components/modals/investments-modal/investments-modal.component';
-import { InvestmentManagerComponent } from './components/manager-modals/investment-manager/investment-manager.component';
 
 //// Enterprise
 import { CapabilitiesModelComponent } from './views/enterprise/capabilities-model/capabilities-model.component';
@@ -40,14 +39,10 @@ import { OrganizationsChartComponent } from './views/enterprise/organizations-ch
 import { OrganizationsComponent } from './views/enterprise/organizations/organizations.component';
 import { OrganizationsModalComponent } from './components/modals/organizations-modal/organizations-modal.component';
 
-//// Applications
-import { SystemsComponent } from './views/applications/systems/systems.component';
+//// Systems
+import { SystemsComponent } from './views/systems/systems/systems.component';
 import { SystemsModalComponent } from './components/modals/systems-modal/systems-modal.component';
-import { SystemManagerComponent } from './components/manager-modals/system-manager/system-manager.component';
-import { AppsComponent } from './views/applications/apps/apps.component';
-import { ApplicationsModalComponent } from './components/modals/applications-modal/applications-modal.component';
-import { TimeComponent } from './views/applications/time/time.component';
-import { AppManagerComponent } from './components/manager-modals/app-manager/app-manager.component';
+import { TimeComponent } from './views/systems/time/time.component';
 
 //// Security
 import { FismaComponent } from './views/security/fisma/fisma.component';
@@ -83,7 +78,6 @@ import { Globals } from './common/globals';
     FrameworkComponent,
     InvestmentsComponent,
     InvestmentsModalComponent,
-    InvestmentManagerComponent,
 
     CapabilitiesModelComponent,
     CapabilitiesComponent,
@@ -94,11 +88,7 @@ import { Globals } from './common/globals';
 
     SystemsComponent,
     SystemsModalComponent,
-    SystemManagerComponent,
-    AppsComponent,
-    ApplicationsModalComponent,
     TimeComponent,
-    AppManagerComponent,
 
     FismaComponent,
     FismaModalComponent,
