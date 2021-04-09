@@ -71,7 +71,7 @@ export class FismaComponent implements OnInit {
     field: 'ATODate',
     title: 'ATO Date',
     sortable: true,
-    formatter: this.dateFormatter
+    formatter: this.sharedService.dateFormatter
   }, {
     field: 'ATOType',
     title: 'ATO Type',
@@ -80,7 +80,7 @@ export class FismaComponent implements OnInit {
     field: 'RenewalDate',
     title: 'Renewal Date',
     sortable: true,
-    formatter: this.dateFormatter
+    formatter: this.sharedService.dateFormatter
   }, {
     field: 'ComplFISMA',
     title: 'Complete Assessment For Current FY',
@@ -114,12 +114,16 @@ export class FismaComponent implements OnInit {
   }, {
     field: 'RelatedArtifacts',
     title: 'Related Artifacts',
-    formatter: this.relArtifactsFormatter
+    formatter: this.sharedService.relArtifactsFormatter
   }, {
     field: 'FISMASystemIdentifier',
     title: 'FISMA System Identifier',
     sortable: true,
     visible: false
+  }, {
+    field: 'Status',
+    title: 'Status',
+    sortable: true
   }];
 
   ngOnInit(): void {
@@ -163,28 +167,6 @@ export class FismaComponent implements OnInit {
 
   }
 
-  relArtifactsFormatter(value, row, index, field) {
-    var artifacts = value;
-    var artLinks = [];
-
-    if (artifacts) {
-      var arts = artifacts.split(';');
-
-      arts = arts.map((artifact, tmpObj) => {
-        let pieces = artifact.split(',');
-        let linkStr = `<a target="_blank" rel="noopener" href="${pieces[1]}">${pieces[0]}</a>`
-
-        artLinks.push(linkStr);
-      })
-    }
-
-    return artLinks.join('<br>');
-  };
-
-  dateFormatter(value, row, index, field) {
-    if (value) return formatDate(value, 'MMM. dd, yyyy', 'en-US');
-  };
-
   // Update table to Retire Systems
   showRetired() {
     this.retiredTable = true;  // Expose main table button after RISSO button is pressed
@@ -193,7 +175,7 @@ export class FismaComponent implements OnInit {
       field: 'InactiveDate',
       title: 'Inactive Date',
       sortable: true,
-      formatter: this.dateFormatter
+      formatter: this.sharedService.dateFormatter
     })
 
     // Change columns, filename, and url

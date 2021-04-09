@@ -7,30 +7,30 @@ const queryPath = '../queries/';
 
 exports.findAll = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_fisma_archer.sql')).toString() +
-    " GROUP BY archer.`ex:GEAR_ID`;";
+    " GROUP BY archer.\`ex:GEAR_ID\`;";
 
-  res = ctrl.sendQuery(query, 'FISMA Systems', res);
+  res = ctrl.sendQuery_cowboy(query, 'FISMA Systems', res);
 };
 
 exports.findOne = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_fisma_archer.sql')).toString() +
     ` WHERE archer.\`ex:GEAR_ID\` = ${req.params.id} GROUP BY archer.\`ex:GEAR_ID\`;`;
 
-  res = ctrl.sendQuery(query, 'individual FISMA System', res);
+  res = ctrl.sendQuery_cowboy(query, 'individual FISMA System', res);
 };
 
-exports.findApplications = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_applications.sql')).toString() +
-    ` AND app.obj_fisma_Id = ${req.params.id} GROUP BY app.Id;`;
+// exports.findApplications = (req, res) => {
+//   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_applications.sql')).toString() +
+//     ` AND app.obj_fisma_Id = ${req.params.id} GROUP BY app.Id;`;
 
-  res = ctrl.sendQuery(query, 'certified applications for FISMA System', res);
-};
+//   res = ctrl.sendQuery_cowboy(query, 'certified applications for FISMA System', res);
+// };
 
 exports.findRetired = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_fisma_archer.sql')).toString() +
-    " WHERE archer.`ex:Status` = 'Inactive' GROUP BY archer.`ex:GEAR_ID`;";
+    " WHERE archer.\`ex:Status\` = 'Inactive' GROUP BY archer.\`ex:GEAR_ID\`;";
 
-  res = ctrl.sendQuery(query, 'retired FISMA Systems', res);
+  res = ctrl.sendQuery_cowboy(query, 'retired FISMA Systems', res);
 };
 
 exports.updateAll = (req, res) => {
@@ -192,5 +192,5 @@ exports.updateAll = (req, res) => {
 
   query += " SET FOREIGN_KEY_CHECKS=1;";
   // console.log("Final query string: ", query); // Debug
-  res = ctrl.sendQuery(query, 'Loading into FISMA Archer Table', res);
+  res = ctrl.sendQuery_cowboy(query, 'Loading into FISMA Archer Table', res);
 };

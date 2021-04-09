@@ -12,7 +12,7 @@ SELECT
   `ex:Cloud_Hosted`                            	AS CloudYN,
   `ex:Cloud_Server_Provider`                   	AS CSP,
   `ex:Type_of_Service`                         	AS ServiceType,
-  `ex:FISMA_System_Identifier`                 	AS FISMASystemIdentifier, 
+  `ex:FISMA_System_Identifier`                 	AS FISMASystemIdentifier,
   `ex:Status`                                   AS Status,
   `ex:Inactive_Date`                           	AS InactiveDate,
   `ex:Description`                             	AS Description,
