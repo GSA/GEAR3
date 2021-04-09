@@ -193,11 +193,11 @@ export class ApiService {
       catchError(this.handleError<System[]>('GET System', []))
     );
   };
-  public getChildSubSys(id: number): Observable<System[]> {
-    return this.http.get<System[]>(this.sysUrl + '/get/' + String(id) + '/child_subsystems').pipe(
-      catchError(this.handleError<System[]>('GET System Child Sub-Systems', []))
-    );
-  };
+  // public getChildSubSys(id: number): Observable<System[]> {
+  //   return this.http.get<System[]>(this.sysUrl + '/get/' + String(id) + '/systems').pipe(
+  //     catchError(this.handleError<System[]>('GET System Child Sub-Systems', []))
+  //   );
+  // };
 
 
   //// POCs

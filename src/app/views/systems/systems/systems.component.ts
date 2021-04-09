@@ -125,6 +125,10 @@ export class SystemsComponent implements OnInit {
     title: 'Type of Service',
     sortable: true
   }, {
+    field: 'SharedService',
+    title: "Gov't-Wide Shared Service",
+    sortable: true
+  }, {
     field: 'SystemLevel',
     title: 'System Level',
     sortable: true
@@ -141,7 +145,9 @@ export class SystemsComponent implements OnInit {
   }, {
     field: 'RelatedArtifacts',
     title: 'Related Artifacts',
-    formatter: this.relArtifactsFormatter
+    sortable: false,
+    visible: false,
+    formatter: this.sharedService.relArtifactsFormatter
   }, {
     field: 'Status',
     title: 'Status',
@@ -214,6 +220,10 @@ export class SystemsComponent implements OnInit {
     title: 'Type of Service',
     sortable: true
   }, {
+    field: 'SharedService',
+    title: "Gov't-Wide Shared Service",
+    sortable: true
+  }, {
     field: 'SystemLevel',
     title: 'System Level',
     sortable: true
@@ -230,8 +240,9 @@ export class SystemsComponent implements OnInit {
   }, {
     field: 'RelatedArtifacts',
     title: 'Related Artifacts',
+    sortable: false,
     visible: false,
-    formatter: this.relArtifactsFormatter
+    formatter: this.sharedService.relArtifactsFormatter
   }, {
     field: 'InactiveDate',
     title: 'Inactive Date',
@@ -272,28 +283,28 @@ export class SystemsComponent implements OnInit {
       ));
 
   // Get System data for visuals
-  // this.apiService.getSystems().subscribe((data: any[]) => {
-  //   // Get counts by SSO
-  //   var counts = data.reduce((p, c) => {
-  //     var name = c.SSOShort;
-  //     if (!p.hasOwnProperty(name)) {
-  //       p[name] = 0;
-  //     }
-  //     // Only count if Status is not retired
-  //     if (['Candidate', 'Pre-Production', 'Production'].includes(c.Status)) p[name]++;
-  //     return p;
-  //   }, {});
+  this.apiService.getSystems().subscribe((data: any[]) => {
+    // Get counts by SSO
+    var counts = data.reduce((p, c) => {
+      var name = c.orgName;
+      if (!p.hasOwnProperty(name) && c.Status == 'Active') {
+        p[name] = 0;
+      }
+      // Only count if Status is Active
+      if (c.Status == 'Active') p[name]++;
+      return p;
+    }, {});
 
-  //   // Resolve the counts into an object and sort by value
-  //   this.vizData = Object.keys(counts).map(k => {
-  //     return { name: k, value: counts[k] };
-  //   })
-  //     .sort(function (a, b) {
-  //       return b.value - a.value;
-  //     });
+    // Resolve the counts into an object and sort by value
+    this.vizData = Object.keys(counts).map(k => {
+      return { name: k, value: counts[k] };
+    })
+      .sort(function (a, b) {
+        return b.value - a.value;
+      });
 
-  //   // console.log(this.vizData);  // Debug
-  // });
+    // console.log(this.vizData);  // Debug
+  });
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe(params => {
@@ -322,10 +333,10 @@ export class SystemsComponent implements OnInit {
     $('#systemTable').bootstrapTable('filterBy', filter);
     switch (field) {
       case 'CloudYN':
-        title = 'Cloud Enabled';
+        title = 'Cloud Enabled GSA';
         break;
       case 'Status':
-        title = term;
+        title = term + ' GSA';
         activeColDef = this.inactiveColumnDefs;
         break;
     };
@@ -341,6 +352,8 @@ export class SystemsComponent implements OnInit {
   backToMainSys() {
     this.filteredTable = false;  // Hide main button
 
+    $('#sysViz').collapse('show');
+
     // Remove filters and back to default
     $('#systemTable').bootstrapTable('filterBy', { Status: 'Active' });
     $('#systemTable').bootstrapTable('refreshOptions', {
@@ -351,39 +364,21 @@ export class SystemsComponent implements OnInit {
     });
   }
 
-  relArtifactsFormatter(value, row, index, field) {
-    var artifacts = value;
-    var artLinks = [];
+  onSelect(chartData): void {
+    this.filteredTable = true;  // Filters are on, expose main table button
+    this.filterTitle = chartData.name;
 
-    if (artifacts) {
-      var arts = artifacts.split(';');
-
-      arts = arts.map((artifact, tmpObj) => {
-        let pieces = artifact.split(',');
-        let linkStr = `<a target="_blank" rel="noopener" href="${pieces[1]}">${pieces[0]}</a>`
-
-        artLinks.push(linkStr);
-      })
-    }
-
-    return artLinks.join('<br>');
-  };
-
-//   onSelect(chartData): void {
-//     this.filteredTable = true;  // Filters are on, expose main table button
-//     this.filterTitle = chartData.name;
-
-//     // Filter by SSO clicked on visualization
-//     $('#systemTable').bootstrapTable('filterBy', {
-//       Status: ['Active'],
-//       SSOShort: chartData.name
-//     });
-//     $('#systemTable').bootstrapTable('refreshOptions', {
-//       exportOptions: {
-//         fileName: this.sharedService.fileNameFmt('GSA_Systems_SubSystems-' + chartData.name)
-//       }
-//     });
-//   }
+    // Filter by OrgName clicked on visualization
+    $('#systemTable').bootstrapTable('filterBy', {
+      Status: ['Active'],
+      orgName: chartData.name
+    });
+    $('#systemTable').bootstrapTable('refreshOptions', {
+      exportOptions: {
+        fileName: this.sharedService.fileNameFmt('GSA_Systems_SubSystems-' + chartData.name)
+      }
+    });
+  }
 
 //   private getInterfaceData(sysID: number) {
 //     this.apiService.getOneDataFlow(sysID).subscribe((data: any[]) => {

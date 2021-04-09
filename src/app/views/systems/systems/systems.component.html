@@ -3,9 +3,9 @@
     <h3 class="card-title col-12 mb-0">
       <span>
         <i class="fas fa-server mr-2"></i>
-        <span [hidden]="filteredTable">Active </span>
+        <span [hidden]="filteredTable">Active GSA </span>
         <span [hidden]="!filteredTable">{{ filterTitle }} </span>
-        GSA Systems & Sub-Systems
+        Systems & Sub-Systems
       </span>
     </h3>
     <!-- Help Button -->
@@ -31,14 +31,14 @@
 
   <div class="card-body card-text">
     <!-- Visualizations -->
-    <!-- <div id="sysViz" class="row justify-content-center collapse show" style="height: 300px;" [hidden]="filterTitle == 'Inactive'">
+    <div id="sysViz" class="row justify-content-center collapse show" style="height: 300px;" [hidden]="filterTitle == 'Active'">
       <ngx-charts-advanced-pie-chart
         [scheme]="colorScheme"
         [results]="vizData"
         [label]="vizLabel"
         (select)="onSelect($event)">
       </ngx-charts-advanced-pie-chart>
-    </div> -->
+    </div>
 
     <div class="row w-100">
       <!-- System/Sub-System Definition Popover -->

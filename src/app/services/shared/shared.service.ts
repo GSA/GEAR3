@@ -133,6 +133,25 @@ export class SharedService {
     return finalVal;
   };
 
+  //// Related Artifacts
+  public relArtifactsFormatter(value, row, index, field) {
+    var artifacts = value;
+    var artLinks = [];
+
+    if (artifacts) {
+      var arts = artifacts.split(';');
+
+      arts = arts.map((artifact, tmpObj) => {
+        let pieces = artifact.split(',');
+        let linkStr = `<a target="_blank" rel="noopener" href="${pieces[1]}">${pieces[0]}</a>`
+
+        artLinks.push(linkStr);
+      })
+    }
+
+    return artLinks.join('<br>');
+  };
+
   //// Date
   public dateFormatter(value, row, index, field) {
     if (value) return formatDate(value, 'MMM. dd, yyyy', 'en-US');

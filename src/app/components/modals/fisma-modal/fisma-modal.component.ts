@@ -28,20 +28,20 @@ export class FismaModalComponent implements OnInit {
   ngOnInit(): void {
     this.modalService.currentFismaSys.subscribe(fisma => this.fisma = fisma);
 
-    $('#fismaCertAppsTable').bootstrapTable($.extend(this.tableService.relAppsTableOptions, {
-      columns: this.tableService.relAppsColumnDefs,
-      data: [],
-    }));
+    // $('#fismaSubSysTable').bootstrapTable($.extend(this.tableService.relSysTableOptions, {
+    //   columns: this.tableService.relSysColumnDefs,
+    //   data: [],
+    // }));
 
-    // Method to handle click events on the Certified Apps table
-    $(document).ready(
-      $('#fismaCertAppsTable').on('click-row.bs.table', function (e, row) {
-        // Hide First Modal before showing new modal
-        $('#fismaDetail').modal('hide');
+    // // Method to handle click events on the Subsystems table
+    // $(document).ready(
+    //   $('#fismaSubSysTable').on('click-row.bs.table', function (e, row) {
+    //     // Hide First Modal before showing new modal
+    //     $('#fismaDetail').modal('hide');
 
-        this.tableService.appsTableClick(row);
-      }.bind(this)
-      ));
+    //     this.tableService.systemsTableClick(row);
+    //   }.bind(this)
+    //   ));
 
     // Revert back to overview tab when modal goes away
     $('#fismaDetail').on('hidden.bs.modal', function (e) {

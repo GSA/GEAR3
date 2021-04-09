@@ -13,11 +13,13 @@ export class System {
   public CSP: string;
   public ServiceType: string;
   public FISMASystemIdentifier: string;
+  public Status: string;
   public InactiveDate: Date;
   public Description: string;
   public SystemLevel: string;
   public SubSystem_Tag: string;
   public Reportable: string;
+  public SharedService: string;
   public POC: string;
   public AO: string;
   public SO: string;

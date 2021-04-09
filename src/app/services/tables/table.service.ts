@@ -11,7 +11,7 @@ interface ClickOptions {
   data: any,
   update: string,
   detailModalID: string,
-  appsTableID: string,
+  sysTableID: string,
   exportName: string,
   apiString: string
 };
@@ -21,10 +21,10 @@ interface ClickOptions {
 })
 export class TableService {
 
-  // Apps Related Table Options
-  public relAppsTableOptions: {} = this.createTableOptions({
+  // Systems Related Table Options
+  public relSysTableOptions: {} = this.createTableOptions({
     advancedSearch: true,
-    idTable: 'RelAppsTable',
+    idTable: 'RelSysTable',
     classes: "table-hover table-light clickable-table",
     showColumns: true,
     showExport: true,
@@ -38,145 +38,98 @@ export class TableService {
     url: null
   });
 
-  // Apps Related Table Columns
-  public relAppsColumnDefs: any[] = [{
+  // Systems Related Table Columns
+  public relSysColumnDefs: any[] = [{
     field: 'Name',
-    title: 'Business Application Name',
+    title: 'System Name',
     sortable: true
   }, {
-    field: 'DisplayName',
-    title: 'Display Name',
-    sortable: true,
-    visible: false
+    field: 'orgName',
+    title: 'Responsible Org',
+    sortable: true
   }, {
     field: 'Description',
     title: 'Description',
     sortable: true,
     class: 'text-truncate'
   }, {
-    field: 'SSOShort',
-    title: 'SSO',
+    field: 'FedContractorLoc',
+    title: 'Federal/Contractor',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'FIPS_Impact_Level',
+    title: 'FIPS Impact Level',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'ATODate',
+    title: 'ATO Date',
+    sortable: true,
+    visible: false,
+    formatter: this.sharedService.dateFormatter
+  }, {
+    field: 'ATOType',
+    title: 'ATO Type',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'RenewalDate',
+    title: 'Renewal Date',
+    sortable: true,
+    formatter: this.sharedService.dateFormatter
+  }, {
+    field: 'ComplFISMA',
+    title: 'Complete Assessment For Current FY',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'PII',
+    title: 'PII',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'CloudYN',
+    title: 'Cloud Hosted?',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'CSP',
+    title: 'Cloud Server Provider',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'ServiceType',
+    title: 'Type of Service',
     sortable: true
   }, {
-    field: 'SSO',
-    title: 'SSO (Long)',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'Owner',
-    title: 'Owning Org (Long)',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'OwnerShort',
-    title: 'Owning Org (Short)',
+    field: 'SharedService',
+    title: "Gov't-Wide Shared Service",
     sortable: true
   }, {
-    field: 'Support',
-    title: 'Supporting Org (Long)',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'SupportShort',
-    title: 'Supportingr Org (Short)',
+    field: 'SystemLevel',
+    title: 'System Level',
     sortable: true
   }, {
-    field: 'BusPOC',
-    title: 'Business POC',
+    field: 'FISMASystemIdentifier',
+    title: 'FISMA System Identifier',
     sortable: true,
     visible: false
   }, {
-    field: 'TechPOC',
-    title: 'Technical POC',
+    field: 'SubSystem_Tag',
+    title: 'SubSystem Identifier Tag',
     sortable: true,
     visible: false
   }, {
-    field: 'ParentSystem',
-    title: 'Parent System',
-    sortable: true,
-    visible: false,
-    formatter: this.sharedService.systemFormatter
-  }, {
-    field: 'FY14',
-    title: 'FY14',
-    visible: false,
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'FY15',
-    title: 'FY15',
-    visible: false,
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'FY16',
-    title: 'FY16',
-    visible: false,
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'FY17',
-    title: 'FY17',
-    visible: false,
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'FY18',
-    title: 'FY18',
-    visible: false,
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'FY19',
-    title: 'FY19',
-    visible: false,
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'FY20',
-    title: 'FY20',
-    visible: false,
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'FY21',
-    title: 'FY21',
-    visible: false,
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'Notes',
-    title: 'Notes',
-    visible: false
-  }, {
-    field: 'HostingProvider',
-    title: 'Hosting Provider',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'Cloud',
-    title: 'Cloud',
-    sortable: true,
+    field: 'RelatedArtifacts',
+    title: 'Related Artifacts',
+    formatter: this.sharedService.relArtifactsFormatter,
+    sortable: false,
     visible: false
   }, {
     field: 'Status',
     title: 'Status',
     sortable: true
-  }, {
-    field: 'ProdYear',
-    title: 'Production Year',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'FISMASystem',
-    title: 'FISMA System',
-    sortable: true,
-    visible: false,
-    formatter: this.sharedService.systemFormatter
-  },
-  // {
-  //   field: 'HelpDesk',
-  //   title: 'Help Desk',
-  //   sortable: true,
-  //   visible: false
-  // },
-  {
-    field: 'OMBUID',
-    title: 'Application ID',
-    sortable: true,
-    visible: false
   }];
 
 
@@ -264,7 +217,7 @@ export class TableService {
       data: data,
       update: 'capability',
       detailModalID: '#capabilityDetail',
-      appsTableID: '#capSupportAppsTable',
+      sysTableID: '#capSupportSysTable',
       exportName: data.Name + '-Supporting_Apps',
       apiString: '/api/capabilities/get/'
     };
@@ -277,7 +230,7 @@ export class TableService {
       data: data,
       update: 'fisma',
       detailModalID: '#fismaDetail',
-      appsTableID: '#fismaCertAppsTable',
+      sysTableID: '#fismaCertSysTable',
       exportName: data.Name + '-Certified_Apps',
       apiString: '/api/fisma/get/'
     };
@@ -290,7 +243,7 @@ export class TableService {
       data: data,
       update: 'investment',
       detailModalID: '#investDetail',
-      appsTableID: '#investRelAppsTable',
+      sysTableID: '#investRelSysTable',
       exportName: data.Name + '-Related_Apps',
       apiString: '/api/investments/get/'
     };
@@ -303,7 +256,7 @@ export class TableService {
       data: data,
       update: 'it-standard',
       detailModalID: '#itStandardDetail',
-      appsTableID: '#itRelAppsTable',
+      sysTableID: '#itRelSysTable',
       exportName: data.Name + '-Related_Apps',
       apiString: '/api/it_standards/get/'
     };
@@ -316,7 +269,7 @@ export class TableService {
       data: data,
       update: 'organization',
       detailModalID: '#organizationDetail',
-      appsTableID: '#orgAppsTable',
+      sysTableID: '#orgSysTable',
       exportName: data.Name + '-Organizational_Apps',
       apiString: '/api/organizations/get/'
     };
@@ -329,8 +282,8 @@ export class TableService {
       data: data,
       update: 'system',
       detailModalID: '#systemDetail',
-      appsTableID: '#childAppsTable',
-      exportName: data.Name + '-Child_Apps',
+      sysTableID: '#childSubSysTable',
+      exportName: data.Name + '-Child_SubSystems',
       apiString: '/api/systems/get/'
     };
     this.clickMethod(options);
@@ -364,12 +317,12 @@ export class TableService {
     this.modalService.updateDetails(options.data, options.update);
     $(options.detailModalID).modal('show');
 
-    // Update related apps table in detail modal with clicked data
-    if (options.appsTableID) {
+    // Update related systems table in detail modal with clicked data
+    if (options.sysTableID) {
       this.updateRelatedTable(
-        options.appsTableID,
+        options.sysTableID,
         options.exportName,
-        options.apiString + String(options.data.ID) + '/applications'
+        options.apiString + String(options.data.ID) + '/systems'
       );
     };
   }
@@ -381,6 +334,39 @@ export class TableService {
       },
       url: this.sharedService.internalURLFmt(apiString)
     });
+  }
+
+  // Have to render artifacts info separately as anchor links dont work with ngFor
+  public renderRelArtifacts(artifactString: string) {
+    let artifacts = this.splitRelArtifacts(artifactString)
+    let html = ''
+
+    artifacts.forEach(artifact => {
+      html += `<li>
+        <a href="${artifact.link}" target="_blank" rel="noopener">${artifact.name}</a>
+      </li>`;
+    });
+    return html;
+  }
+
+  private splitRelArtifacts(artifacts) {
+    var artObjs = [];
+
+    if (artifacts) {
+      var arts = artifacts.split(';');
+      for (let index = 0; index < arts.length; index++) {
+        let tmpObj: any = {};
+        const art = arts[index];
+        let pieces = art.split(',');
+
+        tmpObj.name = pieces[0];
+        tmpObj.link = pieces[1];
+
+        artObjs.push(tmpObj);
+      }
+    }
+
+    return artObjs;
   }
 
 }
