@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { formatDate, Location } from '@angular/common';
+import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';

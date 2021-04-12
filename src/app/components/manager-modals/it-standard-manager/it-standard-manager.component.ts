@@ -194,9 +194,7 @@ export class ItStandardManagerComponent implements OnInit {
       else this.itStandardsForm.value.itStandGoldImg = 'F';
 
       // Set Date from Date Picker
-      if (this.itStandardsForm.value.itStandAprvExp) {
         this.itStandardsForm.value.itStandAprvExp = formatDate($('#itStandAprvExp').datepicker('getFormattedDate'), 'yyyy-MM-dd', 'en-US');
-      }
 
       // Adjust for N/A text fields
       if (!this.itStandardsForm.value.itStandVendorOrg) this.itStandardsForm.value.itStandVendorOrg = 'N/A';
