@@ -42,12 +42,14 @@ export class SharedService {
     return this.location.prepareExternalUrl(url).replace('#', '');
   };
 
-  // Find in Array an Item by Key
-  findInArrayID(array: any[], arrayKey: string, searchItem: any) {
+  // Find value of Item in Array by Key (ID by default, else value of specified field)
+  findInArray(array: any[], arrayKey: string, searchItem: any, field: string = null) {
     var result: any = array.find(element => element[arrayKey] === searchItem);
 
-    if (result) return result.ID;
-    else return null
+    if (result) {
+      if (field) return result[field];
+      else return result.ID;
+    };
   };
 
   // Have to render POC info separately as anchor links dont work with ngFor
