@@ -58,8 +58,8 @@ exports.update = (req, res) => {
       pocString += `DELETE FROM zk_technology_poc WHERE obj_technology_Id=${req.params.id}; `;
 
       // Insert new IDs
-      data.itStandPOC.forEach(pocID => {
-        pocString += `INSERT INTO zk_technology_poc (obj_technology_Id, obj_poc_Id) VALUES (${req.params.id}, ${pocID}); `;
+      data.itStandPOC.forEach(pocSamName => {
+        pocString += `INSERT INTO zk_technology_poc (obj_technology_Id, obj_ldap_SamAccountName) VALUES (${req.params.id}, ${pocSamName}); `;
       });
     };
 
