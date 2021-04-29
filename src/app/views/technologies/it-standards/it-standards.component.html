@@ -51,6 +51,8 @@
           (click)="changeFilter('Status', 'Sunsetting')">Sunsetting</button>
         <button role="button" name="itExpiredBttn" class="btn btn-primary"
           (click)="changeFilter('Status', 'Expired')">Expired</button>
+        <button role="button" name="itRetiredBttn" class="btn btn-primary"
+          (click)="changeFilter('Status', 'Retired')">Retired</button>
 
         <button role="button" name="itBttn" class="btn btn-primary ml-3" (click)="backToMainIT()"
           [hidden]="!filteredTable">
