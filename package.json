@@ -66,6 +66,7 @@
     "tableexport.jquery.plugin": "^1.10.20",
     "tslib": "^1.14.1",
     "xml-crypto": "^2.0.0",
+    "y18n": "^4.0.1",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
