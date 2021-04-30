@@ -89,9 +89,4 @@ export class SidenavComponent implements OnInit {
     console.info('Backdrop clicked');
   }
 
-  logoutManager() {
-    localStorage.removeItem('jwt');
-    $('#loggedOut').toast('show');
-  }
-
 }

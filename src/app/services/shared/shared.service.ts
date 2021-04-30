@@ -111,6 +111,12 @@ export class SharedService {
     return localStorage.getItem('jwt') !== null && localStorage.getItem('jwt') == this.globals.jwtToken;
   };
 
+  //// Remove JWT and show log out banner when logging out of GEAR Manager
+  public logoutManager() {
+    localStorage.removeItem('jwt');
+    $('#loggedOut').toast('show');
+  }
+
 
   // Table Data Formatters
   //// Fiscal Year Breakdown

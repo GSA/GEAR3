@@ -1,13 +1,23 @@
 <div class="card">
   <div class="card-header text-white bg-teal text-center">
+    <!-- Title -->
     <h3 class="card-title col-12 mb-0">
       <span>
-        <i class="fas fa-microchip mr-2"></i> 
+        <i class="fas fa-microchip mr-2"></i>
         <span [hidden]="filteredTable">All GSA </span>
         <span [hidden]="!filteredTable" [innerHTML]="filterTitle"></span>
         IT Standards
       </span>
     </h3>
+    <!-- GEAR Manager Access -->
+    <a class="btn btn-sm btn-info text-white shadow mngr-btn d-flex align-items-center justify-content-center"
+      routerLink="/gear_manager" *ngIf="!sharedService.loggedIn" aria-label="GEAR Manager Login">
+      <span class="mr-2">GEAR Manager Access</span><i class="fa fa-sign-in-alt fa-2x"></i>
+    </a>
+    <a class="btn btn-sm btn-danger text-white shadow mngr-btn d-flex align-items-center justify-content-center"
+      routerLink="/it_standards" *ngIf="sharedService.loggedIn" aria-label="GEAR Manager Logout" (click)="sharedService.logoutManager()">
+      <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
+    </a>
     <!-- Help Button -->
     <a tabindex="0"
       class="btn btn-sm btn-info text-white shadow help-btn d-flex align-items-center justify-content-center"
@@ -32,8 +42,8 @@
   <div class="card-body card-text justify-content-center">
     <div class="row w-100">
       <!-- Add Button -->
-      <button role="button" name="addITStandBttn" class="btn bg-teal text-white position-absolute ml-3" (click)="createITStand()"
-        [hidden]="!sharedService.loggedIn">
+      <button role="button" name="addITStandBttn" class="btn bg-teal text-white position-absolute ml-3"
+        (click)="createITStand()" [hidden]="!sharedService.loggedIn">
         <i class="fas fa-plus"></i>
       </button>
 

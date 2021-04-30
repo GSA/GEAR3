@@ -176,29 +176,6 @@
       </li>
 
     </ul>
-
-    <!-- GEAR Manager Login -->
-    <div class="sidebar-footer">
-      <a name="managerLoginBttn" routerLink="/gear_manager" [hidden]="sharedService.loggedIn" aria-label="GEAR Manager Login"
-        tabindex="0" class="bg-info list-group-item list-group-item-action align-items-start text-white">
-        <div class="d-flex w-100 justify-content-start align-items-center">
-          GEAR Manager Login
-          <span class="submenu-icon">
-            <i class="fa fa-sign-in-alt fa-lg fa-fw"></i>
-          </span>
-        </div>
-      </a>
-      <a name="managerLogoutBttn" routerLink="/" [hidden]="!sharedService.loggedIn" (click)="logoutManager()" tabindex="0"
-        aria-label="GEAR Manager Logout" class="bg-danger list-group-item list-group-item-action align-items-start text-white">
-        <div class="d-flex w-100 justify-content-start align-items-center">
-          GEAR Manager Logout
-          <span class="submenu-icon">
-            <i class="fas fa-sign-out-alt fa-lg fa-fw"></i>
-          </span>
-        </div>
-      </a>
-    </div>
-
   </ng-sidebar>
 
   <!-- Page content -->
