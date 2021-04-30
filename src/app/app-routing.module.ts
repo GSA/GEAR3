@@ -32,7 +32,7 @@ import { FismaPocsComponent } from './views/security/fisma-pocs/fisma-pocs.compo
 import { ItStandardsComponent } from './views/technologies/it-standards/it-standards.component';
 
 // Enterprise Architecture
-import { GInvoicingComponent } from './views/architecture/g-invoicing/g-invoicing.component';
+import { GearModelComponent } from './views/architecture/gear-model/gear-model.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -63,7 +63,7 @@ const routes: Routes = [
   { path: 'it_standards', component: ItStandardsComponent },
   { path: 'it_standards/:standardID', component: ItStandardsComponent },
 
-  { path: 'g_invoicing', component: GInvoicingComponent },
+  { path: 'gear_model', component: GearModelComponent },
 
   { path: 'forms_glossary', component: FormsGlossaryComponent },
 

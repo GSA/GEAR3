@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GInvoicingComponent } from './g-invoicing.component';
+import { GearModelComponent } from './gear-model.component';
 
-describe('GInvoicingComponent', () => {
-  let component: GInvoicingComponent;
-  let fixture: ComponentFixture<GInvoicingComponent>;
+describe('GearModelComponent', () => {
+  let component: GearModelComponent;
+  let fixture: ComponentFixture<GearModelComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ GInvoicingComponent ]
+      declarations: [ GearModelComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(GInvoicingComponent);
+    fixture = TestBed.createComponent(GearModelComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
