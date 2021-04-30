@@ -12,12 +12,6 @@ export class HomeComponent implements OnInit {
   constructor(private sharedService: SharedService) { }
 
   ngOnInit(): void {
-    this.setJWT();
-  }
-
-  // Set JWT when Logging in
-  setJWT() {
-    this.sharedService.setJWTonLogIn();
   }
 
 }
