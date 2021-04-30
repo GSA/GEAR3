@@ -11,7 +11,7 @@
     </h3>
     <!-- GEAR Manager Access -->
     <a class="btn btn-sm btn-info text-white shadow mngr-btn d-flex align-items-center justify-content-center"
-      routerLink="/gear_manager" *ngIf="!sharedService.loggedIn" aria-label="GEAR Manager Login">
+      routerLink="/gear_manager" *ngIf="!sharedService.loggedIn" aria-label="GEAR Manager Login" (click)="sharedService.setRedirectPath()">
       <span class="mr-2">GEAR Manager Access</span><i class="fa fa-sign-in-alt fa-2x"></i>
     </a>
     <a class="btn btn-sm btn-danger text-white shadow mngr-btn d-flex align-items-center justify-content-center"

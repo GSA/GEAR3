@@ -161,7 +161,7 @@ app.post(samlConfig.path,
           // JWT TOKEN SIGNED HERE TO BE USED IN INLINE HTML PAGE NEXT
           const token = jsonwebtoken.sign(jwt, process.env.SECRET);
 
-          let adminRoute = (process.env.SAML_HOST === 'localhost') ? 'http://localhost:3000/' : '/#/';
+          let adminRoute = (process.env.SAML_HOST === 'localhost') ? 'http://localhost:3000' : '/#';
 
           html =
             `

@@ -1,6 +1,7 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { formatDate, Location } from '@angular/common';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { Router } from '@angular/router';
 
 import { Globals } from '@common/globals';
 
@@ -23,7 +24,8 @@ export class SharedService {
 
   constructor(
     private globals: Globals,
-    private location: Location) { }
+    private location: Location,
+    private router: Router) { }
 
   // Sidebar Toggle
   public toggleClick() {
@@ -104,18 +106,23 @@ export class SharedService {
         $('#loggedIn').toast('show');
       }, 1000);  // Wait for 1 sec to propogate after logging in
     }
-  }
+  };
 
   //// Check if user is authenticated to GEAR Manager
   public get loggedIn(): boolean {
     return localStorage.getItem('jwt') !== null && localStorage.getItem('jwt') == this.globals.jwtToken;
   };
 
+  //// Set Redirect Path to come back to page after GEAR Manager login
+  public setRedirectPath(): void {
+    localStorage.setItem('redirectPath', this.router.url);
+  };
+
   //// Remove JWT and show log out banner when logging out of GEAR Manager
   public logoutManager() {
     localStorage.removeItem('jwt');
     $('#loggedOut').toast('show');
-  }
+  };
 
 
   // Table Data Formatters
