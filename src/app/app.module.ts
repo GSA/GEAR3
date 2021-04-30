@@ -54,6 +54,9 @@ import { ItStandardsComponent } from './views/technologies/it-standards/it-stand
 import { ItStandardsModalComponent } from './components/modals/it-standards-modal/it-standards-modal.component';
 import { ItStandardManagerComponent } from './components/manager-modals/it-standard-manager/it-standard-manager.component';
 
+//// Enterprise Architecture
+import { GInvoicingComponent } from './views/architecture/g-invoicing/g-invoicing.component';
+
 // Global Variables
 import { Globals } from './common/globals';
 
@@ -93,7 +96,9 @@ import { Globals } from './common/globals';
 
     ItStandardsComponent,
     ItStandardsModalComponent,
-    ItStandardManagerComponent
+    ItStandardManagerComponent,
+    
+    GInvoicingComponent
   ],
   imports: [
     AppRoutingModule,

@@ -139,6 +139,25 @@
         </div>
       </li>
 
+      <!-- Enterprise Architecture -->
+      <li>
+        <a id="eaBttn" data-toggle="collapse" data-target="#eaDropdown" aria-controls="#eaDropdown"
+          aria-expanded="false" (click)="_opened=true"
+          class="bg-purple list-group-item list-group-item-action flex-column align-items-start">
+          <div class="d-flex w-100 justify-content-start align-items-center">
+            Enterprise Architecture
+            <span class="submenu-icon">
+              <i class="fas fa-network-wired fa-lg fa-fw"></i>
+            </span>
+          </div>
+        </a>
+        <div id="eaDropdown" aria-labelledby="eaDropdown" data-parent="#sideMenu"
+          class="collapse sidebar-submenu">
+          <a routerLink="/g_invoicing" class="bg-dark list-group-item list-group-item-action">
+            G-Invoicing</a>
+        </div>
+      </li>
+
       <!-- Menu Break -->
       <li><br></li>
 
