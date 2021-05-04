@@ -13,8 +13,6 @@ import { Capability } from '@api/models/capabilities.model';
 
 import { FISMA } from '@api/models/fisma.model';
 
-import { GearMngrRequest } from '@api/models/manager-request.model';
-
 import { Investment } from '@api/models/investments.model';
 import { InvestmentType } from '@api/models/investment-types.model';
 
@@ -68,9 +66,6 @@ export class ApiService {
 
   // IT Standards
   techUrl: string = this.sharedService.internalURLFmt('/api/it_standards');
-
-  // GEAR Manager Request
-  mngrReqURL: string = this.sharedService.internalURLFmt('/api/manager_request');
 
 
   constructor(
@@ -300,35 +295,6 @@ export class ApiService {
         'Authorization': this.globals.jwtToken
       })
     };
-  };
-
-
-  // GEAR Manager Request
-  gearMngrRequest(requestData: {}) {
-    return this.http.post(this.mngrReqURL, requestData).pipe(
-        catchError(this.handleError('CREATE GEAR Manager Request', []))
-      );
-  };
-
-  // Send Email for GEAR Manager Request
-  mngrRequestSendEmail(requestData: {}) {
-    return this.http.post(this.mngrReqURL + '/manager_request_email', requestData).pipe(
-        catchError(this.handleError('SEND GEAR Manager Request Email', []))
-      );
-  };
-
-  // Accept GEAR Manager Request
-  mngrRequestAccept(requestData: {}) {
-    return this.http.put(this.mngrReqURL + '/accept', requestData).pipe(
-        catchError(this.handleError('ACCEPT GEAR Manager Request Email', []))
-      );
-  };
-
-  // Reject GEAR Manager Request
-  mngrRequestReject(requestData: {}) {
-    return this.http.put(this.mngrReqURL + '/reject', requestData).pipe(
-        catchError(this.handleError('REJECT GEAR Manager Request Email', []))
-      );
   };
 
 }
