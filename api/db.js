@@ -29,20 +29,12 @@ dbCredentials_cowboy = {
 };
 
 // Create DB Connection
-const connection = mysql.createConnection(dbCredentials)
-connection.connect(error => {
-  if (error) throw error;
-  console.log("Successfully connected to MySQL gear_ods database.");
-});
+const pool = mysql.createPool(dbCredentials)
 
-const connection_cowboy = mysql.createConnection(dbCredentials_cowboy)
-connection_cowboy.connect(error => {
-  if (error) throw error;
-  console.log("Successfully connected to MySQL cowboy_ods database.");
-});
+const pool_cowboy = mysql.createPool(dbCredentials_cowboy)
 
 module.exports = {
   dbCredentials: dbCredentials,
-  connection: connection,
-  connection_cowboy: connection_cowboy
+  connection: pool,
+  connection_cowboy: pool_cowboy
 };

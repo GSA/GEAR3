@@ -1,7 +1,6 @@
 const routesPath = './routes/';
 
 const express = require('express');
-const appTIME = require(routesPath + 'apptime.routes');
 const cap = require(routesPath + 'capabilities.routes');
 const dataFlow = require(routesPath + 'dataflow.routes');
 const fisma = require(routesPath + 'fisma.routes');
@@ -12,10 +11,10 @@ const org = require(routesPath + 'organizations.routes');
 const poc = require(routesPath + 'pocs.routes');
 const search = require(routesPath + 'search.routes');
 const system = require(routesPath + 'systems.routes');
+const sysTIME = require(routesPath + 'systime.routes');
 
 const router = express.Router();
 
-router.use('/apptime', appTIME);
 router.use('/capabilities', cap);
 router.use('/data_flow', dataFlow);
 router.use('/fisma', fisma);
@@ -26,5 +25,6 @@ router.use('/organizations', org);
 router.use('/pocs', poc);
 router.use('/search', search);
 router.use('/systems', system);
+router.use('/system_time', sysTIME);
 
 module.exports = router;

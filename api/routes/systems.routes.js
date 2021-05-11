@@ -9,6 +9,9 @@ router.route('/')
 router.route('/get/:id')
   .get(sysCtrl.findOne);
 
+router.route('/getByName/:name')
+  .get(sysCtrl.findByName);
+
 // router.route('/get/:id/systems')
 //   .get(sysCtrl.findSubSystems);
 

@@ -19,6 +19,13 @@ exports.findOne = (req, res) => {
   res = ctrl.sendQuery_cowboy(query, 'individual System/Subsystem', res);
 };
 
+exports.findByName = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
+    ` WHERE \`ex:System_Name\` LIKE '${req.params.name}%' GROUP BY \`ex:GEAR_ID\`;`;
+
+  res = ctrl.sendQuery_cowboy(query, 'individual System/Subsystem by name', res);
+};
+
 // exports.findCapabilities = (req, res) => {
 //   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_capabilities.sql')).toString() +
 //     ` LEFT JOIN zk_app_capabilities           ON cap.Id = zk_app_capabilities.obj_capability_Id
