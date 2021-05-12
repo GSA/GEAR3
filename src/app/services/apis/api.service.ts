@@ -25,17 +25,15 @@ import { ITStandardTypes } from '@api/models/it-standards-types.model';
 
 import { Organization } from '@api/models/organizations.model';
 
-import { System } from '@api/models/systems.model';
-
 import { POC } from '@api/models/pocs.model';
+
+import { System } from '@api/models/systems.model';
+import { TIME } from '@api/models/systime.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-
-  // App TIME
-  timeUrl: string = this.sharedService.internalURLFmt('/api/apptime');
 
   // Capabilities
   capUrl: string = this.sharedService.internalURLFmt('/api/capabilities');
@@ -63,6 +61,9 @@ export class ApiService {
 
   // Systems
   sysUrl: string = this.sharedService.internalURLFmt('/api/systems');
+
+  // Systems TIME
+  timeUrl: string = this.sharedService.internalURLFmt('/api/system_time');
 
   // IT Standards
   techUrl: string = this.sharedService.internalURLFmt('/api/it_standards');
@@ -177,6 +178,19 @@ export class ApiService {
   };
 
 
+  //// POCs
+  public getPOCs(): Observable<POC[]> {
+    return this.http.get<POC[]>(this.pocUrl).pipe(
+      catchError(this.handleError<POC[]>('GET POCs', []))
+    );
+  };
+  public getPOC(id: number): Observable<POC[]> {
+    return this.http.get<POC[]>(this.pocUrl + '/get/' + String(id)).pipe(
+      catchError(this.handleError<POC[]>('GET POC', []))
+    );
+  };
+
+
   //// Systems
   public getSystems(): Observable<System[]> {
     return this.http.get<System[]>(this.sysUrl).pipe(
@@ -188,6 +202,11 @@ export class ApiService {
       catchError(this.handleError<System[]>('GET System', []))
     );
   };
+  public getSystemByName(name: string): Observable<System[]> {
+    return this.http.get<System[]>(this.sysUrl + '/getByName/' + name).pipe(
+      catchError(this.handleError<System[]>('GET System', []))
+    );
+  };
   // public getChildSubSys(id: number): Observable<System[]> {
   //   return this.http.get<System[]>(this.sysUrl + '/get/' + String(id) + '/systems').pipe(
   //     catchError(this.handleError<System[]>('GET System Child Sub-Systems', []))
@@ -195,15 +214,20 @@ export class ApiService {
   // };
 
 
-  //// POCs
-  public getPOCs(): Observable<POC[]> {
-    return this.http.get<POC[]>(this.pocUrl).pipe(
-      catchError(this.handleError<POC[]>('GET POCs', []))
+  //// TIME
+  public getTIME(): Observable<TIME[]> {
+    return this.http.get<TIME[]>(this.timeUrl).pipe(
+      catchError(this.handleError<TIME[]>('GET TIME', []))
     );
   };
-  public getPOC(id: number): Observable<POC[]> {
-    return this.http.get<POC[]>(this.pocUrl + '/get/' + String(id)).pipe(
-      catchError(this.handleError<POC[]>('GET POC', []))
+  public getOneSysTIME(id: number): Observable<TIME[]> {
+    return this.http.get<TIME[]>(this.timeUrl + '/get/' + String(id)).pipe(
+      catchError(this.handleError<TIME[]>('GET TIME by ID', []))
+    );
+  };
+  public getTIMEByName(name: string): Observable<TIME[]> {
+    return this.http.get<TIME[]>(this.sysUrl + '/getByName/' + name).pipe(
+      catchError(this.handleError<TIME[]>('GET TIME by Name', []))
     );
   };
 

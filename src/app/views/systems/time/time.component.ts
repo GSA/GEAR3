@@ -30,7 +30,7 @@ export class TimeComponent implements OnInit {
   xAxisLabel: string = 'Fiscal Year';
   showYAxis: boolean = true;
   showYAxisLabel: boolean = true;
-  yAxisLabel: string = '# of Applications';
+  yAxisLabel: string = '# of Systems';
   colorSets: any;
 
   colorScheme: any;
@@ -54,7 +54,7 @@ export class TimeComponent implements OnInit {
     classes: "table-hover table-dark clickable-table",
     showColumns: true,
     showExport: true,
-    exportFileName: 'Business_Apps_TIME_Report',
+    exportFileName: 'Sysems_TIME_Report',
     headerStyle: "bg-danger",
     pagination: true,
     search: true,
@@ -66,128 +66,52 @@ export class TimeComponent implements OnInit {
 
   // TIME Table Columns
   columnDefs: any[] = [{
-    field: 'DisplayName',
-    title: 'Display Name',
+    field: 'System Name',
+    title: 'System Name',
+    sortable: true
+  }, {
+    field: 'FY',
+    title: 'FY',
+    sortable: true
+  }, {
+    field: 'TIME Designation',
+    title: 'TIME Designation',
+    sortable: true
+  }, {
+    field: 'Business Score',
+    title: 'Business Score',
+    sortable: true
+  }, {
+    field: 'Technical Score',
+    title: 'Technical Score',
+    sortable: true
+  }, {
+    field: 'O&M Cost',
+    title: 'O&M Cost',
+    sortable: true
+  }, {
+    field: 'DM&E Cost',
+    title: 'DM&E Cost',
+    sortable: true
+  }, {
+    field: 'Software/Hardware License Costs',
+    title: 'License Costs',
+    sortable: true
+  }, {
+    field: 'Questionnaire Last Updated',
+    title: 'Questionnaire Last Updated',
     sortable: true,
-    visible: false
+    formatter: this.sharedService.dateFormatter
   }, {
-    field: 'Name',
-    title: 'Application Name',
-    sortable: true
-  }, {
-    field: 'SSO',
-    title: 'SSO',
-    visible: false,
-    sortable: true
-  }, {
-    field: 'OwnerShort',
-    title: 'Owning Org (Short)',
+    field: 'POC Last Updated',
+    title: 'POC of Last Updated',
     sortable: true,
+    formatter: this.sharedService.emailFormatter
   }, {
-    field: 'Owner',
-    title: 'Owning Org (Long)',
-    visible: false,
-    sortable: true
-  }, {
-    field: 'SupportShort',
-    title: 'Supporting Org (Short)',
-    sortable: true
-  }, {
-    field: 'Support',
-    title: 'Supporting Org (Long)',
+    field: 'File Link',
+    title: 'File Link',
     sortable: true,
-    visible: false
-  }, {
-    field: 'ParentSystem',
-    title: 'Parent System',
-    sortable: true,
-    visible: false,
-    formatter: this.sharedService.systemFormatter
-  }, {
-    field: 'CUI',
-    title: 'CUI',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'Status',
-    title: 'Status',
-    sortable: true
-  }, {
-    field: 'ProdYear',
-    title: 'Production Year',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'FY14',
-    title: 'FY14',
-    visible: false,
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'FY15',
-    title: 'FY15',
-    visible: false,
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'FY16',
-    title: 'FY16',
-    visible: false,
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'FY17',
-    title: 'FY17',
-    visible: false,
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'FY18',
-    title: 'FY18',
-    visible: false,
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'FY19',
-    title: 'FY19',
-    visible: false,
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'FY20',
-    title: 'FY20',
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'FY21',
-    title: 'FY21',
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'FY22',
-    title: 'FY22',
-    visible: false,
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'FY23',
-    title: 'FY23',
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'FY24',
-    title: 'FY24',
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'Notes',
-    title: 'Notes',
-    visible: false,
-    sortable: true
-  }, {
-    field: 'BusPOC',
-    title: 'Business POC',
-    visible: false,
-    sortable: true
-  }, {
-    field: 'TechPOC',
-    title: 'Technical POC',
-    visible: false,
-    sortable: true
-  }, {
-    field: 'OMBUID',
-    title: 'Application ID',
-    sortable: true,
-    visible: false
+    formatter: this.sharedService.linksFormatter
   }];
 
   ngOnInit(): void {
@@ -203,65 +127,54 @@ export class TimeComponent implements OnInit {
 
     // Method to handle click events on the Systems table
     $(document).ready(
-      $('#timeTable').on('click-row.bs.table', function (e, row) {
-        this.tableService.appsTableClick(row);
+      $('#timeTable').on('dbl-click-row.bs.table', function (e, row) {
+        // Grab data for system by name
+        this.apiService.getSystemByName(row['System Name']).subscribe((data: any[]) => {
+          console.log("API data: ", data[0]);
+          this.tableService.systemsTableClick(data[0]) });
       }.bind(this)
       ));
 
-    // Filter by only non-retired
-    $(document).ready(
-      $('#timeTable').bootstrapTable('filterBy', {
-        Status: ['Candidate', 'Pre-Production', 'Production']
-      })
-    );
-
     // Visualization data
-    // this.apiService.getApplications().subscribe((data: any[]) => {
-    //   data = data.map(row => row.AppTime);
-    //   var yearTimeCount = {};
+    this.apiService.getTIME().subscribe((data: any[]) => {
+      var yearTimeCount = {};
 
-    //   data.forEach(timeStr => {
-    //     if (timeStr != '') {  // Skip if empty string
-    //       let FYs = timeStr.split('; ');
+      // Count number of each TIME value for each FY
+      data.forEach(row => {
+        let year = row['FY'];
+        let timeVal = row['TIME Designation'];
 
-    //       FYs.forEach(fy => {
-    //         let str = fy.split(', ');
-    //         let year = str[0];  // Fiscal Year for app
-    //         let value = str[1];  // Time value for corresponding fiscal year
-
-    //         if (value === 'N/A' || !(['FY19', 'FY20', 'FY21', 'FY22', 'FY23'].includes(year))) return  // Do not count N/As or anything before FY19
-    //         if (!(year in yearTimeCount)) yearTimeCount[year] = {};  // If year does not exist, add it
-    //         if (!(value in yearTimeCount[year])) yearTimeCount[year][value] = 1;  // If time value for year does not exist, initialize to 1
-    //         else yearTimeCount[year][value]++;  // Else, increment time value for year by 1
-    //       });
-    //     };
-    //   });
+        if (!(year in yearTimeCount)) yearTimeCount[year] = {};  // If year does not exist, add it
+        if (!(timeVal in yearTimeCount[year])) yearTimeCount[year][timeVal] = 1;  // If time value for year does not exist, initialize to 1
+        else yearTimeCount[year][timeVal]++;  // Else, increment time value for year by 1
+      });
       
-    //   for (const [fy, timeCount] of Object.entries(yearTimeCount).sort()) {
-    //     let dataPoint = {};
+      // Layout counts to form to be ingested to visual
+      for (const [fy, timeCount] of Object.entries(yearTimeCount).sort()) {
+        let dataPoint = {};
 
-    //     dataPoint['name'] = fy;
-    //     dataPoint['series'] = [];
+        dataPoint['name'] = fy;
+        dataPoint['series'] = [];
 
-    //     for (const [timeVal, count] of Object.entries(timeCount).sort()) {
-    //       let obj = {};
+        for (const [timeVal, count] of Object.entries(timeCount).sort()) {
+          let obj = {};
 
-    //       obj['name'] = timeVal;
-    //       obj['value'] = count;
+          obj['name'] = timeVal;
+          obj['value'] = count;
 
-    //       dataPoint['series'].push(obj);
-    //     };
-    //     this.vizData.push(dataPoint);
-    //   }
+          dataPoint['series'].push(obj);
+        };
+        this.vizData.push(dataPoint);
+      }
 
-    //   // For change detection to render chart after data has been processed
-    //   this.vizData = [...this.vizData];
+      // For change detection to render chart after data has been processed
+      this.vizData = [...this.vizData];
 
-    //   // Set color scheme for chart
-    //   this.colorScheme = this.colorSets.find(s => s.name === 'vivid');
+      // Set color scheme for chart
+      this.colorScheme = this.colorSets.find(s => s.name === 'vivid');
 
-    //   // console.log(this.vizData);  // Debug
-    // });
+      // console.log(this.vizData);  // Debug
+    });
     
   }
 

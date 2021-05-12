@@ -9,4 +9,7 @@ router.route('/')
 router.route('/get/:id')
   .get(sysTimeCtrl.findOne);
 
+router.route('/getByName/:name')
+  .get(sysTimeCtrl.findByName);
+
 module.exports = router;

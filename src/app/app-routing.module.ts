@@ -53,7 +53,7 @@ const routes: Routes = [
 
   { path: 'systems', component: SystemsComponent },
   { path: 'systems/:sysID', component: SystemsComponent },
-  { path: 'applications_TIME', component: TimeComponent },
+  { path: 'systems_TIME', component: TimeComponent },
 
   { path: 'FISMA', component: FismaComponent },
   { path: 'FISMA/:fismaID', component: FismaComponent },

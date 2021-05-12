@@ -112,7 +112,7 @@ export class FismaPocsComponent implements OnInit {
     field: 'Email',
     title: 'Email',
     sortable: true,
-    formatter: this.emailFormatter
+    formatter: this.sharedService.emailFormatter
   }];
 
   ngOnInit(): void {
@@ -211,10 +211,6 @@ export class FismaPocsComponent implements OnInit {
 
     // Block each POC's info with breaks
     return pocs.join('<br><br>');
-  }
-
-  emailFormatter(value, row, index, field) {
-    return `<a href="https://mail.google.com/mail/?view=cm&fs=1&to=${value}" target="_blank" rel="noopener">${value}</a>`
   }
 
   // Update table to RISSO POCs

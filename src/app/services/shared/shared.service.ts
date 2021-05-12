@@ -167,9 +167,20 @@ export class SharedService {
     return artLinks.join('<br>');
   };
 
+  //// File Link
+  public linksFormatter(value, row, index, field) {
+    if (value) return `<a target="_blank" rel="noopener" href="${value}">Link</a>`;
+  };
+
   //// Date
   public dateFormatter(value, row, index, field) {
     if (value) return formatDate(value, 'MMM. dd, yyyy', 'en-US');
+  };
+
+
+  //// Email
+  public emailFormatter(value, row, index, field) {
+    return `<a href="https://mail.google.com/mail/?view=cm&fs=1&to=${value}" target="_blank" rel="noopener">${value}</a>`
   };
 
 
