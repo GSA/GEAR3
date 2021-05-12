@@ -5,7 +5,8 @@
       <div class="modal-header bg-danger">
         <h5 class="modal-title text-white" id="systemTitle">
           <i class="fas fa-desktop"></i>
-          {{ system.Name }}</h5>
+          {{ system.Name }}
+        </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -16,16 +17,20 @@
         <ul class="nav nav-tabs">
           <li class="nav-item">
             <a class="nav-link active" data-toggle="tab" href="#systemOverview">
-              Overview</a></li>
+              Overview</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#businessRelated">
-              Business</a></li>
+              Business</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#technicalRelated">
-              Technical</a></li>
+              Technical</a>
+          </li>
           <li class="nav-item" [hidden]="system.SystemLevel != 'System'">
             <a class="nav-link" data-toggle="tab" href="#systemSubs">
-              Subsystems</a></li>
+              Subsystems</a>
+          </li>
           <!-- <li class="nav-item" [hidden]="!interfaces.length">
             <a class="nav-link" data-toggle="tab" href="#systemDataFlow">
               Data Flow</a></li> -->
@@ -151,20 +156,22 @@
                   <tbody [innerHTML]="tableService.renderPOCInfo(system.POC)"></tbody>
                 </table>
               </div>
-              <!-- End of Points of Contact Table -->
+            </div>
+            <!-- End of Points of Contact Table -->
 
-              <!-- App Roadmap/TIME Report -->
-              <!-- <div>
+            <div class="row justify-content-center">
+              <!-- System TIME Report -->
+              <div class="col-12">
                 <div class="text-center">
-                  <h4>Business Application Roadmap</h4> -->
-              <!-- TIME Definitions Link -->
-              <!-- <a type="button" class="btn btn-sm btn-info text-white" [routerLink]="['/about', 'appRat']"
+                  <h4>System TIME Report</h4>
+                  <!-- TIME Definitions Link -->
+                  <a type="button" class="btn btn-sm btn-info text-white" [routerLink]="['/about', 'sysRat']"
                     target="_blank">TIME Value Definitions</a>
                 </div>
-  
-                <table id="systemTimeTable"></table>
+
+                <table id="sysTimeTable"></table>
               </div>
-              <br> -->
+              <br>
 
               <!-- Related Business Capabilities Table -->
               <!-- <div>

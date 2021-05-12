@@ -13,10 +13,6 @@ exports.findOne = (req, res) => {
   googleMain(res, 'single', req.params.id);
 };
 
-exports.findByName = (req, res) => {
-  googleMain(res, 'byName', req.params.name);
-};
-
 // TODO: This should be refactored to be less redundant
 
 // If modifying these scopes, delete token.json.
@@ -39,7 +35,6 @@ function googleMain(response, method, key = null) {
     var callback_method = null;
     if (method === 'all') callback_method = retrieveAll;
     else if (method === 'single') callback_method = single;
-    else if (method === 'byName') callback_method = byNameData;
 
     // Authorize a client with credentials, then call the Google Sheets API.
     authorize(JSON.parse(content), callback_method, response, key);
@@ -185,56 +180,6 @@ function single(auth, response, key) {
       });
 
       sendResponse(response, singleID);
-    }
-  });
-}
-
-
-/**
- * Retrieve records associated to a system from the following spreadsheet:
- * @see https://docs.google.com/spreadsheets/d/1_9X39tQ6jbYARcEYF7KbO-lDGbpDPjIwtKx0qhFvohE/edit
- * @param {google.auth.OAuth2} auth The authenticated Google OAuth client.
- * @param response Response object
- */
-function byNameData(auth, response, key) {
-  const sheets = google.sheets({ version: 'v4', auth });
-
-  // Grab all data first
-  sheets.spreadsheets.values.get({
-    spreadsheetId: SHEET_ID,
-    range: 'MASTER!A:M'
-  }, (err, res) => {
-    if (err) {
-      sendResponse(response, { error: 'The API returned an error: ' + err });
-      return;
-    };
-
-    const rows = res.data.values;
-    if (rows.length) {
-      const headers = rows[0];
-      var data = [];
-
-      // Structure rows into an object
-      for (i = 1; i < rows.length; i++) {
-        row = {};
-        for (j = 0; j < headers.length; j++) {
-          row[headers[j]] = rows[i][j];
-        };
-        data.push(row);
-      };
-
-      // Send error if no data
-      if (!data) {
-        sendResponse(response, null);
-        return;
-      }
-
-      // Filter down to desired System Name
-      var recordsForSys = data.filter(function (d) {
-        return d['System Name'].includes(key);
-      });
-
-      sendResponse(response, recordsForSys);
     }
   });
 }

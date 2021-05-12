@@ -288,13 +288,18 @@ export class TableService {
     };
     this.clickMethod(options);
 
+    this.apiService.getOneSysTIME(data['ID']).subscribe((TIMEdata: any[]) => {
+      var timeAPIdata = TIMEdata[0];
+
     // Update TIME report table in detail modal with clicked application
-    // $('#appTimeTable').bootstrapTable('refreshOptions', {
-    //   exportOptions: {
-    //     fileName: this.sharedService.fileNameFmt(data.Name + '-TIME_Report')
-    //   },
-    //   data: [data]
-    // });
+      $('#sysTimeTable').bootstrapTable('refreshOptions', {
+        exportOptions: {
+          fileName: this.sharedService.fileNameFmt(timeAPIdata['System Name'] + '-TIME_Report')
+        },
+        data: [timeAPIdata]
+      });
+    });
+
 
     // // Update related capabilities table in detail modal with clicked application
     // this.updateRelatedTable(

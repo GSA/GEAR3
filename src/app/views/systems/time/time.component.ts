@@ -54,7 +54,7 @@ export class TimeComponent implements OnInit {
     classes: "table-hover table-dark clickable-table",
     showColumns: true,
     showExport: true,
-    exportFileName: 'Sysems_TIME_Report',
+    exportFileName: 'Systems_TIME_Report',
     headerStyle: "bg-danger",
     pagination: true,
     search: true,
@@ -129,8 +129,7 @@ export class TimeComponent implements OnInit {
     $(document).ready(
       $('#timeTable').on('dbl-click-row.bs.table', function (e, row) {
         // Grab data for system by name
-        this.apiService.getSystemByName(row['System Name']).subscribe((data: any[]) => {
-          console.log("API data: ", data[0]);
+        this.apiService.getOneSys(row.Id).subscribe((data: any[]) => {
           this.tableService.systemsTableClick(data[0]) });
       }.bind(this)
       ));

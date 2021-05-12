@@ -202,11 +202,6 @@ export class ApiService {
       catchError(this.handleError<System[]>('GET System', []))
     );
   };
-  public getSystemByName(name: string): Observable<System[]> {
-    return this.http.get<System[]>(this.sysUrl + '/getByName/' + name).pipe(
-      catchError(this.handleError<System[]>('GET System', []))
-    );
-  };
   // public getChildSubSys(id: number): Observable<System[]> {
   //   return this.http.get<System[]>(this.sysUrl + '/get/' + String(id) + '/systems').pipe(
   //     catchError(this.handleError<System[]>('GET System Child Sub-Systems', []))
@@ -223,11 +218,6 @@ export class ApiService {
   public getOneSysTIME(id: number): Observable<TIME[]> {
     return this.http.get<TIME[]>(this.timeUrl + '/get/' + String(id)).pipe(
       catchError(this.handleError<TIME[]>('GET TIME by ID', []))
-    );
-  };
-  public getTIMEByName(name: string): Observable<TIME[]> {
-    return this.http.get<TIME[]>(this.sysUrl + '/getByName/' + name).pipe(
-      catchError(this.handleError<TIME[]>('GET TIME by Name', []))
     );
   };
 
