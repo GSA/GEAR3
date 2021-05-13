@@ -21,14 +21,15 @@
     (onOpened)="_onOpened()"
     (onCloseStart)="_onCloseStart()"
     (onClosed)="_onClosed()"
-    (onTransitionEnd)="_onTransitionEnd()">
+    (onTransitionEnd)="_onTransitionEnd()"
+    (mouseenter)="_opened=true"
+    (mouseleave)="_opened=false">
 
     <ul id="sideMenu" class="list-group">
       <!-- Strategy -->
       <li>
         <a id="strategyBttn" data-toggle="collapse" data-target="#strategyDropdown" aria-controls="#strategyDropdown"
-          aria-expanded="false" (click)="_opened=true"
-          class="bg-success list-group-item list-group-item-action flex-column align-items-start">
+          aria-expanded="false" class="bg-success list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
             IT Strategy
             <span class="submenu-icon">
@@ -52,8 +53,7 @@
       <!-- Enterprise  -->
       <li>
         <a id="enterpriseBttn" data-toggle="collapse" data-target="#enterpriseDropdown" aria-controls="#enterpriseDropdown"
-          aria-expanded="false" (click)="_opened=true"
-          class="bg-royal-blue list-group-item list-group-item-action flex-column align-items-start">
+          aria-expanded="false" class="bg-royal-blue list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
             GSA Enterprise
             <span class="submenu-icon">
@@ -77,8 +77,7 @@
       <!-- Systems -->
       <li>
         <a id="systemBttn" data-toggle="collapse" data-target="#systemsDropdown" aria-controls="#systemsDropdown"
-          aria-expanded="false" (click)="_opened=true"
-          class="bg-danger list-group-item list-group-item-action flex-column align-items-start">
+          aria-expanded="false" class="bg-danger list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
             Systems
             <span class="submenu-icon">
@@ -98,8 +97,7 @@
       <!-- Security -->
       <li>
         <a id="securityBttn" data-toggle="collapse" data-target="#securityDropdown" aria-controls="#securityDropdown"
-          aria-expanded="false" (click)="_opened=true"
-          class="bg-warning list-group-item list-group-item-action flex-column align-items-start">
+          aria-expanded="false" class="bg-warning list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
             Security
             <span class="submenu-icon">
@@ -119,8 +117,7 @@
       <!-- Technologies -->
       <li>
         <a id="technologyBttn" data-toggle="collapse" data-target="#technologiesDropdown" aria-controls="#technologiesDropdown"
-          aria-expanded="false" (click)="_opened=true"
-          class="bg-teal list-group-item list-group-item-action flex-column align-items-start">
+          aria-expanded="false" class="bg-teal list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
             Technologies
             <span class="submenu-icon">
@@ -142,8 +139,7 @@
       <!-- Enterprise Architecture -->
       <li>
         <a id="eaBttn" data-toggle="collapse" data-target="#eaDropdown" aria-controls="#eaDropdown"
-          aria-expanded="false" (click)="_opened=true"
-          class="bg-purple list-group-item list-group-item-action flex-column align-items-start">
+          aria-expanded="false" class="bg-purple list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
             Enterprise Architecture
             <span class="submenu-icon">
