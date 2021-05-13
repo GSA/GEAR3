@@ -161,8 +161,9 @@ export class TableService {
       showPaginationSwitch: definitions.pagination,
 
       search: definitions.search,
-      showSearchClearButton: definitions.search,
       searchOnEnterKey: definitions.search,
+      showSearchButton: definitions.search,
+      showSearchClearButton: definitions.search,
 
       sortName: definitions.sortName,
       sortOrder: definitions.sortOrder,
@@ -218,7 +219,7 @@ export class TableService {
       update: 'capability',
       detailModalID: '#capabilityDetail',
       sysTableID: '#capSupportSysTable',
-      exportName: data.Name + '-Supporting_Apps',
+      exportName: data.Name + '-Supporting_Systems',
       apiString: '/api/capabilities/get/'
     };
     this.clickMethod(options);
@@ -231,7 +232,7 @@ export class TableService {
       update: 'fisma',
       detailModalID: '#fismaDetail',
       sysTableID: '#fismaCertSysTable',
-      exportName: data.Name + '-Certified_Apps',
+      exportName: data.Name + '-Certified_Systems',
       apiString: '/api/fisma/get/'
     };
     this.clickMethod(options);
@@ -244,7 +245,7 @@ export class TableService {
       update: 'investment',
       detailModalID: '#investDetail',
       sysTableID: '#investRelSysTable',
-      exportName: data.Name + '-Related_Apps',
+      exportName: data.Name + '-Related_Systems',
       apiString: '/api/investments/get/'
     };
     this.clickMethod(options);
@@ -257,7 +258,7 @@ export class TableService {
       update: 'it-standard',
       detailModalID: '#itStandardDetail',
       sysTableID: '#itRelSysTable',
-      exportName: data.Name + '-Related_Apps',
+      exportName: data.Name + '-Related_Systems',
       apiString: '/api/it_standards/get/'
     };
     this.clickMethod(options);
@@ -270,7 +271,7 @@ export class TableService {
       update: 'organization',
       detailModalID: '#organizationDetail',
       sysTableID: '#orgSysTable',
-      exportName: data.Name + '-Organizational_Apps',
+      exportName: data.Name + '-Organizational_Systems',
       apiString: '/api/organizations/get/'
     };
     this.clickMethod(options);
@@ -282,8 +283,8 @@ export class TableService {
       data: data,
       update: 'system',
       detailModalID: '#systemDetail',
-      sysTableID: '#childSubSysTable',
-      exportName: data.Name + '-Child_SubSystems',
+      sysTableID: '#SubSysTable',
+      exportName: data.Name + '-SubSystems',
       apiString: '/api/systems/get/'
     };
     this.clickMethod(options);
@@ -323,13 +324,13 @@ export class TableService {
     $(options.detailModalID).modal('show');
 
     // Update related systems table in detail modal with clicked data
-    if (options.sysTableID) {
-      this.updateRelatedTable(
-        options.sysTableID,
-        options.exportName,
-        options.apiString + String(options.data.ID) + '/systems'
-      );
-    };
+    // if (options.sysTableID) {
+    //   this.updateRelatedTable(
+    //     options.sysTableID,
+    //     options.exportName,
+    //     options.apiString + String(options.data.ID) + '/subsystems'
+    //   );
+    // };
   }
 
   private updateRelatedTable(tableID: string, exportName: string, apiString: string) {
