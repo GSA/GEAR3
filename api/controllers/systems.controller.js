@@ -28,14 +28,12 @@ exports.findOne = (req, res) => {
 //   res = ctrl.sendQuery_cowboy(query, 'related capabilities for system', res);
 // };
 
-// exports.findTechnologies = (req, res) => {
-//   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
-//     ` WHERE obj_standard_type.Keyname LIKE '%Software%'
-//       AND obj_technology_status.Keyname NOT LIKE 'Sunsetting'
-//       AND obj_technology_status.Keyname NOT LIKE 'Not yet submitted'
-//       AND app.Id = ${req.params.id}
+exports.findTechnologies = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
+    ` WHERE obj_standard_type.Keyname LIKE '%Software%'
+        AND systems.\`ex:GEAR_ID\` = ${req.params.id}
 
-//     GROUP BY tech.Id;`;
+    GROUP BY tech.Id;`;
 
-//   res = ctrl.sendQuery_cowboy(query, 'related technologies for system', res);
-// };
+  res = ctrl.sendQuery_cowboy(query, 'related technologies for system', res);
+};

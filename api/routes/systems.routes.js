@@ -9,13 +9,13 @@ router.route('/')
 router.route('/get/:id')
   .get(sysCtrl.findOne);
 
-// router.route('/get/:id/systems')
+// router.route('/get/:id/subsystems')
 //   .get(sysCtrl.findSubSystems);
 
 // router.route('/get/:id/capabilities')
 //   .get(sysCtrl.findCapabilities);
 
-// router.route('/get/:id/technologies')
-//   .get(sysCtrl.findTechnologies);
+router.route('/get/:id/technologies')
+  .get(sysCtrl.findTechnologies);
 
 module.exports = router;
