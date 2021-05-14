@@ -53,7 +53,7 @@
     "ng2-pdf-viewer": "^6.3.2",
     "node-cron": "^2.0.3",
     "node-fetch": "^2.6.1",
-    "nodemailer": "^6.4.14",
+    "nodemailer": "^6.4.16",
     "nodemon": "^2.0.6",
     "object-path": "^0.11.5",
     "passport": "^0.4.1",
