@@ -93,6 +93,48 @@ export class SystemsModalComponent implements OnInit {
     formatter: this.sharedService.linksFormatter
   }];
 
+  // Related Technologies Table Options
+  sysTechTableOptions: {} = this.tableService.createTableOptions({
+    advancedSearch: false,
+    idTable: null,
+    classes: "table-hover table-light clickable-table fixed-table",
+    showColumns: true,
+    showExport: true,
+    exportFileName: null,
+    headerStyle: "bg-teal text-white",
+    pagination: false,
+    search: true,
+    sortName: 'Name',
+    sortOrder: 'asc',
+    showToggle: true,
+    url: null
+  });
+
+  // Related Technologies Table Columns
+  sysTechColumnDefs: any[] = [{
+    field: 'Name',
+    title: 'Technology',
+    sortable: true
+  }, {
+    field: 'Description',
+    title: 'Description',
+    sortable: true,
+    class: 'text-truncate'
+  }, {
+    field: 'Status',
+    title: 'Status',
+    sortable: true
+  }, {
+    field: 'Category',
+    title: 'Software Category',
+    sortable: true,
+  }, {
+    field: 'ApprovalExpirationDate',
+    title: 'Approved Status Expiration Date',
+    sortable: true,
+    formatter: this.sharedService.dateFormatter
+  }];
+
   ngOnInit(): void {
     this.modalService.currentSys.subscribe(system => this.system = system);
 
@@ -100,6 +142,21 @@ export class SystemsModalComponent implements OnInit {
       columns: this.sysTimecolumnDefs,
       data: [],
     }));
+
+    $('#systemTechTable').bootstrapTable($.extend(this.sysTechTableOptions, {
+      columns: this.sysTechColumnDefs,
+      data: [],
+    }));
+
+    // Method to handle click events on the Related Technologies table
+    $(document).ready(
+      $('#systemTechTable').on('click-row.bs.table', function (e, row) {
+        // Hide First Modal before showing new modal
+        $('#systemDetail').modal('hide');
+
+        this.tableService.itStandTableClick(row);
+      }.bind(this)
+      ));
 
     // $('#subSysTable').bootstrapTable($.extend(this.tableService.relSysTableOptions, {
     //   columns: this.tableService.relSysColumnDefs,

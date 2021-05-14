@@ -292,7 +292,7 @@ export class TableService {
     this.apiService.getOneSysTIME(data['ID']).subscribe((TIMEdata: any[]) => {
       var timeAPIdata = TIMEdata[0];
 
-    // Update TIME report table in detail modal with clicked application
+    // Update TIME report table in detail modal with clicked system
       $('#sysTimeTable').bootstrapTable('refreshOptions', {
         exportOptions: {
           fileName: this.sharedService.fileNameFmt(timeAPIdata['System Name'] + '-TIME_Report')
@@ -309,12 +309,12 @@ export class TableService {
     //   '/api/applications/get/' + String(data.ID) + '/capabilities'
     // );
 
-    // // Update related technologies table in detail modal with clicked application
-    // this.updateRelatedTable(
-    //   '#appTechTable',
-    //   data.Name + '-Related_Technologies',
-    //   '/api/applications/get/' + String(data.ID) + '/technologies'
-    // );
+    // Update related technologies table in detail modal with clicked system
+    this.updateRelatedTable(
+      '#systemTechTable',
+      data.Name + '-Related_Technologies',
+      '/api/systems/get/' + String(data.ID) + '/technologies'
+    );
   }
 
   private clickMethod(options: ClickOptions) {
