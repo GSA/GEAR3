@@ -25,7 +25,7 @@ export class TableService {
   public relSysTableOptions: {} = this.createTableOptions({
     advancedSearch: true,
     idTable: 'RelSysTable',
-    classes: "table-hover table-light clickable-table",
+    classes: "table-hover table-light clickable-table fixed-table",
     showColumns: true,
     showExport: true,
     exportFileName: null,
@@ -324,13 +324,13 @@ export class TableService {
     $(options.detailModalID).modal('show');
 
     // Update related systems table in detail modal with clicked data
-    // if (options.sysTableID) {
-    //   this.updateRelatedTable(
-    //     options.sysTableID,
-    //     options.exportName,
-    //     options.apiString + String(options.data.ID) + '/subsystems'
-    //   );
-    // };
+    if (options.sysTableID) {
+      this.updateRelatedTable(
+        options.sysTableID,
+        options.exportName,
+        options.apiString + String(options.data.ID) + '/systems'
+      );
+    };
   }
 
   private updateRelatedTable(tableID: string, exportName: string, apiString: string) {
