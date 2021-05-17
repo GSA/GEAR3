@@ -7,14 +7,14 @@ const queryPath = '../queries/';
 
 exports.findAll = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
-    " GROUP BY \`ex:GEAR_ID\`;";
+    " GROUP BY systems.\`ex:GEAR_ID\`;";
 
   res = ctrl.sendQuery_cowboy(query, 'Systems and subsystems', res);
 };
 
 exports.findOne = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
-    ` WHERE \`ex:GEAR_ID\` = ${req.params.id} GROUP BY \`ex:GEAR_ID\`;`;
+    ` WHERE systems.\`ex:GEAR_ID\` = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`;
 
   res = ctrl.sendQuery_cowboy(query, 'individual System/Subsystem', res);
 };

@@ -38,5 +38,4 @@ SELECT
 
   GROUP_CONCAT(DISTINCT concat_ws(',', `ex:Primary_Artifact_Name`,  `ex:Primary_Artifact_URL`) SEPARATOR ';') AS RelatedArtifacts
     
-FROM obj_fisma_archer
-
+FROM obj_fisma_archer AS systems
