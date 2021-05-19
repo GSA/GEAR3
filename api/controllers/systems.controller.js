@@ -64,3 +64,30 @@ exports.findTechnologies = (req, res) => {
 
   res = ctrl.sendQuery_cowboy(query, 'related technologies for system', res);
 };
+
+exports.updateTech = (req, res) => {
+  if (req.headers.authorization) {
+    var data = req.body;
+
+    // Create string to update system-IT Standards relationship
+    var techString = '';
+    if (data.relatedTech) {
+      // Delete any references first
+      techString += `DELETE FROM zk_systems_subsystems_technology WHERE obj_systems_subsystems_Id=${req.params.id}; `;
+
+      // Insert new IDs
+      data.relatedCaps.forEach(techID => {
+        techString += `INSERT INTO zk_systems_subsystems_technology (obj_systems_subsystems_Id, obj_technology_Id) VALUES (${req.params.id}, ${techID}); `;
+      });
+    };
+
+    var query = `${techString}`;
+    
+    res = ctrl.sendQuery(query, 'updating IT Standards for system', res);
+
+  } else {
+    res.status(502).json({
+      message: "No authorization token present. Not allowed to update systems-business capabilities mapping."
+    });
+  }
+};

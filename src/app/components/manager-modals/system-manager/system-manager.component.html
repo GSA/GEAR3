@@ -6,8 +6,7 @@
       <div class="modal-header bg-danger">
         <h5 class="modal-title text-white" id="systemMngrTitle">
           <i class="fas fa-money-bill-wave"></i>
-          <span *ngIf="system.Name"> {{ system.Name }} - <span
-              class="text-primary">**EDITING**</span></span>
+          <span *ngIf="system.Name"> {{ system.Name }} - <span class="text-primary">**EDITING**</span></span>
         </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
@@ -19,10 +18,12 @@
         <ul id="systemMngrTabs" class="nav nav-tabs">
           <li class="nav-item">
             <a class="nav-link active" data-toggle="tab" href="#systemMngrCap">
-              Business Capability Mapping</a></li>
+              Business Capability Mapping</a>
+          </li>
           <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#systemMngrInvest">
-              Investment Mapping</a></li>
+            <a class="nav-link" data-toggle="tab" href="#systemMngrITStand">
+              IT Standards Mapping</a>
+          </li>
         </ul>
 
         <!-- Tab Panes -->
@@ -39,9 +40,11 @@
                 </div>
 
                 <div class="col-2 my-auto">
-                  <button class="btn btn-success w-100 mb-5" (click)="capPoolToSelected()">Move to<br>Selected <i
-                      class="fas fa-arrow-right fa-lg"></i></button>
-                  <button class="btn btn-warning w-100" (click)="selectedToCapPool()"><i
+                  <button class="btn btn-success w-100 mb-5"
+                    (click)="poolSelectedMove('#busCapPool', selectedCapsIDs, 'select')">Move
+                    to<br>Selected <i class="fas fa-arrow-right fa-lg"></i></button>
+                  <button class="btn btn-warning w-100"
+                    (click)="poolSelectedMove('#busCapSelect', selectedCapsIDs, 'deselect')"><i
                       class="fas fa-arrow-left fa-lg"></i> Move to<br>Un-Selected</button>
                 </div>
 
@@ -55,32 +58,34 @@
             </div>
             <!-- End of Business Capabilities Mapping Pane -->
 
-            <!-- <div class="tab-pane fade" id="systemMngrChildApps">
-              <h4>Child Business Applications</h4>
+            <div class="tab-pane fade" id="systemMngrITStand">
+              <h4>IT Standards</h4>
               <div class="row">
                 <div class="form-group col-5">
-                  <label for="sysChildAppsPool">Business Applications Pool</label>
-                  <select class="form-control" id="sysChildAppsPool" size="27" multiple>
-                    <option *ngFor="let app of notSelected" [value]="app.ID">{{ app.Name }}</option>
+                  <label for="sysITStandPool">IT Standards Pool</label>
+                  <select class="form-control" id="sysITStandPool" size="27" multiple>
+                    <option *ngFor="let tech of notSelectedTech" [value]="tech.ID">{{ tech.Name }}</option>
                   </select>
                 </div>
 
                 <div class="col-2 my-auto">
-                  <button class="btn btn-success w-100 mb-5" (click)="poolToSelected()">Move to<br>Selected <i
-                      class="fas fa-arrow-right  fa-lg"></i></button>
-                  <button class="btn btn-warning w-100" (click)="selectedToPool()"><i
+                  <button class="btn btn-success w-100 mb-5"
+                    (click)="poolSelectedMove('#sysITStandPool', selectedTechIDs, 'select')">Move
+                    to<br>Selected <i class="fas fa-arrow-right fa-lg"></i></button>
+                  <button class="btn btn-warning w-100"
+                    (click)="poolSelectedMove('#sysITStandSelect', selectedTechIDs, 'deselect')"><i
                       class="fas fa-arrow-left fa-lg"></i> Move to<br>Un-Selected</button>
                 </div>
 
                 <div class="form-group col-5">
-                  <label for="sysChildAppsSelect">Selected</label>
-                  <select class="form-control" id="sysChildAppsSelect" size="27" multiple>
-                    <option *ngFor="let app of childApps" [value]="app.ID">{{ app.Name }}</option>
+                  <label for="sysITStandSelect">Selected</label>
+                  <select class="form-control" id="sysITStandSelect" size="27" multiple>
+                    <option *ngFor="let tech of techRelations" [value]="tech.ID">{{ tech.Name }}</option>
                   </select>
                 </div>
               </div>
-            </div> -->
-            <!-- End of Child Business Apps Pane -->
+            </div>
+            <!-- End of IT Standards Mapping Pane -->
 
           </div>
         </form>

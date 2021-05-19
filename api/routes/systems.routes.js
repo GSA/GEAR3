@@ -21,4 +21,7 @@ router.route('/updateCaps/:id')
 router.route('/get/:id/technologies')
   .get(sysCtrl.findTechnologies);
 
+router.route('/updateTech/:id')
+  .put(sysCtrl.updateTech);
+
 module.exports = router;

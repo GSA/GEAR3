@@ -223,6 +223,22 @@ export class ApiService {
       catchError(this.handleError<System[]>('UPDATE System-Business Capabilities', []))
     );
   };
+  public getSysITStandards(id: number): Observable<ITStandards[]> {
+    return this.http.get<ITStandards[]>(this.sysUrl + '/get/' + String(id) + '/technologies').pipe(
+      catchError(this.handleError<ITStandards[]>('GET System Related Technologies', []))
+    );
+  };
+  public updateSystemTech(id: number, data: {}): Observable<System[]> {
+    if (this.globals.jwtToken) {
+      var httpOptions = this.setHeaderOpts();
+    } else {
+      catchError(this.handleError<System[]>('UPDATE System-IT Standards - No Authentication Token', []))
+    }
+
+    return this.http.put<System[]>(this.sysUrl + '/updateTech/' + String(id), data, httpOptions).pipe(
+      catchError(this.handleError<System[]>('UPDATE System-IT Standards', []))
+    );
+  };
 
 
   //// TIME

@@ -20,7 +20,7 @@ export class SystemManagerComponent implements OnInit {
 
   systemForm: FormGroup = new FormGroup({
     relatedCaps: new FormControl(),
-    deselectedCaps: new FormControl()
+    relatedTech: new FormControl(),
   });
 
   system = <any>{};
@@ -29,7 +29,11 @@ export class SystemManagerComponent implements OnInit {
   capRelations: any[] = [];
   notSelectedCaps: any[] = [];
   selectedCapsIDs: Set<any> = new Set();
-  deSelectedCapsIDs: Set<any> = new Set();
+
+  techPool: any[] = [];
+  techRelations: any[] = [];
+  notSelectedTech: any[] = [];
+  selectedTechIDs: Set<any> = new Set();
 
   systemCertify: boolean = false;
 
@@ -68,7 +72,7 @@ export class SystemManagerComponent implements OnInit {
       });
     });
   
-    // Populate Business Capabilities Pool minus related apps
+    // Populate Business Capabilities Pool minus related ones
     this.apiService.getCapabilities().toPromise()
       .then((data: any[]) => {
         this.busCapPool = [];
@@ -91,37 +95,61 @@ export class SystemManagerComponent implements OnInit {
         this.systemForm.patchValue({
           relatedCaps: this.selectedCapsIDs
         });
-
-        // Populate Child Apps
-        // this.apiService.getChildApps(this.system.ID).subscribe((data: any[]) => {
-        //   this.caps = [];
-        //   // Only take ID and name
-        //   data.forEach(element => {
-        //     this.childApps.push({
-        //       ID: element.ID,
-        //       Name: element.Name
-        //     })
-        //   });
     });
+
+
+    // Populate Related IT Standards
+    this.apiService.getSysITStandards(this.system.ID).subscribe((data: any[]) => {
+      this.techRelations = [];
+      // Only take ID and name
+      data.forEach(element => {
+        this.techRelations.push({
+          ID: element.ID,
+          Name: element.Name
+        })
+      });
+    });
+
+    // Populate IT Standards Pool minus related ones
+    this.apiService.getITStandards().toPromise()
+      .then((data: any[]) => {
+        this.techPool = [];
+        // Only take ID and name
+        data.forEach(element => {
+          this.techPool.push({
+            ID: element.ID,
+            Name: element.Name,
+          })
+        });
+        this.selectedTechIDs = new Set();
+        this.notSelectedTech = this.busCapPool;
+
+        // Take related tech IDs and remove them from the techPool list
+        // to include only IT Standards that are not related to this system
+        this.selectedTechIDs = new Set(this.techRelations.map(({ ID }) => ID));
+        this.notSelectedTech = this.techPool.filter(({ ID }) => !this.selectedTechIDs.has(ID));
+
+        // Set default values for form with current values after resolving related caps
+        this.systemForm.patchValue({
+          relatedTech: this.selectedTechIDs
+        });
+    });
+  
   };
 
-  capPoolToSelected() {
-    // Add to selected list
-    let poolVals = $('#busCapPool').val().map(x => +x)
-    poolVals.forEach(val => {
-      this.deSelectedCapsIDs.delete(val);
-      this.selectedCapsIDs.add(val);
-    });
-    this.updateSelectLists();
-  };
-
-  selectedToCapPool() {
-    // Delete from selected list
-    let selectedVals = $('#busCapSelect').val().map(x => +x)
-    selectedVals.forEach(val => {
-      this.deSelectedCapsIDs.add(val);
-      this.selectedCapsIDs.delete(val);
-    });
+  poolSelectedMove(elementID, selectedIDs, movement) {
+    if (movement === 'select') {
+      // Add to selected list
+      let vals = $(elementID).val().map(x => +x)
+      vals.forEach(val => {
+        selectedIDs.add(val);
+      });
+    } else if (movement === 'deselect') {
+      let vals = $(elementID).val().map(x => +x)
+      vals.forEach(val => {
+        selectedIDs.delete(val);
+      });
+    }
     this.updateSelectLists();
   };
 
@@ -129,11 +157,14 @@ export class SystemManagerComponent implements OnInit {
     // Update all pools and selected lists
     this.notSelectedCaps = this.busCapPool.filter(({ ID }) => !this.selectedCapsIDs.has(ID));
     this.capRelations = this.busCapPool.filter(({ ID }) => this.selectedCapsIDs.has(ID));
+    
+    this.notSelectedTech = this.techPool.filter(({ ID }) => !this.selectedTechIDs.has(ID));
+    this.techRelations = this.techPool.filter(({ ID }) => this.selectedTechIDs.has(ID));
 
     // Update form value with selected IDs
     this.systemForm.patchValue({
       relatedCaps: this.selectedCapsIDs,
-      deselectedCaps: this.deSelectedCapsIDs
+      relatedTech: this.selectedTechIDs
     });
   };
 
@@ -145,8 +176,8 @@ export class SystemManagerComponent implements OnInit {
       if (this.systemForm.value.relatedCaps) {
         this.systemForm.value.relatedCaps = Array.from(this.systemForm.value.relatedCaps);
       };
-      if (this.systemForm.value.deselectedCaps) {
-        this.systemForm.value.deselectedCaps = Array.from(this.systemForm.value.deselectedCaps);
+      if (this.systemForm.value.relatedTech) {
+        this.systemForm.value.relatedTech = Array.from(this.systemForm.value.relatedTech);
       };
 
       // console.log("Form values before committing to database: ", this.systemForm.value); // Debug
@@ -158,7 +189,17 @@ export class SystemManagerComponent implements OnInit {
           this.apiService.getOneSys(this.system.ID).toPromise()
             .then(data => { this.systemDetailRefresh(data[0]) }),
             (error) => {
-              console.log("GET Updated Parent System rejected with " + JSON.stringify(error));
+              console.log("GET Updated System rejected with " + JSON.stringify(error));
+            };
+        });
+
+      this.apiService.updateSystemTech(this.system.ID, this.systemForm.value).toPromise()
+        .then(res => {
+          // Grab new data from database
+          this.apiService.getOneSys(this.system.ID).toPromise()
+            .then(data => { this.systemDetailRefresh(data[0]) }),
+            (error) => {
+              console.log("GET Updated System rejected with " + JSON.stringify(error));
             };
         });
     }
