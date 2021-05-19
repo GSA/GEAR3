@@ -41,6 +41,7 @@ import { OrganizationsModalComponent } from './components/modals/organizations-m
 //// Systems
 import { SystemsComponent } from './views/systems/systems/systems.component';
 import { SystemsModalComponent } from './components/modals/systems-modal/systems-modal.component';
+import { SystemManagerComponent } from './components/manager-modals/system-manager/system-manager.component';
 import { TimeComponent } from './views/systems/time/time.component';
 
 //// Security
@@ -86,6 +87,7 @@ import { Globals } from './common/globals';
 
     SystemsComponent,
     SystemsModalComponent,
+    SystemManagerComponent,
     TimeComponent,
 
     FismaComponent,

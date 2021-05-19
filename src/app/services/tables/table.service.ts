@@ -302,12 +302,12 @@ export class TableService {
     });
 
 
-    // // Update related capabilities table in detail modal with clicked application
-    // this.updateRelatedTable(
-    //   '#appCapTable',
-    //   data.Name + '-Related_Capabilities',
-    //   '/api/applications/get/' + String(data.ID) + '/capabilities'
-    // );
+    // Update related capabilities table in detail modal with clicked system
+    this.updateRelatedTable(
+      '#systemCapTable',
+      data.Name + '-Related_Capabilities',
+      '/api/systems/get/' + String(data.ID) + '/capabilities'
+    );
 
     // Update related technologies table in detail modal with clicked system
     this.updateRelatedTable(

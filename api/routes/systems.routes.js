@@ -12,8 +12,11 @@ router.route('/get/:id')
 // router.route('/get/:id/subsystems')
 //   .get(sysCtrl.findSubSystems);
 
-// router.route('/get/:id/capabilities')
-//   .get(sysCtrl.findCapabilities);
+router.route('/get/:id/capabilities')
+  .get(sysCtrl.findCapabilities);
+
+router.route('/updateCaps/:id')
+  .put(sysCtrl.updateCaps);
 
 router.route('/get/:id/technologies')
   .get(sysCtrl.findTechnologies);

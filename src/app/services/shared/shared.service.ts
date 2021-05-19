@@ -18,9 +18,11 @@ export class SharedService {
   toggleSub: Subscription;
 
   // Forms Emitter
-
   itStandardsFormEmitter = new EventEmitter();
   itStandardsFormSub: Subscription;
+
+  systemFormEmitter = new EventEmitter();
+  systemFormSub: Subscription;
 
   constructor(
     private globals: Globals,
@@ -187,6 +189,10 @@ export class SharedService {
   // Set Forms Default
   public setITStandardsForm() {
     this.itStandardsFormEmitter.emit();
+  };
+
+  public setSystemForm() {
+    this.systemFormEmitter.emit();
   };
 
 

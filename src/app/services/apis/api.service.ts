@@ -207,6 +207,22 @@ export class ApiService {
   //     catchError(this.handleError<System[]>('GET System Child Sub-Systems', []))
   //   );
   // };
+  public getSysCapabilities(id: number): Observable<Capability[]> {
+    return this.http.get<Capability[]>(this.sysUrl + '/get/' + String(id) + '/capabilities').pipe(
+      catchError(this.handleError<Capability[]>('GET System Related Business Capabilities', []))
+    );
+  };
+  public updateSystemCaps(id: number, data: {}): Observable<System[]> {
+    if (this.globals.jwtToken) {
+      var httpOptions = this.setHeaderOpts();
+    } else {
+      catchError(this.handleError<System[]>('UPDATE System-Business Capabilities - No Authentication Token', []))
+    }
+
+    return this.http.put<System[]>(this.sysUrl + '/updateCaps/' + String(id), data, httpOptions).pipe(
+      catchError(this.handleError<System[]>('UPDATE System-Business Capabilities', []))
+    );
+  };
 
 
   //// TIME

@@ -174,10 +174,10 @@
               <br>
 
               <!-- Related Business Capabilities Table -->
-              <!-- <div>
+              <div>
                 <h4 class="text-center">Related Business Capabilities</h4>
                 <table id="systemCapTable"></table>
-              </div> -->
+              </div>
             </div>
           </div>
           <!-- End of Business Tab Pane -->
@@ -266,7 +266,9 @@
       </div>
       <!-- End of Modal Body -->
 
-      <div class="modal-footer"></div>
+      <div class="modal-footer">
+        <button  type="button" [hidden]="!sharedService.loggedIn" class="btn btn-info text-white" (click)="systemEdit()">Edit This Item</button>
+      </div>
     </div>
   </div>
 </div>

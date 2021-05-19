@@ -93,6 +93,49 @@ export class SystemsModalComponent implements OnInit {
     formatter: this.sharedService.linksFormatter
   }];
 
+
+  // Related Business Capabilities Table Options
+  sysCapTableOptions: {} = this.tableService.createTableOptions({
+    advancedSearch: true,
+    idTable: null,
+    classes: "table-hover table-light clickable-table fixed-table",
+    showColumns: false,
+    showExport: true,
+    exportFileName: null,
+    headerStyle: "bg-royal-blue text-white",
+    pagination: false,
+    search: true,
+    sortName: 'ReferenceNum',
+    sortOrder: 'asc',
+    showToggle: true,
+    url: null
+  });
+
+  // Related Business Capabiltiies Table Columns
+  sysCapColumnDefs: any[] = [{
+    field: 'ReferenceNum',
+    title: 'Ref Id',
+    sortable: true
+  }, {
+    field: 'Name',
+    title: 'Capability Name',
+    sortable: true
+  }, {
+    field: 'Description',
+    title: 'Description',
+    sortable: true,
+    class: 'text-truncate'
+  }, {
+    field: 'Level',
+    title: 'Level',
+    sortable: true
+  }, {
+    field: 'Parent',
+    title: 'Parent',
+    sortable: true
+  }];
+
+
   // Related Technologies Table Options
   sysTechTableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: false,
@@ -143,6 +186,11 @@ export class SystemsModalComponent implements OnInit {
       data: [],
     }));
 
+    $('#systemCapTable').bootstrapTable($.extend(this.sysCapTableOptions, {
+      columns: this.sysCapColumnDefs,
+      data: [],
+    }));
+
     $('#systemTechTable').bootstrapTable($.extend(this.sysTechTableOptions, {
       columns: this.sysTechColumnDefs,
       data: [],
@@ -150,13 +198,22 @@ export class SystemsModalComponent implements OnInit {
 
     // Method to handle click events on the Related Technologies table
     $(document).ready(
+      $('#appCapTable').on('click-row.bs.table', function (e, row) {
+        // Hide First Modal before showing new modal
+        $('#appDetail').modal('hide');
+
+        this.tableService.capsTableClick(row);
+      }.bind(this)
+    ));
+
+    $(document).ready(
       $('#systemTechTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#systemDetail').modal('hide');
 
         this.tableService.itStandTableClick(row);
       }.bind(this)
-      ));
+    ));
 
     // $('#subSysTable').bootstrapTable($.extend(this.tableService.relSysTableOptions, {
     //   columns: this.tableService.relSysColumnDefs,
@@ -181,6 +238,14 @@ export class SystemsModalComponent implements OnInit {
       var truncatedURL = this.sharedService.coreURL(this.router.url);
       this.location.replaceState(truncatedURL);
     }.bind(this));
+  }
+
+  systemEdit () {
+    // Hide Detail Modal before showing Manager Modal
+    $('#systemDetail').modal('hide');
+    this.modalService.updateDetails(this.system, 'system');
+    this.sharedService.setSystemForm();
+    $('#systemManager').modal('show');
   }
 
 }
