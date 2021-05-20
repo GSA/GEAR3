@@ -35,7 +35,7 @@
                 <div class="form-group col-5">
                   <label for="busCapPool">Business Capabilities Pool</label>
                   <select class="form-control" id="busCapPool" size="27" multiple>
-                    <option *ngFor="let cap of notSelectedCaps" [value]="cap.ID">{{ cap.Name }}</option>
+                    <option *ngFor="let cap of notSelectedCaps" [value]="cap.ID">{{ cap.Name }} ({{ cap.ReferenceNum }})</option>
                   </select>
                 </div>
 
@@ -51,7 +51,7 @@
                 <div class="form-group col-5">
                   <label for="busCapSelect">Selected</label>
                   <select class="form-control" id="busCapSelect" size="27" multiple>
-                    <option *ngFor="let cap of capRelations" [value]="cap.ID">{{ cap.Name }}</option>
+                    <option *ngFor="let cap of capRelations" [value]="cap.ID">{{ cap.Name }} ({{ cap.ReferenceNum }})</option>
                   </select>
                 </div>
               </div>
@@ -64,7 +64,7 @@
                 <div class="form-group col-5">
                   <label for="sysITStandPool">IT Standards Pool</label>
                   <select class="form-control" id="sysITStandPool" size="27" multiple>
-                    <option *ngFor="let tech of notSelectedTech" [value]="tech.ID">{{ tech.Name }}</option>
+                    <option *ngFor="let tech of notSelectedTech" [value]="tech.ID">{{ tech.Name }} ({{ tech.Category }})</option>
                   </select>
                 </div>
 
@@ -80,7 +80,7 @@
                 <div class="form-group col-5">
                   <label for="sysITStandSelect">Selected</label>
                   <select class="form-control" id="sysITStandSelect" size="27" multiple>
-                    <option *ngFor="let tech of techRelations" [value]="tech.ID">{{ tech.Name }}</option>
+                    <option *ngFor="let tech of techRelations" [value]="tech.ID">{{ tech.Name }} ({{ tech.Category }})</option>
                   </select>
                 </div>
               </div>

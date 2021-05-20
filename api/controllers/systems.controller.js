@@ -57,10 +57,13 @@ exports.updateCaps = (req, res) => {
 
 exports.findTechnologies = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
-    ` WHERE obj_standard_type.Keyname LIKE '%Software%'
+    ` LEFT JOIN gear_ods.zk_systems_subsystems_technology   AS tech_mapping  ON tech.Id = tech_mapping.obj_technology_Id
+      LEFT JOIN obj_fisma_archer                            AS systems       ON tech_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
+      WHERE obj_standard_type.Keyname LIKE '%Software%'
         AND systems.\`ex:GEAR_ID\` = ${req.params.id}
 
-    GROUP BY tech.Id;`;
+    GROUP BY tech.Id
+    ORDER BY tech.Keyname;`;
 
   res = ctrl.sendQuery_cowboy(query, 'related technologies for system', res);
 };
@@ -76,7 +79,7 @@ exports.updateTech = (req, res) => {
       techString += `DELETE FROM zk_systems_subsystems_technology WHERE obj_systems_subsystems_Id=${req.params.id}; `;
 
       // Insert new IDs
-      data.relatedCaps.forEach(techID => {
+      data.relatedTech.forEach(techID => {
         techString += `INSERT INTO zk_systems_subsystems_technology (obj_systems_subsystems_Id, obj_technology_Id) VALUES (${req.params.id}, ${techID}); `;
       });
     };

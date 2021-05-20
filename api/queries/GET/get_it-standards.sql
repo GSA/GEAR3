@@ -33,6 +33,3 @@ LEFT JOIN obj_organization  AS org            ON poc.obj_organization_Id = org.I
 
 LEFT JOIN zk_technology_standard_category     ON tech.Id = zk_technology_standard_category.obj_technology_Id
 LEFT JOIN obj_standard_category               ON zk_technology_standard_category.obj_standard_category_Id = obj_standard_category.Id
-
-LEFT JOIN gear_ods.zk_systems_subsystems_technology  ON tech.Id = zk_systems_subsystems_technology.obj_technology_Id
-LEFT JOIN obj_fisma_archer  AS systems               ON gear_ods.zk_systems_subsystems_technology.obj_systems_subsystems_Id = systems.`ex:GEAR_ID`

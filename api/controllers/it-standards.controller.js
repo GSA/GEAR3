@@ -9,7 +9,8 @@ exports.findAll = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
     ` WHERE obj_standard_type.Keyname LIKE 'Software'
       AND obj_technology_status.Keyname NOT LIKE 'Not yet submitted'
-      GROUP BY tech.Id;`;
+      GROUP BY tech.Id
+      ORDER BY tech.Keyname;`;
 
   res = ctrl.sendQuery_cowboy(query, 'IT Standards', res);
 };

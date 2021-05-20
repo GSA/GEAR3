@@ -20,7 +20,7 @@ export class SystemManagerComponent implements OnInit {
 
   systemForm: FormGroup = new FormGroup({
     relatedCaps: new FormControl(),
-    relatedTech: new FormControl(),
+    relatedTech: new FormControl()
   });
 
   system = <any>{};
@@ -67,7 +67,8 @@ export class SystemManagerComponent implements OnInit {
       data.forEach(element => {
         this.capRelations.push({
           ID: element.ID,
-          Name: element.Name
+          Name: element.Name,
+          ReferenceNum: element.ReferenceNum
         })
       });
     });
@@ -76,12 +77,16 @@ export class SystemManagerComponent implements OnInit {
     this.apiService.getCapabilities().toPromise()
       .then((data: any[]) => {
         this.busCapPool = [];
-        // Only take ID and name
+        // Only take ID, name, and reference num
         data.forEach(element => {
-          this.busCapPool.push({
-            ID: element.ID,
-            Name: element.Name,
-          })
+          // Filter to only 2 bottom levels (not including root capability)
+          if ((element.Level === 'BRM Business Service' || element.Level === 'GSA Business Capability') && element.ReferenceNum !== '-') {
+            this.busCapPool.push({
+              ID: element.ID,
+              Name: element.Name,
+              ReferenceNum: element.ReferenceNum
+            })
+          };
         });
         this.selectedCapsIDs = new Set();
         this.notSelectedCaps = this.busCapPool;
@@ -105,7 +110,8 @@ export class SystemManagerComponent implements OnInit {
       data.forEach(element => {
         this.techRelations.push({
           ID: element.ID,
-          Name: element.Name
+          Name: element.Name,
+          Category: element.Category
         })
       });
     });
@@ -119,10 +125,11 @@ export class SystemManagerComponent implements OnInit {
           this.techPool.push({
             ID: element.ID,
             Name: element.Name,
+            Category: element.Category
           })
         });
         this.selectedTechIDs = new Set();
-        this.notSelectedTech = this.busCapPool;
+        this.notSelectedTech = this.techPool;
 
         // Take related tech IDs and remove them from the techPool list
         // to include only IT Standards that are not related to this system
