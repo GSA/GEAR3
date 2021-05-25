@@ -122,7 +122,8 @@ export class InvestmentsComponent implements OnInit {
   }, {
     field: 'Updated_Date',
     title: 'Updated Date',
-    sortable: true
+    sortable: true,
+    formatter: this.sharedService.dateFormatter
   }];
 
   // Previous Year Investments Table Columns
@@ -288,19 +289,6 @@ export class InvestmentsComponent implements OnInit {
     });
 
   }
-
-
-  // Create new investment when in GEAR Manager mode
-  // createInvestment() {
-  //   var emptyInvestment = new Investment();
-
-  //   // By default, set new record to active
-  //   emptyInvestment.Active = true;
-  //   this.modalService.updateRecordCreation(true);
-  //   this.sharedService.setInvestForm();
-  //   this.modalService.updateDetails(emptyInvestment, 'investment');
-  //   $('#investManager').modal('show');
-  // }
 
   // Update table from filter buttons
   eliminatedFilter() {

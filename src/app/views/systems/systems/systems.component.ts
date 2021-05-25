@@ -48,7 +48,7 @@ export class SystemsComponent implements OnInit {
   // Systems Table Options
   tableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: true,
-    idTable: 'systemTable',
+    idTable: 'SystemTable',
     classes: "table-hover table-dark clickable-table fixed-table",
     showColumns: true,
     showExport: true,
@@ -91,7 +91,8 @@ export class SystemsComponent implements OnInit {
     title: 'ATO Date',
     sortable: true,
     visible: false,
-    formatter: this.sharedService.dateFormatter
+    formatter: this.sharedService.dateFormatter,
+    searchable: false
   }, {
     field: 'ATOType',
     title: 'ATO Type',
@@ -101,7 +102,8 @@ export class SystemsComponent implements OnInit {
     field: 'RenewalDate',
     title: 'Renewal Date',
     sortable: true,
-    formatter: this.sharedService.dateFormatter
+    formatter: this.sharedService.dateFormatter,
+    searchable: false
   }, {
     field: 'ComplFISMA',
     title: 'Complete Assessment For Current FY',
@@ -147,7 +149,8 @@ export class SystemsComponent implements OnInit {
     title: 'Related Artifacts',
     sortable: false,
     visible: false,
-    formatter: this.sharedService.relArtifactsFormatter
+    formatter: this.sharedService.relArtifactsFormatter,
+    searchable: false
   }, {
     field: 'Status',
     title: 'Status',

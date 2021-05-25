@@ -147,6 +147,7 @@ export class TableService {
       cache: true,
       classes: "table table-bordered table-striped " + definitions.classes,
       showColumns: definitions.showColumns,
+      showColumnsSearch: definitions.showColumns,
 
       showExport: definitions.showExport,
       exportDataType: 'all',
@@ -164,6 +165,7 @@ export class TableService {
       searchOnEnterKey: definitions.search,
       showSearchButton: definitions.search,
       showSearchClearButton: definitions.search,
+      visibleSearch: definitions.search,
 
       sortName: definitions.sortName,
       sortOrder: definitions.sortOrder,
