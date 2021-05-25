@@ -29,7 +29,7 @@ export class SystemsModalComponent implements OnInit {
   sysTimeTableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: true,
     idTable: 'sysTimeTable',
-    classes: "table-hover table-dark clickable-table",
+    classes: "table-hover table-dark",
     showColumns: true,
     showExport: true,
     exportFileName: null,
@@ -198,9 +198,9 @@ export class SystemsModalComponent implements OnInit {
 
     // Method to handle click events on the Related Technologies table
     $(document).ready(
-      $('#appCapTable').on('click-row.bs.table', function (e, row) {
+      $('#systemCapTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
-        $('#appDetail').modal('hide');
+        $('#systemDetail').modal('hide');
 
         this.tableService.capsTableClick(row);
       }.bind(this)
