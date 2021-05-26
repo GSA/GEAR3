@@ -57,7 +57,7 @@ export class SharedService {
   };
 
   // Have to render POC info separately as anchor links dont work with ngFor
-  renderPOCInfo(pocString: string) {
+  renderPOCInfoList(pocString: string) {
     let POCs = this.splitPOCInfo(pocString)
     let html = ''
 
@@ -183,6 +183,15 @@ export class SharedService {
   //// Email
   public emailFormatter(value, row, index, field) {
     return `<a href="https://mail.google.com/mail/?view=cm&fs=1&to=${value}" target="_blank" rel="noopener">${value}</a>`
+  };
+
+  //// POC Name
+  public pocStringNameFormatter(value, row, index, field) {
+    let poc = value.split(':')[1];  // Retrieve POC after colon
+    poc = poc.split(', ');
+    let name = poc[0];
+
+    return name;
   };
 
   //// None Provided

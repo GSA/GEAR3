@@ -25,7 +25,7 @@ export class TableService {
   public relSysTableOptions: {} = this.createTableOptions({
     advancedSearch: true,
     idTable: 'RelSysTable',
-    classes: "table-hover table-light clickable-table fixed-table",
+    classes: "table-hover table-light clickable-table",
     showColumns: true,
     showExport: true,
     exportFileName: null,
@@ -44,48 +44,26 @@ export class TableService {
     title: 'System Name',
     sortable: true
   }, {
+    field: 'Description',
+    title: 'Description',
+    sortable: true,
+    visible: false,
+    class: 'text-truncate'
+  }, {
+    field: 'SystemLevel',
+    title: 'System Level',
+    sortable: true
+  }, {
+    field: 'Status',
+    title: 'Status',
+    sortable: true
+  }, {
     field: 'orgName',
     title: 'Responsible Org',
     sortable: true
   }, {
-    field: 'Description',
-    title: 'Description',
-    sortable: true,
-    class: 'text-truncate'
-  }, {
-    field: 'FedContractorLoc',
-    title: 'Federal/Contractor',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'FIPS_Impact_Level',
-    title: 'FIPS Impact Level',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'ATODate',
-    title: 'ATO Date',
-    sortable: true,
-    visible: false,
-    formatter: this.sharedService.dateFormatter
-  }, {
-    field: 'ATOType',
-    title: 'ATO Type',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'RenewalDate',
-    title: 'Renewal Date',
-    sortable: true,
-    formatter: this.sharedService.dateFormatter
-  }, {
-    field: 'ComplFISMA',
-    title: 'Complete Assessment For Current FY',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'PII',
-    title: 'PII',
+    field: 'CSP',
+    title: 'Cloud Server Provider',
     sortable: true,
     visible: false
   }, {
@@ -94,42 +72,17 @@ export class TableService {
     sortable: true,
     visible: false
   }, {
-    field: 'CSP',
-    title: 'Cloud Server Provider',
+    field: 'AO',
+    title: 'Authorizing Official',
     sortable: true,
-    visible: false
+    visible: false,
+    formatter: this.sharedService.pocStringNameFormatter
   }, {
-    field: 'ServiceType',
-    title: 'Type of Service',
-    sortable: true
-  }, {
-    field: 'SharedService',
-    title: "Gov't-Wide Shared Service",
-    sortable: true
-  }, {
-    field: 'SystemLevel',
-    title: 'System Level',
-    sortable: true
-  }, {
-    field: 'FISMASystemIdentifier',
-    title: 'FISMA System Identifier',
+    field: 'SO',
+    title: 'System Owner',
     sortable: true,
-    visible: false
-  }, {
-    field: 'SubSystem_Tag',
-    title: 'SubSystem Identifier Tag',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'RelatedArtifacts',
-    title: 'Related Artifacts',
-    formatter: this.sharedService.relArtifactsFormatter,
-    sortable: false,
-    visible: false
-  }, {
-    field: 'Status',
-    title: 'Status',
-    sortable: true
+    visible: false,
+    formatter: this.sharedService.pocStringNameFormatter
   }];
 
 
@@ -378,7 +331,7 @@ export class TableService {
   }
 
   // Have to render POC info separately as anchor links dont work with ngFor
-  renderPOCInfo(pocString: string) {
+  renderPOCInfoTable(pocString: string) {
     let POCs = this.splitPOCInfo(pocString)
     let html = ''
 

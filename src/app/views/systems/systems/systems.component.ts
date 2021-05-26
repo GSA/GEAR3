@@ -49,7 +49,7 @@ export class SystemsComponent implements OnInit {
   tableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: true,
     idTable: 'SystemTable',
-    classes: "table-hover table-dark clickable-table fixed-table",
+    classes: "table-hover table-dark clickable-table",
     showColumns: true,
     showExport: true,
     exportFileName: 'GSA_Systems_SubSystems',
@@ -68,94 +68,45 @@ export class SystemsComponent implements OnInit {
     title: 'System Name',
     sortable: true
   }, {
-    field: 'orgName',
-    title: 'Responsible Org',
-    sortable: true
-  }, {
     field: 'Description',
     title: 'Description',
     sortable: true,
-    class: 'text-truncate'
-  }, {
-    field: 'FedContractorLoc',
-    title: 'Federal/Contractor',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'FIPS_Impact_Level',
-    title: 'FIPS Impact Level',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'ATODate',
-    title: 'ATO Date',
-    sortable: true,
     visible: false,
-    formatter: this.sharedService.dateFormatter,
-    searchable: false
-  }, {
-    field: 'ATOType',
-    title: 'ATO Type',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'RenewalDate',
-    title: 'Renewal Date',
-    sortable: true,
-    formatter: this.sharedService.dateFormatter,
-    searchable: false
-  }, {
-    field: 'ComplFISMA',
-    title: 'Complete Assessment For Current FY',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'PII',
-    title: 'PII',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'CloudYN',
-    title: 'Cloud Hosted?',
-    sortable: true
-  }, {
-    field: 'CSP',
-    title: 'Cloud Server Provider',
-    sortable: true
-  }, {
-    field: 'ServiceType',
-    title: 'Type of Service',
-    sortable: true
-  }, {
-    field: 'SharedService',
-    title: "Gov't-Wide Shared Service",
-    sortable: true
+    class: 'text-truncate'
   }, {
     field: 'SystemLevel',
     title: 'System Level',
     sortable: true
   }, {
-    field: 'FISMASystemIdentifier',
-    title: 'FISMA System Identifier',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'SubSystem_Tag',
-    title: 'SubSystem Identifier Tag',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'RelatedArtifacts',
-    title: 'Related Artifacts',
-    sortable: false,
-    visible: false,
-    formatter: this.sharedService.relArtifactsFormatter,
-    searchable: false
-  }, {
     field: 'Status',
     title: 'Status',
+    sortable: true
+  }, {
+    field: 'orgName',
+    title: 'Responsible Org',
+    sortable: true
+  }, {
+    field: 'CSP',
+    title: 'Cloud Server Provider',
     sortable: true,
     visible: false
+  }, {
+    field: 'CloudYN',
+    title: 'Cloud Hosted?',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'AO',
+    title: 'Authorizing Official',
+    sortable: true,
+    visible: false,
+    formatter: this.sharedService.pocStringNameFormatter
+  }, {
+    field: 'SO',
+    title: 'System Owner',
+    sortable: true,
+    visible: false,
+    formatter: this.sharedService.pocStringNameFormatter
   }];
 
   // Inactive Column Defs
@@ -164,48 +115,26 @@ export class SystemsComponent implements OnInit {
     title: 'System Name',
     sortable: true
   }, {
+    field: 'Description',
+    title: 'Description',
+    sortable: true,
+    visible: false,
+    class: 'text-truncate'
+  }, {
+    field: 'SystemLevel',
+    title: 'System Level',
+    sortable: true
+  }, {
+    field: 'Status',
+    title: 'Status',
+    sortable: true
+  }, {
     field: 'orgName',
     title: 'Responsible Org',
     sortable: true
   }, {
-    field: 'Description',
-    title: 'Description',
-    sortable: true,
-    class: 'text-truncate'
-  }, {
-    field: 'FedContractorLoc',
-    title: 'Federal/Contractor',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'FIPS_Impact_Level',
-    title: 'FIPS Impact Level',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'ATODate',
-    title: 'ATO Date',
-    sortable: true,
-    visible: false,
-    formatter: this.sharedService.dateFormatter
-  }, {
-    field: 'ATOType',
-    title: 'ATO Type',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'RenewalDate',
-    title: 'Renewal Date',
-    sortable: true,
-    formatter: this.sharedService.dateFormatter
-  }, {
-    field: 'ComplFISMA',
-    title: 'Complete Assessment For Current FY',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'PII',
-    title: 'PII',
+    field: 'CSP',
+    title: 'Cloud Server Provider',
     sortable: true,
     visible: false
   }, {
@@ -214,47 +143,22 @@ export class SystemsComponent implements OnInit {
     sortable: true,
     visible: false
   }, {
-    field: 'CSP',
-    title: 'Cloud Server Provider',
+    field: 'AO',
+    title: 'Authorizing Official',
     sortable: true,
-    visible: false
-  }, {
-    field: 'ServiceType',
-    title: 'Type of Service',
-    sortable: true
-  }, {
-    field: 'SharedService',
-    title: "Gov't-Wide Shared Service",
-    sortable: true
-  }, {
-    field: 'SystemLevel',
-    title: 'System Level',
-    sortable: true
-  }, {
-    field: 'FISMASystemIdentifier',
-    title: 'FISMA System Identifier',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'SubSystem_Tag',
-    title: 'SubSystem Identifier Tag',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'RelatedArtifacts',
-    title: 'Related Artifacts',
-    sortable: false,
     visible: false,
-    formatter: this.sharedService.relArtifactsFormatter
+    formatter: this.sharedService.pocStringNameFormatter
+  }, {
+    field: 'SO',
+    title: 'System Owner',
+    sortable: true,
+    visible: false,
+    formatter: this.sharedService.pocStringNameFormatter
   }, {
     field: 'InactiveDate',
     title: 'Inactive Date',
     sortable: true,
     formatter: this.sharedService.dateFormatter
-  }, {
-    field: 'Status',
-    title: 'Status',
-    sortable: true
   }];
 
   ngOnInit(): void {
