@@ -18,9 +18,9 @@
           <li class="nav-item">
             <a class="nav-link active" data-toggle="tab" href="#capOverview">
               Overview</a></li>
-          <!-- <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#capSupportApps">
-              Supporting Business Applications</a></li> -->
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#capSupportSystems">
+              Supporting Systems</a></li>
         </ul>
 
         <!-- Tab Panes -->
@@ -28,10 +28,14 @@
           <div class="tab-pane fade show active" id="capOverview">
             <h4>Description</h4>
             <p>{{ capability.Description }}</p>
+            <br><br>
+
+            <h4>Level</h4>
+            <p>{{ capability.Level }}</p>
           </div>
 
-          <div class="tab-pane fade" id="capSupportApps">
-            <table id="capSupportAppsTable"></table>
+          <div class="tab-pane fade" id="capSupportSystems">
+            <table id="capSupportSysTable"></table>
           </div>
 
         </div>

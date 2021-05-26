@@ -9,8 +9,8 @@ router.route('/')
 router.route('/get/:id')
   .get(capabilitiesCtrl.findOne);
 
-// router.route('/get/:id/applications')
-//   .get(capabilitiesCtrl.findApplications);
+router.route('/get/:id/systems')
+  .get(capabilitiesCtrl.findSystems);
 
 // router.route('/sso/:name')
 //   .get(capabilitiesCtrl.findSSO);
