@@ -185,6 +185,12 @@ export class SharedService {
     return `<a href="https://mail.google.com/mail/?view=cm&fs=1&to=${value}" target="_blank" rel="noopener">${value}</a>`
   };
 
+  //// None Provided
+  public noneProvidedFormatter(value, row, index, field) {
+    if (!value) return 'None Provided';
+    else return value;
+  };
+
 
   // Set Forms Default
   public setITStandardsForm() {

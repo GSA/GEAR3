@@ -46,7 +46,7 @@ export class InvestmentsComponent implements OnInit {
   tableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: true,
     idTable: 'InvestTable',
-    classes: "table-hover table-dark clickable-table fixed-table",
+    classes: "table-hover table-dark clickable-table",
     showColumns: true,
     showExport: true,
     exportFileName: 'GSA_IT_Investments',
@@ -68,6 +68,7 @@ export class InvestmentsComponent implements OnInit {
     field: 'Description',
     title: 'Description',
     sortable: true,
+    visible: false,
     class: 'text-truncate'
   }, {
     field: 'Type',
@@ -84,7 +85,8 @@ export class InvestmentsComponent implements OnInit {
   }, {
     field: 'InvManager',
     title: 'Investment Manager',
-    sortable: true
+    sortable: true,
+    formatter: this.sharedService.noneProvidedFormatter
   }, {
     field: 'Status',
     title: 'Status',
@@ -123,6 +125,7 @@ export class InvestmentsComponent implements OnInit {
     field: 'Updated_Date',
     title: 'Updated Date',
     sortable: true,
+    visible: false,
     formatter: this.sharedService.dateFormatter
   }];
 
@@ -130,7 +133,8 @@ export class InvestmentsComponent implements OnInit {
   PYcolumnDefs: any[] = [{
     field: 'UII',
     title: 'Investment UII',
-    sortable: true
+    sortable: true,
+    visible: false
   }, {
     field: 'Name',
     title: 'Investment Name',
@@ -161,7 +165,8 @@ export class InvestmentsComponent implements OnInit {
   CYcolumnDefs: any[] = [{
     field: 'UII',
     title: 'Investment UII',
-    sortable: true
+    sortable: true,
+    visible: false
   }, {
     field: 'Name',
     title: 'Investment Name',
@@ -192,7 +197,8 @@ export class InvestmentsComponent implements OnInit {
   BYcolumnDefs: any[] = [{
     field: 'UII',
     title: 'Investment UII',
-    sortable: true
+    sortable: true,
+    visible: false
   }, {
     field: 'Name',
     title: 'Investment Name',
