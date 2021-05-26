@@ -15,8 +15,6 @@ interface OrgTree {
   identity: number;
   name: string;
   DisplayName: string;
-  description: string;
-  link: string;
   children: Array<any>;
 }
 
@@ -68,8 +66,6 @@ export class OrganizationsChartComponent implements OnInit {
             identity: org.ID,
             name: org.Name,
             displayName: org.DisplayName,
-            description: org.Description,
-            link: org.Link,
             children: []
           }
         };
@@ -82,8 +78,6 @@ export class OrganizationsChartComponent implements OnInit {
             identity: org.ID,
             name: org.Name,
             displayName: org.DisplayName,
-            description: org.Description,
-            link: org.Link,
             children: []
           });
         }
@@ -98,8 +92,6 @@ export class OrganizationsChartComponent implements OnInit {
               identity: org.ID,
               name: org.Name,
               displayName: org.DisplayName,
-              description: org.Description,
-              link: org.Link,
               children: []
             });
           }
@@ -117,8 +109,6 @@ export class OrganizationsChartComponent implements OnInit {
                 identity: org.ID,
                 name: org.Name,
                 displayName: org.DisplayName,
-                description: org.Description,
-                link: org.Link,
                 children: []
               });
             }
@@ -138,8 +128,6 @@ export class OrganizationsChartComponent implements OnInit {
                   identity: org.ID,
                   name: org.Name,
                   displayName: org.DisplayName,
-                  description: org.Description,
-                  link: org.Link,
                   children: []
                 });
               }
@@ -161,8 +149,6 @@ export class OrganizationsChartComponent implements OnInit {
                     identity: org.ID,
                     name: org.Name,
                     displayName: org.DisplayName,
-                    description: org.Description,
-                    link: org.Link,
                     children: []
                   });
                 }
@@ -358,14 +344,8 @@ export class OrganizationsChartComponent implements OnInit {
         .style("visibility", "visible")   // Show detail card
         .style("opacity", "1");
 
-        d3.select("#orgExtLink")
-          .style("display", function () {  // Show external link if available
-            return d.data.link ? "inline" : "none"
-          });
         d3.select("#orgName")
           .text(d.data.name);  // Set Name
-        d3.select("#orgDetailbody")
-          .text(d.data.description);  // Set Description
 
         d3.select("#orgChart")
           .style("transform", "translateY(13%)");
@@ -455,19 +435,12 @@ export class OrganizationsChartComponent implements OnInit {
     }
 
     // Detail Pane Controls
-    var orgExtLink = d3.select('#orgExtLink');
     var orgDetail = d3.select('#orgDetailLink');
     var orgClose = d3.select('#orgDetailClose');
 
-    // When external link is clicked
-    orgExtLink.on("click", function () {
-      console.log(selectedOrg);
-      window.open(selectedOrg.data.link);
-    });
-
     // When detail link is clicked
     orgDetail.on("click", function () {
-      // console.log("Selected Node: ", selectedCap);  // Debug
+      // console.log("Selected Node: ", selectedOrg);  // Debug
 
       // Grab data for selected node
       this.apiService.getOneOrg(selectedOrg.data.identity).subscribe((data: any[]) => {

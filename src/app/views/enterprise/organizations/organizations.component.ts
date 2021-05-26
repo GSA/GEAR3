@@ -34,7 +34,7 @@ export class OrganizationsComponent implements OnInit {
   tableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: true,
     idTable: 'OrgTable',
-    classes: "table-hover table-dark clickable-table fixed-table",
+    classes: "table-hover table-dark clickable-table",
     showColumns: false,
     showExport: true,
     exportFileName: 'GSA_Organizations',
@@ -60,11 +60,6 @@ export class OrganizationsComponent implements OnInit {
     field: 'Name',
     title: 'Organization Name',
     sortable: true
-  }, {
-    field: 'Description',
-    title: 'Description',
-    sortable: true,
-    class: 'text-truncate'
   }];
 
   ngOnInit(): void {
