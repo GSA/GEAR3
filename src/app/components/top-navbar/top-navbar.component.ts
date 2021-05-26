@@ -33,7 +33,6 @@ export class TopNavbarComponent implements OnInit {
 
   globalSearch(event) {
     if (event.key === "Enter" || event.type === "click") {
-      // Update related apps table in detail modal with clicked investment
       $('#globalSearchTable').bootstrapTable('refreshOptions', {
         exportOptions: {
           fileName: this.sharedService.fileNameFmt('GEAR_Global_Search-' + this.searchKW)
