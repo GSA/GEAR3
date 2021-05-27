@@ -3,5 +3,4 @@ export class Organization {
   public Name: string;
   public DisplayName: string;
   public Parent: string;
-  public old_Id: number;
 }
