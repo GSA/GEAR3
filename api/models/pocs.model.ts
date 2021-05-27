@@ -3,6 +3,5 @@ export class POC {
   public Name: string;
   public Email: string;
   public Phone: string;
-  public RISSO_Region: string;
   public Organization: string;
 }

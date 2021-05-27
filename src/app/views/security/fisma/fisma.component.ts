@@ -47,29 +47,28 @@ export class FismaComponent implements OnInit {
     showToggle: true,
     url: this.apiService.fismaUrl
   });
-
+  
   // FISMA System Table Columns
   columnDefs: any[] = [{
     field: 'Name',
     title: 'System Name',
     sortable: true
   }, {
-    field: 'orgName',
-    title: 'Responsible Org',
+    field: 'SystemLevel',
+    title: 'System Level',
     sortable: true
   }, {
-    field: 'FedContractorLoc',
-    title: 'Federal/Contractor',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'FIPS_Impact_Level',
-    title: 'FIPS Impact Level',
-    sortable: true,
-    visible: false
+    field: 'Status',
+    title: 'Status',
+    sortable: true
   }, {
     field: 'ATODate',
     title: 'ATO Date',
+    sortable: true,
+    formatter: this.sharedService.dateFormatter
+  }, {
+    field: 'RenewalDate',
+    title: 'Renewal Date',
     sortable: true,
     formatter: this.sharedService.dateFormatter
   }, {
@@ -77,13 +76,18 @@ export class FismaComponent implements OnInit {
     title: 'ATO Type',
     sortable: true
   }, {
-    field: 'RenewalDate',
-    title: 'Renewal Date',
-    sortable: true,
-    formatter: this.sharedService.dateFormatter
+    field: 'FIPS_Impact_Level',
+    title: 'FIPS Impact Level',
+    sortable: true
   }, {
-    field: 'ComplFISMA',
-    title: 'Complete Assessment For Current FY',
+    field: 'Description',
+    title: 'Description',
+    sortable: true,
+    visible: false,
+    class: 'text-truncate'
+  }, {
+    field: 'Reportable',
+    title: 'FISMA Reportable',
     sortable: true,
     visible: false
   }, {
@@ -91,39 +95,6 @@ export class FismaComponent implements OnInit {
     title: 'PII',
     sortable: true,
     visible: false
-  }, {
-    field: 'CloudYN',
-    title: 'Cloud Hosted?',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'CSP',
-    title: 'Cloud Server Provider',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'ServiceType',
-    title: 'Type of Service',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'SystemLevel',
-    title: 'System Level',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'RelatedArtifacts',
-    title: 'Related Artifacts',
-    formatter: this.sharedService.relArtifactsFormatter
-  }, {
-    field: 'FISMASystemIdentifier',
-    title: 'FISMA System Identifier',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'Status',
-    title: 'Status',
-    sortable: true
   }];
 
   ngOnInit(): void {
@@ -169,7 +140,7 @@ export class FismaComponent implements OnInit {
 
   // Update table to Retire Systems
   showRetired() {
-    this.retiredTable = true;  // Expose main table button after RISSO button is pressed
+    this.retiredTable = true;  // Expose main table button after "Retired" button is pressed
 
     this.columnDefs.push({
       field: 'InactiveDate',

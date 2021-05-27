@@ -9,7 +9,4 @@ router.route('/')
 router.route('/get/:id')
   .get(pocCtrl.findOne);
 
-// router.route('/risso')
-//   .get(pocCtrl.findRissos);
-
 module.exports = router;

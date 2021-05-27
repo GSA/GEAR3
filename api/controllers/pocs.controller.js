@@ -18,10 +18,3 @@ exports.findOne = (req, res) => {
 
   res = ctrl.sendQuery_cowboy(query, 'individual POC', res);
 };
-
-// exports.findRissos = (req, res) => {
-//   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_pocs.sql')).toString() +
-//     " WHERE poc.RISSO <> 24;";
-
-//   res = ctrl.sendQuery_cowboy(query, 'RISSO POCs', res);
-// };
