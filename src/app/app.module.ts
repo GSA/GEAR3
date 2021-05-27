@@ -55,6 +55,7 @@ import { ItStandardsModalComponent } from './components/modals/it-standards-moda
 import { ItStandardManagerComponent } from './components/manager-modals/it-standard-manager/it-standard-manager.component';
 
 //// Enterprise Architecture
+import { ArtifactsComponent } from './views/architecture/artifacts/artifacts.component';
 import { GearModelComponent } from './views/architecture/gear-model/gear-model.component';
 
 // Global Variables
@@ -98,6 +99,7 @@ import { Globals } from './common/globals';
     ItStandardsModalComponent,
     ItStandardManagerComponent,
   
+    ArtifactsComponent,
     GearModelComponent
   ],
   imports: [

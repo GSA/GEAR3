@@ -95,7 +95,7 @@ export class TableService {
   public createTableOptions(definitions: any): {} {
     return {
       advancedSearch: definitions.advancedSearch,
-      idTable: 'advSearch' + definitions.idTable,
+      idTable: definitions.idTable,
       buttonsClass: 'info',
       cache: true,
       classes: "table table-bordered table-striped " + definitions.classes,
