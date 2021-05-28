@@ -21,14 +21,15 @@
     (onOpened)="_onOpened()"
     (onCloseStart)="_onCloseStart()"
     (onClosed)="_onClosed()"
-    (onTransitionEnd)="_onTransitionEnd()">
+    (onTransitionEnd)="_onTransitionEnd()"
+    (mouseenter)="_opened=true"
+    (mouseleave)="_opened=false">
 
     <ul id="sideMenu" class="list-group">
       <!-- Strategy -->
       <li>
         <a id="strategyBttn" data-toggle="collapse" data-target="#strategyDropdown" aria-controls="#strategyDropdown"
-          aria-expanded="false" (click)="_opened=true"
-          class="bg-success list-group-item list-group-item-action flex-column align-items-start">
+          aria-expanded="false" class="bg-success list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
             IT Strategy
             <span class="submenu-icon">
@@ -52,8 +53,7 @@
       <!-- Enterprise  -->
       <li>
         <a id="enterpriseBttn" data-toggle="collapse" data-target="#enterpriseDropdown" aria-controls="#enterpriseDropdown"
-          aria-expanded="false" (click)="_opened=true"
-          class="bg-royal-blue list-group-item list-group-item-action flex-column align-items-start">
+          aria-expanded="false" class="bg-royal-blue list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
             GSA Enterprise
             <span class="submenu-icon">
@@ -74,34 +74,32 @@
         </div>
       </li>
 
-      <!-- Business Applications -->
+      <!-- Systems -->
       <li>
-        <a id="businessBttn" data-toggle="collapse" data-target="#businessAppDropdown" aria-controls="#businessAppDropdown"
-          aria-expanded="false" (click)="_opened=true"
-          class="bg-danger list-group-item list-group-item-action flex-column align-items-start">
+        <a id="systemBttn" data-toggle="collapse" data-target="#systemsDropdown" aria-controls="#systemsDropdown"
+          aria-expanded="false" class="bg-danger list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
-            Business Applications
+            Systems
             <span class="submenu-icon">
               <i class="fas fa-laptop fa-lg fa-fw"></i>
             </span>
           </div>
         </a>
-        <div id="businessAppDropdown" aria-labelledby="businessAppDropdown" data-parent="#sideMenu"
+        <div id="systemsDropdown" aria-labelledby="systemsDropdown" data-parent="#sideMenu"
           class="collapse sidebar-submenu">
           <a routerLink="/systems" class="bg-dark list-group-item list-group-item-action">
-            Parent Systems</a>
-          <a routerLink="/applications" class="bg-dark list-group-item list-group-item-action">
-            Business Applications</a>
-          <a routerLink="/applications_TIME" class="bg-dark list-group-item list-group-item-action">
-            Application TIME Report</a>
+            Systems & Subsystems</a>
+          <a routerLink="/systems_TIME" class="bg-dark list-group-item list-group-item-action">
+            TIME Report</a>
+          <a routerLink="/records_mgmt" class="bg-dark list-group-item list-group-item-action">
+            Records Management</a>
         </div>
       </li>
 
       <!-- Security -->
       <li>
         <a id="securityBttn" data-toggle="collapse" data-target="#securityDropdown" aria-controls="#securityDropdown"
-          aria-expanded="false" (click)="_opened=true"
-          class="bg-warning list-group-item list-group-item-action flex-column align-items-start">
+          aria-expanded="false" class="bg-warning list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
             Security
             <span class="submenu-icon">
@@ -121,8 +119,7 @@
       <!-- Technologies -->
       <li>
         <a id="technologyBttn" data-toggle="collapse" data-target="#technologiesDropdown" aria-controls="#technologiesDropdown"
-          aria-expanded="false" (click)="_opened=true"
-          class="bg-teal list-group-item list-group-item-action flex-column align-items-start">
+          aria-expanded="false" class="bg-teal list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
             Technologies
             <span class="submenu-icon">
@@ -144,8 +141,7 @@
       <!-- Enterprise Architecture -->
       <li>
         <a id="eaBttn" data-toggle="collapse" data-target="#eaDropdown" aria-controls="#eaDropdown"
-          aria-expanded="false" (click)="_opened=true"
-          class="bg-purple list-group-item list-group-item-action flex-column align-items-start">
+          aria-expanded="false" class="bg-purple list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-start align-items-center">
             Enterprise Architecture
             <span class="submenu-icon">
@@ -155,8 +151,10 @@
         </a>
         <div id="eaDropdown" aria-labelledby="eaDropdown" data-parent="#sideMenu"
           class="collapse sidebar-submenu">
-          <a routerLink="/g_invoicing" class="bg-dark list-group-item list-group-item-action">
-            G-Invoicing</a>
+          <a routerLink="/artifacts" class="bg-dark list-group-item list-group-item-action">
+            Artifacts</a>
+          <a routerLink="/gear_model" class="bg-dark list-group-item list-group-item-action">
+            GEAR Model Diagram</a>
         </div>
       </li>
 
@@ -178,29 +176,6 @@
       </li>
 
     </ul>
-
-    <!-- GEAR Manager Login -->
-    <div class="sidebar-footer">
-      <a name="managerLoginBttn" routerLink="/gear_manager" [hidden]="sharedService.loggedIn" aria-label="GEAR Manager Login"
-        tabindex="0" class="bg-info list-group-item list-group-item-action align-items-start text-white">
-        <div class="d-flex w-100 justify-content-start align-items-center">
-          GEAR Manager Login
-          <span class="submenu-icon">
-            <i class="fa fa-sign-in-alt fa-lg fa-fw"></i>
-          </span>
-        </div>
-      </a>
-      <a name="managerLogoutBttn" routerLink="/" [hidden]="!sharedService.loggedIn" (click)="logoutManager()" tabindex="0"
-        aria-label="GEAR Manager Logout" class="bg-danger list-group-item list-group-item-action align-items-start text-white">
-        <div class="d-flex w-100 justify-content-start align-items-center">
-          GEAR Manager Logout
-          <span class="submenu-icon">
-            <i class="fas fa-sign-out-alt fa-lg fa-fw"></i>
-          </span>
-        </div>
-      </a>
-    </div>
-
   </ng-sidebar>
 
   <!-- Page content -->

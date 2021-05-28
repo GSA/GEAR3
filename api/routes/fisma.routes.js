@@ -9,8 +9,8 @@ router.route('/')
 router.route('/get/:id')
   .get(fismaCtrl.findOne);
 
-router.route('/get/:id/applications')
-  .get(fismaCtrl.findApplications);
+// router.route('/get/:id/applications')
+//   .get(fismaCtrl.findApplications);
 
 router.route('/retired')
   .get(fismaCtrl.findRetired);

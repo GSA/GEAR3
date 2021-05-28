@@ -33,6 +33,3 @@ LEFT JOIN obj_organization  AS org            ON poc.obj_organization_Id = org.I
 
 LEFT JOIN zk_technology_standard_category     ON tech.Id = zk_technology_standard_category.obj_technology_Id
 LEFT JOIN obj_standard_category               ON zk_technology_standard_category.obj_standard_category_Id = obj_standard_category.Id
-
-LEFT JOIN zk_application_technology           ON tech.Id = zk_application_technology.obj_technology_Id
-LEFT JOIN obj_application   AS app            ON zk_application_technology.obj_application_Id = app.Id

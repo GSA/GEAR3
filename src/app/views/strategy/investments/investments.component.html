@@ -4,8 +4,8 @@
       <span>
         <i class="fas fa-money-bill-wave mr-2"></i>
         <span [hidden]="!filteredTable">{{ filterTitle }} </span>
-        <span [hidden]="filteredTable">Active </span>
-        IT Investments
+        <span [hidden]="filteredTable">Non-Eliminated IT </span>
+        Investments
       </span>
     </h3>
     <!-- Help Button -->
@@ -41,20 +41,18 @@
     </div>
 
     <div class="row w-100">
-      <!-- Add Button -->
-      <button role="button" name="addInvestBttn" class="btn btn-success position-absolute ml-3" (click)="createInvestment()"
-        [hidden]="!sharedService.loggedIn">
-        <i class="fas fa-plus"></i>
-      </button>
-
       <!-- Filters -->
       <div class="mx-auto">
         <span class="my-auto mr-3">Add'l Filter Buttons:</span>
-        <button role="button" name="investInactiveBttn" class="btn btn-primary" (click)="inactiveFilter()"
-          [hidden]="filteredTable">Inactive</button>
+        <button role="button" name="investEliminatedBttn" class="btn btn-primary" (click)="eliminatedFilter()"
+          [hidden]="filteredTable">Eliminated</button>
+
+        <button role="button" name="investPYBttn" class="btn btn-primary" (click)="previousYearFilter()">Previous Year Numbers</button>
+        <button role="button" name="investCYBttn" class="btn btn-primary" (click)="currentYearFilter()">Current Year Numbers</button>
+        <button role="button" name="investBYBttn" class="btn btn-primary" (click)="budgetYearFilter()">Budget Year Numbers</button>
 
         <button role="button" name="investBttn" class="btn btn-primary ml-3" (click)="backToMainInvest()"
-          [hidden]="!filteredTable">Back to All Active Investments</button>
+          [hidden]="!filteredTable">Back to All Non-Eliminated Investments</button>
       </div>
     </div>
 

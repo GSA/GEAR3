@@ -19,8 +19,8 @@
             <a class="nav-link active" data-toggle="tab" href="#orgOverview">
               Overview</a></li>
           <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#orgApps">
-              Organizational Business Applications</a></li>
+            <a class="nav-link" data-toggle="tab" href="#orgSys">
+              Organizational Systems</a></li>
         </ul>
 
         <!-- Tab Panes -->
@@ -30,21 +30,13 @@
             <p>{{ org.DisplayName }}</p>
             <br><br>
 
-            <h4>Description</h4>
-            <p>{{ org.Description }}</p>
-            <br><br>
-
             <h4>Parent Organization</h4>
             {{ org.Parent }}
             <p [hidden]="org.Parent">None</p>
-            <br><br>
-
-            <h4>Link</h4>
-            <a href="{{ org.Link }}" target="_blank" rel="noopener">{{ org.Link }}</a>
           </div>
 
-          <div class="tab-pane fade" id="orgApps">
-            <table id="orgAppsTable"></table>
+          <div class="tab-pane fade" id="orgSys">
+            <table id="orgSysTable"></table>
           </div>
 
         </div>

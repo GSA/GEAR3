@@ -1,6 +1,7 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { formatDate, Location } from '@angular/common';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { Router } from '@angular/router';
 
 import { Globals } from '@common/globals';
 
@@ -17,21 +18,16 @@ export class SharedService {
   toggleSub: Subscription;
 
   // Forms Emitter
-  investFormEmitter = new EventEmitter();
-  investFormSub: Subscription;
+  itStandardsFormEmitter = new EventEmitter();
+  itStandardsFormSub: Subscription;
 
   systemFormEmitter = new EventEmitter();
   systemFormSub: Subscription;
 
-  appFormEmitter = new EventEmitter();
-  appFormSub: Subscription;
-
-  itStandardsFormEmitter = new EventEmitter();
-  itStandardsFormSub: Subscription;
-
   constructor(
     private globals: Globals,
-    private location: Location) { }
+    private location: Location,
+    private router: Router) { }
 
   // Sidebar Toggle
   public toggleClick() {
@@ -50,16 +46,18 @@ export class SharedService {
     return this.location.prepareExternalUrl(url).replace('#', '');
   };
 
-  // Find in Array an Item by Key
-  findInArrayID(array: any[], arrayKey: string, searchItem: any) {
+  // Find value of Item in Array by Key (ID by default, else value of specified field)
+  findInArray(array: any[], arrayKey: string, searchItem: any, field: string = null) {
     var result: any = array.find(element => element[arrayKey] === searchItem);
 
-    if (result) return result.ID;
-    else return null
+    if (result) {
+      if (field) return result[field];
+      else return result.ID;
+    };
   };
 
   // Have to render POC info separately as anchor links dont work with ngFor
-  renderPOCInfo(pocString: string) {
+  renderPOCInfoList(pocString: string) {
     let POCs = this.splitPOCInfo(pocString)
     let html = ''
 
@@ -110,11 +108,22 @@ export class SharedService {
         $('#loggedIn').toast('show');
       }, 1000);  // Wait for 1 sec to propogate after logging in
     }
-  }
+  };
 
   //// Check if user is authenticated to GEAR Manager
   public get loggedIn(): boolean {
     return localStorage.getItem('jwt') !== null && localStorage.getItem('jwt') == this.globals.jwtToken;
+  };
+
+  //// Set Redirect Path to come back to page after GEAR Manager login
+  public setRedirectPath(): void {
+    localStorage.setItem('redirectPath', this.router.url);
+  };
+
+  //// Remove JWT and show log out banner when logging out of GEAR Manager
+  public logoutManager() {
+    localStorage.removeItem('jwt');
+    $('#loggedOut').toast('show');
   };
 
 
@@ -141,22 +150,64 @@ export class SharedService {
     return finalVal;
   };
 
+  //// Related Artifacts
+  public relArtifactsFormatter(value, row, index, field) {
+    var artifacts = value;
+    var artLinks = [];
+
+    if (artifacts) {
+      var arts = artifacts.split(';');
+
+      arts = arts.map((artifact, tmpObj) => {
+        let pieces = artifact.split(',');
+        let linkStr = `<a target="_blank" rel="noopener" href="${pieces[1]}">${pieces[0]}</a>`
+
+        artLinks.push(linkStr);
+      })
+    }
+
+    return artLinks.join('<br>');
+  };
+
+  //// File Link
+  public linksFormatter(value, row, index, field) {
+    if (value) return `<a target="_blank" rel="noopener" href="${value}">Link</a>`;
+  };
+
+  //// Date
+  public dateFormatter(value, row, index, field) {
+    if (value) return formatDate(value, 'MMM. dd, yyyy', 'en-US');
+  };
+
+
+  //// Email
+  public emailFormatter(value, row, index, field) {
+    return `<a href="https://mail.google.com/mail/?view=cm&fs=1&to=${value}" target="_blank" rel="noopener">${value}</a>`
+  };
+
+  //// POC Name
+  public pocStringNameFormatter(value, row, index, field) {
+    let poc = value.split(':')[1];  // Retrieve POC after colon
+    poc = poc.split(', ');
+    let name = poc[0];
+
+    return name;
+  };
+
+  //// None Provided
+  public noneProvidedFormatter(value, row, index, field) {
+    if (!value) return 'None Provided';
+    else return value;
+  };
+
 
   // Set Forms Default
-  public setInvestForm() {
-    this.investFormEmitter.emit();
+  public setITStandardsForm() {
+    this.itStandardsFormEmitter.emit();
   };
 
   public setSystemForm() {
     this.systemFormEmitter.emit();
-  };
-
-  public setAppForm() {
-    this.appFormEmitter.emit();
-  };
-
-  public setITStandardsForm() {
-    this.itStandardsFormEmitter.emit();
   };
 
 

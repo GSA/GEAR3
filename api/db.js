@@ -17,14 +17,24 @@ dbCredentials = {
   multipleStatements: true
 };
 
+// Credentials for old database
+dbCredentials_cowboy = {
+  host: dbCredentials.host,
+  user: dbCredentials.user,
+  password: dbCredentials.password,
+  database: process.env.DB2 || process.env.DB,
+  port: dbCredentials.port,
+  ssl: dbCredentials.ssl,
+  multipleStatements: dbCredentials.multipleStatements
+};
+
 // Create DB Connection
-const connection = mysql.createConnection(dbCredentials)
-connection.connect(error => {
-  if (error) throw error;
-  console.log("Successfully connected to MySQL database.");
-});
+const pool = mysql.createPool(dbCredentials)
+
+const pool_cowboy = mysql.createPool(dbCredentials_cowboy)
 
 module.exports = {
   dbCredentials: dbCredentials,
-  connection: connection
+  connection: pool,
+  connection_cowboy: pool_cowboy
 };

@@ -9,30 +9,34 @@ exports.findAll = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
     ` WHERE obj_standard_type.Keyname LIKE 'Software'
       AND obj_technology_status.Keyname NOT LIKE 'Not yet submitted'
-      GROUP BY tech.Id;`;
+      GROUP BY tech.Id
+      ORDER BY tech.Keyname;`;
 
-  res = ctrl.sendQuery(query, 'IT Standards', res);
+  res = ctrl.sendQuery_cowboy(query, 'IT Standards', res);
 };
 
 exports.findOne = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
     ` WHERE tech.Id = ${req.params.id};`;
 
-  res = ctrl.sendQuery(query, 'individual IT Standard', res);
+  res = ctrl.sendQuery_cowboy(query, 'individual IT Standard', res);
 };
 
 exports.findLatest = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
     ` GROUP BY tech.Id ORDER BY tech.CreateDTG DESC LIMIT 1;`;
 
-  res = ctrl.sendQuery(query, 'latest individual IT Standard', res);
+  res = ctrl.sendQuery_cowboy(query, 'latest individual IT Standard', res);
 };
 
-exports.findApplications = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_applications.sql')).toString() +
-    ` AND tech.Id = ${req.params.id} GROUP BY app.Id;`;
+exports.findSystems = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
+    ` LEFT JOIN gear_ods.zk_systems_subsystems_technology AS mappings ON systems.\`ex:GEAR_ID\` = mappings.obj_systems_subsystems_Id
+      LEFT JOIN obj_technology AS tech                                ON mappings.obj_technology_Id = tech.Id
+      
+      WHERE tech.Id = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`;
 
-  res = ctrl.sendQuery(query, 'applications using IT Standard', res);
+  res = ctrl.sendQuery_cowboy(query, 'systems using IT Standard', res);
 };
 
 exports.update = (req, res) => {
@@ -58,8 +62,8 @@ exports.update = (req, res) => {
       pocString += `DELETE FROM zk_technology_poc WHERE obj_technology_Id=${req.params.id}; `;
 
       // Insert new IDs
-      data.itStandPOC.forEach(pocID => {
-        pocString += `INSERT INTO zk_technology_poc (obj_technology_Id, obj_poc_Id) VALUES (${req.params.id}, ${pocID}); `;
+      data.itStandPOC.forEach(pocSamName => {
+        pocString += `INSERT INTO zk_technology_poc (obj_technology_Id, obj_ldap_SamAccountName) VALUES (${req.params.id}, ${pocSamName}); `;
       });
     };
 
@@ -90,7 +94,7 @@ exports.update = (req, res) => {
       ${catString}
       ${pocString}`
 
-    res = ctrl.sendQuery(query, 'update IT Standard', res);
+    res = ctrl.sendQuery_cowboy(query, 'update IT Standard', res);
   } else {
     res.status(502).json({
       message: "No authorization token present. Not allowed to update IT-Standards"
@@ -139,7 +143,7 @@ exports.create = (req, res) => {
         '${data.auditUser}',
         '${data.auditUser}');`
 
-    res = ctrl.sendQuery(query, 'create IT Standard', res);
+    res = ctrl.sendQuery_cowboy(query, 'create IT Standard', res);
   } else {
     res.status(502).json({
       message: "No authorization token present. Not allowed to create IT Standard"
@@ -150,29 +154,29 @@ exports.create = (req, res) => {
 exports.find508Compliance = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standard_508_status.sql')).toString();
 
-  res = ctrl.sendQuery(query, '508 Compliance Statuses', res);
+  res = ctrl.sendQuery_cowboy(query, '508 Compliance Statuses', res);
 };
 
 exports.findCategories = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standard_categories.sql')).toString();
 
-  res = ctrl.sendQuery(query, 'IT Standard Categories', res);
+  res = ctrl.sendQuery_cowboy(query, 'IT Standard Categories', res);
 };
 
 exports.findDeployTypes = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standard_deploy_types.sql')).toString();
 
-  res = ctrl.sendQuery(query, 'IT Standard Deployment Types', res);
+  res = ctrl.sendQuery_cowboy(query, 'IT Standard Deployment Types', res);
 };
 
 exports.findStatuses = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standard_statuses.sql')).toString();
 
-  res = ctrl.sendQuery(query, 'IT Standard Statuses', res);
+  res = ctrl.sendQuery_cowboy(query, 'IT Standard Statuses', res);
 };
 
 exports.findTypes = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standard_types.sql')).toString();
 
-  res = ctrl.sendQuery(query, 'IT Standard Types', res);
+  res = ctrl.sendQuery_cowboy(query, 'IT Standard Types', res);
 };

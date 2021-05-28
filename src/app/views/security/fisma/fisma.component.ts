@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { formatDate, Location } from '@angular/common';
+import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
@@ -47,77 +47,52 @@ export class FismaComponent implements OnInit {
     showToggle: true,
     url: this.apiService.fismaUrl
   });
-
+  
   // FISMA System Table Columns
   columnDefs: any[] = [{
     field: 'Name',
     title: 'System Name',
     sortable: true
   }, {
-    field: 'orgName',
-    title: 'Responsible Org',
+    field: 'SystemLevel',
+    title: 'System Level',
     sortable: true
   }, {
-    field: 'FedContractorLoc',
-    title: 'Federal/Contractor',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'FIPS_Impact_Level',
-    title: 'FIPS Impact Level',
-    sortable: true,
-    visible: false
+    field: 'Status',
+    title: 'Status',
+    sortable: true
   }, {
     field: 'ATODate',
     title: 'ATO Date',
     sortable: true,
-    formatter: this.dateFormatter
+    formatter: this.sharedService.dateFormatter
+  }, {
+    field: 'RenewalDate',
+    title: 'Renewal Date',
+    sortable: true,
+    formatter: this.sharedService.dateFormatter
   }, {
     field: 'ATOType',
     title: 'ATO Type',
     sortable: true
   }, {
-    field: 'RenewalDate',
-    title: 'Renewal Date',
-    sortable: true,
-    formatter: this.dateFormatter
+    field: 'FIPS_Impact_Level',
+    title: 'FIPS Impact Level',
+    sortable: true
   }, {
-    field: 'ComplFISMA',
-    title: 'Complete Assessment For Current FY',
+    field: 'Description',
+    title: 'Description',
+    sortable: true,
+    visible: false,
+    class: 'text-truncate'
+  }, {
+    field: 'Reportable',
+    title: 'FISMA Reportable',
     sortable: true,
     visible: false
   }, {
     field: 'PII',
     title: 'PII',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'CloudYN',
-    title: 'Cloud Hosted?',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'CSP',
-    title: 'Cloud Server Provider',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'ServiceType',
-    title: 'Type of Service',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'SystemLevel',
-    title: 'System Level',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'RelatedArtifacts',
-    title: 'Related Artifacts',
-    formatter: this.relArtifactsFormatter
-  }, {
-    field: 'FISMASystemIdentifier',
-    title: 'FISMA System Identifier',
     sortable: true,
     visible: false
   }];
@@ -163,37 +138,15 @@ export class FismaComponent implements OnInit {
 
   }
 
-  relArtifactsFormatter(value, row, index, field) {
-    var artifacts = value;
-    var artLinks = [];
-
-    if (artifacts) {
-      var arts = artifacts.split(';');
-
-      arts = arts.map((artifact, tmpObj) => {
-        let pieces = artifact.split(',');
-        let linkStr = `<a target="_blank" rel="noopener" href="${pieces[1]}">${pieces[0]}</a>`
-
-        artLinks.push(linkStr);
-      })
-    }
-
-    return artLinks.join('<br>');
-  };
-
-  dateFormatter(value, row, index, field) {
-    if (value) return formatDate(value, 'MMM. dd, yyyy', 'en-US');
-  };
-
   // Update table to Retire Systems
   showRetired() {
-    this.retiredTable = true;  // Expose main table button after RISSO button is pressed
+    this.retiredTable = true;  // Expose main table button after "Retired" button is pressed
 
     this.columnDefs.push({
       field: 'InactiveDate',
       title: 'Inactive Date',
       sortable: true,
-      formatter: this.dateFormatter
+      formatter: this.sharedService.dateFormatter
     })
 
     // Change columns, filename, and url

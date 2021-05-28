@@ -7,16 +7,11 @@ import { SharedService } from '@services/shared/shared.service';
 import { Globals } from '@common/globals';
 
 // Models
-import { Application } from '@api/models/applications.model';
-import { ApplicationStatus } from '@api/models/application-statuses.model';
 import { DataFlow } from '@api/models/dataflow.model';
-import { HostProvider } from '@api/models/application_host_providers';
 
 import { Capability } from '@api/models/capabilities.model';
 
 import { FISMA } from '@api/models/fisma.model';
-
-import { GearMngrRequest } from '@api/models/manager-request.model';
 
 import { Investment } from '@api/models/investments.model';
 import { InvestmentType } from '@api/models/investment-types.model';
@@ -30,20 +25,16 @@ import { ITStandardTypes } from '@api/models/it-standards-types.model';
 
 import { Organization } from '@api/models/organizations.model';
 
-import { ParentSystem } from '@api/models/parentsystems.model';
-
 import { POC } from '@api/models/pocs.model';
+
+import { Record } from '@api/models/records.model'
+import { System } from '@api/models/systems.model';
+import { TIME } from '@api/models/systime.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-
-  // Applications
-  appUrl: string = this.sharedService.internalURLFmt('/api/applications');
-
-  // App TIME
-  timeUrl: string = this.sharedService.internalURLFmt('/api/apptime');
 
   // Capabilities
   capUrl: string = this.sharedService.internalURLFmt('/api/capabilities');
@@ -69,14 +60,17 @@ export class ApiService {
   // POCs
   pocUrl: string = this.sharedService.internalURLFmt('/api/pocs');
 
-  // Parent System
-  sysUrl: string = this.sharedService.internalURLFmt('/api/parentsystems');
+  // Records Management
+  recordsUrl: string = this.sharedService.internalURLFmt('/api/records');
+
+  // Systems
+  sysUrl: string = this.sharedService.internalURLFmt('/api/systems');
+
+  // Systems TIME
+  timeUrl: string = this.sharedService.internalURLFmt('/api/system_time');
 
   // IT Standards
   techUrl: string = this.sharedService.internalURLFmt('/api/it_standards');
-
-  // GEAR Manager Request
-  mngrReqURL: string = this.sharedService.internalURLFmt('/api/manager_request');
 
 
   constructor(
@@ -86,61 +80,6 @@ export class ApiService {
 
 
   // Calls
-  //// Applications
-  public getApplications(): Observable<Application[]> {
-    return this.http.get<Application[]>(this.appUrl).pipe(
-      catchError(this.handleError<Application[]>('GET Applications', []))
-    );
-  };
-  public getOneApp(id: number): Observable<Application[]> {
-    return this.http.get<Application[]>(this.appUrl + '/get/' + String(id)).pipe(
-      catchError(this.handleError<Application[]>('GET Application', []))
-    );
-  };
-  public getLatestApp(): Observable<Application[]> {
-    return this.http.get<Application[]>(this.appUrl + '/latest').pipe(
-      catchError(this.handleError<Application[]>('GET Latest Application', []))
-    );
-  };
-  public getAppTechnologies(id: number): Observable<ITStandards[]> {
-    return this.http.get<ITStandards[]>(this.appUrl + '/get/' + String(id) + '/technologies').pipe(
-      catchError(this.handleError<ITStandards[]>('GET App Related Technologies', []))
-    );
-  };
-  public getAppStatuses(): Observable<ApplicationStatus[]> {
-    return this.http.get<ApplicationStatus[]>(this.appUrl + '/statuses').pipe(
-      catchError(this.handleError<ApplicationStatus[]>('GET Application Statuses', []))
-    );
-  };
-  public getHostProviders(): Observable<HostProvider[]> {
-    return this.http.get<HostProvider[]>(this.appUrl + '/host_providers').pipe(
-      catchError(this.handleError<HostProvider[]>('GET Application Host Providers', []))
-    );
-  };
-  public updateApplication(id: number, data: {}): Observable<Application[]> {
-    if (this.globals.jwtToken) {
-      var httpOptions = this.setHeaderOpts();
-    } else {
-      catchError(this.handleError<Application[]>('UPDATE Application - No Authentication Token', []))
-    }
-
-    return this.http.put<Application[]>(this.appUrl + '/update/' + String(id), data, httpOptions).pipe(
-      catchError(this.handleError<Application[]>('UPDATE Application', []))
-    );
-  };
-  public createApplication(data: {}): Observable<Application[]> {
-    if (this.globals.jwtToken) {
-      var httpOptions = this.setHeaderOpts();
-    } else {
-      catchError(this.handleError<Application[]>('CREATE Application - No Authentication Token', []))
-    }
-
-    return this.http.post<Application[]>(this.appUrl + '/create', data, httpOptions).pipe(
-      catchError(this.handleError<Application[]>('CREATE Application', []))
-    );
-  };
-
-
   //// Capabilities
   public getCapabilities(): Observable<Capability[]> {
     return this.http.get<Capability[]>(this.capUrl).pipe(
@@ -201,11 +140,11 @@ export class ApiService {
       catchError(this.handleError<InvestmentType[]>('GET Investment Types', []))
     );
   };
-  public getInvestApps(id: number): Observable<Application[]> {
-    return this.http.get<Application[]>(this.investUrl + '/get/' + String(id) + '/applications').pipe(
-      catchError(this.handleError<Application[]>('GET Investment Related Applications', []))
-    );
-  };
+  // public getInvestApps(id: number): Observable<Application[]> {
+  //   return this.http.get<Application[]>(this.investUrl + '/get/' + String(id) + '/applications').pipe(
+  //     catchError(this.handleError<Application[]>('GET Investment Related Applications', []))
+  //   );
+  // };
   public updateInvestment(id: number, data: {}): Observable<Investment[]> {
     if (this.globals.jwtToken) {
       var httpOptions = this.setHeaderOpts();
@@ -241,49 +180,9 @@ export class ApiService {
       catchError(this.handleError<Organization[]>('GET Organization', []))
     );
   };
-
-
-  //// Parent Systems
-  public getSystems(): Observable<ParentSystem[]> {
-    return this.http.get<ParentSystem[]>(this.sysUrl).pipe(
-      catchError(this.handleError<ParentSystem[]>('GET Parent Systems', []))
-    );
-  };
-  public getOneSys(id: number): Observable<ParentSystem[]> {
-    return this.http.get<ParentSystem[]>(this.sysUrl + '/get/' + String(id)).pipe(
-      catchError(this.handleError<ParentSystem[]>('GET Parent System', []))
-    );
-  };
-  public getLatestSys(): Observable<ParentSystem[]> {
-    return this.http.get<ParentSystem[]>(this.sysUrl + '/latest').pipe(
-      catchError(this.handleError<ParentSystem[]>('GET Latest Parent System', []))
-    );
-  };
-  public getChildApps(id: number): Observable<Application[]> {
-    return this.http.get<Application[]>(this.sysUrl + '/get/' + String(id) + '/applications').pipe(
-      catchError(this.handleError<Application[]>('GET System Child Applications', []))
-    );
-  };
-  public updateParentSys(id: number, data: {}): Observable<ParentSystem[]> {
-    if (this.globals.jwtToken) {
-      var httpOptions = this.setHeaderOpts();
-    } else {
-      catchError(this.handleError<ParentSystem[]>('UPDATE Parent System - No Authentication Token', []))
-    }
-
-    return this.http.put<ParentSystem[]>(this.sysUrl + '/update/' + String(id), data, httpOptions).pipe(
-      catchError(this.handleError<ParentSystem[]>('UPDATE Parent System', []))
-    );
-  };
-  public createParentSys(data: {}): Observable<ParentSystem[]> {
-    if (this.globals.jwtToken) {
-      var httpOptions = this.setHeaderOpts();
-    } else {
-      catchError(this.handleError<ParentSystem[]>('CREATE Parent System - No Authentication Token', []))
-    }
-
-    return this.http.post<ParentSystem[]>(this.sysUrl + '/create', data, httpOptions).pipe(
-      catchError(this.handleError<ParentSystem[]>('CREATE Parent System', []))
+  public getOrgSys(name: string): Observable<System[]> {
+    return this.http.get<System[]>(this.orgUrl + '/get/' + name + '/systems').pipe(
+      catchError(this.handleError<System[]>('GET Systems for Organization', []))
     );
   };
 
@@ -297,6 +196,82 @@ export class ApiService {
   public getPOC(id: number): Observable<POC[]> {
     return this.http.get<POC[]>(this.pocUrl + '/get/' + String(id)).pipe(
       catchError(this.handleError<POC[]>('GET POC', []))
+    );
+  };
+
+
+  //// Records Management
+  public getRecords(): Observable<Record[]> {
+    return this.http.get<Record[]>(this.recordsUrl).pipe(
+      catchError(this.handleError<Record[]>('GET Records', []))
+    );
+  };
+  public getOneRecord(id: number): Observable<Record[]> {
+    return this.http.get<Record[]>(this.recordsUrl + '/get/' + String(id)).pipe(
+      catchError(this.handleError<Record[]>('GET Record', []))
+    );
+  };
+
+
+  //// Systems
+  public getSystems(): Observable<System[]> {
+    return this.http.get<System[]>(this.sysUrl).pipe(
+      catchError(this.handleError<System[]>('GET Systems', []))
+    );
+  };
+  public getOneSys(id: number): Observable<System[]> {
+    return this.http.get<System[]>(this.sysUrl + '/get/' + String(id)).pipe(
+      catchError(this.handleError<System[]>('GET System', []))
+    );
+  };
+  // public getChildSubSys(id: number): Observable<System[]> {
+  //   return this.http.get<System[]>(this.sysUrl + '/get/' + String(id) + '/systems').pipe(
+  //     catchError(this.handleError<System[]>('GET System Child Sub-Systems', []))
+  //   );
+  // };
+  public getSysCapabilities(id: number): Observable<Capability[]> {
+    return this.http.get<Capability[]>(this.sysUrl + '/get/' + String(id) + '/capabilities').pipe(
+      catchError(this.handleError<Capability[]>('GET System Related Business Capabilities', []))
+    );
+  };
+  public updateSystemCaps(id: number, data: {}): Observable<System[]> {
+    if (this.globals.jwtToken) {
+      var httpOptions = this.setHeaderOpts();
+    } else {
+      catchError(this.handleError<System[]>('UPDATE System-Business Capabilities - No Authentication Token', []))
+    }
+
+    return this.http.put<System[]>(this.sysUrl + '/updateCaps/' + String(id), data, httpOptions).pipe(
+      catchError(this.handleError<System[]>('UPDATE System-Business Capabilities', []))
+    );
+  };
+  public getSysITStandards(id: number): Observable<ITStandards[]> {
+    return this.http.get<ITStandards[]>(this.sysUrl + '/get/' + String(id) + '/technologies').pipe(
+      catchError(this.handleError<ITStandards[]>('GET System Related Technologies', []))
+    );
+  };
+  public updateSystemTech(id: number, data: {}): Observable<System[]> {
+    if (this.globals.jwtToken) {
+      var httpOptions = this.setHeaderOpts();
+    } else {
+      catchError(this.handleError<System[]>('UPDATE System-IT Standards - No Authentication Token', []))
+    }
+
+    return this.http.put<System[]>(this.sysUrl + '/updateTech/' + String(id), data, httpOptions).pipe(
+      catchError(this.handleError<System[]>('UPDATE System-IT Standards', []))
+    );
+  };
+
+
+  //// TIME
+  public getTIME(): Observable<TIME[]> {
+    return this.http.get<TIME[]>(this.timeUrl).pipe(
+      catchError(this.handleError<TIME[]>('GET TIME', []))
+    );
+  };
+  public getOneSysTIME(id: number): Observable<TIME[]> {
+    return this.http.get<TIME[]>(this.timeUrl + '/get/' + String(id)).pipe(
+      catchError(this.handleError<TIME[]>('GET TIME by ID', []))
     );
   };
 
@@ -317,11 +292,11 @@ export class ApiService {
       catchError(this.handleError<ITStandards[]>('GET Latest IT Standard', []))
     );
   };
-  public getITStandApps(id: number): Observable<Application[]> {
-    return this.http.get<Application[]>(this.investUrl + '/get/' + String(id) + '/applications').pipe(
-      catchError(this.handleError<Application[]>('GET IT Standard Related Applications', []))
-    );
-  };
+  // public getITStandApps(id: number): Observable<Application[]> {
+  //   return this.http.get<Application[]>(this.investUrl + '/get/' + String(id) + '/applications').pipe(
+  //     catchError(this.handleError<Application[]>('GET IT Standard Related Applications', []))
+  //   );
+  // };
   public getITStand508Statuses(): Observable<ITStandard508Status[]> {
     return this.http.get<ITStandard508Status[]>(this.techUrl + '/508_compliance').pipe(
       catchError(this.handleError<ITStandard508Status[]>('GET IT Standard 508 Compliance Statuses', []))
@@ -388,35 +363,6 @@ export class ApiService {
         'Authorization': this.globals.jwtToken
       })
     };
-  };
-
-
-  // GEAR Manager Request
-  gearMngrRequest(requestData: {}) {
-    return this.http.post(this.mngrReqURL, requestData).pipe(
-        catchError(this.handleError('CREATE GEAR Manager Request', []))
-      );
-  };
-
-  // Send Email for GEAR Manager Request
-  mngrRequestSendEmail(requestData: {}) {
-    return this.http.post(this.mngrReqURL + '/manager_request_email', requestData).pipe(
-        catchError(this.handleError('SEND GEAR Manager Request Email', []))
-      );
-  };
-
-  // Accept GEAR Manager Request
-  mngrRequestAccept(requestData: {}) {
-    return this.http.put(this.mngrReqURL + '/accept', requestData).pipe(
-        catchError(this.handleError('ACCEPT GEAR Manager Request Email', []))
-      );
-  };
-
-  // Reject GEAR Manager Request
-  mngrRequestReject(requestData: {}) {
-    return this.http.put(this.mngrReqURL + '/reject', requestData).pipe(
-        catchError(this.handleError('REJECT GEAR Manager Request Email', []))
-      );
   };
 
 }

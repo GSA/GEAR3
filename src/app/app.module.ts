@@ -23,13 +23,11 @@ import { AboutComponent } from './views/main/about/about.component';
 import { AssistTechComponent } from './views/main/assist-tech/assist-tech.component';
 import { FormsGlossaryComponent } from './views/main/forms-glossary/forms-glossary.component';
 import { GearManagerComponent } from './views/main/gear-manager/gear-manager.component';
-import { ManagerRequestComponent } from './views/main/manager-request/manager-request.component';
 
 //// Strategy
 import { FrameworkComponent } from './views/strategy/framework/framework.component';
 import { InvestmentsComponent } from './views/strategy/investments/investments.component';
 import { InvestmentsModalComponent } from './components/modals/investments-modal/investments-modal.component';
-import { InvestmentManagerComponent } from './components/manager-modals/investment-manager/investment-manager.component';
 
 //// Enterprise
 import { CapabilitiesModelComponent } from './views/enterprise/capabilities-model/capabilities-model.component';
@@ -40,14 +38,13 @@ import { OrganizationsChartComponent } from './views/enterprise/organizations-ch
 import { OrganizationsComponent } from './views/enterprise/organizations/organizations.component';
 import { OrganizationsModalComponent } from './components/modals/organizations-modal/organizations-modal.component';
 
-//// Applications
-import { SystemsComponent } from './views/applications/systems/systems.component';
+//// Systems
+import { SystemsComponent } from './views/systems/systems/systems.component';
 import { SystemsModalComponent } from './components/modals/systems-modal/systems-modal.component';
 import { SystemManagerComponent } from './components/manager-modals/system-manager/system-manager.component';
-import { AppsComponent } from './views/applications/apps/apps.component';
-import { ApplicationsModalComponent } from './components/modals/applications-modal/applications-modal.component';
-import { TimeComponent } from './views/applications/time/time.component';
-import { AppManagerComponent } from './components/manager-modals/app-manager/app-manager.component';
+import { TimeComponent } from './views/systems/time/time.component';
+import { RecordsManagementComponent } from './views/systems/records-management/records-management.component';
+import { RecordsModalComponent } from './components/modals/records-modal/records-modal.component';
 
 //// Security
 import { FismaComponent } from './views/security/fisma/fisma.component';
@@ -60,7 +57,8 @@ import { ItStandardsModalComponent } from './components/modals/it-standards-moda
 import { ItStandardManagerComponent } from './components/manager-modals/it-standard-manager/it-standard-manager.component';
 
 //// Enterprise Architecture
-import { GInvoicingComponent } from './views/architecture/g-invoicing/g-invoicing.component';
+import { ArtifactsComponent } from './views/architecture/artifacts/artifacts.component';
+import { GearModelComponent } from './views/architecture/gear-model/gear-model.component';
 
 // Global Variables
 import { Globals } from './common/globals';
@@ -78,12 +76,10 @@ import { Globals } from './common/globals';
     AssistTechComponent,
     FormsGlossaryComponent,
     GearManagerComponent,
-    ManagerRequestComponent,
 
     FrameworkComponent,
     InvestmentsComponent,
     InvestmentsModalComponent,
-    InvestmentManagerComponent,
 
     CapabilitiesModelComponent,
     CapabilitiesComponent,
@@ -95,11 +91,10 @@ import { Globals } from './common/globals';
     SystemsComponent,
     SystemsModalComponent,
     SystemManagerComponent,
-    AppsComponent,
-    ApplicationsModalComponent,
     TimeComponent,
-    AppManagerComponent,
-
+    RecordsManagementComponent,
+    RecordsModalComponent,
+    
     FismaComponent,
     FismaModalComponent,
     FismaPocsComponent,
@@ -107,8 +102,9 @@ import { Globals } from './common/globals';
     ItStandardsComponent,
     ItStandardsModalComponent,
     ItStandardManagerComponent,
-    
-    GInvoicingComponent
+  
+    ArtifactsComponent,
+    GearModelComponent
   ],
   imports: [
     AppRoutingModule,

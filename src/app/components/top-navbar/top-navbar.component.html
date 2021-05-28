@@ -1,18 +1,14 @@
 <nav class="navbar navbar-expand-xl2 fixed-top navbar-dark bg-primary shadow-lg p-1" id="topNav" role="navigation">
 
-  <!-- Side Navbar Toggle -->
-  <button (click)="sharedService.toggleClick()" class="navbar-toggler mr-2 rotate" id="sidebarToggle"
-    aria-label="Toggle Side Navigation"><i class="fas fa-angle-right"></i>
-  </button>
-
-  <a class="navbar-brand" routerLink="/">
+  <a class="navbar-brand ml-3" routerLink="/">
     <i class="fas fa-cogs fa-lg"></i>
     GSA EA Analytics & Reporting (GEAR)
     <span [innerHTML]="envName"></span>
     <span *ngIf="sharedService.loggedIn" style="color: red"> **GEAR Manager Mode**</span>
   </a>
-  <button id="topNavToggle"(click)="toggleTopNavBttn()" class="navbar-toggler rotate" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle Top Navigation">
+  <button id="topNavToggle" (click)="toggleTopNavBttn()" class="navbar-toggler rotate" type="button"
+    data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+    aria-expanded="false" aria-label="Toggle Top Navigation">
     <i class="fas fa-angle-down"></i>
   </button>
 
@@ -23,7 +19,8 @@
         <input type="search" name="globalSearchField" [(ngModel)]="searchKW" class="form-control mr-2"
           placeholder="Global Search" (keydown)="globalSearch($event)">
         <!-- Weird bug where if button isn't here, hitting enter will not execute and update search table at first. Leaving button here -->
-        <button name="globalSearchBttn" aria-label="Global Search Button" class="btn btn-light form-control" (click)="globalSearch($event)">
+        <button name="globalSearchBttn" aria-label="Global Search Button" class="btn btn-light form-control"
+          (click)="globalSearch($event)" hidden>
           <i class="fas fa-search fa-lg"></i>
         </button>
       </form>
@@ -49,7 +46,7 @@
 
       <div class="dropdown-divider"></div>
 
-      <li class="dropdown-header">Regarding Everything Else</li>
+      <li class="dropdown-header">Regarding GEAR/EA</li>
       <a class="dropdown-item" href="https://mail.google.com/mail/?view=cm&fs=1&to=ea_planning@gsa.gov" target="_blank"
         rel="noopener">EA Team</a>
   </div>

@@ -11,9 +11,9 @@ interface ClickOptions {
   data: any,
   update: string,
   detailModalID: string,
-  appsTableID: string,
+  sysTableID: string,
   exportName: string,
-  apiString: string
+  systemApiStr: string
 };
 
 @Injectable({
@@ -21,10 +21,10 @@ interface ClickOptions {
 })
 export class TableService {
 
-  // Apps Related Table Options
-  public relAppsTableOptions: {} = this.createTableOptions({
+  // Systems Related Table Options
+  public relSysTableOptions: {} = this.createTableOptions({
     advancedSearch: true,
-    idTable: 'RelAppsTable',
+    idTable: 'RelSysTable',
     classes: "table-hover table-light clickable-table",
     showColumns: true,
     showExport: true,
@@ -38,145 +38,51 @@ export class TableService {
     url: null
   });
 
-  // Apps Related Table Columns
-  public relAppsColumnDefs: any[] = [{
+  // Systems Related Table Columns
+  public relSysColumnDefs: any[] = [{
     field: 'Name',
-    title: 'Business Application Name',
+    title: 'System Name',
     sortable: true
-  }, {
-    field: 'DisplayName',
-    title: 'Display Name',
-    sortable: true,
-    visible: false
   }, {
     field: 'Description',
     title: 'Description',
     sortable: true,
+    visible: false,
     class: 'text-truncate'
   }, {
-    field: 'SSOShort',
-    title: 'SSO',
+    field: 'SystemLevel',
+    title: 'System Level',
     sortable: true
-  }, {
-    field: 'SSO',
-    title: 'SSO (Long)',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'Owner',
-    title: 'Owning Org (Long)',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'OwnerShort',
-    title: 'Owning Org (Short)',
-    sortable: true
-  }, {
-    field: 'Support',
-    title: 'Supporting Org (Long)',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'SupportShort',
-    title: 'Supportingr Org (Short)',
-    sortable: true
-  }, {
-    field: 'BusPOC',
-    title: 'Business POC',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'TechPOC',
-    title: 'Technical POC',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'ParentSystem',
-    title: 'Parent System',
-    sortable: true,
-    visible: false,
-    formatter: this.sharedService.systemFormatter
-  }, {
-    field: 'FY14',
-    title: 'FY14',
-    visible: false,
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'FY15',
-    title: 'FY15',
-    visible: false,
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'FY16',
-    title: 'FY16',
-    visible: false,
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'FY17',
-    title: 'FY17',
-    visible: false,
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'FY18',
-    title: 'FY18',
-    visible: false,
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'FY19',
-    title: 'FY19',
-    visible: false,
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'FY20',
-    title: 'FY20',
-    visible: false,
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'FY21',
-    title: 'FY21',
-    visible: false,
-    formatter: this.sharedService.FYFormatter
-  }, {
-    field: 'Notes',
-    title: 'Notes',
-    visible: false
-  }, {
-    field: 'HostingProvider',
-    title: 'Hosting Provider',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'Cloud',
-    title: 'Cloud',
-    sortable: true,
-    visible: false
   }, {
     field: 'Status',
     title: 'Status',
     sortable: true
   }, {
-    field: 'ProdYear',
-    title: 'Production Year',
+    field: 'orgName',
+    title: 'Responsible Org',
+    sortable: true
+  }, {
+    field: 'CSP',
+    title: 'Cloud Server Provider',
     sortable: true,
     visible: false
   }, {
-    field: 'FISMASystem',
-    title: 'FISMA System',
-    sortable: true,
-    visible: false,
-    formatter: this.sharedService.systemFormatter
-  },
-  // {
-  //   field: 'HelpDesk',
-  //   title: 'Help Desk',
-  //   sortable: true,
-  //   visible: false
-  // },
-  {
-    field: 'OMBUID',
-    title: 'Application ID',
+    field: 'CloudYN',
+    title: 'Cloud Hosted?',
     sortable: true,
     visible: false
+  }, {
+    field: 'AO',
+    title: 'Authorizing Official',
+    sortable: true,
+    visible: false,
+    formatter: this.sharedService.pocStringNameFormatter
+  }, {
+    field: 'SO',
+    title: 'System Owner',
+    sortable: true,
+    visible: false,
+    formatter: this.sharedService.pocStringNameFormatter
   }];
 
 
@@ -189,11 +95,12 @@ export class TableService {
   public createTableOptions(definitions: any): {} {
     return {
       advancedSearch: definitions.advancedSearch,
-      idTable: 'advSearch' + definitions.idTable,
+      idTable: definitions.idTable,
       buttonsClass: 'info',
       cache: true,
       classes: "table table-bordered table-striped " + definitions.classes,
       showColumns: definitions.showColumns,
+      showColumnsSearch: definitions.showColumns,
 
       showExport: definitions.showExport,
       exportDataType: 'all',
@@ -208,8 +115,10 @@ export class TableService {
       showPaginationSwitch: definitions.pagination,
 
       search: definitions.search,
-      showSearchClearButton: definitions.search,
       searchOnEnterKey: definitions.search,
+      showSearchButton: definitions.search,
+      showSearchClearButton: definitions.search,
+      visibleSearch: definitions.search,
 
       sortName: definitions.sortName,
       sortOrder: definitions.sortOrder,
@@ -223,12 +132,6 @@ export class TableService {
     // console.log("Global Search Table Clicked Row: ", data);  // Debug
 
     switch (searchData.GEAR_Type) {
-      case 'Application':
-        this.apiService.getOneApp(searchData.Id).subscribe((apiData: any[]) => {
-          this.appsTableClick(apiData[0]);
-        });
-        break;
-
       case 'Capability':
         this.apiService.getOneCap(searchData.Id).subscribe((apiData: any[]) => {
           this.capsTableClick(apiData[0]);
@@ -247,7 +150,7 @@ export class TableService {
         });
         break;
 
-      case 'System':
+      case 'System':  // TODO: need to change when gear_ods is fully transitioned
         this.apiService.getOneSys(searchData.Id).subscribe((apiData: any[]) => {
           this.systemsTableClick(apiData[0]);
         });
@@ -265,49 +168,14 @@ export class TableService {
   }
 
 
-  public appsTableClick(data: any) {
-    var options: ClickOptions = {
-      data: data,
-      update: 'application',
-      detailModalID: '#appDetail',
-      appsTableID: null,
-      exportName: null,
-      apiString: null
-    };
-    this.clickMethod(options);
-
-    // Update TIME report table in detail modal with clicked application
-    $('#appTimeTable').bootstrapTable('refreshOptions', {
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt(data.Name + '-TIME_Report')
-      },
-      data: [data]
-    });
-
-    // Update related capabilities table in detail modal with clicked application
-    this.updateRelatedTable(
-      '#appCapTable',
-      data.Name + '-Related_Capabilities',
-      '/api/applications/get/' + String(data.ID) + '/capabilities'
-    );
-
-    // Update related technologies table in detail modal with clicked application
-    this.updateRelatedTable(
-      '#appTechTable',
-      data.Name + '-Related_Technologies',
-      '/api/applications/get/' + String(data.ID) + '/technologies'
-    );
-  }
-
-
   public capsTableClick(data: any) {
     var options: ClickOptions = {
       data: data,
       update: 'capability',
       detailModalID: '#capabilityDetail',
-      appsTableID: '#capSupportAppsTable',
-      exportName: data.Name + '-Supporting_Apps',
-      apiString: '/api/capabilities/get/'
+      sysTableID: '#capSupportSysTable',
+      exportName: data.Name + '-Supporting_Systems',
+      systemApiStr: '/api/capabilities/get/'
     };
     this.clickMethod(options);
   }
@@ -318,9 +186,9 @@ export class TableService {
       data: data,
       update: 'fisma',
       detailModalID: '#fismaDetail',
-      appsTableID: '#fismaCertAppsTable',
-      exportName: data.Name + '-Certified_Apps',
-      apiString: '/api/fisma/get/'
+      sysTableID: '#fismaCertSysTable',
+      exportName: data.Name + '-Certified_Systems',
+      systemApiStr: '/api/fisma/get/'
     };
     this.clickMethod(options);
   }
@@ -331,9 +199,9 @@ export class TableService {
       data: data,
       update: 'investment',
       detailModalID: '#investDetail',
-      appsTableID: '#investRelAppsTable',
-      exportName: data.Name + '-Related_Apps',
-      apiString: '/api/investments/get/'
+      sysTableID: '#investRelSysTable',
+      exportName: data.Name + '-Related_Systems',
+      systemApiStr: '/api/investments/get/'
     };
     this.clickMethod(options);
   }
@@ -344,9 +212,9 @@ export class TableService {
       data: data,
       update: 'it-standard',
       detailModalID: '#itStandardDetail',
-      appsTableID: '#itRelAppsTable',
-      exportName: data.Name + '-Related_Apps',
-      apiString: '/api/it_standards/get/'
+      sysTableID: '#itRelSysTable',
+      exportName: data.Name + '-Related_Systems',
+      systemApiStr: '/api/it_standards/get/'
     };
     this.clickMethod(options);
   }
@@ -357,9 +225,29 @@ export class TableService {
       data: data,
       update: 'organization',
       detailModalID: '#organizationDetail',
-      appsTableID: '#orgAppsTable',
-      exportName: data.Name + '-Organizational_Apps',
-      apiString: '/api/organizations/get/'
+      sysTableID: '#orgSysTable',
+      exportName: data.Name + '-Organizational_Systems',
+      systemApiStr: null  // Should revert back when can use IDs again for actual org table instead of names
+    };
+    this.clickMethod(options);
+
+    // Update related capabilities table in detail modal with clicked system
+    this.updateRelatedTable(
+      '#orgSysTable',
+      data.Name + '-Related_Systems',
+      '/api/organizations/get/' + data.Name + '/systems'
+    );
+  }
+
+
+  public recordsTableClick(data: any) {
+    var options: ClickOptions = {
+      data: data,
+      update: 'record',
+      detailModalID: '#recordDetail',
+      sysTableID: null, // '#recordsSysTable',
+      exportName: null, // data.RecordTitle + '-Related_Systems',
+      systemApiStr: null // '/api/records/get/'
     };
     this.clickMethod(options);
   }
@@ -370,11 +258,38 @@ export class TableService {
       data: data,
       update: 'system',
       detailModalID: '#systemDetail',
-      appsTableID: '#childAppsTable',
-      exportName: data.Name + '-Child_Apps',
-      apiString: '/api/parentsystems/get/'
+      sysTableID: '#SubSysTable',
+      exportName: data.Name + '-SubSystems',
+      systemApiStr: '/api/systems/get/'
     };
     this.clickMethod(options);
+
+    this.apiService.getOneSysTIME(data['ID']).subscribe((TIMEdata: any[]) => {
+      var timeAPIdata = TIMEdata[0];
+
+    // Update TIME report table in detail modal with clicked system
+      $('#sysTimeTable').bootstrapTable('refreshOptions', {
+        exportOptions: {
+          fileName: this.sharedService.fileNameFmt(timeAPIdata['System Name'] + '-TIME_Report')
+        },
+        data: [timeAPIdata]
+      });
+    });
+
+
+    // Update related capabilities table in detail modal with clicked system
+    this.updateRelatedTable(
+      '#systemCapTable',
+      data.Name + '-Related_Capabilities',
+      '/api/systems/get/' + String(data.ID) + '/capabilities'
+    );
+
+    // Update related technologies table in detail modal with clicked system
+    this.updateRelatedTable(
+      '#systemTechTable',
+      data.Name + '-Related_Technologies',
+      '/api/systems/get/' + String(data.ID) + '/technologies'
+    );
   }
 
   private clickMethod(options: ClickOptions) {
@@ -383,22 +298,111 @@ export class TableService {
     this.modalService.updateDetails(options.data, options.update);
     $(options.detailModalID).modal('show');
 
-    // Update related apps table in detail modal with clicked data
-    if (options.appsTableID) {
+    // Update related systems table in detail modal with clicked data
+    if (options.sysTableID) {
       this.updateRelatedTable(
-        options.appsTableID,
+        options.sysTableID,
         options.exportName,
-        options.apiString + String(options.data.ID) + '/applications'
+        options.systemApiStr + String(options.data.ID) + '/systems'
       );
     };
   }
 
-  private updateRelatedTable(tableID: string, exportName: string, apiString: string) {
+  private updateRelatedTable(tableID: string, exportName: string, systemApiStr: string) {
     $(tableID).bootstrapTable('refreshOptions', {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(exportName)
       },
-      url: this.sharedService.internalURLFmt(apiString)
+      url: this.sharedService.internalURLFmt(systemApiStr)
+    });
+  }
+
+  // Have to render artifacts info separately as anchor links dont work with ngFor
+  public renderRelArtifacts(artifactString: string) {
+    let artifacts = this.splitRelArtifacts(artifactString)
+    let html = ''
+
+    artifacts.forEach(artifact => {
+      html += `<li>
+        <a href="${artifact.link}" target="_blank" rel="noopener">${artifact.name}</a>
+      </li>`;
+    });
+    return html;
+  }
+
+  private splitRelArtifacts(artifacts) {
+    var artObjs = [];
+
+    if (artifacts) {
+      var arts = artifacts.split(';');
+      for (let index = 0; index < arts.length; index++) {
+        let tmpObj: any = {};
+        const art = arts[index];
+        let pieces = art.split(',');
+
+        tmpObj.name = pieces[0];
+        tmpObj.link = pieces[1];
+
+        artObjs.push(tmpObj);
+      }
+    }
+
+    return artObjs;
+  }
+
+  // Have to render POC info separately as anchor links dont work with ngFor
+  renderPOCInfoTable(pocString: string) {
+    let POCs = this.splitPOCInfo(pocString)
+    let html = ''
+
+    POCs.forEach(p => {
+      html += `<tr>
+        <td>${p.type}</td>
+        <td>${p.name}</td>`
+
+      if (p.phone) html += `<td>
+          ${p.phone.substring(0, 4)}-${p.phone.substring(4, 7)}-${p.phone.substring(7, 11)}
+        </td>`
+      else html += "<td>None</td>"
+
+      if (p.email) html += `<td>
+        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=${p.email}" target="_blank" rel="noopener">
+          ${p.email}</a>
+      </td>`
+      else html += "<td>None</td>"
+
+      html += "</tr>"
+    });
+    return html;
+  }
+
+  private splitPOCInfo(p) {
+    let poc = null;
+    let poc1 = null;
+    let pocs = [];
+
+    if (p) {
+      poc1 = p.split('*');
+      poc1 = poc1.map((poctype, tmpObj) => {
+        poctype = poctype.split(':');
+        poc = poctype[1].split('; ');
+        for (var i = 0; i < poc.length; i++) {
+          var pieces = poc[i].split(',');
+          tmpObj = null;
+          if (pieces[0] !== '')
+            tmpObj = {
+              type: poctype[0],
+              name: pieces[0],
+              phone: pieces[2],
+              email: pieces[1],
+            };
+          pocs.push(tmpObj);
+        }
+      })
+    }
+
+    return pocs.filter(function (el) {
+      return el != null;
     });
   }
 

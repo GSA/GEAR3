@@ -28,18 +28,18 @@ export class CapabilitiesModalComponent implements OnInit {
   ngOnInit(): void {
     this.modalService.currentCap.subscribe(capability => this.capability = capability);
 
-    $('#capSupportAppsTable').bootstrapTable($.extend(this.tableService.relAppsTableOptions, {
-      columns: this.tableService.relAppsColumnDefs,
+    $('#capSupportSysTable').bootstrapTable($.extend(this.tableService.relSysTableOptions, {
+      columns: this.tableService.relSysColumnDefs,
       data: [],
     }));
 
-    // Method to handle click events on the Supported Apps table
+    // Method to handle click events on the Supported Systems table
     $(document).ready(
-      $('#capSupportAppsTable').on('click-row.bs.table', function (e, row) {
+      $('#capSupportSysTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#capabilityDetail').modal('hide');
 
-        this.tableService.appsTableClick(row);
+        this.tableService.systemsTableClick(row);
       }.bind(this)
       ));
 

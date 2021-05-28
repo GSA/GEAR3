@@ -68,6 +68,7 @@ export class CapabilitiesModelComponent implements OnInit {
             name: cap.Name,
             description: cap.Description,
             referenceNum: cap.ReferenceNum,
+            level: cap.Level,
             children: []
           }
         };
@@ -81,6 +82,7 @@ export class CapabilitiesModelComponent implements OnInit {
             name: cap.Name,
             description: cap.Description,
             referenceNum: cap.ReferenceNum,
+            level: cap.Level,
             children: []
           });
         }
@@ -96,6 +98,7 @@ export class CapabilitiesModelComponent implements OnInit {
               name: cap.Name,
               description: cap.Description,
               referenceNum: cap.ReferenceNum,
+              level: cap.Level,
               children: []
             });
           }
@@ -114,6 +117,7 @@ export class CapabilitiesModelComponent implements OnInit {
                 name: cap.Name,
                 description: cap.Description,
                 referenceNum: cap.ReferenceNum,
+                level: cap.Level,
                 children: []
               });
             }
@@ -134,6 +138,7 @@ export class CapabilitiesModelComponent implements OnInit {
                   name: cap.Name,
                   description: cap.Description,
                   referenceNum: cap.ReferenceNum,
+                  level: cap.Level,
                   children: []
                 });
               }
@@ -156,6 +161,7 @@ export class CapabilitiesModelComponent implements OnInit {
                     name: cap.Name,
                     description: cap.Description,
                     referenceNum: cap.ReferenceNum,
+                    level: cap.Level,
                     children: []
                   });
                 }
@@ -352,8 +358,10 @@ export class CapabilitiesModelComponent implements OnInit {
           .style("opacity", "1");
         d3.select("#capName")
           .text(d.data.name + " (" + d.data.referenceNum + ")");  // Set Name
+        d3.select("#capLevel")
+          .text(d.data.level)  // Set Capability Level
         d3.select("#capDetailbody")
-          .text(d.data.description);  // Set Description
+          .text(d.data.description);  // Set Body with description
 
         d3.select("#busCapGraph")
           .style("transform", "translateY(13%)");

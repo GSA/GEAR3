@@ -9,8 +9,8 @@ router.route('/')
 router.route('/get/:id')
   .get(itsCtrl.findOne);
 
-router.route('/get/:id/applications/')
-  .get(itsCtrl.findApplications);
+router.route('/get/:id/systems/')
+  .get(itsCtrl.findSystems);
 
 router.route('/latest')
   .get(itsCtrl.findLatest);

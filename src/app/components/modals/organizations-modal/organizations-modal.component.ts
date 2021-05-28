@@ -28,18 +28,18 @@ export class OrganizationsModalComponent implements OnInit {
   ngOnInit(): void {
     this.modalService.currentOrg.subscribe(organization => this.org = organization);
 
-    $('#orgAppsTable').bootstrapTable($.extend(this.tableService.relAppsTableOptions, {
-      columns: this.tableService.relAppsColumnDefs,
+    $('#orgSysTable').bootstrapTable($.extend(this.tableService.relSysTableOptions, {
+      columns: this.tableService.relSysColumnDefs,
       data: [],
     }));
 
-    // Method to handle click events on the Organizational Apps table
+    // Method to handle click events on the Organizational Systems table
     $(document).ready(
-      $('#orgAppsTable').on('click-row.bs.table', function (e, row) {
+      $('#orgSysTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#organizationDetail').modal('hide');
 
-        this.tableService.appsTableClick(row);
+        this.tableService.systemsTableClick(row);
       }.bind(this)
       ));
 

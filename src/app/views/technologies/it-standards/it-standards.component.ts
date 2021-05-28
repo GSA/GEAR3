@@ -106,7 +106,9 @@ export class ItStandardsComponent implements OnInit {
     // Enable popovers
     $(function () {
       $('[data-toggle="popover"]').popover()
-    })
+    });
+
+    this.sharedService.setJWTonLogIn();
 
     $('#itStandardsTable').bootstrapTable($.extend(this.tableOptions, {
       columns: this.columnDefs,

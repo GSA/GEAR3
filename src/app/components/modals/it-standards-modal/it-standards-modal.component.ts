@@ -28,18 +28,18 @@ export class ItStandardsModalComponent implements OnInit {
   ngOnInit(): void {
     this.modalService.currentITStand.subscribe(itStandard => this.itStandard = itStandard);
 
-    $('#itRelAppsTable').bootstrapTable($.extend(this.tableService.relAppsTableOptions, {
-      columns: this.tableService.relAppsColumnDefs,
+    $('#itRelSysTable').bootstrapTable($.extend(this.tableService.relSysTableOptions, {
+      columns: this.tableService.relSysColumnDefs,
       data: [],
     }));
 
-    // Method to handle click events on the Related Apps table
+    // Method to handle click events on the Related Systems table
     $(document).ready(
-      $('#itStandRelatedApps').on('click-row.bs.table', function (e, row) {
+      $('#itRelSysTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#itStandardDetail').modal('hide');
 
-        this.tableService.appsTableClick(row);
+        this.tableService.systemsTableClick(row);
       }.bind(this)
       ));
 

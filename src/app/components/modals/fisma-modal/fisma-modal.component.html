@@ -17,9 +17,9 @@
           <li class="nav-item">
             <a class="nav-link active" data-toggle="tab" href="#fismaOverview">
               Overview</a></li>
-          <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#certifiedApps">
-              Certified Business Applications</a></li>
+          <!-- <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#subSystemsTab">
+              Certified Business Applications</a></li> -->
         </ul>
 
         <!-- Tab Panes -->
@@ -72,7 +72,7 @@
                         <i class="fa fa-file-alt"></i>Related Artifacts
                       </td>
                       <td>
-                        <ul [innerHTML]="renderRelArtifacts(fisma.RelatedArtifacts)"></ul>
+                        <ul [innerHTML]="tableService.renderRelArtifacts(fisma.RelatedArtifacts)"></ul>
                       </td>
                     </tr>
                     <tr>
@@ -119,7 +119,7 @@
                     </tr>
                   </thead>
 
-                  <tbody [innerHTML]="renderFismaPOCInfo(fisma.POC)"></tbody>
+                  <tbody [innerHTML]="tableService.renderPOCInfoTable(fisma.POC)"></tbody>
                 </table>
               </div>
               <!-- End ofPoints of Contact Table -->
@@ -127,10 +127,10 @@
           </div>
           <!-- End of Overview Tab Pane -->
 
-          <div class="tab-pane fade" id="certifiedApps">
-            <table id="fismaCertAppsTable"></table>
-          </div>
-          <!-- End of Certified Apps Tab Pane -->
+          <!-- <div class="tab-pane fade" id="subSystemsTab">
+            <table id="fismaSubSysTable"></table>
+          </div> -->
+          <!-- End of Sub-Systems Tab Pane -->
 
         </div>
         <!-- End of Tab Panes -->

@@ -19,26 +19,23 @@ declare var $: any;
 export class SystemManagerComponent implements OnInit {
 
   systemForm: FormGroup = new FormGroup({
-    sysStatus: new FormControl(null, [Validators.required]),
-    sysName: new FormControl(null, [Validators.required]),
-    sysDesc: new FormControl(),
-    sysSSO: new FormControl(null, [Validators.required]),
-    sysLink: new FormControl(),
-    sysChildApps: new FormControl(),
-    deselectedApps: new FormControl()
+    relatedCaps: new FormControl(),
+    relatedTech: new FormControl()
   });
 
   system = <any>{};
-  createBool: any;
-  SSOs: any[] = [];
 
-  appPool: any[] = [];
-  childApps: any[] = [];
-  notSelected: any[] = [];
-  selectedIDs: Set<any> = new Set();
-  deSelectedIDs: Set<any> = new Set();
+  busCapPool: any[] = [];
+  capRelations: any[] = [];
+  notSelectedCaps: any[] = [];
+  selectedCapsIDs: Set<any> = new Set();
 
-  parentCertify: boolean = false;
+  techPool: any[] = [];
+  techRelations: any[] = [];
+  notSelectedTech: any[] = [];
+  selectedTechIDs: Set<any> = new Set();
+
+  systemCertify: boolean = false;
 
   constructor(
     private apiService: ApiService,
@@ -54,185 +51,166 @@ export class SystemManagerComponent implements OnInit {
     }
 
     this.modalService.currentSys.subscribe(system => this.system = system);
-    this.modalService.currentCreate.subscribe(createBool => this.createBool = createBool);
 
-    // Populate SSOs
-    this.apiService.getOrganizations().subscribe((data: any[]) => {
-      data.forEach(element => {
-        if (element.Parent === 'Office of the Administrator (A)') this.SSOs.push(element);
-      });
-    });
-
-    // If the manager modal is exited, clear the create flag
+    // If the manager modal is exited, clear the certify flag
     $('#systemManager').on('hidden.bs.modal', function (e) {
-      this.modalService.updateRecordCreation(false);
-      this.parentCertify = false;
+      this.systemCertify = false;
       $("#systemMngrTabs li:first-child a").tab('show');
     }.bind(this));
   }
 
   setFormDefaults(): void {
-    if (this.createBool) {
-      this.systemForm.reset();  // Clear any erroneous values if any
-      this.systemForm.patchValue({
-        sysStatus: 'Active'
+    // Populate Related Capabilities
+    this.apiService.getSysCapabilities(this.system.ID).subscribe((data: any[]) => {
+      this.capRelations = [];
+      // Only take ID and name
+      data.forEach(element => {
+        this.capRelations.push({
+          ID: element.ID,
+          Name: element.Name,
+          ReferenceNum: element.ReferenceNum
+        })
       });
-
-      // Populate All Apps Pool
-      this.childApps = [];
-      this.apiService.getApplications().toPromise()
-        .then((data: any[]) => {
-          this.appPool = [];
-          // Only take ID and name
-          data.forEach(element => {
-            this.appPool.push({
+    });
+  
+    // Populate Business Capabilities Pool minus related ones
+    this.apiService.getCapabilities().toPromise()
+      .then((data: any[]) => {
+        this.busCapPool = [];
+        // Only take ID, name, and reference num
+        data.forEach(element => {
+          // Filter to only 2 bottom levels (not including root capability)
+          if ((element.Level === 'BRM Business Service' || element.Level === 'GSA Business Capability') && element.ReferenceNum !== '-') {
+            this.busCapPool.push({
               ID: element.ID,
               Name: element.Name,
-              ParentSystemID: element.ParentSystemID
+              ReferenceNum: element.ReferenceNum
             })
-          });
-          this.selectedIDs = new Set();
-          this.notSelected = this.appPool;
+          };
         });
-    } else {
-      // Adjust Status for rendering
-      if (this.system.Status === 'Active') var status = true;
-      else var status = false;
+        this.selectedCapsIDs = new Set();
+        this.notSelectedCaps = this.busCapPool;
 
-      // Populate Child Apps
-      this.apiService.getChildApps(this.system.ID).subscribe((data: any[]) => {
-        this.childApps = [];
+        // Take related caps IDs and remove them from the busCapPool list
+        // to include only capabilities that are not related to this system
+        this.selectedCapsIDs = new Set(this.capRelations.map(({ ID }) => ID));
+        this.notSelectedCaps = this.busCapPool.filter(({ ID }) => !this.selectedCapsIDs.has(ID));
+
+        // Set default values for form with current values after resolving related caps
+        this.systemForm.patchValue({
+          relatedCaps: this.selectedCapsIDs
+        });
+    });
+
+
+    // Populate Related IT Standards
+    this.apiService.getSysITStandards(this.system.ID).subscribe((data: any[]) => {
+      this.techRelations = [];
+      // Only take ID and name
+      data.forEach(element => {
+        this.techRelations.push({
+          ID: element.ID,
+          Name: element.Name,
+          Category: element.Category
+        })
+      });
+    });
+
+    // Populate IT Standards Pool minus related ones
+    this.apiService.getITStandards().toPromise()
+      .then((data: any[]) => {
+        this.techPool = [];
         // Only take ID and name
         data.forEach(element => {
-          this.childApps.push({
+          this.techPool.push({
             ID: element.ID,
-            Name: element.Name
+            Name: element.Name,
+            Category: element.Category
           })
         });
+        this.selectedTechIDs = new Set();
+        this.notSelectedTech = this.techPool;
+
+        // Take related tech IDs and remove them from the techPool list
+        // to include only IT Standards that are not related to this system
+        this.selectedTechIDs = new Set(this.techRelations.map(({ ID }) => ID));
+        this.notSelectedTech = this.techPool.filter(({ ID }) => !this.selectedTechIDs.has(ID));
+
+        // Set default values for form with current values after resolving related caps
+        this.systemForm.patchValue({
+          relatedTech: this.selectedTechIDs
+        });
+    });
+  
+  };
+
+  poolSelectedMove(elementID, selectedIDs, movement) {
+    if (movement === 'select') {
+      // Add to selected list
+      let vals = $(elementID).val().map(x => +x)
+      vals.forEach(val => {
+        selectedIDs.add(val);
       });
-
-      // Populate All Apps Pool minus related apps
-      this.apiService.getApplications().toPromise()
-        .then((data: any[]) => {
-          this.appPool = [];
-          // Only take ID and name
-          data.forEach(element => {
-            this.appPool.push({
-              ID: element.ID,
-              Name: element.Name,
-              ParentSystemID: element.ParentSystemID
-            })
-          });
-
-          // Take related apps IDs and remove them from the appPool list
-          // to include only apps that don't have parent systems yet
-          this.selectedIDs = new Set(this.childApps.map(({ ID }) => ID));
-          this.notSelected = this.appPool.filter(({ ID }) => !this.selectedIDs.has(ID))
-            .filter(({ ParentSystemID }) => !ParentSystemID);
-
-          // Set default values for form with current values after resolving related apps
-          this.systemForm.patchValue({
-            sysStatus: status,
-            sysName: this.system.Name,
-            sysDesc: this.system.Description,
-            sysSSO: this.sharedService.findInArrayID(this.SSOs, 'Name', this.system.SSO),
-            sysLink: this.system.URL,
-            sysChildApps: this.selectedIDs
-          });
-        }),
-        (error) => {
-          console.log("Getting applications rejected with " + JSON.stringify(error));
-        };
+    } else if (movement === 'deselect') {
+      let vals = $(elementID).val().map(x => +x)
+      vals.forEach(val => {
+        selectedIDs.delete(val);
+      });
     }
-  };
-
-  poolToSelected() {
-    // Add to selected list
-    let poolVals = $('#sysChildAppsPool').val().map(x => +x)
-    poolVals.forEach(val => {
-      this.deSelectedIDs.delete(val);
-      this.selectedIDs.add(val);
-    });
-    this.updateSelectLists();
-  };
-
-  selectedToPool() {
-    // Delete from selected list
-    let selectedVals = $('#sysChildAppsSelect').val().map(x => +x)
-    selectedVals.forEach(val => {
-      this.deSelectedIDs.add(val);
-      this.selectedIDs.delete(val);
-    });
     this.updateSelectLists();
   };
 
   updateSelectLists() {
-    // Update app pool and child apps lists of options
-    this.notSelected = this.appPool.filter(({ ID }) => !this.selectedIDs.has(ID));
-    this.childApps = this.appPool.filter(({ ID }) => this.selectedIDs.has(ID));
+    // Update all pools and selected lists
+    this.notSelectedCaps = this.busCapPool.filter(({ ID }) => !this.selectedCapsIDs.has(ID));
+    this.capRelations = this.busCapPool.filter(({ ID }) => this.selectedCapsIDs.has(ID));
+    
+    this.notSelectedTech = this.techPool.filter(({ ID }) => !this.selectedTechIDs.has(ID));
+    this.techRelations = this.techPool.filter(({ ID }) => this.selectedTechIDs.has(ID));
 
     // Update form value with selected IDs
     this.systemForm.patchValue({
-      sysChildApps: this.selectedIDs,
-      deselectedApps: this.deSelectedIDs
+      relatedCaps: this.selectedCapsIDs,
+      relatedTech: this.selectedTechIDs
     });
   };
 
   submitForm() {
-    console.log("Form: ", this.systemForm);  // Debug
+    // console.log("Form: ", this.systemForm);  // Debug
 
     if (this.systemForm.valid) {
-      // Adjust Status for saving
-      if (this.systemForm.value.sysStatus) this.systemForm.value.sysStatus = 'Active';
-      else this.systemForm.value.sysStatus = 'Retired';
-
-      // Add username to payload
-      this.systemForm.value.auditUser = this.globals.authUser;
-
       // Change de/selected IDs to array from set
-      if (this.systemForm.value.sysChildApps) {
-        this.systemForm.value.sysChildApps = Array.from(this.systemForm.value.sysChildApps);
+      if (this.systemForm.value.relatedCaps) {
+        this.systemForm.value.relatedCaps = Array.from(this.systemForm.value.relatedCaps);
       };
-      if (this.systemForm.value.deselectedApps) {
-        this.systemForm.value.deselectedApps = Array.from(this.systemForm.value.deselectedApps);
+      if (this.systemForm.value.relatedTech) {
+        this.systemForm.value.relatedTech = Array.from(this.systemForm.value.relatedTech);
       };
 
-      console.log("Form values before committing to database: ", this.systemForm.value); // Debug
+      // console.log("Form values before committing to database: ", this.systemForm.value); // Debug
 
       // Send data to database
-      if (this.createBool) {
-        this.apiService.createParentSys(this.systemForm.value).toPromise()
-          .then(res => {
-            // Grab new data from database
-            this.apiService.getLatestSys().toPromise()
-              .then((data: any) => {
-                // Update with related apps after getting new ID
-                this.apiService.updateParentSys(data[0].ID, this.systemForm.value).toPromise()
-                  .then(res => {
-                    this.systemDetailRefresh(data[0]);
-                  }),
-                  (error) => {
-                    console.log("Update after creating parent system rejected with " + JSON.stringify(error));
-                  };
-              }),
-              (error) => {
-                console.log("Getting latest parent system rejected with " + JSON.stringify(error));
-              };
-          });
-      } else {
-        this.apiService.updateParentSys(this.system.ID, this.systemForm.value).toPromise()
-          .then(res => {
-            // Grab new data from database
-            this.apiService.getOneSys(this.system.ID).toPromise()
-              .then(data => { this.systemDetailRefresh(data[0]) }),
-              (error) => {
-                console.log("GET Updated Parent System rejected with " + JSON.stringify(error));
-              };
-          });
-      }
+      this.apiService.updateSystemCaps(this.system.ID, this.systemForm.value).toPromise()
+        .then(res => {
+          // Grab new data from database
+          this.apiService.getOneSys(this.system.ID).toPromise()
+            .then(data => { this.systemDetailRefresh(data[0]) }),
+            (error) => {
+              console.log("GET Updated System rejected with " + JSON.stringify(error));
+            };
+        });
 
-      this.modalService.updateRecordCreation(false);  // Reset Creation flag
+      this.apiService.updateSystemTech(this.system.ID, this.systemForm.value).toPromise()
+        .then(res => {
+          // Grab new data from database
+          this.apiService.getOneSys(this.system.ID).toPromise()
+            .then(data => { this.systemDetailRefresh(data[0]) }),
+            (error) => {
+              console.log("GET Updated System rejected with " + JSON.stringify(error));
+            };
+        });
     }
+
   };
 
   systemDetailRefresh(data: any) {

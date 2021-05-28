@@ -38,7 +38,7 @@ export class GlobalSearchComponent implements OnInit {
 
   // Global Search Table Columns
   columnDefs: any[] = [{
-    field: 'Keyname',
+    field: 'Name',
     title: 'Item Name',
     sortable: true
   },

@@ -69,7 +69,7 @@ export class SidenavComponent implements OnInit {
     console.info('Sidebar closing');
     $('#strategyDropdown').collapse('hide');
     $('#enterpriseDropdown').collapse('hide');
-    $('#businessAppDropdown').collapse('hide');
+    $('#systemsDropdown').collapse('hide');
     $('#securityDropdown').collapse('hide');
     $('#technologiesDropdown').collapse('hide');
     $('#eaDropdown').collapse('hide');
@@ -87,11 +87,6 @@ export class SidenavComponent implements OnInit {
 
   _onBackdropClicked(): void {
     console.info('Backdrop clicked');
-  }
-
-  logoutManager() {
-    localStorage.removeItem('jwt');
-    $('#loggedOut').toast('show');
   }
 
 }

@@ -9,6 +9,8 @@
 /pocs/GSA_Pocs.csv
 .ipynb_checkpoints
 .vscode
+# Google API auth token
+token.json
 
 #--------------------------
 

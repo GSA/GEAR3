@@ -16,7 +16,6 @@ declare var $: any;
 export class FismaPocsComponent implements OnInit {
 
   row: Object = <any>{};
-  rissoTable: boolean = false;
 
   constructor(
     private apiService: ApiService,
@@ -49,13 +48,19 @@ export class FismaPocsComponent implements OnInit {
     title: 'System Name',
     sortable: true
   }, {
-    field: 'orgName',
-    title: 'Responsible SSO',
-    sortable: true
-  }, {
     field: 'FIPS_Impact_Level',
     title: 'FIPS Impact Level',
     sortable: true
+  }, {
+    field: 'Authorizing Official',
+    title: 'Authorizing Official',
+    sortable: true,
+    formatter: this.pocFormatter
+  }, {
+    field: 'System Owner',
+    title: 'System Owner',
+    sortable: true,
+    formatter: this.pocFormatter
   }, {
     field: 'ISSM',
     title: 'ISSM',
@@ -67,52 +72,10 @@ export class FismaPocsComponent implements OnInit {
     sortable: true,
     formatter: this.pocFormatter
   }, {
-    field: 'System Owner',
-    title: 'System Owner',
+    field: 'orgName',
+    title: 'Responsible SSO',
     sortable: true,
-    formatter: this.pocFormatter
-  }, {
-    field: 'Authorizing Official',
-    title: 'Authorizing Official',
-    sortable: true,
-    visible: false,
-    formatter: this.pocFormatter
-  }, {
-    field: 'CO',
-    title: 'Contracting Officer',
-    sortable: true,
-    visible: false,
-    formatter: this.pocFormatter
-  }, {
-    field: 'COR',
-    title: 'Contracting Officer Rep.',
-    sortable: true,
-    visible: false,
-    formatter: this.pocFormatter
-  }];
-
-  // RISSO POCs Table Columns
-  rissoColumnDefs: any[] = [{
-    field: 'Name',
-    title: 'Name',
-    sortable: true
-  }, {
-    field: 'Organization',
-    title: 'Organization',
-    sortable: true
-  }, {
-    field: 'RISSO_Region',
-    title: 'Region',
-    sortable: true
-  }, {
-    field: 'Phone',
-    title: 'Phone',
-    sortable: true
-  }, {
-    field: 'Email',
-    title: 'Email',
-    sortable: true,
-    formatter: this.emailFormatter
+    visible: false
   }];
 
   ngOnInit(): void {
@@ -123,11 +86,6 @@ export class FismaPocsComponent implements OnInit {
 
     $('#fismaPOCTable').bootstrapTable($.extend(this.pocTableOptions, {
       columns: this.pocColumnDefs,
-      data: [],
-    }));
-
-    $('#rissoPOCTable').bootstrapTable($.extend(this.pocTableOptions, {
-      columns: this.rissoColumnDefs,
       data: [],
     }));
 
@@ -171,67 +129,53 @@ export class FismaPocsComponent implements OnInit {
         // Only continue for POC type matching the desired field
         if (poctype[0] === field) {
           poc = poctype[1].split('; ');
+          
+          // Return if there are no POCs in this field
+          if (poc[0] === '') {
+            return 'None Provided';
+          } else {
+            // For every POC
+            for (var i = 0; i < poc.length; i++) {
+              // Split the different components
+              let pieces = poc[i].split(',');
 
-          // For every POC
-          for (var i = 0; i < poc.length; i++) {
-            // Split the different components
-            let pieces = poc[i].split(',');
+              let tmpObj = {
+                name: pieces[0],
+                phone: pieces[2],
+                email: pieces[1],
+              };
 
-            let tmpObj = {
-              name: pieces[0],
-              phone: pieces[2],
-              email: pieces[1],
-            };
+              let linkStr = null;
 
-            let linkStr = null;
+              // Only continue if name exists
+              if (tmpObj.name) {
+                linkStr = tmpObj.name + '<br>';
 
-            // Only continue if name exists
-            if (tmpObj.name) {
-              linkStr = tmpObj.name + '<br>';
+                // Format email into a HTML link
+                if (tmpObj.email) {
+                  linkStr += `<a href="https://mail.google.com/mail/?view=cm&fs=1&to=${tmpObj.email}"
+                    target="_blank" rel="noopener">${tmpObj.email}</a><br>`
+                }
 
-              // Format email into a HTML link
-              if (tmpObj.email) {
-                linkStr += `<a href="https://mail.google.com/mail/?view=cm&fs=1&to=${tmpObj.email}"
-                  target="_blank" rel="noopener">${tmpObj.email}</a><br>`
+                // Format number into phone format
+                if (tmpObj.phone) {
+                  linkStr += tmpObj.phone.substring(0, 4) + '-' +
+                    tmpObj.phone.substring(4, 7) + '-' +
+                    tmpObj.phone.substring(7, 11) + '<br>'
+                }
+
+                pocs.push(linkStr);
               }
-
-              // Format number into phone format
-              if (tmpObj.phone) {
-                linkStr += tmpObj.phone.substring(0, 4) + '-' +
-                  tmpObj.phone.substring(4, 7) + '-' +
-                  tmpObj.phone.substring(7, 11) + '<br>'
-              }
-
-              pocs.push(linkStr);
             }
           }
         }
       }
+      // Block each POC's info with breaks
+      return pocs.join('<br><br>');
+    } else {
+      return 'None Provided';
     }
 
-    // Block each POC's info with breaks
-    return pocs.join('<br><br>');
-  }
-
-  emailFormatter(value, row, index, field) {
-    return `<a href="https://mail.google.com/mail/?view=cm&fs=1&to=${value}" target="_blank" rel="noopener">${value}</a>`
-  }
-
-  // Update table to RISSO POCs
-  showRISSOs() {
-    this.rissoTable = true;  // Expose main table button after RISSO button is pressed
-
-    // Change columns, filename, and url
-    $('#rissoPOCTable').bootstrapTable('refreshOptions', {
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt('GSA_RISSO_POCs')
-      },
-      url: this.apiService.pocUrl + '/risso'
-    });
-  }
-
-  backToMainFisma() {
-    this.rissoTable = false;  // Hide main button
   }
 
 }

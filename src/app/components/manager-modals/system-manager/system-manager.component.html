@@ -1,4 +1,4 @@
-<!-- Parent System Manager Modal -->
+<!-- System Manager Modal -->
 <div class="modal fade" id="systemManager" tabindex="-1" role="dialog" aria-labelledby="systemMngrTitle"
   aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
@@ -6,9 +6,7 @@
       <div class="modal-header bg-danger">
         <h5 class="modal-title text-white" id="systemMngrTitle">
           <i class="fas fa-money-bill-wave"></i>
-          <span *ngIf="system.Name; else elseSystemName"> {{ system.Name }} - <span
-              class="text-primary">**EDITING**</span></span>
-          <ng-template #elseSystemName> Create New Parent System</ng-template>
+          <span *ngIf="system.Name"> {{ system.Name }} - <span class="text-primary">**EDITING**</span></span>
         </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
@@ -19,95 +17,75 @@
         <!-- Tabs -->
         <ul id="systemMngrTabs" class="nav nav-tabs">
           <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#systemMngrOverview">
-              Overview<span class="text-danger">*</span></a></li>
+            <a class="nav-link active" data-toggle="tab" href="#systemMngrCap">
+              Business Capability Mapping</a>
+          </li>
           <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#systemMngrChildApps">
-              Child Business Applications</a></li>
+            <a class="nav-link" data-toggle="tab" href="#systemMngrITStand">
+              IT Standards Mapping</a>
+          </li>
         </ul>
 
         <!-- Tab Panes -->
         <form [formGroup]="systemForm" class="container">
           <div class="tab-content mt-3">
-            <div class="tab-pane fade show active" id="systemMngrOverview">
-
-              <div class="row align-items-center">
-                <div class="form-group col-2 text-center mb-0">
-                  <label for="sysStatus">Status</label>
-                  <div id="sysStatus" class="custom-control custom-switch">
-                    <input type="checkbox" class="custom-control-input" id="sysStatusSwitch"
-                      formControlName="sysStatus" [checked]="system.Status === 'Active'">
-                    <label class="custom-control-label" for="sysStatusSwitch">Active</label>
-                  </div>
-                </div>
-
-                <div class="form-group col mb-0">
-                  <label for="sysName">Parent System Name<span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(systemForm, 'sysName')}" id="sysName"
-                    formControlName="sysName" placeholder="Enter a Name" [value]="system.Name" required>
-                  <div *ngIf="modalService.fieldValidCheck(systemForm, 'sysName')">
-                    <div class="invalid-feedback" *ngIf="systemForm.controls['sysName'].errors.required">
-                      Parent System Name Required
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="sysDesc">Description</label>
-                <textarea type="text" class="form-control" id="sysDesc" formControlName="sysDesc"
-                  placeholder="Enter a Description" rows="2" [value]="system.Description"></textarea>
-              </div>
-
-              <div class="form-group">
-                <label for="sysSSO">Owning SSO<span class="text-danger">*</span></label>
-                <select class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(systemForm, 'sysSSO')}" id="sysSSO"
-                  formControlName="sysSSO" required>
-                  <option *ngFor="let sso of SSOs" [value]="sso.ID" [selected]="sso.Name === system.SSO">
-                    {{ sso.Name }}</option>
-                </select>
-                <div *ngIf="modalService.fieldValidCheck(systemForm, 'sysSSO')">
-                  <div class="invalid-feedback" *ngIf="systemForm.controls['sysName'].errors.required">
-                    Parent System Owning SSO Required
-                  </div>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="sysLink">Link to Parent System</label>
-                <input type="text" class="form-control" id="sysLink" formControlName="sysLink"
-                  placeholder="Enter Link to System, if Available" [value]="system.URL">
-              </div>
-
-            </div>
-            <!-- End of Overview Pane -->
-
-            <div class="tab-pane fade" id="systemMngrChildApps">
-              <h4>Child Business Applications</h4>
+            <div class="tab-pane fade show active" id="systemMngrCap">
+              <h4>Related Business Capabilities</h4>
               <div class="row">
                 <div class="form-group col-5">
-                  <label for="sysChildAppsPool">Business Applications Pool</label>
-                  <select class="form-control" id="sysChildAppsPool" size="27" multiple>
-                    <option *ngFor="let app of notSelected" [value]="app.ID">{{ app.Name }}</option>
+                  <label for="busCapPool">Business Capabilities Pool</label>
+                  <select class="form-control" id="busCapPool" size="27" multiple>
+                    <option *ngFor="let cap of notSelectedCaps" [value]="cap.ID">{{ cap.Name }} ({{ cap.ReferenceNum }})</option>
                   </select>
                 </div>
 
                 <div class="col-2 my-auto">
-                  <button class="btn btn-success w-100 mb-5" (click)="poolToSelected()">Move to<br>Selected <i
-                      class="fas fa-arrow-right  fa-lg"></i></button>
-                  <button class="btn btn-warning w-100" (click)="selectedToPool()"><i
+                  <button class="btn btn-success w-100 mb-5"
+                    (click)="poolSelectedMove('#busCapPool', selectedCapsIDs, 'select')">Move
+                    to<br>Selected <i class="fas fa-arrow-right fa-lg"></i></button>
+                  <button class="btn btn-warning w-100"
+                    (click)="poolSelectedMove('#busCapSelect', selectedCapsIDs, 'deselect')"><i
                       class="fas fa-arrow-left fa-lg"></i> Move to<br>Un-Selected</button>
                 </div>
 
                 <div class="form-group col-5">
-                  <label for="sysChildAppsSelect">Selected</label>
-                  <select class="form-control" id="sysChildAppsSelect" size="27" multiple>
-                    <option *ngFor="let app of childApps" [value]="app.ID">{{ app.Name }}</option>
+                  <label for="busCapSelect">Selected</label>
+                  <select class="form-control" id="busCapSelect" size="27" multiple>
+                    <option *ngFor="let cap of capRelations" [value]="cap.ID">{{ cap.Name }} ({{ cap.ReferenceNum }})</option>
                   </select>
                 </div>
               </div>
             </div>
-            <!-- End of Child Business Apps Pane -->
+            <!-- End of Business Capabilities Mapping Pane -->
+
+            <div class="tab-pane fade" id="systemMngrITStand">
+              <h4>IT Standards</h4>
+              <div class="row">
+                <div class="form-group col-5">
+                  <label for="sysITStandPool">IT Standards Pool</label>
+                  <select class="form-control" id="sysITStandPool" size="27" multiple>
+                    <option *ngFor="let tech of notSelectedTech" [value]="tech.ID">{{ tech.Name }} ({{ tech.Category }})</option>
+                  </select>
+                </div>
+
+                <div class="col-2 my-auto">
+                  <button class="btn btn-success w-100 mb-5"
+                    (click)="poolSelectedMove('#sysITStandPool', selectedTechIDs, 'select')">Move
+                    to<br>Selected <i class="fas fa-arrow-right fa-lg"></i></button>
+                  <button class="btn btn-warning w-100"
+                    (click)="poolSelectedMove('#sysITStandSelect', selectedTechIDs, 'deselect')"><i
+                      class="fas fa-arrow-left fa-lg"></i> Move to<br>Un-Selected</button>
+                </div>
+
+                <div class="form-group col-5">
+                  <label for="sysITStandSelect">Selected</label>
+                  <select class="form-control" id="sysITStandSelect" size="27" multiple>
+                    <option *ngFor="let tech of techRelations" [value]="tech.ID">{{ tech.Name }} ({{ tech.Category }})</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- End of IT Standards Mapping Pane -->
 
           </div>
         </form>
@@ -115,18 +93,15 @@
 
       <div class="modal-footer">
         <div class="text-danger mr-auto">* Required</div>
-        <div [hidden]="!system.ChangeDTG" class="position-absolute center text-center">
-          Last Updated:<br>{{ system.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}
-        </div>
         <div class="col-md-3 pl-0 ml-0 custom-control custom-checkbox text-right">
-          <input type="checkbox" class="custom-control-input" id="parentCertifyCheck" [(ngModel)]="parentCertify">
-          <label class="custom-control-label" for="parentCertifyCheck">
+          <input type="checkbox" class="custom-control-input" id="systemCertifyCheck" [(ngModel)]="systemCertify">
+          <label class="custom-control-label" for="systemCertifyCheck">
             <span class="text-danger">*</span>
             I certify all data is correct and up-to-date
           </label>
         </div>
         <button type="submit" form="systemForm" class="btn btn-info text-white" (click)="submitForm()"
-          [disabled]="!(parentCertify && systemForm.valid)">Save</button>
+          [disabled]="!(systemCertify && systemForm.valid)">Save</button>
       </div>
 
     </div>

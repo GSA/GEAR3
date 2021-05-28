@@ -9,7 +9,7 @@ router.route('/')
 router.route('/get/:id')
   .get(orgCtrl.findOne);
 
-router.route('/get/:id/applications/')
-  .get(orgCtrl.findApplications);
+router.route('/get/:name/systems/')
+  .get(orgCtrl.findSystems);
 
 module.exports = router;
