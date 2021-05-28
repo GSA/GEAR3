@@ -27,6 +27,7 @@ import { Organization } from '@api/models/organizations.model';
 
 import { POC } from '@api/models/pocs.model';
 
+import { Record } from '@api/models/records.model'
 import { System } from '@api/models/systems.model';
 import { TIME } from '@api/models/systime.model';
 
@@ -58,6 +59,9 @@ export class ApiService {
 
   // POCs
   pocUrl: string = this.sharedService.internalURLFmt('/api/pocs');
+
+  // Records Management
+  recordsUrl: string = this.sharedService.internalURLFmt('/api/records');
 
   // Systems
   sysUrl: string = this.sharedService.internalURLFmt('/api/systems');
@@ -192,6 +196,19 @@ export class ApiService {
   public getPOC(id: number): Observable<POC[]> {
     return this.http.get<POC[]>(this.pocUrl + '/get/' + String(id)).pipe(
       catchError(this.handleError<POC[]>('GET POC', []))
+    );
+  };
+
+
+  //// Records Management
+  public getRecords(): Observable<Record[]> {
+    return this.http.get<Record[]>(this.recordsUrl).pipe(
+      catchError(this.handleError<Record[]>('GET Records', []))
+    );
+  };
+  public getOneRecord(id: number): Observable<Record[]> {
+    return this.http.get<Record[]>(this.recordsUrl + '/get/' + String(id)).pipe(
+      catchError(this.handleError<Record[]>('GET Record', []))
     );
   };
 

@@ -22,11 +22,15 @@ export class ModalsService {
   // System
   private sysSource = new Subject();
   currentSys = this.sysSource.asObservable();
-
+  
   // Data Flow
   private dataFlowSource = new Subject();
   currentDataFlow = this.dataFlowSource.asObservable();
-
+  
+  // Records Management
+  private recordSource = new Subject();
+  currentRecord = this.recordSource.asObservable();
+  
   // FiSMA System
   private fismaSysSource = new Subject();
   currentFismaSys = this.fismaSysSource.asObservable();
@@ -52,6 +56,8 @@ export class ModalsService {
       this.sysSource.next(row);
     } else if (component == 'data-flow') {
       this.dataFlowSource.next(row);
+    } else if (component == 'record') {
+      this.recordSource.next(row);
     } else if (component == 'fisma') {
       this.fismaSysSource.next(row);
     } else if (component == 'it-standard') {

@@ -203,7 +203,11 @@ exports.googleMain = (response, method, sheetID, dataRange, key = null) => {
 
       // Filter down to desired ID
       var singleID = data.filter(function (d) {
-        return d.Id === key;
+        if (d.Id) {
+          return d.Id === key;
+        } else if (d.Rec_ID) {
+          return d.Rec_ID === key;
+        }
       });
 
       sendResponse(response, singleID);

@@ -240,6 +240,19 @@ export class TableService {
   }
 
 
+  public recordsTableClick(data: any) {
+    var options: ClickOptions = {
+      data: data,
+      update: 'record',
+      detailModalID: '#recordDetail',
+      sysTableID: null, // '#recordsSysTable',
+      exportName: null, // data.RecordTitle + '-Related_Systems',
+      systemApiStr: null // '/api/records/get/'
+    };
+    this.clickMethod(options);
+  }
+
+
   public systemsTableClick(data: any) {
     var options: ClickOptions = {
       data: data,

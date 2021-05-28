@@ -22,6 +22,7 @@ import { OrganizationsComponent } from './views/enterprise/organizations/organiz
 // Systems
 import { SystemsComponent } from './views/systems/systems/systems.component';
 import { TimeComponent } from './views/systems/time/time.component';
+import { RecordsManagementComponent } from './views/systems/records-management/records-management.component';
 
 // Security
 import { FismaComponent } from './views/security/fisma/fisma.component';
@@ -55,6 +56,8 @@ const routes: Routes = [
   { path: 'systems', component: SystemsComponent },
   { path: 'systems/:sysID', component: SystemsComponent },
   { path: 'systems_TIME', component: TimeComponent },
+  { path: 'records_mgmt', component: RecordsManagementComponent },
+  { path: 'records_mgmt/:recID', component: RecordsManagementComponent },
 
   { path: 'FISMA', component: FismaComponent },
   { path: 'FISMA/:fismaID', component: FismaComponent },
