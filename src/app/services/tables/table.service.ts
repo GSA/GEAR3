@@ -227,9 +227,16 @@ export class TableService {
       detailModalID: '#organizationDetail',
       sysTableID: '#orgSysTable',
       exportName: data.Name + '-Organizational_Systems',
-      apiString: '/api/organizations/get/'
+      apiString: null  // Should revert back when can use IDs again for actual org table instead of names
     };
     this.clickMethod(options);
+
+    // Update related capabilities table in detail modal with clicked system
+    this.updateRelatedTable(
+      '#orgSysTable',
+      data.Name + '-Related_Systems',
+      '/api/organizations/get/' + data.Name + '/systems'
+    );
   }
 
 

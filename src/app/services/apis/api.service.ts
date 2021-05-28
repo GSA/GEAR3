@@ -176,6 +176,11 @@ export class ApiService {
       catchError(this.handleError<Organization[]>('GET Organization', []))
     );
   };
+  public getOrgSys(name: string): Observable<System[]> {
+    return this.http.get<System[]>(this.orgUrl + '/get/' + name + '/systems').pipe(
+      catchError(this.handleError<System[]>('GET Systems for Organization', []))
+    );
+  };
 
 
   //// POCs

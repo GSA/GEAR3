@@ -347,8 +347,8 @@ export class OrganizationsChartComponent implements OnInit {
         d3.select("#orgName")
           .text(d.data.name);  // Set Name
 
-        d3.select("#orgChart")
-          .style("transform", "translateY(13%)");
+        // d3.select("#orgChart")
+        //   .style("transform", "translateY(13%)");   // Keeping this hear in case the detail pane gets larger and needs to move
 
         // console.log("Hovered Node: ", d);  // Debug
         selectedOrg = d;  // Save selected node for links

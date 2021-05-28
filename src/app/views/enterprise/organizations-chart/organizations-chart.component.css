@@ -19,9 +19,10 @@
   border: 3px solid black;
 }
 
-#orgChart {
+/* Keeping this here in case the detail pane gets larger and needs to move */
+/* #orgChart {
   z-index: 1;
   -moz-transition: all 0.3s linear;
   -webkit-transition: all 0.3s linear;
   transition: all 0.3s linear;
-}
+} */
