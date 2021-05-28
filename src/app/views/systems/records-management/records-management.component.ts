@@ -130,7 +130,6 @@ export class RecordsManagementComponent implements OnInit {
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe(params => {
       var detailrecID = params['recID'];
-      console.log(detailrecID);
       if (detailrecID) {
         this.apiService.getOneRecord(detailrecID).subscribe((data: any[]) => {
           this.tableService.recordsTableClick(data[0]);
