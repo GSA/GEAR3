@@ -13,7 +13,7 @@ interface ClickOptions {
   detailModalID: string,
   sysTableID: string,
   exportName: string,
-  apiString: string
+  systemApiStr: string
 };
 
 @Injectable({
@@ -175,7 +175,7 @@ export class TableService {
       detailModalID: '#capabilityDetail',
       sysTableID: '#capSupportSysTable',
       exportName: data.Name + '-Supporting_Systems',
-      apiString: '/api/capabilities/get/'
+      systemApiStr: '/api/capabilities/get/'
     };
     this.clickMethod(options);
   }
@@ -188,7 +188,7 @@ export class TableService {
       detailModalID: '#fismaDetail',
       sysTableID: '#fismaCertSysTable',
       exportName: data.Name + '-Certified_Systems',
-      apiString: '/api/fisma/get/'
+      systemApiStr: '/api/fisma/get/'
     };
     this.clickMethod(options);
   }
@@ -201,7 +201,7 @@ export class TableService {
       detailModalID: '#investDetail',
       sysTableID: '#investRelSysTable',
       exportName: data.Name + '-Related_Systems',
-      apiString: '/api/investments/get/'
+      systemApiStr: '/api/investments/get/'
     };
     this.clickMethod(options);
   }
@@ -214,7 +214,7 @@ export class TableService {
       detailModalID: '#itStandardDetail',
       sysTableID: '#itRelSysTable',
       exportName: data.Name + '-Related_Systems',
-      apiString: '/api/it_standards/get/'
+      systemApiStr: '/api/it_standards/get/'
     };
     this.clickMethod(options);
   }
@@ -227,7 +227,7 @@ export class TableService {
       detailModalID: '#organizationDetail',
       sysTableID: '#orgSysTable',
       exportName: data.Name + '-Organizational_Systems',
-      apiString: null  // Should revert back when can use IDs again for actual org table instead of names
+      systemApiStr: null  // Should revert back when can use IDs again for actual org table instead of names
     };
     this.clickMethod(options);
 
@@ -247,7 +247,7 @@ export class TableService {
       detailModalID: '#systemDetail',
       sysTableID: '#SubSysTable',
       exportName: data.Name + '-SubSystems',
-      apiString: '/api/systems/get/'
+      systemApiStr: '/api/systems/get/'
     };
     this.clickMethod(options);
 
@@ -290,17 +290,17 @@ export class TableService {
       this.updateRelatedTable(
         options.sysTableID,
         options.exportName,
-        options.apiString + String(options.data.ID) + '/systems'
+        options.systemApiStr + String(options.data.ID) + '/systems'
       );
     };
   }
 
-  private updateRelatedTable(tableID: string, exportName: string, apiString: string) {
+  private updateRelatedTable(tableID: string, exportName: string, systemApiStr: string) {
     $(tableID).bootstrapTable('refreshOptions', {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(exportName)
       },
-      url: this.sharedService.internalURLFmt(apiString)
+      url: this.sharedService.internalURLFmt(systemApiStr)
     });
   }
 
