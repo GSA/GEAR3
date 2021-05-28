@@ -19,9 +19,9 @@ exports.findOne = (req, res) => {
   res = ctrl.sendQuery_cowboy(query, 'individual organization', res);
 };
 
-exports.findApplications = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_applications.sql')).toString() +
-    ` AND owner.Id = ${req.params.id} GROUP BY app.Id;`;
+exports.findSystems = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
+    ` WHERE systems.\`ex:Responsible_Org\` LIKE '%${req.params.name}%' GROUP BY systems.\`ex:GEAR_ID\`;`;
 
-  res = ctrl.sendQuery_cowboy(query, 'applications for organization', res);
+  res = ctrl.sendQuery_cowboy(query, 'systems for organization', res);
 };
