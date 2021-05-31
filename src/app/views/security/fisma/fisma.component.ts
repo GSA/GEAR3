@@ -121,8 +121,7 @@ export class FismaComponent implements OnInit {
         this.tableService.fismaTableClick(row);
 
         // Change URL to include ID
-        var normalizedURL = this.sharedService.coreURL(this.router.url);
-        this.location.replaceState(`${normalizedURL}/${row.ID}`);
+        this.sharedService.addIDtoURL(row);
       }.bind(this)
       ));
 

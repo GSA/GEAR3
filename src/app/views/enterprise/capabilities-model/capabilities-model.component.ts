@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 import { ApiService } from "@services/apis/api.service";
 import { ModalsService } from '@services/modals/modals.service';
@@ -42,6 +43,7 @@ export class CapabilitiesModelComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private modalService: ModalsService,
+    private route: ActivatedRoute,
     private sharedService: SharedService,
     private tableService: TableService) { }
 
@@ -52,6 +54,16 @@ export class CapabilitiesModelComponent implements OnInit {
     })
 
     this.getCapData();
+
+    // Method to open details modal when referenced directly via URL
+    this.route.params.subscribe(params => {
+      var detailCapID = params['capID'];
+      if (detailCapID) {
+        this.apiService.getOneCap(detailCapID).subscribe((data: any[]) => {
+          this.tableService.capsTableClick(data[0]);
+        });
+      };
+    });
   }
 
   // Create Capability Model Graph
@@ -462,6 +474,9 @@ export class CapabilitiesModelComponent implements OnInit {
       this.apiService.getOneCap(selectedCap).subscribe((data: any[]) => {
         var capData = data[0];
         this.tableService.capsTableClick(capData);
+
+        // Change URL to include ID
+        this.sharedService.addIDtoURL(capData);
       });
     }.bind(this));
 

@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
@@ -41,6 +42,7 @@ export class OrganizationsChartComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private modalService: ModalsService,
+    private route: ActivatedRoute,
     private sharedService: SharedService,
     private tableService: TableService) { }
 
@@ -51,6 +53,16 @@ export class OrganizationsChartComponent implements OnInit {
     })
 
     this.getOrgData();
+
+    // Method to open details modal when referenced directly via URL
+    this.route.params.subscribe(params => {
+      var detailOrgID = params['orgID'];
+      if (detailOrgID) {
+        this.apiService.getOneOrg(detailOrgID).subscribe((data: any[]) => {
+          this.tableService.orgsTableClick(data[0]);
+        });
+      };
+    }); 
   }
 
   // Create Org Chart
@@ -446,6 +458,9 @@ export class OrganizationsChartComponent implements OnInit {
       this.apiService.getOneOrg(selectedOrg.data.identity).subscribe((data: any[]) => {
         var orgData = data[0];
         this.tableService.orgsTableClick(orgData);
+
+        // Change URL to include ID
+        this.sharedService.addIDtoURL(orgData);
       });
     }.bind(this));
 

@@ -218,4 +218,10 @@ export class SharedService {
     return match[0];
   };
 
+  //Change URL to include ID when clicking on a table item
+  public addIDtoURL(row) {
+    var normalizedURL = this.coreURL(this.router.url);
+    this.location.replaceState(`${normalizedURL}/${row.ID}`);
+  };
+
 }

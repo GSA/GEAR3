@@ -47,21 +47,25 @@ const routes: Routes = [
   { path: 'investments/:investID', component: InvestmentsComponent },
 
   { path: 'capabilities_model', component: CapabilitiesModelComponent },
+  { path: 'capabilities_model/:capID', component: CapabilitiesModelComponent },
   { path: 'capabilities', component: CapabilitiesComponent },
   { path: 'capabilities/:capID', component: CapabilitiesComponent },
   { path: 'org_chart', component: OrganizationsChartComponent },
+  { path: 'org_chart/:orgID', component: OrganizationsChartComponent },
   { path: 'organizations', component: OrganizationsComponent },
   { path: 'organizations/:orgID', component: OrganizationsComponent },
 
   { path: 'systems', component: SystemsComponent },
   { path: 'systems/:sysID', component: SystemsComponent },
   { path: 'systems_TIME', component: TimeComponent },
+  { path: 'systems_TIME/:sysID', component: TimeComponent },
   { path: 'records_mgmt', component: RecordsManagementComponent },
   { path: 'records_mgmt/:recID', component: RecordsManagementComponent },
 
   { path: 'FISMA', component: FismaComponent },
   { path: 'FISMA/:fismaID', component: FismaComponent },
   { path: 'FISMA_POC', component: FismaPocsComponent },
+  { path: 'FISMA_POC/:fismaID', component: FismaPocsComponent },
 
   { path: 'it_standards', component: ItStandardsComponent },
   { path: 'it_standards/:standardID', component: ItStandardsComponent },

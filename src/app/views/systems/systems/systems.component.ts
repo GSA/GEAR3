@@ -184,8 +184,7 @@ export class SystemsComponent implements OnInit {
         // this.getInterfaceData(row.ID);
 
         // Change URL to include ID
-        var normalizedURL = this.sharedService.coreURL(this.router.url);
-        this.location.replaceState(`${normalizedURL}/${row.ID}`);
+        this.sharedService.addIDtoURL(row);
       }.bind(this)
       ));
 

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
@@ -19,8 +20,9 @@ export class FismaPocsComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    private sharedService: SharedService,
     private modalService: ModalsService,
+    private route: ActivatedRoute,
+    private sharedService: SharedService,
     private tableService: TableService) {
     this.modalService.currentFismaSys.subscribe(row => this.row = row);
   }
@@ -92,21 +94,22 @@ export class FismaPocsComponent implements OnInit {
     // Method to handle click events on the FISMA POC table
     $(document).ready(
       $('#fismaPOCTable').on('dbl-click-row.bs.table', function (e, row) {
-        // console.log("FISMA POC Table Clicked Row: ", row);  // Debug
+        this.tableService.fismaTableClick(row);
 
-        this.modalService.updateDetails(row, 'fisma');
-        $('#fismaDetail').modal('show');
-
-        // Update related apps table in detail modal with clicked FISMA POC
-        $('#fismaCertAppsTable').bootstrapTable('refreshOptions', {
-          exportOptions: {
-            fileName: this.sharedService.fileNameFmt(row.Name + '-Certified_Apps')
-          },
-          url: this.apiService.fismaUrl + '/get/' + String(row.ID) + '/applications'
-        })
-
+        // Change URL to include ID
+        this.sharedService.addIDtoURL(row);
       }.bind(this)
       ));
+
+      // Method to open details modal when referenced directly via URL
+      this.route.params.subscribe(params => {
+        var detailFismaID = params['fismaID'];
+        if (detailFismaID) {
+          this.apiService.getOneFISMASys(detailFismaID).subscribe((data: any[]) => {
+            this.tableService.fismaTableClick(data[0]);
+          });
+        };
+      }); 
 
   }
 
