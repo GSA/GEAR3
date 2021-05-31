@@ -143,7 +143,7 @@ export class ItStandardsComponent implements OnInit {
     emptyITStand.Status = 'Pilot';
     this.modalService.updateRecordCreation(true);
     this.sharedService.setITStandardsForm();
-    this.modalService.updateDetails(emptyITStand, 'it-standard');
+    this.modalService.updateDetails(emptyITStand, 'it-standard', false);
     $('#itStandardsManager').modal('show');
   }
 

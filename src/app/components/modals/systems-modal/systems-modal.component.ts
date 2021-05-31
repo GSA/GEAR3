@@ -20,7 +20,7 @@ export class SystemsModalComponent implements OnInit {
 
   constructor(
     private location: Location,
-    private modalService: ModalsService,
+    public modalService: ModalsService,
     private router: Router,
     public sharedService: SharedService,
     public tableService: TableService) { }
@@ -233,17 +233,16 @@ export class SystemsModalComponent implements OnInit {
     // Revert back to overview tab when modal goes away
     $('#systemDetail').on('hidden.bs.modal', function (e) {
       $("#systemTabs li:first-child a").tab('show');
-      
+
       // Change URL back without ID after closing Modal
-      var truncatedURL = this.sharedService.coreURL(this.router.url);
-      this.location.replaceState(truncatedURL);
+      this.sharedService.removeIDfromURL();
     }.bind(this));
   }
 
   systemEdit () {
     // Hide Detail Modal before showing Manager Modal
     $('#systemDetail').modal('hide');
-    this.modalService.updateDetails(this.system, 'system');
+    this.modalService.updateDetails(this.system, 'system', false);
     this.sharedService.setSystemForm();
     $('#systemManager').modal('show');
   }

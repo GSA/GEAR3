@@ -20,10 +20,10 @@ export class ItStandardsModalComponent implements OnInit {
 
   constructor(
     private location: Location,
-    private modalService: ModalsService,
+    public modalService: ModalsService,
     private router: Router,
     public sharedService: SharedService,
-    private tableService: TableService) { }
+    public tableService: TableService) { }
 
   ngOnInit(): void {
     this.modalService.currentITStand.subscribe(itStandard => this.itStandard = itStandard);
@@ -48,15 +48,14 @@ export class ItStandardsModalComponent implements OnInit {
       $("#itStandTabs li:first-child a").tab('show');
 
       // Change URL back without ID after closing Modal
-      var truncatedURL = this.sharedService.coreURL(this.router.url);
-      this.location.replaceState(truncatedURL);
+      this.sharedService.removeIDfromURL();
     }.bind(this));
   }
 
   itStandEdit () {
     // Hide Detail Modal before showing Manager Modal
     $('#itStandardDetail').modal('hide');
-    this.modalService.updateDetails(this.itStandard, 'it-standard');
+    this.modalService.updateDetails(this.itStandard, 'it-standard', false);
     this.sharedService.setITStandardsForm();
     $('#itStandardsManager').modal('show');
   }

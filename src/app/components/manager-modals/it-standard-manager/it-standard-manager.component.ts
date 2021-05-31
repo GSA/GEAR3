@@ -255,7 +255,7 @@ export class ItStandardManagerComponent implements OnInit {
 
     // Close Manager Modal and go back to showing Detail Modal
     $('#itStandardsManager').modal('hide');
-    this.tableService.itStandTableClick(data);
+    this.tableService.itStandTableClick(data, false);
     $('#itStandardDetail').modal('show');
   }
 

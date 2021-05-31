@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
+import { Router } from '@angular/router';
+
+import { Globals } from '@common/globals';
 
 @Injectable({
   providedIn: 'root'
@@ -43,9 +46,11 @@ export class ModalsService {
   private createRecordSource = new Subject();
   currentCreate = this.createRecordSource.asObservable();
 
-  constructor() { }
+  constructor(
+    private globals: Globals,
+    private router: Router) { }
 
-  public updateDetails(row: {}, component: string) {
+  public updateDetails(row: {}, component: string, addRoute: boolean) {
     if (component == 'investment') {
       this.investSource.next(row);
     } else if (component == 'capability') {
@@ -65,6 +70,18 @@ export class ModalsService {
     } else {
       console.log("Error: Not a valid component to update details");
     }
+
+    // Add data to history of modals for routing purposes
+    if (addRoute) {
+      this.globals.modalRoutes.push({
+        component: component,
+        data: row
+      });
+      // console.log(this.globals.modalRoutes);  // Debug
+    } else {
+      // Reset Modal Routes since navigating to a new modal that we don't care about the previous ones of
+      this.globals.modalRoutes = [];
+    };
   }
 
   // For setting creation flag
@@ -100,6 +117,10 @@ export class ModalsService {
 
   public fieldValidCheck(form: FormGroup, field: string) {
     return form.controls[field].invalid;
+  }
+
+  public checkModalRoutes() {
+    return this.globals.modalRoutes.length > 1;  // Greater than one because the initial click is from the main table, not a modal table.
   }
 
 }

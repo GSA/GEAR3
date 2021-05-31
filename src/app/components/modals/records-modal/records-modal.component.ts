@@ -22,11 +22,11 @@ export class RecordsModalComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private location: Location,
-    private modalService: ModalsService,
+    public modalService: ModalsService,
     private route: ActivatedRoute,
     private router: Router,
     public sharedService: SharedService,
-    private tableService: TableService) { }
+    public tableService: TableService) { }
 
   ngOnInit(): void {
     this.modalService.currentRecord.subscribe(record => this.record = record);
@@ -36,8 +36,7 @@ export class RecordsModalComponent implements OnInit {
       $("#recordTabs li:first-child a").tab('show');
       
       // Change URL back without ID after closing Modal
-      var truncatedURL = this.sharedService.coreURL(this.router.url);
-      this.location.replaceState(truncatedURL);
+      this.sharedService.removeIDfromURL();
     }.bind(this));
   }
 

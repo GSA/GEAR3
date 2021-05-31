@@ -19,11 +19,11 @@ export class OrganizationsModalComponent implements OnInit {
   org = <any>{};
 
   constructor(
-    private modalService: ModalsService,
     private location: Location,
+    public modalService: ModalsService,
     private router: Router,
     private sharedService: SharedService,
-    private tableService: TableService) { }
+    public tableService: TableService) { }
 
   ngOnInit(): void {
     this.modalService.currentOrg.subscribe(organization => this.org = organization);
@@ -48,8 +48,7 @@ export class OrganizationsModalComponent implements OnInit {
       $("#orgTabs li:first-child a").tab('show');
 
       // Change URL back without ID after closing Modal
-      var truncatedURL = this.sharedService.coreURL(this.router.url);
-      this.location.replaceState(truncatedURL);
+      this.sharedService.removeIDfromURL();
     }.bind(this));
   }
 

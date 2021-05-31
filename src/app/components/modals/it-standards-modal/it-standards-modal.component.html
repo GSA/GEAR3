@@ -4,9 +4,14 @@
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
     <div class="modal-content">
       <div class="modal-header bg-teal">
+        <a class="mr-3 text-white" role="button" aria-label="Previous"
+          (click)="tableService.previousModalRoute('itStandardDetail')" [hidden]="!modalService.checkModalRoutes()">
+          <i class="fas fa-arrow-circle-left fa-lg fa-fw"></i>
+        </a>
         <h5 class="modal-title text-white" id="itStandTitle">
           <i class="fas fa-microchip"></i>
-          {{ itStandard.Name }}</h5>
+          {{ itStandard.Name }}
+        </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -17,10 +22,12 @@
         <ul id="itStandTabs" class="nav nav-tabs">
           <li class="nav-item">
             <a class="nav-link active" data-toggle="tab" href="#itStandOverview">
-              Overview</a></li>
+              Overview</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#itStandRelatedSys">
-              Systems Using This Standard</a></li>
+              Systems Using This Standard</a>
+          </li>
         </ul>
 
         <!-- Tab Panes -->

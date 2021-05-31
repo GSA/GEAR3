@@ -3,6 +3,10 @@
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
     <div class="modal-content">
       <div class="modal-header bg-danger">
+        <a class="mr-3 text-white" role="button" aria-label="Previous"
+          (click)="tableService.previousModalRoute('systemDetail')" [hidden]="!modalService.checkModalRoutes()">
+          <i class="fas fa-arrow-circle-left fa-lg fa-fw"></i>
+        </a>
         <h5 class="modal-title text-white" id="systemTitle">
           <i class="fas fa-desktop"></i>
           {{ system.Name }}
@@ -267,7 +271,8 @@
       <!-- End of Modal Body -->
 
       <div class="modal-footer">
-        <button  type="button" [hidden]="!sharedService.loggedIn" class="btn btn-info text-white" (click)="systemEdit()">Edit This Item</button>
+        <button type="button" [hidden]="!sharedService.loggedIn" class="btn btn-info text-white"
+          (click)="systemEdit()">Edit This Item</button>
       </div>
     </div>
   </div>

@@ -20,7 +20,7 @@ export class FismaModalComponent implements OnInit {
 
   constructor(
     private location: Location,
-    private modalService: ModalsService,
+    public modalService: ModalsService,
     private router: Router,
     private sharedService: SharedService,
     public tableService: TableService) { }
@@ -48,8 +48,7 @@ export class FismaModalComponent implements OnInit {
       $("#fismaTabs li:first-child a").tab('show');
 
       // Change URL back without ID after closing Modal
-      var truncatedURL = this.sharedService.coreURL(this.router.url);
-      this.location.replaceState(truncatedURL);
+      this.sharedService.removeIDfromURL();
     }.bind(this));
   }
 

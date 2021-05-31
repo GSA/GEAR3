@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 
+import { Globals } from '@common/globals';
+
 import { ApiService } from "@services/apis/api.service";
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
@@ -14,7 +16,8 @@ interface ClickOptions {
   detailModalID: string,
   sysTableID: string,
   exportName: string,
-  systemApiStr: string
+  systemApiStr: string,
+  addRoute: boolean
 };
 
 @Injectable({
@@ -89,6 +92,7 @@ export class TableService {
 
   constructor(
     private apiService: ApiService,
+    private globals: Globals,
     private modalService: ModalsService,
     private sharedService: SharedService) { }
 
@@ -169,7 +173,7 @@ export class TableService {
   }
 
 
-  public capsTableClick(data: any) {
+  public capsTableClick(data: any, addRoute: boolean=true) {
     var options: ClickOptions = {
       data: data,
       dataID: 'ID',
@@ -177,13 +181,14 @@ export class TableService {
       detailModalID: '#capabilityDetail',
       sysTableID: '#capSupportSysTable',
       exportName: data.Name + '-Supporting_Systems',
-      systemApiStr: '/api/capabilities/get/'
+      systemApiStr: '/api/capabilities/get/',
+      addRoute: addRoute
     };
     this.clickMethod(options);
   }
 
 
-  public fismaTableClick(data: any) {
+  public fismaTableClick(data: any, addRoute: boolean=true) {
     var options: ClickOptions = {
       data: data,
       dataID: 'ID',
@@ -191,13 +196,14 @@ export class TableService {
       detailModalID: '#fismaDetail',
       sysTableID: '#fismaCertSysTable',
       exportName: data.Name + '-Certified_Systems',
-      systemApiStr: '/api/fisma/get/'
+      systemApiStr: '/api/fisma/get/',
+      addRoute: addRoute
     };
     this.clickMethod(options);
   }
 
 
-  public investTableClick(data: any) {
+  public investTableClick(data: any, addRoute: boolean=true) {
     var options: ClickOptions = {
       data: data,
       dataID: 'ID',
@@ -205,13 +211,14 @@ export class TableService {
       detailModalID: '#investDetail',
       sysTableID: '#investRelSysTable',
       exportName: data.Name + '-Related_Systems',
-      systemApiStr: '/api/investments/get/'
+      systemApiStr: '/api/investments/get/',
+      addRoute: addRoute
     };
     this.clickMethod(options);
   }
 
 
-  public itStandTableClick(data: any) {
+  public itStandTableClick(data: any, addRoute: boolean=true) {
     var options: ClickOptions = {
       data: data,
       dataID: 'ID',
@@ -219,13 +226,14 @@ export class TableService {
       detailModalID: '#itStandardDetail',
       sysTableID: '#itRelSysTable',
       exportName: data.Name + '-Related_Systems',
-      systemApiStr: '/api/it_standards/get/'
+      systemApiStr: '/api/it_standards/get/',
+      addRoute: addRoute
     };
     this.clickMethod(options);
   }
 
 
-  public orgsTableClick(data: any) {
+  public orgsTableClick(data: any, addRoute: boolean=true) {
     var options: ClickOptions = {
       data: data,
       dataID: 'ID',
@@ -233,7 +241,8 @@ export class TableService {
       detailModalID: '#organizationDetail',
       sysTableID: '#orgSysTable',
       exportName: data.Name + '-Organizational_Systems',
-      systemApiStr: null  // Should revert back when can use IDs again for actual org table instead of names
+      systemApiStr: null,  // Should revert back when can use IDs again for actual org table instead of names
+      addRoute: addRoute
     };
     this.clickMethod(options);
 
@@ -246,7 +255,7 @@ export class TableService {
   }
 
 
-  public recordsTableClick(data: any) {
+  public recordsTableClick(data: any, addRoute: boolean=true) {
     var options: ClickOptions = {
       data: data,
       dataID: 'Rec_ID',
@@ -254,13 +263,14 @@ export class TableService {
       detailModalID: '#recordDetail',
       sysTableID: null, // '#recordsSysTable',
       exportName: null, // data.RecordTitle + '-Related_Systems',
-      systemApiStr: null // '/api/records/get/'
+      systemApiStr: null, // '/api/records/get/'
+      addRoute: addRoute
     };
     this.clickMethod(options);
   }
 
 
-  public systemsTableClick(data: any) {
+  public systemsTableClick(data: any, addRoute: boolean=true) {
     var options: ClickOptions = {
       data: data,
       dataID: 'ID',
@@ -268,7 +278,8 @@ export class TableService {
       detailModalID: '#systemDetail',
       sysTableID: '#SubSysTable',
       exportName: data.Name + '-SubSystems',
-      systemApiStr: '/api/systems/get/'
+      systemApiStr: '/api/systems/get/',
+      addRoute: addRoute
     };
     this.clickMethod(options);
 
@@ -303,7 +314,7 @@ export class TableService {
   private clickMethod(options: ClickOptions) {
     // console.log("Clicked Row Data: ", options.data);  // Debug
 
-    this.modalService.updateDetails(options.data, options.update);
+    this.modalService.updateDetails(options.data, options.update, options.addRoute);
     $(options.detailModalID).modal('show');
 
     // Change URL to include ID
@@ -415,6 +426,54 @@ export class TableService {
     return pocs.filter(function (el) {
       return el != null;
     });
+  }
+
+  public previousModalRoute(currentModalID: string) {
+    // Close current modal
+    $('#' + currentModalID).modal('hide');
+
+    // Get previous modal data
+    let previousModal = this.globals.modalRoutes.pop();
+    // Need to pop twice to get the previous modal instead of the current one just saved
+    previousModal = this.globals.modalRoutes.pop();
+
+    // Debug
+    // console.log("previousModal: ", previousModal);
+    // console.log("modalRoutes after pop: ", this.globals.modalRoutes);
+  
+    // Present previous modal data
+    switch (previousModal.component) {
+      case 'investment':
+        this.investTableClick(previousModal.data);
+        break;
+
+      case 'capability':
+        this.capsTableClick(previousModal.data);
+        break;
+
+      case 'organization':
+        this.orgsTableClick(previousModal.data);
+        break;
+
+      case 'system':
+        this.systemsTableClick(previousModal.data);
+        break;
+
+      case 'record':
+        this.recordsTableClick(previousModal.data);
+        break;
+
+      case 'fisma':
+        this.fismaTableClick(previousModal.data);
+        break;
+
+      case 'it-standard':
+        this.itStandTableClick(previousModal.data);
+        break;
+
+      default:
+        break;
+    };
   }
 
 }

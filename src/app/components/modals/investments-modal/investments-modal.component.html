@@ -3,9 +3,14 @@
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
     <div class="modal-content">
       <div class="modal-header bg-success">
+        <a class="mr-3 text-white" role="button" aria-label="Previous"
+          (click)="tableService.previousModalRoute('investDetail')" [hidden]="!modalService.checkModalRoutes()">
+          <i class="fas fa-arrow-circle-left fa-lg fa-fw"></i>
+        </a>
         <h5 class="modal-title text-white" id="investTitle">
           <i class="fas fa-money-bill-wave"></i>
-          {{ investment.Name }}</h5>
+          {{ investment.Name }}
+        </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -16,7 +21,8 @@
         <ul id="investTabs" class="nav nav-tabs">
           <li class="nav-item">
             <a class="nav-link active" data-toggle="tab" href="#investOverview">
-              Overview</a></li>
+              Overview</a>
+          </li>
           <!-- <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#investRelatedSys">
               Related Systems</a></li> -->

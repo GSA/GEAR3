@@ -219,7 +219,7 @@ export class SystemManagerComponent implements OnInit {
 
     // Close Manager Modal and go back to showing Detail Modal
     $('#systemManager').modal('hide');
-    this.tableService.systemsTableClick(data);
+    this.tableService.systemsTableClick(data, false);
     $('#systemDetail').modal('show');
   };
 

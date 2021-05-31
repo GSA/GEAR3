@@ -4,4 +4,6 @@ import { Injectable } from '@angular/core';
 export class Globals {
   jwtToken: string = null;
   authUser: string = null;
+
+  modalRoutes: any[] = [];
 }

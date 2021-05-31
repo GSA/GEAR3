@@ -218,6 +218,12 @@ export class SharedService {
     return match[0];
   };
 
+  // Change URL back without ID
+  public removeIDfromURL() {
+    var truncatedURL = this.coreURL(this.router.url);
+    this.location.replaceState(truncatedURL);
+  };
+
   //Change URL to include ID when clicking on a table item
   public addIDtoURL(row, IDname) {
     var normalizedURL = this.coreURL(this.router.url);
