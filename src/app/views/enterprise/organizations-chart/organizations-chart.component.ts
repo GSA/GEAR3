@@ -458,9 +458,6 @@ export class OrganizationsChartComponent implements OnInit {
       this.apiService.getOneOrg(selectedOrg.data.identity).subscribe((data: any[]) => {
         var orgData = data[0];
         this.tableService.orgsTableClick(orgData);
-
-        // Change URL to include ID
-        this.sharedService.addIDtoURL(orgData);
       });
     }.bind(this));
 

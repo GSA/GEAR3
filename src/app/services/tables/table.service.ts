@@ -9,6 +9,7 @@ declare var $: any;
 
 interface ClickOptions {
   data: any,
+  dataID: string,
   update: string,
   detailModalID: string,
   sysTableID: string,
@@ -171,6 +172,7 @@ export class TableService {
   public capsTableClick(data: any) {
     var options: ClickOptions = {
       data: data,
+      dataID: 'ID',
       update: 'capability',
       detailModalID: '#capabilityDetail',
       sysTableID: '#capSupportSysTable',
@@ -184,6 +186,7 @@ export class TableService {
   public fismaTableClick(data: any) {
     var options: ClickOptions = {
       data: data,
+      dataID: 'ID',
       update: 'fisma',
       detailModalID: '#fismaDetail',
       sysTableID: '#fismaCertSysTable',
@@ -197,6 +200,7 @@ export class TableService {
   public investTableClick(data: any) {
     var options: ClickOptions = {
       data: data,
+      dataID: 'ID',
       update: 'investment',
       detailModalID: '#investDetail',
       sysTableID: '#investRelSysTable',
@@ -210,6 +214,7 @@ export class TableService {
   public itStandTableClick(data: any) {
     var options: ClickOptions = {
       data: data,
+      dataID: 'ID',
       update: 'it-standard',
       detailModalID: '#itStandardDetail',
       sysTableID: '#itRelSysTable',
@@ -223,6 +228,7 @@ export class TableService {
   public orgsTableClick(data: any) {
     var options: ClickOptions = {
       data: data,
+      dataID: 'ID',
       update: 'organization',
       detailModalID: '#organizationDetail',
       sysTableID: '#orgSysTable',
@@ -243,6 +249,7 @@ export class TableService {
   public recordsTableClick(data: any) {
     var options: ClickOptions = {
       data: data,
+      dataID: 'Rec_ID',
       update: 'record',
       detailModalID: '#recordDetail',
       sysTableID: null, // '#recordsSysTable',
@@ -256,6 +263,7 @@ export class TableService {
   public systemsTableClick(data: any) {
     var options: ClickOptions = {
       data: data,
+      dataID: 'ID',
       update: 'system',
       detailModalID: '#systemDetail',
       sysTableID: '#SubSysTable',
@@ -297,6 +305,9 @@ export class TableService {
 
     this.modalService.updateDetails(options.data, options.update);
     $(options.detailModalID).modal('show');
+
+    // Change URL to include ID
+    this.sharedService.addIDtoURL(options.data, options.dataID);
 
     // Update related systems table in detail modal with clicked data
     if (options.sysTableID) {

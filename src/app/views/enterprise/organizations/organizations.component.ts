@@ -77,9 +77,6 @@ export class OrganizationsComponent implements OnInit {
     $(document).ready(
       $('#orgTable').on('click-row.bs.table', function (e, row) {
         this.tableService.orgsTableClick(row);
-
-        // Change URL to include ID
-        this.sharedService.addIDtoURL(row);
       }.bind(this)
       ));
 

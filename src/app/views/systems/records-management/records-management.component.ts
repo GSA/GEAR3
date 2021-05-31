@@ -120,10 +120,6 @@ export class RecordsManagementComponent implements OnInit {
     $(document).ready(
       $('#recordsTable').on('click-row.bs.table', function (e, row) {
         this.tableService.recordsTableClick(row);
-
-        // Change URL to include ID
-        var normalizedURL = this.sharedService.coreURL(this.router.url);
-        this.location.replaceState(`${normalizedURL}/${row.Rec_ID}`);
       }.bind(this),
       ));
 

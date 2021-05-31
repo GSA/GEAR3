@@ -253,9 +253,6 @@ export class InvestmentsComponent implements OnInit {
     $(document).ready(
       $('#investTable').on('click-row.bs.table', function (e, row) {
         this.tableService.investTableClick(row);
-
-        // Change URL to include ID
-        this.sharedService.addIDtoURL(row);
       }.bind(this))
     );
 

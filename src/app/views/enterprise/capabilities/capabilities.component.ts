@@ -120,9 +120,6 @@ export class CapabilitiesComponent implements OnInit {
     $(document).ready(
       $('#capTable').on('click-row.bs.table', function (e, row) {
         this.tableService.capsTableClick(row);
-
-        // Change URL to include ID
-        this.sharedService.addIDtoURL(row);
       }.bind(this))
     );
 

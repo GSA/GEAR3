@@ -138,8 +138,7 @@ export class TimeComponent implements OnInit {
           this.tableService.systemsTableClick(data[0]) });
 
           // Change URL to include ID
-          var normalizedURL = this.sharedService.coreURL(this.router.url);
-          this.location.replaceState(`${normalizedURL}/${row.Id}`);
+          this.sharedService.addIDtoURL(row, 'Id');
       }.bind(this)
       ));
 

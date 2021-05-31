@@ -474,9 +474,6 @@ export class CapabilitiesModelComponent implements OnInit {
       this.apiService.getOneCap(selectedCap).subscribe((data: any[]) => {
         var capData = data[0];
         this.tableService.capsTableClick(capData);
-
-        // Change URL to include ID
-        this.sharedService.addIDtoURL(capData);
       });
     }.bind(this));
 

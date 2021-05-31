@@ -182,9 +182,6 @@ export class SystemsComponent implements OnInit {
       $('#systemTable').on('click-row.bs.table', function (e, row) {
         this.tableService.systemsTableClick(row);
         // this.getInterfaceData(row.ID);
-
-        // Change URL to include ID
-        this.sharedService.addIDtoURL(row);
       }.bind(this)
       ));
 

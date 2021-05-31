@@ -95,9 +95,6 @@ export class FismaPocsComponent implements OnInit {
     $(document).ready(
       $('#fismaPOCTable').on('dbl-click-row.bs.table', function (e, row) {
         this.tableService.fismaTableClick(row);
-
-        // Change URL to include ID
-        this.sharedService.addIDtoURL(row);
       }.bind(this)
       ));
 

@@ -119,9 +119,6 @@ export class FismaComponent implements OnInit {
     $(document).ready(
       $('#fismaTable').on('dbl-click-row.bs.table', function (e, row) {
         this.tableService.fismaTableClick(row);
-
-        // Change URL to include ID
-        this.sharedService.addIDtoURL(row);
       }.bind(this)
       ));
 

@@ -119,9 +119,6 @@ export class ItStandardsComponent implements OnInit {
     $(document).ready(
       $('#itStandardsTable').on('click-row.bs.table', function (e, row) {
         this.tableService.itStandTableClick(row);
-
-        // Change URL to include ID
-        this.sharedService.addIDtoURL(row);
       }.bind(this))
     );
 

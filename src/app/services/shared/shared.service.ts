@@ -219,9 +219,9 @@ export class SharedService {
   };
 
   //Change URL to include ID when clicking on a table item
-  public addIDtoURL(row) {
+  public addIDtoURL(row, IDname) {
     var normalizedURL = this.coreURL(this.router.url);
-    this.location.replaceState(`${normalizedURL}/${row.ID}`);
+    this.location.replaceState(`${normalizedURL}/${row[IDname]}`);
   };
 
 }
