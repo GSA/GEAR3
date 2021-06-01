@@ -113,7 +113,7 @@
                     <!-- <tr>
                       <td><i class="fas fa-money-bill-wave"></i>Investment</td>
                       <td *ngIf="system.Investment; else investElse" class="btn-outline-success pointer"
-                      (click)="openRelated(system.InvestmentID, 'investment')">{{ system.Investment }}</td>
+                      (click)="tableService.openRelated(system.InvestmentID, 'investment')">{{ system.Investment }}</td>
                       <ng-template #investElse>
                         <td>None Designated</td>
                       </ng-template>

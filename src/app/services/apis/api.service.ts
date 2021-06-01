@@ -140,33 +140,33 @@ export class ApiService {
       catchError(this.handleError<InvestmentType[]>('GET Investment Types', []))
     );
   };
-  // public getInvestApps(id: number): Observable<Application[]> {
-  //   return this.http.get<Application[]>(this.investUrl + '/get/' + String(id) + '/applications').pipe(
-  //     catchError(this.handleError<Application[]>('GET Investment Related Applications', []))
+  public getInvestSys(id: number): Observable<System[]> {
+    return this.http.get<System[]>(this.investUrl + '/get/' + String(id) + '/systems').pipe(
+      catchError(this.handleError<System[]>('GET Investment Related Systems', []))
+    );
+  };
+  // public updateInvestment(id: number, data: {}): Observable<Investment[]> {
+  //   if (this.globals.jwtToken) {
+  //     var httpOptions = this.setHeaderOpts();
+  //   } else {
+  //     catchError(this.handleError<Investment[]>('UPDATE Investment - No Authentication Token', []))
+  //   }
+
+  //   return this.http.put<Investment[]>(this.investUrl + '/update/' + String(id), data, httpOptions).pipe(
+  //     catchError(this.handleError<Investment[]>('UPDATE Investment', []))
   //   );
   // };
-  public updateInvestment(id: number, data: {}): Observable<Investment[]> {
-    if (this.globals.jwtToken) {
-      var httpOptions = this.setHeaderOpts();
-    } else {
-      catchError(this.handleError<Investment[]>('UPDATE Investment - No Authentication Token', []))
-    }
+  // public createInvestment(data: {}): Observable<Investment[]> {
+  //   if (this.globals.jwtToken) {
+  //     var httpOptions = this.setHeaderOpts();
+  //   } else {
+  //     catchError(this.handleError<Investment[]>('CREATE Investment - No Authentication Token', []))
+  //   }
 
-    return this.http.put<Investment[]>(this.investUrl + '/update/' + String(id), data, httpOptions).pipe(
-      catchError(this.handleError<Investment[]>('UPDATE Investment', []))
-    );
-  };
-  public createInvestment(data: {}): Observable<Investment[]> {
-    if (this.globals.jwtToken) {
-      var httpOptions = this.setHeaderOpts();
-    } else {
-      catchError(this.handleError<Investment[]>('CREATE Investment - No Authentication Token', []))
-    }
-
-    return this.http.post<Investment[]>(this.investUrl + '/create', data, httpOptions).pipe(
-      catchError(this.handleError<Investment[]>('CREATE Investment', []))
-    );
-  };
+  //   return this.http.post<Investment[]>(this.investUrl + '/create', data, httpOptions).pipe(
+  //     catchError(this.handleError<Investment[]>('CREATE Investment', []))
+  //   );
+  // };
 
 
   //// Organizations

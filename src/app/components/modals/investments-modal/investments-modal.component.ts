@@ -28,20 +28,20 @@ export class InvestmentsModalComponent implements OnInit {
   ngOnInit(): void {
     this.modalService.currentInvest.subscribe(investment => this.investment = investment);
 
-    // $('#investRelSysTable').bootstrapTable($.extend(this.tableService.relSysTableOptions, {
-    //   columns: this.tableService.relSysColumnDefs,
-    //   data: [],
-    // }));
+    $('#investRelSysTable').bootstrapTable($.extend(this.tableService.relSysTableOptions, {
+      columns: this.tableService.relSysColumnDefs,
+      data: [],
+    }));
 
     // Method to handle click events on the Related Systems table
-    // $(document).ready(
-    //   $('#investRelSysTable').on('click-row.bs.table', function (e, row) {
-    //     // Hide First Modal before showing new modal
-    //     $('#investDetail').modal('hide');
+    $(document).ready(
+      $('#investRelSysTable').on('click-row.bs.table', function (e, row) {
+        // Hide First Modal before showing new modal
+        $('#investDetail').modal('hide');
 
-    //     this.tableService.systemsTableClick(row);
-    //   }.bind(this)
-    //   ));
+        this.tableService.systemsTableClick(row);
+      }.bind(this)
+      ));
 
     // Revert back to overview tab when modal goes away
     $('#investDetail').on('hidden.bs.modal', function (e) {

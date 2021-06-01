@@ -476,4 +476,26 @@ export class TableService {
     };
   }
 
+  public openRelated(detailID: string, ID: number, type: string) {
+    $(detailID).modal('hide');
+
+    if (type === 'investment') {
+      this.apiService.getOneInvest(ID).subscribe((apiData: any[]) => {
+        this.investTableClick(apiData[0]);
+      });
+    } else if (type === 'system') {
+      this.apiService.getOneSys(ID).subscribe((apiData: any[]) => {
+        this.systemsTableClick(apiData[0]);
+      });
+    } else if (type === 'org') {
+      this.apiService.getOneOrg(ID).subscribe((apiData: any[]) => {
+        this.orgsTableClick(apiData[0]);
+      });
+    } else if (type === 'fisma') {
+      this.apiService.getOneFISMASys(ID).subscribe((apiData: any[]) => {
+        this.fismaTableClick(apiData[0]);
+      });
+    }
+  }
+
 }

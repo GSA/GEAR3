@@ -19,6 +19,16 @@ exports.findOne = (req, res) => {
   res = ctrl.sendQuery(query, 'individual investment', res);
 };
 
+exports.findSystems = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
+    ` LEFT JOIN gear_ods.zk_systems_subsystems_investments  AS invest_mappings  ON systems.\`ex:GEAR_ID\` = invest_mappings.obj_systems_subsystems_Id
+      LEFT JOIN gear_ods.obj_investments                    AS invest           ON invest_mappings.obj_investment_Id = invest.Investment_Id
+    
+      WHERE invest.Investment_Id = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`;
+
+  res = ctrl.sendQuery_cowboy(query, 'system relations for investment', res);
+};
+
 // exports.findLatest = (req, res) => {
 //   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_investments.sql')).toString() +
 //     ` ORDER BY invest.CreateDTG DESC LIMIT 1;`;
@@ -26,12 +36,6 @@ exports.findOne = (req, res) => {
 //   res = ctrl.sendQuery(query, 'latest individual investment', res);
 // };
 
-// exports.findApplications = (req, res) => {
-//   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_applications.sql')).toString() +
-//     ` AND app.obj_investment_Id = ${req.params.id} GROUP BY app.Id;`;  // Note that there's already a WHERE clause
-
-//   res = ctrl.sendQuery(query, 'application relations for investment', res);
-// };
 
 // exports.update = (req, res) => {
 //   if (req.headers.authorization) {
