@@ -211,6 +211,11 @@ export class ApiService {
       catchError(this.handleError<Record[]>('GET Record', []))
     );
   };
+  public getRecordSys(id: number): Observable<System[]> {
+    return this.http.get<System[]>(this.recordsUrl + '/get/' + String(id) + '/systems').pipe(
+      catchError(this.handleError<System[]>('GET Systems for Record', []))
+    );
+  };
 
 
   //// Systems

@@ -261,12 +261,31 @@ export class TableService {
       dataID: 'Rec_ID',
       update: 'record',
       detailModalID: '#recordDetail',
-      sysTableID: null, // '#recordsSysTable',
-      exportName: null, // data.RecordTitle + '-Related_Systems',
+      sysTableID: '#recordsRelSysTable',
+      exportName: data.Record_Item_Title + '-Related_Systems',
       systemApiStr: null, // '/api/records/get/'
       addRoute: addRoute
     };
     this.clickMethod(options);
+
+    
+    var record_related_systems = <any>[];
+
+    // Join Systems to Record for Related Systems
+    this.apiService.getRecordSys(data.Rec_ID).subscribe((system_mappings: any[]) => {
+      this.apiService.getSystems().subscribe((systems: any[]) => {
+        // Grab all System IDs related to the one record
+        var systemID_from_mappings = new Set(system_mappings.map(({ obj_systems_subsystems_Id }) => obj_systems_subsystems_Id));
+        // Filter Systems to the IDs related to the one record
+        record_related_systems = systems.filter(({ ID }) => systemID_from_mappings.has(ID));
+
+        // Update related systems table with filtered systems
+        $('#recordsRelSysTable').bootstrapTable('refreshOptions', {
+          data: record_related_systems
+        });
+      });
+    });
+
   }
 
 
@@ -284,17 +303,18 @@ export class TableService {
     this.clickMethod(options);
 
     this.apiService.getOneSysTIME(data['ID']).subscribe((TIMEdata: any[]) => {
-      var timeAPIdata = TIMEdata[0];
+      if (TIMEdata[0]) {  // Only continute if any data came back
+        var timeAPIdata = TIMEdata[0];
 
-    // Update TIME report table in detail modal with clicked system
-      $('#sysTimeTable').bootstrapTable('refreshOptions', {
-        exportOptions: {
-          fileName: this.sharedService.fileNameFmt(timeAPIdata['System Name'] + '-TIME_Report')
-        },
-        data: [timeAPIdata]
-      });
+      // Update TIME report table in detail modal with clicked system
+        $('#sysTimeTable').bootstrapTable('refreshOptions', {
+          exportOptions: {
+            fileName: this.sharedService.fileNameFmt(timeAPIdata['System Name'] + '-TIME_Report')
+          },
+          data: [timeAPIdata]
+        });
+      };
     });
-
 
     // Update related capabilities table in detail modal with clicked system
     this.updateRelatedTable(
@@ -309,6 +329,13 @@ export class TableService {
       data.Name + '-Related_Technologies',
       '/api/systems/get/' + String(data.ID) + '/technologies'
     );
+
+    // Update related records table in detail modal with clicked system
+    this.updateRelatedTable(
+      '#systemRecTable',
+      data.Name + '-Related_Records',
+      null
+    );
   }
 
   private clickMethod(options: ClickOptions) {
@@ -320,23 +347,36 @@ export class TableService {
     // Change URL to include ID
     this.sharedService.addIDtoURL(options.data, options.dataID);
 
+    var fullSystemAPIString = null;
+    if (options.systemApiStr) {
+      fullSystemAPIString = options.systemApiStr + String(options.data[options.dataID]) + '/systems'
+    }
+
     // Update related systems table in detail modal with clicked data
     if (options.sysTableID) {
       this.updateRelatedTable(
         options.sysTableID,
         options.exportName,
-        options.systemApiStr + String(options.data.ID) + '/systems'
+        fullSystemAPIString
       );
     };
   }
 
   private updateRelatedTable(tableID: string, exportName: string, systemApiStr: string) {
-    $(tableID).bootstrapTable('refreshOptions', {
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt(exportName)
-      },
-      url: this.sharedService.internalURLFmt(systemApiStr)
-    });
+    if (systemApiStr) {
+      $(tableID).bootstrapTable('refreshOptions', {
+        exportOptions: {
+          fileName: this.sharedService.fileNameFmt(exportName)
+        },
+        url: this.sharedService.internalURLFmt(systemApiStr)
+      });
+    } else {
+      $(tableID).bootstrapTable('refreshOptions', {
+        exportOptions: {
+          fileName: this.sharedService.fileNameFmt(exportName)
+        }
+      });
+    }
   }
 
   // Have to render artifacts info separately as anchor links dont work with ngFor

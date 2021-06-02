@@ -31,6 +31,21 @@ export class RecordsModalComponent implements OnInit {
   ngOnInit(): void {
     this.modalService.currentRecord.subscribe(record => this.record = record);
 
+    $('#recordsRelSysTable').bootstrapTable($.extend(this.tableService.relSysTableOptions, {
+      columns: this.tableService.relSysColumnDefs,
+      data: []
+    }));
+
+    // Method to handle click events on the Related Systems table
+    $(document).ready(
+      $('#recordsRelSysTable').on('click-row.bs.table', function (e, row) {
+        // Hide First Modal before showing new modal
+        $('#recordDetail').modal('hide');
+
+        this.tableService.systemsTableClick(row);
+      }.bind(this)
+      ));
+
     // Revert back to overview tab when modal goes away
     $('#recordDetail').on('hidden.bs.modal', function (e) {
       $("#recordTabs li:first-child a").tab('show');

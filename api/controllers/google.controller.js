@@ -19,7 +19,6 @@ exports.auth = (req, res, next) => {
     };
 
     credentials = JSON.parse(content).installed;
-    console.log(credentials);
 
     const { client_secret, client_id, redirect_uris } = credentials;
     const oAuth2Client = new google.auth.OAuth2(
@@ -48,7 +47,6 @@ exports.saveToken = (req, res, next) => {
     };
 
     credentials = JSON.parse(content).installed;
-    console.log(credentials);
 
     const { client_secret, client_id, redirect_uris } = credentials;
     const oAuth2Client = new google.auth.OAuth2(

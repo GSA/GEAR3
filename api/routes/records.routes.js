@@ -9,4 +9,7 @@ router.route('/')
 router.route('/get/:id')
   .get(recordsCtrl.findOne);
 
+router.route('/get/:id/systems')
+  .get(recordsCtrl.findSystems);
+
 module.exports = router;
