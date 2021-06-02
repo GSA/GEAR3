@@ -1,5 +1,4 @@
-const dotenv      = require('dotenv').config(),  // .env Credentials
-      sql         = require("../db.js").connection,
+const sql         = require("../db.js").connection,
       sql_cowboy  = require("../db.js").connection_cowboy,
 
       path        = require('path'),
@@ -79,7 +78,6 @@ exports.googleMain = (response, method, sheetID, dataRange, key = null) => {
 
   // Check if we have previously stored a token.
   fs.readFile(TOKEN_PATH, (err, token) => {
-    if (err) return getNewToken(oAuth2Client, callback, response, sheetID, dataRange);
     oAuth2Client.setCredentials(JSON.parse(token));
 
     oAuth2Client.on('tokens', (tokens) => {
@@ -93,50 +91,6 @@ exports.googleMain = (response, method, sheetID, dataRange, key = null) => {
     if (!key) callback(oAuth2Client, response, sheetID, dataRange);
     else callback(oAuth2Client, response, sheetID, dataRange, key);
   });
-}
-
-/**
- * Get and store new token after prompting for user authorization, and then
- * execute the given callback with the authorized OAuth2 client.
- * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for.
- * @param {getEventsCallback} callback The callback for the authorized client.
- */
- function getNewToken(oAuth2Client, callback, response, sheetID, dataRange) {
-  oAuth2Client.getToken(process.env.GOOGLE_AUTH_CODE, (err, token) => {
-    if (err) return response = response.status(505).json({ error: 'Error while trying to retrieve access token: ' + err });
-    oAuth2Client.setCredentials(token);
-    // Store the token to disk for later program executions
-    fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
-      if (err) return response = response.status(505).json({ error: 'Error while saving access token: ' + err });
-      console.log('Token stored to', TOKEN_PATH);
-    });
-    callback(oAuth2Client, response, sheetID, dataRange);
-  });
-
-  // This portion below is to generate the authURL from the beginning to provide consent from a GSA Google account. Only needed for the first time.
-  // const authUrl = oAuth2Client.generateAuthUrl({
-  //   access_type: 'offline',
-  //   prompt: 'consent',
-  //   scope: SCOPES
-  // });
-  // console.log('Authorize this app by visiting this url:', authUrl);
-  // const rl = readline.createInterface({
-  //   input: process.stdin,
-  //   output: process.stdout,
-  // });
-  // rl.question('Enter the code from that page here: ', (code) => {
-  //   rl.close();
-  //   oAuth2Client.getToken(code, (err, token) => {
-  //     if (err) return response = response.status(505).json({ error: 'Error while trying to retrieve access token: ' + err });
-  //     oAuth2Client.setCredentials(token);
-  //     // Store the token to disk for later program executions
-  //     fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
-  //       if (err) return response = response.status(505).json({ error: 'Error while saving access token: ' + err });
-  //       console.log('Token stored to', TOKEN_PATH);
-  //     });
-  //     callback(oAuth2Client, response, sheetID, dataRange);
-  //   });
-  // });
 }
 
 /**
@@ -224,6 +178,7 @@ exports.googleMain = (response, method, sheetID, dataRange, key = null) => {
       });
 
       sendResponse(response, singleID);
+      return singleID;
     }
   });
 }

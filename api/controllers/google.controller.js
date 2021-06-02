@@ -1,0 +1,70 @@
+const dotenv      = require('dotenv').config(),  // .env Credentials
+      {google}    = require('googleapis'),
+      fs          = require('fs');
+
+// If modifying these scopes, delete token.json.
+const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
+// The file token.json stores the user's access and refresh tokens, and is
+// created automatically when the authorization flow completes for the first
+// time.
+const TOKEN_PATH = 'token.json';
+
+exports.auth = (req, res, next) => {
+  var credentials = {}
+  // Load client secrets from a local file.
+  fs.readFile('certs/gear_google_credentials.json', (err, content) => {
+    if (err) {
+      res = res.status(504).json({ error: 'Error loading client secret file: ' + err });
+      return
+    };
+
+    credentials = JSON.parse(content).installed;
+    console.log(credentials);
+
+    const { client_secret, client_id, redirect_uris } = credentials;
+    const oAuth2Client = new google.auth.OAuth2(
+      client_id, client_secret, process.env.GOOGLE_AUTH_REDIRECT);
+
+
+    const authUrl = oAuth2Client.generateAuthUrl({
+      access_type: 'offline',
+      prompt: 'consent',
+      scope: SCOPES
+    });
+    
+    res.redirect(authUrl);
+  });
+}
+
+exports.saveToken = (req, res, next) => {
+  let code = req.query.code;
+  var credentials = {};
+
+  // Load client secrets from a local file.
+  fs.readFile('certs/gear_google_credentials.json', (err, content) => {
+    if (err) {
+      res = res.status(504).json({ error: 'Error loading client secret file: ' + err });
+      return
+    };
+
+    credentials = JSON.parse(content).installed;
+    console.log(credentials);
+
+    const { client_secret, client_id, redirect_uris } = credentials;
+    const oAuth2Client = new google.auth.OAuth2(
+      client_id, client_secret, process.env.GOOGLE_AUTH_REDIRECT);
+
+
+    oAuth2Client.getToken(code, (err, token) => {
+      if (err) return res = res.status(505).json({ error: 'Error while trying to retrieve access token: ' + err });
+      oAuth2Client.setCredentials(token);
+      // Store the token to disk for later program executions
+      fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
+        if (err) return res = res.status(505).json({ error: 'Error while saving access token: ' + err });
+        console.log('Token stored to', TOKEN_PATH);
+        res = res.status(200).json({ msg: "Token successfully retrieved and stored to " + TOKEN_PATH});
+      });
+    });
+  });
+  
+}
