@@ -122,7 +122,6 @@ export class TableService {
       search: definitions.search,
       searchOnEnterKey: definitions.search,
       showSearchButton: definitions.search,
-      showSearchClearButton: definitions.search,
       visibleSearch: definitions.search,
 
       sortName: definitions.sortName,
