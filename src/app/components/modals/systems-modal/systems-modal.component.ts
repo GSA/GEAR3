@@ -98,7 +98,7 @@ export class SystemsModalComponent implements OnInit {
   sysCapTableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: true,
     idTable: null,
-    classes: "table-hover table-light clickable-table fixed-table",
+    classes: "table-hover table-light clickable-table",
     showColumns: false,
     showExport: true,
     exportFileName: null,
@@ -124,6 +124,7 @@ export class SystemsModalComponent implements OnInit {
     field: 'Description',
     title: 'Description',
     sortable: true,
+    visible: false,
     class: 'text-truncate'
   }, {
     field: 'Level',
@@ -140,7 +141,7 @@ export class SystemsModalComponent implements OnInit {
   sysTechTableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: false,
     idTable: null,
-    classes: "table-hover table-light clickable-table fixed-table",
+    classes: "table-hover table-light clickable-table",
     showColumns: true,
     showExport: true,
     exportFileName: null,
@@ -162,6 +163,7 @@ export class SystemsModalComponent implements OnInit {
     field: 'Description',
     title: 'Description',
     sortable: true,
+    visible: false,
     class: 'text-truncate'
   }, {
     field: 'Status',
@@ -176,6 +178,86 @@ export class SystemsModalComponent implements OnInit {
     title: 'Approved Status Expiration Date',
     sortable: true,
     formatter: this.sharedService.dateFormatter
+  }];
+
+
+  // Related Records Table Options
+  sysRecTableOptions: {} = this.tableService.createTableOptions({
+    advancedSearch: false,
+    idTable: null,
+    classes: "table-hover table-light clickable-table",
+    showColumns: true,
+    showExport: true,
+    exportFileName: null,
+    headerStyle: "bg-danger text-white",
+    pagination: false,
+    search: true,
+    sortName: 'RecordTitle',
+    sortOrder: 'asc',
+    showToggle: true,
+    url: null
+  });
+
+  // Related Records Table Columns
+  sysRecColumnDefs: any[] = [{
+    field: 'Record_Item_Title',
+    title: 'Record Title',
+    sortable: true
+  }, {
+    field: 'Description',
+    title: 'Description',
+    sortable: false,
+    visible: false,
+    class: 'text-truncate'
+  }, {
+    field: 'Record_Status',
+    title: 'Status',
+    sortable: true
+  }, {
+    field: 'RG',
+    title: 'Record Group',
+    sortable: true
+  }, {
+    field: 'Retention_Instructions',
+    title: 'Retention Instructions',
+    sortable: false,
+    visible: false,
+    class: 'text-truncate'
+  }, {
+    field: 'Legal_Disposition_Authority',
+    title: 'Disposition Authority (DA)',
+    sortable: true
+  }, {
+    field: 'Type_Disposition',
+    title: 'Disposition Type',
+    sortable: true
+  }, {
+    field: 'Date_DA_Approved',
+    title: 'DA Approval Date',
+    sortable: true
+  }, {
+    field: 'Disposition_Notes',
+    title: 'Disposition Notes',
+    sortable: false,
+    visible: false,
+    class: 'text-truncate'
+  }, {
+    field: 'GSA_Number',
+    title: 'GSA Number',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'FP_Category',
+    title: 'FP Category',
+    sortable: true
+  }, {
+    field: 'PII',
+    title: 'PII',
+    sortable: true
+  }, {
+    field: 'CUI',
+    title: 'CUI',
+    sortable: true
   }];
 
   ngOnInit(): void {
@@ -196,7 +278,12 @@ export class SystemsModalComponent implements OnInit {
       data: [],
     }));
 
-    // Method to handle click events on the Related Technologies table
+    $('#systemRecTable').bootstrapTable($.extend(this.sysRecTableOptions, {
+      columns: this.sysRecColumnDefs,
+      data: [],
+    }));
+
+    // Method to handle click events on the Related Capabilities table
     $(document).ready(
       $('#systemCapTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
@@ -206,6 +293,7 @@ export class SystemsModalComponent implements OnInit {
       }.bind(this)
     ));
 
+    // Method to handle click events on the Related Technologies table
     $(document).ready(
       $('#systemTechTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
@@ -214,6 +302,16 @@ export class SystemsModalComponent implements OnInit {
         this.tableService.itStandTableClick(row);
       }.bind(this)
     ));
+
+    // Method to handle click events on the Related Systems table
+    $(document).ready(
+      $('#systemRecTable').on('click-row.bs.table', function (e, row) {
+        // Hide First Modal before showing new modal
+        $('#systemDetail').modal('hide');
+
+        this.tableService.recordsTableClick(row);
+      }.bind(this)
+      ));
 
     // $('#subSysTable').bootstrapTable($.extend(this.tableService.relSysTableOptions, {
     //   columns: this.tableService.relSysColumnDefs,

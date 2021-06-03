@@ -266,6 +266,11 @@ export class ApiService {
       catchError(this.handleError<System[]>('UPDATE System-IT Standards', []))
     );
   };
+  public getSysRecords(id: number): Observable<Record[]> {
+    return this.http.get<Record[]>(this.sysUrl + '/get/' + String(id) + '/records').pipe(
+      catchError(this.handleError<Record[]>('GET System Related Records', []))
+    );
+  };
 
 
   //// TIME

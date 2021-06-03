@@ -31,6 +31,10 @@
             <a class="nav-link" data-toggle="tab" href="#technicalRelated">
               Technical</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#relatedRecords">
+              Related Records</a>
+          </li>
           <li class="nav-item" [hidden]="system.SystemLevel != 'System'">
             <a class="nav-link" data-toggle="tab" href="#systemSubs">
               Subsystems</a>
@@ -255,9 +259,15 @@
           </div>
           <!-- End of Technology Tab Pane -->
 
+          <div class="tab-pane fade" id="relatedRecords">
+            <table id="systemRecTable"></table>
+          </div>
+          <!-- End of Related Records Pane -->
+
           <div class="tab-pane fade" id="systemSubs">
             <table id="subSysTable"></table>
           </div>
+          <!-- End of Sub Systems Pane -->
 
           <div class="tab-pane fade" id="systemDataFlow">
             <!-- Data Flow Sankey Diagram -->

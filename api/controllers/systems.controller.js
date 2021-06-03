@@ -94,3 +94,13 @@ exports.updateTech = (req, res) => {
     });
   }
 };
+
+exports.findRecords = (req, res) => {
+  var query = `SELECT * FROM gear_ods.zk_systems_subsystems_records   AS records_mapping
+      LEFT JOIN cowboy_ods.obj_fisma_archer                           AS systems       ON records_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
+      WHERE systems.\`ex:GEAR_ID\` = ${req.params.id}
+
+    GROUP BY records_mapping.obj_records_Id;`;
+
+  res = ctrl.sendQuery_cowboy(query, 'related records for system', res);
+};

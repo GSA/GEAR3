@@ -263,29 +263,10 @@ export class TableService {
       detailModalID: '#recordDetail',
       sysTableID: '#recordsRelSysTable',
       exportName: data.Record_Item_Title + '-Related_Systems',
-      systemApiStr: null, // '/api/records/get/'
+      systemApiStr: '/api/records/get/',
       addRoute: addRoute
     };
     this.clickMethod(options);
-
-    
-    var record_related_systems = <any>[];
-
-    // Join Systems to Record for Related Systems
-    this.apiService.getRecordSys(data.Rec_ID).subscribe((system_mappings: any[]) => {
-      this.apiService.getSystems().subscribe((systems: any[]) => {
-        // Grab all System IDs related to the one record
-        var systemID_from_mappings = new Set(system_mappings.map(({ obj_systems_subsystems_Id }) => obj_systems_subsystems_Id));
-        // Filter Systems to the IDs related to the one record
-        record_related_systems = systems.filter(({ ID }) => systemID_from_mappings.has(ID));
-
-        // Update related systems table with filtered systems
-        $('#recordsRelSysTable').bootstrapTable('refreshOptions', {
-          data: record_related_systems
-        });
-      });
-    });
-
   }
 
 
@@ -331,11 +312,21 @@ export class TableService {
     );
 
     // Update related records table in detail modal with clicked system
-    this.updateRelatedTable(
-      '#systemRecTable',
-      data.Name + '-Related_Records',
-      null
-    );
+    var system_related_records = <any>[];
+
+    // Join Records to System for Related Systems
+    this.apiService.getSysRecords(data.ID).subscribe((records_mappings: any[]) => {
+      this.apiService.getRecords().subscribe((records: any[]) => {
+        // Grab all Record IDs related to the one record
+        var recordID_from_mappings = new Set(records_mappings.map(({ obj_records_Id }) => obj_records_Id));
+        // Filter Records to the IDs related to the one record
+        system_related_records = records.filter(({ Rec_ID }) => recordID_from_mappings.has(parseInt(Rec_ID)));  // Parse into int as GoogleAPI makes everything strings
+        // Update related records table with filtered systems
+        $('#systemRecTable').bootstrapTable('refreshOptions', {
+          data: system_related_records
+        });
+      });
+    });
   }
 
   private clickMethod(options: ClickOptions) {

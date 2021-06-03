@@ -24,4 +24,7 @@ router.route('/get/:id/technologies')
 router.route('/updateTech/:id')
   .put(sysCtrl.updateTech);
 
+  router.route('/get/:id/records')
+    .get(sysCtrl.findRecords);
+
 module.exports = router;
