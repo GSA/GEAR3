@@ -75,7 +75,12 @@ export class FismaPocsComponent implements OnInit {
     formatter: this.pocFormatter
   }, {
     field: 'orgName',
-    title: 'Responsible SSO',
+    title: 'Responsible Org',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'businessOrgName',
+    title: 'Business Org',
     sortable: true,
     visible: false
   }];
