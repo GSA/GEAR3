@@ -9,14 +9,14 @@ exports.findAll = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
     " GROUP BY systems.\`ex:GEAR_ID\`;";
 
-  res = ctrl.sendQuery_cowboy(query, 'Systems and subsystems', res);
+  res = ctrl.sendQuery(query, 'Systems and subsystems', res);
 };
 
 exports.findOne = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
     ` WHERE systems.\`ex:GEAR_ID\` = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`;
 
-  res = ctrl.sendQuery_cowboy(query, 'individual System/Subsystem', res);
+  res = ctrl.sendQuery(query, 'individual System/Subsystem', res);
 };
 
 exports.findCapabilities = (req, res) => {
@@ -102,5 +102,5 @@ exports.findRecords = (req, res) => {
 
     GROUP BY records_mapping.obj_records_Id;`;
 
-  res = ctrl.sendQuery_cowboy(query, 'related records for system', res);
+  res = ctrl.sendQuery(query, 'related records for system', res);
 };

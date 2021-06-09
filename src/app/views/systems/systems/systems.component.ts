@@ -86,6 +86,10 @@ export class SystemsComponent implements OnInit {
     title: 'Responsible Org',
     sortable: true
   }, {
+    field: 'businessOrgName',
+    title: 'Business Org',
+    sortable: true
+  }, {
     field: 'CSP',
     title: 'Cloud Server Provider',
     sortable: true,
@@ -104,6 +108,18 @@ export class SystemsComponent implements OnInit {
   }, {
     field: 'SO',
     title: 'System Owner',
+    sortable: true,
+    visible: false,
+    formatter: this.sharedService.pocStringNameFormatter
+  }, {
+    field: 'BusPOC',
+    title: 'Business POC',
+    sortable: true,
+    visible: false,
+    formatter: this.sharedService.pocStringNameFormatter
+  }, {
+    field: 'TechPOC',
+    title: 'Technical POC',
     sortable: true,
     visible: false,
     formatter: this.sharedService.pocStringNameFormatter

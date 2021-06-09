@@ -86,6 +86,11 @@ export class FismaComponent implements OnInit {
     visible: false,
     class: 'text-truncate'
   }, {
+    field: 'ParentName',
+    title: 'Parent System',
+    sortable: true,
+    visible: false
+  }, {
     field: 'Reportable',
     title: 'FISMA Reportable',
     sortable: true,
@@ -93,6 +98,20 @@ export class FismaComponent implements OnInit {
   }, {
     field: 'PII',
     title: 'PII',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'CUI',
+    title: 'CUI',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'orgName',
+    title: 'Responsible Org',
+    sortable: true
+  }, {
+    field: 'businessOrgName',
+    title: 'Business Org',
     sortable: true,
     visible: false
   }];

@@ -187,11 +187,16 @@ export class SharedService {
 
   //// POC Name
   public pocStringNameFormatter(value, row, index, field) {
-    let poc = value.split(':')[1];  // Retrieve POC after colon
-    poc = poc.split(', ');
-    let name = poc[0];
+    let names = [];
+    let pocs = value.split(':')[1];  // Retrieve POC after colon
+    pocs = pocs.split('; ');  // Retrieve POC after colon
+    for (let i=0; i<pocs.length; i++) {
+      let singleName = pocs[i].split(', ')[0];
+      if (singleName != '') names.push(singleName);  // Add only if there is a name
+    }
 
-    return name;
+    if (names.length === 0) return null;
+    else return names.join(', ');
   };
 
   //// None Provided

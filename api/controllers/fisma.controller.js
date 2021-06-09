@@ -9,14 +9,14 @@ exports.findAll = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_fisma_archer.sql')).toString() +
     " GROUP BY archer.\`ex:GEAR_ID\`;";
 
-  res = ctrl.sendQuery_cowboy(query, 'FISMA Systems', res);
+  res = ctrl.sendQuery(query, 'FISMA Systems', res);
 };
 
 exports.findOne = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_fisma_archer.sql')).toString() +
     ` WHERE archer.\`ex:GEAR_ID\` = ${req.params.id} GROUP BY archer.\`ex:GEAR_ID\`;`;
 
-  res = ctrl.sendQuery_cowboy(query, 'individual FISMA System', res);
+  res = ctrl.sendQuery(query, 'individual FISMA System', res);
 };
 
 // exports.findApplications = (req, res) => {
@@ -30,7 +30,7 @@ exports.findRetired = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_fisma_archer.sql')).toString() +
     " WHERE archer.\`ex:Status\` = 'Inactive' GROUP BY archer.\`ex:GEAR_ID\`;";
 
-  res = ctrl.sendQuery_cowboy(query, 'retired FISMA Systems', res);
+  res = ctrl.sendQuery(query, 'retired FISMA Systems', res);
 };
 
 exports.updateAll = (req, res) => {
