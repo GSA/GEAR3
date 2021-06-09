@@ -77,6 +77,10 @@ export class FormsGlossaryComponent implements OnInit {
   {
     field: 'Definition',
     title: 'Definition'
+  },
+  {
+    field: 'Reference',
+    title: 'Reference'
   }]
 
   ngOnInit(): void {

@@ -1,226 +1,172 @@
 [
   {
-    "Term": "Agile Approach to Federal Enterprise Architecture",
-    "Definition": "Agile is a term in Information Technology (IT) circles today that essentially means growth happens with small, iterative, customer-centric steps that produce results quickly. Agile EA is an approach to architecture development that is focused on small EA deliverables with the needs of the customer in mind. When starting to build (or rebuild) an agency’s architecture, start small with one aspect that would benefit the stakeholders, and put something together. It doesn’t have to be complete and polished, and actually shouldn’t be. Each draft and subsequent improvement should be based on what will best fit the stakeholder’s most immediate needs. The architecture should not be developed to serve the enterprise architect."
+    "Term": "AO (Authorizing Official)",
+    "Definition": "An official with the authority to formally assume responsibility for operating an information system at an acceptable level of risk to agency operations (including mission, functions, image, or reputation), agency assets, or individuals.",
+    "Reference": "NIST"
   },
   {
     "Term": "Architecture",
-    "Definition": "An architecture contains descriptions of all the components of a selected, acceptable solution while allowing certain details of specific components to be variable to satisfy related constraints (e.g., costs, local environment, user acceptability).\nREF - NIST"
-  },
-  {
-    "Term": "AO (Authorizing Official)",
-    "Definition": "An official with the authority to formally assume responsibility for operating an information system at an acceptable level of risk to agency operations (including mission, functions, image, or reputation), agency assets, or individuals.\nREF - NIST"
+    "Definition": "An architecture contains descriptions of all the components of a selected, acceptable solution while allowing certain details of specific components to be variable to satisfy related constraints (e.g., costs, local environment, user acceptability).",
+    "Reference": "NIST"
   },
   {
     "Term": "ATO (Authorization to Operate)",
-    "Definition": "The official management decision given by a senior organizational official to authorize operation of an information system and to explicitly accept the risk to organizational operations.\nREF - NIST"
+    "Definition": "The official management decision given by a senior organizational official to authorize operation of an information system and to explicitly accept the risk to organizational operations.",
+    "Reference": "NIST"
   },
   {
     "Term": "BRM (Business Reference Model)",
-    "Definition": "It is a classification taxonomy used to describe the type of business functions and service types in a particular solution architecture at the system, segment, agency, sector, federal, national, or international level. The taxonomy identifies business function and subfunction areas as well as related services that are performed within and between federal agencies and with external partners. The BRM can help to identify opportunities for collaboration, shared services, and solution reuse in agency IT portfolios and inter-agency Lines of Business.\nREF - FEAF"
-  },
-  {
-    "Term": "Business Application",
-    "Definition": "An Application is a piece of software which a customer uses to perform at least one business capability within GSA. \nGSA applications have these characteristics:\n- Requires funding (costs including: planning/project management, ATO, security scanning/monitoring, infrastructure/hosting support, change requests, FTE hours)\n- Responsible POCs (business, technical, organizational)\n- Uses / processes data (including business intelligence)\n- Deployed on production environment (deployed on server)\n- Supported by technologies/IT Tools (database, servers, programming language)\n"
-  },
-  {
-    "Term": "Business Architecture",
-    "Definition": "A description of the structure and interaction between the business strategy, organization, functions, business processes, and information needs.  In practical terms, the Business Architecture is also often necessary as a means of demonstrating the business value of subsequent architecture work to key stakeholders, and the return on investment to those stakeholders from supporting and participating in the subsequent work."
-  },
-  {
-    "Term": "Business Function",
-    "Definition": "A function that delivers business capabilities closely aligned to an organization, but not necessarily explicitly governed by the organization.   In FEAF, it is defined as a function that describes what the Federal government does at an aggregated level, using the budget function classification codes provided in OMB Circular A-11"
+    "Definition": "It is a classification taxonomy used to describe the type of business functions and service types in a particular solution architecture at the system, segment, agency, sector, federal, national, or international level. The taxonomy identifies business function and subfunction areas as well as related services that are performed within and between federal agencies and with external partners. The BRM can help to identify opportunities for collaboration, shared services, and solution reuse in agency IT portfolios and inter-agency Lines of Business.",
+    "Reference": "FEAF"
   },
   {
     "Term": "Business Service",
-    "Definition": "A software component participating in a service-oriented architecture that provides functionality or participates in realizing one or more capabilities.  A set of related IT components provided in support of one or more business processes.\nREF - NIST"
+    "Definition": "A software component participating in a service-oriented architecture that provides functionality or participates in realizing one or more capabilities.  A set of related IT components provided in support of one or more business processes.",
+    "Reference": "NIST"
   },
   {
     "Term": "Capability",
-    "Definition": "A set of mutually reinforcing security controls implemented by technical, physical, and procedural means. Typically selected to achieve a common information security-related purpose.\nREF - NIST"
-  },
-  {
-    "Term": "Capability Architecture",
-    "Definition": "A highly detailed description of the architectural approach to realize a particular solution or solution aspect."
-  },
-  {
-    "Term": "Capability Based Planning",
-    "Definition": "Capability based planning is the planning, engineering, and deliver y of strategic business capabilities to the enterprise. It is business-driven and business-led and combines the requisite efforts of all lines of business to achieve the desired capability.  Capability-based planning accommodates most, if not all, of the corporate business models and is especially useful in organizations where a latent capability to respond (e.g., an emergency preparedness unit) is required and the same resources are involved in multiple capabilities.Often the need for these capabilities are discovered and reﬁned using business scenarios.  From an enterprise architecture and IT perspective, capability-based planning is a powerful mechanism to ensure that the strategic business plan drives the enterprise from a top-down approach. It is also adaptable with capability engineering to leverage emerging bottom-up innovations."
+    "Definition": "A set of mutually reinforcing security controls implemented by technical, physical, and procedural means. Typically selected to achieve a common information security-related purpose.",
+    "Reference": "NIST"
   },
   {
     "Term": "Cloud Computing",
-    "Definition": "A model for enabling, on-demand network access to a shared pool of configurable computing resources (e.g., networks, servers, storage, applications, and services) that can be rapidly provisioned and released with minimal management effort or service provider interaction.\nREF - NIST"
+    "Definition": "A model for enabling, on-demand network access to a shared pool of configurable computing resources (e.g., networks, servers, storage, applications, and services) that can be rapidly provisioned and released with minimal management effort or service provider interaction.",
+    "Reference": "NIST"
   },
   {
     "Term": "Cloud Provider or Provider",
-    "Definition": "An organization that provides cloud services.\nREF - NIST"
+    "Definition": "An organization that provides cloud services.",
+    "Reference": "NIST"
   },
   {
-    "Term": "CUI",
-    "Definition": "A categorical designation that refers to unclassified information, but under law or policy, it still requires protection from unauthorized disclosure, special handling safeguards, or prescribed limits on exchange or dissemination.\nREF - NIST"
-  },
-  {
-    "Term": "CXO",
-    "Definition": "A catch-all term relating to four \"C-Level\" GSA organizations: the Office of the Chief Financial Officer (OCFO), the Office of Human Resource (OHRM), the Office of Administrative Services (OAS), and GSA IT"
-  },
-  {
-    "Term": "DM&E",
-    "Definition": "Development, Modernization, and Enhancement"
+    "Term": "CUI (Controlled Unclassified Information)",
+    "Definition": "A categorical designation that refers to unclassified information, but under law or policy, it still requires protection from unauthorized disclosure, special handling safeguards, or prescribed limits on exchange or dissemination.",
+    "Reference": "NIST"
   },
   {
     "Term": "EA (Enterprise Architecture)",
-    "Definition": "The description of an enterprise’s entire set of information systems: how they are configured, how they are integrated, how they interface to the external environment at the enterprise’s boundary, how they are operated to support the enterprise mission, and how they contribute to the enterprise’s overall security posture.\nREF - NIST"
-  },
-  {
-    "Term": "EBC",
-    "Definition": "Executive Business Case"
+    "Definition": "The description of an enterprise’s entire set of information systems: how they are configured, how they are integrated, how they interface to the external environment at the enterprise’s boundary, how they are operated to support the enterprise mission, and how they contribute to the enterprise’s overall security posture.",
+    "Reference": "NIST"
   },
   {
     "Term": "FEAF/FEA (Federal Enterprise Architecture Framework/Federal Enterprise Architecture)",
-    "Definition": "A business-based framework for governmentwide improvement, that is intended to facilitate efforts to transform the federal government to one that is results-oriented, and market-based.\nREF - NIST"
+    "Definition": "A business-based framework for governmentwide improvement, that is intended to facilitate efforts to transform the federal government to one that is results-oriented, and market-based.",
+    "Reference": "NIST"
   },
   {
     "Term": "FIPS (Federal Information Processing Standards)",
-    "Definition": "A standard for adoption and use by federal departments and agencies.  FIPS covers some information technology in order to achieve a common level of quality or some level of interoperability.\nREF - NIST"
+    "Definition": "A standard for adoption and use by federal departments and agencies.  FIPS covers some information technology in order to achieve a common level of quality or some level of interoperability.",
+    "Reference": "NIST"
   },
   {
     "Term": "FISMA",
-    "Definition": "Federal Information Security Modernization Act.\nREF - NIST"
-  },
-  {
-    "Term": "FITARA",
-    "Definition": "Federal Information Technology Acquisition Reform Act"
+    "Definition": "Federal Information Security Modernization Act.",
+    "Reference": "NIST"
   },
   {
     "Term": "Framework",
-    "Definition": "A layered structure indicating what kind of programs can or should be built and how they would interrelate. Some computer system frameworks also include actual programs, specify programming interfaces, or offer programming tools for using the frameworks. A framework may be for a set of functions within a system and how they interrelate; the layers of an operating system; the layers of an application subsystem; how communication should be standardized at some level of a network; and so forth. A framework is generally more comprehensive than a protocol and more prescriptive than a structure.\nREF - NIST"
-  },
-  {
-    "Term": "FTE",
-    "Definition": "Full-time Equivalent"
-  },
-  {
-    "Term": "FY",
-    "Definition": "Fiscal Year"
-  },
-  {
-    "Term": "Gap",
-    "Definition": "A statement of difference between two states. Used in the context of gap analysis, where the difference between the Baseline and Target Architecture is identiﬁed."
+    "Definition": "A layered structure indicating what kind of programs can or should be built and how they would interrelate. Some computer system frameworks also include actual programs, specify programming interfaces, or offer programming tools for using the frameworks. A framework may be for a set of functions within a system and how they interrelate; the layers of an operating system; the layers of an application subsystem; how communication should be standardized at some level of a network; and so forth. A framework is generally more comprehensive than a protocol and more prescriptive than a structure.",
+    "Reference": "NIST"
   },
   {
     "Term": "Governance",
-    "Definition": "Governance means a group of policies, decision-making procedures, and management processes that work together to enable the effective planning and oversight of activities and resources.\nREF - FEAF"
+    "Definition": "Governance means a group of policies, decision-making procedures, and management processes that work together to enable the effective planning and oversight of activities and resources.",
+    "Reference": "FEAF"
   },
   {
     "Term": "Hybrid Cloud",
-    "Definition": "The cloud infrastructure is a composition of two or more distinct cloud infrastructures (private, community, or public) that remain unique entities, but are bound together by standardized or proprietary technology that enables data and application portability.\nREF - NIST"
+    "Definition": "The cloud infrastructure is a composition of two or more distinct cloud infrastructures (private, community, or public) that remain unique entities, but are bound together by standardized or proprietary technology that enables data and application portability.",
+    "Reference": "NIST"
   },
   {
     "Term": "IaaS (Infrastructure as a Service)",
-    "Definition": "The capability provided to the consumer is to provision processing, storage, networks, and other fundamental computing resources where the consumer is able to deploy and run arbitrary software, which can include operating systems and applications. The consumer does not manage or control the underlying cloud infrastructure but has control over operating systems, storage, and deployed applications; and possibly limited control of select networking components (e.g., host firewalls).\nREF - NIST"
+    "Definition": "The capability provided to the consumer is to provision processing, storage, networks, and other fundamental computing resources where the consumer is able to deploy and run arbitrary software, which can include operating systems and applications. The consumer does not manage or control the underlying cloud infrastructure but has control over operating systems, storage, and deployed applications; and possibly limited control of select networking components (e.g., host firewalls).",
+    "Reference": "NIST"
   },
   {
     "Term": "Information Technology Product",
-    "Definition": "A system, component, application, etc., that is based upon technology which is used to electronically process, store, or transmit information.\nREF - NIST"
-  },
-  {
-    "Term": "Informational Website",
-    "Definition": "An Informational Website is intended to represent a non-interactive presentation of information."
+    "Definition": "A system, component, application, etc., that is based upon technology which is used to electronically process, store, or transmit information.",
+    "Reference": "NIST"
   },
   {
     "Term": "ISSM (Information Systems Security Manager)",
-    "Definition": "Individual responsible for the information assurance of a program, organization, system, or enclave.\nREF - NIST"
+    "Definition": "Individual responsible for the information assurance of a program, organization, system, or enclave.",
+    "Reference": "NIST"
   },
   {
     "Term": "ISSO (Information Systems Security Officer)",
-    "Definition": "Individual with assigned responsibility for maintaining the appropriate operational security posture for an information system or program.\nREF - NIST"
+    "Definition": "Individual with assigned responsibility for maintaining the appropriate operational security posture for an information system or program.",
+    "Reference": "NIST"
   },
   {
     "Term": "Life Cycle Model",
-    "Definition": "Framework of processes and activities concerned with the life cycle that may be organized into stages, which also acts as a common reference for communication and understanding.\nREF - NIST"
-  },
-  {
-    "Term": "Mission Sector",
-    "Definition": "Identifies the ten business areas of the Federal Government in the Common Approach to EA (FEAF)"
+    "Definition": "Framework of processes and activities concerned with the life cycle that may be organized into stages, which also acts as a common reference for communication and understanding.",
+    "Reference": "NIST"
   },
   {
     "Term": "Model",
-    "Definition": "A very detailed description or scaled representation of one component of a larger system that can be created, operated, and analyzed to predict actual operational characteristics of the final produced component.\nREF - NIST"
+    "Definition": "A very detailed description or scaled representation of one component of a larger system that can be created, operated, and analyzed to predict actual operational characteristics of the final produced component.",
+    "Reference": "NIST"
   },
   {
     "Term": "NIST",
-    "Definition": "National Institute of Standards and Technology.\nREF - NIST"
-  },
-  {
-    "Term": "O&M",
-    "Definition": "Operation and Maintenance"
+    "Definition": "National Institute of Standards and Technology.",
+    "Reference": "NIST"
   },
   {
     "Term": "PaaS (Platform-as-a-Service)",
-    "Definition": "The capability provided to the consumer is to deploy onto the cloud infrastructure consumer-created or acquired applications created using programming languages, libraries, services, and tools supported by the provider. The consumer does not manage or control the underlying cloud infrastructure including network, servers, operating systems, or storage, but has control over the deployed applications and possibly configuration settings for the application-hosting environment.\nREF - NIST"
+    "Definition": "The capability provided to the consumer is to deploy onto the cloud infrastructure consumer-created or acquired applications created using programming languages, libraries, services, and tools supported by the provider. The consumer does not manage or control the underlying cloud infrastructure including network, servers, operating systems, or storage, but has control over the deployed applications and possibly configuration settings for the application-hosting environment.",
+    "Reference": "NIST"
   },
   {
     "Term": "PII (Personally Identifiable Information)",
-    "Definition": "Information which can be used to distinguish or trace the identity of an individual (e.g., name, social security number, biometric records, etc.) alone, or when combined with other personal or identifying information which is linked or linkable to a specific individual (e.g., date and place of birth, mother’s maiden name, etc.).\nREF - NIST"
+    "Definition": "Information which can be used to distinguish or trace the identity of an individual (e.g., name, social security number, biometric records, etc.) alone, or when combined with other personal or identifying information which is linked or linkable to a specific individual (e.g., date and place of birth, mother’s maiden name, etc.).",
+    "Reference": "NIST"
   },
   {
     "Term": "Platform",
-    "Definition": "A computer or hardware device and/or associated operating system, or a virtual environment, on which software can be installed or run.\nREF - NIST"
+    "Definition": "A computer or hardware device and/or associated operating system, or a virtual environment, on which software can be installed or run.",
+    "Reference": "NIST"
   },
   {
     "Term": "Requirement",
-    "Definition": "A statement of need that must be met by a particular architecture or work package.\nREF - NIST"
-  },
-  {
-    "Term": "RISSO",
-    "Definition": "Regional Information Systems Security Officer"
-  },
-  {
-    "Term": "Roadmap",
-    "Definition": "An abstracted plan for business or technology change, typically operating across multiple disciplines over multiple years.   Normally used in the phrases Technology Roadmap, Architecture Roadmap, etc."
+    "Definition": "A statement of need that must be met by a particular architecture or work package.",
+    "Reference": "NIST"
   },
   {
     "Term": "SaaS (Software as a Service)",
-    "Definition": "The capability provided to the consumer is to use the provider’s applications running on a cloud infrastructure. The applications are accessible from various client devices through either a thin client interface, such as a web browser (e.g., web-based email), or a program interface. The consumer does not manage or control the underlying cloud infrastructure including network, servers, operating systems, storage, or even individual application capabilities, with the possible exception of limited user-specific application configuration settings.\nREF - NIST"
+    "Definition": "The capability provided to the consumer is to use the provider’s applications running on a cloud infrastructure. The applications are accessible from various client devices through either a thin client interface, such as a web browser (e.g., web-based email), or a program interface. The consumer does not manage or control the underlying cloud infrastructure including network, servers, operating systems, storage, or even individual application capabilities, with the possible exception of limited user-specific application configuration settings.",
+    "Reference": "NIST"
   },
   {
     "Term": "Service",
-    "Definition": "A software component participating in a service-oriented architecture that provides functionality or participates in realizing one or more capabilities.\nREF - NIST"
+    "Definition": "A software component participating in a service-oriented architecture that provides functionality or participates in realizing one or more capabilities.",
+    "Reference": "NIST"
   },
   {
     "Term": "Service Provider",
-    "Definition": "A provider of basic services or value-added services for operation of a network ­ generally refers to public carriers and other commercial enterprises.\nREF - NIST"
-  },
-  {
-    "Term": "SSO",
-    "Definition": "Services and Staff Office"
+    "Definition": "A provider of basic services or value-added services for operation of a network ­ generally refers to public carriers and other commercial enterprises.",
+    "Reference": "NIST"
   },
   {
     "Term": "Subsystem",
-    "Definition": "A major subdivision or component of an information system consisting of information, information technology, and personnel that performs one or more specific functions\nREF - NIST"
+    "Definition": "A major subdivision or component of an information system consisting of information, information technology, and personnel that performs one or more specific functions",
+    "Reference": "NIST"
   },
   {
     "Term": "System",
-    "Definition": "Combination of interacting elements organized to achieve one or more stated purposes.  1: There are many types of systems. Examples include: general and special-purpose information systems; and communication systems; financial, and transaction systems. 2: The inteacting elements in the definition of system include hardware, software, data, humans, processes, facilites, materials, and naturally occurring physical entities. 3: Systems of systems is included in the definition of system.\nREF - NIST"
-  },
-  {
-    "Term": "Technology",
-    "Definition": "A Technology is intended to describe those component parts of Business Applications that work together to deliver a business capability."
+    "Definition": "Combination of interacting elements organized to achieve one or more stated purposes.  1: There are many types of systems. Examples include: general and special-purpose information systems; and communication systems; financial, and transaction systems. 2: The inteacting elements in the definition of system include hardware, software, data, humans, processes, facilites, materials, and naturally occurring physical entities. 3: Systems of systems is included in the definition of system.",
+    "Reference": "NIST"
   },
   {
     "Term": "TIME",
-    "Definition": "Is the aging application and product portfolios need more attention than budgets allow. Application leaders should work with business stakeholders to apply top-down analysis and TIME categorization to prioritize opportunities for portfolio improvement using business and technology fitness, risk and cost.\nTriage Your Application and Product Portfolio by Using the TIME Model.\nDefine an Initial Remediation Strategy for Each of the Four Application Categories: Tolerate, Invest, Migrate and Eliminate\nTolerate — Re-engineer\nInvest — Innovate, Evolve\nMigrate — Modernize\nEliminate — Replace, Consolidate\nEngage and Involve Business Stakeholders by Discussing the TIME Model, and Jointly Identify and Prioritize Improvement Opportunities\nSupport Continuous Improvement of the Application Portfolio by Assessing the Portfolio Regularly\nREF - Gartner"
-  },
-  {
-    "Term": "Tool",
-    "Definition": "Refers to a collection of software which provides an interface to the business user and relays instructions to software that supports and/or performs at least one business function i.e., data entry, data processing, updating, query and reporting for an organization’s information systems.  An application must have a unique set of supported business functions, responsible POCs (business, technical, organizational), constituent tools/technologies (databases, servers, other software), managed data sets, funding sources, and users. An application’s costs should include all infrastructure and planning/project management costs directly associated with that application (FISMA, ATO, security scanning/monitoring, infrastructure/hosting support, change requests, FTE hours)."
-  },
-  {
-    "Term": "UII",
-    "Definition": "Unique Investment Identifier"
+    "Definition": "As the aging application and product portfolios need more attention than budgets allow, application leaders should work with business stakeholders to apply top-down analysis and TIME categorization to prioritize opportunities for portfolio improvement using business and technology fitness, risk and cost.\nTriage Your Application and Product Portfolio by Using the TIME Model.\nDefine an Initial Remediation Strategy for Each of the Four Application Categories: Tolerate, Invest, Migrate and Eliminate\nTolerate — Re-engineer\nInvest — Innovate, Evolve\nMigrate — Modernize\nEliminate — Replace, Consolidate\nEngage and Involve Business Stakeholders by Discussing the TIME Model, and Jointly Identify and Prioritize Improvement Opportunities\nSupport Continuous Improvement of the Application Portfolio by Assessing the Portfolio Regularly",
+    "Reference": "Gartner"
   },
   {
     "Term": "Web-enabled",
-    "Definition": "Are applications and services that are accessed through a web browser and function through an internal and/or external Internet-protocol based collaboration environment (e.g., Internet, local area network, wide area network, public cloud, private cloud, and hybrid cloud).\nREF - FEAF"
+    "Definition": "Are applications and services that are accessed through a web browser and function through an internal and/or external Internet-protocol based collaboration environment (e.g., Internet, local area network, wide area network, public cloud, private cloud, and hybrid cloud).",
+    "Reference": "FEAF"
   }
 ]
