@@ -2,7 +2,7 @@
   <div class="card-header text-white bg-royal-blue text-center">
     <h3 class="card-title col-12 mb-0">
       <span>
-        <i class="fas fa-project-diagram mr-2"></i> 
+        <i class="fas fa-project-diagram mr-2"></i>
         <span [hidden]="ssoTable">GSA </span>
         <span [hidden]="!ssoTable" [innerHTML]="filterTitle"></span>
         Business Capabilities List
@@ -29,24 +29,34 @@
     </a>
   </div>
 
-  <div class="card-body card-text justify-content-center">
-    <!-- <div class="text-center"> -->
-      <!-- Filters -->
-      <!-- <span class="my-auto mr-3">Filter Buttons:</span>
-      <button role="button" name="capFASbttn" class="btn btn-primary" (click)="changeCapSSO('FAS')">
+  <div class="card-body card-text">
+    <div class="row w-100">
+      <!-- Business Capability Definition Popover -->
+      <a tabindex="0" class="btn btn-sm btn-info text-white" role="button"
+        data-toggle="popover" data-trigger="focus" data-placement="auto" data-html="true" title=""
+        data-content="Business capabilities encapsulate what a business is doing right now and what it needs be doing in order 
+        to meet current and future challenges. They define “what” a business does, rather than “how” it does it (which is 
+        described by processes). (<a href='https://cio-wiki.org/wiki/Business_Capability' target='_blank' rel='noopener'>Link</a>)">
+        Business Capabilities Definition
+      </a>
+      <!-- <div class="text-center"> -->
+        <!-- Filters -->
+        <!-- <span class="my-auto mr-3">Filter Buttons:</span>
+          <button role="button" name="capFASbttn" class="btn btn-primary" (click)="changeCapSSO('FAS')">
         FAS (Q)</button>
-      <button role="button" name="capITbttn" class="btn btn-primary" (click)="changeCapSSO('GSA IT')">
-        GSA IT (I)</button>
-      <button role="button" name="capOCFObttn" class="btn btn-primary" (click)="changeCapSSO('OCFO')">
-        OCFO (B)</button>
-      <button role="button" name="capPBSbttn" class="btn btn-primary" (click)="changeCapSSO('PBS')">
-        PBS (P)</button>
+        <button role="button" name="capITbttn" class="btn btn-primary" (click)="changeCapSSO('GSA IT')">
+          GSA IT (I)</button>
+        <button role="button" name="capOCFObttn" class="btn btn-primary" (click)="changeCapSSO('OCFO')">
+          OCFO (B)</button>
+          <button role="button" name="capPBSbttn" class="btn btn-primary" (click)="changeCapSSO('PBS')">
+          PBS (P)</button>
 
-      <button role="button" name="capBttn" class="btn btn-primary mx-3" (click)="backToMainCap()" [hidden]="!ssoTable">
-        Back to All Capabilities</button>
-    </div> -->
-
-    <!-- Main Table -->
-    <table id="capTable"></table>
+        <button role="button" name="capBttn" class="btn btn-primary mx-3" (click)="backToMainCap()" [hidden]="!ssoTable">
+          Back to All Capabilities</button>
+      </div> -->
+    
+      <!-- Main Table -->
+      <table id="capTable"></table>
+    </div>
   </div>
 </div>

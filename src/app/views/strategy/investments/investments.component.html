@@ -30,12 +30,21 @@
   </div>
 
   <div class="card-body card-text">
+    <!-- Investment Definition Popover -->
+    <a tabindex="0" class="btn btn-sm btn-info text-white position-absolute float-right w-11" role="button"
+      data-toggle="popover" data-trigger="focus" data-placement="auto" data-html="true" title=""
+      data-content="Information technology investment means an expenditure of information technology resources to address 
+      mission delivery and management support. These investments shall have a defined life cycle with start and end dates, 
+      with the end date representing the end of the currently estimated useful life of the investment, consistent with the 
+      investment’s most current alternatives analysis if applicable. (<a href='https://www.lawinsider.com/dictionary/information-technology-investment' 
+      target='_blank' rel='noopener'>Link</a>)">
+      Investment Definition
+    </a>
+
     <!-- Visualizations -->
-    <div id="investViz" class="row justify-content-center collapse show" style="height: 300px;" [hidden]="filterTitle == 'Inactive'">
-      <ngx-charts-advanced-pie-chart
-        [scheme]="colorScheme"
-        [results]="vizData"
-        [label]="vizLabel"
+    <div id="investViz" class="row justify-content-center collapse show" style="height: 300px;"
+      [hidden]="filterTitle == 'Inactive'">
+      <ngx-charts-advanced-pie-chart [scheme]="colorScheme" [results]="vizData" [label]="vizLabel"
         (select)="onSelect($event)">
       </ngx-charts-advanced-pie-chart>
     </div>
@@ -47,9 +56,12 @@
         <button role="button" name="investEliminatedBttn" class="btn btn-primary" (click)="eliminatedFilter()"
           [hidden]="filteredTable">Eliminated</button>
 
-        <button role="button" name="investPYBttn" class="btn btn-primary" (click)="previousYearFilter()">Previous Year Numbers</button>
-        <button role="button" name="investCYBttn" class="btn btn-primary" (click)="currentYearFilter()">Current Year Numbers</button>
-        <button role="button" name="investBYBttn" class="btn btn-primary" (click)="budgetYearFilter()">Budget Year Numbers</button>
+        <button role="button" name="investPYBttn" class="btn btn-primary" (click)="previousYearFilter()">Previous Year
+          Numbers</button>
+        <button role="button" name="investCYBttn" class="btn btn-primary" (click)="currentYearFilter()">Current Year
+          Numbers</button>
+        <button role="button" name="investBYBttn" class="btn btn-primary" (click)="budgetYearFilter()">Budget Year
+          Numbers</button>
 
         <button role="button" name="investBttn" class="btn btn-primary ml-3" (click)="backToMainInvest()"
           [hidden]="!filteredTable">Back to All Non-Eliminated Investments</button>

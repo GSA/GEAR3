@@ -11,11 +11,13 @@
     </h3>
     <!-- GEAR Manager Access -->
     <a class="btn btn-sm btn-info text-white shadow mngr-btn d-flex align-items-center justify-content-center"
-      routerLink="/gear_manager" *ngIf="!sharedService.loggedIn" aria-label="GEAR Manager Login" (click)="sharedService.setRedirectPath()">
+      routerLink="/gear_manager" *ngIf="!sharedService.loggedIn" aria-label="GEAR Manager Login"
+      (click)="sharedService.setRedirectPath()">
       <span class="mr-2">GEAR Manager Login</span><i class="fa fa-sign-in-alt fa-2x"></i>
     </a>
     <a class="btn btn-sm btn-danger text-white shadow mngr-btn d-flex align-items-center justify-content-center"
-      routerLink="/it_standards" *ngIf="sharedService.loggedIn" aria-label="GEAR Manager Logout" (click)="sharedService.logoutManager()">
+      routerLink="/it_standards" *ngIf="sharedService.loggedIn" aria-label="GEAR Manager Logout"
+      (click)="sharedService.logoutManager()">
       <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
     </a>
     <!-- Help Button -->
@@ -46,6 +48,17 @@
         (click)="createITStand()" [hidden]="!sharedService.loggedIn">
         <i class="fas fa-plus"></i>
       </button>
+
+      <!-- IT-Standard Definition Popover -->
+      <a tabindex="0" class="btn btn-sm btn-info text-white position-absolute float-right w-11" role="button"
+        data-toggle="popover" data-trigger="focus" data-placement="auto" data-html="true" title=""
+        data-content="Information technology investment means an expenditure of information technology resources to address mission 
+        delivery and management support. These investments shall have a defined life cycle with start and end dates, with the end 
+        date representing the end of the currently estimated useful life of the investment, consistent with the investment’s most 
+        current alternatives analysis if applicable. (<a href='https://www.encyclopedia.com/computing/news-wires-white-papers-and-books/information-technology-standards' 
+        target='_blank' rel='noopener'>Link</a>)">
+        IT-Standard Definition
+      </a>
 
       <!-- Filters -->
       <div class="mx-auto">
