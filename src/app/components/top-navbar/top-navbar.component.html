@@ -6,6 +6,20 @@
     <span [innerHTML]="envName"></span>
     <span *ngIf="sharedService.loggedIn" style="color: red"> **GEAR Manager Mode**</span>
   </a>
+
+  <!-- Global Search -->
+  <div class="d-flex flex-nowrap justify-content-center">
+    <form class="form-inline" role="search">
+      <input type="search" name="globalSearchField" [(ngModel)]="searchKW" class="form-control mr-2"
+        placeholder="Global Search" (keydown)="globalSearch($event)">
+      <!-- Weird bug where if button isn't here, hitting enter will not execute and update search table at first. Leaving button here -->
+      <button name="globalSearchBttn" aria-label="Global Search Button" class="btn btn-light form-control"
+        (click)="globalSearch($event)" hidden>
+        <i class="fas fa-search fa-lg"></i>
+      </button>
+    </form>
+  </div>
+
   <button id="topNavToggle" (click)="toggleTopNavBttn()" class="navbar-toggler rotate" type="button"
     data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
     aria-expanded="false" aria-label="Toggle Top Navigation">
@@ -13,19 +27,6 @@
   </button>
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <!-- Global Search -->
-    <div class="d-flex flex-nowrap justify-content-center">
-      <form class="form-inline" role="search">
-        <input type="search" name="globalSearchField" [(ngModel)]="searchKW" class="form-control mr-2"
-          placeholder="Global Search" (keydown)="globalSearch($event)">
-        <!-- Weird bug where if button isn't here, hitting enter will not execute and update search table at first. Leaving button here -->
-        <button name="globalSearchBttn" aria-label="Global Search Button" class="btn btn-light form-control"
-          (click)="globalSearch($event)" hidden>
-          <i class="fas fa-search fa-lg"></i>
-        </button>
-      </form>
-    </div>
-
     <!-- Right Side Links -->
     <ul class="navbar-nav ml-auto align-items-center">
       <li class="nav-item">
