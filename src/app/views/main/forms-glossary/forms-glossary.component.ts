@@ -101,11 +101,19 @@ export class FormsGlossaryComponent implements OnInit {
 
     // Method to handle click events on the Investments table
     $(document).ready(
-      $('#formsTable').on('click-row.bs.table', function (e, row) {
+      $('#formsTable').on('click-cell.bs.table', function (e, field, value, row) {
+        // console.log("Forms Table Clicked Element: ", e);  // Debug
+        // console.log("Forms Table Clicked Field: ", field);  // Debug
+        // console.log("Forms Table Clicked Cell Value: ", value);  // Debug
         // console.log("Forms Table Clicked Row: ", row);  // Debug
 
-        // Open new tab with link of row
-        window.open(row.Link);
+        if (field === 'Description') {
+          // Open new tab with link of row
+          window.open(row.Link);
+        } else if (field === 'POC') {
+          // Open new tab to compose email
+          window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${row.POC_email}`);
+        }
 
       }.bind(this)
       ));

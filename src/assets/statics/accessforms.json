@@ -3,12 +3,14 @@
     "Title": "New IT Standard Request Form",
     "Link": "https://gsa--c.na21.visual.force.com/apex/TechnologyRequestForm",
     "POC": "Cindy Smith",
-    "Description": "To request unapproved software:\n\nComplete the New Software Request form.\nFor additional details on the process, review the How to Request New Software document.\nAfter you submit the New Software Request form, you will receive an email with a Request Tracker (RT) ticket number. Track your request with the ticket number.\n\nOur goal in the CTO office is to continuously improve our processes and ensure we are able to meet your technology needs. Please send feedback to it-standards@gsa.gov."
+    "POC_email": "it-standards@gsa.gov",
+    "Description": "To request unapproved software:\n\nComplete the New Software Request form by clicking this cell.\nFor additional details on the process, review the How to Request New Software document.\nAfter you submit the New Software Request form, you will receive an email with a Request Tracker (RT) ticket number. Track your request with the ticket number.\n\nOur goal in the CTO office is to continuously improve our processes and ensure we are able to meet your technology needs. Please send feedback by clicking the POC cell to the right."
   },
   {
     "Title": "TIME Assessment for Each System",
-    "Link": "https://drive.google.com/drive/folders/1p1XdpaKFqhOHoTb9efGkkoYC7gGV3Ge-?usp=sharing",
+    "Link": "https://docs.google.com/spreadsheets/d/1cx-gi-jjHSvAD57Z0T812a0o7eJ-IWIAqlhE0ZTTMTI/edit?usp=sharing",
     "POC": "EA Team",
-    "Description": "TIME assessments for systems are now conducted through specific Google Sheets made for each system. They can be found at this linked Google Drive location. If you need access to the assessment Google Sheet for your system or have any questions, please email the EA team at ea_planning@gsa.gov."
+    "POC_email": "ea_planning@gsa.gov",
+    "Description": "TIME assessments for systems are now conducted through specific Google Sheets made for each system. Click this cell to open the template Google Sheet to fill out for your specific system. If you have any questions, click the POC cell to email the EA Team."
   }
 ]
