@@ -29,7 +29,7 @@ export class OrganizationsChartComponent implements OnInit {
   @ViewChild('orgChart') public graphContainer: ElementRef;
   private orgs: any[] = [];
   private root: any = {};
-  private rootOrg: string = 'Office of the Administrator (A)';
+  private rootOrg: string = 'Office of the Administrator';
   private orgTree: any = {};
   public highlightColor: string = '#ff4136';
 

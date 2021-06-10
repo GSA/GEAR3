@@ -41,7 +41,7 @@ export class OrganizationsComponent implements OnInit {
     headerStyle: "bg-royal-blue",
     pagination: true,
     search: true,
-    sortName: 'Parent',
+    sortName: 'OrgSymbol',
     sortOrder: 'asc',
     showToggle: true,
     url: this.apiService.orgUrl
@@ -49,16 +49,24 @@ export class OrganizationsComponent implements OnInit {
 
   // Organizations Table Columns
   columnDefs: any[] = [{
-    field: 'Parent',
-    title: 'Parent',
-    sortable: true
-  }, {
-    field: 'DisplayName',
-    title: 'Short Name',
+    field: 'OrgSymbol',
+    title: 'OrgSymbol',
     sortable: true
   }, {
     field: 'Name',
     title: 'Organization Name',
+    sortable: true
+  }, {
+    field: 'SSOName',
+    title: 'SSO Name',
+    sortable: true
+  }, {
+    field: 'TwoLetterOrgSymbol',
+    title: 'Two Letter Org',
+    sortable: true
+  }, {
+    field: 'TwoLetterOrgName',
+    title: 'Two Letter Org Name',
     sortable: true
   }];
 

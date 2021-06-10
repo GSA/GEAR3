@@ -10,7 +10,7 @@
         </a>
         <h5 class="modal-title text-white" id="orgTitle">
           <i class="fas fa-sitemap"></i>
-          {{ org.Name }}
+          {{ org.Name }} ({{ org.OrgSymbol }})
         </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
@@ -33,13 +33,28 @@
         <!-- Tab Panes -->
         <div class="tab-content mt-3">
           <div class="tab-pane fade show active" id="orgOverview">
-            <h4>Display Name</h4>
-            <p>{{ org.DisplayName }}</p>
-            <br><br>
+            <div class="row">
+              <div class="col-3">
+                <h4>Display Name</h4>
+                <p>{{ org.DisplayName }}</p>
+              </div>
 
-            <h4>Parent Organization</h4>
-            {{ org.Parent }}
-            <p [hidden]="org.Parent">None</p>
+              <div class="col-3" [hidden]="!org.SSOName">
+                <h4>SSO Name</h4>
+                <p>{{ org.SSOName }}</p>
+              </div>
+
+              <div class="col-3" [hidden]="!org.TwoLetterOrgName">
+                <h4>Two Letter Org</h4>
+                <p>{{ org.TwoLetterOrgName }} ({{ org.TwoLetterOrgSymbol }})</p>
+              </div>
+
+              <div class="col-3">
+                <h4>Parent Organization</h4>
+                {{ org.Parent }}
+                <p [hidden]="org.Parent">None</p>
+              </div>
+            </div>
           </div>
 
           <div class="tab-pane fade" id="orgSys">
