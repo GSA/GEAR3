@@ -39,6 +39,15 @@
   </div>
 
   <div class="card-body card-text">
+    <!-- System/Sub-System Definition Popover -->
+    <a tabindex="0" class="btn btn-sm btn-info text-white position-absolute float-right w-11" role="button" data-toggle="popover"
+      data-trigger="focus" data-placement="auto" data-html="true" title="" data-content="A system is based upon 
+      a hierarchical organization where systems and sub-systems are ranked one above the other according to status, authority 
+      or access point.  From one system, you have access to other subsystems.
+      <img src='/assets/img/systems.png'>">
+      System/Sub-System Definition
+    </a>
+
     <!-- Visualizations -->
     <div id="sysViz" class="row justify-content-center collapse show" style="height: 300px;" [hidden]="filterTitle == 'Active'">
       <ngx-charts-advanced-pie-chart
@@ -50,15 +59,6 @@
     </div>
 
     <div class="row w-100">
-      <!-- System/Sub-System Definition Popover -->
-      <a tabindex="0" class="btn btn-sm btn-info text-white position-absolute float-right w-11" role="button" data-toggle="popover"
-        data-trigger="focus" data-placement="auto" data-html="true" title="" data-content="A system is based upon 
-        a hierarchical organization where systems and sub-systems are ranked one above the other according to status, authority 
-        or access point.  From one system, you have access to other subsystems.
-        <img src='/assets/img/systems.png'>">
-        System/Sub-System Definition
-      </a>
-
       <!-- Filters -->
       <div class="mx-auto">
         <span class="my-auto mr-3">Add'l Filter Buttons:</span>
