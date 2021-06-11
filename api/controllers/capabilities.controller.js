@@ -26,7 +26,7 @@ exports.findSystems = (req, res) => {
     
       WHERE cap.capability_Id = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`;
 
-  res = ctrl.sendQuery_cowboy(query, 'supporting systems for capability', res);
+  res = ctrl.sendQuery(query, 'supporting systems for capability', res);
 };
 
 // exports.findSSO = (req, res) => {
