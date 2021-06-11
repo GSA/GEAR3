@@ -36,6 +36,9 @@ export class OrganizationsChartComponent implements OnInit {
   private treemap: any;
   private vis: any;
 
+  // Save selected node id
+  private selectedOrg: any;
+
   public searchKey: string;
   private finalSearchPath;
 
@@ -236,9 +239,6 @@ export class OrganizationsChartComponent implements OnInit {
   }
 
   private update = (source) => {
-    // Save selected node id
-    var selectedOrg;
-
     // Transition timing in milliseconds
     var duration = d3.event && d3.event.altKey ? 5000 : 300;
 
@@ -351,7 +351,7 @@ export class OrganizationsChartComponent implements OnInit {
       .attr("cursor", "pointer")
 
       // Show detail card on hoverover
-      .on("mouseover", function (d) {
+      .on("mouseenter", function (d) {
         d3.select("#orgDetail")
         .style("visibility", "visible")   // Show detail card
         .style("opacity", "1");
@@ -360,11 +360,25 @@ export class OrganizationsChartComponent implements OnInit {
           .text(d.data.name);  // Set Name
 
         // d3.select("#orgChart")
-        //   .style("transform", "translateY(13%)");   // Keeping this hear in case the detail pane gets larger and needs to move
+        //   .style("transform", "translateY(13%)");   // Keeping this here in case the detail pane gets larger and needs to move
 
         // console.log("Hovered Node: ", d);  // Debug
-        selectedOrg = d;  // Save selected node for links
-      });
+        this.selectedOrg = d;  // Save selected node for links
+
+        // Detail Pane Controls
+        var orgDetail = d3.select('#orgDetailLink');
+
+        // When detail link is clicked
+        orgDetail.on("click", function () {
+          // console.log("Selected Node: ", this.selectedOrg);  // Debug
+
+          // Grab data for selected node
+          this.apiService.getOneOrg(this.selectedOrg.data.identity).subscribe((data: any[]) => {
+            var orgData = data[0];
+            this.tableService.orgsTableClick(orgData);
+          });
+        }.bind(this));
+      }.bind(this));
 
     // Remove any exiting nodes
     var nodeExit = node.exit().transition()
@@ -446,22 +460,8 @@ export class OrganizationsChartComponent implements OnInit {
       return path
     }
 
-    // Detail Pane Controls
-    var orgDetail = d3.select('#orgDetailLink');
-    var orgClose = d3.select('#orgDetailClose');
-
-    // When detail link is clicked
-    orgDetail.on("click", function () {
-      // console.log("Selected Node: ", selectedOrg);  // Debug
-
-      // Grab data for selected node
-      this.apiService.getOneOrg(selectedOrg.data.identity).subscribe((data: any[]) => {
-        var orgData = data[0];
-        this.tableService.orgsTableClick(orgData);
-      });
-    }.bind(this));
-
     // When close window is clicked
+    var orgClose = d3.select('#orgDetailClose');
     orgClose.on("click", function (d) {
       d3.select("#orgDetail")
         .style("visibility", "hidden")

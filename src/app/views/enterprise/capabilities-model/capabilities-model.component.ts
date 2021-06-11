@@ -37,6 +37,9 @@ export class CapabilitiesModelComponent implements OnInit {
   private treemap: any;
   private vis: any;
 
+  // Save selected node id
+  private selectedCap: any;
+
   public searchKey: string;
   private finalSearchPath;
 
@@ -192,7 +195,7 @@ export class CapabilitiesModelComponent implements OnInit {
 
   // Example taken from https://bl.ocks.org/d3noob/1a96af738c89b88723eb63456beb6510
   private createGraph() {
-    var margin: any = { top: 20, bottom: 20, left: 120, right: 120 };
+    var margin: any = { top: 60, bottom: 20, left: 120, right: 120 };
     var i: number = 0;
 
     // Set margins
@@ -249,9 +252,6 @@ export class CapabilitiesModelComponent implements OnInit {
   }
 
   private update = (source) => {
-    // Save selected node id
-    var selectedCap;
-
     // Transition timing in milliseconds
     var duration = d3.event && d3.event.altKey ? 5000 : 300;
 
@@ -364,7 +364,7 @@ export class CapabilitiesModelComponent implements OnInit {
       .attr("cursor", "pointer")
 
       // Show detail card on hoverover
-      .on("mouseover", function (d) {
+      .on("mouseenter", function (d) {
         d3.select("#capDetail")
           .style("visibility", "visible")   // Show detail card
           .style("opacity", "1");
@@ -375,12 +375,24 @@ export class CapabilitiesModelComponent implements OnInit {
         d3.select("#capDetailbody")
           .text(d.data.description);  // Set Body with description
 
-        d3.select("#busCapGraph")
-          .style("transform", "translateY(13%)");
+        // d3.select("#busCapGraph")
+        //   .style("transform", "translateY(13%)");   // Keeping this here in case the detail pane gets larger and needs to move
 
         // console.log("Hovered Node: ", d);  // Debug
-        selectedCap = d.data.identity;  // Save selected node id for links
-      });
+        this.selectedCap = d;  // Save selected node id for links
+
+        // Detail Pane Controls
+        var capDetail = d3.select('#capDetailLink');
+
+        // When detail link is clicked
+        capDetail.on("click", function () {
+          // Grab data for selected node
+          this.apiService.getOneCap(this.selectedCap.data.identity).subscribe((data: any[]) => {
+            var capData = data[0];
+            this.tableService.capsTableClick(capData);
+          });
+        }.bind(this));
+      }.bind(this));
 
     // Remove any exiting nodes
     var nodeExit = node.exit().transition()
@@ -462,22 +474,8 @@ export class CapabilitiesModelComponent implements OnInit {
       return path
     }
 
-    // Detail Pane Controls
-    var capDetail = d3.select('#capDetailLink');
-    var capClose = d3.select('#capDetailClose');
-
-    // When detail link is clicked
-    capDetail.on("click", function () {
-      // console.log("Selected Node: ", selectedCap);  // Debug
-
-      // Grab data for selected node
-      this.apiService.getOneCap(selectedCap).subscribe((data: any[]) => {
-        var capData = data[0];
-        this.tableService.capsTableClick(capData);
-      });
-    }.bind(this));
-
     // When close window is clicked
+    var capClose = d3.select('#capDetailClose');
     capClose.on("click", function (d) {
       d3.select("#capDetail")
         .style("visibility", "hidden")
