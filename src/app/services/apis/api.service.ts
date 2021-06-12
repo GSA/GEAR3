@@ -88,7 +88,12 @@ export class ApiService {
   };
   public getOneCap(id: number): Observable<Capability[]> {
     return this.http.get<Capability[]>(this.capUrl + '/get/' + String(id)).pipe(
-      catchError(this.handleError<Capability[]>('GET Capability', []))
+      catchError(this.handleError<Capability[]>('GET Capability by ID', []))
+    );
+  };
+  public getOneCapName(name: string): Observable<Capability[]> {
+    return this.http.get<Capability[]>(this.capUrl + '/getByName/' + name).pipe(
+      catchError(this.handleError<Capability[]>('GET Capability by name', []))
     );
   };
 

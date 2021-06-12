@@ -531,12 +531,16 @@ export class TableService {
     };
   }
 
-  public openRelated(detailID: string, ID: number, type: string) {
+  public openRelated(detailID: string, ID: any, type: string) {
     $(detailID).modal('hide');
 
     if (type === 'investment') {
       this.apiService.getOneInvest(ID).subscribe((apiData: any[]) => {
         this.investTableClick(apiData[0]);
+      });
+    } else if (type === 'capability-name') {
+      this.apiService.getOneCapName(ID).subscribe((apiData: any[]) => {
+        this.capsTableClick(apiData[0]);
       });
     } else if (type === 'system') {
       this.apiService.getOneSys(ID).subscribe((apiData: any[]) => {

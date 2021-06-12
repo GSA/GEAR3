@@ -26,7 +26,7 @@ exports.findSystems = (req, res) => {
     
       WHERE invest.Investment_Id = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`;
 
-  res = ctrl.sendQuery_cowboy(query, 'system relations for investment', res);
+  res = ctrl.sendQuery(query, 'system relations for investment', res);
 };
 
 // exports.findLatest = (req, res) => {

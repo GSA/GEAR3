@@ -16,7 +16,14 @@ exports.findOne = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_capabilities.sql')).toString() +
     ` WHERE cap.capability_Id = ${req.params.id};`;
 
-  res = ctrl.sendQuery(query, 'individual business capability', res);
+  res = ctrl.sendQuery(query, 'individual business capability by ID', res);
+};
+
+exports.findOneName = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_capabilities.sql')).toString() +
+    ` WHERE cap.Capability_Name = '${req.params.name}';`;
+
+  res = ctrl.sendQuery(query, 'individual business capability by name', res);
 };
 
 exports.findSystems = (req, res) => {

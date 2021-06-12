@@ -94,7 +94,11 @@
                 </tr>
                 <tr>
                   <td><i class="fa fa-th"></i>Primary Service Area</td>
-                  <td>{{ investment.PSA }}</td>
+                  <td *ngIf="investment.PSA; else psaElse" class="btn-outline-info pointer"
+                  (click)="tableService.openRelated('#investDetail', investment.PSA, 'capability-name')">{{ investment.PSA }}</td>
+                  <ng-template #psaElse>
+                    <td>None Designated</td>
+                  </ng-template>
                 </tr>
                 <tr>
                   <td><i class="fas fa-info-circle"></i>Status</td>
