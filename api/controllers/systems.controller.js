@@ -22,7 +22,7 @@ exports.findOne = (req, res) => {
 exports.findCapabilities = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_capabilities.sql')).toString() +
     ` LEFT JOIN zk_systems_subsystems_capabilities AS cap_mapping    ON cap.capability_Id = cap_mapping.obj_capability_Id
-      LEFT JOIN cowboy_ods.obj_fisma_archer        AS systems        ON cap_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
+      LEFT JOIN obj_fisma_archer                   AS systems        ON cap_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
       WHERE systems.\`ex:GEAR_ID\` = ${req.params.id};`;
 
   res = ctrl.sendQuery(query, 'related capabilities for system', res);
@@ -58,7 +58,7 @@ exports.updateCaps = (req, res) => {
 exports.findTechnologies = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
     ` LEFT JOIN gear_ods.zk_systems_subsystems_technology   AS tech_mapping  ON tech.Id = tech_mapping.obj_technology_Id
-      LEFT JOIN obj_fisma_archer                            AS systems       ON tech_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
+      LEFT JOIN gear_ods.obj_fisma_archer                   AS systems       ON tech_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
       WHERE obj_standard_type.Keyname LIKE '%Software%'
         AND systems.\`ex:GEAR_ID\` = ${req.params.id}
 
@@ -97,7 +97,7 @@ exports.updateTech = (req, res) => {
 
 exports.findRecords = (req, res) => {
   var query = `SELECT * FROM gear_ods.zk_systems_subsystems_records   AS records_mapping
-      LEFT JOIN cowboy_ods.obj_fisma_archer                           AS systems       ON records_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
+      LEFT JOIN obj_fisma_archer                                      AS systems       ON records_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
       WHERE systems.\`ex:GEAR_ID\` = ${req.params.id}
 
     GROUP BY records_mapping.obj_records_Id;`;

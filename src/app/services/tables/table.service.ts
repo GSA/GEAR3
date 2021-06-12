@@ -44,6 +44,10 @@ export class TableService {
 
   // Systems Related Table Columns
   public relSysColumnDefs: any[] = [{
+    field: 'DisplayName',
+    title: 'Alias/Acronym',
+    sortable: true
+  }, {
     field: 'Name',
     title: 'System Name',
     sortable: true
@@ -62,9 +66,18 @@ export class TableService {
     title: 'Status',
     sortable: true
   }, {
-    field: 'orgName',
+    field: 'BusOrg',
+    title: 'Business Org',
+    sortable: true
+  }, {
+    field: 'RespOrg',
     title: 'Responsible Org',
     sortable: true
+  }, {
+    field: 'ParentName',
+    title: 'Parent System',
+    sortable: true,
+    visible: false
   }, {
     field: 'CSP',
     title: 'Cloud Server Provider',
@@ -84,6 +97,18 @@ export class TableService {
   }, {
     field: 'SO',
     title: 'System Owner',
+    sortable: true,
+    visible: false,
+    formatter: this.sharedService.pocStringNameFormatter
+  }, {
+    field: 'BusPOC',
+    title: 'Business POC',
+    sortable: true,
+    visible: false,
+    formatter: this.sharedService.pocStringNameFormatter
+  }, {
+    field: 'TechPOC',
+    title: 'Technical POC',
     sortable: true,
     visible: false,
     formatter: this.sharedService.pocStringNameFormatter

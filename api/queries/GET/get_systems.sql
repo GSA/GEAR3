@@ -1,26 +1,31 @@
 SELECT
-	`ex:GEAR_ID`									                AS ID,
-	`ex:Responsible_Org`                        	AS orgName,
-	`ex:System_Name`                            	AS Name,
-  `ex:FederalContractor`                      	AS FedContractorLoc,
-  `ex:FIPS_Impact_Level`                      	AS FIPS_Impact_Level,
-  `ex:ATOIATO_Date`                           	AS ATODate,
-  `ex:ATO_Type`                               	AS ATOType,
-  `ex:Renewal_Date`                           	AS RenewalDate,
-  `ex:Complete_ASsessment_For_Current_FY_Text`	AS ComplFISMA,
-  `ex:PII`                                     	AS PII,
-  `ex:Cloud_Hosted`                            	AS CloudYN,
-  `ex:Cloud_Server_Provider`                   	AS CSP,
-  `ex:Type_of_Service`                         	AS ServiceType,
-  `ex:FISMA_System_Identifier`                 	AS FISMASystemIdentifier,
-  `ex:Status`                                   AS Status,
-  `ex:Inactive_Date`                           	AS InactiveDate,
-  `ex:Description`                             	AS Description,
-  `ex:SystemLevel`                             	AS SystemLevel,
-  `ex:Parent_Name`                              AS ParentName,
-  `ex:SubSystem_Identifier_Tag`                	AS SubSystem_Tag,
-  `ex:FISMA_Reportable`                        	AS Reportable,
-  `ex:Goverment_Wide_Shared_Service`            AS SharedService,
+	systems.`ex:GEAR_ID`									                AS ID,
+	systems.`ex:Responsible_Org`                        	AS RespOrg,
+	systems_ext.Business_Org                            	AS BusOrg,
+	CASE  -- If there is no normalized name, use Archer's system name
+    WHEN systems_ext.Normalized_Name IS NULL THEN systems.`ex:System_Name`
+    ELSE systems_ext.Normalized_Name
+  END AS Name,
+  systems_ext.Display_Name					                    AS DisplayName,
+  systems.`ex:FederalContractor`                      	AS FedContractorLoc,
+  systems.`ex:FIPS_Impact_Level`                      	AS FIPS_Impact_Level,
+  systems.`ex:ATOIATO_Date`                           	AS ATODate,
+  systems.`ex:ATO_Type`                               	AS ATOType,
+  systems.`ex:Renewal_Date`                           	AS RenewalDate,
+  systems.`ex:Complete_ASsessment_For_Current_FY_Text`	AS ComplFISMA,
+  systems.`ex:PII`                                     	AS PII,
+  systems.`ex:Cloud_Hosted`                            	AS CloudYN,
+  systems.`ex:Cloud_Server_Provider`                   	AS CSP,
+  systems.`ex:Type_of_Service`                         	AS ServiceType,
+  systems.`ex:FISMA_System_Identifier`                 	AS FISMASystemIdentifier,
+  systems.`ex:Status`                                   AS Status,
+  systems.`ex:Inactive_Date`                           	AS InactiveDate,
+  systems.`ex:Description`                             	AS Description,
+  systems.`ex:SystemLevel`                             	AS SystemLevel,
+  systems.`ex:Parent_Name`                              AS ParentName,
+  systems.`ex:SubSystem_Identifier_Tag`                	AS SubSystem_Tag,
+  systems.`ex:FISMA_Reportable`                        	AS Reportable,
+  systems.`ex:Goverment_Wide_Shared_Service`            AS SharedService,
 
   CONCAT_WS('*', CONCAT_WS(':', 'Authorizing Official', CONCAT_WS( '; ', CONCAT_WS(', ', `ex:Authorizing_Official_Full_Name`, `ex:Authorizing_Official_Email`, `ex:Authorizing_Official_Phone`))) ,
   CONCAT_WS(':', 'System Owner',  CONCAT_WS( '; ',  CONCAT_WS(', ', `ex:System_Owner_Full_Name`, `ex:System_Owner_eMail`, `ex:System_Owner_Phone`))) ,
@@ -45,3 +50,5 @@ SELECT
   GROUP_CONCAT(DISTINCT concat_ws(',', `ex:Primary_Artifact_Name`,  `ex:Primary_Artifact_URL`) SEPARATOR ';') AS RelatedArtifacts
     
 FROM obj_fisma_archer AS systems
+
+LEFT JOIN obj_systems_subsystems AS systems_ext ON systems.`ex:GEAR_ID` = systems_ext.GEAR_ID

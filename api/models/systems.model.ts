@@ -1,7 +1,9 @@
 export class System {
   public ID: number;
+  public RespOrg: string;
+  public BusOrg: string;
   public Name: string;
-  public orgName: string;
+  public DisplayName: string;
   public FedContractorLoc: string;
   public FIPS_Impact_Level: string;
   public ATODate: Date;
@@ -17,6 +19,7 @@ export class System {
   public InactiveDate: Date;
   public Description: string;
   public SystemLevel: string;
+  public ParentName: string;
   public SubSystem_Tag: string;
   public Reportable: string;
   public SharedService: string;
@@ -27,5 +30,7 @@ export class System {
   public ISSO: string;
   public CO: string;
   public COR: string;
+  public BusPOC: string;
+  public TechPOC: string;
   public RelatedArtifacts: string;
 }

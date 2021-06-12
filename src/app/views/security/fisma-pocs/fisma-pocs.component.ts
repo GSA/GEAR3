@@ -74,12 +74,12 @@ export class FismaPocsComponent implements OnInit {
     sortable: true,
     formatter: this.pocFormatter
   }, {
-    field: 'orgName',
+    field: 'RespOrg',
     title: 'Responsible Org',
     sortable: true,
     visible: false
   }, {
-    field: 'businessOrgName',
+    field: 'BusOrg',
     title: 'Business Org',
     sortable: true,
     visible: false

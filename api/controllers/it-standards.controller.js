@@ -31,12 +31,12 @@ exports.findLatest = (req, res) => {
 
 exports.findSystems = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
-    ` LEFT JOIN gear_ods.zk_systems_subsystems_technology AS mappings ON systems.\`ex:GEAR_ID\` = mappings.obj_systems_subsystems_Id
-      LEFT JOIN obj_technology AS tech                                ON mappings.obj_technology_Id = tech.Id
+    ` LEFT JOIN zk_systems_subsystems_technology AS mappings ON systems.\`ex:GEAR_ID\` = mappings.obj_systems_subsystems_Id
+      LEFT JOIN cowboy_ods.obj_technology AS tech                                ON mappings.obj_technology_Id = tech.Id
       
       WHERE tech.Id = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`;
 
-  res = ctrl.sendQuery_cowboy(query, 'systems using IT Standard', res);
+  res = ctrl.sendQuery(query, 'systems using IT Standard', res);
 };
 
 exports.update = (req, res) => {

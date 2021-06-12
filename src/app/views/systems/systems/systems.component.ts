@@ -64,6 +64,10 @@ export class SystemsComponent implements OnInit {
 
   // Systems Table Columns
   columnDefs: any[] = [{
+    field: 'DisplayName',
+    title: 'Alias/Acronym',
+    sortable: true
+  }, {
     field: 'Name',
     title: 'System Name',
     sortable: true
@@ -82,13 +86,18 @@ export class SystemsComponent implements OnInit {
     title: 'Status',
     sortable: true
   }, {
-    field: 'orgName',
+    field: 'RespOrg',
     title: 'Responsible Org',
     sortable: true
   }, {
-    field: 'businessOrgName',
+    field: 'BusOrg',
     title: 'Business Org',
     sortable: true
+  }, {
+    field: 'ParentName',
+    title: 'Parent System',
+    sortable: true,
+    visible: false
   }, {
     field: 'CSP',
     title: 'Cloud Server Provider',
@@ -145,8 +154,12 @@ export class SystemsComponent implements OnInit {
     title: 'Status',
     sortable: true
   }, {
-    field: 'orgName',
+    field: 'RespOrg',
     title: 'Responsible Org',
+    sortable: true
+  }, {
+    field: 'BusOrg',
+    title: 'Business Org',
     sortable: true
   }, {
     field: 'CSP',
@@ -205,7 +218,7 @@ export class SystemsComponent implements OnInit {
   this.apiService.getSystems().subscribe((data: any[]) => {
     // Get counts by SSO
     var counts = data.reduce((p, c) => {
-      var name = c.orgName;
+      var name = c.RespOrg;
       if (!p.hasOwnProperty(name) && c.Status == 'Active') {
         p[name] = 0;
       }
@@ -287,10 +300,10 @@ export class SystemsComponent implements OnInit {
     this.filteredTable = true;  // Filters are on, expose main table button
     this.filterTitle = chartData.name;
 
-    // Filter by OrgName clicked on visualization
+    // Filter by RespOrg clicked on visualization
     $('#systemTable').bootstrapTable('filterBy', {
       Status: ['Active'],
-      orgName: chartData.name
+      RespOrg: chartData.name
     });
     $('#systemTable').bootstrapTable('refreshOptions', {
       exportOptions: {

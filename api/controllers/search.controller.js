@@ -10,7 +10,7 @@ exports.searchAll = (req, res) => {
         'System' AS \`GEAR_Type\`,
         '{}' AS \`Other\`
       FROM
-        cowboy_ods.obj_fisma_archer AS systems
+        gear_ods.obj_fisma_archer AS systems
       WHERE
         systems.\`ex:SystemLevel\` = 'SubSystem'
       UNION SELECT 
@@ -20,7 +20,7 @@ exports.searchAll = (req, res) => {
         'FISMA' AS \`GEAR_Type\`,
         '{}' AS \`Other\`
       FROM
-        cowboy_ods.obj_fisma_archer AS fisma
+      gear_ods.obj_fisma_archer AS fisma
       WHERE
         (fisma.\`ex:SystemLevel\` = 'System') AND
         (fisma.\`ex:Status\` <> 'Pending') 

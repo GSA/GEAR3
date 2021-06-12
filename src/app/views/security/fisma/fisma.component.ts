@@ -50,6 +50,10 @@ export class FismaComponent implements OnInit {
   
   // FISMA System Table Columns
   columnDefs: any[] = [{
+    field: 'DisplayName',
+    title: 'Alias/Acronym',
+    sortable: true
+  }, {
     field: 'Name',
     title: 'System Name',
     sortable: true
@@ -106,11 +110,12 @@ export class FismaComponent implements OnInit {
     sortable: true,
     visible: false
   }, {
-    field: 'orgName',
+    field: 'RespOrg',
     title: 'Responsible Org',
-    sortable: true
+    sortable: true,
+    visible: false
   }, {
-    field: 'businessOrgName',
+    field: 'BusOrg',
     title: 'Business Org',
     sortable: true,
     visible: false
