@@ -111,6 +111,9 @@ export class RecordsManagementComponent implements OnInit {
       $('[data-toggle="popover"]').popover()
     })
 
+    // Set JWT when logged into GEAR Manager when returning from secureAuth
+    this.sharedService.setJWTonLogIn();
+
     $('#recordsTable').bootstrapTable($.extend(this.tableOptions, {
       columns: this.columnDefs,
       data: [],
