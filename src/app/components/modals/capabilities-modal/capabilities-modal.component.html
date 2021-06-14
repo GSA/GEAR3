@@ -25,6 +25,10 @@
               Overview</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#capRelOrgs">
+              Related Organizations</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#capSupportSystems">
               Supporting Systems</a>
           </li>
@@ -40,10 +44,17 @@
             <h4>Level</h4>
             <p>{{ capability.Level }}</p>
           </div>
+          <!-- End of Overview Pane -->
+
+          <div class="tab-pane fade" id="capRelOrgs">
+            <table id="capRelOrgsTable"></table>
+          </div>
+          <!-- End of Related Orgs Pane -->
 
           <div class="tab-pane fade" id="capSupportSystems">
             <table id="capSupportSysTable"></table>
           </div>
+          <!-- End of Support Systems Pane -->
 
         </div>
       </div>

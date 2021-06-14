@@ -209,6 +209,13 @@ export class TableService {
       addRoute: addRoute
     };
     this.clickMethod(options);
+
+    // Update related orgs table in detail modal with clicked system
+    this.updateRelatedTable(
+      '#capRelOrgsTable',
+      data.Name + '-Related_Orgs',
+      '/api/capabilities/get/' + data.ID + '/orgs'
+    );
   }
 
 
@@ -269,6 +276,13 @@ export class TableService {
       addRoute: addRoute
     };
     this.clickMethod(options);
+
+    // Update related capabilities table in detail modal with clicked system
+    this.updateRelatedTable(
+      '#orgCapsTable',
+      data.Name + '-Related_Capabilities',
+      '/api/organizations/get/' + data.ID + '/capabilities'
+    );
 
     // Update related capabilities table in detail modal with clicked system
     this.updateRelatedTable(

@@ -9,6 +9,9 @@ router.route('/')
 router.route('/get/:id')
   .get(orgCtrl.findOne);
 
+router.route('/get/:id/capabilities/')
+  .get(orgCtrl.findCapabilites);
+
 router.route('/get/:name/systems/')
   .get(orgCtrl.findSystems);
 

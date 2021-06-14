@@ -27,7 +27,7 @@ export class CapabilitiesComponent implements OnInit {
     private modalService: ModalsService,
     private route: ActivatedRoute,
     private router: Router,
-    private sharedService: SharedService,
+    public sharedService: SharedService,
     private tableService: TableService) {
     this.modalService.currentCap.subscribe(row => this.row = row);
   }

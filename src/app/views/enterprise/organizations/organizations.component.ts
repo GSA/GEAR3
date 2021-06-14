@@ -50,7 +50,7 @@ export class OrganizationsComponent implements OnInit {
   // Organizations Table Columns
   columnDefs: any[] = [{
     field: 'OrgSymbol',
-    title: 'OrgSymbol',
+    title: 'Org Symbol',
     sortable: true
   }, {
     field: 'Name',

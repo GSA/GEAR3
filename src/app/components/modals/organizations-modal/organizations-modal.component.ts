@@ -25,13 +25,71 @@ export class OrganizationsModalComponent implements OnInit {
     private sharedService: SharedService,
     public tableService: TableService) { }
 
+
+  // Related Capabilities Table Options
+  relCapsTableOptions: {} = this.tableService.createTableOptions({
+    advancedSearch: true,
+    idTable: null,
+    classes: "table-hover table-dark clickable-table fixed-table",
+    showColumns: false,
+    showExport: true,
+    exportFileName: null,
+    headerStyle: "bg-royal-blue",
+    pagination: true,
+    search: true,
+    sortName: 'ReferenceNum',
+    sortOrder: 'asc',
+    showToggle: true,
+    url: null
+  });
+
+  // Related Capabilities Table Columns
+  relCapsColumnDefs: any[] = [{
+    field: 'ReferenceNum',
+    title: 'Ref Id',
+    sortable: true
+  }, {
+    field: 'Name',
+    title: 'Capability Name',
+    sortable: true
+  }, {
+    field: 'Description',
+    title: 'Description',
+    sortable: true,
+    class: 'text-truncate'
+  }, {
+    field: 'Level',
+    title: 'Level',
+    sortable: true
+  }, {
+    field: 'Parent',
+    title: 'Parent',
+    sortable: true
+  }];
+
+
   ngOnInit(): void {
     this.modalService.currentOrg.subscribe(organization => this.org = organization);
+
+    $('#orgCapsTable').bootstrapTable($.extend(this.relCapsTableOptions, {
+      columns: this.relCapsColumnDefs,
+      data: [],
+    }));
 
     $('#orgSysTable').bootstrapTable($.extend(this.tableService.relSysTableOptions, {
       columns: this.tableService.relSysColumnDefs,
       data: [],
     }));
+
+    // Method to handle click events on the Organizational Systems table
+    $(document).ready(
+      $('#orgCapsTable').on('click-row.bs.table', function (e, row) {
+        // Hide First Modal before showing new modal
+        $('#organizationDetail').modal('hide');
+
+        this.tableService.capsTableClick(row);
+      }.bind(this)
+      ));
 
     // Method to handle click events on the Organizational Systems table
     $(document).ready(

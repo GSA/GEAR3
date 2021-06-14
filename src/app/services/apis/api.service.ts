@@ -201,6 +201,11 @@ export class ApiService {
       catchError(this.handleError<Organization[]>('GET Organization', []))
     );
   };
+  public getOrgCap(id: number): Observable<Capability[]> {
+    return this.http.get<Capability[]>(this.orgUrl + '/get/' + String(id) + '/capabilities').pipe(
+      catchError(this.handleError<Capability[]>('GET Business Capabilities for Organization', []))
+    );
+  };
   public getOrgSys(name: string): Observable<System[]> {
     return this.http.get<System[]>(this.orgUrl + '/get/' + name + '/systems').pipe(
       catchError(this.handleError<System[]>('GET Systems for Organization', []))
