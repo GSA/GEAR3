@@ -21,6 +21,10 @@
               Business Capability Mapping</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#systemMngrInvest">
+              Investments Mapping</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#systemMngrITStand">
               IT Standards Mapping</a>
           </li>
@@ -57,6 +61,35 @@
               </div>
             </div>
             <!-- End of Business Capabilities Mapping Pane -->
+
+            <div class="tab-pane fade" id="systemMngrInvest">
+              <h4>Investments</h4>
+              <div class="row">
+                <div class="form-group col-5">
+                  <label for="sysInvestPool">Investments Pool</label>
+                  <select class="form-control" id="sysInvestPool" size="27" multiple>
+                    <option *ngFor="let investment of notSelectedInvest" [value]="investment.ID">{{ investment.Name }}</option>
+                  </select>
+                </div>
+
+                <div class="col-2 my-auto">
+                  <button class="btn btn-success w-100 mb-5"
+                    (click)="poolSelectedMove('#sysInvestPool', selectedInvestIDs, 'select')">Move
+                    to<br>Selected <i class="fas fa-arrow-right fa-lg"></i></button>
+                  <button class="btn btn-warning w-100"
+                    (click)="poolSelectedMove('#sysInvestSelect', selectedInvestIDs, 'deselect')"><i
+                      class="fas fa-arrow-left fa-lg"></i> Move to<br>Un-Selected</button>
+                </div>
+
+                <div class="form-group col-5">
+                  <label for="sysInvestSelect">Selected</label>
+                  <select class="form-control" id="sysInvestSelect" size="27" multiple>
+                    <option *ngFor="let investment of investRelations" [value]="investment.ID">{{ investment.Name }}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- End of Investments Mapping Pane -->
 
             <div class="tab-pane fade" id="systemMngrITStand">
               <h4>IT Standards</h4>

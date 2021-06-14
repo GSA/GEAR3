@@ -349,6 +349,13 @@ export class TableService {
       '/api/systems/get/' + String(data.ID) + '/technologies'
     );
 
+    // Update related investments table in detail modal with clicked system
+    this.updateRelatedTable(
+      '#systemInvestTable',
+      data.Name + '-Related_Investments',
+      '/api/systems/get/' + String(data.ID) + '/investments'
+    );
+
     // Update related records table in detail modal with clicked system
     var system_related_records = <any>[];
 

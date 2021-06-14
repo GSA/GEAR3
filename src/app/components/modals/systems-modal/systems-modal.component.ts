@@ -137,6 +137,94 @@ export class SystemsModalComponent implements OnInit {
   }];
 
 
+   // Related Investments Table Options
+   sysInvestTableOptions: {} = this.tableService.createTableOptions({
+    advancedSearch: true,
+    idTable: null,
+    classes: "table-hover table-dark clickable-table",
+    showColumns: true,
+    showExport: true,
+    exportFileName: null,
+    headerStyle: "bg-success",
+    pagination: true,
+    search: true,
+    sortName: 'Name',
+    sortOrder: 'asc',
+    showToggle: true,
+    url: null
+  });
+
+  // Related Investments Table Columns
+  sysInvestColumnDefs: any[] = [{
+    field: 'Name',
+    title: 'Investment Name',
+    sortable: true
+  }, {
+    field: 'Description',
+    title: 'Description',
+    sortable: true,
+    visible: false,
+    class: 'text-truncate'
+  }, {
+    field: 'Type',
+    title: 'Type',
+    sortable: true
+  }, {
+    field: 'IT_Portfolio',
+    title: 'Part of IT Portfolio',
+    sortable: true
+  }, {
+    field: 'Budget_Year',
+    title: 'Budget Year',
+    sortable: true
+  }, {
+    field: 'InvManager',
+    title: 'Investment Manager',
+    sortable: true,
+    formatter: this.sharedService.noneProvidedFormatter
+  }, {
+    field: 'Status',
+    title: 'Status',
+    sortable: true
+  }, {
+    field: 'Start_Year',
+    title: 'Start Year',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'End_Year',
+    title: 'End Year',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'PSA',
+    title: 'Primary Service Area',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'Cloud_Alt',
+    title: 'Cloud Alt. Evaluation',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'Comments',
+    title: 'Comments',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'UII',
+    title: 'Investment UII',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'Updated_Date',
+    title: 'Updated Date',
+    sortable: true,
+    visible: false,
+    formatter: this.sharedService.dateFormatter
+  }];
+
+
   // Related Technologies Table Options
   sysTechTableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: false,
@@ -273,6 +361,11 @@ export class SystemsModalComponent implements OnInit {
       data: [],
     }));
 
+    $('#systemInvestTable').bootstrapTable($.extend(this.sysInvestTableOptions, {
+      columns: this.sysInvestColumnDefs,
+      data: [],
+    }));
+
     $('#systemTechTable').bootstrapTable($.extend(this.sysTechTableOptions, {
       columns: this.sysTechColumnDefs,
       data: [],
@@ -302,6 +395,16 @@ export class SystemsModalComponent implements OnInit {
         this.tableService.itStandTableClick(row);
       }.bind(this)
     ));
+
+    // Method to handle click events on the Related Systems table
+    $(document).ready(
+      $('#systemInvestTable').on('click-row.bs.table', function (e, row) {
+        // Hide First Modal before showing new modal
+        $('#systemDetail').modal('hide');
+
+        this.tableService.investTableClick(row);
+      }.bind(this)
+      ));
 
     // Method to handle click events on the Related Systems table
     $(document).ready(

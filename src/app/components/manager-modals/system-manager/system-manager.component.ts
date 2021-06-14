@@ -20,6 +20,7 @@ export class SystemManagerComponent implements OnInit {
 
   systemForm: FormGroup = new FormGroup({
     relatedCaps: new FormControl(),
+    relatedInvest: new FormControl(),
     relatedTech: new FormControl()
   });
 
@@ -29,6 +30,11 @@ export class SystemManagerComponent implements OnInit {
   capRelations: any[] = [];
   notSelectedCaps: any[] = [];
   selectedCapsIDs: Set<any> = new Set();
+
+  investPool: any[] = [];
+  investRelations: any[] = [];
+  notSelectedInvest: any[] = [];
+  selectedInvestIDs: Set<any> = new Set();
 
   techPool: any[] = [];
   techRelations: any[] = [];
@@ -103,6 +109,44 @@ export class SystemManagerComponent implements OnInit {
     });
 
 
+    // Populate Related Investments
+    this.apiService.getSysInvestments(this.system.ID).subscribe((data: any[]) => {
+      this.investRelations = [];
+      // Only take ID and name
+      data.forEach(element => {
+        this.investRelations.push({
+          ID: element.ID,
+          Name: element.Name
+        })
+      });
+    });
+
+    // Populate Investments Pool minus related ones
+    this.apiService.getInvestments().toPromise()
+      .then((data: any[]) => {
+        this.investPool = [];
+        // Only take ID and name
+        data.forEach(element => {
+          this.investPool.push({
+            ID: element.ID,
+            Name: element.Name
+          })
+        });
+        this.selectedInvestIDs = new Set();
+        this.notSelectedInvest = this.investPool;
+
+        // Take related investment IDs and remove them from the investPool list
+        // to include only Investments that are not related to this system
+        this.selectedInvestIDs = new Set(this.investRelations.map(({ ID }) => ID));
+        this.notSelectedInvest = this.investPool.filter(({ ID }) => !this.selectedInvestIDs.has(ID));
+
+        // Set default values for form with current values after resolving related caps
+        this.systemForm.patchValue({
+          relatedInvest: this.selectedInvestIDs
+        });
+    });
+
+
     // Populate Related IT Standards
     this.apiService.getSysITStandards(this.system.ID).subscribe((data: any[]) => {
       this.techRelations = [];
@@ -165,12 +209,16 @@ export class SystemManagerComponent implements OnInit {
     this.notSelectedCaps = this.busCapPool.filter(({ ID }) => !this.selectedCapsIDs.has(ID));
     this.capRelations = this.busCapPool.filter(({ ID }) => this.selectedCapsIDs.has(ID));
     
+    this.notSelectedInvest = this.investPool.filter(({ ID }) => !this.selectedInvestIDs.has(ID));
+    this.techRelations = this.investPool.filter(({ ID }) => this.selectedInvestIDs.has(ID));
+    
     this.notSelectedTech = this.techPool.filter(({ ID }) => !this.selectedTechIDs.has(ID));
     this.techRelations = this.techPool.filter(({ ID }) => this.selectedTechIDs.has(ID));
 
     // Update form value with selected IDs
     this.systemForm.patchValue({
       relatedCaps: this.selectedCapsIDs,
+      relatedInvest: this.selectedInvestIDs,
       relatedTech: this.selectedTechIDs
     });
   };
@@ -183,6 +231,9 @@ export class SystemManagerComponent implements OnInit {
       if (this.systemForm.value.relatedCaps) {
         this.systemForm.value.relatedCaps = Array.from(this.systemForm.value.relatedCaps);
       };
+      if (this.systemForm.value.relatedInvest) {
+        this.systemForm.value.relatedInvest = Array.from(this.systemForm.value.relatedInvest);
+      };
       if (this.systemForm.value.relatedTech) {
         this.systemForm.value.relatedTech = Array.from(this.systemForm.value.relatedTech);
       };
@@ -191,6 +242,16 @@ export class SystemManagerComponent implements OnInit {
 
       // Send data to database
       this.apiService.updateSystemCaps(this.system.ID, this.systemForm.value).toPromise()
+        .then(res => {
+          // Grab new data from database
+          this.apiService.getOneSys(this.system.ID).toPromise()
+            .then(data => { this.systemDetailRefresh(data[0]) }),
+            (error) => {
+              console.log("GET Updated System rejected with " + JSON.stringify(error));
+            };
+        });
+
+      this.apiService.updateSystemInvestments(this.system.ID, this.systemForm.value).toPromise()
         .then(res => {
           // Grab new data from database
           this.apiService.getOneSys(this.system.ID).toPromise()

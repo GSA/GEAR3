@@ -18,6 +18,12 @@ router.route('/get/:id/capabilities')
 router.route('/updateCaps/:id')
   .put(sysCtrl.updateCaps);
 
+router.route('/get/:id/investments')
+  .get(sysCtrl.findInvestments);
+
+router.route('/updateInvest/:id')
+  .put(sysCtrl.updateInvest);
+
 router.route('/get/:id/technologies')
   .get(sysCtrl.findTechnologies);
 

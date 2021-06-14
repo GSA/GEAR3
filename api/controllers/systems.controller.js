@@ -19,6 +19,7 @@ exports.findOne = (req, res) => {
   res = ctrl.sendQuery(query, 'individual System/Subsystem', res);
 };
 
+
 exports.findCapabilities = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_capabilities.sql')).toString() +
     ` LEFT JOIN zk_systems_subsystems_capabilities AS cap_mapping    ON cap.capability_Id = cap_mapping.obj_capability_Id
@@ -54,6 +55,44 @@ exports.updateCaps = (req, res) => {
     });
   }
 };
+
+
+exports.findInvestments = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_investments.sql')).toString() +
+    ` LEFT JOIN zk_systems_subsystems_investments AS invest_mapping   ON invest.Investment_Id = invest_mapping.obj_investment_Id
+      LEFT JOIN obj_fisma_archer                  AS systems          ON invest_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
+      WHERE systems.\`ex:GEAR_ID\` = ${req.params.id};`;
+
+  res = ctrl.sendQuery(query, 'related investments for system', res);
+};
+
+exports.updateInvest = (req, res) => {
+  if (req.headers.authorization) {
+    var data = req.body;
+
+    // Create string to update system-investments relationship
+    var investString = '';
+    if (data.relatedInvest) {
+      // Delete any references first
+      investString += `DELETE FROM zk_systems_subsystems_investments WHERE obj_systems_subsystems_Id=${req.params.id}; `;
+
+      // Insert new IDs
+      data.relatedInvest.forEach(investID => {
+        investString += `INSERT INTO zk_systems_subsystems_investments (obj_systems_subsystems_Id, obj_investment_Id) VALUES (${req.params.id}, ${investID}); `;
+      });
+    };
+
+    var query = `${investString}`;
+    
+    res = ctrl.sendQuery(query, 'updating investments for system', res);
+
+  } else {
+    res.status(502).json({
+      message: "No authorization token present. Not allowed to update systems-investments mapping."
+    });
+  }
+};
+
 
 exports.findTechnologies = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
@@ -94,6 +133,7 @@ exports.updateTech = (req, res) => {
     });
   }
 };
+
 
 exports.findRecords = (req, res) => {
   var query = `SELECT * FROM gear_ods.zk_systems_subsystems_records   AS records_mapping
