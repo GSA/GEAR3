@@ -18,6 +18,9 @@ export class SharedService {
   toggleSub: Subscription;
 
   // Forms Emitter
+  capabilityFormEmitter = new EventEmitter();
+  capabilityFormSub: Subscription;
+
   itStandardsFormEmitter = new EventEmitter();
   itStandardsFormSub: Subscription;
 
@@ -207,6 +210,10 @@ export class SharedService {
 
 
   // Set Forms Default
+  public setCapabilityForm() {
+    this.capabilityFormEmitter.emit();
+  };
+
   public setITStandardsForm() {
     this.itStandardsFormEmitter.emit();
   };

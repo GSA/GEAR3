@@ -48,7 +48,10 @@
         </div>
       </div>
 
-      <div class="modal-footer"></div>
+      <div class="modal-footer">
+        <button type="button" [hidden]="!sharedService.loggedIn" class="btn btn-info text-white"
+          (click)="capabilityEdit()">Edit This Item</button>
+      </div>
     </div>
   </div>
 </div>

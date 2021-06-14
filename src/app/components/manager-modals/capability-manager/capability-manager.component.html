@@ -1,0 +1,76 @@
+<!-- Capability Manager Modal -->
+<div class="modal fade" id="capabilityManager" tabindex="-1" role="dialog" aria-labelledby="capabilityMngrTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-xl">
+    <div class="modal-content">
+      <div class="modal-header bg-info">
+        <h5 class="modal-title text-white" id="capabilityMngrTitle">
+          <i class="fas fa-project-diagram"></i>
+          <span *ngIf="capability.Name"> {{ capability.Name }} - <span class="text-primary">**EDITING**</span></span>
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Tabs -->
+        <ul id="capabilityMngrTabs" class="nav nav-tabs">
+          <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#capabilityMngrOrg">
+              Organization Mapping</a>
+          </li>
+        </ul>
+
+        <!-- Tab Panes -->
+        <form [formGroup]="capabilityForm" class="container">
+          <div class="tab-content mt-3">
+            <div class="tab-pane fade show active" id="capabilityMngrOrg">
+              <h4>Related Orgs</h4>
+              <div class="row">
+                <div class="form-group col-5">
+                  <label for="orgPool">Organizations Pool</label>
+                  <select class="form-control" id="orgPool" size="27" multiple>
+                    <option *ngFor="let org of notSelectedOrgs" [value]="org.ID">{{ org.Name }} ({{ org.Symbol }})</option>
+                  </select>
+                </div>
+
+                <div class="col-2 my-auto">
+                  <button class="btn btn-success w-100 mb-5"
+                    (click)="poolSelectedMove('#orgPool', selectedOrgsIDs, 'select')">Move
+                    to<br>Selected <i class="fas fa-arrow-right fa-lg"></i></button>
+                  <button class="btn btn-warning w-100"
+                    (click)="poolSelectedMove('#orgSelect', selectedOrgsIDs, 'deselect')"><i
+                      class="fas fa-arrow-left fa-lg"></i> Move to<br>Un-Selected</button>
+                </div>
+
+                <div class="form-group col-5">
+                  <label for="orgSelect">Selected</label>
+                  <select class="form-control" id="orgSelect" size="27" multiple>
+                    <option *ngFor="let org of orgRelations" [value]="org.ID">{{ org.Name }} ({{ org.Symbol }})</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- End of Orgs Mapping Pane -->
+
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <div class="text-danger mr-auto">* Required</div>
+        <div class="col-md-3 pl-0 ml-0 custom-control custom-checkbox text-right">
+          <input type="checkbox" class="custom-control-input" id="capabilityCertifyCheck" [(ngModel)]="capabilityCertify">
+          <label class="custom-control-label" for="capabilityCertifyCheck">
+            <span class="text-danger">*</span>
+            I certify all data is correct and up-to-date
+          </label>
+        </div>
+        <button type="submit" form="capabilityForm" class="btn btn-info text-white" (click)="submitForm()"
+          [disabled]="!(capabilityCertify && capabilityForm.valid)">Save</button>
+      </div>
+
+    </div>
+  </div>
+</div>

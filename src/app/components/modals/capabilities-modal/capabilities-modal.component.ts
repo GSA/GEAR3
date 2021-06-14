@@ -22,7 +22,7 @@ export class CapabilitiesModalComponent implements OnInit {
     private location: Location,
     public modalService: ModalsService,
     private router: Router,
-    private sharedService: SharedService,
+    public sharedService: SharedService,
     public tableService: TableService) { }
 
   ngOnInit(): void {
@@ -50,6 +50,14 @@ export class CapabilitiesModalComponent implements OnInit {
       // Change URL back without ID after closing Modal
       this.sharedService.removeIDfromURL();
     }.bind(this));
+  }
+
+  capabilityEdit () {
+    // Hide Detail Modal before showing Manager Modal
+    $('#capabilityDetail').modal('hide');
+    this.modalService.updateDetails(this.capability, 'capability', false);
+    this.sharedService.setCapabilityForm();
+    $('#capabilityManager').modal('show');
   }
 
 }

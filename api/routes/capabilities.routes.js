@@ -15,7 +15,10 @@ router.route('/getByName/:name')
 router.route('/get/:id/systems')
   .get(capabilitiesCtrl.findSystems);
 
-// router.route('/sso/:name')
-//   .get(capabilitiesCtrl.findSSO);
+router.route('/get/:id/orgs')
+  .get(capabilitiesCtrl.findOrgs);
+
+router.route('/updateOrgs/:id')
+  .put(capabilitiesCtrl.updateOrgs);
 
 module.exports = router;

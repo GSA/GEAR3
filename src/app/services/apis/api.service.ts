@@ -96,6 +96,22 @@ export class ApiService {
       catchError(this.handleError<Capability[]>('GET Capability by name', []))
     );
   };
+  public getCapOrgs(id: number): Observable<Organization[]> {
+    return this.http.get<Organization[]>(this.capUrl + '/get/' + String(id) + '/orgs').pipe(
+      catchError(this.handleError<Organization[]>('GET Capability Related Orgs', []))
+    );
+  };
+  public updateCapOrgs(id: number, data: {}): Observable<Capability[]> {
+    if (this.globals.jwtToken) {
+      var httpOptions = this.setHeaderOpts();
+    } else {
+      catchError(this.handleError<Capability[]>('UPDATE Business Capabilities-Orgs - No Authentication Token', []))
+    }
+
+    return this.http.put<Capability[]>(this.capUrl + '/updateOrgs/' + String(id), data, httpOptions).pipe(
+      catchError(this.handleError<Capability[]>('UPDATE Business Capability-Orgs', []))
+    );
+  };
 
 
   //// Data Flow
