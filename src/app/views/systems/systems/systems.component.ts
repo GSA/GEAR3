@@ -195,6 +195,9 @@ export class SystemsComponent implements OnInit {
     $(function () {
       $('[data-toggle="popover"]').popover();
     });
+    
+    // Set JWT when logged into GEAR Manager when returning from secureAuth
+    this.sharedService.setJWTonLogIn();
 
     $('#systemTable').bootstrapTable($.extend(this.tableOptions, {
       columns: this.columnDefs,

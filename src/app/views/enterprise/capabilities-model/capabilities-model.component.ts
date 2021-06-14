@@ -56,6 +56,9 @@ export class CapabilitiesModelComponent implements OnInit {
       $('[data-toggle="popover"]').popover()
     })
 
+    // Set JWT when logged into GEAR Manager when returning from secureAuth
+    this.sharedService.setJWTonLogIn();
+
     this.getCapData();
 
     // Method to open details modal when referenced directly via URL

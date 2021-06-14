@@ -108,6 +108,7 @@ export class ItStandardsComponent implements OnInit {
       $('[data-toggle="popover"]').popover()
     });
 
+    // Set JWT when logged into GEAR Manager when returning from secureAuth
     this.sharedService.setJWTonLogIn();
 
     $('#itStandardsTable').bootstrapTable($.extend(this.tableOptions, {

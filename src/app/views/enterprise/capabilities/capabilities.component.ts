@@ -111,6 +111,9 @@ export class CapabilitiesComponent implements OnInit {
       $('[data-toggle="popover"]').popover()
     })
 
+    // Set JWT when logged into GEAR Manager when returning from secureAuth
+    this.sharedService.setJWTonLogIn();
+
     $('#capTable').bootstrapTable($.extend(this.tableOptions, {
       columns: this.capColumnDefs,
       data: [],

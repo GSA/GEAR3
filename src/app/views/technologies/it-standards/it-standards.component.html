@@ -9,6 +9,7 @@
         IT Standards
       </span>
     </h3>
+
     <!-- GEAR Manager Access -->
     <a class="btn btn-sm btn-info text-white shadow mngr-btn d-flex align-items-center justify-content-center"
       routerLink="/gear_manager" *ngIf="!sharedService.loggedIn" aria-label="GEAR Manager Login"
@@ -20,6 +21,7 @@
       (click)="sharedService.logoutManager()">
       <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
     </a>
+    
     <!-- Help Button -->
     <a tabindex="0"
       class="btn btn-sm btn-info text-white shadow help-btn d-flex align-items-center justify-content-center"
