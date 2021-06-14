@@ -21,5 +21,32 @@ exports.findSystems = (req, res) => {
   ` LEFT JOIN gear_ods.zk_systems_subsystems_records AS records_mapping ON systems.\`ex:GEAR_ID\` = records_mapping.obj_systems_subsystems_Id
     WHERE records_mapping.obj_records_Id = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`;
 
-  res = ctrl.sendQuery_cowboy(query, 'related systems for record', res);
+  res = ctrl.sendQuery(query, 'related systems for record', res);
+};
+
+exports.updateSystems = (req, res) => {
+  if (req.headers.authorization) {
+    var data = req.body;
+
+    // Create string to update record-system relationship
+    var systemString = '';
+    if (data.relatedSystems) {
+      // Delete any references first
+      systemString += `DELETE FROM zk_systems_subsystems_records WHERE obj_records_Id=${req.params.id}; `;
+
+      // Insert new IDs
+      data.relatedSystems.forEach(systemID => {
+        systemString += `INSERT INTO zk_systems_subsystems_records (obj_records_Id, obj_systems_subsystems_Id) VALUES (${req.params.id}, ${systemID}); `;
+      });
+    };
+
+    var query = `${systemString}`;
+    
+    res = ctrl.sendQuery(query, 'updating systems for record', res);
+
+  } else {
+    res.status(502).json({
+      message: "No authorization token present. Not allowed to update systems-business capabilities mapping."
+    });
+  }
 };

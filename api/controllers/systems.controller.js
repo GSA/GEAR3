@@ -7,7 +7,7 @@ const queryPath = '../queries/';
 
 exports.findAll = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
-    " GROUP BY systems.\`ex:GEAR_ID\`;";
+    " GROUP BY systems.\`ex:System_Name\`;";
 
   res = ctrl.sendQuery(query, 'Systems and subsystems', res);
 };

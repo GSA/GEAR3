@@ -121,7 +121,10 @@
       </div>
       <!-- End of Modal Body -->
 
-      <div class="modal-footer"></div>
+      <div class="modal-footer">
+        <button type="button" [hidden]="!sharedService.loggedIn" class="btn btn-info text-white"
+          (click)="recordEdit()">Edit This Item</button>
+      </div>
     </div>
   </div>
 </div>

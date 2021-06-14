@@ -55,4 +55,12 @@ export class RecordsModalComponent implements OnInit {
     }.bind(this));
   }
 
+  recordEdit () {
+    // Hide Detail Modal before showing Manager Modal
+    $('#recordDetail').modal('hide');
+    this.modalService.updateDetails(this.record, 'record', false);
+    this.sharedService.setRecordForm();
+    $('#recordManager').modal('show');
+  }
+
 }

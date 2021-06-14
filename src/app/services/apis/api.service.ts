@@ -242,6 +242,17 @@ export class ApiService {
       catchError(this.handleError<System[]>('GET Systems for Record', []))
     );
   };
+  public updateRecordSys(id: number, data: {}): Observable<Record[]> {
+    if (this.globals.jwtToken) {
+      var httpOptions = this.setHeaderOpts();
+    } else {
+      catchError(this.handleError<Record[]>('UPDATE Record-System - No Authentication Token', []))
+    }
+
+    return this.http.put<Record[]>(this.sysUrl + '/updateSystems/' + String(id), data, httpOptions).pipe(
+      catchError(this.handleError<Record[]>('UPDATE Record-System', []))
+    );
+  };
 
 
   //// Systems

@@ -46,6 +46,7 @@ import { SystemManagerComponent } from './components/manager-modals/system-manag
 import { TimeComponent } from './views/systems/time/time.component';
 import { RecordsManagementComponent } from './views/systems/records-management/records-management.component';
 import { RecordsModalComponent } from './components/modals/records-modal/records-modal.component';
+import { RecordManagerComponent } from './components/manager-modals/record-manager/record-manager.component';
 
 //// Security
 import { FismaComponent } from './views/security/fisma/fisma.component';
@@ -96,6 +97,7 @@ import { Globals } from './common/globals';
     TimeComponent,
     RecordsManagementComponent,
     RecordsModalComponent,
+    RecordManagerComponent,
     
     FismaComponent,
     FismaModalComponent,

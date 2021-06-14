@@ -12,4 +12,7 @@ router.route('/get/:id')
 router.route('/get/:id/systems')
   .get(recordsCtrl.findSystems);
 
+router.route('/updateSystems/:id')
+  .put(recordsCtrl.updateSystems);
+
 module.exports = router;

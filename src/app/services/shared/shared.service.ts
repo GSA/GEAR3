@@ -24,6 +24,9 @@ export class SharedService {
   itStandardsFormEmitter = new EventEmitter();
   itStandardsFormSub: Subscription;
 
+  recordFormEmitter = new EventEmitter();
+  recordFormSub: Subscription;
+
   systemFormEmitter = new EventEmitter();
   systemFormSub: Subscription;
 
@@ -216,6 +219,10 @@ export class SharedService {
 
   public setITStandardsForm() {
     this.itStandardsFormEmitter.emit();
+  };
+
+  public setRecordForm() {
+    this.recordFormEmitter.emit();
   };
 
   public setSystemForm() {
