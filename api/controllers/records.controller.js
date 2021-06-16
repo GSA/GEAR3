@@ -9,11 +9,21 @@ const ctrl      = require('./base.controller'),
 // @see https://docs.google.com/spreadsheets/d/1eSoyn7-2EZMqbohzTMNDcFmNBbkl-CzXtpwNXHNHD1A
 
 exports.findAll = (req, res) => {
-  ctrl.googleMain(res, 'all', SHEET_ID, RANGE);
+  // ctrl.googleMain(res, 'all', SHEET_ID, RANGE);
+
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_records.sql')).toString() +
+  ` ORDER BY Record_Item_Title;`;
+
+  res = ctrl.sendQuery(query, 'records', res);
 };
 
 exports.findOne = (req, res) => {
-  ctrl.googleMain(res, 'single', SHEET_ID, RANGE, req.params.id);
+  // ctrl.googleMain(res, 'single', SHEET_ID, RANGE, req.params.id);
+
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_records.sql')).toString() +
+  ` WHERE Records_Id = ${req.params.id} ORDER BY Record_Item_Title;`;
+
+  res = ctrl.sendQuery(query, 'individual record', res);
 };
 
 exports.findSystems = (req, res) => {
