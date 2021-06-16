@@ -134,7 +134,7 @@ export class TimeComponent implements OnInit {
     $(document).ready(
       $('#timeTable').on('dbl-click-row.bs.table', function (e, row) {
         // Grab data for system by name
-        this.apiService.getOneSys(row.Id).subscribe((data: any[]) => {
+        this.apiService.getOneSys(row['System Id']).subscribe((data: any[]) => {
           this.tableService.systemsTableClick(data[0]) });
 
           // Change URL to include ID

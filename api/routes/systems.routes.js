@@ -24,13 +24,16 @@ router.route('/get/:id/investments')
 router.route('/updateInvest/:id')
   .put(sysCtrl.updateInvest);
 
+router.route('/get/:id/records')
+  .get(sysCtrl.findRecords);
+
 router.route('/get/:id/technologies')
   .get(sysCtrl.findTechnologies);
 
 router.route('/updateTech/:id')
   .put(sysCtrl.updateTech);
 
-  router.route('/get/:id/records')
-    .get(sysCtrl.findRecords);
+router.route('/get/:id/time')
+  .get(sysCtrl.findTIME);
 
 module.exports = router;

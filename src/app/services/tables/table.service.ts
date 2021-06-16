@@ -321,7 +321,7 @@ export class TableService {
     };
     this.clickMethod(options);
 
-    this.apiService.getOneSysTIME(data['ID']).subscribe((TIMEdata: any[]) => {
+    this.apiService.getSysTIME(data['ID']).subscribe((TIMEdata: any[]) => {
       if (TIMEdata[0]) {  // Only continute if any data came back
         var timeAPIdata = TIMEdata[0];
 

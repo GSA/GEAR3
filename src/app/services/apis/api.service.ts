@@ -303,6 +303,11 @@ export class ApiService {
       catchError(this.handleError<System[]>('UPDATE System-Investments', []))
     );
   };
+  public getSysRecords(id: number): Observable<Record[]> {
+    return this.http.get<Record[]>(this.sysUrl + '/get/' + String(id) + '/records').pipe(
+      catchError(this.handleError<Record[]>('GET System Related Records', []))
+    );
+  };
   public getSysITStandards(id: number): Observable<ITStandards[]> {
     return this.http.get<ITStandards[]>(this.sysUrl + '/get/' + String(id) + '/technologies').pipe(
       catchError(this.handleError<ITStandards[]>('GET System Related Technologies', []))
@@ -319,9 +324,9 @@ export class ApiService {
       catchError(this.handleError<System[]>('UPDATE System-IT Standards', []))
     );
   };
-  public getSysRecords(id: number): Observable<Record[]> {
-    return this.http.get<Record[]>(this.sysUrl + '/get/' + String(id) + '/records').pipe(
-      catchError(this.handleError<Record[]>('GET System Related Records', []))
+  public getSysTIME(id: number): Observable<TIME[]> {
+    return this.http.get<TIME[]>(this.sysUrl + '/get/' + String(id) + '/time').pipe(
+      catchError(this.handleError<TIME[]>('GET TIME by System', []))
     );
   };
 
@@ -330,11 +335,6 @@ export class ApiService {
   public getTIME(): Observable<TIME[]> {
     return this.http.get<TIME[]>(this.timeUrl).pipe(
       catchError(this.handleError<TIME[]>('GET TIME', []))
-    );
-  };
-  public getOneSysTIME(id: number): Observable<TIME[]> {
-    return this.http.get<TIME[]>(this.timeUrl + '/get/' + String(id)).pipe(
-      catchError(this.handleError<TIME[]>('GET TIME by ID', []))
     );
   };
 

@@ -6,7 +6,4 @@ const router = express.Router();
 router.route('/')
   .get(sysTimeCtrl.findAll);
 
-router.route('/get/:id')
-  .get(sysTimeCtrl.findOne);
-
 module.exports = router;

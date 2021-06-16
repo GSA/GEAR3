@@ -44,11 +44,6 @@ export class SystemsModalComponent implements OnInit {
 
   // System TIME Table Columns
   sysTimecolumnDefs: any[] = [{
-    field: 'System Name',
-    title: 'System Name',
-    sortable: true,
-    visible: false
-  }, {
     field: 'FY',
     title: 'FY',
     sortable: true

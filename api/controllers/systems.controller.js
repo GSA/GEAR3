@@ -94,6 +94,17 @@ exports.updateInvest = (req, res) => {
 };
 
 
+exports.findRecords = (req, res) => {
+  var query = `SELECT * FROM gear_ods.zk_systems_subsystems_records   AS records_mapping
+      LEFT JOIN obj_fisma_archer                                      AS systems       ON records_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
+      WHERE systems.\`ex:GEAR_ID\` = ${req.params.id}
+
+    GROUP BY records_mapping.obj_records_Id;`;
+
+  res = ctrl.sendQuery(query, 'related records for system', res);
+};
+
+
 exports.findTechnologies = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
     ` LEFT JOIN gear_ods.zk_systems_subsystems_technology   AS tech_mapping  ON tech.Id = tech_mapping.obj_technology_Id
@@ -135,12 +146,9 @@ exports.updateTech = (req, res) => {
 };
 
 
-exports.findRecords = (req, res) => {
-  var query = `SELECT * FROM gear_ods.zk_systems_subsystems_records   AS records_mapping
-      LEFT JOIN obj_fisma_archer                                      AS systems       ON records_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
-      WHERE systems.\`ex:GEAR_ID\` = ${req.params.id}
+exports.findTIME = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_sysTIME.sql')).toString() +
+    ` WHERE \`System Id\` = ${req.params.id};`;
 
-    GROUP BY records_mapping.obj_records_Id;`;
-
-  res = ctrl.sendQuery(query, 'related records for system', res);
+  res = ctrl.sendQuery(query, 'related TIME designations for system', res);
 };
