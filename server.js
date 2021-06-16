@@ -23,6 +23,12 @@ const bodyParser = require('body-parser'),
   ExtractJWT = passportJWT.ExtractJwt,
   JWTStrategy = passportJWT.Strategy;
 
+// Proxy Settings for Google API to use
+// process.env.HTTP_PROXY="http://patchproxyr13.gsa.gov:3128";
+// process.env.http_proxy="http://patchproxyr13.gsa.gov:3128";
+// process.env.https_proxy="http://patchproxyr13.gsa.gov:3128";
+// process.env.HTTPS_PROXY="http://patchproxyr13.gsa.gov:3128";
+
 
 /********************************************************************
 PASSPORT BEGIN
@@ -70,7 +76,8 @@ const app = express()
   .use(bodyParser.json({ limit: '50mb' }))
   .use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
   .use(passport.initialize())
-  .use(express.static(path.join(__dirname, 'public')));
+  .use(express.static(path.join(__dirname, 'public')))
+  .enable('trust proxy');  // For expressJS to know we're behind a proxy when deployed
 
 
 /********************************************************************

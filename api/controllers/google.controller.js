@@ -9,6 +9,11 @@ const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
 // time.
 const TOKEN_PATH = 'token.json';
 
+google.options({
+  // All requests made with this object will use these settings unless overridden.
+  timeout: 30_000
+});
+
 exports.auth = (req, res, next) => {
   var credentials = {}
   // Load client secrets from a local file.
@@ -52,9 +57,11 @@ exports.saveToken = (req, res, next) => {
     const oAuth2Client = new google.auth.OAuth2(
       client_id, client_secret, process.env.GOOGLE_AUTH_REDIRECT);
 
-
     oAuth2Client.getToken(code, (err, token) => {
-      if (err) return res = res.status(505).json({ error: 'Error while trying to retrieve access token: ' + err });
+      if (err) {
+        console.log("Error while trying to retrieve access token: ", err );
+        return res = res.status(200).json({ error: 'Error while trying to retrieve access token: ' + err });
+      };
       oAuth2Client.setCredentials(token);
       // Store the token to disk for later program executions
       fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
