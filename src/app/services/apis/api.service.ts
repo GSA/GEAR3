@@ -249,7 +249,7 @@ export class ApiService {
       catchError(this.handleError<Record[]>('UPDATE Record-System - No Authentication Token', []))
     }
 
-    return this.http.put<Record[]>(this.sysUrl + '/updateSystems/' + String(id), data, httpOptions).pipe(
+    return this.http.put<Record[]>(this.recordsUrl + '/updateSystems/' + String(id), data, httpOptions).pipe(
       catchError(this.handleError<Record[]>('UPDATE Record-System', []))
     );
   };
