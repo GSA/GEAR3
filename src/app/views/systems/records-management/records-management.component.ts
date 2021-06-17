@@ -37,7 +37,7 @@ export class RecordsManagementComponent implements OnInit {
     headerStyle: "bg-danger",
     pagination: true,
     search: true,
-    sortName: 'RecordTitle',
+    sortName: 'GSA_Number',
     sortOrder: 'asc',
     showToggle: true,
     url: this.apiService.recordsUrl
@@ -45,6 +45,10 @@ export class RecordsManagementComponent implements OnInit {
 
   // Apps Table Columns
   columnDefs: any[] = [{
+    field: 'GSA_Number',
+    title: 'GSA Number',
+    sortable: true
+  }, {
     field: 'Record_Item_Title',
     title: 'Record Title',
     sortable: true
@@ -86,11 +90,6 @@ export class RecordsManagementComponent implements OnInit {
     sortable: false,
     visible: false,
     class: 'text-truncate'
-  }, {
-    field: 'GSA_Number',
-    title: 'GSA Number',
-    sortable: true,
-    visible: false
   }, {
     field: 'FP_Category',
     title: 'FP Category',
