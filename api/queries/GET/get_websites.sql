@@ -16,6 +16,7 @@ SELECT
   mobile_friendly,
   has_search,
   repository_url,
-  hosting_platform
+  hosting_platform,
+  https
     
 FROM obj_websites AS websites

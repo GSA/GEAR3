@@ -17,4 +17,5 @@ export class Website {
   public has_search: string;
   public repository_url: string;
   public hosting_platform: string;
+  public https: string;
 }
