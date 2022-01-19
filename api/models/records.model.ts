@@ -13,4 +13,5 @@ export class Record {
   public FP_Category: string;
   public PII: string;
   public CUI: string;
+  public FY_Retention_Years: string;
 }

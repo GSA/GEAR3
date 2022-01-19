@@ -102,6 +102,10 @@ export class RecordsManagementComponent implements OnInit {
     field: 'CUI',
     title: 'CUI',
     sortable: true
+  }, {
+    field: 'FY_Retention_Years',
+    title: 'FY Retention Years',
+    sortable: true
   }];
 
   ngOnInit(): void {

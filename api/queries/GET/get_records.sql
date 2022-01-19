@@ -12,6 +12,7 @@ SELECT
   Disposition_Notes,
   FP_Category,
   PII,
-  CUI
+  CUI,
+  FY_Retention_Years
     
 FROM obj_records AS records
