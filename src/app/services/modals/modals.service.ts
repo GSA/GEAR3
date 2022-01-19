@@ -45,6 +45,10 @@ export class ModalsService {
   // New Record Creation
   private createRecordSource = new Subject();
   currentCreate = this.createRecordSource.asObservable();
+  
+  // Websites
+  private websiteSource = new Subject();
+  currentWebsite = this.websiteSource.asObservable();
 
   constructor(
     private globals: Globals,
@@ -67,6 +71,8 @@ export class ModalsService {
       this.fismaSysSource.next(row);
     } else if (component == 'it-standard') {
       this.itStandSource.next(row);
+	  } else if (component == 'website') {
+      this.websiteSource.next(row);  
     } else {
       console.log("Error: Not a valid component to update details");
     }

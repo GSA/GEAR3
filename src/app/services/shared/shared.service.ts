@@ -29,6 +29,9 @@ export class SharedService {
 
   systemFormEmitter = new EventEmitter();
   systemFormSub: Subscription;
+  
+  websiteFormEmitter = new EventEmitter();
+  websiteFormSub: Subscription;
 
   constructor(
     private globals: Globals,
@@ -229,6 +232,9 @@ export class SharedService {
     this.systemFormEmitter.emit();
   };
 
+  public setWebsiteForm() {
+    this.websiteFormEmitter.emit();
+  };
 
   // Only include the core URL path and no parameters
   public coreURL(url) {

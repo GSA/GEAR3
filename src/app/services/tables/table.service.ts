@@ -307,6 +307,19 @@ export class TableService {
     this.clickMethod(options);
   }
 
+  public websitesTableClick(data: any, addRoute: boolean=true) {
+    var options: ClickOptions = {
+      data: data,
+      dataID: 'Website_ID',
+      update: 'website',
+      detailModalID: '#websiteDetail',
+      sysTableID: '#websitesRelSysTable',
+      exportName: data.Website_Item_Title + '-Related_Systems',
+      systemApiStr: '/api/websites/get/',
+      addRoute: addRoute
+    };
+    this.clickMethod(options);
+  }
 
   public systemsTableClick(data: any, addRoute: boolean=true) {
     var options: ClickOptions = {
@@ -372,6 +385,25 @@ export class TableService {
         });
       });
     });
+  
+	
+    // Update related websites table in detail modal with clicked system
+    var system_related_websites = <any>[];
+
+    // Join Websites to System for Related Systems
+    this.apiService.getSysWebsites(data.ID).subscribe((websites_mappings: any[]) => {
+      this.apiService.getWebsites().subscribe((websites: any[]) => {
+        // Grab all Website IDs related to the one website
+        var websiteID_from_mappings = new Set(websites_mappings.map(({ obj_websites_Id }) => obj_websites_Id));
+        // Filter Websites to the IDs related to the one website
+        system_related_websites = websites.filter(({ Website_ID }) => websiteID_from_mappings.has(parseInt(Website_ID)));  // Parse into int as GoogleAPI makes everything strings
+        // Update related websites table with filtered systems
+        $('#systemWebsiteTable').bootstrapTable('refreshOptions', {
+          data: system_related_websites
+        });
+      });
+    });
+	
   }
 
   private clickMethod(options: ClickOptions) {
@@ -545,6 +577,10 @@ export class TableService {
 
       case 'it-standard':
         this.itStandTableClick(previousModal.data);
+        break;
+		
+      case 'website':
+        this.websitesTableClick(previousModal.data);
         break;
 
       default:
