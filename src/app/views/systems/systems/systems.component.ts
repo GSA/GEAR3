@@ -100,7 +100,7 @@ export class SystemsComponent implements OnInit {
     visible: false
   }, {
     field: 'CSP',
-    title: 'Cloud Server Provider',
+    title: 'Hosting Provider',
     sortable: true,
     visible: false
   }, {

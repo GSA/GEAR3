@@ -87,7 +87,7 @@ exports.updateAll = (req, res) => {
         \`ex:Complete_Assessment_For_Current_FY_Text\`,
         \`ex:PII\`,
         \`ex:Cloud_Hosted\`,
-        \`ex:Cloud_Server_Provider\`,
+        \`ex:Hosting_Provider\`,
         \`ex:Type_of_Service\`,
         \`ex:FISMA_System_Identifier\`,
         \`ex:Inactive_Date\`,
