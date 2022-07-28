@@ -135,8 +135,8 @@ export class FismaComponent implements OnInit {
     // Filter out "Pending" Status
     $(document).ready(
       $('#fismaTable').bootstrapTable('filterBy', {
-        Status: ['Active'],
-		SystemLevel: ['System']
+        Status: 'Active',
+		SystemLevel: 'System'
       })
     );
 
