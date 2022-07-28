@@ -2,7 +2,7 @@ SELECT
 	archer.`ex:GEAR_ID`									                AS ID,
 	archer.`ex:Responsible_Org`                        	AS RespOrg,
 	systems_ext.Business_Org                            AS BusOrg,
-	systems_ext.Normalized_Name                         AS Name,
+	archer.`ex:System_Name`                        AS Name,
   systems_ext.Display_Name					                  AS DisplayName,
   archer.`ex:FederalContractor`                      	AS FedContractorLoc,
   archer.`ex:FIPS_Impact_Level`                      	AS FIPS_Impact_Level,

@@ -49,11 +49,11 @@ export class FismaComponent implements OnInit {
   });
   
   // FISMA System Table Columns
-  columnDefs: any[] = [{
+  columnDefs: any[] = [/* {
     field: 'DisplayName',
     title: 'Alias/Acronym',
     sortable: true
-  }, {
+  }, */ {
     field: 'Name',
     title: 'System Name',
     sortable: true
@@ -114,12 +114,12 @@ export class FismaComponent implements OnInit {
     title: 'Responsible Org',
     sortable: true,
     visible: false
-  }, {
+  }/* , {
     field: 'BusOrg',
     title: 'Business Org',
     sortable: true,
     visible: false
-  }];
+  } */];
 
   ngOnInit(): void {
     // Enable popovers
@@ -135,7 +135,8 @@ export class FismaComponent implements OnInit {
     // Filter out "Pending" Status
     $(document).ready(
       $('#fismaTable').bootstrapTable('filterBy', {
-        Status: ['Active']
+        Status: ['Active'],
+		SystemLevel: ['System']
       })
     );
 
