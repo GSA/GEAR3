@@ -198,7 +198,8 @@ export class FismaComponent implements OnInit {
 
     // Filter back to "Active" Status
     $('#fismaTable').bootstrapTable('filterBy', {
-      Status: ['Active']
+      Status: 'Active',
+	  SystemLevel: 'System'
     });
   }
 
