@@ -9,6 +9,7 @@ SELECT
   systems_ext.Display_Name					                    AS DisplayName,
   systems.`ex:FederalContractor`                      	AS FedContractorLoc,
   systems.`ex:FIPS_Impact_Level`                      	AS FIPS_Impact_Level,
+  systems.`ex:BusinessApplication`						AS BusApp,
   systems.`ex:ATOIATO_Date`                           	AS ATODate,
   systems.`ex:ATO_Type`                               	AS ATOType,
   systems.`ex:Renewal_Date`                           	AS RenewalDate,
