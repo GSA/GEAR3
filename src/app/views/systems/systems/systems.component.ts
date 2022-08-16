@@ -100,7 +100,7 @@ export class SystemsComponent implements OnInit {
     visible: false
   }, {
     field: 'CSP',
-    title: 'Cloud Server Provider',
+    title: 'Hosting Provider',
     sortable: true,
     visible: false
   }, {
@@ -206,7 +206,10 @@ export class SystemsComponent implements OnInit {
 
     // Filter to only active systems
     $(document).ready(
-      $('#systemTable').bootstrapTable('filterBy', { Status: 'Active' })
+      $('#systemTable').bootstrapTable('filterBy', { 
+		Status: 'Active',
+		BusApp: 'Yes'
+		})
     );
 
     // Method to handle click events on the Systems table
@@ -222,11 +225,11 @@ export class SystemsComponent implements OnInit {
     // Get counts by SSO
     var counts = data.reduce((p, c) => {
       var name = c.RespOrg;
-      if (!p.hasOwnProperty(name) && c.Status == 'Active') {
+      if (!p.hasOwnProperty(name) && c.Status == 'Active' && c.BusApp == 'Yes') {
         p[name] = 0;
       }
       // Only count if Status is Active
-      if (c.Status == 'Active') p[name]++;
+      if (c.Status == 'Active' && c.BusApp == 'Yes') p[name]++;
       return p;
     }, {});
 
@@ -290,7 +293,10 @@ export class SystemsComponent implements OnInit {
     $('#sysViz').collapse('show');
 
     // Remove filters and back to default
-    $('#systemTable').bootstrapTable('filterBy', { Status: 'Active' });
+    $('#systemTable').bootstrapTable('filterBy', { 
+		Status: 'Active', 
+		BusApp: 'Yes'
+		});
     $('#systemTable').bootstrapTable('refreshOptions', {
       columns: this.columnDefs,
       exportOptions: {
@@ -306,6 +312,7 @@ export class SystemsComponent implements OnInit {
     // Filter by RespOrg clicked on visualization
     $('#systemTable').bootstrapTable('filterBy', {
       Status: ['Active'],
+	  BusApp: 'Yes',
       RespOrg: chartData.name
     });
     $('#systemTable').bootstrapTable('refreshOptions', {

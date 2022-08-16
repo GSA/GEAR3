@@ -104,6 +104,16 @@ exports.findRecords = (req, res) => {
   res = ctrl.sendQuery(query, 'related records for system', res);
 };
 
+exports.findWebsites = (req, res) => {
+  var query = `SELECT * FROM gear_ods.zk_systems_subsystems_websites   AS websites_mapping
+      LEFT JOIN obj_fisma_archer                                      AS systems       ON websites_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
+      WHERE systems.\`ex:GEAR_ID\` = ${req.params.id}
+
+    GROUP BY websites_mapping.obj_websites_Id;`;
+
+  res = ctrl.sendQuery(query, 'related websites for system', res);
+};
+
 
 exports.findTechnologies = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +

@@ -27,9 +27,10 @@ import { Organization } from '@api/models/organizations.model';
 
 import { POC } from '@api/models/pocs.model';
 
-import { Record } from '@api/models/records.model'
+import { Record } from '@api/models/records.model';
 import { System } from '@api/models/systems.model';
 import { TIME } from '@api/models/systime.model';
+import { Website } from '@api/models/websites.model';
 
 @Injectable({
   providedIn: 'root'
@@ -72,6 +73,8 @@ export class ApiService {
   // IT Standards
   techUrl: string = this.sharedService.internalURLFmt('/api/it_standards');
 
+  // Websites
+  websitesUrl: string = this.sharedService.internalURLFmt('/api/websites');
 
   constructor(
     private globals: Globals,
@@ -308,6 +311,11 @@ export class ApiService {
       catchError(this.handleError<Record[]>('GET System Related Records', []))
     );
   };
+  public getSysWebsites(id: number): Observable<Website[]> {
+    return this.http.get<Website[]>(this.sysUrl + '/get/' + String(id) + '/website').pipe(
+      catchError(this.handleError<Website[]>('GET System Related Websites', []))
+    );
+  };
   public getSysITStandards(id: number): Observable<ITStandards[]> {
     return this.http.get<ITStandards[]>(this.sysUrl + '/get/' + String(id) + '/technologies').pipe(
       catchError(this.handleError<ITStandards[]>('GET System Related Technologies', []))
@@ -408,6 +416,35 @@ export class ApiService {
     );
   }
 
+
+  //// Websites
+  public getWebsites(): Observable<Website[]> {
+    return this.http.get<Website[]>(this.websitesUrl).pipe(
+      catchError(this.handleError<Website[]>('GET Websites', []))
+    );
+  };
+  public getOneWebsite(id: number): Observable<Website[]> {
+    return this.http.get<Website[]>(this.websitesUrl + '/get/' + String(id)).pipe(
+      catchError(this.handleError<Website[]>('GET Website', []))
+    );
+  };
+  public getWebsiteSys(id: number): Observable<System[]> {
+    return this.http.get<System[]>(this.websitesUrl + '/get/' + String(id) + '/systems').pipe(
+      catchError(this.handleError<System[]>('GET Systems for Website', []))
+    );
+  };
+  public updateWebsiteSys(id: number, data: {}): Observable<Website[]> {
+    if (this.globals.jwtToken) {
+      var httpOptions = this.setHeaderOpts();
+    } else {
+      catchError(this.handleError<Website[]>('UPDATE Website-System - No Authentication Token', []))
+    }
+
+    return this.http.put<Website[]>(this.websitesUrl + '/updateSystems/' + String(id), data, httpOptions).pipe(
+      catchError(this.handleError<Website[]>('UPDATE Website-System', []))
+    );
+  };
+  
 
   //// Error Handler for calls
   private handleError<T>(operation: string = 'operation', result?: T) {

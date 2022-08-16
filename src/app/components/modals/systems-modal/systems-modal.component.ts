@@ -341,6 +341,10 @@ export class SystemsModalComponent implements OnInit {
     field: 'CUI',
     title: 'CUI',
     sortable: true
+  }, {
+    field: 'FY_Retention_Years',
+    title: 'Retention Years',
+    sortable: true
   }];
 
   ngOnInit(): void {

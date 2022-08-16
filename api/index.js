@@ -14,6 +14,7 @@ const records = require(routesPath + 'records.routes');
 const search = require(routesPath + 'search.routes');
 const system = require(routesPath + 'systems.routes');
 const sysTIME = require(routesPath + 'systime.routes');
+const websites = require(routesPath + 'websites.routes');
 
 const router = express.Router();
 
@@ -30,5 +31,6 @@ router.use('/records', records);
 router.use('/search', search);
 router.use('/systems', system);
 router.use('/system_time', sysTIME);
+router.use('/websites', websites);
 
 module.exports = router;
