@@ -37,7 +37,6 @@
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
               "node_modules/bootstrap-table/dist/bootstrap-table.min.js",
               "node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js",
-
               "node_modules/tableexport.jquery.plugin/libs/FileSaver/FileSaver.min.js",
               "node_modules/tableexport.jquery.plugin/libs/js-xlsx/xlsx.core.min.js",
               "node_modules/jspdf/dist/jspdf.umd.min.js",
@@ -201,5 +200,8 @@
       }
     }
   },
-  "defaultProject": "gear3"
+  "defaultProject": "gear3",
+  "cli": {
+    "analytics": "3f92fd32-6d37-41df-b2e0-b7821dc67e46"
+  }
 }
