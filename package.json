@@ -61,6 +61,7 @@
     "is-svg": "^4.3.0",
     "jquery": "^3.6.0",
     "json-bigint": "^1.0.0",
+    "json-schema": "^0.4.0",
     "jsonwebtoken": "^8.5.1",
     "jspdf-autotable": "^3.5.20",
     "ldapjs": "^2.3.1",
