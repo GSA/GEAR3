@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { CapabilityManagerComponent } from './capability-manager.component';
 
@@ -6,7 +6,7 @@ describe('CapabilityManagerComponent', () => {
   let component: CapabilityManagerComponent;
   let fixture: ComponentFixture<CapabilityManagerComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ CapabilityManagerComponent ]
     })

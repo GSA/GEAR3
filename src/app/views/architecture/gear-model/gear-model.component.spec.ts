@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { GearModelComponent } from './gear-model.component';
 
@@ -6,7 +6,7 @@ describe('GearModelComponent', () => {
   let component: GearModelComponent;
   let fixture: ComponentFixture<GearModelComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ GearModelComponent ]
     })
