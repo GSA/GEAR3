@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { FismaModalComponent } from './fisma-modal.component';
 
@@ -6,7 +6,7 @@ describe('FismaModalComponent', () => {
   let component: FismaModalComponent;
   let fixture: ComponentFixture<FismaModalComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ FismaModalComponent ]
     })

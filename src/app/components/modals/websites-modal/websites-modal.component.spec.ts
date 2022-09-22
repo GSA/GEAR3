@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { WebsitesModalComponent } from './websites-modal.component';
 
@@ -6,7 +6,7 @@ describe('WebsitesModalComponent', () => {
   let component: WebsitesModalComponent;
   let fixture: ComponentFixture<WebsitesModalComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ WebsitesModalComponent ]
     })

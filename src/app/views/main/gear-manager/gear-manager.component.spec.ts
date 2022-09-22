@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { GearManagerComponent } from './gear-manager.component';
 
@@ -6,7 +6,7 @@ describe('GearManagerComponent', () => {
   let component: GearManagerComponent;
   let fixture: ComponentFixture<GearManagerComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ GearManagerComponent ]
     })
