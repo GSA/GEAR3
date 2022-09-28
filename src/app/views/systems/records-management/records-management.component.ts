@@ -60,12 +60,12 @@ export class RecordsManagementComponent implements OnInit {
   }, {
     field: 'Record_Status',
     title: 'Status',
-	visible: false,
+	  visible: false,
     sortable: true
   }, {
     field: 'RG',
     title: 'Record Group',
-	visible: false,
+	  visible: false,
     sortable: true
   }, {
     field: 'Retention_Instructions',
@@ -80,11 +80,12 @@ export class RecordsManagementComponent implements OnInit {
   }, {
     field: 'Type_Disposition',
     title: 'Disposition Type',
+    visible: false,
     sortable: true
   }, {
     field: 'Date_DA_Approved',
     title: 'DA Approval Date',
-	visible: false,
+	  visible: false,
     sortable: true
   }, {
     field: 'Disposition_Notes',
@@ -95,7 +96,7 @@ export class RecordsManagementComponent implements OnInit {
   }, {
     field: 'FP_Category',
     title: 'FP Category',
-	visible: false,
+	  visible: false,
     sortable: true
   }, {
     field: 'PII',
@@ -107,7 +108,7 @@ export class RecordsManagementComponent implements OnInit {
     sortable: true
   }, {
     field: 'FY_Retention_Years',
-    title: 'FY Retention Years',
+    title: 'Retention Years',
     sortable: true
   }];
 

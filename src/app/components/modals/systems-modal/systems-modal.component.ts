@@ -275,7 +275,7 @@ export class SystemsModalComponent implements OnInit {
     headerStyle: "bg-danger text-white",
     pagination: false,
     search: true,
-    sortName: 'RecordTitle',
+    sortName: 'GSA_Number',
     sortOrder: 'asc',
     showToggle: true,
     url: null
@@ -283,6 +283,10 @@ export class SystemsModalComponent implements OnInit {
 
   // Related Records Table Columns
   sysRecColumnDefs: any[] = [{
+    field: 'GSA_Number',
+    title: 'GSA Number',
+    sortable: true
+  }, {
     field: 'Record_Item_Title',
     title: 'Record Title',
     sortable: true
@@ -291,21 +295,22 @@ export class SystemsModalComponent implements OnInit {
     title: 'Description',
     sortable: false,
     visible: false,
-    class: 'text-truncate'
+    class: 'text-wrap'
   }, {
     field: 'Record_Status',
     title: 'Status',
+    visible: false,
     sortable: true
   }, {
     field: 'RG',
     title: 'Record Group',
+    visible: false,
     sortable: true
   }, {
     field: 'Retention_Instructions',
     title: 'Retention Instructions',
     sortable: false,
-    visible: false,
-    class: 'text-truncate'
+    class: 'text-wrap'
   }, {
     field: 'Legal_Disposition_Authority',
     title: 'Disposition Authority (DA)',
@@ -313,6 +318,7 @@ export class SystemsModalComponent implements OnInit {
   }, {
     field: 'Type_Disposition',
     title: 'Disposition Type',
+    visible: false,
     sortable: true
   }, {
     field: 'Date_DA_Approved',
@@ -323,15 +329,11 @@ export class SystemsModalComponent implements OnInit {
     title: 'Disposition Notes',
     sortable: false,
     visible: false,
-    class: 'text-truncate'
-  }, {
-    field: 'GSA_Number',
-    title: 'GSA Number',
-    sortable: true,
-    visible: false
+    class: 'text-wrap'
   }, {
     field: 'FP_Category',
     title: 'FP Category',
+    visible: false,
     sortable: true
   }, {
     field: 'PII',
@@ -344,6 +346,7 @@ export class SystemsModalComponent implements OnInit {
   }, {
     field: 'FY_Retention_Years',
     title: 'Retention Years',
+    visible: false,
     sortable: true
   }];
 

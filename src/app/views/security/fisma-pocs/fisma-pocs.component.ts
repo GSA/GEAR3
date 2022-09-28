@@ -96,6 +96,14 @@ export class FismaPocsComponent implements OnInit {
       data: [],
     }));
 
+    // Filter out "Pending" Status
+    $(document).ready(
+      $('#fismaPOCTable').bootstrapTable('filterBy', {
+        Status: 'Active',
+		SystemLevel: 'System'
+      })
+    );
+
     // Method to handle click events on the FISMA POC table
     $(document).ready(
       $('#fismaPOCTable').on('dbl-click-row.bs.table', function (e, row) {
