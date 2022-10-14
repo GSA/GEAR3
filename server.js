@@ -41,6 +41,7 @@ const samlConfig = {
   path: process.env.SAML_PATH,
   entryPoint: process.env.SAML_ENTRY_POINT,
   issuer: process.env.SAML_ISSUER,
+  cert: process.env.SAML_CERT,
   acceptedClockSkewMs: -1,
 };
 
