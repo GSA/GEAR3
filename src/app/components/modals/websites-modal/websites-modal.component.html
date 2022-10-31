@@ -1,17 +1,35 @@
 <!-- Website Detail Modal -->
-<div class="modal fade" id="websiteDetail" tabindex="-1" role="dialog" aria-labelledby="websiteTitle" aria-hidden="true">
+<div
+  class="modal fade"
+  id="websiteDetail"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="websiteTitle"
+  aria-hidden="true"
+>
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
     <div class="modal-content">
       <div class="modal-header bg-danger">
-        <a class="mr-3 text-white" role="button" aria-label="Previous"
-          (click)="tableService.previousModalRoute('websiteDetail')" [hidden]="!modalService.checkModalRoutes()">
+        <a
+          class="mr-3 text-white"
+          role="button"
+          aria-label="Previous"
+          (click)="tableService.previousModalRoute('websiteDetail')"
+          [hidden]="!modalService.checkModalRoutes()"
+        >
           <i class="fas fa-arrow-circle-left fa-lg fa-fw"></i>
         </a>
         <h5 class="modal-title text-white" id="websiteTitle">
           <i class="far fa-folder-open"></i>
-          {{ website.domain }} <!-- This refers to api/queries/GET name of object in database -->
+          {{ website.domain }}
+          <!-- This refers to api/queries/GET name of object in database -->
         </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -20,113 +38,135 @@
         <!-- Tabs -->
         <ul id="websiteTabs" class="nav nav-tabs">
           <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#websitesOverview">
-              Overview</a>
+            <a
+              class="nav-link active"
+              data-toggle="tab"
+              href="#websitesOverview"
+            >
+              Overview</a
+            >
           </li>
           <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#websiteRelatedSystems">
-              Related Systems</a>
+              Related Systems</a
+            >
           </li>
         </ul>
 
         <!-- Tab Panes -->
         <div class="tab-content mt-3">
           <div class="tab-pane fade show active" id="websitesOverview">
-            <website-screencap></website-screencap>
-            <h4>Production Status</h4>
-            <p>{{ website.production_status }}</p>
-            <br>
+            <div class="container-fluid">
+              <div class="row align-items-start">
+                <website-screencap></website-screencap>
+              </div>
+              <div class="row">
+                <h4>Production Status</h4>
+                <p>{{ website.production_status }}</p>
+              </div>
+              <div class="row">
+                <h4>Parent Domain</h4>
+                <div>
+                  <p>{{ website.parent_domain }}</p>
+                </div>
+                <div [hidden]="website.parent_domain">None</div>
+              </div>
+              <div class="row">
+                <h4>Type of Site</h4>
+                <div>
+                  <p>{{ website.type_of_site }}</p>
+                </div>
+                <div [hidden]="website.type_of_site">None</div>
+              </div>
+              <div class="row">
+                <table
+                  id="websiteDetailTable"
+                  class="table table-borderless table-striped table-dark rounded-lg w-75 mx-auto"
+                >
+                  <thead class="bg-danger">
+                    <tr>
+                      <th>
+                        <h5>Attribute</h5>
+                      </th>
+                      <th>
+                        <h5>Value</h5>
+                      </th>
+                    </tr>
+                  </thead>
 
-            <h4>Parent Domain</h4>
-            <div>
-              <p>{{ website.parent_domain }}</p>
+                  <tbody>
+                    <tr>
+                      <td><i class="fa fa-bookmark"></i>Office</td>
+                      <td>{{ website.office }}</td>
+                    </tr>
+                    <tr>
+                      <td><i class="fas fa-user-lock"></i>Sub Office</td>
+                      <td>{{ website.sub_office }}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <i class="fas fa-calendar-day"></i>Website Manager
+                      </td>
+                      <td>{{ website.site_owner_email }}</td>
+                    </tr>
+                    <tr>
+                      <td><i class="fa fa-certificate"></i>Contact Email</td>
+                      <td>{{ website.contact_email }}</td>
+                    </tr>
+                    <tr>
+                      <td><i class="fas fa-info-circle"></i>Redirects to</td>
+                      <td>{{ website.redirects_to }}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <i class="far fa-list-alt"></i>Required by Law or
+                        Policy?
+                      </td>
+                      <td>{{ website.required_by_law_or_policy }}</td>
+                    </tr>
+                    <tr>
+                      <td><i class="fas fa-hashtag"></i>Has DAP?</td>
+                      <td>{{ website.has_dap }}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <i class="far fa-address-card"></i>Current USWDS Score
+                      </td>
+                      <td>{{ website.current_uswds_score }}</td>
+                    </tr>
+                    <tr>
+                      <td><i class="fas fa-users"></i>Mobile Friendly?</td>
+                      <td>{{ website.mobile_friendly }}</td>
+                    </tr>
+                    <tr>
+                      <td><i class="fas fa-fingerprint"></i>Has Search?</td>
+                      <td>{{ website.has_search }}</td>
+                    </tr>
+                    <tr>
+                      <td><i class="fas fa-info-circle"></i>HTTPS enabled?</td>
+                      <td>{{ website.https }}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <i class="fas fa-info-circle"></i>Hosting Platform
+                      </td>
+                      <td>{{ website.hosting_platform }}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <i class="fas fa-info-circle"></i>Content Management
+                        System
+                      </td>
+                      <td>{{ website.cms_platform }}</td>
+                    </tr>
+                    <tr>
+                      <td><i class="fas fa-info-circle"></i>Repository URL</td>
+                      <td>{{ website.repository_url }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <div [hidden]="website.parent_domain">
-              None
-            </div>
-            <br>
-
-            <h4>Type of Site</h4>
-            <div>
-              <p>{{ website.type_of_site }}</p>
-            </div>
-            <div [hidden]="website.type_of_site">
-              None
-            </div>
-            <br>
-
-            <table id="websiteDetailTable"
-              class="table table-borderless table-striped table-dark rounded-lg w-75 mx-auto">
-              <thead class="bg-danger">
-                <tr>
-                  <th>
-                    <h5>Attribute</h5>
-                  </th>
-                  <th>
-                    <h5>Value</h5>
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody>
-                <tr>
-                  <td><i class="fa fa-bookmark"></i>Office</td>
-                  <td>{{ website.office }}</td>
-                </tr>
-                <tr>
-                  <td><i class="fas fa-user-lock"></i>Sub Office</td>
-                  <td>{{ website.sub_office }}</td>
-                </tr>
-                <tr>
-                  <td><i class="fas fa-calendar-day"></i>Website Manager</td>
-                  <td>{{ website.site_owner_email }}</td>
-                </tr>
-                <tr>
-                  <td><i class="fa fa-certificate"></i>Contact Email</td>
-                  <td>{{ website.contact_email }}</td>
-                </tr>
-				<tr>
-                  <td><i class="fas fa-info-circle"></i>Redirects to</td>
-                  <td>{{ website.redirects_to }}</td>
-                </tr>
-                <tr>
-                  <td><i class="far fa-list-alt"></i>Required by Law or Policy?</td>
-                  <td>{{ website.required_by_law_or_policy }}</td>
-                </tr>
-                <tr>
-                  <td><i class="fas fa-hashtag"></i>Has DAP?</td>
-                  <td>{{ website.has_dap }}</td>
-                </tr>
-                <tr>
-                  <td><i class="far fa-address-card"></i>Current USWDS Score</td>
-                  <td>{{ website.current_uswds_score }}</td>
-                </tr>
-                <tr>
-                  <td><i class="fas fa-users"></i>Mobile Friendly?</td>
-                  <td>{{ website.mobile_friendly }}</td>
-                </tr>
-                <tr>
-                  <td><i class="fas fa-fingerprint"></i>Has Search?</td>
-                  <td>{{ website.has_search }}</td>
-                </tr>
-                <tr>
-                  <td><i class="fas fa-info-circle"></i>HTTPS enabled?</td>
-                  <td>{{ website.https }}</td>
-                </tr>
-				<tr>
-                  <td><i class="fas fa-info-circle"></i>Hosting Platform</td>
-                  <td>{{ website.hosting_platform }}</td>
-                </tr>
-				<tr>
-                  <td><i class="fas fa-info-circle"></i>Content Management System</td>
-                  <td>{{ website.cms_platform }}</td>
-                </tr>
-				<tr>
-                  <td><i class="fas fa-info-circle"></i>Repository URL</td>
-                  <td>{{ website.repository_url }}</td>
-                </tr>
-              </tbody>
-            </table>
           </div>
           <!-- End of Overview Tab Pane -->
 
@@ -139,8 +179,14 @@
       <!-- End of Modal Body -->
 
       <div class="modal-footer">
-        <button type="button" [hidden]="!sharedService.loggedIn" class="btn btn-info text-white"
-          (click)="websiteEdit()">Edit This Item</button>
+        <button
+          type="button"
+          [hidden]="!sharedService.loggedIn"
+          class="btn btn-info text-white"
+          (click)="websiteEdit()"
+        >
+          Edit This Item
+        </button>
       </div>
     </div>
   </div>
