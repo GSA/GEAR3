@@ -9,6 +9,8 @@ router.route('/')
 router.route('/get/:id')
   .get(websitesCtrl.findOne);
 
+router.route('/get/:id/scans').get(websitesCtrl.findScans);
+
 router.route('/get/:id/systems')
   .get(websitesCtrl.findSystems);
 

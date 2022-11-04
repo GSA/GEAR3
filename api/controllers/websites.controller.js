@@ -21,6 +21,13 @@ exports.findOne = (req, res) => {
   res = ctrl.sendQuery(query, 'individual website', res);
 };
 
+exports.findScans= (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_website_scans.sql')).toString() +
+  ` WHERE obj_website_id = ${req.params.id} ORDER BY scan_date DESC;`;
+
+  res = ctrl.sendQuery(query, 'individual website', res);
+}
+
 exports.findSystems = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
   ` LEFT JOIN gear_ods.zk_systems_subsystems_websites AS websites_mapping ON systems.\`ex:GEAR_ID\` = websites_mapping.obj_systems_subsystems_Id
