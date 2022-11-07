@@ -428,6 +428,16 @@ export class ApiService {
       catchError(this.handleError<Website[]>('GET Website', []))
     );
   };
+  public getWebsiteScans(id: number): Observable<Website[]> {
+    return this.http.get<Website[]>(this.websitesUrl + '/get/' + String(id) + '/scans').pipe(
+      catchError(this.handleError<Website[]>('GET Scans for Website', []))
+    );
+  };
+  public getOneWebsiteScans(id: number, scanId: number): Observable<Website[]> {
+    return this.http.get<Website[]>(this.websitesUrl + '/get/' + String(id) + '/scans/' + String(scanId)).pipe(
+      catchError(this.handleError<Website[]>('GET One Scan for Website', []))
+    );
+  }
   public getWebsiteSys(id: number): Observable<System[]> {
     return this.http.get<System[]>(this.websitesUrl + '/get/' + String(id) + '/systems').pipe(
       catchError(this.handleError<System[]>('GET Systems for Website', []))
