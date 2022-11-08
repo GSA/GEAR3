@@ -54,6 +54,11 @@ export class FismaComponent implements OnInit {
     title: 'Alias/Acronym',
     sortable: true
   }, */ {
+    field: 'ID',
+    title: 'ID',
+    sortable: true,
+    visible: false
+  }, {
     field: 'Name',
     title: 'System Name',
     sortable: true

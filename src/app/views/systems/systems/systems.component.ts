@@ -67,6 +67,11 @@ export class SystemsComponent implements OnInit {
 
   // Systems Table Columns
   columnDefs: any[] = [{
+    field: 'ID',
+    title: 'ID',
+    sortable: true,
+    visible: false
+  }, {
     field: 'DisplayName',
     title: 'Alias/Acronym',
     sortable: true
@@ -79,7 +84,7 @@ export class SystemsComponent implements OnInit {
     title: 'Description',
     sortable: true,
     visible: false,
-    class: 'text-truncate'
+    class: 'text-wrap'
   }, {
     field: 'SystemLevel',
     title: 'System Level',
