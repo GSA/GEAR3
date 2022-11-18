@@ -1,6 +1,6 @@
 SELECT
 	id			              AS Scan_ID,
-  obj_website_id,
+  obj_website_id        AS Website_ID,
   desktop_img_file_name,
   mobile_img_file_name,
   scan_date,

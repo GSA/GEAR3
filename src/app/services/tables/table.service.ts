@@ -5,6 +5,8 @@ import { Globals } from '@common/globals';
 import { ApiService } from "@services/apis/api.service";
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
+import { WebsiteScan } from '@api/models/website-scan.model';
+
 
 // Declare jQuery symbol
 declare var $: any;
@@ -319,6 +321,16 @@ export class TableService {
       addRoute: addRoute
     };
     this.clickMethod(options);
+
+    this.apiService.getWebsiteScans(data[options.dataID]).subscribe((websiteScanData:WebsiteScan[]) => {
+      $('#websiteScans').bootstrapTable('refreshOptions', {
+        exportOptions: {
+          fileName: this.sharedService.fileNameFmt(data.Website_Item_Title + '-Website_Scans')
+        },
+        data: websiteScanData
+      });
+      this.apiService.getOneWebsiteScan(data[options.dataID], websiteScanData[0].Scan_ID).subscribe((latestWebsiteScan:WebsiteScan[]) => {console.log("latest website scan"); console.log(latestWebsiteScan);})
+    })
   }
 
   public systemsTableClick(data: any, addRoute: boolean=true) {

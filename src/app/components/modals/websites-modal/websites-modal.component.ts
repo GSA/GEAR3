@@ -20,6 +20,7 @@ declare var $: any;
 export class WebsitesModalComponent implements OnInit {
 
   website = <any>{};
+  websiteScans = <any>{};
 
   constructor(
     private apiService: ApiService,
@@ -30,13 +31,56 @@ export class WebsitesModalComponent implements OnInit {
     public sharedService: SharedService,
     public tableService: TableService) { }
 
-  ngOnInit(): void {
-    this.modalService.currentWebsite.subscribe(website => this.website = website);
+  // Website scan Table Options
+  websiteScanTableOptions: {} = this.tableService.createTableOptions({
+    advancedSearch: true,
+    idTable: null,
+    classes: "table-hover table-light clickable-table",
+    showColumns: false,
+    showExport: true,
+    exportFileName: null,
+    headerStyle: "bg-danger",
+    pagination: false,
+    search: true,
+    sortName: 'scan_date',
+    sortOrder: 'desc',
+    showToggle: true,
+    url: null
+  });
 
+  // Related Business Capabiltiies Table Columns
+  websiteScanColumnDefs: any[] = [{
+    field: 'Scan_ID',
+    title: 'Scan Id',
+    sortable: true
+  }, {
+    field: 'scan_date',
+    title: 'Scan Date',
+    sortable: true,
+    visible: true,
+  }, {
+    field: 'scan_version',
+    title: 'Scan Version',
+    sortable: true
+  }];
+
+  ngOnInit(): void {
+    this.modalService.currentWebsite.subscribe(website => {
+      this.website = website
+      this.apiService.getWebsiteScans(this.website.Website_ID).subscribe((websiteScanData) => this.websiteScans = websiteScanData);
+    }
+      );
+    
     $('#websitesRelSysTable').bootstrapTable($.extend(this.tableService.relSysTableOptions, {
       columns: this.tableService.relSysColumnDefs,
       data: []
     }));
+
+    $('#websiteScans').bootstrapTable({
+      columns: this.websiteScanColumnDefs, 
+      data:[] 
+    });
+
 
     // Method to handle click events on the Related Systems table
     $(document).ready(
