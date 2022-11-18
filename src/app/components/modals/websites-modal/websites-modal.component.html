@@ -62,14 +62,20 @@
                   <div class="col-12 col-md-8">
                     <!--10x.gsa.gov_desktop_c4517f0f0dc57121791dcb44890847e1.webp"-->
                     <img
-                      src='{{"../../../../../assets/website-screenshots/" + websiteScans[0].desktop_img_file_name}}'
+                      src="{{
+                        '../../../../../assets/website-screenshots/' +
+                          websiteScans[0].desktop_img_file_name
+                      }}"
                       class="img-fluid"
                       alt="Responsive image"
                     />
                   </div>
                   <div class="col-12 col-md-2">
                     <img
-                      src='{{"../../../../../assets/website-screenshots/" + websiteScans[0].mobile_img_file_name}}'
+                      src="{{
+                        '../../../../../assets/website-screenshots/' +
+                          websiteScans[0].mobile_img_file_name
+                      }}"
                       class="img-fluid"
                       alt="Responsive image"
                     />
@@ -77,31 +83,31 @@
                 </div>
               </div>
               <div class="row">
-                <p>Latest Scan: {{websiteScans[0].scan_date}}</p>
+                <p>Latest Scan: {{ websiteScans[0].scan_date }}</p>
               </div>
               <div class="row">
                 <div>
-                <h4>Production Status</h4>
-                <p>{{ website.production_status }}</p>
-              </div>
-              </div>
-              <div class="row">
-                <div>
-                <h4>Parent Domain</h4>
-                <div>
-                  <p>{{ website.parent_domain }}</p>
+                  <h4>Production Status</h4>
+                  <p>{{ website.production_status }}</p>
                 </div>
-                <div [hidden]="website.parent_domain">None</div>
-              </div>
               </div>
               <div class="row">
                 <div>
-                <h4>Type of Site</h4>
-                <div>
-                  <p>{{ website.type_of_site }}</p>
+                  <h4>Parent Domain</h4>
+                  <div>
+                    <p>{{ website.parent_domain }}</p>
+                  </div>
+                  <div [hidden]="website.parent_domain">None</div>
                 </div>
-                <div [hidden]="website.type_of_site">None</div>
               </div>
+              <div class="row">
+                <div>
+                  <h4>Type of Site</h4>
+                  <div>
+                    <p>{{ website.type_of_site }}</p>
+                  </div>
+                  <div [hidden]="website.type_of_site">None</div>
+                </div>
               </div>
               <div class="row">
                 <table
