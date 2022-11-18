@@ -28,9 +28,11 @@ import { Organization } from '@api/models/organizations.model';
 import { POC } from '@api/models/pocs.model';
 
 import { Record } from '@api/models/records.model';
+
 import { System } from '@api/models/systems.model';
 import { TIME } from '@api/models/systime.model';
 import { Website } from '@api/models/websites.model';
+import { WebsiteScan } from '@api/models/website-scan.model';
 
 @Injectable({
   providedIn: 'root'
@@ -428,6 +430,16 @@ export class ApiService {
       catchError(this.handleError<Website[]>('GET Website', []))
     );
   };
+  public getWebsiteScans(id: number): Observable<WebsiteScan[]> {
+    return this.http.get<WebsiteScan[]>(this.websitesUrl + '/get/' + String(id) + '/scans').pipe(
+      catchError(this.handleError<WebsiteScan[]>('GET Scans for Website', []))
+    );
+  };
+  public getOneWebsiteScan(id: number, scanId: number): Observable<WebsiteScan[]> {
+    return this.http.get<WebsiteScan[]>(this.websitesUrl + '/get/' + String(id) + '/scans/' + String(scanId)).pipe(
+      catchError(this.handleError<WebsiteScan[]>('GET One Scan for Website', []))
+    );
+  }
   public getWebsiteSys(id: number): Observable<System[]> {
     return this.http.get<System[]>(this.websitesUrl + '/get/' + String(id) + '/systems').pipe(
       catchError(this.handleError<System[]>('GET Systems for Website', []))

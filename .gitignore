@@ -61,3 +61,7 @@ testem.log
 .DS_Store
 Thumbs.db
 .vscode/launch.json
+
+# Images not meant for version control
+/src/assets/website-screenshots
+/website-screenshots

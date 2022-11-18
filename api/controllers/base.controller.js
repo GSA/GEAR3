@@ -21,6 +21,12 @@ exports.sendQuery_cowboy = (query, msg, response) => {
   return buildQuery(sql_cowboy, query, msg, response);
 };
 
+/**
+ * @param conn
+ * @param {string} query - A complete sql query
+ * @param {string} msg - A description of the query that will be printed if an error occurs 
+ * @return {object} - query results as JSON
+ */
 function buildQuery(conn, query, msg, response) {
   conn.query(query, (error, data) => {
     if (error) {
