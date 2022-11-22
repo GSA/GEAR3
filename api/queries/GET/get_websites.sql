@@ -17,6 +17,12 @@ SELECT
   has_search,
   repository_url,
   hosting_platform,
-  https
+  https,
+  customer_centricity, 
+  mobile_performance, 
+  google_analytics, 
+  accessibility, 
+  uswds, 
+  required_links
     
 FROM obj_websites AS websites

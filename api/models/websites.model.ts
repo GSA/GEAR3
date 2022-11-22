@@ -18,4 +18,10 @@ export class Website {
   public repository_url: string;
   public hosting_platform: string;
   public https: string;
+  public customer_centricity: number; 
+  public mobile_performance: number; 
+  public google_analytics: number; 
+  public accessibility: number; 
+  public uswds: number; 
+  public required_links: number;
 }

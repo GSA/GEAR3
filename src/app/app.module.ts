@@ -16,9 +16,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TopNavbarComponent } from './components/top-navbar/top-navbar.component';
 import { SidenavComponent } from './components/sidenav/sidenav.component';
 
-/// Websites
-import { WebsiteScreencapComponent } from './components/websites/website-screencap/website-screencap.component';
-
 //// Main
 import { HomeComponent } from './views/main/home/home.component';
 import { GlobalSearchComponent } from './views/main/global-search/global-search.component';
@@ -117,8 +114,7 @@ import { Globals } from './common/globals';
     ItStandardManagerComponent,
   
     ArtifactsComponent,
-    GearModelComponent,
-    WebsiteScreencapComponent
+    GearModelComponent
   ],
   imports: [
     AppRoutingModule,

@@ -7,8 +7,6 @@ import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 
-import {WebsiteScreencapComponent} from "../../websites/website-screencap/website-screencap.component"
-
 // Declare jQuery symbol
 declare var $: any;
 
@@ -21,6 +19,7 @@ export class WebsitesModalComponent implements OnInit {
 
   website = <any>{};
   websiteScans = <any>{};
+  blue="blue";
 
   constructor(
     private apiService: ApiService,
@@ -109,4 +108,7 @@ export class WebsitesModalComponent implements OnInit {
     $('#websiteManager').modal('show');
   }
 
+  getValues (value, maxValue) {
+    return {'--value': value, '--max': maxValue};
+  }
 }
