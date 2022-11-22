@@ -68,8 +68,10 @@
           Cloud Enabled</button>
         <button role="button" name="sysInactiveBttn" class="btn btn-primary" (click)="showInactive()">
           Inactive</button>
+        <!-- Remove Pending button based on security feedback. 
         <button role="button" name="sysPendingBttn" class="btn btn-primary" (click)="showPending()">
-          Pending</button>
+        Pending</button>
+        -->
 
         <button role="button" name="sysBttn" class="btn btn-primary ml-3" (click)="backToMainSys()"
           [hidden]="!filteredTable">
