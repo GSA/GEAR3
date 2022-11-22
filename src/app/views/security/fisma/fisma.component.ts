@@ -141,7 +141,8 @@ export class FismaComponent implements OnInit {
     $(document).ready(
       $('#fismaTable').bootstrapTable('filterBy', {
         Status: 'Active',
-		SystemLevel: 'System'
+		SystemLevel: 'System',
+    Reportable: 'Yes'
       })
     );
 
