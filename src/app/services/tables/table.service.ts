@@ -179,7 +179,7 @@ export class TableService {
         });
         break;
 
-      case 'System':  // TODO: need to change when gear_ods is fully transitioned
+      case 'System':  // TODO: need to change when gear_schema is fully transitioned
         this.apiService.getOneSys(searchData.Id).subscribe((apiData: any[]) => {
           this.systemsTableClick(apiData[0]);
         });

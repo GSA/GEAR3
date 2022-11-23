@@ -28,8 +28,8 @@ exports.findOneName = (req, res) => {
 
 exports.findSystems = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
-    ` LEFT JOIN gear_ods.zk_systems_subsystems_capabilities AS cap_mappings ON systems.\`ex:GEAR_ID\` = cap_mappings.obj_systems_subsystems_Id
-      LEFT JOIN gear_ods.obj_capability AS cap ON cap_mappings.obj_capability_Id = cap.capability_Id
+    ` LEFT JOIN gear_schema.zk_systems_subsystems_capabilities AS cap_mappings ON systems.\`ex:GEAR_ID\` = cap_mappings.obj_systems_subsystems_Id
+      LEFT JOIN gear_schema.obj_capability AS cap ON cap_mappings.obj_capability_Id = cap.capability_Id
     
       WHERE cap.capability_Id = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`;
 
