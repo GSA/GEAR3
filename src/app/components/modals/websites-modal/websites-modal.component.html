@@ -57,50 +57,21 @@
         <div class="tab-content mt-3">
           <div class="tab-pane fade show active" id="websitesOverview">
             <div class="container-fluid">
-              <div class="row align-items-start">
-                <div class="row">
-                  <div class="col-12 col-md-8">
-                    <img
-                      src="{{
-                        '../../../../../assets/website-screenshots/' +
-                          websiteScans[0].desktop_img_file_name
-                      }}"
-                      class="img-fluid"
-                      alt="Responsive image"
-                    />
-                  </div>
-                  <div class="col-12 col-md-2">
-                    <img
-                      src="{{
-                        '../../../../../assets/website-screenshots/' +
-                          websiteScans[0].mobile_img_file_name
-                      }}"
-                      class="img-fluid"
-                      alt="Responsive image"
-                    />
-                  </div>
-                </div>
-              </div>
               <div class="row">
-                <p>Latest Scan: {{ websiteScans[0].scan_date }}</p>
-              </div>
-              <div class="row">
-                <div>
+                <div class="col">
                   <h4>Production Status</h4>
                   <p>{{ website.production_status }}</p>
                 </div>
-              </div>
-              <div class="row">
-                <div>
+
+                <div class="col">
                   <h4>Parent Domain</h4>
                   <div>
                     <p>{{ website.parent_domain }}</p>
                   </div>
                   <div [hidden]="website.parent_domain">None</div>
                 </div>
-              </div>
-              <div class="row">
-                <div>
+
+                <div class="col">
                   <h4>Type of Site</h4>
                   <div>
                     <p>{{ website.type_of_site }}</p>
@@ -108,87 +79,134 @@
                   <div [hidden]="website.type_of_site">None</div>
                 </div>
               </div>
-              <div class="row">
-                <p>Customer Centricity: {{website.customer_centricity}}</p>
-              </div>
-              <div class="row">
-                <div class="col-auto">
-                <svg
-                  class="website-chart"
-                  style="display: block; margin: 0 auto"
-                  id="graph"
-                  height="100"
-                  width="100"
-                  viewBox="0 0 100 100"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <g class="background">
-                    <circle cx="50" cy="50" r="50" pathLength="100"  />
-                  </g>
 
-                  <g id="website-chart" class="graph">
-                    <circle
-                      cx="50"
-                      cy="50"
-                      class="one"
-                      ngClass="{{website.customer_centricity === 0 ? 'zero-value': ''}}"
-                      transform="rotate(-90 50 50)"
-                      
-                    [style.--value]="website.customer_centricity"
-                    [style.--max]="1"/>
-                    <circle
-                      cx="50"
-                      cy="50"
-                      class="two"
-                      ngClass="{{website.required_links === 0 ? 'zero-value': ''}}"
-                      transform="rotate(-30 50 50)"
-                      [style.--value]="website.required_links"
-                    [style.--max]="1"
-                     />
-                    <circle
-                      cx="50"
-                      cy="50"
-                      class="three"
-                      ngClass="{{website.mobile_performance === 0 ? 'zero-value': ''}}"
-                      transform="rotate(30 50 50)"
-                      [style.--value]="website.mobile_performance"
-                    [style.--max]="1"/>
-                    <circle
-                      cx="50"
-                      cy="50"
-                      class="four"
-                      ngClass="{{website.accessibility === 0 ? 'zero-value': ''}}"
-                      transform="rotate(90 50 50)"
-                      [style.--value]="website.accessibility"
-                    [style.--max]="1"/>
-                    <circle
-                      cx="50"
-                      cy="50"
-                      class="five"
-                      ngClass="{{website.google_analytics === 0 ? 'zero-value': ''}}"
-                      transform="rotate(150 50 50)"
-                      [style.--value]="website.google_analytics"
-                    [style.--max]="1"/>
-                    <circle
-                      cx="50"
-                      cy="50"
-                      class="six"
-                      ngClass="{{website.uswds === 0 ? 'zero-value': ''}}"
-                      transform="rotate(210 50 50)"
-                      [style.--value]="website.uswds"
-                      [style.--max]="1"/>                 
-                     </g>
-                </svg>
+              <div class="row mb-3">
+                <div class="col-12">
+                  <h4>Recent Screenshots</h4>
+                </div>
+                <div class="col-12 col-md-8">
+                  <img
+                    src="{{
+                      '../../../../../assets/website-screenshots/' +
+                        websiteScans[0].desktop_img_file_name
+                    }}"
+                    class="img-fluid shadow"
+                    alt="{{'Desktop screenshot of ' + website.domain}}"
+                  />
+                </div>
+                <div class="col-12 col-md-2">
+                  <img
+                    src="{{
+                      '../../../../../assets/website-screenshots/' +
+                        websiteScans[0].mobile_img_file_name
+                    }}"
+                    class="img-fluid shadow"
+                    alt="{{'Mobile screenshot of ' + website.domain}}"
+                  />
+                </div>
               </div>
-                <div class="col">
+
+              <div class="row mb-3">
+                <div class="col-12 mb-3">
+                  <h4>Type of Site</h4>
+                </div>
+                <div class="col-auto">
+                  <div>
+                    <svg
+                      class="website-chart"
+                      style="display: block; margin: 0 auto"
+                      id="graph"
+                      height="100"
+                      width="100"
+                      viewBox="0 0 100 100"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g class="background">
+                        <circle cx="50" cy="50" r="50" pathLength="100" />
+                      </g>
+
+                      <g id="website-chart" class="graph">
+                        <circle
+                          cx="50"
+                          cy="50"
+                          class="one"
+                          ngClass="{{
+                            website.customer_centricity === '0.00'
+                              ? 'zeroValue'
+                              : ''
+                          }}"
+                          transform="rotate(-90 50 50)"
+                          [style.--value]="website.customer_centricity"
+                          [style.--max]="1"
+                        />
+                        <circle
+                          cx="50"
+                          cy="50"
+                          class="two"
+                          ngClass="{{
+                            website.required_links === '0.00' ? 'zeroValue' : ''
+                          }}"
+                          transform="rotate(-30 50 50)"
+                          [style.--value]="website.required_links"
+                          [style.--max]="1"
+                        />
+                        <circle
+                          cx="50"
+                          cy="50"
+                          class="three"
+                          ngClass="{{
+                            website.mobile_performance === '0.00' ? 'zeroValue' : ''
+                          }}"
+                          transform="rotate(30 50 50)"
+                          [style.--value]="website.mobile_performance"
+                          [style.--max]="1"
+                        />
+                        <circle
+                          cx="50"
+                          cy="50"
+                          class="four"
+                          ngClass="{{
+                            website.accessibility === '0.00' ? 'zeroValue' : ''
+                          }}"
+                          transform="rotate(90 50 50)"
+                          [style.--value]="website.accessibility"
+                          [style.--max]="1"
+                        />
+                        <circle
+                          cx="50"
+                          cy="50"
+                          class="five"
+                          ngClass="{{
+                            website.google_analytics === '0.00' ? 'zeroValue' : ''
+                          }}"
+                          transform="rotate(150 50 50)"
+                          [style.--value]="website.google_analytics"
+                          [style.--max]="1"
+                        />
+                        <circle
+                          cx="50"
+                          cy="50"
+                          class="six"
+                          ngClass="{{
+                            website.uswds === '0.00' ? 'zeroValue' : ''
+                          }}"
+                          transform="rotate(210 50 50)"
+                          [style.--value]="website.uswds"
+                          [style.--max]="1"
+                        />
+                      </g>
+                    </svg>
+                  </div>
+                </div>
+                <div class="col-8">
                   <p>
-                    The following charts show the relative strengths and weaknesses of
-                    each website across 6 areas. Click on a domain name to view
-                    additional data and stats.
+                    The following charts show the relative strengths and
+                    weaknesses of each website across 6 areas. Click on a domain
+                    name to view additional data and stats.
                   </p>
                   <p>
-                    A gray semi-circle appears when data is unavailable for the website
-                    in that particular category.
+                    A gray semi-circle appears when data is unavailable for the
+                    website in that particular category.
                   </p>
                   <div class="row">
                     <div class="col-12 col-md-4 mb-2">
@@ -213,6 +231,9 @@
                 </div>
               </div>
               <div class="row">
+                <div class="col-12">
+                  <h4>Additional Information</h4>
+                </div>
                 <table
                   id="websiteDetailTable"
                   class="table table-borderless table-striped table-dark rounded-lg w-75 mx-auto"

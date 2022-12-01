@@ -19,7 +19,6 @@ export class WebsitesModalComponent implements OnInit {
 
   website = <any>{};
   websiteScans = <any>{};
-  blue="blue";
 
   constructor(
     private apiService: ApiService,
@@ -66,18 +65,19 @@ export class WebsitesModalComponent implements OnInit {
   ngOnInit(): void {
     this.modalService.currentWebsite.subscribe(website => {
       this.website = website
-      this.apiService.getWebsiteScans(this.website.Website_ID).subscribe((websiteScanData) => this.websiteScans = websiteScanData);
+      console.log(this.website);
+      this.apiService.getWebsiteScans(this.website.Website_ID).subscribe((websiteScanData) => this.websiteScans = (websiteScanData.length > 0) ? websiteScanData : this.getBlankWebsiteScan());
     }
-      );
-    
+    );
+
     $('#websitesRelSysTable').bootstrapTable($.extend(this.tableService.relSysTableOptions, {
       columns: this.tableService.relSysColumnDefs,
       data: []
     }));
 
     $('#websiteScans').bootstrapTable({
-      columns: this.websiteScanColumnDefs, 
-      data:[] 
+      columns: this.websiteScanColumnDefs,
+      data: []
     });
 
 
@@ -94,13 +94,13 @@ export class WebsitesModalComponent implements OnInit {
     // Revert back to overview tab when modal goes away
     $('#websiteDetail').on('hidden.bs.modal', function (e) {
       $("#websiteTabs li:first-child a").tab('show');
-      
+
       // Change URL back without ID after closing Modal
       this.sharedService.removeIDfromURL();
     }.bind(this));
   }
 
-  websiteEdit () {
+  websiteEdit() {
     // Hide Detail Modal before showing Manager Modal
     $('#websiteDetail').modal('hide');
     this.modalService.updateDetails(this.website, 'website', false);
@@ -108,7 +108,11 @@ export class WebsitesModalComponent implements OnInit {
     $('#websiteManager').modal('show');
   }
 
-  getValues (value, maxValue) {
-    return {'--value': value, '--max': maxValue};
+  getBlankWebsiteScan() {
+    return [{ "Scan_ID": 0, "Website_ID": this.website.Website_ID, "desktop_img_file_name": "desktop.png", "mobile_img_file_name": "mobile.png", "scan_date": "none", "scan_version": "" }];
+  }
+
+  getValues(value, maxValue) {
+    return { '--value': value, '--max': maxValue };
   }
 }
