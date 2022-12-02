@@ -91,7 +91,7 @@
                         websiteScans[0].desktop_img_file_name
                     }}"
                     class="img-fluid shadow"
-                    alt="{{'Desktop screenshot of ' + website.domain}}"
+                    alt="{{ 'Desktop screenshot of ' + website.domain }}"
                   />
                 </div>
                 <div class="col-12 col-md-2">
@@ -101,7 +101,7 @@
                         websiteScans[0].mobile_img_file_name
                     }}"
                     class="img-fluid shadow"
-                    alt="{{'Mobile screenshot of ' + website.domain}}"
+                    alt="{{ 'Mobile screenshot of ' + website.domain }}"
                   />
                 </div>
               </div>
@@ -155,7 +155,9 @@
                           cy="50"
                           class="three"
                           ngClass="{{
-                            website.mobile_performance === '0.00' ? 'zeroValue' : ''
+                            website.mobile_performance === '0.00'
+                              ? 'zeroValue'
+                              : ''
                           }}"
                           transform="rotate(30 50 50)"
                           [style.--value]="website.mobile_performance"
@@ -177,7 +179,9 @@
                           cy="50"
                           class="five"
                           ngClass="{{
-                            website.google_analytics === '0.00' ? 'zeroValue' : ''
+                            website.google_analytics === '0.00'
+                              ? 'zeroValue'
+                              : ''
                           }}"
                           transform="rotate(150 50 50)"
                           [style.--value]="website.google_analytics"

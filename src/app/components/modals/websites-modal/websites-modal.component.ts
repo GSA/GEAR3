@@ -18,7 +18,7 @@ declare var $: any;
 export class WebsitesModalComponent implements OnInit {
 
   website = <any>{};
-  websiteScans = <any>{};
+  websiteScans = <any>this.getBlankWebsiteScan();
 
   constructor(
     private apiService: ApiService,
@@ -65,7 +65,6 @@ export class WebsitesModalComponent implements OnInit {
   ngOnInit(): void {
     this.modalService.currentWebsite.subscribe(website => {
       this.website = website
-      console.log(this.website);
       this.apiService.getWebsiteScans(this.website.Website_ID).subscribe((websiteScanData) => this.websiteScans = (websiteScanData.length > 0) ? websiteScanData : this.getBlankWebsiteScan());
     }
     );
