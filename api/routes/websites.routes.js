@@ -15,6 +15,9 @@ router.route('/get/:id/scans')
 router.route('/get/:id/scans/:scanId')
   .get(websitesCtrl.findOneScan);
 
+router.route('/get/:id/service_categories')
+  .get(websitesCtrl.findServiceCategories);
+
 router.route('/get/:id/systems')
   .get(websitesCtrl.findSystems);
 
