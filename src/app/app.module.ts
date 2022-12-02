@@ -39,6 +39,9 @@ import { OrganizationsChartComponent } from './views/enterprise/organizations-ch
 import { OrganizationsComponent } from './views/enterprise/organizations/organizations.component';
 import { OrganizationsModalComponent } from './components/modals/organizations-modal/organizations-modal.component';
 
+import { ServiceCategoryComponent} from './views/enterprise/serviceCategory/serviceCategory.component';
+import { ServiceCategoryModalComponent } from './components/modals/service-category-modal/service-category-modal.component';
+
 //// Systems
 import { SystemsComponent } from './views/systems/systems/systems.component';
 import { SystemsModalComponent } from './components/modals/systems-modal/systems-modal.component';
@@ -93,6 +96,8 @@ import { Globals } from './common/globals';
     OrganizationsChartComponent,
     OrganizationsComponent,
     OrganizationsModalComponent,
+    ServiceCategoryComponent,
+    ServiceCategoryModalComponent,
 
     SystemsComponent,
     SystemsModalComponent,
@@ -114,7 +119,7 @@ import { Globals } from './common/globals';
     ItStandardManagerComponent,
   
     ArtifactsComponent,
-    GearModelComponent
+    GearModelComponent,
   ],
   imports: [
     AppRoutingModule,

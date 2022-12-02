@@ -24,6 +24,7 @@ import { ITStandardStatus } from '@api/models/it-standards-statuses.model';
 import { ITStandardTypes } from '@api/models/it-standards-types.model';
 
 import { Organization } from '@api/models/organizations.model';
+import { Service_Category } from '@api/models/service-category.model';
 
 import { POC } from '@api/models/pocs.model';
 
@@ -65,6 +66,9 @@ export class ApiService {
 
   // Records Management
   recordsUrl: string = this.sharedService.internalURLFmt('/api/records');
+
+  // Service Category
+  serviceCategoryUrl: string = this.sharedService.internalURLFmt('api/service_category');
 
   // Systems
   sysUrl: string = this.sharedService.internalURLFmt('/api/systems');
@@ -258,6 +262,20 @@ export class ApiService {
       catchError(this.handleError<Record[]>('UPDATE Record-System', []))
     );
   };
+
+  //// Service Category
+  public getServiceCategory(): Observable<Service_Category[]> {
+    return this.http.get<Service_Category[]>(this.serviceCategoryUrl).pipe(
+      catchError(this.handleError<Service_Category[]>('GET Service Category', []))
+    );
+  };
+  public getOneServiceCategory(id: number): Observable<Service_Category[]> {
+    return this.http.get<Service_Category[]>(this.serviceCategoryUrl + '/get/' + String(id)).pipe(
+      catchError(this.handleError<Service_Category[]>('GET Service Category', []))
+    );
+  };
+  
+  
 
 
   //// Systems

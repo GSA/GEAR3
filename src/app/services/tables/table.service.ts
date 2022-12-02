@@ -333,6 +333,20 @@ export class TableService {
     })
   }
 
+  public serviceCategoryTableClick(data: any, addRoute: boolean=true) {
+    var options: ClickOptions = {
+      data: data,
+      dataID: 'id',
+      update: 'serviceCategory',
+      detailModalID: '#serviceCategoryDetail',
+      sysTableID: '',
+      exportName: data.Name + '',
+      systemApiStr: '/api/service_category/get/',  // Should revert back when can use IDs again for actual org table instead of names
+      addRoute: addRoute
+    };
+    this.clickMethod(options);    
+  }
+
   public systemsTableClick(data: any, addRoute: boolean=true) {
     var options: ClickOptions = {
       data: data,
@@ -422,6 +436,7 @@ export class TableService {
     // console.log("Clicked Row Data: ", options.data);  // Debug
 
     this.modalService.updateDetails(options.data, options.update, options.addRoute);
+    console.log("click method", options.detailModalID);
     $(options.detailModalID).modal('show');
 
     // Change URL to include ID
