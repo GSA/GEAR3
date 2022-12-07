@@ -55,8 +55,11 @@ const routes: Routes = [
   { path: 'org_chart/:orgID', component: OrganizationsChartComponent },
   { path: 'organizations', component: OrganizationsComponent },
   { path: 'organizations/:orgID', component: OrganizationsComponent },
-  { path: 'service_category', component: ServiceCategoryComponent},
-  { path: 'service_category/:serviceCategoryID', component: ServiceCategoryComponent},
+  { path: 'service_category', component: ServiceCategoryComponent },
+  {
+    path: 'service_category/:serviceCategoryID',
+    component: ServiceCategoryComponent,
+  },
 
   { path: 'systems', component: SystemsComponent },
   { path: 'systems/:sysID', component: SystemsComponent },
@@ -82,15 +85,21 @@ const routes: Routes = [
 
   { path: 'gear_manager', component: GearManagerComponent },
 
-  {  // Catch-all Redirect to Home
+  {
+    // Catch-all Redirect to Home
     path: '**',
     redirectTo: '',
-    pathMatch: 'full'
-  }
+    pathMatch: 'full',
+  },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { useHash: true, relativeLinkResolution: 'legacy' })],
-  exports: [RouterModule]
+  imports: [
+    RouterModule.forRoot(routes, {
+      useHash: true,
+      relativeLinkResolution: 'legacy',
+    }),
+  ],
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
