@@ -274,6 +274,11 @@ export class ApiService {
       catchError(this.handleError<Service_Category[]>('GET Service Category', []))
     );
   };
+  public getServiceCategoryRelatedWebsites(id: number):  Observable<Service_Category[]> {
+    return this.http.get<Service_Category[]>(this.serviceCategoryUrl + '/get/' + String(id) + '/websites').pipe(
+      catchError(this.handleError<Service_Category[]>('GET Service Category Related Websites', []))
+    );
+  };
   
   
 

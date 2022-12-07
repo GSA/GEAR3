@@ -66,8 +66,7 @@ export class WebsitesModalComponent implements OnInit {
     this.modalService.currentWebsite.subscribe(website => {
       this.website = website
       this.apiService.getWebsiteScans(this.website.Website_ID).subscribe((websiteScanData) => this.websiteScans = (websiteScanData.length > 0) ? websiteScanData : this.getBlankWebsiteScan());
-    }
-    );
+    });
 
     $('#websitesRelSysTable').bootstrapTable($.extend(this.tableService.relSysTableOptions, {
       columns: this.tableService.relSysColumnDefs,

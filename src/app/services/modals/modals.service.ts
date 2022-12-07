@@ -64,7 +64,6 @@ export class ModalsService {
     } else if (component == 'capability') {
       this.capSource.next(row);
     } else if (component == 'serviceCategory') {
-      console.log("in modal service");
       this.serviceCategorySource.next(row);
     } else if (component == 'organization') {
       this.orgSource.next(row);

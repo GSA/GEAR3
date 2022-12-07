@@ -18,7 +18,8 @@ declare var $: any;
 export class ServiceCategoryModalComponent implements OnInit {
 
   serviceCategory = <any>{};
-
+  serviceCategoryWebsites = <any>{};
+  
   constructor(
     private apiService: ApiService,
     private location: Location,
@@ -28,14 +29,55 @@ export class ServiceCategoryModalComponent implements OnInit {
     public sharedService: SharedService,
     public tableService: TableService) { }
 
-  
+  serviceCategoryWebsitesTableOptions: {} = this.tableService.createTableOptions({
+    advancedSearch: true,
+    idTable: null,
+    classes: "table-hover table-light clickable-table",
+    showColumns: false,
+    showExport: true,
+    exportFileName: null,
+    headerStyle: "bg-royal-blue",
+    pagination: false,
+    search: true,
+    sortName: 'domain',
+    sortOrder: 'desc',
+    showToggle: true,
+    url: null
+  });
+
+  // Related Website Table Columns
+  serviceCategoryWebsitesColumnDefs: any[] = [{
+    field: 'Website_ID',
+    title: 'Website Id',
+    sortable: true
+  }, {
+    field: 'domain',
+    title: 'Domain',
+    sortable: true,
+    visible: true,
+  }, {
+    field: 'site_owner_email',
+    title: 'Website Manager Email',
+    sortable: true
+  }, {
+    field: 'office',
+    title: 'Office',
+    sortable: true
+  }, {
+    field: 'sub_office',
+    title: 'Sub-Office',
+    sortable: true
+  }];
 
   ngOnInit(): void {
     this.modalService.currentServiceCategory.subscribe(serviceCategory => {
       this.serviceCategory = serviceCategory;
-      console.log(serviceCategory);
-      }
-    );
+    });
+
+    $('#serviceCategoryWebsites').bootstrapTable({
+      columns: this.serviceCategoryWebsitesColumnDefs,
+      data: []
+    });
 
     // Method to handle click events on the Related Systems table
     $(document).ready(

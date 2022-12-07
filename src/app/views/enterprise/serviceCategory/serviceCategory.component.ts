@@ -49,7 +49,7 @@ export class ServiceCategoryComponent implements OnInit {
 
   // serviceCategory Table Columns
   columnDefs: any[] = [{
-    field: 'id',
+    field: 'service_category_id',
     title: 'Id',
     sortable: true
   }, {
