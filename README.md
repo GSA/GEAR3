@@ -38,5 +38,100 @@ In order to keep the image filesize small, all PNGs get converted to WEBP. The f
 
 `npx sharp-cli -f webp --input "*.png" -o .`
 
+## Creating New Views and Detail Modals
 
+This assumes APIs have been created in express already
 
+### Scaffold Components
+
+#### Create View Component
+
+Navigate to parent folder for the view (in this case, enterperise)
+
+```sh
+cd src/app/views/enterprise
+ng generate component myComponent
+```
+
+#### Create Modal Component
+
+Navigate to modals folder
+
+```
+cd src/app/components/modals
+ng generate component myComponent-modal
+```
+
+Add component reference to Modal Service (`modals.service.ts`)
+
+```ts
+private myComponentSource = new Subject();
+currentMyComponent = this.myComponentSource.asObservable();
+```
+
+Add component to `updateDetails` method
+
+```ts
+ else if (component == 'myComponent') {
+   this.myComponentSource.next(row);
+ }
+```
+
+### Additional Updates
+
+#### Application Plumbing
+- Update App Routing (app-routing.module.ts)
+  - Add the View component as an import in app-routing.module.ts
+    - `import {myComponent} from './views/enterprise/myComponentName.myComponent.component';`
+  - Create objects in the routes array to serve the View at URL paths
+    - `{ path: 'myComponentPath', component: myComponent},`
+    - `{ path: 'myComponentPath/:myComponentId', component: myComponent},`
+- Update App Module (app.module.ts)
+  - Import View and Modal components
+    - `import { myComponent} from './views/enterprise/serviceCategory/serviceCategory.component';`
+    - `import { myComponent-modal } from './components/modals/myComponent-modal/service-category-modal.component';`
+  - Add imported modules to `@NgModule({declarations:[]}`
+
+#### Table Service 
+
+- Add public method to handle row click
+```ts
+public myComponentTableClick(data: any, addRoute: boolean=true) {
+  var options: ClickOptions = {
+    data: data,
+    dataID: 'id', // data attribute to use in URL 
+    update: 'myComponent', // corresponds to value in modals service component
+    detailModalID: '#myComponentDetail', // corresponds to the div id in the modal component
+    sysTableID: '',
+    exportName: data.Name + '',
+    systemApiStr: '/api/myComponent/get/',  // corresponding api path
+    addRoute: addRoute
+  };
+  this.clickMethod(options);    
+}
+```
+
+#### Navigation
+- Open `sidenav.component.html` and add link pointing at the route established earlier
+  - `<a routerLink="/myComponentPath" >My Component List</a>`
+
+#### API Connection 
+
+- Update API Service (api.service.ts)
+  - `import { myComponent } from '@api/models/myComponent.model';`
+  - add new API path to `ApiService` class as an attribute
+    - `myComponentUrl: string = this.sharedService.internalURLFmt('api/myComponent');`
+  - Add new publicly available methods for each API operation 
+
+```ts
+    public getMyComponent(): Observable<MyComponent[]> {
+      return this.http.get<MyComponent[]>(this.myComponentUrl).pipe(
+        catchError(this.handleError<MyComponent[]>('GET MyComponent', []))
+      );
+    };
+    public getOneMyComponent(id: number): Observable<MyComponent[]> {
+      return this.http.get<MyComponent[]>(this.myComponentUrl + '/get/' + String(id)).pipe(
+        catchError(this.handleError<MyComponent[]>('GET One MyComponent ', []))
+      );
+    };
+```

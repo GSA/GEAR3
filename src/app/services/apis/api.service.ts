@@ -24,6 +24,7 @@ import { ITStandardStatus } from '@api/models/it-standards-statuses.model';
 import { ITStandardTypes } from '@api/models/it-standards-types.model';
 
 import { Organization } from '@api/models/organizations.model';
+import { Service_Category } from '@api/models/service-category.model';
 
 import { POC } from '@api/models/pocs.model';
 
@@ -33,6 +34,7 @@ import { System } from '@api/models/systems.model';
 import { TIME } from '@api/models/systime.model';
 import { Website } from '@api/models/websites.model';
 import { WebsiteScan } from '@api/models/website-scan.model';
+import { WebsiteServiceCategory } from '@api/models/website-service-category.model';
 
 @Injectable({
   providedIn: 'root'
@@ -65,6 +67,9 @@ export class ApiService {
 
   // Records Management
   recordsUrl: string = this.sharedService.internalURLFmt('/api/records');
+
+  // Service Category
+  serviceCategoryUrl: string = this.sharedService.internalURLFmt('api/service_category');
 
   // Systems
   sysUrl: string = this.sharedService.internalURLFmt('/api/systems');
@@ -259,6 +264,25 @@ export class ApiService {
     );
   };
 
+  //// Service Category
+  public getServiceCategory(): Observable<Service_Category[]> {
+    return this.http.get<Service_Category[]>(this.serviceCategoryUrl).pipe(
+      catchError(this.handleError<Service_Category[]>('GET Service Category', []))
+    );
+  };
+  public getOneServiceCategory(id: number): Observable<Service_Category[]> {
+    return this.http.get<Service_Category[]>(this.serviceCategoryUrl + '/get/' + String(id)).pipe(
+      catchError(this.handleError<Service_Category[]>('GET Service Category', []))
+    );
+  };
+  public getServiceCategoryRelatedWebsites(id: number):  Observable<Service_Category[]> {
+    return this.http.get<Service_Category[]>(this.serviceCategoryUrl + '/get/' + String(id) + '/websites').pipe(
+      catchError(this.handleError<Service_Category[]>('GET Service Category Related Websites', []))
+    );
+  };
+  
+  
+
 
   //// Systems
   public getSystems(): Observable<System[]> {
@@ -438,6 +462,11 @@ export class ApiService {
   public getOneWebsiteScan(id: number, scanId: number): Observable<WebsiteScan[]> {
     return this.http.get<WebsiteScan[]>(this.websitesUrl + '/get/' + String(id) + '/scans/' + String(scanId)).pipe(
       catchError(this.handleError<WebsiteScan[]>('GET One Scan for Website', []))
+    );
+  }
+  public getWebsiteServiceCategories(id: number): Observable<WebsiteServiceCategory[]> {
+    return this.http.get<WebsiteServiceCategory[]>(this.websitesUrl + '/get/' + String(id) + '/service_categories').pipe(
+      catchError(this.handleError<WebsiteServiceCategory[]>('GET Website Service Categories', []))
     );
   }
   public getWebsiteSys(id: number): Observable<System[]> {

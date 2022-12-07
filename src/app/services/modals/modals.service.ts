@@ -22,6 +22,10 @@ export class ModalsService {
   private orgSource = new Subject();
   currentOrg = this.orgSource.asObservable();
 
+  // ServiceCategory
+  private serviceCategorySource = new Subject();
+  currentServiceCategory = this.serviceCategorySource.asObservable();
+
   // System
   private sysSource = new Subject();
   currentSys = this.sysSource.asObservable();
@@ -59,6 +63,8 @@ export class ModalsService {
       this.investSource.next(row);
     } else if (component == 'capability') {
       this.capSource.next(row);
+    } else if (component == 'serviceCategory') {
+      this.serviceCategorySource.next(row);
     } else if (component == 'organization') {
       this.orgSource.next(row);
     } else if (component == 'system') {

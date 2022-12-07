@@ -53,6 +53,11 @@ export class ItStandardsComponent implements OnInit {
 
   // IT Standard Table Columns
   columnDefs: any[] = [{
+    field: 'ID',
+    title: 'ID',
+    sortable: true,
+    visible: false
+  }, {
     field: 'Name',
     title: 'Standard Name',
     sortable: true

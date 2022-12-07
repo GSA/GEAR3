@@ -6,7 +6,8 @@ import { ApiService } from "@services/apis/api.service";
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
 import { WebsiteScan } from '@api/models/website-scan.model';
-
+import { Service_Category } from '@api/models/service-category.model';
+ 
 
 // Declare jQuery symbol
 declare var $: any;
@@ -329,8 +330,31 @@ export class TableService {
         },
         data: websiteScanData
       });
-      this.apiService.getOneWebsiteScan(data[options.dataID], websiteScanData[0].Scan_ID).subscribe((latestWebsiteScan:WebsiteScan[]) => {console.log("latest website scan"); console.log(latestWebsiteScan);})
+      this.apiService.getOneWebsiteScan(data[options.dataID], websiteScanData[0].Scan_ID).subscribe((latestWebsiteScan:WebsiteScan[]) => {})
     })
+  }
+
+  public serviceCategoryTableClick(data: any, addRoute: boolean=true) {
+    var options: ClickOptions = {
+      data: data,
+      dataID: 'service_category_id',
+      update: 'serviceCategory',
+      detailModalID: '#serviceCategoryDetail',
+      sysTableID: '',
+      exportName: data.name + '',
+      systemApiStr: '/api/service_category/get/',  // Should revert back when can use IDs again for actual org table instead of names
+      addRoute: addRoute
+    };
+    this.clickMethod(options);  
+    // load the related websites list to display within the main modal tab
+    this.apiService.getServiceCategoryRelatedWebsites(data[options.dataID]).subscribe((serviceCategoryWebsiteData:Service_Category[]) => {
+      $('#serviceCategoryWebsites').bootstrapTable('refreshOptions', {
+        exportOptions: {
+          fileName: this.sharedService.fileNameFmt(data.name + '-related-websites')
+        },
+        data: serviceCategoryWebsiteData
+      });
+    });
   }
 
   public systemsTableClick(data: any, addRoute: boolean=true) {
@@ -419,8 +443,6 @@ export class TableService {
   }
 
   private clickMethod(options: ClickOptions) {
-    // console.log("Clicked Row Data: ", options.data);  // Debug
-
     this.modalService.updateDetails(options.data, options.update, options.addRoute);
     $(options.detailModalID).modal('show');
 

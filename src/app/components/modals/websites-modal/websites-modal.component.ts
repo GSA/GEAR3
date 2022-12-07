@@ -18,7 +18,8 @@ declare var $: any;
 export class WebsitesModalComponent implements OnInit {
 
   website = <any>{};
-  websiteScans = <any>{};
+  websiteScans = <any>this.getBlankWebsiteScan();
+  serviceCategories = <any>{};
 
   constructor(
     private apiService: ApiService,
@@ -65,10 +66,9 @@ export class WebsitesModalComponent implements OnInit {
   ngOnInit(): void {
     this.modalService.currentWebsite.subscribe(website => {
       this.website = website
-      console.log(this.website);
       this.apiService.getWebsiteScans(this.website.Website_ID).subscribe((websiteScanData) => this.websiteScans = (websiteScanData.length > 0) ? websiteScanData : this.getBlankWebsiteScan());
-    }
-    );
+      this.apiService.getWebsiteServiceCategories(this.website.Website_ID).subscribe((websiteServiceCategories) => this.serviceCategories = websiteServiceCategories );
+    });
 
     $('#websitesRelSysTable').bootstrapTable($.extend(this.tableService.relSysTableOptions, {
       columns: this.tableService.relSysColumnDefs,
@@ -88,8 +88,7 @@ export class WebsitesModalComponent implements OnInit {
         $('#websiteDetail').modal('hide');
 
         this.tableService.systemsTableClick(row);
-      }.bind(this)
-      ));
+      }.bind(this)));
 
     // Revert back to overview tab when modal goes away
     $('#websiteDetail').on('hidden.bs.modal', function (e) {
@@ -110,6 +109,14 @@ export class WebsitesModalComponent implements OnInit {
 
   getBlankWebsiteScan() {
     return [{ "Scan_ID": 0, "Website_ID": this.website.Website_ID, "desktop_img_file_name": "desktop.png", "mobile_img_file_name": "mobile.png", "scan_date": "none", "scan_version": "" }];
+  }
+
+  serviceCategoryClick(id) {
+    console.log("webservicecategoryClick",id);
+    $('#websiteDetail').modal('hide');
+    this.apiService.getOneServiceCategory(id).subscribe((data: any[]) => {
+      this.tableService.serviceCategoryTableClick(data[0]);
+    });
   }
 
   getValues(value, maxValue) {

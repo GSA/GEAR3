@@ -18,7 +18,7 @@ import { CapabilitiesModelComponent } from './views/enterprise/capabilities-mode
 import { CapabilitiesComponent } from './views/enterprise/capabilities/capabilities.component';
 import { OrganizationsChartComponent } from './views/enterprise/organizations-chart/organizations-chart.component';
 import { OrganizationsComponent } from './views/enterprise/organizations/organizations.component';
-
+import { ServiceCategoryComponent } from './views/enterprise/serviceCategory/serviceCategory.component';
 // Systems
 import { SystemsComponent } from './views/systems/systems/systems.component';
 import { TimeComponent } from './views/systems/time/time.component';
@@ -55,6 +55,8 @@ const routes: Routes = [
   { path: 'org_chart/:orgID', component: OrganizationsChartComponent },
   { path: 'organizations', component: OrganizationsComponent },
   { path: 'organizations/:orgID', component: OrganizationsComponent },
+  { path: 'service_category', component: ServiceCategoryComponent},
+  { path: 'service_category/:serviceCategoryID', component: ServiceCategoryComponent},
 
   { path: 'systems', component: SystemsComponent },
   { path: 'systems/:sysID', component: SystemsComponent },

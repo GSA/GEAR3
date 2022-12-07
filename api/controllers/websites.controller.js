@@ -35,6 +35,13 @@ exports.findOneScan= (req, res) => {
   res = ctrl.sendQuery(query, 'individual website one scan', res);
 }
 
+exports.findServiceCategories = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_website_service_categories.sql')).toString() +
+  ` WHERE obj_websites_id = ${req.params.id} ORDER BY name ASC`;
+
+  res = ctrl.sendQuery(query, 'service categories for a website', res);
+}
+
 exports.findSystems = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
   ` LEFT JOIN gear_ods.zk_systems_subsystems_websites AS websites_mapping ON systems.\`ex:GEAR_ID\` = websites_mapping.obj_systems_subsystems_Id

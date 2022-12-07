@@ -27,6 +27,9 @@ export class SystemsComponent implements OnInit {
   filteredTable: boolean = false;
   filterTitle: string = '';
   interfaces: any[] = [];
+  cloudTable: boolean = false;
+  inactiveTable: boolean = false;
+  pendingTable: boolean = false;
 
   vizData: any[] = [];
   vizLabel: string = 'Total Active Systems'
@@ -64,6 +67,11 @@ export class SystemsComponent implements OnInit {
 
   // Systems Table Columns
   columnDefs: any[] = [{
+    field: 'ID',
+    title: 'ID',
+    sortable: true,
+    visible: false
+  }, {
     field: 'DisplayName',
     title: 'Alias/Acronym',
     sortable: true
@@ -76,7 +84,7 @@ export class SystemsComponent implements OnInit {
     title: 'Description',
     sortable: true,
     visible: false,
-    class: 'text-truncate'
+    class: 'text-wrap'
   }, {
     field: 'SystemLevel',
     title: 'System Level',
@@ -257,7 +265,7 @@ export class SystemsComponent implements OnInit {
 
   }
 
-  // Update table from filter buttons
+  // Update table from filter buttons if only filtering ONE column. Not currently used in business systems report.
   changeFilter(field: string, term: string) {
     this.filteredTable = true;  // Filters are on, expose main table button
     var filter = {};
@@ -287,6 +295,79 @@ export class SystemsComponent implements OnInit {
     this.filterTitle = title;
   }
 
+  //The following is adapted from fisma.component.ts to filter on multiple columns of data rather than one
+  // Update table to Cloud Business Systems
+  showCloud() {
+    this.filteredTable = true;  // Expose main table button after "Cloud Enabled" button is pressed
+    this.filterTitle = 'Cloud GSA';
+
+    // Hide visualization when on alternative filters
+    $('#sysViz').collapse('hide');
+
+    // Change columns, filename, and url
+    $('#systemTable').bootstrapTable('refreshOptions', {
+      columns: this.columnDefs,
+      exportOptions: {
+        fileName: this.sharedService.fileNameFmt('GSA_Cloud_Business_Systems')
+      }
+    });
+
+    // Filter to only "Cloud" Business Systems/Subsystems
+    $('#systemTable').bootstrapTable('filterBy', {
+      Status: ['Active'],
+	    BusApp: 'Yes',
+      CloudYN: 'Yes'
+    });
+  }
+
+  // Update table to Inactive Business Systems
+  showInactive() {
+    this.filteredTable = true;  // Expose main table button after "Inactive" button is pressed
+    this.filterTitle = 'Inactive GSA';
+
+    // Hide visualization when on alternative filters
+    $('#sysViz').collapse('hide');
+
+    // Change columns, filename, and url
+    $('#systemTable').bootstrapTable('refreshOptions', {
+      columns: this.columnDefs,
+      exportOptions: {
+        fileName: this.sharedService.fileNameFmt('GSA_Inactive_Business_Systems')
+      }
+    });
+
+    // Filter to only "Inactive" Business Systems/Subsystems
+    $('#systemTable').bootstrapTable('filterBy', {
+      Status: ['Inactive'],
+	    BusApp: 'Yes'
+    });
+  }
+
+  // Update table to Pending Business Systems
+  showPending() {
+    this.filteredTable = true;  // Expose main table button after "Pending" button is pressed
+    this.filterTitle = 'Pending GSA';
+
+    // Hide visualization when on alternative filters
+    $('#sysViz').collapse('hide');
+
+    // Change columns, filename, and url
+    $('#systemTable').bootstrapTable('refreshOptions', {
+      columns: this.columnDefs,
+      exportOptions: {
+        fileName: this.sharedService.fileNameFmt('GSA_Pending_Business_Systems')
+      }
+    });
+
+    // Filter to only "Pending" Business Systems/Subsystems
+    $('#systemTable').bootstrapTable('filterBy', {
+      Status: ['Pending']//,
+      //Commenting out BusApp: 'Yes' since pending systems need to be reviewed by EA and Security of whether they are a business system.
+	    //BusApp: 'Yes'
+    });
+  }
+ //The preceding code is adapted from fisma.component.ts to filter on multiple columns of data rather than one 
+
   backToMainSys() {
     this.filteredTable = false;  // Hide main button
 
@@ -312,7 +393,7 @@ export class SystemsComponent implements OnInit {
     // Filter by RespOrg clicked on visualization
     $('#systemTable').bootstrapTable('filterBy', {
       Status: ['Active'],
-	  BusApp: 'Yes',
+	    BusApp: 'Yes',
       RespOrg: chartData.name
     });
     $('#systemTable').bootstrapTable('refreshOptions', {

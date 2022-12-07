@@ -91,7 +91,7 @@
                         websiteScans[0].desktop_img_file_name
                     }}"
                     class="img-fluid shadow"
-                    alt="{{'Desktop screenshot of ' + website.domain}}"
+                    alt="{{ 'Desktop screenshot of ' + website.domain }}"
                   />
                 </div>
                 <div class="col-12 col-md-2">
@@ -101,11 +101,19 @@
                         websiteScans[0].mobile_img_file_name
                     }}"
                     class="img-fluid shadow"
-                    alt="{{'Mobile screenshot of ' + website.domain}}"
+                    alt="{{ 'Mobile screenshot of ' + website.domain }}"
                   />
                 </div>
               </div>
+              <div class="row mb-3">
+                <div class="col-12">
+                  <h4>Service Categories</h4>
+                </div>
+                <div class="col-auto" id="websiteServiceCategories">
+                  <span *ngFor="let sc of serviceCategories" (click)="serviceCategoryClick(sc.service_category_id)" class="badge badge-info p-3 mr-2">{{ sc.name }}</span>
 
+                </div>
+              </div>
               <div class="row mb-3">
                 <div class="col-12 mb-3">
                   <h4>Type of Site</h4>
@@ -155,7 +163,9 @@
                           cy="50"
                           class="three"
                           ngClass="{{
-                            website.mobile_performance === '0.00' ? 'zeroValue' : ''
+                            website.mobile_performance === '0.00'
+                              ? 'zeroValue'
+                              : ''
                           }}"
                           transform="rotate(30 50 50)"
                           [style.--value]="website.mobile_performance"
@@ -177,7 +187,9 @@
                           cy="50"
                           class="five"
                           ngClass="{{
-                            website.google_analytics === '0.00' ? 'zeroValue' : ''
+                            website.google_analytics === '0.00'
+                              ? 'zeroValue'
+                              : ''
                           }}"
                           transform="rotate(150 50 50)"
                           [style.--value]="website.google_analytics"
@@ -321,17 +333,16 @@
                   </tbody>
                 </table>
               </div>
+              <div>
+                <h4>Scans</h4>
+                <table id="websiteScans"></table>
+              </div>
             </div>
           </div>
           <!-- End of Overview Tab Pane -->
 
           <div class="tab-pane fade" id="websiteRelatedSystems">
             <table id="websitesRelSysTable"></table>
-          </div>
-
-          <div>
-            <h4 class="text-center mt-3">Scans</h4>
-            <table id="websiteScans"></table>
           </div>
         </div>
         <!-- End of Tab Panes -->
