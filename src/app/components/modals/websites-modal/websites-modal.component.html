@@ -110,8 +110,12 @@
                   <h4>Service Categories</h4>
                 </div>
                 <div class="col-auto" id="websiteServiceCategories">
-                  <span *ngFor="let sc of serviceCategories" (click)="serviceCategoryClick(sc.service_category_id)" class="badge badge-info p-3 mr-2">{{ sc.name }}</span>
-
+                  <span
+                    *ngFor="let sc of serviceCategories"
+                    (click)="serviceCategoryClick(sc.service_category_id)"
+                    class="badge badge-info p-3 mr-2"
+                    >{{ sc.name }}</span
+                  >
                 </div>
               </div>
               <div class="row mb-3">

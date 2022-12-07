@@ -8,9 +8,8 @@ describe('ServiceCategoryModalComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ServiceCategoryModalComponent ]
-    })
-    .compileComponents();
+      declarations: [ServiceCategoryModalComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
