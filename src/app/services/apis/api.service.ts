@@ -34,6 +34,7 @@ import { System } from '@api/models/systems.model';
 import { TIME } from '@api/models/systime.model';
 import { Website } from '@api/models/websites.model';
 import { WebsiteScan } from '@api/models/website-scan.model';
+import { WebsiteServiceCategory } from '@api/models/website-service-category.model';
 
 @Injectable({
   providedIn: 'root'
@@ -461,6 +462,11 @@ export class ApiService {
   public getOneWebsiteScan(id: number, scanId: number): Observable<WebsiteScan[]> {
     return this.http.get<WebsiteScan[]>(this.websitesUrl + '/get/' + String(id) + '/scans/' + String(scanId)).pipe(
       catchError(this.handleError<WebsiteScan[]>('GET One Scan for Website', []))
+    );
+  }
+  public getWebsiteServiceCategories(id: number): Observable<WebsiteServiceCategory[]> {
+    return this.http.get<WebsiteServiceCategory[]>(this.websitesUrl + '/get/' + String(id) + '/service_categories').pipe(
+      catchError(this.handleError<WebsiteServiceCategory[]>('GET Website Service Categories', []))
     );
   }
   public getWebsiteSys(id: number): Observable<System[]> {

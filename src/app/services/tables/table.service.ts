@@ -330,7 +330,7 @@ export class TableService {
         },
         data: websiteScanData
       });
-      this.apiService.getOneWebsiteScan(data[options.dataID], websiteScanData[0].Scan_ID).subscribe((latestWebsiteScan:WebsiteScan[]) => {console.log("latest website scan"); console.log(latestWebsiteScan);})
+      this.apiService.getOneWebsiteScan(data[options.dataID], websiteScanData[0].Scan_ID).subscribe((latestWebsiteScan:WebsiteScan[]) => {})
     })
   }
 
