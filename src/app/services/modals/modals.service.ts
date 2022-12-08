@@ -6,10 +6,9 @@ import { Router } from '@angular/router';
 import { Globals } from '@common/globals';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ModalsService {
-
   // Investment
   private investSource = new Subject();
   currentInvest = this.investSource.asObservable();
@@ -29,15 +28,15 @@ export class ModalsService {
   // System
   private sysSource = new Subject();
   currentSys = this.sysSource.asObservable();
-  
+
   // Data Flow
   private dataFlowSource = new Subject();
   currentDataFlow = this.dataFlowSource.asObservable();
-  
+
   // Records Management
   private recordSource = new Subject();
   currentRecord = this.recordSource.asObservable();
-  
+
   // FiSMA System
   private fismaSysSource = new Subject();
   currentFismaSys = this.fismaSysSource.asObservable();
@@ -49,14 +48,12 @@ export class ModalsService {
   // New Record Creation
   private createRecordSource = new Subject();
   currentCreate = this.createRecordSource.asObservable();
-  
+
   // Websites
   private websiteSource = new Subject();
   currentWebsite = this.websiteSource.asObservable();
 
-  constructor(
-    private globals: Globals,
-    private router: Router) { }
+  constructor(private globals: Globals, private router: Router) {}
 
   public updateDetails(row: {}, component: string, addRoute: boolean) {
     if (component == 'investment') {
@@ -77,23 +74,23 @@ export class ModalsService {
       this.fismaSysSource.next(row);
     } else if (component == 'it-standard') {
       this.itStandSource.next(row);
-	  } else if (component == 'website') {
-      this.websiteSource.next(row);  
+    } else if (component == 'website') {
+      this.websiteSource.next(row);
     } else {
-      console.log("Error: Not a valid component to update details");
+      console.log('Error: Not a valid component to update details');
     }
 
     // Add data to history of modals for routing purposes
     if (addRoute) {
       this.globals.modalRoutes.push({
         component: component,
-        data: row
+        data: row,
       });
       // console.log(this.globals.modalRoutes);  // Debug
     } else {
       // Reset Modal Routes since navigating to a new modal that we don't care about the previous ones of
       this.globals.modalRoutes = [];
-    };
+    }
   }
 
   // For setting creation flag
@@ -101,11 +98,22 @@ export class ModalsService {
     this.createRecordSource.next(bool);
   }
 
-  onScrollToEnd(buffer: any, bufferSize: number = 50, fullList: [], loading: boolean) {
+  onScrollToEnd(
+    buffer: any,
+    bufferSize: number = 50,
+    fullList: [],
+    loading: boolean
+  ) {
     this.fetchMore(buffer, bufferSize, fullList, loading);
-  };
+  }
 
-  onScroll({ end }, buffer: any, bufferSize: number = 50, fullList: [], loading: boolean) {
+  onScroll(
+    { end },
+    buffer: any,
+    bufferSize: number = 50,
+    fullList: [],
+    loading: boolean
+  ) {
     let numberOfItemsFromEndBeforeFetchingMore = 10;
     if (loading || fullList.length <= buffer.length) {
       return;
@@ -116,7 +124,12 @@ export class ModalsService {
     }
   }
 
-  private fetchMore(buffer: any, bufferSize: number = 50, fullList: [], loading: boolean) {
+  private fetchMore(
+    buffer: any,
+    bufferSize: number = 50,
+    fullList: [],
+    loading: boolean
+  ) {
     const len = buffer.length;
     const more = fullList.slice(len, bufferSize + len);
     loading = true;
@@ -132,7 +145,6 @@ export class ModalsService {
   }
 
   public checkModalRoutes() {
-    return this.globals.modalRoutes.length > 1;  // Greater than one because the initial click is from the main table, not a modal table.
+    return this.globals.modalRoutes.length > 1; // Greater than one because the initial click is from the main table, not a modal table.
   }
-
 }

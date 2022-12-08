@@ -7,8 +7,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { SidebarModule } from 'ng-sidebar';  // Sidebar Module
-import { PdfViewerModule } from 'ng2-pdf-viewer';  // PDF Viewer
+import { SidebarModule } from 'ng-sidebar'; // Sidebar Module
+import { PdfViewerModule } from 'ng2-pdf-viewer'; // PDF Viewer
 import { NgxChartsModule } from '@swimlane/ngx-charts'; // Visualizations
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -39,7 +39,7 @@ import { OrganizationsChartComponent } from './views/enterprise/organizations-ch
 import { OrganizationsComponent } from './views/enterprise/organizations/organizations.component';
 import { OrganizationsModalComponent } from './components/modals/organizations-modal/organizations-modal.component';
 
-import { ServiceCategoryComponent} from './views/enterprise/serviceCategory/serviceCategory.component';
+import { ServiceCategoryComponent } from './views/enterprise/serviceCategory/serviceCategory.component';
 import { ServiceCategoryModalComponent } from './components/modals/service-category-modal/service-category-modal.component';
 
 //// Systems
@@ -106,10 +106,10 @@ import { Globals } from './common/globals';
     RecordsManagementComponent,
     RecordsModalComponent,
     RecordManagerComponent,
-	  WebsitesComponent,
+    WebsitesComponent,
     WebsitesModalComponent,
     WebsiteManagerComponent,
-    
+
     FismaComponent,
     FismaModalComponent,
     FismaPocsComponent,
@@ -117,7 +117,7 @@ import { Globals } from './common/globals';
     ItStandardsComponent,
     ItStandardsModalComponent,
     ItStandardManagerComponent,
-  
+
     ArtifactsComponent,
     GearModelComponent,
   ],
@@ -131,16 +131,11 @@ import { Globals } from './common/globals';
     NgxChartsModule,
     PdfViewerModule,
     ReactiveFormsModule,
-    SidebarModule.forRoot()
+    SidebarModule.forRoot(),
   ],
-  providers: [
-    Globals
-  ],
-  bootstrap: [AppComponent]
+  providers: [Globals],
+  bootstrap: [AppComponent],
 })
-
 export class AppModule {
-
-  constructor() { }
-
+  constructor() {}
 }
