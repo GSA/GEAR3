@@ -3,8 +3,13 @@
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
     <div class="modal-content">
       <div class="modal-header bg-danger">
-        <a class="mr-3 text-white" role="button" aria-label="Previous"
-          (click)="tableService.previousModalRoute('recordDetail')" [hidden]="!modalService.checkModalRoutes()">
+        <a 
+          class="mr-3 text-white" 
+          role="button" 
+          tabindex="0"
+          aria-label="Previous"
+          (click)="tableService.previousModalRoute('recordDetail')" 
+          [hidden]="!modalService.checkModalRoutes()">
           <i class="fas fa-arrow-circle-left fa-lg fa-fw"></i>
         </a>
         <h5 class="modal-title text-white" id="recordTitle">
