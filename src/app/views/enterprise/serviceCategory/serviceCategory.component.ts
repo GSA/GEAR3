@@ -94,10 +94,10 @@ export class ServiceCategoryComponent implements OnInit {
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {
       var detailServiceCategoryID = params['serviceCategoryID'];
-      this.titleService.setTitle(
-        `${this.titleService.getTitle()} - ${detailServiceCategoryID}`
-      );
       if (detailServiceCategoryID) {
+        this.titleService.setTitle(
+          `${this.titleService.getTitle()} - ${detailServiceCategoryID}`
+        );
         this.apiService
           .getOneServiceCategory(detailServiceCategoryID)
           .subscribe((data: any[]) => {
