@@ -6,6 +6,7 @@ import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
+import { Title } from '@angular/platform-browser';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -27,7 +28,8 @@ export class WebsitesModalComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     public sharedService: SharedService,
-    public tableService: TableService
+    public tableService: TableService,
+    private titleService: Title
   ) {}
 
   // Website scan Table Options
@@ -85,6 +87,9 @@ export class WebsitesModalComponent implements OnInit {
           (websiteServiceCategories) =>
             (this.serviceCategories = websiteServiceCategories)
         );
+      this.titleService.setTitle(
+        `${this.titleService.getTitle()} / ${this.website.Website_ID}`
+      );
     });
 
     $('#websitesRelSysTable').bootstrapTable(

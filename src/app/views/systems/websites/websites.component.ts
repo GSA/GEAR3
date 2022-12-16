@@ -173,7 +173,7 @@ export class WebsitesComponent implements OnInit {
     this.route.params.subscribe((params) => {
       var detailwebsiteID = params['websiteID'];
       this.titleService.setTitle(
-        `${this.titleService.getTitle()} | ${detailwebsiteID}`
+        `${this.titleService.getTitle()} - ${detailwebsiteID}`
       );
       if (detailwebsiteID) {
         this.apiService
