@@ -6,6 +6,7 @@ import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
+import { Title } from '@angular/platform-browser';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -25,7 +26,8 @@ export class ServiceCategoryComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private sharedService: SharedService,
-    private tableService: TableService
+    private tableService: TableService,
+    private titleService: Title
   ) {
     this.modalService.currentInvest.subscribe((row) => (this.row = row));
   }
@@ -92,6 +94,9 @@ export class ServiceCategoryComponent implements OnInit {
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {
       var detailServiceCategoryID = params['serviceCategoryID'];
+      this.titleService.setTitle(
+        `${this.titleService.getTitle()} - ${detailServiceCategoryID}`
+      );
       if (detailServiceCategoryID) {
         this.apiService
           .getOneServiceCategory(detailServiceCategoryID)

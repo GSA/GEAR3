@@ -87,9 +87,6 @@ export class WebsitesModalComponent implements OnInit {
           (websiteServiceCategories) =>
             (this.serviceCategories = websiteServiceCategories)
         );
-      this.titleService.setTitle(
-        `${this.titleService.getTitle()} / ${this.website.Website_ID}`
-      );
     });
 
     $('#websitesRelSysTable').bootstrapTable(
