@@ -1,5 +1,10 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { Injectable, NgModule } from '@angular/core';
+import {
+  Routes,
+  RouterModule,
+  TitleStrategy,
+  RouterStateSnapshot,
+} from '@angular/router';
 
 // Main
 import { HomeComponent } from './views/main/home/home.component';
@@ -35,6 +40,7 @@ import { ItStandardsComponent } from './views/technologies/it-standards/it-stand
 // Enterprise Architecture
 import { ArtifactsComponent } from './views/architecture/artifacts/artifacts.component';
 import { GearModelComponent } from './views/architecture/gear-model/gear-model.component';
+import { Title } from '@angular/platform-browser';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -67,7 +73,7 @@ const routes: Routes = [
   { path: 'systems_TIME/:sysID', component: TimeComponent },
   { path: 'records_mgmt', component: RecordsManagementComponent },
   { path: 'records_mgmt/:recID', component: RecordsManagementComponent },
-  { path: 'websites', component: WebsitesComponent },
+  { path: 'websites', component: WebsitesComponent, title: 'websites' },
   { path: 'websites/:websiteID', component: WebsitesComponent },
 
   { path: 'FISMA', component: FismaComponent },
@@ -93,6 +99,20 @@ const routes: Routes = [
   },
 ];
 
+@Injectable({ providedIn: 'root' })
+export class TemplatePageTitleStrategy extends TitleStrategy {
+  constructor(private readonly title: Title) {
+    super();
+  }
+
+  override updateTitle(routerState: RouterStateSnapshot) {
+    const title = this.buildTitle(routerState);
+    if (title !== undefined) {
+      this.title.setTitle(`GEAR3 | ${title}`);
+    }
+  }
+}
+
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, {
@@ -101,5 +121,6 @@ const routes: Routes = [
     }),
   ],
   exports: [RouterModule],
+  providers: [{ provide: TitleStrategy, useClass: TemplatePageTitleStrategy }],
 })
 export class AppRoutingModule {}
