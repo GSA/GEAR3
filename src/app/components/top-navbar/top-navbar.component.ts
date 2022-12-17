@@ -24,7 +24,7 @@ export class TopNavbarComponent implements OnInit {
     public sharedService: SharedService
   ) {
     if (environment.name !== 'Production') {
-      this.envName = `<span style="color: var(--pink)"> - ${environment.name.toUpperCase()} ENVIRONMENT</span>`;
+      this.envName = `<span> - ${environment.name.toUpperCase()} ENVIRONMENT</span>`;
     }
   }
 

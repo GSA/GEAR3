@@ -6,7 +6,7 @@
   <a class="navbar-brand ml-3" routerLink="/">
     <i class="fas fa-cogs fa-lg"></i>
     GSA EA Analytics & Reporting (GEAR)
-    <span [innerHTML]="envName"></span>
+    <span [innerHTML]="envName" style="color: var(--pink)"></span>
     <span *ngIf="sharedService.loggedIn" style="color: red">
       **GEAR Manager Mode**</span
     >
