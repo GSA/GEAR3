@@ -12,33 +12,34 @@ declare var $: any;
 @Component({
   selector: 'top-navbar',
   templateUrl: './top-navbar.component.html',
-  styleUrls: ['./top-navbar.component.css']
+  styleUrls: ['./top-navbar.component.css'],
 })
 export class TopNavbarComponent implements OnInit {
-
   public envName: string = '';
   public searchKW: string = '';
 
   constructor(
     private apiService: ApiService,
     private router: Router,
-    public sharedService: SharedService) {
-      if (environment.name !== 'Production') {
-        this.envName = `<span class="text-danger"> - ${environment.name.toUpperCase()} ENVIRONMENT</span>`;
-      };
+    public sharedService: SharedService
+  ) {
+    if (environment.name !== 'Production') {
+      this.envName = `<span> - ${environment.name.toUpperCase()} ENVIRONMENT</span>`;
     }
-
-  ngOnInit(): void {
   }
 
+  ngOnInit(): void {}
+
   globalSearch(event) {
-    if (event.key === "Enter" || event.type === "click") {
+    if (event.key === 'Enter' || event.type === 'click') {
       $('#globalSearchTable').bootstrapTable('refreshOptions', {
         exportOptions: {
-          fileName: this.sharedService.fileNameFmt('GEAR_Global_Search-' + this.searchKW)
+          fileName: this.sharedService.fileNameFmt(
+            'GEAR_Global_Search-' + this.searchKW
+          ),
         },
-        url: this.apiService.globalSearchUrl + this.searchKW
-      })
+        url: this.apiService.globalSearchUrl + this.searchKW,
+      });
 
       this.router.navigate([`/search`]);
     }
@@ -46,7 +47,6 @@ export class TopNavbarComponent implements OnInit {
 
   // Toggle arrow rotation when top navbar collapse button is clicked
   toggleTopNavBttn() {
-    $("#topNavToggle").toggleClass("opposite");
+    $('#topNavToggle').toggleClass('opposite');
   }
-
 }

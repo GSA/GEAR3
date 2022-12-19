@@ -1,3 +1,8 @@
+/* Service Category Badges */
+span.pointer {
+  cursor: pointer;
+}
+/* Website chart */
 .legend {
   height: 25px;
   width: 25px;

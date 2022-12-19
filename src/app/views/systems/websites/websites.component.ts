@@ -6,6 +6,7 @@ import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
+import { Title } from '@angular/platform-browser';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -23,7 +24,8 @@ export class WebsitesComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     public sharedService: SharedService,
-    private tableService: TableService
+    private tableService: TableService,
+    private titleService: Title
   ) {}
 
   // Websites Table Options
@@ -169,8 +171,12 @@ export class WebsitesComponent implements OnInit {
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {
-      var detailwebsiteID = params['websiteID'];
+      let detailwebsiteID = params['websiteID'];
+
       if (detailwebsiteID) {
+        this.titleService.setTitle(
+          `${this.titleService.getTitle()} - ${detailwebsiteID}`
+        );
         this.apiService
           .getOneWebsite(detailwebsiteID)
           .subscribe((data: any[]) => {

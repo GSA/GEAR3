@@ -14,6 +14,7 @@
           class="mr-3 text-white"
           role="button"
           aria-label="Previous"
+          tabindex="0"
           (click)="tableService.previousModalRoute('websiteDetail')"
           [hidden]="!modalService.checkModalRoutes()"
         >
@@ -24,14 +25,9 @@
           {{ website.domain }}
           <!-- This refers to api/queries/GET name of object in database -->
         </h5>
-        <button
-          type="button"
-          class="close"
-          data-dismiss="modal"
-          aria-label="Close"
-        >
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <a role="button" aria-label="Close" data-dismiss="modal" tabindex="0">
+          <i class="fas fa-times fa-lg text-white align-self-center"></i>
+        </a>
       </div>
 
       <div class="modal-body">
@@ -113,7 +109,12 @@
                   <span
                     *ngFor="let sc of serviceCategories"
                     (click)="serviceCategoryClick(sc.service_category_id)"
-                    class="badge badge-info p-3 mr-2"
+                    (keydown.enter)="
+                      serviceCategoryClick(sc.service_category_id)
+                    "
+                    class="badge badge-info p-3 mr-2 pointer"
+                    tabindex="0"
+                    role="link"
                     >{{ sc.name }}</span
                   >
                 </div>
@@ -133,6 +134,17 @@
                       viewBox="0 0 100 100"
                       xmlns="http://www.w3.org/2000/svg"
                     >
+                      <title>
+                        Coxcomb chart showing website strengths and weaknesses
+                        on a 0 to 1 scale with 1 being the highest value. Scores
+                        are as follows: Customer Centricity:
+                        {{ website.customer_centricity }}, Required Links:
+                        {{ website.required_links }}, Mobile Performance:
+                        {{ website.mobile_performance }}, Accessibility:
+                        {{ website.accessibility }}, Google Analytics:
+                        {{ website.google_analytics }}, USWDS:
+                        {{ website.uswds }}
+                      </title>
                       <g class="background">
                         <circle cx="50" cy="50" r="50" pathLength="100" />
                       </g>
