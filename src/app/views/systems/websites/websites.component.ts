@@ -171,11 +171,12 @@ export class WebsitesComponent implements OnInit {
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {
-      var detailwebsiteID = params['websiteID'];
-      this.titleService.setTitle(
-        `${this.titleService.getTitle()} - ${detailwebsiteID}`
-      );
+      let detailwebsiteID = params['websiteID'];
+
       if (detailwebsiteID) {
+        this.titleService.setTitle(
+          `${this.titleService.getTitle()} - ${detailwebsiteID}`
+        );
         this.apiService
           .getOneWebsite(detailwebsiteID)
           .subscribe((data: any[]) => {
