@@ -1,25 +1,32 @@
 <!-- Capabilities Detail Modal -->
-<div class="modal fade" id="capabilityDetail" tabindex="-1" role="dialog" aria-labelledby="capabilityTitle"
-  aria-hidden="true">
+<div
+  class="modal fade"
+  id="capabilityDetail"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="capabilityTitle"
+  aria-hidden="true"
+>
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
     <div class="modal-content">
       <div class="modal-header bg-royal-blue">
-        <a 
-          class="mr-3 text-white" 
-          role="button" 
-          aria-label="Previous" 
+        <a
+          class="mr-3 text-white"
+          role="button"
+          aria-label="Previous"
           tabindex="0"
-          (click)="tableService.previousModalRoute('capabilityDetail')" 
-          [hidden]="!modalService.checkModalRoutes()">
+          (click)="tableService.previousModalRoute('capabilityDetail')"
+          [hidden]="!modalService.checkModalRoutes()"
+        >
           <i class="fas fa-arrow-circle-left fa-lg fa-fw"></i>
         </a>
         <h5 class="modal-title text-white" id="capabilityTitle">
           <i class="fas fa-project-diagram"></i>
           {{ capability.Name }} ({{ capability.ReferenceNum }})
         </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <a role="button" aria-label="Close" data-dismiss="modal" tabindex="0">
+          <i class="fas fa-times fa-lg text-white align-self-center"></i>
+        </a>
       </div>
 
       <div class="modal-body">
@@ -27,15 +34,18 @@
         <ul id="capTabs" class="nav nav-tabs">
           <li class="nav-item">
             <a class="nav-link active" data-toggle="tab" href="#capOverview">
-              Overview</a>
+              Overview</a
+            >
           </li>
           <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#capRelOrgs">
-              Related Organizations</a>
+              Related Organizations</a
+            >
           </li>
           <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#capSupportSystems">
-              Supporting Systems</a>
+              Supporting Systems</a
+            >
           </li>
         </ul>
 
@@ -44,7 +54,7 @@
           <div class="tab-pane fade show active" id="capOverview">
             <h4>Description</h4>
             <p>{{ capability.Description }}</p>
-            <br><br>
+            <br /><br />
 
             <h4>Level</h4>
             <p>{{ capability.Level }}</p>
@@ -60,13 +70,18 @@
             <table id="capSupportSysTable"></table>
           </div>
           <!-- End of Support Systems Pane -->
-
         </div>
       </div>
 
       <div class="modal-footer">
-        <button type="button" [hidden]="!sharedService.loggedIn" class="btn btn-info text-white"
-          (click)="capabilityEdit()">Edit This Item</button>
+        <button
+          type="button"
+          [hidden]="!sharedService.loggedIn"
+          class="btn btn-info text-white"
+          (click)="capabilityEdit()"
+        >
+          Edit This Item
+        </button>
       </div>
     </div>
   </div>

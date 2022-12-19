@@ -1,37 +1,50 @@
 <!-- IT Standard Detail Modal -->
-<div class="modal fade" id="itStandardDetail" tabindex="-1" role="dialog" aria-labelledby="itStandTitle"
-  aria-hidden="true">
+<div
+  class="modal fade"
+  id="itStandardDetail"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="itStandTitle"
+  aria-hidden="true"
+>
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
     <div class="modal-content">
       <div class="modal-header bg-teal">
-        <a 
-          class="mr-3 text-white" 
+        <a
+          class="mr-3 text-white"
           role="button"
           tabindex="0"
           aria-label="Previous"
-          (click)="tableService.previousModalRoute('itStandardDetail')" 
-          [hidden]="!modalService.checkModalRoutes()">
+          (click)="tableService.previousModalRoute('itStandardDetail')"
+          [hidden]="!modalService.checkModalRoutes()"
+        >
           <i class="fas fa-arrow-circle-left fa-lg fa-fw"></i>
         </a>
         <h5 class="modal-title text-white" id="itStandTitle">
           <i class="fas fa-microchip"></i>
           {{ itStandard.Name }}
         </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <a role="button" aria-label="Close" data-dismiss="modal" tabindex="0">
+          <i class="fas fa-times fa-lg text-white align-self-center"></i>
+        </a>
       </div>
 
       <div class="modal-body">
         <!-- Tabs -->
         <ul id="itStandTabs" class="nav nav-tabs">
           <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#itStandOverview">
-              Overview</a>
+            <a
+              class="nav-link active"
+              data-toggle="tab"
+              href="#itStandOverview"
+            >
+              Overview</a
+            >
           </li>
           <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#itStandRelatedSys">
-              Systems Using This Standard</a>
+              Systems Using This Standard</a
+            >
           </li>
         </ul>
 
@@ -40,11 +53,13 @@
           <div class="tab-pane fade show active" id="itStandOverview">
             <h4>Description</h4>
             <p>{{ itStandard.Description }}</p>
-            <br>
+            <br />
 
             <h4>Technology Overview</h4>
-            <table id="itStandDetailTable"
-              class="table table-borderless table-striped table-dark rounded-lg w-75 mx-auto">
+            <table
+              id="itStandDetailTable"
+              class="table table-borderless table-striped table-dark rounded-lg w-75 mx-auto"
+            >
               <thead class="bg-teal">
                 <tr>
                   <th>
@@ -58,12 +73,18 @@
 
               <tbody>
                 <tr>
-                  <td><i class="fas fa-universal-access"></i>508 Compliance Status</td>
+                  <td>
+                    <i class="fas fa-universal-access"></i>508 Compliance Status
+                  </td>
                   <td>{{ itStandard.ComplianceStatus }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fa fa-calendar-alt"></i>Approval Expiration Date</td>
-                  <td>{{ itStandard.ApprovalExpirationDate | date:'MMMM d, y' }}</td>
+                  <td>
+                    <i class="fa fa-calendar-alt"></i>Approval Expiration Date
+                  </td>
+                  <td>
+                    {{ itStandard.ApprovalExpirationDate | date : "MMMM d, y" }}
+                  </td>
                 </tr>
                 <tr>
                   <td><i class="far fa-list-alt"></i>Category</td>
@@ -80,7 +101,11 @@
                 <tr>
                   <td><i class="fa fa-user"></i>POC</td>
                   <td>
-                    <ul [innerHTML]="sharedService.renderPOCInfoList(itStandard.POC)"></ul>
+                    <ul
+                      [innerHTML]="
+                        sharedService.renderPOCInfoList(itStandard.POC)
+                      "
+                    ></ul>
                   </td>
                 </tr>
                 <tr>
@@ -92,35 +117,49 @@
                   <td>{{ itStandard.Status }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fas fa-sitemap"></i>Vendor Standard Organization</td>
+                  <td>
+                    <i class="fas fa-sitemap"></i>Vendor Standard Organization
+                  </td>
                   <td>{{ itStandard.Vendor_Standard_Organization }}</td>
                 </tr>
                 <tr>
                   <td><i class="far fa-comment"></i>Reference Document</td>
                   <td>
-                    <a [hidden]="!itStandard.ReferenceDocument" href="{{ itStandard.ReferenceDocument }}"
-                      target="_blank" rel="noopener">
-                      {{ itStandard.ReferenceDocument }}</a>
+                    <a
+                      [hidden]="!itStandard.ReferenceDocument"
+                      href="{{ itStandard.ReferenceDocument }}"
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      {{ itStandard.ReferenceDocument }}</a
+                    >
                     <div [hidden]="itStandard.ReferenceDocument">None</div>
                   </td>
                 </tr>
               </tbody>
             </table>
-
           </div>
           <!-- End of Overview Pane -->
 
           <div class="tab-pane fade" id="itStandRelatedSys">
             <table id="itRelSysTable"></table>
           </div>
-
         </div>
       </div>
 
       <div class="modal-footer">
-        <div class="float-right">Last Updated: {{ itStandard.ChangeDTG | date:'MMM d, y, h:mm:ss a O' }}</div>
-        <button type="button" [hidden]="!sharedService.loggedIn" class="btn btn-info text-white"
-          (click)="itStandEdit()">Edit This Item</button>
+        <div class="float-right">
+          Last Updated:
+          {{ itStandard.ChangeDTG | date : "MMM d, y, h:mm:ss a O" }}
+        </div>
+        <button
+          type="button"
+          [hidden]="!sharedService.loggedIn"
+          class="btn btn-info text-white"
+          (click)="itStandEdit()"
+        >
+          Edit This Item
+        </button>
       </div>
     </div>
   </div>

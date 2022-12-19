@@ -1,24 +1,32 @@
 <!-- Investment Detail Modal -->
-<div class="modal fade" id="investDetail" tabindex="-1" role="dialog" aria-labelledby="investTitle" aria-hidden="true">
+<div
+  class="modal fade"
+  id="investDetail"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="investTitle"
+  aria-hidden="true"
+>
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
     <div class="modal-content">
       <div class="modal-header bg-success">
-        <a 
-          class="mr-3 text-white" 
+        <a
+          class="mr-3 text-white"
           role="button"
           tabindex="0"
           aria-label="Previous"
-          (click)="tableService.previousModalRoute('investDetail')" 
-          [hidden]="!modalService.checkModalRoutes()">
+          (click)="tableService.previousModalRoute('investDetail')"
+          [hidden]="!modalService.checkModalRoutes()"
+        >
           <i class="fas fa-arrow-circle-left fa-lg fa-fw"></i>
         </a>
         <h5 class="modal-title text-white" id="investTitle">
           <i class="fas fa-money-bill-wave"></i>
           {{ investment.Name }}
         </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <a role="button" aria-label="Close" data-dismiss="modal" tabindex="0">
+          <i class="fas fa-times fa-lg text-white align-self-center"></i>
+        </a>
       </div>
 
       <div class="modal-body">
@@ -26,11 +34,14 @@
         <ul id="investTabs" class="nav nav-tabs">
           <li class="nav-item">
             <a class="nav-link active" data-toggle="tab" href="#investOverview">
-              Overview</a>
+              Overview</a
+            >
           </li>
           <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#investRelatedSys">
-              Related Systems</a></li>
+              Related Systems</a
+            >
+          </li>
         </ul>
 
         <!-- Tab Panes -->
@@ -38,10 +49,12 @@
           <div class="tab-pane fade show active" id="investOverview">
             <h4>Description</h4>
             <p>{{ investment.Description }}</p>
-            <br>
+            <br />
 
-            <table id="investDetailTable"
-              class="table table-borderless table-striped table-dark rounded-lg w-75 mx-auto">
+            <table
+              id="investDetailTable"
+              class="table table-borderless table-striped table-dark rounded-lg w-75 mx-auto"
+            >
               <thead class="bg-success">
                 <tr>
                   <th>
@@ -67,7 +80,9 @@
                   <td>{{ investment.End_Year }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fas fa-cloud"></i>Cloud Alternatives Evaluation</td>
+                  <td>
+                    <i class="fas fa-cloud"></i>Cloud Alternatives Evaluation
+                  </td>
                   <td>{{ investment.Cloud_Alt }}</td>
                 </tr>
                 <tr>
@@ -77,12 +92,16 @@
                 <tr>
                   <td><i class="fa fa-user"></i>Investment Manager</td>
                   <td>
-                    <a class="email text-white"
-                      href="https://mail.google.com/mail/?view=cm&fs=1&to={{ investment.InvManagerEmail }}"
-                      target="_blank" rel="noopener">{{ investment.InvManager }}</a>
-                    <div [hidden]="investment.InvManager">
-                      None Provided
-                    </div>
+                    <a
+                      class="email text-white"
+                      href="https://mail.google.com/mail/?view=cm&fs=1&to={{
+                        investment.InvManagerEmail
+                      }}"
+                      target="_blank"
+                      rel="noopener"
+                      >{{ investment.InvManager }}</a
+                    >
+                    <div [hidden]="investment.InvManager">None Provided</div>
                   </td>
                 </tr>
                 <tr>
@@ -94,13 +113,26 @@
                   <td>{{ investment.UII }}</td>
                 </tr>
                 <tr>
-                  <td><i class="far fa-folder-open"></i>Part of IT Portfolio</td>
+                  <td>
+                    <i class="far fa-folder-open"></i>Part of IT Portfolio
+                  </td>
                   <td>{{ investment.IT_Portfolio }}</td>
                 </tr>
                 <tr>
                   <td><i class="fa fa-th"></i>Primary Service Area</td>
-                  <td *ngIf="investment.PSA; else psaElse" class="btn-outline-info pointer"
-                  (click)="tableService.openRelated('#investDetail', investment.PSA, 'capability-name')">{{ investment.PSA }}</td>
+                  <td
+                    *ngIf="investment.PSA; else psaElse"
+                    class="btn-outline-info pointer"
+                    (click)="
+                      tableService.openRelated(
+                        '#investDetail',
+                        investment.PSA,
+                        'capability-name'
+                      )
+                    "
+                  >
+                    {{ investment.PSA }}
+                  </td>
                   <ng-template #psaElse>
                     <td>None Designated</td>
                   </ng-template>
@@ -111,19 +143,19 @@
                 </tr>
               </tbody>
             </table>
-
           </div>
           <!-- End of Overview Pane -->
 
           <div class="tab-pane fade" id="investRelatedSys">
             <table id="investRelSysTable"></table>
           </div>
-
         </div>
       </div>
 
       <div class="modal-footer">
-        <p class="font-weight-bold font-italic">Last Updated: {{ investment.Updated_Date | date:'MMM. dd, yyyy' }}</p>
+        <p class="font-weight-bold font-italic">
+          Last Updated: {{ investment.Updated_Date | date : "MMM. dd, yyyy" }}
+        </p>
       </div>
     </div>
   </div>

@@ -1,36 +1,50 @@
 <!-- Record Detail Modal -->
-<div class="modal fade" id="recordDetail" tabindex="-1" role="dialog" aria-labelledby="recordTitle" aria-hidden="true">
+<div
+  class="modal fade"
+  id="recordDetail"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="recordTitle"
+  aria-hidden="true"
+>
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
     <div class="modal-content">
       <div class="modal-header bg-danger">
-        <a 
-          class="mr-3 text-white" 
-          role="button" 
+        <a
+          class="mr-3 text-white"
+          role="button"
           tabindex="0"
           aria-label="Previous"
-          (click)="tableService.previousModalRoute('recordDetail')" 
-          [hidden]="!modalService.checkModalRoutes()">
+          (click)="tableService.previousModalRoute('recordDetail')"
+          [hidden]="!modalService.checkModalRoutes()"
+        >
           <i class="fas fa-arrow-circle-left fa-lg fa-fw"></i>
         </a>
         <h5 class="modal-title text-white" id="recordTitle">
           <i class="far fa-folder-open"></i>
           {{ record.Record_Item_Title }}
         </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <a role="button" aria-label="Close" data-dismiss="modal" tabindex="0">
+          <i class="fas fa-times fa-lg text-white align-self-center"></i>
+        </a>
       </div>
 
       <div class="modal-body">
         <!-- Tabs -->
         <ul id="recordTabs" class="nav nav-tabs">
           <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#recordsOverview">
-              Overview</a>
+            <a
+              class="nav-link active"
+              data-toggle="tab"
+              href="#recordsOverview"
+            >
+              Overview</a
+            >
           </li>
           <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#recRelatedSystems">
-              Related Systems</a>
+              Related Systems</a
+            >
           </li>
         </ul>
 
@@ -39,28 +53,26 @@
           <div class="tab-pane fade show active" id="recordsOverview">
             <h4>Description</h4>
             <p>{{ record.Description }}</p>
-            <br>
+            <br />
 
             <h4>Retention Instructions</h4>
             <div>
               <p>{{ record.Retention_Instructions }}</p>
             </div>
-            <div [hidden]="record.Retention_Instructions">
-              None
-            </div>
-            <br>
+            <div [hidden]="record.Retention_Instructions">None</div>
+            <br />
 
             <h4>Disposition Notes</h4>
             <div>
               <p>{{ record.Disposition_Notes }}</p>
             </div>
-            <div [hidden]="record.Disposition_Notes">
-              None
-            </div>
-            <br>
+            <div [hidden]="record.Disposition_Notes">None</div>
+            <br />
 
-            <table id="recordDetailTable"
-              class="table table-borderless table-striped table-dark rounded-lg w-75 mx-auto">
+            <table
+              id="recordDetailTable"
+              class="table table-borderless table-striped table-dark rounded-lg w-75 mx-auto"
+            >
               <thead class="bg-danger">
                 <tr>
                   <th>
@@ -77,7 +89,7 @@
                   <td><i class="fa fa-bookmark"></i>CUI Indicator</td>
                   <td>{{ record.CUI }}</td>
                 </tr>
-				<tr>
+                <tr>
                   <td><i class="fa fa-bookmark"></i>Retention Years</td>
                   <td>{{ record.FY_Retention_Years }}</td>
                 </tr>
@@ -131,8 +143,14 @@
       <!-- End of Modal Body -->
 
       <div class="modal-footer">
-        <button type="button" [hidden]="!sharedService.loggedIn" class="btn btn-info text-white"
-          (click)="recordEdit()">Edit This Item</button>
+        <button
+          type="button"
+          [hidden]="!sharedService.loggedIn"
+          class="btn btn-info text-white"
+          (click)="recordEdit()"
+        >
+          Edit This Item
+        </button>
       </div>
     </div>
   </div>
