@@ -11,12 +11,12 @@ import { TableService } from '@services/tables/table.service';
 declare var $: any;
 
 @Component({
-  selector: 'service-category-modal',
-  templateUrl: './service-category-modal.component.html',
-  styleUrls: ['./service-category-modal.component.css'],
+  selector: 'website-service-category-modal',
+  templateUrl: './website-service-category-modal.component.html',
+  styleUrls: ['./website-service-category-modal.component.css'],
 })
-export class ServiceCategoryModalComponent implements OnInit {
-  serviceCategory = <any>{};
+export class WebsiteServiceCategoryModalComponent implements OnInit {
+  websiteServiceCategory = <any>{};
   serviceCategoryWebsites = <any>{};
 
   constructor(
@@ -49,7 +49,7 @@ export class ServiceCategoryModalComponent implements OnInit {
   // Related Website Table Columns
   serviceCategoryWebsitesColumnDefs: any[] = [
     {
-      field: 'Website_ID',
+      field: 'website_id',
       title: 'Website Id',
       sortable: true,
     },
@@ -77,11 +77,13 @@ export class ServiceCategoryModalComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.modalService.currentServiceCategory.subscribe((serviceCategory) => {
-      this.serviceCategory = serviceCategory;
-    });
+    this.modalService.currentWebsiteServiceCategory.subscribe(
+      (websiteServiceCategory) => {
+        this.websiteServiceCategory = websiteServiceCategory;
+      }
+    );
 
-    $('#serviceCategoryWebsites').bootstrapTable({
+    $('#websiteServiceCategoryWebsites').bootstrapTable({
       columns: this.serviceCategoryWebsitesColumnDefs,
       data: [],
     });
@@ -92,7 +94,7 @@ export class ServiceCategoryModalComponent implements OnInit {
         'click-row.bs.table',
         function (e, row) {
           // Hide First Modal before showing new modal
-          $('#serviceCategoryDetail').modal('hide');
+          $('#websiteServiceCategoryDetail').modal('hide');
 
           this.tableService.systemsTableClick(row);
         }.bind(this)
@@ -100,10 +102,10 @@ export class ServiceCategoryModalComponent implements OnInit {
     );
 
     // Revert back to overview tab when modal goes away
-    $('#serviceCategoryDetail').on(
+    $('#websiteServiceCategoryDetail').on(
       'hidden.bs.modal',
       function (e) {
-        $('#serviceCategoryTabs li:first-child a').tab('show');
+        $('#websiteServiceCategoryTabs li:first-child a').tab('show');
 
         // Change URL back without ID after closing Modal
         this.sharedService.removeIDfromURL();
@@ -113,10 +115,10 @@ export class ServiceCategoryModalComponent implements OnInit {
 
   serviceCategoryEdit() {
     // Hide Detail Modal before showing Manager Modal
-    $('#serviceCategoryDetail').modal('hide');
+    $('#websiteServiceCategoryDetail').modal('hide');
     this.modalService.updateDetails(
-      this.serviceCategory,
-      'serviceCategory',
+      this.websiteServiceCategory,
+      'websiteServiceCategory',
       false
     );
 

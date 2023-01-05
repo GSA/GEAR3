@@ -12,11 +12,11 @@ import { Title } from '@angular/platform-browser';
 declare var $: any;
 
 @Component({
-  selector: 'serviceCategory',
-  templateUrl: './serviceCategory.component.html',
-  styleUrls: ['./serviceCategory.component.css'],
+  selector: 'website-service-category',
+  templateUrl: './website-service-category.component.html',
+  styleUrls: ['./website-service-category.component.css'],
 })
-export class ServiceCategoryComponent implements OnInit {
+export class WebsiteServiceCategoryComponent implements OnInit {
   row: Object = <any>{};
 
   constructor(
@@ -29,30 +29,32 @@ export class ServiceCategoryComponent implements OnInit {
     private tableService: TableService,
     private titleService: Title
   ) {
-    this.modalService.currentInvest.subscribe((row) => (this.row = row));
+    this.modalService.currentWebsiteServiceCategory.subscribe(
+      (row) => (this.row = row)
+    );
   }
 
-  // serviceCategory Table Options
+  // websiteServiceCategory Table Options
   tableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: true,
-    idTable: 'serviceCategoryTable',
+    idTable: 'websiteServiceCategoryTable',
     classes: 'table-hover table-dark clickable-table',
     showColumns: false,
     showExport: true,
-    exportFileName: 'GSA_serviceCategory',
+    exportFileName: 'GSA_websiteServiceCategory',
     headerStyle: 'bg-royal-blue',
     pagination: true,
     search: true,
     sortName: 'name',
     sortOrder: 'asc',
     showToggle: true,
-    url: this.apiService.serviceCategoryUrl,
+    url: this.apiService.websiteServiceCategoryUrl,
   });
 
-  // serviceCategory Table Columns
+  // websiteServiceCategory Table Columns
   columnDefs: any[] = [
     {
-      field: 'service_category_id',
+      field: 'website_service_category_id',
       title: 'Id',
       sortable: true,
     },
@@ -74,7 +76,7 @@ export class ServiceCategoryComponent implements OnInit {
       $('[data-toggle="popover"]').popover();
     });
 
-    $('#serviceCategoryTable').bootstrapTable(
+    $('#websiteServiceCategoryTable').bootstrapTable(
       $.extend(this.tableOptions, {
         columns: this.columnDefs,
         data: [],
@@ -83,25 +85,25 @@ export class ServiceCategoryComponent implements OnInit {
 
     // Method to handle click events on the serviceCategory table
     $(document).ready(
-      $('#serviceCategoryTable').on(
+      $('#websiteServiceCategoryTable').on(
         'click-row.bs.table',
         function (e, row) {
-          this.tableService.serviceCategoryTableClick(row);
+          this.tableService.websiteServiceCategoryTableClick(row);
         }.bind(this)
       )
     );
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {
-      var detailServiceCategoryID = params['serviceCategoryID'];
-      if (detailServiceCategoryID) {
+      var detailWebsiteServiceCategoryID = params['websiteServiceCategoryID'];
+      if (detailWebsiteServiceCategoryID) {
         this.titleService.setTitle(
-          `${this.titleService.getTitle()} - ${detailServiceCategoryID}`
+          `${this.titleService.getTitle()} - ${detailWebsiteServiceCategoryID}`
         );
         this.apiService
-          .getOneServiceCategory(detailServiceCategoryID)
+          .getOneWebsiteServiceCategory(detailWebsiteServiceCategoryID)
           .subscribe((data: any[]) => {
-            this.tableService.serviceCategoryTableClick(data[0]);
+            this.tableService.websiteServiceCategoryTableClick(data[0]);
           });
       }
     });

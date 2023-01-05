@@ -1,6 +1,6 @@
 SELECT
-  zk.obj_websites_id AS Website_ID,
-  zk.obj_service_category_id AS Service_Category_ID,
+  zk.obj_websites_id AS website_id,
+  zk.obj_service_category_id AS website_service_category_id,
   w.domain,
   w.contact_email,
   w.site_owner_email,

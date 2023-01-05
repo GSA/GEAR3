@@ -21,9 +21,10 @@ export class ModalsService {
   private orgSource = new Subject();
   currentOrg = this.orgSource.asObservable();
 
-  // ServiceCategory
-  private serviceCategorySource = new Subject();
-  currentServiceCategory = this.serviceCategorySource.asObservable();
+  // Website Service Category
+  private websiteServiceCategorySource = new Subject();
+  currentWebsiteServiceCategory =
+    this.websiteServiceCategorySource.asObservable();
 
   // System
   private sysSource = new Subject();
@@ -60,8 +61,8 @@ export class ModalsService {
       this.investSource.next(row);
     } else if (component == 'capability') {
       this.capSource.next(row);
-    } else if (component == 'serviceCategory') {
-      this.serviceCategorySource.next(row);
+    } else if (component == 'websiteServiceCategory') {
+      this.websiteServiceCategorySource.next(row);
     } else if (component == 'organization') {
       this.orgSource.next(row);
     } else if (component == 'system') {

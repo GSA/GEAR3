@@ -39,8 +39,8 @@ import { OrganizationsChartComponent } from './views/enterprise/organizations-ch
 import { OrganizationsComponent } from './views/enterprise/organizations/organizations.component';
 import { OrganizationsModalComponent } from './components/modals/organizations-modal/organizations-modal.component';
 
-import { ServiceCategoryComponent } from './views/enterprise/serviceCategory/serviceCategory.component';
-import { ServiceCategoryModalComponent } from './components/modals/service-category-modal/service-category-modal.component';
+import { WebsiteServiceCategoryComponent } from './views/enterprise/website-service-category/website-service-category.component';
+import { WebsiteServiceCategoryModalComponent } from './components/modals/website-service-category-modal/website-service-category-modal.component';
 
 //// Systems
 import { SystemsComponent } from './views/systems/systems/systems.component';
@@ -96,8 +96,8 @@ import { Globals } from './common/globals';
     OrganizationsChartComponent,
     OrganizationsComponent,
     OrganizationsModalComponent,
-    ServiceCategoryComponent,
-    ServiceCategoryModalComponent,
+    WebsiteServiceCategoryComponent,
+    WebsiteServiceCategoryModalComponent,
 
     SystemsComponent,
     SystemsModalComponent,

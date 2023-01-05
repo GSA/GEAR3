@@ -7,7 +7,7 @@ exports.findAll = (req, res) => {
   var query =
     fs
       .readFileSync(
-        path.join(__dirname, queryPath, "GET/get_service_category.sql")
+        path.join(__dirname, queryPath, "GET/get_website_service_category.sql")
       )
       .toString() + ` ORDER BY name ASC;`;
 
@@ -18,7 +18,7 @@ exports.findOne = (req, res) => {
   var query =
     fs
       .readFileSync(
-        path.join(__dirname, queryPath, "GET/get_service_category.sql")
+        path.join(__dirname, queryPath, "GET/get_website_service_category.sql")
       )
       .toString() +
     ` WHERE id = ${req.params.id} 
@@ -34,7 +34,7 @@ exports.findRelatedWebsites = (req, res) => {
         path.join(
           __dirname,
           queryPath,
-          "GET/get_service_category_related_websites.sql"
+          "GET/get_website_service_category_related_websites.sql"
         )
       )
       .toString() +

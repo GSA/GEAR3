@@ -1,10 +1,10 @@
-<!-- Service Category Detail Modal -->
+<!-- Website Service Category Detail Modal -->
 <div
   class="modal fade"
-  id="serviceCategoryDetail"
+  id="websiteServiceCategoryDetail"
   tabindex="-1"
   role="dialog"
-  aria-labelledby="serviceCategoryTitle"
+  aria-labelledby="websiteServiceCategoryTitle"
   aria-hidden="true"
 >
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
@@ -15,14 +15,16 @@
           role="button"
           aria-label="Previous"
           tabindex="0"
-          (click)="tableService.previousModalRoute('serviceCategoryDetail')"
+          (click)="
+            tableService.previousModalRoute('websiteServiceCategoryDetail')
+          "
           [hidden]="!modalService.checkModalRoutes()"
         >
           <i class="fas fa-arrow-circle-left fa-lg fa-fw"></i>
         </a>
-        <h5 class="modal-title text-white" id="serviceCategoryTitle">
+        <h5 class="modal-title text-white" id="websiteServiceCategoryTitle">
           <i class="fas fa-project-diagram"></i>
-          {{ serviceCategory.name }}
+          {{ websiteServiceCategory.name }}
         </h5>
         <a role="button" aria-label="Close" data-dismiss="modal" tabindex="0">
           <i class="fas fa-times fa-lg text-white align-self-center"></i>
@@ -31,12 +33,12 @@
 
       <div class="modal-body">
         <!-- Tabs -->
-        <ul id="serviceCategoryTabs" class="nav nav-tabs">
+        <ul id="websiteServiceCategoryTabs" class="nav nav-tabs">
           <li class="nav-item">
             <a
               class="nav-link active"
               data-toggle="tab"
-              href="#serviceCategoryOverview"
+              href="#websiteServiceCategoryOverview"
             >
               Overview</a
             >
@@ -45,12 +47,15 @@
 
         <!-- Tab Panes -->
         <div class="tab-content mt-3">
-          <div class="tab-pane fade show active" id="serviceCategoryOverview">
+          <div
+            class="tab-pane fade show active"
+            id="websiteServiceCategoryOverview"
+          >
             <div class="card-body card-text">
               <div class="row">
                 <div class="col-12 col-md-6">
-                  <h4>{{ serviceCategory.name }}</h4>
-                  <p>{{ serviceCategory.description }}</p>
+                  <h4>{{ websiteServiceCategory.name }}</h4>
+                  <p>{{ websiteServiceCategory.description }}</p>
                 </div>
               </div>
             </div>
@@ -60,14 +65,14 @@
                 <div class="col-12 col-md-6">
                   <h5>About Related Websites</h5>
                   <p>
-                    Service Categories at GSA can stretch across multiple staff
-                    offices. Below are websites that fall into the service
-                    category described above.
+                    Website Service Categories at GSA can stretch across
+                    multiple staff offices. Below are websites that fall into
+                    the website service category described above.
                   </p>
                 </div>
               </div>
               <!-- Main Table -->
-              <table id="serviceCategoryWebsites"></table>
+              <table id="websiteServiceCategoryWebsites"></table>
             </div>
           </div>
           <!-- End of Overview Pane -->

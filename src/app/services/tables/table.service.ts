@@ -353,29 +353,29 @@ export class TableService {
       });
   }
 
-  public serviceCategoryTableClick(data: any, addRoute: boolean = true) {
+  public websiteServiceCategoryTableClick(data: any, addRoute: boolean = true) {
     var options: ClickOptions = {
       data: data,
-      dataID: 'service_category_id',
-      update: 'serviceCategory',
-      detailModalID: '#serviceCategoryDetail',
+      dataID: 'website_service_category_id',
+      update: 'websiteServiceCategory',
+      detailModalID: '#websiteServiceCategoryDetail',
       sysTableID: '',
       exportName: data.name + '',
-      systemApiStr: '/api/service_category/get/', // Should revert back when can use IDs again for actual org table instead of names
+      systemApiStr: '/api/website_service_category/get/', // Should revert back when can use IDs again for actual org table instead of names
       addRoute: addRoute,
     };
     this.clickMethod(options);
     // load the related websites list to display within the main modal tab
     this.apiService
-      .getServiceCategoryRelatedWebsites(data[options.dataID])
-      .subscribe((serviceCategoryWebsiteData: Service_Category[]) => {
-        $('#serviceCategoryWebsites').bootstrapTable('refreshOptions', {
+      .getWebsiteServiceCategoryRelatedWebsites(data[options.dataID])
+      .subscribe((websiteServiceCategoryWebsiteData: Service_Category[]) => {
+        $('#websiteServiceCategoryWebsites').bootstrapTable('refreshOptions', {
           exportOptions: {
             fileName: this.sharedService.fileNameFmt(
               data.name + '-related-websites'
             ),
           },
-          data: serviceCategoryWebsiteData,
+          data: websiteServiceCategoryWebsiteData,
         });
       });
   }

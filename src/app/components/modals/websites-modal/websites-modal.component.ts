@@ -8,6 +8,8 @@ import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
 
+import { WebsiteServiceCategory } from '@api/models/website-service-category.model';
+
 // Declare jQuery symbol
 declare var $: any;
 
@@ -19,7 +21,7 @@ declare var $: any;
 export class WebsitesModalComponent implements OnInit {
   website = <any>{};
   websiteScans = <any>this.getBlankWebsiteScan();
-  serviceCategories = <any>{};
+  websiteServiceCategories = <WebsiteServiceCategory[]>[];
 
   constructor(
     private apiService: ApiService,
@@ -85,7 +87,7 @@ export class WebsitesModalComponent implements OnInit {
         .getWebsiteServiceCategories(this.website.Website_ID)
         .subscribe(
           (websiteServiceCategories) =>
-            (this.serviceCategories = websiteServiceCategories)
+            (this.websiteServiceCategories = websiteServiceCategories)
         );
     });
 
@@ -147,12 +149,13 @@ export class WebsitesModalComponent implements OnInit {
     ];
   }
 
-  serviceCategoryClick(id) {
-    console.log('webservicecategoryClick', id);
+  websiteServiceCategoryClick(id) {
+    this.apiService
+      .getOneWebsiteServiceCategory(id)
+      .subscribe((data: any[]) => {
+        this.tableService.websiteServiceCategoryTableClick(data[0]);
+      });
     $('#websiteDetail').modal('hide');
-    this.apiService.getOneServiceCategory(id).subscribe((data: any[]) => {
-      this.tableService.serviceCategoryTableClick(data[0]);
-    });
   }
 
   getValues(value, maxValue) {

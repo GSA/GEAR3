@@ -23,7 +23,7 @@ import { CapabilitiesModelComponent } from './views/enterprise/capabilities-mode
 import { CapabilitiesComponent } from './views/enterprise/capabilities/capabilities.component';
 import { OrganizationsChartComponent } from './views/enterprise/organizations-chart/organizations-chart.component';
 import { OrganizationsComponent } from './views/enterprise/organizations/organizations.component';
-import { ServiceCategoryComponent } from './views/enterprise/serviceCategory/serviceCategory.component';
+import { WebsiteServiceCategoryComponent } from './views/enterprise/website-service-category/website-service-category.component';
 // Systems
 import { SystemsComponent } from './views/systems/systems/systems.component';
 import { TimeComponent } from './views/systems/time/time.component';
@@ -110,14 +110,14 @@ const routes: Routes = [
     title: 'Organization',
   },
   {
-    path: 'service_category',
-    component: ServiceCategoryComponent,
-    title: 'Service Categories',
+    path: 'website_service_category',
+    component: WebsiteServiceCategoryComponent,
+    title: 'Website Service Categories',
   },
   {
-    path: 'service_category/:serviceCategoryID',
-    component: ServiceCategoryComponent,
-    title: 'Service Category',
+    path: 'website_service_category/:websiteServiceCategoryID',
+    component: WebsiteServiceCategoryComponent,
+    title: 'Website Service Category',
   },
 
   { path: 'systems', component: SystemsComponent, title: 'Systems' },

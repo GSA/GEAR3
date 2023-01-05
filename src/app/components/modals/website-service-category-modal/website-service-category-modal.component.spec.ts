@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { ServiceCategoryModalComponent } from './service-category-modal.component';
+import { WebsiteServiceCategoryModalComponent } from './website-service-category-modal.component';
 
 describe('ServiceCategoryModalComponent', () => {
-  let component: ServiceCategoryModalComponent;
-  let fixture: ComponentFixture<ServiceCategoryModalComponent>;
+  let component: WebsiteServiceCategoryModalComponent;
+  let fixture: ComponentFixture<WebsiteServiceCategoryModalComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ServiceCategoryModalComponent],
+      declarations: [WebsiteServiceCategoryModalComponent],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ServiceCategoryModalComponent);
+    fixture = TestBed.createComponent(WebsiteServiceCategoryModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
