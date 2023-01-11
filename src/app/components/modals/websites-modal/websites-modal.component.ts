@@ -143,7 +143,7 @@ export class WebsitesModalComponent implements OnInit {
         Website_ID: this.website.Website_ID,
         desktop_img_file_name: 'desktop.png',
         mobile_img_file_name: 'mobile.png',
-        scan_date: 'none',
+        scan_date: '',
         scan_version: '',
       },
     ];

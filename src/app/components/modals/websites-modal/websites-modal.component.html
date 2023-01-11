@@ -79,6 +79,21 @@
               <div class="row mb-3">
                 <div class="col-12">
                   <h4>Recent Screenshots</h4>
+                  <div
+                    *ngIf="
+                      website.production_status != 'production' ||
+                      website.type_of_site == 'infrastructure'
+                    "
+                    class="alert alert-warning"
+                    role="alert"
+                  >
+                    Websites that are not in a production status or are
+                    considered infrastructure do not contain screenshots
+                  </div>
+                  <span *ngIf="websiteScans[0].scan_date != ''"
+                    >As of:
+                    {{ websiteScans[0].scan_date | date : "mediumDate" }}</span
+                  >
                 </div>
                 <div class="col-12 col-md-8">
                   <img
@@ -286,71 +301,113 @@
                   <tbody>
                     <tr>
                       <td><i class="fa fa-bookmark"></i>Office</td>
-                      <td>{{ website.office }}</td>
+                      <td>
+                        {{ website.office ? website.office : "none provided" }}
+                      </td>
                     </tr>
                     <tr>
                       <td><i class="fas fa-user-lock"></i>Sub Office</td>
-                      <td>{{ website.sub_office }}</td>
+                      <td>
+                        {{
+                          website.sub_office
+                            ? website.sub_office
+                            : "none provided"
+                        }}
+                      </td>
                     </tr>
                     <tr>
                       <td>
                         <i class="fas fa-calendar-day"></i>Website Manager
                       </td>
-                      <td>{{ website.site_owner_email }}</td>
+                      <td>
+                        {{
+                          website.site_owner_email
+                            ? website.site_owner_email
+                            : "none provided"
+                        }}
+                      </td>
                     </tr>
                     <tr>
                       <td><i class="fa fa-certificate"></i>Contact Email</td>
-                      <td>{{ website.contact_email }}</td>
+                      <td>
+                        {{
+                          website.contact_email
+                            ? website.contact_email
+                            : "none provided"
+                        }}
+                      </td>
                     </tr>
                     <tr>
                       <td><i class="fas fa-info-circle"></i>Redirects to</td>
-                      <td>{{ website.redirects_to }}</td>
+                      <td>
+                        {{
+                          website.redirects_to ? website.redirects_to : "n/a"
+                        }}
+                      </td>
                     </tr>
                     <tr>
                       <td>
                         <i class="far fa-list-alt"></i>Required by Law or
                         Policy?
                       </td>
-                      <td>{{ website.required_by_law_or_policy }}</td>
+                      <td>
+                        {{
+                          website.required_by_law_or_policy
+                            ? website.required_by_law_or_policy
+                            : "no response"
+                        }}
+                      </td>
                     </tr>
                     <tr>
                       <td><i class="fas fa-hashtag"></i>Has DAP?</td>
-                      <td>{{ website.has_dap }}</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <i class="far fa-address-card"></i>Current USWDS Score
-                      </td>
-                      <td>{{ website.current_uswds_score }}</td>
+                      <td>{{ website.has_dap ? "Yes" : "No" }}</td>
                     </tr>
                     <tr>
                       <td><i class="fas fa-users"></i>Mobile Friendly?</td>
-                      <td>{{ website.mobile_friendly }}</td>
+                      <td>{{ website.mobile_friendly ? "Yes" : "No" }}</td>
                     </tr>
                     <tr>
                       <td><i class="fas fa-fingerprint"></i>Has Search?</td>
-                      <td>{{ website.has_search }}</td>
+                      <td>{{ website.has_search ? "Yes" : "No" }}</td>
                     </tr>
                     <tr>
                       <td><i class="fas fa-info-circle"></i>HTTPS enabled?</td>
-                      <td>{{ website.https }}</td>
+                      <td>{{ website.https ? "Yes" : "No" }}</td>
                     </tr>
                     <tr>
                       <td>
                         <i class="fas fa-info-circle"></i>Hosting Platform
                       </td>
-                      <td>{{ website.hosting_platform }}</td>
+                      <td>
+                        {{
+                          website.hosting_platform
+                            ? website.hosting_platform
+                            : "none provided"
+                        }}
+                      </td>
                     </tr>
                     <tr>
                       <td>
                         <i class="fas fa-info-circle"></i>Content Management
                         System
                       </td>
-                      <td>{{ website.cms_platform }}</td>
+                      <td>
+                        {{
+                          website.cms_platform
+                            ? website.cms_platform
+                            : "none provided"
+                        }}
+                      </td>
                     </tr>
                     <tr>
                       <td><i class="fas fa-info-circle"></i>Repository URL</td>
-                      <td>{{ website.repository_url }}</td>
+                      <td>
+                        {{
+                          website.repository_url
+                            ? website.repository_url
+                            : "none provided"
+                        }}
+                      </td>
                     </tr>
                   </tbody>
                 </table>
