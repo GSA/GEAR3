@@ -22,7 +22,7 @@ const websites = require(routesPath + "websites.routes");
 const router = express.Router();
 let limiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 1, // 20 requests
+  max: 20, // 20 requests
 });
 router.use(limiter);
 router.use("/capabilities", cap);
