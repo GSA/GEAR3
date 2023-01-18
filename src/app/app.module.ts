@@ -7,8 +7,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { SidebarModule } from 'ng-sidebar';  // Sidebar Module
-import { PdfViewerModule } from 'ng2-pdf-viewer';  // PDF Viewer
+import { SidebarModule } from 'ng-sidebar'; // Sidebar Module
+import { PdfViewerModule } from 'ng2-pdf-viewer'; // PDF Viewer
 import { NgxChartsModule } from '@swimlane/ngx-charts'; // Visualizations
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -38,6 +38,9 @@ import { CapabilityManagerComponent } from './components/manager-modals/capabili
 import { OrganizationsChartComponent } from './views/enterprise/organizations-chart/organizations-chart.component';
 import { OrganizationsComponent } from './views/enterprise/organizations/organizations.component';
 import { OrganizationsModalComponent } from './components/modals/organizations-modal/organizations-modal.component';
+
+import { WebsiteServiceCategoryComponent } from './views/enterprise/website-service-category/website-service-category.component';
+import { WebsiteServiceCategoryModalComponent } from './components/modals/website-service-category-modal/website-service-category-modal.component';
 
 //// Systems
 import { SystemsComponent } from './views/systems/systems/systems.component';
@@ -93,6 +96,8 @@ import { Globals } from './common/globals';
     OrganizationsChartComponent,
     OrganizationsComponent,
     OrganizationsModalComponent,
+    WebsiteServiceCategoryComponent,
+    WebsiteServiceCategoryModalComponent,
 
     SystemsComponent,
     SystemsModalComponent,
@@ -101,10 +106,10 @@ import { Globals } from './common/globals';
     RecordsManagementComponent,
     RecordsModalComponent,
     RecordManagerComponent,
-	WebsitesComponent,
+    WebsitesComponent,
     WebsitesModalComponent,
     WebsiteManagerComponent,
-    
+
     FismaComponent,
     FismaModalComponent,
     FismaPocsComponent,
@@ -112,9 +117,9 @@ import { Globals } from './common/globals';
     ItStandardsComponent,
     ItStandardsModalComponent,
     ItStandardManagerComponent,
-  
+
     ArtifactsComponent,
-    GearModelComponent
+    GearModelComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -126,16 +131,11 @@ import { Globals } from './common/globals';
     NgxChartsModule,
     PdfViewerModule,
     ReactiveFormsModule,
-    SidebarModule.forRoot()
+    SidebarModule.forRoot(),
   ],
-  providers: [
-    Globals
-  ],
-  bootstrap: [AppComponent]
+  providers: [Globals],
+  bootstrap: [AppComponent],
 })
-
 export class AppModule {
-
-  constructor() { }
-
+  constructor() {}
 }

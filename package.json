@@ -3,6 +3,9 @@
   "version": "3.0.0",
   "description": "Next Iteration of the GEAR portal to latest tech stack of 2020",
   "main": "server.js",
+  "engines": {
+    "node": "14.20.0"
+  },
   "scripts": {
     "ng": "ng",
     "start": "concurrently --kill-others \"npm run serve-api\" \"npm run serve\"",
@@ -132,6 +135,7 @@
     "karma-coverage-istanbul-reporter": "~3.0.2",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.5.0",
+    "prettier": "^2.8.1",
     "protractor": "~7.0.0",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",

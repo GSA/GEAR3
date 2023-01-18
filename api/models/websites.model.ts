@@ -1,5 +1,5 @@
 export class Website {
-  public Website_ID: number;
+  public Website_ID: string;
   public domain: string;
   public parent_domain: string;
   public office: string;
@@ -18,4 +18,10 @@ export class Website {
   public repository_url: string;
   public hosting_platform: string;
   public https: string;
+  public customer_centricity: string;
+  public mobile_performance: string;
+  public google_analytics: string;
+  public accessibility: string;
+  public uswds: string;
+  public required_links: string;
 }

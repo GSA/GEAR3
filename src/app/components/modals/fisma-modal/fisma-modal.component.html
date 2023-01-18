@@ -1,19 +1,32 @@
 <!-- FISMA System Detail Modal -->
-<div class="modal fade" id="fismaDetail" tabindex="-1" role="dialog" aria-labelledby="fismaTitle" aria-hidden="true">
+<div
+  class="modal fade"
+  id="fismaDetail"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="fismaTitle"
+  aria-hidden="true"
+>
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
     <div class="modal-content">
       <div class="modal-header bg-warning">
-        <a class="mr-3 text-white" role="button" aria-label="Previous"
-          (click)="tableService.previousModalRoute('fismaDetail')" [hidden]="!modalService.checkModalRoutes()">
+        <a
+          class="mr-3 text-white"
+          role="button"
+          tabindex="0"
+          aria-label="Previous"
+          (click)="tableService.previousModalRoute('fismaDetail')"
+          [hidden]="!modalService.checkModalRoutes()"
+        >
           <i class="fas fa-arrow-circle-left fa-lg fa-fw"></i>
         </a>
         <h5 class="modal-title text-white" id="fismaTitle">
           <i class="fas fa-shield-alt"></i>
           {{ fisma.Name }}
         </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <a role="button" aria-label="Close" data-dismiss="modal" tabindex="0">
+          <i class="fas fa-times fa-lg text-white align-self-center"></i>
+        </a>
       </div>
 
       <div id="fismaTabs" class="modal-body">
@@ -21,7 +34,8 @@
         <ul class="nav nav-tabs">
           <li class="nav-item">
             <a class="nav-link active" data-toggle="tab" href="#fismaOverview">
-              Overview</a>
+              Overview</a
+            >
           </li>
           <!-- <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#subSystemsTab">
@@ -30,13 +44,19 @@
 
         <!-- Tab Panes -->
         <div class="tab-content mt-3">
-          <div class="container-fluid tab-pane fade show active" id="fismaOverview">
+          <div
+            class="container-fluid tab-pane fade show active"
+            id="fismaOverview"
+          >
             <div class="row">
               <div class="col-5">
                 <h4 class="text-center">System Overview</h4>
-                <br>
+                <br />
 
-                <table id="fismaOverviewTable" class="table table-striped table-dark rounded-lg">
+                <table
+                  id="fismaOverviewTable"
+                  class="table table-striped table-dark rounded-lg"
+                >
                   <thead class="bg-warning">
                     <tr>
                       <th>
@@ -51,7 +71,7 @@
                   <tbody>
                     <tr>
                       <td><i class="fa fa-calendar-alt"></i>ATO Date</td>
-                      <td>{{ fisma.ATODate | date:'longDate' }}</td>
+                      <td>{{ fisma.ATODate | date : "longDate" }}</td>
                     </tr>
                     <tr>
                       <td><i class="far fa-file"></i>ATO Type</td>
@@ -82,12 +102,18 @@
                         <i class="fa fa-file-alt"></i>Related Artifacts
                       </td>
                       <td>
-                        <ul [innerHTML]="tableService.renderRelArtifacts(fisma.RelatedArtifacts)"></ul>
+                        <ul
+                          [innerHTML]="
+                            tableService.renderRelArtifacts(
+                              fisma.RelatedArtifacts
+                            )
+                          "
+                        ></ul>
                       </td>
                     </tr>
                     <tr>
                       <td><i class="fa fa-calendar-alt"></i>Renewal Date</td>
-                      <td>{{ fisma.RenewalDate | date:'longDate' }}</td>
+                      <td>{{ fisma.RenewalDate | date : "longDate" }}</td>
                     </tr>
                     <tr>
                       <td><i class="fa fa-door-open"></i>Responsible Org</td>
@@ -109,9 +135,12 @@
               <!-- Points of Contact Table -->
               <div class="col-7">
                 <h4 class="text-center">Points of Contact</h4>
-                <br>
+                <br />
 
-                <table id="fismaPOCTable" class="table table-striped table-dark rounded-lg">
+                <table
+                  id="fismaPOCTable"
+                  class="table table-striped table-dark rounded-lg"
+                >
                   <thead class="bg-warning">
                     <tr>
                       <th>
@@ -129,7 +158,9 @@
                     </tr>
                   </thead>
 
-                  <tbody [innerHTML]="tableService.renderPOCInfoTable(fisma.POC)"></tbody>
+                  <tbody
+                    [innerHTML]="tableService.renderPOCInfoTable(fisma.POC)"
+                  ></tbody>
                 </table>
               </div>
               <!-- End ofPoints of Contact Table -->
@@ -141,7 +172,6 @@
             <table id="fismaSubSysTable"></table>
           </div> -->
           <!-- End of Sub-Systems Tab Pane -->
-
         </div>
         <!-- End of Tab Panes -->
       </div>

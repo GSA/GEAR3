@@ -1,131 +1,422 @@
 <!-- Website Detail Modal -->
-<div class="modal fade" id="websiteDetail" tabindex="-1" role="dialog" aria-labelledby="websiteTitle" aria-hidden="true">
+<div
+  class="modal fade"
+  id="websiteDetail"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="websiteTitle"
+  aria-hidden="true"
+>
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
     <div class="modal-content">
       <div class="modal-header bg-danger">
-        <a class="mr-3 text-white" role="button" aria-label="Previous"
-          (click)="tableService.previousModalRoute('websiteDetail')" [hidden]="!modalService.checkModalRoutes()">
+        <a
+          class="mr-3 text-white"
+          role="button"
+          aria-label="Previous"
+          tabindex="0"
+          (click)="tableService.previousModalRoute('websiteDetail')"
+          [hidden]="!modalService.checkModalRoutes()"
+        >
           <i class="fas fa-arrow-circle-left fa-lg fa-fw"></i>
         </a>
         <h5 class="modal-title text-white" id="websiteTitle">
           <i class="far fa-folder-open"></i>
-          {{ website.domain }} <!-- This refers to api/queries/GET name of object in database -->
+          {{ website.domain }}
+          <!-- This refers to api/queries/GET name of object in database -->
         </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <a role="button" aria-label="Close" data-dismiss="modal" tabindex="0">
+          <i class="fas fa-times fa-lg text-white align-self-center"></i>
+        </a>
       </div>
 
       <div class="modal-body">
         <!-- Tabs -->
         <ul id="websiteTabs" class="nav nav-tabs">
           <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#websitesOverview">
-              Overview</a>
+            <a
+              class="nav-link active"
+              data-toggle="tab"
+              href="#websitesOverview"
+            >
+              Overview</a
+            >
           </li>
           <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#websiteRelatedSystems">
-              Related Systems</a>
+              Related Systems</a
+            >
           </li>
         </ul>
 
         <!-- Tab Panes -->
         <div class="tab-content mt-3">
           <div class="tab-pane fade show active" id="websitesOverview">
-            <h4>Production Status</h4>
-            <p>{{ website.production_status }}</p>
-            <br>
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col">
+                  <h4>Production Status</h4>
+                  <p>{{ website.production_status }}</p>
+                </div>
 
-            <h4>Parent Domain</h4>
-            <div>
-              <p>{{ website.parent_domain }}</p>
-            </div>
-            <div [hidden]="website.parent_domain">
-              None
-            </div>
-            <br>
+                <div class="col">
+                  <h4>Parent Domain</h4>
+                  <div>
+                    <p>{{ website.parent_domain }}</p>
+                  </div>
+                  <div [hidden]="website.parent_domain">None</div>
+                </div>
 
-            <h4>Type of Site</h4>
-            <div>
-              <p>{{ website.type_of_site }}</p>
-            </div>
-            <div [hidden]="website.type_of_site">
-              None
-            </div>
-            <br>
+                <div class="col">
+                  <h4>Type of Site</h4>
+                  <div>
+                    <p>{{ website.type_of_site }}</p>
+                  </div>
+                  <div [hidden]="website.type_of_site">None</div>
+                </div>
+              </div>
 
-            <table id="websiteDetailTable"
-              class="table table-borderless table-striped table-dark rounded-lg w-75 mx-auto">
-              <thead class="bg-danger">
-                <tr>
-                  <th>
-                    <h5>Attribute</h5>
-                  </th>
-                  <th>
-                    <h5>Value</h5>
-                  </th>
-                </tr>
-              </thead>
+              <div class="row mb-3">
+                <div class="col-12">
+                  <h4>Recent Screenshots</h4>
+                  <div
+                    *ngIf="
+                      website.production_status != 'production' ||
+                      website.type_of_site == 'infrastructure'
+                    "
+                    class="alert alert-warning"
+                    role="alert"
+                  >
+                    Websites that are not in a production status or are
+                    considered infrastructure do not contain screenshots
+                  </div>
+                  <span *ngIf="websiteScans[0].scan_date != ''"
+                    >As of:
+                    {{ websiteScans[0].scan_date | date : "mediumDate" }}</span
+                  >
+                </div>
+                <div class="col-12 col-md-8">
+                  <img
+                    src="{{
+                      '../../../../../assets/website-screenshots/' +
+                        websiteScans[0].desktop_img_file_name
+                    }}"
+                    class="img-fluid shadow"
+                    alt="{{ 'Desktop screenshot of ' + website.domain }}"
+                  />
+                </div>
+                <div class="col-12 col-md-2">
+                  <img
+                    src="{{
+                      '../../../../../assets/website-screenshots/' +
+                        websiteScans[0].mobile_img_file_name
+                    }}"
+                    class="img-fluid shadow"
+                    alt="{{ 'Mobile screenshot of ' + website.domain }}"
+                  />
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-12">
+                  <h4>Service Categories</h4>
+                </div>
+                <div class="col-auto" id="websiteServiceCategories">
+                  <span
+                    *ngFor="let sc of websiteServiceCategories"
+                    (click)="
+                      websiteServiceCategoryClick(
+                        sc.website_service_category_id
+                      )
+                    "
+                    (keydown.enter)="
+                      websiteServiceCategoryClick(
+                        sc.website_service_category_id
+                      )
+                    "
+                    class="badge badge-info p-3 mr-2 pointer"
+                    tabindex="0"
+                    role="link"
+                    >{{ sc.name }}</span
+                  >
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-12 mb-3">
+                  <h4>Type of Site</h4>
+                </div>
+                <div class="col-auto">
+                  <div>
+                    <svg
+                      class="website-chart"
+                      style="display: block; margin: 0 auto"
+                      id="graph"
+                      height="100"
+                      width="100"
+                      viewBox="0 0 100 100"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <title>
+                        Coxcomb chart showing website strengths and weaknesses
+                        on a 0 to 1 scale with 1 being the highest value. Scores
+                        are as follows: Customer Centricity:
+                        {{ website.customer_centricity }}, Required Links:
+                        {{ website.required_links }}, Mobile Performance:
+                        {{ website.mobile_performance }}, Accessibility:
+                        {{ website.accessibility }}, Google Analytics:
+                        {{ website.google_analytics }}, USWDS:
+                        {{ website.uswds }}
+                      </title>
+                      <g class="background">
+                        <circle cx="50" cy="50" r="50" pathLength="100" />
+                      </g>
 
-              <tbody>
-                <tr>
-                  <td><i class="fa fa-bookmark"></i>Office</td>
-                  <td>{{ website.office }}</td>
-                </tr>
-                <tr>
-                  <td><i class="fas fa-user-lock"></i>Sub Office</td>
-                  <td>{{ website.sub_office }}</td>
-                </tr>
-                <tr>
-                  <td><i class="fas fa-calendar-day"></i>Website Manager</td>
-                  <td>{{ website.site_owner_email }}</td>
-                </tr>
-                <tr>
-                  <td><i class="fa fa-certificate"></i>Contact Email</td>
-                  <td>{{ website.contact_email }}</td>
-                </tr>
-				<tr>
-                  <td><i class="fas fa-info-circle"></i>Redirects to</td>
-                  <td>{{ website.redirects_to }}</td>
-                </tr>
-                <tr>
-                  <td><i class="far fa-list-alt"></i>Required by Law or Policy?</td>
-                  <td>{{ website.required_by_law_or_policy }}</td>
-                </tr>
-                <tr>
-                  <td><i class="fas fa-hashtag"></i>Has DAP?</td>
-                  <td>{{ website.has_dap }}</td>
-                </tr>
-                <tr>
-                  <td><i class="far fa-address-card"></i>Current USWDS Score</td>
-                  <td>{{ website.current_uswds_score }}</td>
-                </tr>
-                <tr>
-                  <td><i class="fas fa-users"></i>Mobile Friendly?</td>
-                  <td>{{ website.mobile_friendly }}</td>
-                </tr>
-                <tr>
-                  <td><i class="fas fa-fingerprint"></i>Has Search?</td>
-                  <td>{{ website.has_search }}</td>
-                </tr>
-                <tr>
-                  <td><i class="fas fa-info-circle"></i>HTTPS enabled?</td>
-                  <td>{{ website.https }}</td>
-                </tr>
-				<tr>
-                  <td><i class="fas fa-info-circle"></i>Hosting Platform</td>
-                  <td>{{ website.hosting_platform }}</td>
-                </tr>
-				<tr>
-                  <td><i class="fas fa-info-circle"></i>Content Management System</td>
-                  <td>{{ website.cms_platform }}</td>
-                </tr>
-				<tr>
-                  <td><i class="fas fa-info-circle"></i>Repository URL</td>
-                  <td>{{ website.repository_url }}</td>
-                </tr>
-              </tbody>
-            </table>
+                      <g id="website-chart" class="graph">
+                        <circle
+                          cx="50"
+                          cy="50"
+                          class="one"
+                          ngClass="{{
+                            website.customer_centricity === '0.00'
+                              ? 'zeroValue'
+                              : ''
+                          }}"
+                          transform="rotate(-90 50 50)"
+                          [style.--value]="website.customer_centricity"
+                          [style.--max]="1"
+                        />
+                        <circle
+                          cx="50"
+                          cy="50"
+                          class="two"
+                          ngClass="{{
+                            website.required_links === '0.00' ? 'zeroValue' : ''
+                          }}"
+                          transform="rotate(-30 50 50)"
+                          [style.--value]="website.required_links"
+                          [style.--max]="1"
+                        />
+                        <circle
+                          cx="50"
+                          cy="50"
+                          class="three"
+                          ngClass="{{
+                            website.mobile_performance === '0.00'
+                              ? 'zeroValue'
+                              : ''
+                          }}"
+                          transform="rotate(30 50 50)"
+                          [style.--value]="website.mobile_performance"
+                          [style.--max]="1"
+                        />
+                        <circle
+                          cx="50"
+                          cy="50"
+                          class="four"
+                          ngClass="{{
+                            website.accessibility === '0.00' ? 'zeroValue' : ''
+                          }}"
+                          transform="rotate(90 50 50)"
+                          [style.--value]="website.accessibility"
+                          [style.--max]="1"
+                        />
+                        <circle
+                          cx="50"
+                          cy="50"
+                          class="five"
+                          ngClass="{{
+                            website.google_analytics === '0.00'
+                              ? 'zeroValue'
+                              : ''
+                          }}"
+                          transform="rotate(150 50 50)"
+                          [style.--value]="website.google_analytics"
+                          [style.--max]="1"
+                        />
+                        <circle
+                          cx="50"
+                          cy="50"
+                          class="six"
+                          ngClass="{{
+                            website.uswds === '0.00' ? 'zeroValue' : ''
+                          }}"
+                          transform="rotate(210 50 50)"
+                          [style.--value]="website.uswds"
+                          [style.--max]="1"
+                        />
+                      </g>
+                    </svg>
+                  </div>
+                </div>
+                <div class="col-8">
+                  <p>
+                    The following charts show the relative strengths and
+                    weaknesses of each website across 6 areas. Click on a domain
+                    name to view additional data and stats.
+                  </p>
+                  <p>
+                    A gray semi-circle appears when data is unavailable for the
+                    website in that particular category.
+                  </p>
+                  <div class="row">
+                    <div class="col-12 col-md-4 mb-2">
+                      <span class="legend one"></span>Customer Centricity
+                    </div>
+                    <div class="col-12 col-md-4 mb-2">
+                      <span class="legend two"></span>Required Links
+                    </div>
+                    <div class="col-12 col-md-4 mb-2">
+                      <span class="legend three"></span>Mobile Performance
+                    </div>
+                    <div class="col-12 col-md-4 mb-2">
+                      <span class="legend four"></span>Accessibility (AMP)
+                    </div>
+                    <div class="col-12 col-md-4 mb-2">
+                      <span class="legend five"></span>Google Analytics
+                    </div>
+                    <div class="col-12 col-md-4 mb-2">
+                      <span class="legend six"></span>USWDS
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <h4>Additional Information</h4>
+                </div>
+                <table
+                  id="websiteDetailTable"
+                  class="table table-borderless table-striped table-dark rounded-lg w-75 mx-auto"
+                >
+                  <thead class="bg-danger">
+                    <tr>
+                      <th>
+                        <h5>Attribute</h5>
+                      </th>
+                      <th>
+                        <h5>Value</h5>
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td><i class="fa fa-bookmark"></i>Office</td>
+                      <td>
+                        {{ website.office ? website.office : "none provided" }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><i class="fas fa-user-lock"></i>Sub Office</td>
+                      <td>
+                        {{
+                          website.sub_office
+                            ? website.sub_office
+                            : "none provided"
+                        }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <i class="fas fa-calendar-day"></i>Website Manager
+                      </td>
+                      <td>
+                        {{
+                          website.site_owner_email
+                            ? website.site_owner_email
+                            : "none provided"
+                        }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><i class="fa fa-certificate"></i>Contact Email</td>
+                      <td>
+                        {{
+                          website.contact_email
+                            ? website.contact_email
+                            : "none provided"
+                        }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><i class="fas fa-info-circle"></i>Redirects to</td>
+                      <td>
+                        {{
+                          website.redirects_to ? website.redirects_to : "n/a"
+                        }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <i class="far fa-list-alt"></i>Required by Law or
+                        Policy?
+                      </td>
+                      <td>
+                        {{
+                          website.required_by_law_or_policy
+                            ? website.required_by_law_or_policy
+                            : "no response"
+                        }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><i class="fas fa-hashtag"></i>Has DAP?</td>
+                      <td>{{ website.has_dap ? "Yes" : "No" }}</td>
+                    </tr>
+                    <tr>
+                      <td><i class="fas fa-users"></i>Mobile Friendly?</td>
+                      <td>{{ website.mobile_friendly ? "Yes" : "No" }}</td>
+                    </tr>
+                    <tr>
+                      <td><i class="fas fa-fingerprint"></i>Has Search?</td>
+                      <td>{{ website.has_search ? "Yes" : "No" }}</td>
+                    </tr>
+                    <tr>
+                      <td><i class="fas fa-info-circle"></i>HTTPS enabled?</td>
+                      <td>{{ website.https ? "Yes" : "No" }}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <i class="fas fa-info-circle"></i>Hosting Platform
+                      </td>
+                      <td>
+                        {{
+                          website.hosting_platform
+                            ? website.hosting_platform
+                            : "none provided"
+                        }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <i class="fas fa-info-circle"></i>Content Management
+                        System
+                      </td>
+                      <td>
+                        {{
+                          website.cms_platform
+                            ? website.cms_platform
+                            : "none provided"
+                        }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><i class="fas fa-info-circle"></i>Repository URL</td>
+                      <td>
+                        {{
+                          website.repository_url
+                            ? website.repository_url
+                            : "none provided"
+                        }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div>
+                <h4>Scans</h4>
+                <table id="websiteScans"></table>
+              </div>
+            </div>
           </div>
           <!-- End of Overview Tab Pane -->
 
@@ -138,8 +429,14 @@
       <!-- End of Modal Body -->
 
       <div class="modal-footer">
-        <button type="button" [hidden]="!sharedService.loggedIn" class="btn btn-info text-white"
-          (click)="websiteEdit()">Edit This Item</button>
+        <button
+          type="button"
+          [hidden]="!sharedService.loggedIn"
+          class="btn btn-info text-white"
+          (click)="websiteEdit()"
+        >
+          Edit This Item
+        </button>
       </div>
     </div>
   </div>
