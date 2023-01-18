@@ -1,7 +1,7 @@
 const routesPath = "./routes/";
 
 const express = require("express");
-const RateLimit = require("express-rate-limit");
+const rateLimit = require("express-rate-limit");
 
 const cap = require(routesPath + "capabilities.routes");
 const dataFlow = require(routesPath + "dataflow.routes");
@@ -20,7 +20,7 @@ const sysTIME = require(routesPath + "systime.routes");
 const websites = require(routesPath + "websites.routes");
 
 const router = express.Router();
-let limiter = new RateLimit({
+let limiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
   max: 1, // 20 requests
 });
