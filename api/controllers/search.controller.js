@@ -34,7 +34,7 @@ exports.searchAll = (req, res) => {
             'Comments',
             tech.\`Comments\`) AS \`Other\`
       FROM
-        cowboy_ods.obj_technology AS tech
+        obj_technology AS tech
       UNION SELECT 
         cap.\`capability_Id\` AS \`Id\`,
         cap.\`Capability_Name\` AS \`Name\`,
@@ -51,7 +51,7 @@ exports.searchAll = (req, res) => {
         '{}' AS \`Other\`
       FROM
         gear_schema.obj_investments as invest) AS global_search
-    WHERE Name LIKE '%${req.params.kw}%' or Description like '%${req.params.kw}%';`;
+    WHERE Name LIKE '%${req.params.kw}%' or Description like '%${req.params.kw}%';`; // Removed cowboy_ods.obj_technology AS tech reference
 
   res = ctrl.sendQuery(query, `global search of ${req.params.kw}`, res);
 };

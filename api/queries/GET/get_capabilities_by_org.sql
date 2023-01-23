@@ -13,4 +13,4 @@ FROM obj_capability AS cap
   LEFT JOIN zk_app_capabilities                   ON cap.Id = zk_app_capabilities.obj_capability_Id
   LEFT JOIN obj_application         AS app        ON zk_app_capabilities.obj_application_Id = app.Id
   LEFT JOIN obj_application_status  AS appStatus  ON app.obj_application_status_Id = appStatus.Id
-  LEFT JOIN obj_organization        AS org        ON app.obj_org_SSO_Id = org.Id
+  LEFT JOIN obj_organization        AS org        ON poc.OrgCode = org.Org_Symbol

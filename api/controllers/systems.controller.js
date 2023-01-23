@@ -125,7 +125,7 @@ exports.findTechnologies = (req, res) => {
     GROUP BY tech.Id
     ORDER BY tech.Keyname;`;
 
-  res = ctrl.sendQuery_cowboy(query, 'related technologies for system', res);
+  res = ctrl.sendQuery(query, 'related technologies for system', res); //Removed sendQuery_cowboy reference
 };
 
 exports.updateTech = (req, res) => {

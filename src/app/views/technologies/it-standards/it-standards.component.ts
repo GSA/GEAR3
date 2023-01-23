@@ -65,7 +65,8 @@ export class ItStandardsComponent implements OnInit {
     field: 'Description',
     title: 'Description',
     sortable: true,
-    class: 'text-truncate'
+    class: 'text-wrap',
+    visible: false
   }, {
     field: 'Category',
     title: 'Category',
@@ -99,12 +100,14 @@ export class ItStandardsComponent implements OnInit {
   }, {
     field: 'Comments',
     title: 'Comments',
-    sortable: true
+    sortable: true,
+    visible: false
   }, {
     field: 'ApprovalExpirationDate',
     title: 'Approval Expiration Date',
     sortable: true,
-    visible: false
+    visible: true,
+    formatter: this.sharedService.dateFormatter
   }];
 
   ngOnInit(): void {
