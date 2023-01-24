@@ -63,7 +63,7 @@ exports.update = (req, res) => {
 
       // Insert new IDs
       data.itStandPOC.forEach(pocSamName => {
-        pocString += `INSERT INTO zk_technology_poc (obj_technology_Id, obj_ldap_SamAccountName) VALUES (${req.params.id}, ${pocSamName}); `;
+        pocString += `INSERT INTO zk_technology_poc (obj_technology_Id, obj_ldap_SamAccountName) VALUES (${req.params.id}, '${pocSamName}'); `;
       });
     };
 
