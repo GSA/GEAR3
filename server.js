@@ -252,7 +252,7 @@ function onListening() {
  * Function to get FISMA info from ServiceNow API
  * everyday at 20:00 Eastern Time
 */
-const request = require('request');
+/* const request = require('request');
 const cron = require('node-cron');
 const fetch = require("node-fetch");
 let base64 = require('base-64');
@@ -301,7 +301,7 @@ const putData = async data => {
   } catch (error) {
     console.log(error);
   };
-};
+}; */
 
 /*
  * Function to load POC data

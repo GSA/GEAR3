@@ -15,7 +15,7 @@ router.route('/get/:id')
 router.route('/retired')
   .get(fismaCtrl.findRetired);
 
-router.route('/update')
-  .put(fismaCtrl.updateAll);
+/* router.route('/update')
+  .put(fismaCtrl.updateAll); */
 
 module.exports = router;
