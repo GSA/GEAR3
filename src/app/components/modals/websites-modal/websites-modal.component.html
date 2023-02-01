@@ -36,15 +36,6 @@
             <p>{{ website.production_status }}</p>
             <br>
 
-            <h4>Parent Domain</h4>
-            <div>
-              <p>{{ website.parent_domain }}</p>
-            </div>
-            <div [hidden]="website.parent_domain">
-              None
-            </div>
-            <br>
-
             <h4>Type of Site</h4>
             <div>
               <p>{{ website.type_of_site }}</p>
@@ -95,10 +86,6 @@
                 <tr>
                   <td><i class="fas fa-hashtag"></i>Has DAP?</td>
                   <td>{{ website.has_dap }}</td>
-                </tr>
-                <tr>
-                  <td><i class="far fa-address-card"></i>Current USWDS Score</td>
-                  <td>{{ website.current_uswds_score }}</td>
                 </tr>
                 <tr>
                   <td><i class="fas fa-users"></i>Mobile Friendly?</td>

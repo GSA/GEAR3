@@ -61,10 +61,6 @@ export class WebsitesComponent implements OnInit {
     title: 'Contact Email',
     sortable: true
   }, {
-	field: 'parent_domain',
-    title: 'Parent Domain',
-    sortable: true
-  }, {
 	field: 'production_status',
     title: 'Status',
     sortable: true
@@ -105,11 +101,7 @@ export class WebsitesComponent implements OnInit {
     title: 'HTTPS?',
     sortable: true
   }, {
-	field: 'current_uswds_score',
-    title: 'Current USWDS Score',
-    sortable: true
-  }, {
-    field: 'sub_office',
+  field: 'sub_office',
     title: 'Sub-office',
     sortable: false,
     visible: false,
