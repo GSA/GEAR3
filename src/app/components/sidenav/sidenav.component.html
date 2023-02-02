@@ -1,6 +1,7 @@
 <!-- Container for sidebar(s) + page content -->
 <ng-sidebar-container (onBackdropClicked)="_onBackdropClicked()">
-  <ng-sidebar id="sidebar"
+  <ng-sidebar
+    id="sidebar"
     [(opened)]="_opened"
     [mode]="_mode"
     [keyClose]="_keyClose"
@@ -22,14 +23,20 @@
     (onCloseStart)="_onCloseStart()"
     (onClosed)="_onClosed()"
     (onTransitionEnd)="_onTransitionEnd()"
-    (mouseenter)="_opened=true"
-    (mouseleave)="_opened=false">
-
+    (mouseenter)="_opened = true"
+    (mouseleave)="_opened = false"
+  >
     <ul id="sideMenu" class="list-group">
       <!-- Strategy -->
       <li>
-        <a id="strategyBttn" data-toggle="collapse" data-target="#strategyDropdown" aria-controls="#strategyDropdown"
-          aria-expanded="false" class="bg-success list-group-item list-group-item-action flex-column align-items-start">
+        <a
+          id="strategyBttn"
+          data-toggle="collapse"
+          data-target="#strategyDropdown"
+          aria-controls="#strategyDropdown"
+          aria-expanded="false"
+          class="bg-success list-group-item list-group-item-action flex-column align-items-start"
+        >
           <div class="d-flex w-100 justify-content-start align-items-center">
             IT Strategy
             <span class="submenu-icon">
@@ -37,23 +44,46 @@
             </span>
           </div>
         </a>
-        <div id="strategyDropdown" aria-labelledby="strategyDropdown" data-parent="#sideMenu"
-          class="collapse sidebar-submenu">
-          <a routerLink="/strategic_framework" class="bg-dark list-group-item list-group-item-action">
-            IT Strategic Framework</a>
-          <a routerLink="/investments" class="bg-dark list-group-item list-group-item-action">
-            IT Investments</a>
-          <a href="https://insite.gsa.gov/directives-library/#GSAIT" target="_blank" rel="noopener"
-            class="bg-dark list-group-item list-group-item-action">
+        <div
+          id="strategyDropdown"
+          aria-labelledby="strategyDropdown"
+          data-parent="#sideMenu"
+          class="collapse sidebar-submenu"
+        >
+          <a
+            routerLink="/strategic_framework"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            IT Strategic Framework</a
+          >
+          <a
+            routerLink="/investments"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            IT Investments</a
+          >
+          <a
+            href="https://insite.gsa.gov/directives-library/#GSAIT"
+            target="_blank"
+            rel="noopener"
+            class="bg-dark list-group-item list-group-item-action"
+          >
             IT Policies
-            <i class="fas fa-external-link-alt"></i></a>
+            <i class="fas fa-external-link-alt"></i
+          ></a>
         </div>
       </li>
 
       <!-- Enterprise  -->
       <li>
-        <a id="enterpriseBttn" data-toggle="collapse" data-target="#enterpriseDropdown" aria-controls="#enterpriseDropdown"
-          aria-expanded="false" class="bg-royal-blue list-group-item list-group-item-action flex-column align-items-start">
+        <a
+          id="enterpriseBttn"
+          data-toggle="collapse"
+          data-target="#enterpriseDropdown"
+          aria-controls="#enterpriseDropdown"
+          aria-expanded="false"
+          class="bg-royal-blue list-group-item list-group-item-action flex-column align-items-start"
+        >
           <div class="d-flex w-100 justify-content-start align-items-center">
             GSA Enterprise
             <span class="submenu-icon">
@@ -61,23 +91,55 @@
             </span>
           </div>
         </a>
-        <div id="enterpriseDropdown" aria-labelledby="enterpriseDropdown" data-parent="#sideMenu"
-          class="collapse sidebar-submenu">
-          <a routerLink="/capabilities_model" class="bg-dark list-group-item list-group-item-action">
-            Business Capability Model</a>
-          <a routerLink="/capabilities" class="bg-dark list-group-item list-group-item-action">
-            Business Capability List</a>
-          <a routerLink="/org_chart" class="bg-dark list-group-item list-group-item-action">
-            Organization Chart</a>
-          <a routerLink="/organizations" class="bg-dark list-group-item list-group-item-action">
-            Organization List</a>
+        <div
+          id="enterpriseDropdown"
+          aria-labelledby="enterpriseDropdown"
+          data-parent="#sideMenu"
+          class="collapse sidebar-submenu"
+        >
+          <a
+            routerLink="/capabilities_model"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            Business Capability Model</a
+          >
+          <a
+            routerLink="/capabilities"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            Business Capability List</a
+          >
+          <a
+            routerLink="/org_chart"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            Organization Chart</a
+          >
+          <a
+            routerLink="/organizations"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            Organization List</a
+          >
+          <a
+            routerLink="/website_service_category"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            Website Service Category List</a
+          >
         </div>
       </li>
 
       <!-- Systems -->
       <li>
-        <a id="systemBttn" data-toggle="collapse" data-target="#systemsDropdown" aria-controls="#systemsDropdown"
-          aria-expanded="false" class="bg-danger list-group-item list-group-item-action flex-column align-items-start">
+        <a
+          id="systemBttn"
+          data-toggle="collapse"
+          data-target="#systemsDropdown"
+          aria-controls="#systemsDropdown"
+          aria-expanded="false"
+          class="bg-danger list-group-item list-group-item-action flex-column align-items-start"
+        >
           <div class="d-flex w-100 justify-content-start align-items-center">
             Business Systems
             <span class="submenu-icon">
@@ -85,23 +147,49 @@
             </span>
           </div>
         </a>
-        <div id="systemsDropdown" aria-labelledby="systemsDropdown" data-parent="#sideMenu"
-          class="collapse sidebar-submenu">
-          <a routerLink="/systems" class="bg-dark list-group-item list-group-item-action">
-            Business Systems</a>
-          <a routerLink="/systems_TIME" class="bg-dark list-group-item list-group-item-action">
-            TIME Report</a>
-          <a routerLink="/records_mgmt" class="bg-dark list-group-item list-group-item-action">
-            Records Management</a>
-		  <a routerLink="/websites" class="bg-dark list-group-item list-group-item-action">
-            GSA Websites</a>
+        <div
+          id="systemsDropdown"
+          aria-labelledby="systemsDropdown"
+          data-parent="#sideMenu"
+          class="collapse sidebar-submenu"
+        >
+          <a
+            routerLink="/systems"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            Business Systems</a
+          >
+          <a
+            routerLink="/systems_TIME"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            TIME Report</a
+          >
+          <a
+            routerLink="/records_mgmt"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            Records Management</a
+          >
+          <a
+            routerLink="/websites"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            GSA Websites</a
+          >
         </div>
       </li>
 
       <!-- Security -->
       <li>
-        <a id="securityBttn" data-toggle="collapse" data-target="#securityDropdown" aria-controls="#securityDropdown"
-          aria-expanded="false" class="bg-warning list-group-item list-group-item-action flex-column align-items-start">
+        <a
+          id="securityBttn"
+          data-toggle="collapse"
+          data-target="#securityDropdown"
+          aria-controls="#securityDropdown"
+          aria-expanded="false"
+          class="bg-warning list-group-item list-group-item-action flex-column align-items-start"
+        >
           <div class="d-flex w-100 justify-content-start align-items-center">
             Security
             <span class="submenu-icon">
@@ -109,19 +197,37 @@
             </span>
           </div>
         </a>
-        <div id="securityDropdown" aria-labelledby="securityDropdown" data-parent="#sideMenu"
-          class="collapse sidebar-submenu">
-          <a routerLink="/FISMA" class="bg-dark list-group-item list-group-item-action">
-            FISMA Systems Inventory</a>
-          <a routerLink="/FISMA_POC" class="bg-dark list-group-item list-group-item-action">
-            FISMA System POCs</a>
+        <div
+          id="securityDropdown"
+          aria-labelledby="securityDropdown"
+          data-parent="#sideMenu"
+          class="collapse sidebar-submenu"
+        >
+          <a
+            routerLink="/FISMA"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            FISMA Systems Inventory</a
+          >
+          <a
+            routerLink="/FISMA_POC"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            FISMA System POCs</a
+          >
         </div>
       </li>
 
       <!-- Technologies -->
       <li>
-        <a id="technologyBttn" data-toggle="collapse" data-target="#technologiesDropdown" aria-controls="#technologiesDropdown"
-          aria-expanded="false" class="bg-teal list-group-item list-group-item-action flex-column align-items-start">
+        <a
+          id="technologyBttn"
+          data-toggle="collapse"
+          data-target="#technologiesDropdown"
+          aria-controls="#technologiesDropdown"
+          aria-expanded="false"
+          class="bg-teal list-group-item list-group-item-action flex-column align-items-start"
+        >
           <div class="d-flex w-100 justify-content-start align-items-center">
             Technologies
             <span class="submenu-icon">
@@ -129,21 +235,40 @@
             </span>
           </div>
         </a>
-        <div id="technologiesDropdown" aria-labelledby="technologiesDropdown" data-parent="#sideMenu"
-          class="collapse sidebar-submenu">
-          <a routerLink="/it_standards" class="bg-dark list-group-item list-group-item-action">
-            IT Standards List</a>
-          <a href="https://insite.gsa.gov/portal/content/500499" target="_blank" rel="noopener"
-            class="bg-dark list-group-item list-group-item-action">
+        <div
+          id="technologiesDropdown"
+          aria-labelledby="technologiesDropdown"
+          data-parent="#sideMenu"
+          class="collapse sidebar-submenu"
+        >
+          <a
+            routerLink="/it_standards"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            IT Standards List</a
+          >
+          <a
+            href="https://insite.gsa.gov/portal/content/500499"
+            target="_blank"
+            rel="noopener"
+            class="bg-dark list-group-item list-group-item-action"
+          >
             IT Standards Approval Process
-            <i class="fas fa-external-link-alt"></i></a>
+            <i class="fas fa-external-link-alt"></i
+          ></a>
         </div>
       </li>
 
       <!-- Enterprise Architecture -->
       <li>
-        <a id="eaBttn" data-toggle="collapse" data-target="#eaDropdown" aria-controls="#eaDropdown"
-          aria-expanded="false" class="bg-purple list-group-item list-group-item-action flex-column align-items-start">
+        <a
+          id="eaBttn"
+          data-toggle="collapse"
+          data-target="#eaDropdown"
+          aria-controls="#eaDropdown"
+          aria-expanded="false"
+          class="bg-purple list-group-item list-group-item-action flex-column align-items-start"
+        >
           <div class="d-flex w-100 justify-content-start align-items-center">
             Enterprise Architecture
             <span class="submenu-icon">
@@ -151,22 +276,39 @@
             </span>
           </div>
         </a>
-        <div id="eaDropdown" aria-labelledby="eaDropdown" data-parent="#sideMenu"
-          class="collapse sidebar-submenu">
-          <a routerLink="/artifacts" class="bg-dark list-group-item list-group-item-action">
-            Artifacts</a>
-          <a routerLink="/gear_model" class="bg-dark list-group-item list-group-item-action">
-            GEAR Model Diagram</a>
+        <div
+          id="eaDropdown"
+          aria-labelledby="eaDropdown"
+          data-parent="#sideMenu"
+          class="collapse sidebar-submenu"
+        >
+          <a
+            routerLink="/artifacts"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            Artifacts</a
+          >
+          <a
+            routerLink="/gear_model"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            GEAR Model Diagram</a
+          >
         </div>
       </li>
 
       <!-- Menu Break -->
-      <li><br></li>
+      <li><br /></li>
 
       <!-- Access Forms & Glossary -->
       <li>
-        <a id="formsBttn" routerLink="/forms_glossary" aria-label="Access Forms and Glossary"
-          tabindex="0" class="bg-info list-group-item list-group-item-action align-items-start">
+        <a
+          id="formsBttn"
+          routerLink="/forms_glossary"
+          aria-label="Access Forms and Glossary"
+          tabindex="0"
+          class="bg-info list-group-item list-group-item-action align-items-start"
+        >
           <div class="d-flex w-100 justify-content-start align-items-center">
             Access Forms & Glossary
             <span class="submenu-icon">
@@ -176,7 +318,6 @@
           </div>
         </a>
       </li>
-
     </ul>
   </ng-sidebar>
 
@@ -185,25 +326,40 @@
     <main role="main">
       <div class="container-fluid my-3">
         <div class="col-md-12">
-
           <!-- Logged In Notification -->
-          <div id="loggedIn" class="container toast hide rounded-lg w-25" role="alert" aria-live="assertive"
-            aria-atomic="true" data-delay="3000">
+          <div
+            id="loggedIn"
+            class="container toast hide rounded-lg w-25"
+            role="alert"
+            aria-live="assertive"
+            aria-atomic="true"
+            data-delay="3000"
+          >
             <div id="loggedInCollapse" class="collapse">
               <div class="toast-header">
                 <i class="fa fa-sign-in-alt mr-2 fa-fw"></i>
-                <strong class="mr-auto text-success">You have successfully logged into GEAR Manager!</strong>
+                <strong class="mr-auto text-success"
+                  >You have successfully logged into GEAR Manager!</strong
+                >
               </div>
             </div>
           </div>
 
           <!-- Logged Out Notification -->
-          <div id="loggedOut" class="container toast hide rounded-lg w-25" role="alert" aria-live="assertive"
-            aria-atomic="true" data-delay="3000">
+          <div
+            id="loggedOut"
+            class="container toast hide rounded-lg w-25"
+            role="alert"
+            aria-live="assertive"
+            aria-atomic="true"
+            data-delay="3000"
+          >
             <div id="loggedOutCollapse" class="collapse">
               <div class="toast-header">
                 <i class="fas fa-sign-out-alt mr-2 fa-fw"></i>
-                <strong class="mr-auto text-warning">You have been logged out of GEAR Manager!</strong>
+                <strong class="mr-auto text-warning"
+                  >You have been logged out of GEAR Manager!</strong
+                >
               </div>
             </div>
           </div>
@@ -215,6 +371,5 @@
     </main>
   </div>
   <!-- End Page Content -->
-
 </ng-sidebar-container>
 <!-- End Side Navbar -->

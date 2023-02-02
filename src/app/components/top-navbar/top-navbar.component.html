@@ -1,28 +1,55 @@
-<nav class="navbar navbar-expand-xl2 fixed-top navbar-dark bg-primary shadow-lg p-1" id="topNav" role="navigation">
-
+<nav
+  class="navbar navbar-expand-xl2 fixed-top navbar-dark bg-primary shadow-lg p-1"
+  id="topNav"
+  role="navigation"
+>
   <a class="navbar-brand ml-3" routerLink="/">
     <i class="fas fa-cogs fa-lg"></i>
     GSA EA Analytics & Reporting (GEAR)
-    <span [innerHTML]="envName"></span>
-    <span *ngIf="sharedService.loggedIn" style="color: red"> **GEAR Manager Mode**</span>
+    <span [innerHTML]="envName" style="color: var(--pink)"></span>
+    <span *ngIf="sharedService.loggedIn" style="color: red">
+      **GEAR Manager Mode**</span
+    >
   </a>
 
   <!-- Global Search -->
   <div class="d-flex flex-nowrap justify-content-center">
     <form class="form-inline" role="search">
-      <input type="search" name="globalSearchField" [(ngModel)]="searchKW" class="form-control mr-2"
-        placeholder="Global Search" (keydown)="globalSearch($event)">
+      <label for="globalSearch" class="sr-only sr-only-focusable"
+        >Global Search</label
+      >
+      <input
+        type="search"
+        id="globalSearch"
+        name="globalSearchField"
+        [(ngModel)]="searchKW"
+        class="form-control mr-2"
+        placeholder="Global Search"
+        (keydown)="globalSearch($event)"
+      />
       <!-- Weird bug where if button isn't here, hitting enter will not execute and update search table at first. Leaving button here -->
-      <button name="globalSearchBttn" aria-label="Global Search Button" class="btn btn-light form-control"
-        (click)="globalSearch($event)" hidden>
+      <button
+        name="globalSearchBttn"
+        aria-label="Global Search Button"
+        class="btn btn-light form-control"
+        (click)="globalSearch($event)"
+        hidden
+      >
         <i class="fas fa-search fa-lg"></i>
       </button>
     </form>
   </div>
 
-  <button (click)="toggleTopNavBttn()" class="navbar-toggler" type="button"
-    data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-    aria-expanded="false" aria-label="Toggle Top Navigation">
+  <button
+    (click)="toggleTopNavBttn()"
+    class="navbar-toggler"
+    type="button"
+    data-toggle="collapse"
+    data-target="#navbarSupportedContent"
+    aria-controls="navbarSupportedContent"
+    aria-expanded="false"
+    aria-label="Toggle Top Navigation"
+  >
     More Links <i id="topNavToggle" class="fas fa-angle-down ml-2 rotate"></i>
   </button>
 
@@ -34,25 +61,45 @@
       </li>
 
       <li class="nav-item">
-        <a id="assistTechBttn" class="nav-link" routerLink="/assist_tech">Assitive Technology</a>
+        <a id="assistTechBttn" class="nav-link" routerLink="/assist_tech"
+          >Assitive Technology</a
+        >
       </li>
 
       <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="contactDropdown" data-toggle="dropdown" aria-haspopup="true"
-          aria-expanded="false">Contact/Feedback</a>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="contactDropdown">
-      <li class="dropdown-header">Regarding IT Standards</li>
-      <a class="dropdown-item" href="https://mail.google.com/mail/?view=cm&fs=1&to=it-standards@gsa.gov" target="_blank"
-        rel="noopener">IT Standards</a>
+        <a
+          class="nav-link dropdown-toggle"
+          id="contactDropdown"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+          >Contact/Feedback</a
+        >
+        <div
+          class="dropdown-menu dropdown-menu-right"
+          aria-labelledby="contactDropdown"
+        >
+          <li class="dropdown-header">Regarding IT Standards</li>
+          <a
+            class="dropdown-item"
+            href="https://mail.google.com/mail/?view=cm&fs=1&to=it-standards@gsa.gov"
+            target="_blank"
+            rel="noopener"
+            >IT Standards</a
+          >
 
-      <div class="dropdown-divider"></div>
+          <div class="dropdown-divider"></div>
 
-      <li class="dropdown-header">Regarding GEAR/EA</li>
-      <a class="dropdown-item" href="https://mail.google.com/mail/?view=cm&fs=1&to=ea_planning@gsa.gov" target="_blank"
-        rel="noopener">EA Team</a>
-  </div>
-  </li>
-
-  </ul>
+          <li class="dropdown-header">Regarding GEAR/EA</li>
+          <a
+            class="dropdown-item"
+            href="https://mail.google.com/mail/?view=cm&fs=1&to=ea_planning@gsa.gov"
+            target="_blank"
+            rel="noopener"
+            >EA Team</a
+          >
+        </div>
+      </li>
+    </ul>
   </div>
 </nav>

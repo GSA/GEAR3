@@ -1,19 +1,32 @@
 <!-- Systems Detail Modal -->
-<div class="modal fade" id="systemDetail" tabindex="-1" role="dialog" aria-labelledby="systemTitle" aria-hidden="true">
+<div
+  class="modal fade"
+  id="systemDetail"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="systemTitle"
+  aria-hidden="true"
+>
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
     <div class="modal-content">
       <div class="modal-header bg-danger">
-        <a class="mr-3 text-white" role="button" aria-label="Previous"
-          (click)="tableService.previousModalRoute('systemDetail')" [hidden]="!modalService.checkModalRoutes()">
+        <a
+          class="mr-3 text-white"
+          role="button"
+          tabindex="0"
+          aria-label="Previous"
+          (click)="tableService.previousModalRoute('systemDetail')"
+          [hidden]="!modalService.checkModalRoutes()"
+        >
           <i class="fas fa-arrow-circle-left fa-lg fa-fw"></i>
         </a>
         <h5 class="modal-title text-white" id="systemTitle">
           <i class="fas fa-desktop"></i>
           {{ system.Name }}
         </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <a role="button" aria-label="Close" data-dismiss="modal" tabindex="0">
+          <i class="fas fa-times fa-lg text-white align-self-center"></i>
+        </a>
       </div>
 
       <div id="systemTabs" class="modal-body">
@@ -21,27 +34,33 @@
         <ul class="nav nav-tabs">
           <li class="nav-item">
             <a class="nav-link active" data-toggle="tab" href="#systemOverview">
-              Overview</a>
+              Overview</a
+            >
           </li>
           <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#businessRelated">
-              Business</a>
+              Business</a
+            >
           </li>
           <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#technicalRelated">
-              Technical</a>
+              Technical</a
+            >
           </li>
           <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#relatedInvestments">
-              Related Investments</a>
+              Related Investments</a
+            >
           </li>
           <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#relatedRecords">
-              Related Records</a>
+              Related Records</a
+            >
           </li>
           <li class="nav-item" [hidden]="system.SystemLevel != 'System'">
             <a class="nav-link" data-toggle="tab" href="#systemSubs">
-              Subsystems</a>
+              Subsystems</a
+            >
           </li>
           <!-- <li class="nav-item" [hidden]="!interfaces.length">
             <a class="nav-link" data-toggle="tab" href="#systemDataFlow">
@@ -51,7 +70,6 @@
         <!-- Tab Panes -->
         <div class="tab-content mt-3">
           <div class="tab-pane fade show active" id="systemOverview">
-
             <div class="row mb-4">
               <div class="col">
                 <h4>Alias/Acronym</h4>
@@ -71,10 +89,14 @@
 
             <h4>Description</h4>
             <p>{{ system.Description }}</p>
-            <br><br>
+            <br /><br />
 
             <h4>Related Artifacts</h4>
-            <ul [innerHTML]="tableService.renderRelArtifacts(system.RelatedArtifacts)"></ul>
+            <ul
+              [innerHTML]="
+                tableService.renderRelArtifacts(system.RelatedArtifacts)
+              "
+            ></ul>
             <p [hidden]="system.RelatedArtifacts">None</p>
           </div>
           <!-- End of Overview Tab Pane -->
@@ -83,9 +105,12 @@
             <div class="row">
               <div class="col-5">
                 <h4 class="text-center">Business Overview</h4>
-                <br>
+                <br />
 
-                <table id="systemBusinessTable" class="table table-borderless table-striped table-dark rounded-lg">
+                <table
+                  id="systemBusinessTable"
+                  class="table table-borderless table-striped table-dark rounded-lg"
+                >
                   <thead class="bg-danger">
                     <tr>
                       <th>
@@ -100,7 +125,7 @@
                   <tbody>
                     <tr>
                       <td><i class="far fa-calendar-check"></i>ATO Date</td>
-                      <td>{{ system.ATODate | date:'longDate' }}</td>
+                      <td>{{ system.ATODate | date : "longDate" }}</td>
                     </tr>
                     <tr>
                       <td><i class="far fa-folder-open"></i>ATO Type</td>
@@ -119,7 +144,7 @@
                     </tr>
                     <tr *ngIf="system.InactiveDate">
                       <td><i class="fa fa-calendar-alt"></i>Inactive Date</td>
-                      <td>{{ system.InactiveDate | date:'longDate' }}</td>
+                      <td>{{ system.InactiveDate | date : "longDate" }}</td>
                     </tr>
                     <!-- <tr>
                       <td><i class="fas fa-money-bill-wave"></i>Investment</td>
@@ -131,7 +156,7 @@
                     </tr> -->
                     <tr *ngIf="system.RenewalDate">
                       <td><i class="fas fa-calendar-day"></i>Renewal Date</td>
-                      <td>{{ system.RenewalDate | date:'longDate' }}</td>
+                      <td>{{ system.RenewalDate | date : "longDate" }}</td>
                     </tr>
                     <tr>
                       <td><i class="fa fa-sitemap"></i>Responsible IT Org</td>
@@ -152,9 +177,12 @@
               <!-- Points of Contact Table -->
               <div class="col-7">
                 <h4 class="text-center">Points of Contact</h4>
-                <br>
+                <br />
 
-                <table id="fismaPOCTable" class="table table-striped table-dark rounded-lg">
+                <table
+                  id="fismaPOCTable"
+                  class="table table-striped table-dark rounded-lg"
+                >
                   <thead class="bg-danger">
                     <tr>
                       <th>
@@ -190,13 +218,18 @@
                 <div class="text-center mt-3">
                   <h4>System TIME Report</h4>
                   <!-- TIME Definitions Link -->
-                  <a type="button" class="btn btn-sm btn-info text-white" [routerLink]="['/about', 'sysRat']"
-                    target="_blank">TIME Value Definitions</a>
+                  <a
+                    type="button"
+                    class="btn btn-sm btn-info text-white"
+                    [routerLink]="['/about', 'sysRat']"
+                    target="_blank"
+                    >TIME Value Definitions</a
+                  >
                 </div>
 
                 <table id="sysTimeTable"></table>
               </div>
-              <br>
+              <br />
 
               <!-- Related Business Capabilities Table -->
               <div>
@@ -209,9 +242,12 @@
 
           <div class="tab-pane fade" id="technicalRelated">
             <h4 class="text-center">Technical Overview</h4>
-            <br>
+            <br />
 
-            <table id="techAttrTable" class="table table-borderless table-striped table-dark rounded-lg w-50 mx-auto">
+            <table
+              id="techAttrTable"
+              class="table table-borderless table-striped table-dark rounded-lg w-50 mx-auto"
+            >
               <thead class="bg-danger">
                 <tr>
                   <th>
@@ -233,7 +269,10 @@
                   <td>{{ system.CSP }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fa fa-bookmark"></i>Complete FISMA Assessment for Current FY</td>
+                  <td>
+                    <i class="fa fa-bookmark"></i>Complete FISMA Assessment for
+                    Current FY
+                  </td>
                   <td>{{ system.ComplFISMA }}</td>
                 </tr>
                 <tr>
@@ -241,7 +280,9 @@
                   <td>{{ system.FIPS_Impact_Level }}</td>
                 </tr>
                 <tr>
-                  <td><i class="far fa-handshake"></i>Gov't-Wide Shared Service</td>
+                  <td>
+                    <i class="far fa-handshake"></i>Gov't-Wide Shared Service
+                  </td>
                   <td>{{ system.SharedService }}</td>
                 </tr>
                 <tr>
@@ -266,7 +307,7 @@
                 </tr> -->
               </tbody>
             </table>
-            <br>
+            <br />
 
             <!-- Related Technologies Table -->
             <div>
@@ -296,15 +337,20 @@
             <!-- <div id="dataFlowChart" class="text-center"></div> -->
           </div>
           <!-- End of Data Flow Tab Pane -->
-
         </div>
         <!-- End of Tab Panes -->
       </div>
       <!-- End of Modal Body -->
 
       <div class="modal-footer">
-        <button type="button" [hidden]="!sharedService.loggedIn" class="btn btn-info text-white"
-          (click)="systemEdit()">Edit This Item</button>
+        <button
+          type="button"
+          [hidden]="!sharedService.loggedIn"
+          class="btn btn-info text-white"
+          (click)="systemEdit()"
+        >
+          Edit This Item
+        </button>
       </div>
     </div>
   </div>
