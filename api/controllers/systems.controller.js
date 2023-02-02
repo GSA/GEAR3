@@ -95,7 +95,7 @@ exports.updateInvest = (req, res) => {
 
 
 exports.findRecords = (req, res) => {
-  var query = `SELECT * FROM gear_ods.zk_systems_subsystems_records   AS records_mapping
+  var query = `SELECT * FROM gear_schema.zk_systems_subsystems_records   AS records_mapping
       LEFT JOIN obj_fisma_archer                                      AS systems       ON records_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
       WHERE systems.\`ex:GEAR_ID\` = ${req.params.id}
 
@@ -105,7 +105,7 @@ exports.findRecords = (req, res) => {
 };
 
 exports.findWebsites = (req, res) => {
-  var query = `SELECT * FROM gear_ods.zk_systems_subsystems_websites   AS websites_mapping
+  var query = `SELECT * FROM gear_schema.zk_systems_subsystems_websites   AS websites_mapping
       LEFT JOIN obj_fisma_archer                                      AS systems       ON websites_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
       WHERE systems.\`ex:GEAR_ID\` = ${req.params.id}
 
@@ -117,15 +117,15 @@ exports.findWebsites = (req, res) => {
 
 exports.findTechnologies = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
-    ` LEFT JOIN gear_ods.zk_systems_subsystems_technology   AS tech_mapping  ON tech.Id = tech_mapping.obj_technology_Id
-      LEFT JOIN gear_ods.obj_fisma_archer                   AS systems       ON tech_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
+    ` LEFT JOIN gear_schema.zk_systems_subsystems_technology   AS tech_mapping  ON tech.Id = tech_mapping.obj_technology_Id
+      LEFT JOIN gear_schema.obj_fisma_archer                   AS systems       ON tech_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
       WHERE obj_standard_type.Keyname LIKE '%Software%'
         AND systems.\`ex:GEAR_ID\` = ${req.params.id}
 
     GROUP BY tech.Id
     ORDER BY tech.Keyname;`;
 
-  res = ctrl.sendQuery_cowboy(query, 'related technologies for system', res);
+  res = ctrl.sendQuery(query, 'related technologies for system', res); //Removed sendQuery_cowboy reference
 };
 
 exports.updateTech = (req, res) => {

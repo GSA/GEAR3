@@ -256,7 +256,7 @@ const request = require('request');
 const cron = require('node-cron');
 const fetch = require("node-fetch");
 let base64 = require('base-64');
-
+/* 
 cron.schedule('0 20 * * *', () => {
   getData(fismaOptions.url);
 });
@@ -301,7 +301,7 @@ const putData = async data => {
   } catch (error) {
     console.log(error);
   };
-};
+}; */
 
 /*
  * Function to load POC data

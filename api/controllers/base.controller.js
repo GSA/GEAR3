@@ -1,5 +1,5 @@
 const sql = require("../db.js").connection,
-  sql_cowboy = require("../db.js").connection_cowboy,
+  // sql_cowboy  = require("../db.js").connection_cowboy,
   path = require("path"),
   fs = require("fs"),
   readline = require("readline"),
@@ -16,9 +16,9 @@ exports.sendQuery = (query, msg, response) => {
   return buildQuery(sql, query, msg, response);
 };
 
-exports.sendQuery_cowboy = (query, msg, response) => {
-  return buildQuery(sql_cowboy, query, msg, response);
-};
+// exports.sendQuery_cowboy = (query, msg, response) => {
+//   return buildQuery(sql_cowboy, query, msg, response);
+// };
 
 /**
  * @param conn

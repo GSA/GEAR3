@@ -1,6 +1,6 @@
 const ctrl = require('./base.controller');
 
-// Need to update this to a view in the database for gear_ods like cowboy_ods once everything is transitioned over to the new schema
+// Need to update this to a view in the database for gear_schema like cowboy_ods once everything is transitioned over to the new schema
 exports.searchAll = (req, res) => {
   var query = `SELECT * FROM
       (SELECT 
@@ -10,7 +10,7 @@ exports.searchAll = (req, res) => {
         'System' AS \`GEAR_Type\`,
         '{}' AS \`Other\`
       FROM
-        gear_ods.obj_fisma_archer AS systems
+        gear_schema.obj_fisma_archer AS systems
       WHERE
         systems.\`ex:SystemLevel\` = 'SubSystem'
       UNION SELECT 
@@ -20,7 +20,7 @@ exports.searchAll = (req, res) => {
         'FISMA' AS \`GEAR_Type\`,
         '{}' AS \`Other\`
       FROM
-      gear_ods.obj_fisma_archer AS fisma
+      gear_schema.obj_fisma_archer AS fisma
       WHERE
         (fisma.\`ex:SystemLevel\` = 'System') AND
         (fisma.\`ex:Status\` <> 'Pending') 
@@ -34,7 +34,7 @@ exports.searchAll = (req, res) => {
             'Comments',
             tech.\`Comments\`) AS \`Other\`
       FROM
-        cowboy_ods.obj_technology AS tech
+        obj_technology AS tech
       UNION SELECT 
         cap.\`capability_Id\` AS \`Id\`,
         cap.\`Capability_Name\` AS \`Name\`,
@@ -42,7 +42,7 @@ exports.searchAll = (req, res) => {
         'Capability' AS \`GEAR_Type\`,
         '{}' AS \`Other\`
       FROM
-        gear_ods.obj_capability AS cap
+        gear_schema.obj_capability AS cap
       UNION SELECT 
         invest.\`Investment_Id\` AS \`Id\`,
         invest.\`Investment_Name\` AS \`Name\`,
@@ -50,8 +50,8 @@ exports.searchAll = (req, res) => {
         'Investment' AS \`GEAR_Type\`,
         '{}' AS \`Other\`
       FROM
-        gear_ods.obj_investments as invest) AS global_search
-    WHERE Name LIKE '%${req.params.kw}%' or Description like '%${req.params.kw}%';`;
+        gear_schema.obj_investments as invest) AS global_search
+    WHERE Name LIKE '%${req.params.kw}%' or Description like '%${req.params.kw}%';`; // Removed cowboy_ods.obj_technology AS tech reference
 
   res = ctrl.sendQuery(query, `global search of ${req.params.kw}`, res);
 };

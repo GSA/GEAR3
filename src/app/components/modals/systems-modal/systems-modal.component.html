@@ -192,17 +192,21 @@
                         <h5>Name</h5>
                       </th>
                       <th>
-                        <h5>Phone</h5>
-                      </th>
-                      <th>
                         <h5>Email</h5>
                       </th>
                     </tr>
                   </thead>
 
-                  <tbody
-                    [innerHTML]="tableService.renderPOCInfoTable(system.POC)"
-                  ></tbody>
+                  <tbody>
+                    <tr *ngFor="let pocp of tableService.renderPOCInfoTable(system.POC)">
+                      <td> {{ pocp.type }} </td>
+                      <td> {{ pocp.name }} </td>
+                      <td> 
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{pocp.email}}" target="_blank" rel="noopener">{{ pocp.email }}</a> 
+                      </td>
+                      
+                    </tr>
+                </tbody>
                 </table>
               </div>
             </div>

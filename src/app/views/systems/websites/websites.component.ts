@@ -46,102 +46,75 @@ export class WebsitesComponent implements OnInit {
   });
 
   // Apps Table Columns
-  columnDefs: any[] = [
-    {
-      field: 'domain',
-      title: 'Domain',
-      sortable: true,
-    },
-    {
-      field: 'office',
-      title: 'Office',
-      sortable: true,
-    },
-    {
-      field: 'site_owner_email',
-      title: 'Site Owner',
-      sortable: true,
-    },
-    {
-      field: 'contact_email',
-      title: 'Contact Email',
-      sortable: true,
-    },
-    {
-      field: 'parent_domain',
-      title: 'Parent Domain',
-      sortable: true,
-    },
-    {
-      field: 'production_status',
-      title: 'Status',
-      sortable: true,
-    },
-    {
-      field: 'redirects_to',
-      title: 'Redirect URL',
-      sortable: true,
-    },
-    {
-      field: 'required_by_law_or_policy',
-      title: 'Required?',
-      sortable: true,
-    },
-    {
-      field: 'has_dap',
-      title: 'Uses DAP?',
-      sortable: true,
-    },
-    {
-      field: 'mobile_friendly',
-      title: 'Mobile Friendly?',
-      sortable: true,
-    },
-    {
-      field: 'has_search',
-      title: 'Has Search?',
-      sortable: true,
-    },
-    {
-      field: 'repository_url',
-      title: 'Repository URL',
-      sortable: true,
-    },
-    {
-      field: 'hosting_platform',
-      title: 'Hosting Platform',
-      sortable: true,
-    },
-    {
-      field: 'cms_platform',
-      title: 'Content Management Platform',
-      sortable: true,
-    },
-    {
-      field: 'https',
-      title: 'HTTPS?',
-      sortable: true,
-    },
-    {
-      field: 'current_uswds_score',
-      title: 'Current USWDS Score',
-      sortable: true,
-    },
-    {
-      field: 'sub_office',
-      title: 'Sub-office',
-      sortable: false,
-      visible: false,
-      class: 'text-truncate',
-    },
-    {
-      field: 'type_of_site',
-      title: 'Type of Site',
-      sortable: false,
-      visible: false,
-      class: 'text-truncate',
-    },
-  ];
+  columnDefs: any[] = [{
+    field: 'domain',
+    title: 'Domain',
+    sortable: true
+  }, {
+    field: 'office',
+    title: 'Office',
+    sortable: true
+  }, {
+    field: 'site_owner_email',
+    title: 'Site Owner',
+    sortable: true
+  }, {
+	field: 'contact_email',
+    title: 'Contact Email',
+    sortable: true
+  }, {
+	field: 'production_status',
+    title: 'Status',
+    sortable: true
+  }, {
+	field: 'redirects_to',
+    title: 'Redirect URL',
+    sortable: true
+  }, {
+	field: 'required_by_law_or_policy',
+    title: 'Required?',
+    sortable: true
+  }, {
+	field: 'has_dap',
+    title: 'Uses DAP?',
+    sortable: true
+  }, {
+	field: 'mobile_friendly',
+    title: 'Mobile Friendly?',
+    sortable: true
+  }, {
+	field: 'has_search',
+    title: 'Has Search?',
+    sortable: true
+  }, {
+	field: 'repository_url',
+    title: 'Repository URL',
+    sortable: true
+  }, {
+	field: 'hosting_platform',
+    title: 'Hosting Platform',
+    sortable: true
+  }, {
+	field: 'cms_platform',
+    title: 'Content Management Platform',
+    sortable: true
+  }, {
+	field: 'https',
+    title: 'HTTPS?',
+    sortable: true
+  }, {
+  field: 'sub_office',
+    title: 'Sub-office',
+    sortable: false,
+    visible: false,
+    class: 'text-truncate'
+  }, {
+    field: 'type_of_site',
+    title: 'Type of Site',
+    sortable: false,
+    visible: false,
+    class: 'text-truncate'
+  }];
 
   ngOnInit(): void {
     // Enable popovers

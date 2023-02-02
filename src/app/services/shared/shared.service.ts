@@ -186,6 +186,7 @@ export class SharedService {
   //// Date
   public dateFormatter(value, row, index, field) {
     if (value) return formatDate(value, 'MMM. dd, yyyy', 'en-US');
+    else return null;
   };
 
 

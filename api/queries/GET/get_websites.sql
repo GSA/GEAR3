@@ -1,7 +1,6 @@
 SELECT
 	id			              AS Website_ID,
   domain,
-  parent_domain,
   office,
   sub_office,
   contact_email,
@@ -12,7 +11,6 @@ SELECT
   cms_platform,
   required_by_law_or_policy,
   has_dap,
-  current_uswds_score,
   mobile_friendly,
   has_search,
   repository_url,
