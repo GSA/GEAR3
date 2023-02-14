@@ -79,7 +79,6 @@
     "make-fetch-happen": "^10.1.2",
     "minimatch": "^3.0.5",
     "minimist": "^1.2.6",
-    "moment": "^2.29.4",
     "mysql2": "^2.3.2",
     "ng-sidebar": "^9.4.2",
     "ng2-pdf-viewer": "^9.1.2",

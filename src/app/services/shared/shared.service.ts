@@ -2,7 +2,6 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { formatDate, Location } from '@angular/common';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { Router } from '@angular/router';
-import * as moment from 'moment';
 
 import { Globals } from '@common/globals';
 
@@ -186,7 +185,8 @@ export class SharedService {
 
   //// Date
   public dateFormatter(value, row, index, field) {
-    if (value) return (moment(value)).format('MMM. DD, yyyy');
+    const date = new Date(value);
+    if (value) return date.toLocaleDateString();
     else return null;
   };
 
