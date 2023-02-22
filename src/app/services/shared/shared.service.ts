@@ -185,7 +185,9 @@ export class SharedService {
 
   //// Date
   public dateFormatter(value, row, index, field) {
-    if (value) return formatDate(value, 'MMM. dd, yyyy', 'en-US');
+    const date = new Date(value);
+    if (value) return date.toLocaleDateString();
+    else return null;
   };
 
 

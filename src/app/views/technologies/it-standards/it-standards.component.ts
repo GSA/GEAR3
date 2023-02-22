@@ -54,73 +54,63 @@ export class ItStandardsComponent implements OnInit {
   });
 
   // IT Standard Table Columns
-  columnDefs: any[] = [
-    {
-      field: 'ID',
-      title: 'ID',
-      sortable: true,
-      visible: false,
-    },
-    {
-      field: 'Name',
-      title: 'Standard Name',
-      sortable: true,
-    },
-    {
-      field: 'Description',
-      title: 'Description',
-      sortable: true,
-      class: 'text-truncate',
-    },
-    {
-      field: 'Category',
-      title: 'Category',
-      sortable: true,
-    },
-    {
-      field: 'Status',
-      title: 'Status',
-      sortable: true,
-    },
-    {
-      field: 'StandardType',
-      title: 'Standard Type',
-      sortable: true,
-    },
-    {
-      field: 'DeploymentType',
-      title: 'Deployment Type',
-      sortable: true,
-    },
-    {
-      field: 'ComplianceStatus',
-      title: '508 Compliance',
-      sortable: true,
-    },
-    {
-      field: 'POC',
-      title: 'POC',
-      sortable: true,
-      visible: false,
-    },
-    {
-      field: 'POCorg',
-      title: 'POC Org',
-      sortable: true,
-      visible: false,
-    },
-    {
-      field: 'Comments',
-      title: 'Comments',
-      sortable: true,
-    },
-    {
-      field: 'ApprovalExpirationDate',
-      title: 'Approval Expiration Date',
-      sortable: true,
-      visible: false,
-    },
-  ];
+  columnDefs: any[] = [{
+    field: 'ID',
+    title: 'ID',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'Name',
+    title: 'Standard Name',
+    sortable: true
+  }, {
+    field: 'Description',
+    title: 'Description',
+    sortable: true,
+    class: 'text-wrap',
+    visible: false
+  }, {
+    field: 'Category',
+    title: 'Category',
+    sortable: true
+  }, {
+    field: 'Status',
+    title: 'Status',
+    sortable: true
+  }, {
+    field: 'StandardType',
+    title: 'Standard Type',
+    sortable: true
+  }, {
+    field: 'DeploymentType',
+    title: 'Deployment Type',
+    sortable: true
+  }, {
+    field: 'ComplianceStatus',
+    title: '508 Compliance',
+    sortable: true
+  }, {
+    field: 'POC',
+    title: 'POC',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'POCorg',
+    title: 'POC Org',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'Comments',
+    title: 'Comments',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'ApprovalExpirationDate',
+    title: 'Approval Expiration Date',
+    sortable: true,
+    visible: true,
+    formatter: this.sharedService.dateFormatter
+  }];
 
   ngOnInit(): void {
     // Enable popovers

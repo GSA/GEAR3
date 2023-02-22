@@ -58,7 +58,6 @@
                   <h4>Production Status</h4>
                   <p>{{ website.production_status }}</p>
                 </div>
-
                 <div class="col">
                   <h4>Parent Domain</h4>
                   <div>
@@ -301,142 +300,96 @@
                   <tbody>
                     <tr>
                       <td><i class="fa fa-bookmark"></i>Office</td>
-                      <td>
-                        {{ website.office ? website.office : "none provided" }}
-                      </td>
+                      <td>{{ website.office }}</td>
                     </tr>
                     <tr>
                       <td><i class="fas fa-user-lock"></i>Sub Office</td>
-                      <td>
-                        {{
-                          website.sub_office
-                            ? website.sub_office
-                            : "none provided"
-                        }}
-                      </td>
+                      <td>{{ website.sub_office }}</td>
                     </tr>
                     <tr>
                       <td>
                         <i class="fas fa-calendar-day"></i>Website Manager
                       </td>
-                      <td>
-                        {{
-                          website.site_owner_email
-                            ? website.site_owner_email
-                            : "none provided"
-                        }}
-                      </td>
+                      <td>{{ website.site_owner_email }}</td>
                     </tr>
                     <tr>
                       <td><i class="fa fa-certificate"></i>Contact Email</td>
-                      <td>
-                        {{
-                          website.contact_email
-                            ? website.contact_email
-                            : "none provided"
-                        }}
-                      </td>
+                      <td>{{ website.contact_email }}</td>
                     </tr>
                     <tr>
                       <td><i class="fas fa-info-circle"></i>Redirects to</td>
-                      <td>
-                        {{
-                          website.redirects_to ? website.redirects_to : "n/a"
-                        }}
-                      </td>
+                      <td>{{ website.redirects_to }}</td>
                     </tr>
                     <tr>
                       <td>
                         <i class="far fa-list-alt"></i>Required by Law or
                         Policy?
                       </td>
-                      <td>
-                        {{
-                          website.required_by_law_or_policy
-                            ? website.required_by_law_or_policy
-                            : "no response"
-                        }}
-                      </td>
+                      <td>{{ website.required_by_law_or_policy }}</td>
                     </tr>
                     <tr>
                       <td><i class="fas fa-hashtag"></i>Has DAP?</td>
-                      <td>{{ website.has_dap ? "Yes" : "No" }}</td>
+                      <td>{{ website.has_dap }}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <i class="far fa-address-card"></i>Current USWDS Score
+                      </td>
+                      <td>{{ website.current_uswds_score }}</td>
                     </tr>
                     <tr>
                       <td><i class="fas fa-users"></i>Mobile Friendly?</td>
-                      <td>{{ website.mobile_friendly ? "Yes" : "No" }}</td>
+                      <td>{{ website.mobile_friendly }}</td>
                     </tr>
                     <tr>
                       <td><i class="fas fa-fingerprint"></i>Has Search?</td>
-                      <td>{{ website.has_search ? "Yes" : "No" }}</td>
+                      <td>{{ website.has_search }}</td>
                     </tr>
                     <tr>
                       <td><i class="fas fa-info-circle"></i>HTTPS enabled?</td>
-                      <td>{{ website.https ? "Yes" : "No" }}</td>
+                      <td>{{ website.https }}</td>
                     </tr>
                     <tr>
                       <td>
                         <i class="fas fa-info-circle"></i>Hosting Platform
                       </td>
-                      <td>
-                        {{
-                          website.hosting_platform
-                            ? website.hosting_platform
-                            : "none provided"
-                        }}
-                      </td>
+                      <td>{{ website.hosting_platform }}</td>
                     </tr>
                     <tr>
                       <td>
                         <i class="fas fa-info-circle"></i>Content Management
                         System
                       </td>
-                      <td>
-                        {{
-                          website.cms_platform
-                            ? website.cms_platform
-                            : "none provided"
-                        }}
-                      </td>
+                      <td>{{ website.cms_platform }}</td>
                     </tr>
                     <tr>
                       <td><i class="fas fa-info-circle"></i>Repository URL</td>
-                      <td>
-                        {{
-                          website.repository_url
-                            ? website.repository_url
-                            : "none provided"
-                        }}
-                      </td>
+                      <td>{{ website.repository_url }}</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-              <div>
-                <h4>Scans</h4>
-                <table id="websiteScans"></table>
+              <!-- End of Overview Tab Pane -->
+
+              <div class="tab-pane fade" id="websiteRelatedSystems">
+                <table id="websitesRelSysTable"></table>
               </div>
             </div>
+            <!-- End of Tab Panes -->
           </div>
-          <!-- End of Overview Tab Pane -->
+          <!-- End of Modal Body -->
 
-          <div class="tab-pane fade" id="websiteRelatedSystems">
-            <table id="websitesRelSysTable"></table>
+          <div class="modal-footer">
+            <button
+              type="button"
+              [hidden]="!sharedService.loggedIn"
+              class="btn btn-info text-white"
+              (click)="websiteEdit()"
+            >
+              Edit This Item
+            </button>
           </div>
         </div>
-        <!-- End of Tab Panes -->
-      </div>
-      <!-- End of Modal Body -->
-
-      <div class="modal-footer">
-        <button
-          type="button"
-          [hidden]="!sharedService.loggedIn"
-          class="btn btn-info text-white"
-          (click)="websiteEdit()"
-        >
-          Edit This Item
-        </button>
       </div>
     </div>
   </div>

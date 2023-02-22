@@ -143,7 +143,7 @@ exports.updateAll = (req, res) => {
       ${element.u_complete_assement_for_current_fy},
       ${element.u_pii},
       ${element.u_cloud_hosted},
-      ${element.u_clound_server_provider},
+      ${element.u_hosting_provider},
       ${element.u_type_of_service},
       ${element.u_fisma_system_identifier},
       ${element.u_inactive_date},
@@ -192,5 +192,5 @@ exports.updateAll = (req, res) => {
 
   query += " SET FOREIGN_KEY_CHECKS=1;";
   // console.log("Final query string: ", query); // Debug
-  res = ctrl.sendQuery_cowboy(query, 'Loading into FISMA Archer Table', res);
+  res = ctrl.sendQuery(query, 'Loading into FISMA Archer Table', res); //removed sendQuery_cowboy reference
 };

@@ -66,7 +66,7 @@ exports.findSystems = (req, res) => {
     fs
       .readFileSync(path.join(__dirname, queryPath, "GET/get_systems.sql"))
       .toString() +
-    ` LEFT JOIN gear_ods.zk_systems_subsystems_websites AS websites_mapping ON systems.\`ex:GEAR_ID\` = websites_mapping.obj_systems_subsystems_Id
+    ` LEFT JOIN gear_schema.zk_systems_subsystems_websites AS websites_mapping ON systems.\`ex:GEAR_ID\` = websites_mapping.obj_systems_subsystems_Id
     WHERE websites_mapping.obj_websites_Id = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`;
 
   res = ctrl.sendQuery(query, "related systems for website", res);

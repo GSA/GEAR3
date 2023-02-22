@@ -20,7 +20,6 @@
   },
   "author": "IDRA - Enterprise Architecture Group",
   "dependencies": {
-    "-": "0.0.1",
     "@angular/animations": "^14.2.2",
     "@angular/cdk": "^14.2.2",
     "@angular/common": "^14.2.2",
@@ -50,6 +49,7 @@
     "es6-promise": "^4.2.8",
     "express": "^4.17.1",
     "express-jwt": "^6.1.0",
+    "express-rate-limit": "^6.7.0",
     "fast-csv": "^4.3.6",
     "follow-redirects": "^1.14.7",
     "googleapis": "^39.2.0",
