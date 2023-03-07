@@ -370,27 +370,26 @@
                 </table>
               </div>
               <!-- End of Overview Tab Pane -->
-
-              <div class="tab-pane fade" id="websiteRelatedSystems">
-                <table id="websitesRelSysTable"></table>
-              </div>
             </div>
-            <!-- End of Tab Panes -->
           </div>
-          <!-- End of Modal Body -->
-
-          <div class="modal-footer">
-            <button
-              type="button"
-              [hidden]="!sharedService.loggedIn"
-              class="btn btn-info text-white"
-              (click)="websiteEdit()"
-            >
-              Edit This Item
-            </button>
+          <div class="tab-pane fade" id="websiteRelatedSystems">
+            <table id="websitesRelSysTable"></table>
           </div>
+          <!-- End of Tab Panes -->
         </div>
+        <!-- End of Modal Body -->
       </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          [hidden]="!sharedService.loggedIn"
+          class="btn btn-info text-white"
+          (click)="websiteEdit()"
+        >
+          Edit This Item
+        </button>
+      </div>
+      <!-- end of modal content -->
     </div>
   </div>
 </div>
