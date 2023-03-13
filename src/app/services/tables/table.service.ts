@@ -6,11 +6,8 @@ import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
 import { Service_Category } from '@api/models/service-category.model';
-
-import {getBlankWebsiteScan}
-
 // Declare jQuery symbol
-declare var $: any;
+import * as $ from 'jquery';
 
 interface ClickOptions {
   data: any;
