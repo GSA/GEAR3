@@ -4,7 +4,7 @@
   "description": "Next Iteration of the GEAR portal to latest tech stack of 2020",
   "main": "server.js",
   "engines": {
-    "node": "14.20.0"
+    "node": "18.14.2"
   },
   "scripts": {
     "ng": "ng",

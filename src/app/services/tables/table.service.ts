@@ -7,7 +7,7 @@ import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
 import { Service_Category } from '@api/models/service-category.model';
 // Declare jQuery symbol
-import * as $ from 'jquery';
+declare var $: any;
 
 interface ClickOptions {
   data: any;
@@ -23,9 +23,6 @@ interface ClickOptions {
 @Injectable({
   providedIn: 'root',
 })
-
-
-
 export class TableService {
   // Systems Related Table Options
   public relSysTableOptions: {} = this.createTableOptions({
@@ -200,7 +197,7 @@ export class TableService {
           });
         break;
 
-      case 'System':  // TODO: need to change when gear_schema is fully transitioned
+      case 'System': // TODO: need to change when gear_schema is fully transitioned
         this.apiService.getOneSys(searchData.Id).subscribe((apiData: any[]) => {
           this.systemsTableClick(apiData[0]);
         });
@@ -548,14 +545,17 @@ export class TableService {
 
   // Have to render POC info separately as anchor links dont work with ngFor
   renderPOCInfoTable(pocString: string) {
-    let POCs = this.splitPOCInfo(pocString)
-    let html = ''
-    POCs.forEach(p => {
-      if (p.phone) p.phone = `
-        ${p.phone.substring(0, 4)}-${p.phone.substring(4, 7)}-${p.phone.substring(7, 11)}`
-
+    let POCs = this.splitPOCInfo(pocString);
+    let html = '';
+    POCs.forEach((p) => {
+      if (p.phone)
+        p.phone = `
+        ${p.phone.substring(0, 4)}-${p.phone.substring(
+          4,
+          7
+        )}-${p.phone.substring(7, 11)}`;
     });
-/*     POCs.forEach(p => {
+    /*     POCs.forEach(p => {
       html += `<tr>
         <td>${p.type}</td>
         <td>${p.name}</td>`;
