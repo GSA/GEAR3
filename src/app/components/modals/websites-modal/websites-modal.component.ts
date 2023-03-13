@@ -98,11 +98,6 @@ export class WebsitesModalComponent implements OnInit {
       })
     );
 
-    $('#websiteScans').bootstrapTable({
-      columns: this.websiteScanColumnDefs,
-      data: [],
-    });
-
     // Method to handle click events on the Related Systems table
     $(document).ready(
       $('#websitesRelSysTable').on(
