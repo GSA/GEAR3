@@ -195,7 +195,7 @@ export class WebsitesComponent implements OnInit {
   resetTableFilters() {
     $('#websitesTable').bootstrapTable('filterBy', {
       production_status: ['production', 'archived'],
-      type_of_site: ['informational', 'application', 'application login'],
+      type_of_site: ['Informational', 'Application', 'Application Login'],
     });
   }
 }
