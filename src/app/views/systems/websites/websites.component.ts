@@ -129,8 +129,8 @@ export class WebsitesComponent implements OnInit {
     {
       field: 'type_of_site',
       title: 'Type of Site',
-      sortable: false,
-      visible: false,
+      sortable: true,
+      visible: true,
       class: 'text-truncate',
     },
   ];
@@ -184,17 +184,17 @@ export class WebsitesComponent implements OnInit {
   //The following is adapted from fisma.component.ts to filter on multiple columns of data rather than one
   // Update table to Cloud Business Systems
   showDecommissioned() {
-    this.filteredTable = true; // Expose main table button after "Cloud Enabled" button is pressed
+    this.filteredTable = true;
 
     // Filter to only "Cloud" Business Systems/Subsystems
     $('#websitesTable').bootstrapTable('filterBy', {
-      Status: ['decommissioned'],
+      production_status: ['decommissioned'],
     });
   }
 
   resetTableFilters() {
     $('#websitesTable').bootstrapTable('filterBy', {
-      Status: ['production', 'archived'],
+      production_status: ['production', 'archived'],
       type_of_site: ['informational', 'application', 'application login'],
     });
   }
