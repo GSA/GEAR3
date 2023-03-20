@@ -181,14 +181,24 @@ export class WebsitesComponent implements OnInit {
     });
   }
 
-  //The following is adapted from fisma.component.ts to filter on multiple columns of data rather than one
-  // Update table to Cloud Business Systems
   showDecommissioned() {
     this.filteredTable = true;
-
-    // Filter to only "Cloud" Business Systems/Subsystems
     $('#websitesTable').bootstrapTable('filterBy', {
       production_status: ['decommissioned'],
+    });
+  }
+
+  showRedirect() {
+    this.filteredTable = true;
+    $('#websitesTable').bootstrapTable('filterBy', {
+      production_status: ['redirect'],
+    });
+  }
+
+  showStaging() {
+    this.filteredTable = true;
+    $('#websitesTable').bootstrapTable('filterBy', {
+      production_status: ['staging'],
     });
   }
 
@@ -197,5 +207,6 @@ export class WebsitesComponent implements OnInit {
       production_status: ['production', 'archived'],
       type_of_site: ['Informational', 'Application', 'Application Login'],
     });
+    this.filteredTable = false;
   }
 }
