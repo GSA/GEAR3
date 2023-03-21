@@ -213,9 +213,8 @@ export class TemplatePageTitleStrategy extends TitleStrategy {
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, {
-      useHash: true,
-      relativeLinkResolution: 'legacy',
-    }),
+    useHash: true
+}),
   ],
   exports: [RouterModule],
   providers: [{ provide: TitleStrategy, useClass: TemplatePageTitleStrategy }],
