@@ -3,6 +3,7 @@ SELECT
   
 	systems.`ex:Responsible_Org`                        	AS RespOrg,
 	systems_ext.Business_Org                            	AS BusOrg,
+  org.Org_Symbol                                        AS BusOrgSymbol,
 	CASE  -- If there is no normalized name, use Archer's system name
     WHEN systems_ext.Normalized_Name IS NULL THEN systems.`ex:System_Name`
     ELSE systems_ext.Normalized_Name
@@ -54,3 +55,4 @@ SELECT
 FROM gear_schema.obj_fisma_archer AS systems
 
 LEFT JOIN gear_schema.obj_systems_subsystems AS systems_ext ON systems.`ex:GEAR_ID` = systems_ext.GEAR_ID
+LEFT JOIN gear_schema.obj_organization as org ON org.Organization_Id = systems_ext.obj_org_SSO_Id
