@@ -2,10 +2,12 @@ export class System {
   public ID: number;
   public RespOrg: string;
   public BusOrg: string;
+  public BusOrgSymbol: string;
   public Name: string;
   public DisplayName: string;
   public FedContractorLoc: string;
   public FIPS_Impact_Level: string;
+  public BusApp: string;
   public ATODate: Date;
   public ATOType: Date;
   public RenewalDate: Date;
