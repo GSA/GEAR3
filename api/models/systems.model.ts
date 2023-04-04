@@ -2,7 +2,7 @@ export class System {
   public ID: number;
   public RespOrg: string;
   public BusOrg: string;
-  public BusOrgSymbol: string;
+  public BusOrgSymbolAndName: string;
   public Name: string;
   public DisplayName: string;
   public FedContractorLoc: string;

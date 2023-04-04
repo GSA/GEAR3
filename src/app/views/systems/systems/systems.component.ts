@@ -267,7 +267,7 @@ export class SystemsComponent implements OnInit {
     this.apiService.getSystems().subscribe((data: any[]) => {
       // Get counts by SSO
       var counts = data.reduce((p, c) => {
-        var name = c.BusOrgSymbol;
+        var name = c.BusOrgSymbolAndName;
         if (
           !p.hasOwnProperty(name) &&
           c.Status == 'Active' &&
