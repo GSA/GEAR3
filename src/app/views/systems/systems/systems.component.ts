@@ -108,6 +108,11 @@ export class SystemsComponent implements OnInit {
       sortable: true,
     },
     {
+      field: 'BusOrgSymbolAndName',
+      title: 'SSO/CXO',
+      sortable: true,
+    },
+    {
       field: 'BusOrg',
       title: 'Business Org',
       sortable: true,
@@ -267,7 +272,7 @@ export class SystemsComponent implements OnInit {
     this.apiService.getSystems().subscribe((data: any[]) => {
       // Get counts by SSO
       var counts = data.reduce((p, c) => {
-        var name = c.RespOrg;
+        var name = c.BusOrgSymbolAndName;
         if (
           !p.hasOwnProperty(name) &&
           c.Status == 'Active' &&
@@ -442,7 +447,7 @@ export class SystemsComponent implements OnInit {
     $('#systemTable').bootstrapTable('filterBy', {
       Status: ['Active'],
       BusApp: 'Yes',
-      RespOrg: chartData.name,
+      BusOrgSymbolAndName: chartData.name,
     });
     $('#systemTable').bootstrapTable('refreshOptions', {
       exportOptions: {
