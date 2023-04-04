@@ -125,16 +125,26 @@ export class ItStandardManagerComponent implements OnInit {
 
   setFormDefaults(): void {
     // Only set status default for creating new record
+    const twoYearsLater = new Date();
+    twoYearsLater.setFullYear(twoYearsLater.getFullYear() + 2);
+    
     if (this.createBool) {
       this.itStandardsForm.reset();  // Clear any erroneous values if any
+      // Set Approval Expiration Date on Date Picker to +2 years from current date
+      $('#itStandAprvExp').datepicker('setDate', twoYearsLater);
       this.itStandardsForm.patchValue({
         itStandStatus: 2
       });
     } else {
-      console.log(this.itStandard);
+
       // Set Approval Expiration Date on Date Picker
-      this.aprvExpDate = new Date(this.itStandard.ApprovalExpirationDate);
-      $('#itStandAprvExp').datepicker('setDate', this.aprvExpDate);
+      const datecheck = new Date();
+      if (this.itStandard.ApprovalExpirationDate !== null) {
+        this.aprvExpDate = new Date(this.itStandard.ApprovalExpirationDate);
+        $('#itStandAprvExp').datepicker('setDate', this.aprvExpDate);
+      } else {
+        $('#itStandAprvExp').datepicker('setDate', twoYearsLater);
+      }
 
       // Parse and find IDs for list of POCs
       var pocIDs = [];
@@ -146,12 +156,11 @@ export class ItStandardManagerComponent implements OnInit {
         });
       };
 
-      // Adjust MyView for rendering
-      if (this.itStandard.Available_through_Myview === 'T') var myView = true;
-      else var myView = false;
+      // Adjust MyView for rendering - could turn this into one line:
+      var myView = this.itStandard.Available_through_Myview === 'T' 
 
-      if (this.itStandard.Gold_Image === 'T') var goldImg = true;
-      else var goldImg = false;
+      // Adjust Gold Image for rendering
+      var goldImg = this.itStandard.Gold_Image === 'T'
 
       // Parse and find IDs for list of Categories
       var categoryIDs = [];
@@ -183,7 +192,7 @@ export class ItStandardManagerComponent implements OnInit {
   };
 
   submitForm() {
-    // console.log("Form: ", this.itStandardsForm);  // Debug
+    //console.log("Form: ", this.itStandardsForm);  // Debug
 
     if (this.itStandardsForm.valid) {
       // Adjust MyView & Gold Image for saving
@@ -194,14 +203,15 @@ export class ItStandardManagerComponent implements OnInit {
       else this.itStandardsForm.value.itStandGoldImg = 'F';
 
       // Set Date from Date Picker
-      if (this.itStandardsForm.value.itStandAprvExp) {
-        this.itStandardsForm.value.itStandAprvExp = formatDate($('#itStandAprvExp').datepicker('getFormattedDate'), 'yyyy-MM-dd', 'en-US');
+      if ($('#itStandAprvExp').data('datepicker')) {
+        this.itStandardsForm.value.itStandAprvExp = $('#itStandAprvExp').data('datepicker').getFormattedDate('yyyy-mm-dd');
       }
 
       // Adjust for N/A text fields
       if (!this.itStandardsForm.value.itStandVendorOrg) this.itStandardsForm.value.itStandVendorOrg = 'N/A';
       if (!this.itStandardsForm.value.itStandGoldComment) this.itStandardsForm.value.itStandGoldComment = 'N/A';
       if (!this.itStandardsForm.value.itStandComments) this.itStandardsForm.value.itStandComments = 'N/A';
+      if (!this.itStandardsForm.value.itStand508) this.itStandardsForm.value.itStand508 = '3';
 
       // Add username to payload
       this.itStandardsForm.value.auditUser = this.globals.authUser;
