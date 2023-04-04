@@ -10,20 +10,37 @@
     </h3>
 
     <!-- GEAR Manager Access -->
-    <a class="btn btn-sm btn-info text-white shadow mngr-btn d-flex align-items-center justify-content-center"
-      routerLink="/gear_manager" *ngIf="!sharedService.loggedIn" aria-label="GEAR Manager Login" (click)="sharedService.setRedirectPath()">
-      <span class="mr-2">GEAR Manager Login</span><i class="fa fa-sign-in-alt fa-2x"></i>
+    <a
+      class="btn btn-sm btn-info text-white shadow mngr-btn d-flex align-items-center justify-content-center"
+      routerLink="/gear_manager"
+      *ngIf="!sharedService.loggedIn"
+      aria-label="GEAR Manager Login"
+      (click)="sharedService.setRedirectPath()"
+    >
+      <span class="mr-2">GEAR Manager Login</span
+      ><i class="fa fa-sign-in-alt fa-2x"></i>
     </a>
-    <a class="btn btn-sm btn-danger text-white shadow mngr-btn d-flex align-items-center justify-content-center"
-      routerLink="/systems" *ngIf="sharedService.loggedIn" aria-label="GEAR Manager Logout" (click)="sharedService.logoutManager()">
+    <a
+      class="btn btn-sm btn-danger text-white shadow mngr-btn d-flex align-items-center justify-content-center"
+      routerLink="/systems"
+      *ngIf="sharedService.loggedIn"
+      aria-label="GEAR Manager Logout"
+      (click)="sharedService.logoutManager()"
+    >
       <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
     </a>
-    
+
     <!-- Help Button -->
-    <a tabindex="0"
+    <a
+      tabindex="0"
       class="btn btn-sm btn-info text-white shadow help-btn d-flex align-items-center justify-content-center"
-      role="button" data-toggle="popover" data-trigger="focus" data-placement="auto" data-html="true"
-      title="Help Using this Table" data-content="<b>Details:</b> Left click on a row within the table to view additional details.
+      role="button"
+      data-toggle="popover"
+      data-trigger="focus"
+      data-placement="auto"
+      data-html="true"
+      title="Help Using this Table"
+      data-content="<b>Details:</b> Left click on a row within the table to view additional details.
         <br><br>
         <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
         <br><br>
@@ -35,28 +52,45 @@
         Search within specific columns by clicking on the <i class='fas fa-angle-down'></i> icon. 
         <br><br>
         <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
-        <i class='fas fa-caret-square-down'></i> icon to display everything on one page.">
-      <span class="mr-2">More Help</span><i class="far fa-question-circle fa-2x"></i>
+        <i class='fas fa-caret-square-down'></i> icon to display everything on one page."
+    >
+      <span class="mr-2">More Help</span
+      ><i class="far fa-question-circle fa-2x"></i>
     </a>
   </div>
 
   <div class="card-body card-text">
     <!-- System/Sub-System Definition Popover -->
-    <a tabindex="0" class="btn btn-sm btn-info text-white position-absolute float-right w-11" role="button" data-toggle="popover"
-      data-trigger="focus" data-placement="auto" data-html="true" title="" data-content="A system is based upon 
+    <a
+      tabindex="0"
+      class="btn btn-sm btn-info text-white position-absolute float-right w-11"
+      role="button"
+      data-toggle="popover"
+      data-trigger="focus"
+      data-placement="auto"
+      data-html="true"
+      title=""
+      data-content="A system is based upon 
       a hierarchical organization where systems and sub-systems are ranked one above the other according to status, authority 
       or access point.  From one system, you have access to other subsystems.
-      <img src='/assets/img/systems.png'>">
+      <img src='/assets/img/systems.png'>"
+    >
       System/Sub-System Definition
     </a>
 
     <!-- Visualizations -->
-    <div id="sysViz" class="row justify-content-center collapse show" style="height: 300px;" [hidden]="filterTitle == 'Active'">
+    <div
+      id="sysViz"
+      class="row justify-content-center collapse show"
+      style="height: 300px"
+      [hidden]="filterTitle == 'Active'"
+    >
       <ngx-charts-advanced-pie-chart
         [scheme]="colorScheme"
         [results]="vizData"
         [label]="vizLabel"
-        (select)="onSelect($event)">
+        (select)="onSelect($event)"
+      >
       </ngx-charts-advanced-pie-chart>
     </div>
 
@@ -64,18 +98,36 @@
       <!-- Filters -->
       <div class="mx-auto">
         <span class="my-auto mr-3">Add'l Filter Buttons:</span>
-        <button role="button" name="sysCloudBttn" class="btn btn-primary" (click)="showCloud()">
-          Cloud Enabled</button>
-        <button role="button" name="sysInactiveBttn" class="btn btn-primary" (click)="showInactive()">
-          Inactive</button>
+        <button
+          role="button"
+          name="sysCloudBttn"
+          class="btn btn-primary"
+          (click)="showCloud()"
+        >
+          Cloud Enabled
+        </button>
+        <button
+          role="button"
+          name="sysInactiveBttn"
+          class="btn btn-primary"
+          (click)="showInactive()"
+        >
+          Inactive
+        </button>
         <!-- Remove Pending button based on security feedback. 
         <button role="button" name="sysPendingBttn" class="btn btn-primary" (click)="showPending()">
         Pending</button>
         -->
 
-        <button role="button" name="sysBttn" class="btn btn-primary ml-3" (click)="backToMainSys()"
-          [hidden]="!filteredTable">
-          Back to All Active Systems</button>
+        <button
+          role="button"
+          name="sysBttn"
+          class="btn btn-primary ml-3"
+          (click)="backToMainSys()"
+          [hidden]="!filteredTable"
+        >
+          Back to All Active Systems
+        </button>
       </div>
     </div>
 

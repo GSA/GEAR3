@@ -3,11 +3,11 @@ SELECT
   
 	systems.`ex:Responsible_Org`                        	AS RespOrg,
 	systems_ext.Business_Org                            	AS BusOrg,
-  org.Display_Name                                        AS BusOrgSymbolAndName,
+  org.Display_Name                                      AS BusOrgSymbolAndName,
 	CASE  -- If there is no normalized name, use Archer's system name
     WHEN systems_ext.Normalized_Name IS NULL THEN systems.`ex:System_Name`
     ELSE systems_ext.Normalized_Name
-  END AS Name,
+  END                                                   AS Name,
   systems_ext.Display_Name					                    AS DisplayName,
   systems.`ex:FederalContractor`                      	AS FedContractorLoc,
   systems.`ex:FIPS_Impact_Level`                      	AS FIPS_Impact_Level,
