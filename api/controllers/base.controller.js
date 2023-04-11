@@ -34,7 +34,7 @@ function buildQuery(conn, query, msg, response) {
         message: error.message || `DB Query Error while executing ${msg}`,
       });
     } else {
-      // console.log("Query Response: ", response);  // Debug
+      console.log("Query Response: ", response);  // Debug
       response.status(200).json(data);
     }
   });
@@ -50,6 +50,7 @@ exports.emptyTextFieldHandler = (content) => {
 /* **** Google API ****
 All this needs to be refactored as to not be so redundant*/
 exports.googleMain = (response, method, sheetID, dataRange, key = null) => {
+  console.log("googleMain()");
   // Load client secrets from a local file.
   fs.readFile("certs/gear_google_credentials.json", (err, content) => {
     if (err) {
@@ -63,7 +64,9 @@ exports.googleMain = (response, method, sheetID, dataRange, key = null) => {
     var callback_method = null;
     if (method === "all") callback_method = retrieveAll;
     else if (method === "single") callback_method = single;
+    else if (method === "refresh") callback_method = refresh;
 
+    console.log("callback_method: ", callback_method);
     // Authorize a client with credentials, then call the Google Sheets API.
     authorize(
       JSON.parse(content),
@@ -101,7 +104,6 @@ function authorize(
   // Check if we have previously stored a token.
   fs.readFile(TOKEN_PATH, (err, token) => {
     oAuth2Client.setCredentials(JSON.parse(token));
-
     oAuth2Client.on("tokens", (tokens) => {
       if (tokens.refresh_token) {
         oAuth2Client.setCredentials({
@@ -147,11 +149,104 @@ function retrieveAll(auth, response, sheetID, dataRange) {
           }
           data.push(row);
         }
-
         sendResponse(response, data);
       }
     }
   );
+}
+
+// This function refreshes the data in the database using the data from the spreadsheet
+function refresh(auth, response, sheetID, dataRange) {
+
+  // Get the data from the spreadsheet
+  const sheets = google.sheets({ version: "v4", auth });
+  sheets.spreadsheets.values.get(
+    {
+      spreadsheetId: sheetID,
+      range: dataRange,
+    },
+    (err, res) => {
+
+      // If there is an error with the API call to the spreadsheet return the error
+      if (err) {
+        sendResponse(response, { error: "The API returned an error: " + err });
+        return;
+      }
+
+      // Get the rows from the spreadsheet
+      const rows = res.data.values;
+
+      // If rows is not empty
+      if (rows.length <= 0 || rows == undefined) {
+        sendResponse(response, { error: "No data found." });
+        return;
+      }
+      console.log("Mapping values...")
+      // Map values
+      var m = new Map();
+
+
+      // Keep track of how many rows are being processed
+      rowCounter = 0
+
+      // Map records to systems
+      rows.forEach((r) => {
+        // If the map does not contain the key, create an empty array
+        if (!m.has(r[1])) {
+          //Insert new key with empty array
+          m.set(r[1], []);
+        }
+        // Push the value into the array
+        m.get(r[1]).push(r[0]);
+
+          // increment the rowCounter
+          rowCounter++
+        })
+
+      // Logs the records to the console.
+      // for (let record of m.keys()) {
+      //   console.log(`${record}:`, m.get(record))
+      //}
+
+
+      // Build DML statements from the map ================================================================================
+      console.log("Building DML Statements...")
+      // Insert new IDs
+      let systemString = ""
+
+      // Keep track of how many DML statements are being sent
+      dmlStatementCounter = 0
+
+      // Keep track of how many inserts are being sent
+      insertCounter = 0
+
+      // Iterate through the map
+      for (let recordsId of m.keys()) {
+        // Delete all records for the given recordsId
+        systemString += `DELETE FROM zk_systems_subsystems_records WHERE obj_records_Id=${recordsId}; `;
+        dmlStatementCounter++
+        // Insert new records for the given recordsId
+        for (let systemId of m.get(recordsId)) {
+          // Append the DML statement to the string
+          systemString += `INSERT INTO zk_systems_subsystems_records (obj_records_Id, obj_systems_subsystems_Id) VALUES (${recordsId}, ${systemId}); `;
+          dmlStatementCounter++
+          insertCounter++
+        }
+      }
+
+      // Send the DML statements to the database
+      console.log("Sending DML Statements: " + dmlStatementCounter)
+      buildQuery(sql, `${systemString}`, "Sending refresh all query using Google Sheet", res)
+      // Send the response
+      response.status(200).json({
+        "Total executions": dmlStatementCounter,
+        "Total inserts": insertCounter,
+        "Total rows": rowCounter,
+      });
+
+    }
+  );
+
 }
 
 /**
@@ -220,3 +315,4 @@ function sendResponse(response, data) {
       .status(507)
       .json({ error: "The API returned an error: " + err });
 }
+
