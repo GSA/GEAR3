@@ -34,7 +34,8 @@ function buildQuery(conn, query, msg, response) {
         message: error.message || `DB Query Error while executing ${msg}`,
       });
     } else {
-      console.log("Query Response: ", response);  // Debug
+      //console.log("Query Response: ", response);  // Debug
+      console.log("Query Response: HIT!"); // Debug
       response.status(200).json(data);
     }
   });
@@ -236,7 +237,7 @@ function refresh(auth, response, sheetID, dataRange) {
 
       // Send the DML statements to the database
       console.log("Sending DML Statements: " + dmlStatementCounter)
-      buildQuery(sql, `${systemString}`, "Sending refresh all query using Google Sheet", res)
+      buildQuery(sql, `${systemString}`, "Sending refresh all query using Google Sheet", response)
       // Send the response
       response.status(200).json({
         "Total executions": dmlStatementCounter,
