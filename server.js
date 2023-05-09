@@ -103,6 +103,7 @@ PASSPORT ROUTES
 1. AUTH ENTRY POINT (STARTS WITH A SAML ASSERTION)
 ********************************************************************/
 app.get('/beginAuth', passport.authenticate('saml'), (req, res) => {
+  console.log('beginAuth');
   // TODO: is this saml-protected route still necessary? or can we
   // change the client src to use /admin (no-hash) instead? Perhaps
   // it's needed while running the React app in dev b/c its proxy.

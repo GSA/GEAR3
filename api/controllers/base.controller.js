@@ -35,7 +35,6 @@ function buildQuery(conn, query, msg, response) {
       });
     } else {
       //console.log("Query Response: ", response);  // Debug
-      console.log("Query Response: HIT!"); // Debug
       response.status(200).json(data);
     }
   });
