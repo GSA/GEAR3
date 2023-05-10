@@ -65,3 +65,4 @@ Thumbs.db
 # Images not meant for version control
 /src/assets/website-screenshots
 /website-screenshots
+debug.log

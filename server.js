@@ -187,6 +187,18 @@ app.post(samlConfig.path,
   </body>
 </html>
 `
+          
+          // Log GEAR Manager login
+          db.query(`insert into log.event (Id, Event, DTG) values (last_insert_id(), 'GEAR Manager ${samlProfile.nameID} logged in', now()); `, 
+            (err, results, fields) => {
+              if (err) {
+                console.log(err);
+                response.status(501);
+                res.json({ error: err });
+              }
+            }
+          );
+
           res.send(html);
         }
       }
