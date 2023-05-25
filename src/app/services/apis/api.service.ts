@@ -317,6 +317,25 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError<Record[]>('UPDATE Record-System', [])));
   }
+  public updateAllRecordSys(data: {}): Observable<Record[]> {
+    if (this.globals.jwtToken) {
+      var httpOptions = this.setHeaderOpts();
+    } else {
+      catchError(
+        this.handleError<Record[]>(
+          'UPDATE All Record-System - No Authentication Token',
+          []
+        )
+      );
+    }
+
+    return this.http
+      .put<Record[]>(
+        this.recordsUrl + '/updateAllSystems',
+        data,
+        httpOptions)
+      .pipe(catchError(this.handleError<Record[]>('UPDATE All Record-System', [])));
+  }
 
   //// Service Category
   public getWebsiteServiceCategory(): Observable<Service_Category[]> {

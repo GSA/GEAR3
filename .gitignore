@@ -3,6 +3,7 @@
 #----- Custom Ignores -----
 # sensitive data
 .env
+copy.env
 /iisnode
 /certs
 /log/*

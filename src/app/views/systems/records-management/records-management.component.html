@@ -39,6 +39,17 @@
   </div>
 
   <div class="card-body card-text">
+    <!-- GEAR Manager Google API Call  -->
+    <a class="btn btn-primary"
+       *ngIf="sharedService.loggedIn"
+       (click)="runUpdateAllRecordSys()">
+       Update All Related Records
+       </a>
+       <span class="my-auto mr-3">{{ updateAllInfoData.ran_by }}</span>
+       <span class="my-auto mr-3">{{ updateAllInfoData.last_ran }}</span>
+
+
+
     <!-- Main Table -->
     <table id="recordsTable"></table>
   </div>

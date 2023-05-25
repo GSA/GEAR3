@@ -42,6 +42,20 @@ function buildQuery(conn, query, msg, response) {
   return response;
 }
 
+function buildLogQuery(conn, query, msg, response) {
+  conn.query(query, (error, data) => {
+    if (error) {
+      console.log(`DB Log Query Error while executing ${msg}: `, error);
+      //response.status(501).json({message: error.message || `DB Query Error while executing ${msg}`,});
+    } else {
+      console.log("DB Log Query Response: ");  // Debug
+      //response = JSON.stringify(data);
+    }
+  });
+
+  return response;
+}
+
 exports.emptyTextFieldHandler = (content) => {
   if (!content) return "NULL";
   else return `'${content}'`;
@@ -158,6 +172,9 @@ function retrieveAll(auth, response, sheetID, dataRange) {
 // This function refreshes the data in the database using the data from the spreadsheet
 function refresh(auth, response, sheetID, dataRange) {
 
+  // log the start of the refresh to the database
+  buildLogQuery(sql, `insert into log.event (Id, Event, DTG) values (last_insert_id(), 'UPDATE zk_systems_subsystems_records ran by [user_email]', now()); `, "log_update_zk_systems_subsystems_records", response);
+  
   // Get the data from the spreadsheet
   const sheets = google.sheets({ version: "v4", auth });
   sheets.spreadsheets.values.get(
@@ -234,14 +251,22 @@ function refresh(auth, response, sheetID, dataRange) {
         }
       }
 
-      // Send the DML statements to the database
       console.log("Sending DML Statements: " + dmlStatementCounter)
-      buildQuery(sql, `${systemString}`, "Sending refresh all query using Google Sheet", response)
+
+      // Send the DML statements to the database 
+      buildLogQuery(sql, `${systemString}`, "Sending refresh all query using Google Sheet", response)
+
+      console.log("Finised sending DML Statements")
+
+      let date = new Date();
+
       // Send the response
       response.status(200).json({
-        "Total executions": dmlStatementCounter,
-        "Total inserts": insertCounter,
-        "Total rows": rowCounter,
+        "tot_executions": dmlStatementCounter,
+        "tot_inserts": insertCounter,
+        "tot_rows": rowCounter,
+        "ran_by": "[username]",
+        "last_ran": (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
       });
 
     }

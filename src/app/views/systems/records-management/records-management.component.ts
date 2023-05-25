@@ -17,6 +17,8 @@ declare var $: any;
   styleUrls: ['./records-management.component.css'],
 })
 export class RecordsManagementComponent implements OnInit {
+  updateAllInfoData: any = "";
+  
   constructor(
     private apiService: ApiService,
     private location: Location,
@@ -167,5 +169,17 @@ export class RecordsManagementComponent implements OnInit {
         });
       }
     });
+  }
+
+  runUpdateAllRecordSys(){
+    console.log("Starting update all record system data...")
+    let data: any = ""
+    this.apiService.updateAllRecordSys(data).toPromise()
+      .then((data: any[]) => {
+        console.log(data);
+        this.updateAllInfoData = data;
+        //alert(data)
+        console.log("Finished update all record system data...")
+      })
   }
 }
