@@ -19,6 +19,8 @@ router.route('/updateSystems/:id')
 router.route('/updateAllSystems')
   .put(recordsCtrl.refreshAllSystems);
 
+router.route('/logEvent')
+  .post(recordsCtrl.logEvent);
 
 
 module.exports = router;

@@ -8,6 +8,8 @@ import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
 
+import { trigger, state, style, animate, transition } from '@angular/animations';
+
 // Declare jQuery symbol
 declare var $: any;
 
@@ -15,9 +17,20 @@ declare var $: any;
   selector: 'records-management',
   templateUrl: './records-management.component.html',
   styleUrls: ['./records-management.component.css'],
+  animations: [
+    trigger('loadingAnimation', [
+      state('true', style({ opacity: 1 })),
+      state('false', style({ opacity: 0 })),
+      transition('true <=> false', animate('500ms ease-in-out')),
+    ]),
+  ],
 })
 export class RecordsManagementComponent implements OnInit {
   updateAllInfoData: any = "";
+
+  isLoading: boolean = false;
+  isDone: boolean = false;
+  isError: boolean = false;
   
   constructor(
     private apiService: ApiService,
@@ -174,12 +187,52 @@ export class RecordsManagementComponent implements OnInit {
   runUpdateAllRecordSys(){
     console.log("Starting update all record system data...")
     let data: any = ""
-    this.apiService.updateAllRecordSys(data).toPromise()
+
+    // log execute to database
+    this.apiService.logEvent({type: 'log', message: 'Update All Records System executed', user: this.sharedService.authUser}).toPromise()
+    .then((data: any[]) => {
+      console.log(data);
+    });
+
+    // Display loading animation
+    this.isLoading = true;
+    // Reset Process Done
+    this.isDone = false;
+    // Reset the error
+    this.isError = false;
+
+    try {
+      // call api to update all record system data
+      this.apiService.updateAllRecordSys(data).toPromise()
       .then((data: any[]) => {
         console.log(data);
+        
+        // Set data
         this.updateAllInfoData = data;
-        //alert(data)
-        console.log("Finished update all record system data...")
+        // Hide loading animation
+        this.isLoading = false;
+        // Set Process Done
+        this.isDone = true;
+        // Set error false
+        this.isError = false;
+        
+        console.log("Finished update all record system data.")
       })
+    } catch (error) {
+      console.log("Update All Records System rejected with " + JSON.stringify(error));
+        
+      // log error to database
+      this.apiService.logEvent({type: 'error', message: 'Update All Records System rejected with ' + JSON.stringify(error), user: this.sharedService.authUser}).toPromise()
+      .then((data: any[]) => {
+        console.log(data);
+      });
+
+      // Hide loading animation when error
+      this.isLoading = false;
+      // Set Process Done on error
+      this.isDone = true;
+      // Set error true
+      this.isError = true;
+      }
   }
 }

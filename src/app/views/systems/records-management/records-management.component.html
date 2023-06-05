@@ -39,16 +39,23 @@
   </div>
 
   <div class="card-body card-text">
-    <!-- GEAR Manager Google API Call  -->
-    <a class="btn btn-primary"
-       *ngIf="sharedService.loggedIn"
-       (click)="runUpdateAllRecordSys()">
-       Update All Related Records
-       </a>
-       <span class="my-auto mr-3">{{ updateAllInfoData.ran_by }}</span>
-       <span class="my-auto mr-3">{{ updateAllInfoData.last_ran }}</span>
-
-
+    <!-- GEAR Manager Google API Call button -->
+    <a class="btn btn-primary" style="color:white"
+       *ngIf="sharedService.loggedIn && !isLoading && !isDone"
+       (click)="runUpdateAllRecordSys()">Update All Related Records</a>
+    <!-- GEAR Manager Google API Call updating animation -->
+    <div *ngIf="isLoading" [@loadingAnimation]="isLoading ? 'true' : 'false'">
+      <p>Updating...</p>
+    </div>
+    <!-- GEAR Manager Google API Call Response -->
+    <div *ngIf="!isLoading && sharedService.loggedIn && isDone">
+      <p>
+        <b>Update All Related Records</b><span *ngIf="!isError && isDone" style="color:green"> - Completed Successfully!</span><span *ngIf="isError && isDone" style="color:red"> - Error</span><br>
+        Last Ran On: {{ updateAllInfoData.last_ran }}<br>
+        By: {{ updateAllInfoData.ran_by }}<br>
+        <b>{{ updateAllInfoData.tot_inserts }} rows inserted.</b>
+      </p>
+    </div>
 
     <!-- Main Table -->
     <table id="recordsTable"></table>

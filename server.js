@@ -190,7 +190,7 @@ app.post(samlConfig.path,
 `
           
           // Log GEAR Manager login
-          db.query(`insert into log.event (Id, Event, DTG) values (last_insert_id(), 'GEAR Manager ${samlProfile.nameID} logged in', now()); `, 
+          db.query(`insert into log.event (Event, User, DTG) values ('GEAR Manager Successful Login', '${results[0][0].AuditID}', now()); `, 
             (err, results, fields) => {
               if (err) {
                 console.log(err);
@@ -353,3 +353,62 @@ cron.schedule('0 7 * * WED', () => {
 
   stream.pipe(csvStream);
 });
+
+// Google API Pull to run every weekday at 2:00 AM
+cron.schedule('0 2 * * 1-5', () => {
+//cron.schedule('*/5 * * * 1-5', () => { //DEBUGGING
+  console.log(getCurrentDatetime() + 'CRON JOB: Google API Pull (runs every weekday at 2:00 AM) - Starting');
+  logServerEvent("CRON JOB: Google API Pull Executed");
+  // run the fetch request to get the data from the Google Sheet
+  putUpdateAllSystems("");
+});
+
+// called by Google API Pull
+const putUpdateAllSystems = async data => {
+  try {
+    // run the fetch request to update all systems
+    const response = await fetch('http://localhost:3000/api/records/updateAllSystems', {
+      method: 'PUT',
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "true",
+        Requester: "gearCronJ"
+      },
+      body: data//JSON.stringify(data)
+    });
+
+    const responseJson = await response.json();
+    console.log(getCurrentDatetime()+'CRON JOB: Google API Pull (runs every weekday at 2:00 AM) - Finished')
+  } catch (error) {
+    // log any errors
+    console.log(getCurrentDatetime()+error);
+  };
+};
+
+// logs an event on the server to the db
+const logServerEvent = async data => {
+  console.log("logServerEvent ("+data+")")
+  // create the data object to send to the server
+  data = {type: 'log/error', message: data, user: "GearCronJ"};
+  try {
+    // run the fetch request to post the log event
+    const response = await fetch('http://localhost:3000/api/records/logEvent', {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "true",
+      },
+      body: JSON.stringify(data)
+    });
+    const responseJson = await response.json();
+  } catch (error) {
+    // log any errors
+    console.log(getCurrentDatetime()+" "+error);
+  };
+};
+
+function getCurrentDatetime() {
+  const currentDate = new Date();
+  const datetimeString = currentDate.toISOString().slice(0, 19).replace('T', ' ') + ': ';
+  return datetimeString;
+}

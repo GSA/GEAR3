@@ -336,6 +336,24 @@ export class ApiService {
         httpOptions)
       .pipe(catchError(this.handleError<Record[]>('UPDATE All Record-System', [])));
   }
+  public logEvent(data: {}): Observable<Record[]> {
+    if (this.globals.jwtToken) {
+      var httpOptions = this.setHeaderOpts();
+    } else {
+      catchError(
+        this.handleError<Record[]>(
+          'Log Event - No Authentication Token',
+          []
+        )
+      );
+    }
+
+    return this.http
+      .post<Record[]>(this.recordsUrl + '/logEvent', data, httpOptions)
+      .pipe(
+        catchError(this.handleError<Record[]>('Log Event', []))
+      );
+  }
 
   //// Service Category
   public getWebsiteServiceCategory(): Observable<Service_Category[]> {
@@ -740,6 +758,7 @@ export class ApiService {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
         Authorization: this.globals.jwtToken,
+        Requester: this.globals.authUser,
       }),
     };
   }

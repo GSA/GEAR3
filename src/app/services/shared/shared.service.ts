@@ -121,7 +121,17 @@ export class SharedService {
 
   //// Check if user is authenticated to GEAR Manager
   public get loggedIn(): boolean {
-    return localStorage.getItem('jwt') !== null && localStorage.getItem('jwt') == this.globals.jwtToken;
+    //return localStorage.getItem('jwt') !== null && localStorage.getItem('jwt') === this.globals.jwtToken;
+    return (localStorage.getItem('jwt') === this.globals.jwtToken &&
+            localStorage.getItem('jwt') !== null &&
+            localStorage.getItem('jwt') !== undefined &&
+            this.globals.jwtToken !== null &&
+            this.globals.jwtToken !== undefined);
+  };
+
+  //// Get Authenticated Username
+  public get authUser(): string {
+    return this.globals.authUser;
   };
 
   //// Set Redirect Path to come back to page after GEAR Manager login

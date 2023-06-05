@@ -16,11 +16,17 @@ exports.sendQuery = (query, msg, response) => {
   return buildQuery(sql, query, msg, response);
 };
 
+exports.sendLogQuery = (event, user, msg, response) => {
+  var data = buildLogQuery(sql, event, user, msg, response);
+  return data;
+};
+
 // exports.sendQuery_cowboy = (query, msg, response) => {
 //   return buildQuery(sql_cowboy, query, msg, response);
 // };
 
 /**
+ * 
  * @param conn
  * @param {string} query - A complete sql query
  * @param {string} msg - A description of the query that will be printed if an error occurs
@@ -42,18 +48,29 @@ function buildQuery(conn, query, msg, response) {
   return response;
 }
 
-function buildLogQuery(conn, query, msg, response) {
+/**
+ * 
+ * @param conn
+ * @param {string} event - A complete sql query
+ * @param {string} user - A description of the query that will be printed if an error occurs
+ * @param {string} msg - A description of the query that will be printed if an error occurs
+ * @return {object} - query results as JSON
+ */
+function buildLogQuery(conn, event, user, msg, response) {
+  // 
+  var query = `insert into log.event (Event, User, DTG) values ('${event}', '${user}', now());`;
+  console.log(query);
+  
+  //
   conn.query(query, (error, data) => {
     if (error) {
-      console.log(`DB Log Query Error while executing ${msg}: `, error);
-      //response.status(501).json({message: error.message || `DB Query Error while executing ${msg}`,});
+      console.log(`DB Log Event Query Error while executing ${msg}: `, error);
+      return {message: error.message || `DB Query Error while executing ${msg}`,};
     } else {
-      console.log("DB Log Query Response: ");  // Debug
-      //response = JSON.stringify(data);
+      console.log("DB Log Event Query Response: ");  // Debug
+      return JSON.stringify(data);
     }
   });
-
-  return response;
 }
 
 exports.emptyTextFieldHandler = (content) => {
@@ -63,7 +80,7 @@ exports.emptyTextFieldHandler = (content) => {
 
 /* **** Google API ****
 All this needs to be refactored as to not be so redundant*/
-exports.googleMain = (response, method, sheetID, dataRange, key = null) => {
+exports.googleMain = (response, method, sheetID, dataRange, requester, key = null) => {
   console.log("googleMain()");
   // Load client secrets from a local file.
   fs.readFile("certs/gear_google_credentials.json", (err, content) => {
@@ -88,6 +105,7 @@ exports.googleMain = (response, method, sheetID, dataRange, key = null) => {
       response,
       sheetID,
       dataRange,
+      requester,
       key
     );
   });
@@ -106,6 +124,7 @@ function authorize(
   response,
   sheetID,
   dataRange,
+  requester,
   key = null
 ) {
   const { client_secret, client_id, redirect_uris } = credentials.installed;
@@ -126,8 +145,8 @@ function authorize(
       }
     });
 
-    if (!key) callback(oAuth2Client, response, sheetID, dataRange);
-    else callback(oAuth2Client, response, sheetID, dataRange, key);
+    if (!key) callback(oAuth2Client, response, sheetID, dataRange, requester);
+    else callback(oAuth2Client, response, sheetID, dataRange, requester, key);
   });
 }
 
@@ -136,7 +155,7 @@ function authorize(
  * @param {google.auth.OAuth2} auth The authenticated Google OAuth client.
  * @param response Response object
  */
-function retrieveAll(auth, response, sheetID, dataRange) {
+function retrieveAll(auth, response, sheetID, dataRange, requester) {
   const sheets = google.sheets({ version: "v4", auth });
 
   sheets.spreadsheets.values.get(
@@ -170,10 +189,10 @@ function retrieveAll(auth, response, sheetID, dataRange) {
 }
 
 // This function refreshes the data in the database using the data from the spreadsheet
-function refresh(auth, response, sheetID, dataRange) {
+function refresh(auth, response, sheetID, dataRange, requester) {
 
   // log the start of the refresh to the database
-  buildLogQuery(sql, `insert into log.event (Id, Event, DTG) values (last_insert_id(), 'UPDATE zk_systems_subsystems_records ran by [user_email]', now()); `, "log_update_zk_systems_subsystems_records", response);
+  //buildLogQuery(sql, `Starting - UPDATE zk_systems_subsystems_records`, requester, "log_update_zk_systems_subsystems_records", response);
   
   // Get the data from the spreadsheet
   const sheets = google.sheets({ version: "v4", auth });
@@ -202,7 +221,6 @@ function refresh(auth, response, sheetID, dataRange) {
       // Map values
       var m = new Map();
 
-
       // Keep track of how many rows are being processed
       rowCounter = 0
 
@@ -219,12 +237,6 @@ function refresh(auth, response, sheetID, dataRange) {
           // increment the rowCounter
           rowCounter++
         })
-
-      // Logs the records to the console.
-      // for (let record of m.keys()) {
-      //   console.log(`${record}:`, m.get(record))
-      //}
-
 
       // Build DML statements from the map ================================================================================
       console.log("Building DML Statements...")
@@ -254,21 +266,36 @@ function refresh(auth, response, sheetID, dataRange) {
       console.log("Sending DML Statements: " + dmlStatementCounter)
 
       // Send the DML statements to the database 
-      buildLogQuery(sql, `${systemString}`, "Sending refresh all query using Google Sheet", response)
+      sql.query(`${systemString}`, (error, data) => {
+        let date = new Date();
+        let msg = "Sending refresh all query using Google Sheet"
+        
+        // Send the response
+        if (error) {
+          console.log(`DB Query Error while executing ${msg}: `, error);
 
-      console.log("Finised sending DML Statements")
+          // log the error to the database
+          buildLogQuery(sql, `UPDATE zk_systems_subsystems_records ${msg}: ` || error.message, requester, `log_update_zk_systems_subsystems_records`, response);
 
-      let date = new Date();
+          response.status(501)
+            .json({message: error.message || `DB Query Error while executing ${msg}`,});
+        } else {
+          //console.log("Query Response: ", response);  // Debug
 
-      // Send the response
-      response.status(200).json({
-        "tot_executions": dmlStatementCounter,
-        "tot_inserts": insertCounter,
-        "tot_rows": rowCounter,
-        "ran_by": "[username]",
-        "last_ran": (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
+          // log the success to the database
+          buildLogQuery(sql, `UPDATE zk_systems_subsystems_records - ${insertCounter} rows inserted`, requester, `log_update_zk_systems_subsystems_records`, response);
+
+          response.status(200)
+            .json({
+              "tot_executions": dmlStatementCounter,
+              "tot_inserts": insertCounter,
+              "tot_rows": rowCounter,
+              "ran_by": requester,
+              "last_ran": (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds(),              
+            });
+        }
+        console.log("Finished sending DML Statements")
       });
-
     }
   );
 
@@ -280,7 +307,7 @@ function refresh(auth, response, sheetID, dataRange) {
  * @param {google.auth.OAuth2} auth The authenticated Google OAuth client.
  * @param response Response object
  */
-function single(auth, response, sheetID, dataRange, key) {
+function single(auth, response, sheetID, dataRange, requester, key) {
   const sheets = google.sheets({ version: "v4", auth });
 
   // Grab all data first

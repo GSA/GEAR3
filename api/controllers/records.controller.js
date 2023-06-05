@@ -80,13 +80,22 @@ exports.updateSystems = (req, res) => {
 
 // This function is called by the api to update all the records using a Google Sheet
 exports.refreshAllSystems = (req, res) => {
+  console.log("refreshAllSystems")
+  
   if (req.headers.authorization) {
-    console.log("refreshAllSystems")
     // 'refresh' is used to set the callback_method = "refresh"
-    ctrl.googleMain(res, 'refresh', SHEET_ID, RANGE);
+    ctrl.googleMain(res, 'refresh', SHEET_ID, RANGE, req.headers.requester);
   } else {
     res.status(502).json({
       message: "No authorization token present. Not allowed to update systems-business capabilities mapping."
     });
   }
+};
+
+//
+exports.logEvent = (req, res) => {
+  console.log("logEvent")
+  var data = req.body;
+
+  res = ctrl.sendLogQuery(data.message, data.user, data.message, res);
 };
