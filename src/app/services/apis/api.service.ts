@@ -123,7 +123,8 @@ export class ApiService {
       );
   }
   public updateCapOrgs(id: number, data: {}): Observable<Capability[]> {
-    if (this.globals.jwtToken) {
+
+    if (this.sharedService.loggedIn) {
       var httpOptions = this.setHeaderOpts();
     } else {
       catchError(
@@ -208,7 +209,7 @@ export class ApiService {
       );
   }
   // public updateInvestment(id: number, data: {}): Observable<Investment[]> {
-  //   if (this.globals.jwtToken) {
+  //   if (this.sharedService.loggedIn) {
   //     var httpOptions = this.setHeaderOpts();
   //   } else {
   //     catchError(this.handleError<Investment[]>('UPDATE Investment - No Authentication Token', []))
@@ -219,7 +220,7 @@ export class ApiService {
   //   );
   // };
   // public createInvestment(data: {}): Observable<Investment[]> {
-  //   if (this.globals.jwtToken) {
+  //   if (this.sharedService.loggedIn) {
   //     var httpOptions = this.setHeaderOpts();
   //   } else {
   //     catchError(this.handleError<Investment[]>('CREATE Investment - No Authentication Token', []))
@@ -298,7 +299,7 @@ export class ApiService {
       );
   }
   public updateRecordSys(id: number, data: {}): Observable<Record[]> {
-    if (this.globals.jwtToken) {
+    if (this.sharedService.loggedIn) {
       var httpOptions = this.setHeaderOpts();
     } else {
       catchError(
@@ -318,7 +319,7 @@ export class ApiService {
       .pipe(catchError(this.handleError<Record[]>('UPDATE Record-System', [])));
   }
   public updateAllRecordSys(data: {}): Observable<Record[]> {
-    if (this.globals.jwtToken) {
+    if (this.sharedService.loggedIn) {
       var httpOptions = this.setHeaderOpts();
     } else {
       catchError(
@@ -337,7 +338,7 @@ export class ApiService {
       .pipe(catchError(this.handleError<Record[]>('UPDATE All Record-System', [])));
   }
   public logEvent(data: {}): Observable<Record[]> {
-    if (this.globals.jwtToken) {
+    if (this.sharedService.loggedIn) {
       var httpOptions = this.setHeaderOpts();
     } else {
       catchError(
@@ -430,7 +431,7 @@ export class ApiService {
       );
   }
   public updateSystemCaps(id: number, data: {}): Observable<System[]> {
-    if (this.globals.jwtToken) {
+    if (this.sharedService.loggedIn) {
       var httpOptions = this.setHeaderOpts();
     } else {
       catchError(
@@ -463,7 +464,7 @@ export class ApiService {
       );
   }
   public updateSystemInvestments(id: number, data: {}): Observable<System[]> {
-    if (this.globals.jwtToken) {
+    if (this.sharedService.loggedIn) {
       var httpOptions = this.setHeaderOpts();
     } else {
       catchError(
@@ -510,7 +511,7 @@ export class ApiService {
       );
   }
   public updateSystemTech(id: number, data: {}): Observable<System[]> {
-    if (this.globals.jwtToken) {
+    if (this.sharedService.loggedIn) {
       var httpOptions = this.setHeaderOpts();
     } else {
       catchError(
@@ -626,7 +627,7 @@ export class ApiService {
       );
   }
   public updateITStandard(id: number, data: {}): Observable<ITStandards[]> {
-    if (this.globals.jwtToken) {
+    if (this.sharedService.loggedIn) {
       var httpOptions = this.setHeaderOpts();
     } else {
       catchError(
@@ -648,7 +649,7 @@ export class ApiService {
       );
   }
   public createITStandard(data: {}): Observable<ITStandards[]> {
-    if (this.globals.jwtToken) {
+    if (this.sharedService.loggedIn) {
       var httpOptions = this.setHeaderOpts();
     } else {
       catchError(
@@ -722,7 +723,7 @@ export class ApiService {
       );
   }
   public updateWebsiteSys(id: number, data: {}): Observable<Website[]> {
-    if (this.globals.jwtToken) {
+    if (this.sharedService.loggedIn) {
       var httpOptions = this.setHeaderOpts();
     } else {
       catchError(

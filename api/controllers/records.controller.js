@@ -52,6 +52,7 @@ exports.findSystems = (req, res) => {
 
 exports.updateSystems = (req, res) => {
   if (req.headers.authorization) {
+    //TODO: Create logic to validate that the user is allowed to update the systems for a record
     var data = req.body;
 
     // Create string to update record-system relationship

@@ -29,7 +29,7 @@ export class SharedService {
 
   systemFormEmitter = new EventEmitter();
   systemFormSub: Subscription;
-  
+
   websiteFormEmitter = new EventEmitter();
   websiteFormSub: Subscription;
 
@@ -121,12 +121,15 @@ export class SharedService {
 
   //// Check if user is authenticated to GEAR Manager
   public get loggedIn(): boolean {
-    //return localStorage.getItem('jwt') !== null && localStorage.getItem('jwt') === this.globals.jwtToken;
-    return (localStorage.getItem('jwt') === this.globals.jwtToken &&
-            localStorage.getItem('jwt') !== null &&
-            localStorage.getItem('jwt') !== undefined &&
-            this.globals.jwtToken !== null &&
-            this.globals.jwtToken !== undefined);
+    if (this.globals.jwtToken === null || this.globals.authUser === null) {
+      console.log("No JWT or Auth User");
+      return false;
+    } else if (this.globals.jwtToken === localStorage.getItem('jwt') &&
+      this.globals.authUser === localStorage.getItem('user')) {
+      console.log("JWT and Auth User match");
+      return true;
+    }
+    return false;
   };
 
   //// Get Authenticated Username
@@ -211,7 +214,7 @@ export class SharedService {
     let names = [];
     let pocs = value.split(':')[1];  // Retrieve POC after colon
     pocs = pocs.split('; ');  // Retrieve POC after colon
-    for (let i=0; i<pocs.length; i++) {
+    for (let i = 0; i < pocs.length; i++) {
       let singleName = pocs[i].split(', ')[0];
       if (singleName != '') names.push(singleName);  // Add only if there is a name
     }
