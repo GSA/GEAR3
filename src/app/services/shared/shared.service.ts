@@ -110,6 +110,7 @@ export class SharedService {
   // JWT Handling
   //// Set JWT on log in to be tracked when checking for authentication
   public setJWTonLogIn(): void {
+    console.log("setJWTonLogIn")
     if (localStorage.getItem('jwt') !== null) {  // If successful set of JWT
       setTimeout(() => {
         this.globals.jwtToken = localStorage.getItem('jwt');
@@ -122,7 +123,7 @@ export class SharedService {
   //// Check if user is authenticated to GEAR Manager
   public get loggedIn(): boolean {
     if (this.globals.jwtToken === null || this.globals.authUser === null) {
-      console.log("No JWT or Auth User");
+      //console.log("No JWT or Auth UserXX");
       return false;
     } else if (this.globals.jwtToken === localStorage.getItem('jwt') &&
       this.globals.authUser === localStorage.getItem('user')) {

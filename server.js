@@ -169,6 +169,7 @@ app.post(samlConfig.path,
 
           // JWT TOKEN SIGNED HERE TO BE USED IN INLINE HTML PAGE NEXT
           const token = jsonwebtoken.sign(jwt, process.env.SECRET);
+          //console.log("Debugging token: " + ${token})
 
           let adminRoute = (process.env.SAML_HOST === 'localhost') ? 'http://localhost:3000' : '/#';
 
@@ -190,16 +191,15 @@ app.post(samlConfig.path,
 `
           
           // Log GEAR Manager login
-          db.query(`insert into log.event (Event, User, DTG) values ('GEAR Manager Successful Login', '${results[0][0].AuditID}', now()); `, 
-            (err, results, fields) => {
-              if (err) {
-                console.log(err);
-                response.status(501);
-                res.json({ error: err });
-              }
-            }
-          );
-
+          // db.query(`insert into log.event (Event, User, DTG) values ('GEAR Manager Successful Login', '${results[0][0].AuditID}', now()); `, 
+          //   (err, results, fields) => {
+          //     if (err) {
+          //       console.log(err);
+          //       response.status(501);
+          //       res.json({ error: err });
+          //     }
+          //   }
+          // );
           res.send(html);
         }
       }
