@@ -189,7 +189,7 @@ export class RecordsManagementComponent implements OnInit {
     let data: any = ""
 
     // log execute to database
-    this.apiService.logEvent({type: 'log', message: 'Update All Records System executed', user: this.sharedService.authUser}).toPromise()
+    this.apiService.logEvent({type: 'log', message: 'Update All Related Records - Executed Manually', user: this.sharedService.authUser}).toPromise()
     .then((data: any[]) => {
       console.log(data);
     });
@@ -205,24 +205,64 @@ export class RecordsManagementComponent implements OnInit {
       // call api to update all record system data
       this.apiService.updateAllRecordSys(data).toPromise()
       .then((data: any[]) => {
-        console.log(data);
-        
-        // Set data
-        this.updateAllInfoData = data;
-        // Hide loading animation
+        let dataError = data["error"];
+        let dataMessage = data["message"];
+        console.log("dataError: " + dataError + " dataMessage: " + dataMessage);
+        console.log(JSON.stringify(data));
+
+        // Check if an error was returned
+        if ((dataError !== null && dataError !== undefined) || (dataMessage !== null && dataMessage !== undefined)) {  
+          console.log("-- api returned error --");
+
+          // log error to database
+          this.apiService.logEvent({type: 'error', message: 'Update All Related Records - Rejected with ' + dataError, user: this.sharedService.authUser}).toPromise()
+          .then((data: any[]) => {
+            console.log(data);
+          });
+
+          // Hide loading animation when error
+          this.isLoading = false;
+          // Set Process Done on error
+          this.isDone = true;
+          // Set error true
+          this.isError = true;
+        } else {
+          console.log("-- all good --");
+          
+          // Set data
+          this.updateAllInfoData = data;
+          // Hide loading animation
+          this.isLoading = false;
+          // Set Process Done
+          this.isDone = true;
+          // Set error false
+          this.isError = false;
+          
+          console.log("Finished update all record system data.");
+        }
+      })
+      .catch((error) => {
+        console.log("updateAllRecordSys returned and caught an error.");
+        //console.log(error);
+
+        // log error to database
+        this.apiService.logEvent({type: 'error', message: 'Update All Related Records - Rejected with ' + JSON.stringify(error), user: this.sharedService.authUser}).toPromise()
+        .then((data: any[]) => {
+          console.log(data);
+        });
+
+        // Hide loading animation when error
         this.isLoading = false;
-        // Set Process Done
+        // Set Process Done on error
         this.isDone = true;
-        // Set error false
-        this.isError = false;
-        
-        console.log("Finished update all record system data.")
+        // Set error true
+        this.isError = true;
       })
     } catch (error) {
-      console.log("Update All Records System rejected with " + JSON.stringify(error));
+      console.log("Update All Records System - rejected with " + JSON.stringify(error));
         
       // log error to database
-      this.apiService.logEvent({type: 'error', message: 'Update All Records System rejected with ' + JSON.stringify(error), user: this.sharedService.authUser}).toPromise()
+      this.apiService.logEvent({type: 'error', message: 'Update All Related Records - Errored with ' + JSON.stringify(error), user: this.sharedService.authUser}).toPromise()
       .then((data: any[]) => {
         console.log(data);
       });
@@ -233,6 +273,6 @@ export class RecordsManagementComponent implements OnInit {
       this.isDone = true;
       // Set error true
       this.isError = true;
-      }
+    }
   }
 }

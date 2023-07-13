@@ -192,7 +192,7 @@ function retrieveAll(auth, response, sheetID, dataRange, requester) {
 function refresh(auth, response, sheetID, dataRange, requester) {
 
   // log the start of the refresh to the database
-  //buildLogQuery(sql, `Starting - UPDATE zk_systems_subsystems_records`, requester, "log_update_zk_systems_subsystems_records", response);
+  //buildLogQuery(sql, `Update All Related Records - Start`, requester, "log_update_zk_systems_subsystems_records", response);
   
   // Get the data from the spreadsheet
   const sheets = google.sheets({ version: "v4", auth });
@@ -275,15 +275,14 @@ function refresh(auth, response, sheetID, dataRange, requester) {
           console.log(`DB Query Error while executing ${msg}: `, error);
 
           // log the error to the database
-          buildLogQuery(sql, `UPDATE zk_systems_subsystems_records ${msg}: ` || error.message, requester, `log_update_zk_systems_subsystems_records`, response);
+          buildLogQuery(sql, `Update All Related Records ${msg}: ` || error.message, requester, `log_update_zk_systems_subsystems_records`, response);
 
-          response.status(501)
-            .json({message: error.message || `DB Query Error while executing ${msg}`,});
+          response.status(501).json({message: error.message || `DB Query Error while executing ${msg}`,});
         } else {
           //console.log("Query Response: ", response);  // Debug
 
           // log the success to the database
-          buildLogQuery(sql, `UPDATE zk_systems_subsystems_records - ${insertCounter} rows inserted`, requester, `log_update_zk_systems_subsystems_records`, response);
+          buildLogQuery(sql, `Update All Related Records - ${insertCounter} rows inserted`, requester, `log_update_zk_systems_subsystems_records`, response);
 
           response.status(200)
             .json({

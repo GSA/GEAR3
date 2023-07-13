@@ -137,20 +137,28 @@ app.get('/verify',
 app.post(samlConfig.path,
   passport.authenticate('saml'),
   (req, res) => {
-
     const samlProfile = req.user;
     const db = mysql.createConnection(dbCredentials);
     db.connect();
     db.query(`CALL acl.get_user_perms('${samlProfile.nameID}');`,
       (err, results, fields) => {
         if (err) {
+          // log call return error
+          let logData = {"message": "GEAR Manager - Login Error", "userId":`${samlProfile.nameID}`};
+          logServerEvent(logData);
+          
           res.status(500);
           res.json({ error: err });
         }
         else {
           let html = ``;
           let userLookupStatus = ``;
+
           if (results[0].length === 0) {
+            // log no data returned
+            let logData = {"message": "GEAR Manager - Unable to Verify User", "userId":`${samlProfile.nameID}`};
+            logServerEvent(logData);
+            
             userLookupStatus = `Unable to verify user, <strong>${samlProfile.nameID}</strong><br/><a href="${process.env.SAML_ENTRY_POINT}">TRY AGAIN</a>`;
             html = `<html><body style="font-family:sans-serif;"><p>${userLookupStatus}</p></body></html>`;
             res.status(401);
@@ -190,15 +198,8 @@ app.post(samlConfig.path,
 `
           
           // Log GEAR Manager login
-          db.query(`insert into log.event (Event, User, DTG) values ('GEAR Manager Successful Login', '${results[0][0].AuditID}', now()); `, 
-            (err, results, fields) => {
-              if (err) {
-                console.log(err);
-                response.status(501);
-                res.json({ error: err });
-              }
-            }
-          );
+          let logData = {"message": "GEAR Manager - Successful Login", "userId":`${results[0][0].AuditID}`};
+          logServerEvent(logData);
 
           res.send(html);
         }
@@ -357,8 +358,12 @@ cron.schedule('0 7 * * WED', () => {
 // Google API Pull to run every weekday at 2:00 AM
 cron.schedule('0 2 * * 1-5', () => {
 //cron.schedule('*/5 * * * 1-5', () => { //DEBUGGING
-  console.log(getCurrentDatetime() + 'CRON JOB: Google API Pull (runs every weekday at 2:00 AM) - Starting');
-  logServerEvent("CRON JOB: Google API Pull Executed");
+  
+  console.log(getCurrentDatetime() + 'CRON JOB: Update All Related Records (runs every weekday at 2:00 AM) - Starting');
+  
+  let logData = {"message": "CRON JOB: Update All Related Records", "userId":"GearCronJ"};
+  logServerEvent(logData);
+  
   // run the fetch request to get the data from the Google Sheet
   putUpdateAllSystems("");
 });
@@ -378,18 +383,23 @@ const putUpdateAllSystems = async data => {
     });
 
     const responseJson = await response.json();
-    console.log(getCurrentDatetime()+'CRON JOB: Google API Pull (runs every weekday at 2:00 AM) - Finished')
+    console.log(getCurrentDatetime()+'CRON JOB: Update All Related Records (runs every weekday at 2:00 AM) - Finished')
   } catch (error) {
     // log any errors
     console.log(getCurrentDatetime()+error);
+
+    let logData = {"message": "CRON JOB: Update All Related Records - Errored with " + json.stringify(error), "userId":"GearCronJ"};
+    logServerEvent(logData);
   };
 };
 
 // logs an event on the server to the db
 const logServerEvent = async data => {
-  console.log("logServerEvent ("+data+")")
+  console.log("logServerEvent ("+data.message+")")
+
   // create the data object to send to the server
-  data = {type: 'log/error', message: data, user: "GearCronJ"};
+  data = {type: 'log/error', message: data.message, user: data.userId};
+
   try {
     // run the fetch request to post the log event
     const response = await fetch('http://localhost:3000/api/records/logEvent', {
@@ -400,6 +410,7 @@ const logServerEvent = async data => {
       },
       body: JSON.stringify(data)
     });
+
     const responseJson = await response.json();
   } catch (error) {
     // log any errors
