@@ -133,21 +133,34 @@ function authorize(
     client_secret,
     redirect_uris[0]
   );
+    try {
+      // Check if we have previously stored a token.
+      fs.readFile(TOKEN_PATH, (err, token) => {
+        if (err) {
+          let errMessage = "Reading the Token returned an error: " + err;
+          errMessage = errMessage.replace(/'/g, "");
 
-  // Check if we have previously stored a token.
-  fs.readFile(TOKEN_PATH, (err, token) => {
-    oAuth2Client.setCredentials(JSON.parse(token));
-    oAuth2Client.on("tokens", (tokens) => {
-      if (tokens.refresh_token) {
-        oAuth2Client.setCredentials({
-          refresh_token: tokens.refresh_token,
+          sendResponse(response, { error: errMessage });
+          return;
+        }
+
+        oAuth2Client.setCredentials(JSON.parse(token));
+        oAuth2Client.on("tokens", (tokens) => {
+          if (tokens.refresh_token) {
+            oAuth2Client.setCredentials({
+              refresh_token: tokens.refresh_token,
+            });
+          }
         });
-      }
-    });
-
-    if (!key) callback(oAuth2Client, response, sheetID, dataRange, requester);
-    else callback(oAuth2Client, response, sheetID, dataRange, requester, key);
-  });
+    
+        if (!key) callback(oAuth2Client, response, sheetID, dataRange, requester);
+        else callback(oAuth2Client, response, sheetID, dataRange, requester, key);
+      });
+    } catch (err) {
+      // log the error to the database
+      buildLogQuery(sql, `Update All Related Records - Token Issue: ` || json.stringify(err), requester, `log_update_zk_systems_subsystems_records`, response);
+      sendResponse(response, { error: "Reading the Token returned an error: " + err });
+    }
 }
 
 /**
@@ -275,7 +288,7 @@ function refresh(auth, response, sheetID, dataRange, requester) {
           console.log(`DB Query Error while executing ${msg}: `, error);
 
           // log the error to the database
-          buildLogQuery(sql, `Update All Related Records ${msg}: ` || error.message, requester, `log_update_zk_systems_subsystems_records`, response);
+          buildLogQuery(sql, `Update All Related Records - ${msg}: ` || error.message, requester, `log_update_zk_systems_subsystems_records`, response);
 
           response.status(501).json({message: error.message || `DB Query Error while executing ${msg}`,});
         } else {
