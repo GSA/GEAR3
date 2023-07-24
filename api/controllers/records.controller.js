@@ -93,10 +93,26 @@ exports.refreshAllSystems = (req, res) => {
   }
 };
 
-//
+// this function is called by the api to log an event to the database
 exports.logEvent = (req, res) => {
   console.log("logEvent")
   var data = req.body;
 
   res = ctrl.sendLogQuery(data.message, data.user, data.message, res);
+};
+
+// this function is called by the api to upload a tech catalog dataset to the database
+exports.runUploadTechCatalogDataset = (req, res) => {
+  console.log("runUploadTaxonomy HIT")
+
+  var data = req.body;
+
+  console.log("data: " + JSON.stringify(data));
+
+  ctrl.uploadTechCatalogDataset(data, res)
+    .then((response) => {
+      let json = response;
+      //console.log("final response msg: " + json); 
+      res.status(200).json({ message: json, });
+    });
 };
