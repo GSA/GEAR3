@@ -103,11 +103,7 @@ exports.logEvent = (req, res) => {
 
 // this function is called by the api to upload a tech catalog dataset to the database
 exports.runUploadTechCatalogDataset = (req, res) => {
-  console.log("runUploadTaxonomy HIT")
-
   var data = req.body;
-
-  console.log("data: " + JSON.stringify(data));
 
   ctrl.uploadTechCatalogDataset(data, res)
     .then((response) => {

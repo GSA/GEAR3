@@ -382,6 +382,18 @@ function sendResponse(response, data) {
       .json({ error: "The API returned an error: " + err });
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
 // ###########################################################################
 // ########################## FLEXERA TECHNOPEDIA ############################
 // ###########################################################################
@@ -396,12 +408,10 @@ exports.uploadTechCatalogDataset = async (data, response) => {
   const datasetName = data.dataset; // ie. "Taxonomy";
 
   console.log('############################################################################################################');
-  console.log('#### START - UPLOAD TECH CATALOG DATASET: ####' + datasetName);
+  console.log('#### START - UPLOAD TECH CATALOG DATASET: #### ' + datasetName);
   console.log('############################################################################################################'); 
   
   // GLOBAL VARIABLES
-    // logging level.... see logger() for definitions
-    const loggingLevel = 1;
     // number of records to retrieve per api call
     const takeAmt = "10000";
     // stores the flerera api access token
@@ -412,6 +422,8 @@ exports.uploadTechCatalogDataset = async (data, response) => {
     // insert query
     let tableName = `tech_catalog.tp_${datasetName}_tmp`;
     let insertQuery = `insert into ${tableName} (`;
+
+    let insertQuerySftwSupportStage = `insert into tech_catalog.tp_SoftwareSupportStage_tmp (softwareLifecycleId, definition, endDate, manufacturerId, name, order_, policy, publishedEndDate) values ?`;
 
     // total number of pages received (aka API calls made)
     var pageCounter = 0;
@@ -425,9 +437,80 @@ exports.uploadTechCatalogDataset = async (data, response) => {
     var lastRecordId = null;
     // upload start time
     var uploadStartTime = new Date(); //TIMESTAMP();
+    // stores the error log path
+    let errorLogPath = 'tech_catalog_data/logs/errors_' + datasetName + '_' + String(uploadStartTime).replace(/:/g, '_').replace(/ /g, '_') + '.log';
+
+    // verify if refreskToken was provided
+    if (refreshToken === undefined || refreshToken === null || refreshToken === '') {
+      let errorMsg = `#### ${datasetName} #### *************** ERROR no refresh token provided... ending upload. *************** \n`;
+
+      console.log('**********************************************************************************************************'  );
+      console.log(errorMsg);
+      console.log('**********************************************************************************************************'  );
+
+      return errorMsg;
+    }
+
+    // verify if datasetName was provided and is supported
+    if (datasetName === undefined || datasetName === null || datasetName === '') {
+      let errorMsg = `#### ${datasetName} #### *************** ERROR no dataset name provided... ending upload. *************** \n`;
+      console.log(errorMsg);
+
+      return errorMsg;
+    } else if (datasetName !== 'Manufacturer' && 
+               datasetName !== 'Platform' && 
+               datasetName !== 'SoftwareEdition' && 
+               datasetName !== 'SoftwareFamily' && 
+               datasetName !== 'SoftwareLifecycle' && 
+               datasetName !== 'SoftwareMarketVersion' && 
+               datasetName !== 'SoftwareProduct' && 
+               datasetName !== 'SoftwareProductLink' && 
+               datasetName !== 'SoftwareRelease' && 
+               datasetName !== 'SoftwareReleaseLink' && 
+               datasetName !== 'SoftwareReleasePlatform' && 
+               //datasetName !== 'SoftwareSupportStage' && 
+               datasetName !== 'SoftwareVersion' && 
+               datasetName !== 'Taxonomy') {
+      let errorMsg = `#### ${datasetName} #### *************** ERROR dataset name provided is not supported... ending upload. *************** \n`;
+
+      console.log('**********************************************************************************************************'  );
+      console.log(errorMsg);
+      console.log('**********************************************************************************************************'  );
+
+      return errorMsg;
+    }
 
     // display the upload start time
     console.log(`#### ${datasetName} #### Upload Start Time: ${uploadStartTime}`);
+
+    // calcs the duration between two date times and returns a string
+    function formatDuration(start_date, end_date) {
+      const duration = new Date(end_date - start_date);
+    
+      const hours = duration.getUTCHours();
+      const minutes = duration.getUTCMinutes();
+      const seconds = duration.getUTCSeconds();
+    
+      let result = "";
+      if (hours > 0) {
+        result += hours + (hours === 1 ? " hour" : " hours");
+      }
+      if (minutes > 0) {
+        if (result !== "") {
+          result += ", ";
+        }
+        result += minutes + (minutes === 1 ? " minute" : " minutes");
+      }
+      if (seconds > 0) {
+        if (result !== "") {
+          result += ", ";
+        }
+        result += seconds + (seconds === 1 ? " second" : " seconds");
+      }
+      
+      //console.log(result);
+      return result;
+    }
 
   
   // ############################################################################################################
@@ -448,7 +531,10 @@ exports.uploadTechCatalogDataset = async (data, response) => {
     }
   } catch (error) {
     let errorMsg = `#### ${datasetName} #### *************** ERROR getting last ${datasetName} record id from database... ending upload. *************** \n`;
+
+    console.log('**********************************************************************************************************'  );
     console.log(errorMsg);
+    console.log('**********************************************************************************************************'  );
 
     return errorMsg;
   }
@@ -494,14 +580,20 @@ exports.uploadTechCatalogDataset = async (data, response) => {
 
           console.log(`#### ${datasetName} #### Page: ${pageCounter} #### ...... Access Token Received.`);
         } else {
-          let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### *************** ERROR access token api call returned bad response ... ending upload. *************** \n`;
-          console.log(errorMsg, response);
+          let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### *************** ERROR access token api call returned bad response ... ending upload. *************** \n ${response.status} ${response.statusText} \n`;
+
+          console.log('**********************************************************************************************************'  );
+          console.log(errorMsg);
+          console.log('**********************************************************************************************************'  );
 
           return errorMsg;
         }
       } catch (error) {
         let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### *************** ERROR getting access token. *************** \n`;
+
+        console.log('**********************************************************************************************************'  );
         console.log(errorMsg, error);
+        console.log('**********************************************************************************************************'  );
 
         // return the error message
         return errorMsg;
@@ -634,6 +726,15 @@ exports.uploadTechCatalogDataset = async (data, response) => {
           toBeDeletedOn
           updatedDate
           softwareRelease { id }
+          softwareSupportStage {
+            definition
+            endDate
+            manufacturerId
+            name
+            order
+            policy
+            publishedEndDate
+          }
           `;
           break;
         case 'SoftwareMarketVersion':
@@ -834,14 +935,20 @@ exports.uploadTechCatalogDataset = async (data, response) => {
         console.log(`#### ${datasetName} #### Page: ${pageCounter} #### ...... Page ${pageCounter} Data Received.`);
       } else {
         let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### *************** ERROR getting ${datasetName} data from api, bad response... ending upload. *************** \n`;
+
+        console.log('**********************************************************************************************************'  );
         console.log(errorMsg, apiResponse, `\ngraphqlQuery: ${graphqlQuery}`);
+        console.log('**********************************************************************************************************'  );
 
         // return the error message
         return errorMsg;
       }
     } catch (error) {
       let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### *************** ERROR getting ${datasetName} data from api... ending upload. *************** \n `;
+
+      console.log('**********************************************************************************************************'  );
       console.log(errorMsg, error);
+      console.log('**********************************************************************************************************'  );
 
       // return the error message
       return errorMsg;
@@ -883,7 +990,7 @@ exports.uploadTechCatalogDataset = async (data, response) => {
 
         if (pageCounter === 1 && pageRecordCounter === 1) {
           // ############################################################################################################
-          // #3 select and build database insert statement
+          // #3 select and add columns to insert statement
           switch (datasetName) {
             case 'Manufacturer':
               insertQuery = insertQuery
@@ -899,19 +1006,16 @@ exports.uploadTechCatalogDataset = async (data, response) => {
               + 'employeesDate,'	   // dt:DATETIME
               + 'fax,'	   // dt:VARCHAR
               + 'fiscalEndDate,'	   // dt:DATETIME
-              //+ 'idLegacy,'	   // dt:INT
               + 'isPubliclyTraded,'	   // dt:VARCHAR
               + 'isToBeDeleted,'	   // dt:TINYINT
               + 'knownAs,'	   // dt:VARCHAR
               + 'legal,'	   // dt:VARCHAR
               + 'name,'	   // dt:VARCHAR
               + 'ownerId,'	   // dt:VARCHAR
-              //+ 'ownerIdLegacy,'	   // dt:INT
               + 'phone,'	   // dt:VARCHAR
               + 'profitsDate,'	   // dt:DATETIME
               + 'profitsPerYear,'	   // dt:INT
               + 'replacementId,'	   // dt:VARCHAR
-              //+ 'replacementIdLegacy,'	   // dt:INT
               + 'revenue,'	   // dt:INT
               + 'revenueDate,'	   // dt:DATETIME
               + 'state,'	   // dt:VARCHAR
@@ -929,11 +1033,9 @@ exports.uploadTechCatalogDataset = async (data, response) => {
               + 'id,'	   // dt:VARCHAR
               + 'createdDate,'	   // dt:DATETIME
               + 'deleteReason,'	   // dt:VARCHAR
-              //+ 'idLegacy,'	   // dt:INT
               + 'isToBeDeleted,'	   // dt:TINYINT
               + 'name,'	   // dt:VARCHAR
               + 'replacementId,'	   // dt:VARCHAR
-              //+ 'replacementIdLegacy,'	   // dt:INT
               + 'synchronizedDate,'	   // dt:DATETIME
               + 'toBeDeletedOn,'	   // dt:DATETIME
               + 'updatedDate,'	   // dt:DATETIME
@@ -947,7 +1049,7 @@ exports.uploadTechCatalogDataset = async (data, response) => {
               + 'isDiscontinued,'	   // dt:TINYINT
               + 'isToBeDeleted,'	   // dt:TINYINT
               + 'name,'	   // dt:VARCHAR
-              + 'priorityOrder,'	   // dt:INT
+              + 'order_,'	   // dt:INT
               + 'replacementId,'	   // dt:INT
               + 'synchronizedDate,'	   // dt:DATETIME
               + 'toBeDeletedOn,'	   // dt:DATETIME
@@ -964,7 +1066,6 @@ exports.uploadTechCatalogDataset = async (data, response) => {
               + 'isToBeDeleted,'	   // dt:TINYINT
               + 'name,'	   // dt:VARCHAR
               + 'replacementId,'	   // dt:INT
-             // + 'replacementIdLegacy,'	   // dt:INT
               + 'synchronizedDate,'	   // dt:TIMESTAMP
               + 'toBeDeletedOn,'	   // dt:DATE
               + 'updatedDate,'	   // dt:TIMESTAMP
@@ -986,7 +1087,6 @@ exports.uploadTechCatalogDataset = async (data, response) => {
               + 'generalAvailabilityDate,'	   // dt:TIMESTAMP
               + 'generalAvailabilityDateCalculated,'	   // dt:TIMESTAMP
               + 'generalAvailabilityException,'	   // dt:VARCHAR
-             // + 'idLegacy,'	   // dt:INT
               + 'isToBeDeleted,'	   // dt:TINYINT
               + 'obsolete,'	   // dt:VARCHAR
               + 'obsoleteCalculatedCase,'	   // dt:VARCHAR
@@ -995,7 +1095,6 @@ exports.uploadTechCatalogDataset = async (data, response) => {
               + 'obsoleteException,'	   // dt:VARCHAR
               + 'obsoleteSupportLevel,'	   // dt:VARCHAR
               + 'replacementId,'	   // dt:VARCHAR
-             // + 'replacementIdLegacy,'	   // dt:INT
               + 'synchronizedDate,'	   // dt:TIMESTAMP
               + 'toBeDeletedOn,'	   // dt:DATE
               + 'updatedDate,'	   // dt:TIMESTAMP
@@ -1006,14 +1105,12 @@ exports.uploadTechCatalogDataset = async (data, response) => {
               + 'id,'	   // dt:VARCHAR
               + 'createdDate,'	   // dt:TIMESTAMP
               + 'deleteReason,'	   // dt:VARCHAR
-             // + 'idLegacy,'	   // dt:INT
               + 'isDesupported,'	   // dt:TINYINT
               + 'isDiscontinued,'	   // dt:TINYINT
               + 'isToBeDeleted,'	   // dt:TINYINT
               + 'name,'	   // dt:VARCHAR
-              + 'ReleaseOrder,'	   // dt:INT
+              + 'order_,'	   // dt:INT
               + 'replacementId,'	   // dt:VARCHAR
-             // + 'replacementIdLegacy,'	   // dt:INT
               + 'synchronizedDate,'	   // dt:TIMESTAMP
               + 'toBeDeletedOn,'	   // dt:DATE
               + 'updatedDate,'	   // dt:TIMESTAMP
@@ -1028,7 +1125,6 @@ exports.uploadTechCatalogDataset = async (data, response) => {
               + 'component,'	   // dt:VARCHAR
               + 'createdDate,'	   // dt:TIMESTAMP
               + 'deleteReason,'	   // dt:VARCHAR
-              //+ 'idLegacy,'	   // dt:INT
               + 'isDesupported,'	   // dt:TINYINT
               + 'isDiscontinued,'	   // dt:TINYINT
               + 'isFamilyInFullName,'	   // dt:TINYINT
@@ -1037,7 +1133,6 @@ exports.uploadTechCatalogDataset = async (data, response) => {
               + 'name,'	   // dt:VARCHAR
               + 'productLicensable,'	   // dt:INT
               + 'replacementId,'	   // dt:VARCHAR
-              //+ 'replacementIdLegacy,'	   // dt:INT
               + 'synchronizedDate,'	   // dt:TIMESTAMP
               + 'toBeDeletedOn,'	   // dt:DATE
               + 'updatedDate,'	   // dt:TIMESTAMP
@@ -1052,21 +1147,13 @@ exports.uploadTechCatalogDataset = async (data, response) => {
               + 'createdDate,'	   // dt:TIMESTAMP
               + 'deleteReason,'	   // dt:VARCHAR
               + 'formerSoftwareProductId,'	   // dt:VARCHAR
-             // + 'formerSoftwareProductIdLegacy,'	   // dt:INT
-             // + 'idLegacy,'	   // dt:INT
               + 'isToBeDeleted,'	   // dt:TINYINT
               + 'laterSoftwareProductId,'	   // dt:VARCHAR
-             // + 'laterSoftwareProductIdLegacy,'	   // dt:INT
               + 'latestSoftwareProductId,'	   // dt:VARCHAR
-             // + 'latestSoftwareProductIdLegacy,'	   // dt:INT
               + 'oldestSoftwareProductId,'	   // dt:VARCHAR
-             // + 'oldestSoftwareProductIdLegacy,'	   // dt:INT
               + 'replacementId,'	   // dt:VARCHAR
-             // + 'replacementIdLegacy,'	   // dt:INT
               + 'softwareCloudId,'	   // dt:VARCHAR
-             // + 'softwareCloudIdLegacy,'	   // dt:INT
               + 'softwareOnPremId,'	   // dt:VARCHAR
-             // + 'softwareOnPremIdLegacy,'	   // dt:INT
               + 'synchronizedDate,'	   // dt:TIMESTAMP
               + 'toBeDeletedOn,'	   // dt:DATE
               + 'updatedDate,'	   // dt:TIMESTAMP
@@ -1079,24 +1166,20 @@ exports.uploadTechCatalogDataset = async (data, response) => {
               + 'cloud,'	   // dt:VARCHAR
               + 'createdDate,'	   // dt:TIMESTAMP
               + 'deleteReason,'	   // dt:VARCHAR
-             // + 'idLegacy,'	   // dt:INT
               + 'isDesupported,'	   // dt:TINYINT
               + 'isDiscontinued,'	   // dt:TINYINT
               + 'isLicensable,'	   // dt:TINYINT
               + 'isMajor,'	   // dt:TINYINT
               + 'isToBeDeleted,'	   // dt:TINYINT
               + 'majorSoftwareReleaseId,'	   // dt:VARCHAR
-             // + 'majorSoftwareReleaseIdLegacy,'	   // dt:INT
               + 'name,'	   // dt:VARCHAR
               + 'patchLevel,'	   // dt:VARCHAR
               + 'replacementId,'	   // dt:VARCHAR
-             // + 'replacementIdLegacy,'	   // dt:INT
               + 'synchronizedDate,'	   // dt:TIMESTAMP
               + 'toBeDeletedOn,'	   // dt:DATE
               + 'updatedDate,'	   // dt:TIMESTAMP
               + 'scaOpenSource,'	   // dt:VARCHAR
               + 'softwareEdition,'	   // dt:VARCHAR
-              //+ 'softwareLifecycle,'	   // dt:VARCHAR
               + 'softwareProduct,'	   // dt:VARCHAR
               + 'softwareVersion,'	   // dt:VARCHAR
               break;
@@ -1106,17 +1189,11 @@ exports.uploadTechCatalogDataset = async (data, response) => {
               + 'createdDate,'	   // dt:TIMESTAMP
               + 'deleteReason,'	   // dt:VARCHAR
               + 'formerSoftwareReleaseId,'	   // dt:VARCHAR
-             // + 'formerSoftwareReleaseIdLegacy,'	   // dt:INT
-             // + 'idLegacy,'	   // dt:INT
               + 'isToBeDeleted,'	   // dt:TINYINT
               + 'laterSoftwareReleaseId,'	   // dt:VARCHAR
-             // + 'laterSoftwareReleaseIdLegacy,'	   // dt:INT
               + 'latestSoftwareReleaseId,'	   // dt:VARCHAR
-             // + 'latestSoftwareReleaseIdLegacy,'	   // dt:INT
               + 'oldestSoftwareReleaseId,'	   // dt:VARCHAR
-             // + 'oldestSoftwareReleaseIdLegacy,'	   // dt:INT
               + 'replacementId,'	   // dt:VARCHAR
-             // + 'replacementIdLegacy,'	   // dt:INT
               + 'synchronizedDate,'	   // dt:TIMESTAMP
               + 'toBeDeletedOn,'	   // dt:DATE
               + 'updatedDate,'	   // dt:TIMESTAMP
@@ -1127,14 +1204,12 @@ exports.uploadTechCatalogDataset = async (data, response) => {
               + 'id,'	   // dt:VARCHAR
               + 'createdDate,'	   // dt:TIMESTAMP
               + 'deleteReason,'	   // dt:VARCHAR
-             // + 'idLegacy,'	   // dt:INT
               + 'isDesupported,'	   // dt:TINYINT
               + 'isDiscontinued,'	   // dt:TINYINT
               + 'isToBeDeleted,'	   // dt:TINYINT
               + 'platformLabel,'	   // dt:VARCHAR
               + 'platformType,'	   // dt:VARCHAR
               + 'replacementId,'	   // dt:VARCHAR
-             // + 'replacementIdLegacy,'	   // dt:INT
               + 'synchronizedDate,'	   // dt:TIMESTAMP
               + 'toBeDeletedOn,'	   // dt:DATE
               + 'updatedDate,'	   // dt:TIMESTAMP
@@ -1150,18 +1225,15 @@ exports.uploadTechCatalogDataset = async (data, response) => {
               + 'id,'	   // dt:VARCHAR
               + 'createdDate,'	   // dt:DATETIME
               + 'deleteReason,'	   // dt:VARCHAR
-              //+ 'idLegacy,'	   // dt:INT
               + 'isDesupported,'	   // dt:TINYINT
               + 'isDiscontinued,'	   // dt:TINYINT
               + 'isMajor,'	   // dt:TINYINT
               + 'isToBeDeleted,'	   // dt:TINYINT
               + 'majorSoftwareVersionId,'	   // dt:VARCHAR
-             // + 'majorVersionIdLegacy,'	   // dt:INT
               + 'name,'	   // dt:VARCHAR
-              + 'releaseOrder,'	   // dt:INT
+              + 'order_,'	   // dt:INT
               + 'patchLevel,'	   // dt:VARCHAR
               + 'replacementId,'	   // dt:VARCHAR
-              //+ 'replacementIdLegacy,'	   // dt:INT
               + 'synchronizedDate,'	   // dt:DATETIME
               + 'toBeDeletedOn,'	   // dt:DATETIME
               + 'updatedDate,'	   // dt:DATETIME
@@ -1175,14 +1247,11 @@ exports.uploadTechCatalogDataset = async (data, response) => {
               + 'category,'	   // dt:VARCHAR
               + 'categoryGroup,'	   // dt:VARCHAR
               + 'categoryId,'	   // dt:VARCHAR
-             // + 'categoryIdLegacy,'	   // dt:INT
               + 'createdDate,'	   // dt:DATETIME
               + 'deleteReason,'	   // dt:VARCHAR
               + 'description,'	   // dt:VARCHAR
-              //+ 'idLegacy,'	   // dt:INT
               + 'isToBeDeleted,'	   // dt:TINYINT
               + 'replacementId,'	   // dt:VARCHAR
-              //+ 'replacementIdLegacy,'	   // dt:INT
               + 'softwareOrHardware,'	   // dt:VARCHAR
               + 'subcategory,'	   // dt:VARCHAR
               + 'synchronizedDate,'	   // dt:DATETIME
@@ -1207,11 +1276,13 @@ exports.uploadTechCatalogDataset = async (data, response) => {
         // perform data cleaning
         function stringToDate (dateString) {
           //console.log(' - Converting stringToDate: ', dateString); // Debug
-          if (dateString === null) {
+          if (dateString === null || dateString === '') {
             return null;
-          //} else if (dateString.includes("/")) {
-          //  return null;
           } else {
+            if (dateString.includes('T') && dateString.slice(-1) === 'Z') {
+              dateString = dateString.replace('T', ' ').replace('Z', '');
+            }
+            
             var newDate = new Date(dateString);
             newDate = newDate.getFullYear() + "-" + 
                           String(newDate.getMonth() + 1).padStart(2, '0') + "-" +
@@ -1271,6 +1342,10 @@ exports.uploadTechCatalogDataset = async (data, response) => {
         let recordsToInsert = [];
         let insertValuesMap = new Map();
 
+        // to store SoftwareLifecycle.softwareSupportStage Object data
+        let recordsToInsertSftwSupportStage = [];
+        let insertValuesMapSftwSupportStage = new Map();
+
         recordsToInsert.push(datasetObject);
 
         try {
@@ -1280,7 +1355,7 @@ exports.uploadTechCatalogDataset = async (data, response) => {
             case 'Manufacturer':
               insertValuesMap = recordsToInsert.map(recordsToInsert => 
                 [datasetObject.id,	// dt:VARCHAR
-                stringToDate(datasetObject.acquiredDate),	// dt:DATETIME
+                datasetObject.acquiredDate,	// dt:DATETIME
                 datasetObject.city,	// dt:VARCHAR
                 datasetObject.country,	// dt:VARCHAR
                 stringToDate(datasetObject.createdDate),	// dt:DATETIME
@@ -1341,7 +1416,7 @@ exports.uploadTechCatalogDataset = async (data, response) => {
                 booleanToTinyint(datasetObject.isDiscontinued),	// dt:TINYINT
                 booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
                 datasetObject.name,	// dt:VARCHAR
-                datasetObject.priorityOrder,	// dt:INT
+                datasetObject.order,	// dt:INT
                 datasetObject.replacementId,	// dt:INT
                 stringToDate(datasetObject.synchronizedDate),	// dt:TIMESTAMP
                 stringToDate(datasetObject.toBeDeletedOn),	// dt:DATE
@@ -1420,7 +1495,6 @@ exports.uploadTechCatalogDataset = async (data, response) => {
                 stringToDate(datasetObject.generalAvailabilityDate),	// dt:TIMESTAMP
                 stringToDate(datasetObject.generalAvailabilityDateCalculated),	// dt:TIMESTAMP
                 datasetObject.generalAvailabilityException,	// dt:VARCHAR
-                //datasetObject.idLegacy,	// dt:INT
                 booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
                 datasetObject.obsolete,	// dt:VARCHAR
                 datasetObject.obsoleteCalculatedCase,	// dt:VARCHAR
@@ -1429,26 +1503,42 @@ exports.uploadTechCatalogDataset = async (data, response) => {
                 datasetObject.obsoleteException,	// dt:VARCHAR
                 datasetObject.obsoleteSupportLevel,	// dt:VARCHAR
                 datasetObject.replacementId,	// dt:VARCHAR
-                //datasetObject.replacementIdLegacy,	// dt:INT
                 stringToDate(datasetObject.synchronizedDate),	// dt:TIMESTAMP
                 stringToDate(datasetObject.toBeDeletedOn),	// dt:DATE
                 stringToDate(datasetObject.updatedDate),	// dt:TIMESTAMP
                 datasetObject.softwareRelease.id,	// dt:VARCHAR
               ]);
+
+              // check if softwareSupportStage has data
+              if (datasetObject.softwareSupportStage !== null && datasetObject.softwareSupportStage !== undefined) {
+                for (let supportStageObject of datasetObject.softwareSupportStage) {
+                  recordsToInsertSftwSupportStage.push(supportStageObject);
+
+                  insertValuesMapSftwSupportStage = recordsToInsertSftwSupportStage.map(recordsToInsertSftwSupportStage => 
+                    [lastRecordId,	// dt:VARCHAR)
+                    supportStageObject.definition,	// dt:VARCHAR
+                    stringToDate(supportStageObject.endDate),	// dt:DATETIME
+                    supportStageObject.manufacturerId,	// dt:VARCHAR
+                    supportStageObject.name,	// dt:VARCHAR
+                    supportStageObject.order,	// dt:INT
+                    supportStageObject.policy,	// dt:VARCHAR
+                    supportStageObject.publishedEndDate,	// dt:VARCHAR
+                    ]);
+                }
+                //.log(' - SoftwareSupportStage data found:' + datasetObject.softwareSupportStage.length + ' records.'); // Debug
+              } 
               break;
             case 'SoftwareMarketVersion':
               insertValuesMap = recordsToInsert.map(recordsToInsert => 
                 [datasetObject.id,	// dt:VARCHAR
                 stringToDate(datasetObject.createdDate),	// dt:TIMESTAMP
                 datasetObject.deleteReason,	// dt:VARCHAR
-                //datasetObject.idLegacy,	// dt:INT
                 booleanToTinyint(datasetObject.isDesupported),	// dt:TINYINT
                 booleanToTinyint(datasetObject.isDiscontinued),	// dt:TINYINT
                 booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
                 datasetObject.name,	// dt:VARCHAR
-                datasetObject.ReleaseOrder,	// dt:INT
+                datasetObject.order,	// dt:INT
                 datasetObject.replacementId,	// dt:VARCHAR
-                //datasetObject.replacementIdLegacy,	// dt:INT
                 stringToDate(datasetObject.synchronizedDate),	// dt:TIMESTAMP
                 stringToDate(datasetObject.toBeDeletedOn),	// dt:DATE
                 stringToDate(datasetObject.updatedDate),	// dt:TIMESTAMP
@@ -1456,59 +1546,41 @@ exports.uploadTechCatalogDataset = async (data, response) => {
               ]);
               break;
             case 'SoftwareProduct':
-              try {
-                insertValuesMap = recordsToInsert.map(recordsToInsert => 
-                  [datasetObject.id,	// dt:VARCHAR
-                  datasetObject.alias,	// dt:VARCHAR
-                  datasetObject.application,	// dt:VARCHAR
-                  datasetObject.cloud,	// dt:VARCHAR
-                  datasetObject.component,	// dt:VARCHAR
-                  stringToDate(datasetObject.createdDate),	// dt:DATETIME
-                  datasetObject.deleteReason,	// dt:VARCHAR
-                  //datasetObject.idLegacy,	// dt:INT
-                  booleanToTinyint(datasetObject.isDesupported),	// dt:TINYINT
-                  booleanToTinyint(datasetObject.isDiscontinued),	// dt:TINYINT
-                  booleanToTinyint(datasetObject.isFamilyInFullName),	// dt:TINYINT
-                  booleanToTinyint(datasetObject.isSuite),	// dt:TINYINT
-                  booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
-                  datasetObject.name,	// dt:VARCHAR
-                  datasetObject.productLicensable,	// dt:INT
-                  datasetObject.replacementId,	// dt:VARCHAR
-                  //datasetObject.replacementIdLegacy,	// dt:INT
-                  stringToDate(datasetObject.synchronizedDate),	// dt:DATETIME
-                  stringToDate(datasetObject.toBeDeletedOn),	// dt:DATETIME
-                  stringToDate(datasetObject.updatedDate),	// dt:DATETIME
-                  datasetObject.manufacturer.id,	// dt:VARCHAR
-                  datasetObject.softwareFamily.id,	// dt:VARCHAR
-                  datasetObject.taxonomy.id,	// dt:VARCHAR
-                ]);
-              } catch (error) {
-                insertValuesMap = recordsToInsert.map(recordsToInsert => 
-                  [datasetObject.id,	// dt:VARCHAR
-                  datasetObject.alias,	// dt:VARCHAR
-                  datasetObject.application,	// dt:VARCHAR
-                  datasetObject.cloud,	// dt:VARCHAR
-                  datasetObject.component,	// dt:VARCHAR
-                  stringToDate(datasetObject.createdDate),	// dt:DATETIME
-                  datasetObject.deleteReason,	// dt:VARCHAR
-                  //datasetObject.idLegacy,	// dt:INT
-                  booleanToTinyint(datasetObject.isDesupported),	// dt:TINYINT
-                  booleanToTinyint(datasetObject.isDiscontinued),	// dt:TINYINT
-                  booleanToTinyint(datasetObject.isFamilyInFullName),	// dt:TINYINT
-                  booleanToTinyint(datasetObject.isSuite),	// dt:TINYINT
-                  booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
-                  datasetObject.name,	// dt:VARCHAR
-                  datasetObject.productLicensable,	// dt:INT
-                  datasetObject.replacementId,	// dt:VARCHAR
-                  //datasetObject.replacementIdLegacy,	// dt:INT
-                  stringToDate(datasetObject.synchronizedDate),	// dt:DATETIME
-                  stringToDate(datasetObject.toBeDeletedOn),	// dt:DATETIME
-                  stringToDate(datasetObject.updatedDate),	// dt:DATETIME
-                  datasetObject.manufacturer.id,	// dt:VARCHAR
-                  datasetObject.softwareFamily,	// dt:VARCHAR
-                  datasetObject.taxonomy.id,	// dt:VARCHAR
-                ]);
+              if (datasetObject.softwareFamily === null){
+                datasetObject.softwareFamily = null;
+              } else {
+                datasetObject.softwareFamily = datasetObject.softwareFamily.id;
               }
+
+              if (datasetObject.taxonomy === null){
+                datasetObject.taxonomy = null;
+              } else {
+                datasetObject.taxonomy = datasetObject.taxonomy.id;
+              }
+
+              insertValuesMap = recordsToInsert.map(recordsToInsert => 
+                [datasetObject.id,	// dt:VARCHAR
+                datasetObject.alias,	// dt:VARCHAR
+                datasetObject.application,	// dt:VARCHAR
+                datasetObject.cloud,	// dt:VARCHAR
+                datasetObject.component,	// dt:VARCHAR
+                stringToDate(datasetObject.createdDate),	// dt:DATETIME
+                datasetObject.deleteReason,	// dt:VARCHAR
+                booleanToTinyint(datasetObject.isDesupported),	// dt:TINYINT
+                booleanToTinyint(datasetObject.isDiscontinued),	// dt:TINYINT
+                booleanToTinyint(datasetObject.isFamilyInFullName),	// dt:TINYINT
+                booleanToTinyint(datasetObject.isSuite),	// dt:TINYINT
+                booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
+                datasetObject.name,	// dt:VARCHAR
+                datasetObject.productLicensable,	// dt:INT
+                datasetObject.replacementId,	// dt:VARCHAR
+                stringToDate(datasetObject.synchronizedDate),	// dt:DATETIME
+                stringToDate(datasetObject.toBeDeletedOn),	// dt:DATETIME
+                stringToDate(datasetObject.updatedDate),	// dt:DATETIME
+                datasetObject.manufacturer.id,	// dt:VARCHAR
+                datasetObject.softwareFamily,	// dt:VARCHAR
+                datasetObject.taxonomy,	// dt:VARCHAR
+                ]);
               break;
             case 'SoftwareProductLink':
               try {
@@ -1518,21 +1590,13 @@ exports.uploadTechCatalogDataset = async (data, response) => {
                   stringToDate(datasetObject.createdDate),	// dt:TIMESTAMP
                   datasetObject.deleteReason,	// dt:VARCHAR
                   datasetObject.formerSoftwareProductId,	// dt:VARCHAR
-                  //datasetObject.formerSoftwareProductIdLegacy,	// dt:INT
-                  //datasetObject.idLegacy,	// dt:INT
                   booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
                   datasetObject.laterSoftwareProductId,	// dt:VARCHAR
-                  //datasetObject.laterSoftwareProductIdLegacy,	// dt:INT
                   datasetObject.latestSoftwareProductId,	// dt:VARCHAR
-                  //datasetObject.latestSoftwareProductIdLegacy,	// dt:INT
                   datasetObject.oldestSoftwareProductId,	// dt:VARCHAR
-                  //datasetObject.oldestSoftwareProductIdLegacy,	// dt:INT
                   datasetObject.replacementId,	// dt:VARCHAR
-                  //datasetObject.replacementIdLegacy,	// dt:INT
                   datasetObject.softwareCloudId,	// dt:VARCHAR
-                  //datasetObject.softwareCloudIdLegacy,	// dt:INT
                   datasetObject.softwareOnPremId,	// dt:VARCHAR
-                  //datasetObject.softwareOnPremIdLegacy,	// dt:INT
                   stringToDate(datasetObject.synchronizedDate),	// dt:TIMESTAMP
                   stringToDate(datasetObject.toBeDeletedOn),	// dt:DATE
                   stringToDate(datasetObject.updatedDate),	// dt:TIMESTAMP
@@ -1545,21 +1609,13 @@ exports.uploadTechCatalogDataset = async (data, response) => {
                   stringToDate(datasetObject.createdDate),	// dt:TIMESTAMP
                   datasetObject.deleteReason,	// dt:VARCHAR
                   datasetObject.formerSoftwareProductId,	// dt:VARCHAR
-                  //datasetObject.formerSoftwareProductIdLegacy,	// dt:INT
-                  //datasetObject.idLegacy,	// dt:INT
                   booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
                   datasetObject.laterSoftwareProductId,	// dt:VARCHAR
-                  //datasetObject.laterSoftwareProductIdLegacy,	// dt:INT
                   datasetObject.latestSoftwareProductId,	// dt:VARCHAR
-                  //datasetObject.latestSoftwareProductIdLegacy,	// dt:INT
                   datasetObject.oldestSoftwareProductId,	// dt:VARCHAR
-                  //datasetObject.oldestSoftwareProductIdLegacy,	// dt:INT
                   datasetObject.replacementId,	// dt:VARCHAR
-                  //datasetObject.replacementIdLegacy,	// dt:INT
                   datasetObject.softwareCloudId,	// dt:VARCHAR
-                  //datasetObject.softwareCloudIdLegacy,	// dt:INT
                   datasetObject.softwareOnPremId,	// dt:VARCHAR
-                  //datasetObject.softwareOnPremIdLegacy,	// dt:INT
                   stringToDate(datasetObject.synchronizedDate),	// dt:TIMESTAMP
                   stringToDate(datasetObject.toBeDeletedOn),	// dt:DATE
                   stringToDate(datasetObject.updatedDate),	// dt:TIMESTAMP
@@ -1568,63 +1624,42 @@ exports.uploadTechCatalogDataset = async (data, response) => {
               }
               break;
             case 'SoftwareRelease':
-              try {
-                insertValuesMap = recordsToInsert.map(recordsToInsert => 
-                  [datasetObject.id,	// dt:VARCHAR
-                  datasetObject.application,	// dt:VARCHAR
-                  datasetObject.cloud,	// dt:VARCHAR
-                  stringToDate(datasetObject.createdDate),	// dt:TIMESTAMP
-                  datasetObject.deleteReason,	// dt:VARCHAR
-                  //datasetObject.idLegacy,	// dt:INT
-                  booleanToTinyint(datasetObject.isDesupported),	// dt:TINYINT
-                  booleanToTinyint(datasetObject.isDiscontinued),	// dt:TINYINT
-                  booleanToTinyint(datasetObject.isLicensable),	// dt:TINYINT
-                  booleanToTinyint(datasetObject.isMajor),	// dt:TINYINT
-                  booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
-                  datasetObject.majorSoftwareReleaseId,	// dt:VARCHAR
-                  //datasetObject.majorSoftwareReleaseIdLegacy,	// dt:INT
-                  datasetObject.name,	// dt:VARCHAR
-                  datasetObject.patchLevel,	// dt:VARCHAR
-                  datasetObject.replacementId,	// dt:VARCHAR
-                  //datasetObject.replacementIdLegacy,	// dt:INT
-                  stringToDate(datasetObject.synchronizedDate),	// dt:TIMESTAMP
-                  stringToDate(datasetObject.toBeDeletedOn),	// dt:DATE
-                  stringToDate(datasetObject.updatedDate),	// dt:TIMESTAMP
-                  datasetObject.scaOpenSource,	// dt:VARCHAR
-                  datasetObject.softwareEdition.id,	// dt:VARCHAR
-                  //datasetObject.softwareLifecycle.id,	// dt:VARCHAR
-                  datasetObject.softwareProduct.id,	// dt:VARCHAR
-                  datasetObject.softwareVersion.id,	// dt:VARCHAR
-                ]);
-              } catch (error) {
-                insertValuesMap = recordsToInsert.map(recordsToInsert => 
-                  [datasetObject.id,	// dt:VARCHAR
-                  datasetObject.application,	// dt:VARCHAR
-                  datasetObject.cloud,	// dt:VARCHAR
-                  stringToDate(datasetObject.createdDate),	// dt:TIMESTAMP
-                  datasetObject.deleteReason,	// dt:VARCHAR
-                  //datasetObject.idLegacy,	// dt:INT
-                  booleanToTinyint(datasetObject.isDesupported),	// dt:TINYINT
-                  booleanToTinyint(datasetObject.isDiscontinued),	// dt:TINYINT
-                  booleanToTinyint(datasetObject.isLicensable),	// dt:TINYINT
-                  booleanToTinyint(datasetObject.isMajor),	// dt:TINYINT
-                  booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
-                  datasetObject.majorSoftwareReleaseId,	// dt:VARCHAR
-                  //datasetObject.majorSoftwareReleaseIdLegacy,	// dt:INT
-                  datasetObject.name,	// dt:VARCHAR
-                  datasetObject.patchLevel,	// dt:VARCHAR
-                  datasetObject.replacementId,	// dt:VARCHAR
-                  //datasetObject.replacementIdLegacy,	// dt:INT
-                  stringToDate(datasetObject.synchronizedDate),	// dt:TIMESTAMP
-                  stringToDate(datasetObject.toBeDeletedOn),	// dt:DATE
-                  stringToDate(datasetObject.updatedDate),	// dt:TIMESTAMP
-                  datasetObject.scaOpenSource,	// dt:VARCHAR
-                  datasetObject.softwareEdition,	// dt:VARCHAR
-                  //datasetObject.softwareLifecycle.id,	// dt:VARCHAR
-                  datasetObject.softwareProduct.id,	// dt:VARCHAR
-                  datasetObject.softwareVersion.id,	// dt:VARCHAR
-                ]);
+              if (datasetObject.scaOpenSource === null) {
+                datasetObject.scaOpenSource = null;
+              } else {
+                datasetObject.scaOpenSource = datasetObject.scaOpenSource.id;
               }
+
+              if (datasetObject.softwareEdition === null) {
+                datasetObject.softwareEdition = null;
+              } else {
+                datasetObject.softwareEdition = datasetObject.softwareEdition.id;
+              }
+
+              insertValuesMap = recordsToInsert.map(recordsToInsert => 
+                [datasetObject.id,	// dt:VARCHAR
+                datasetObject.application,	// dt:VARCHAR
+                datasetObject.cloud,	// dt:VARCHAR
+                stringToDate(datasetObject.createdDate),	// dt:TIMESTAMP
+                datasetObject.deleteReason,	// dt:VARCHAR
+                booleanToTinyint(datasetObject.isDesupported),	// dt:TINYINT
+                booleanToTinyint(datasetObject.isDiscontinued),	// dt:TINYINT
+                booleanToTinyint(datasetObject.isLicensable),	// dt:TINYINT
+                booleanToTinyint(datasetObject.isMajor),	// dt:TINYINT
+                booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
+                datasetObject.majorSoftwareReleaseId,	// dt:VARCHAR
+                datasetObject.name,	// dt:VARCHAR
+                datasetObject.patchLevel,	// dt:VARCHAR
+                datasetObject.replacementId,	// dt:VARCHAR
+                stringToDate(datasetObject.synchronizedDate),	// dt:TIMESTAMP
+                stringToDate(datasetObject.toBeDeletedOn),	// dt:DATE
+                stringToDate(datasetObject.updatedDate),	// dt:TIMESTAMP
+                datasetObject.scaOpenSource,	// dt:VARCHAR
+                datasetObject.softwareEdition,	// dt:VARCHAR
+                datasetObject.softwareProduct.id,	// dt:VARCHAR
+                datasetObject.softwareVersion.id,	// dt:VARCHAR
+              ]);
+              
               break;
             case 'SoftwareReleaseLink':
               insertValuesMap = recordsToInsert.map(recordsToInsert => 
@@ -1632,17 +1667,11 @@ exports.uploadTechCatalogDataset = async (data, response) => {
                 stringToDate(datasetObject.createdDate),	// dt:TIMESTAMP
                 datasetObject.deleteReason,	// dt:VARCHAR
                 datasetObject.formerSoftwareReleaseId,	// dt:VARCHAR
-                //datasetObject.formerSoftwareReleaseIdLegacy,	// dt:INT
-                //datasetObject.idLegacy,	// dt:INT
                 booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
                 datasetObject.laterSoftwareReleaseId,	// dt:VARCHAR
-                //datasetObject.laterSoftwareReleaseIdLegacy,	// dt:INT
                 datasetObject.latestSoftwareReleaseId,	// dt:VARCHAR
-                //datasetObject.latestSoftwareReleaseIdLegacy,	// dt:INT
                 datasetObject.oldestSoftwareReleaseId,	// dt:VARCHAR
-                //datasetObject.oldestSoftwareReleaseIdLegacy,	// dt:INT
                 datasetObject.replacementId,	// dt:VARCHAR
-                //datasetObject.replacementIdLegacy,	// dt:INT
                 stringToDate(datasetObject.synchronizedDate),	// dt:TIMESTAMP
                 stringToDate(datasetObject.toBeDeletedOn),	// dt:DATE
                 stringToDate(datasetObject.updatedDate),	// dt:TIMESTAMP
@@ -1654,14 +1683,12 @@ exports.uploadTechCatalogDataset = async (data, response) => {
                 [datasetObject.id,	// dt:VARCHAR
                 stringToDate(datasetObject.createdDate),	// dt:TIMESTAMP
                 datasetObject.deleteReason,	// dt:VARCHAR
-                //datasetObject.idLegacy,	// dt:INT
                 booleanToTinyint(datasetObject.isDesupported),	// dt:TINYINT
                 booleanToTinyint(datasetObject.isDiscontinued),	// dt:TINYINT
                 booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
                 datasetObject.platformLabel,	// dt:VARCHAR
                 datasetObject.platformType,	// dt:VARCHAR
                 datasetObject.replacementId,	// dt:VARCHAR
-                //datasetObject.replacementIdLegacy,	// dt:INT
                 stringToDate(datasetObject.synchronizedDate),	// dt:TIMESTAMP
                 stringToDate(datasetObject.toBeDeletedOn),	// dt:DATE
                 stringToDate(datasetObject.updatedDate),	// dt:TIMESTAMP
@@ -1674,11 +1701,9 @@ exports.uploadTechCatalogDataset = async (data, response) => {
                 [datasetObject.softwareLifecycle.id,	// dt:VARCHAR
                 datasetObject.definition,	// dt:VARCHAR
                 stringToDate(datasetObject.endDate),	// dt:DATE
-                //datasetObject.idLegacy,	// dt:INT
                 datasetObject.manufacturerId,	// dt:VARCHAR
-                //datasetObject.manufacturerIdLegacy,	// dt:INT
                 datasetObject.name,	// dt:VARCHAR
-                datasetObject.stageOrder,	// dt:INT
+                datasetObject.order,	// dt:INT
                 datasetObject.policy,	// dt:VARCHAR
                 datasetObject.publishedEndDate,	// dt:VARCHAR
               ]);
@@ -1697,7 +1722,7 @@ exports.uploadTechCatalogDataset = async (data, response) => {
                   datasetObject.majorSoftwareVersionId,	// dt:VARCHAR
                   //datasetObject.majorVersionIdLegacy,	// dt:INT
                   datasetObject.name,	// dt:VARCHAR
-                  datasetObject.releaseOrder,	// dt:INT
+                  datasetObject.order,	// dt:INT
                   datasetObject.patchLevel,	// dt:VARCHAR
                   datasetObject.replacementId,	// dt:VARCHAR
                   //datasetObject.replacementIdLegacy,	// dt:INT
@@ -1721,7 +1746,7 @@ exports.uploadTechCatalogDataset = async (data, response) => {
                   datasetObject.majorSoftwareVersionId,	// dt:VARCHAR
                   //datasetObject.majorVersionIdLegacy,	// dt:INT
                   datasetObject.name,	// dt:VARCHAR
-                  datasetObject.releaseOrder,	// dt:INT
+                  datasetObject.order,	// dt:INT
                   datasetObject.patchLevel,	// dt:VARCHAR
                   datasetObject.replacementId,	// dt:VARCHAR
                   //datasetObject.replacementIdLegacy,	// dt:INT
@@ -1740,14 +1765,11 @@ exports.uploadTechCatalogDataset = async (data, response) => {
                 datasetObject.category,	// dt:VARCHAR
                 datasetObject.categoryGroup,	// dt:VARCHAR
                 datasetObject.categoryId,	// dt:VARCHAR
-                //datasetObject.categoryIdLegacy,	// dt:INT
                 stringToDate(datasetObject.createdDate),	// dt:DATETIME
                 datasetObject.deleteReason,	// dt:VARCHAR
                 datasetObject.description,	// dt:VARCHAR
-                //datasetObject.idLegacy,	// dt:INT
                 booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
                 datasetObject.replacementId,	// dt:VARCHAR
-                //datasetObject.replacementIdLegacy,	// dt:INT
                 datasetObject.softwareOrHardware,	// dt:VARCHAR
                 datasetObject.subcategory,	// dt:VARCHAR
                 stringToDate(datasetObject.synchronizedDate),	// dt:DATETIME
@@ -1757,9 +1779,13 @@ exports.uploadTechCatalogDataset = async (data, response) => {
               break;
           }
         } catch (error) {
-          let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### Record: ${pageRecordCounter} #### *************** ERROR: Column Values Error ***************  \n${error} \n`;
+          let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### Record: ${pageRecordCounter} #### *************** ERROR: Column Values id: ${lastRecordId} ***************  \n${error} \n`;
 
+          console.log('**********************************************************************************************************'  );
           console.log(errorMsg);
+          console.log('**********************************************************************************************************'  );
+
+          //console.log(JSON.stringify(datasetObject)); // Debug
 
           // stop the upload and return the error message
           return errorMsg;
@@ -1774,6 +1800,23 @@ exports.uploadTechCatalogDataset = async (data, response) => {
           // reset failed record counter
           consecutiveFailedRecordCounter = 0;
 
+          // handling SoftwareLifecycle.SoftwareSupportStage[] data
+          try {
+            if (datasetName === 'SoftwareLifecycle' && insertValuesMapSftwSupportStage.length > 0) {
+              //console.log('... inserting SoftwareSupportStage data'); // Debug
+              let responseDB = await sql_promise.query(insertQuerySftwSupportStage, [insertValuesMapSftwSupportStage]);
+            }
+          } catch (error) {
+            let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### Record: ${pageRecordCounter} #### *************** ERROR inserting SoftwareSupportStage data for SoftwareLifecycle id: ${lastRecordId} ***************  \n ${error} \n`;
+
+            console.log('**********************************************************************************************************'  );
+            console.log(errorMsg); // ERROR MSG
+            console.log('**********************************************************************************************************'  );
+
+            // log the error to file
+            fs.appendFileSync(errorLogPath, errorMsg + error + '\n\n');
+          }
+
           // get value for affectedRows
           //let affectedRows = responseDB[0].affectedRows;
         } catch (error) {
@@ -1781,28 +1824,33 @@ exports.uploadTechCatalogDataset = async (data, response) => {
           pageFailedRecordCounter++;
           consecutiveFailedRecordCounter++;
 
-          let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### Record: ${pageRecordCounter} #### *************** ERROR executing insert into table ${tableName} ***************  \n`;
+          let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### Record: ${pageRecordCounter} #### *************** ERROR inserting ${datasetName} data id: ${lastRecordId} ***************  \n ${error} \n`;
 
-          console.log(`#### ${datasetName} #### Page: ${pageCounter} #### Record: ${pageRecordCounter} #### ...... ERROR inserting record of ${datasetArray.length} into ${tableName}.`); // Debug
+          console.log('**********************************************************************************************************'  );
+          console.log(errorMsg); // Debug
+          console.log('**********************************************************************************************************'  );
+
 
           // log the error to file
-          let path = 'tech_catalog_data/logs/errors_' + datasetName + '_' + String(uploadStartTime).replace(/:/g, '_').replace(/ /g, '_') + '.log';
-          fs.appendFileSync(path, errorMsg + error + '\n\n');
+          fs.appendFileSync(errorLogPath, errorMsg + error + '\n\n');
 
           // stop the upload and return the error message
           if (consecutiveFailedRecordCounter === 25) {
             errorMsg = errorMsg + `\n#### ${datasetName} #### Page: ${pageCounter} #### *************** ERROR: 25 consecutive failed records, stopping upload. *************** \n`;
+
+            console.log('**********************************************************************************************************'  );
             console.log(errorMsg);
+            console.log('**********************************************************************************************************'  );
 
             return errorMsg;
           }
-          //return errorMsg;
         }
 
+        // 1000 records notification
         if (notificationCounter === 1000) {
           let pageCurrentTime = new Date();
-          let pageCurrentDuration = (pageCurrentTime - pageStartTime) / 1000 / 60;
-          console.log(`#### ${datasetName} #### Page: ${pageCounter} #### ...... ${pageRecordCounter} of ${datasetArray.length} records process with ${pageFailedRecordCounter} error(s) at ${pageCurrentTime}.(Tot.Duration: ${pageCurrentDuration} minutes)`); // Debug
+          let pageCurrentDuration = formatDuration(pageStartTime, pageCurrentTime);
+          console.log(`#### ${datasetName} #### Page: ${pageCounter} #### ...... ${pageRecordCounter} of ${datasetArray.length} records process with ${pageFailedRecordCounter} error(s) at ${pageCurrentTime}.(.... ${pageCurrentDuration})`); // Debug
           notificationCounter = 0;
         }
       } // ####################### end page records FOR LOOP #######################
@@ -1815,12 +1863,8 @@ exports.uploadTechCatalogDataset = async (data, response) => {
     console.log(`#### ${datasetName} #### Page: ${pageCounter} #### Page End Time: ${pageEndTime}`);
 
     // calculate page duration in seconds
-    let pageDuration = (pageEndTime - pageStartTime);
-    //console.log(`...... Page ${pageCounter} Duration: ${pageDuration} seconds`);
-
-    // calculate page duration in minutes
-    let pageDurationMinutes = pageDuration / 1000 / 60;
-    console.log(`#### ${datasetName} #### Page: ${pageCounter} #### ...... Page Duration: ${pageDurationMinutes} minutes`);
+    let pageDuration = formatDuration(pageStartTime, pageEndTime);
+    console.log(`#### ${datasetName} #### Page: ${pageCounter} #### ...... Page Duration: ${pageDuration}`);
 
     // display summary of page
     console.log(`#### ${datasetName} #### Page: ${pageCounter} #### Summary of Page Processing: completed inserting ` + (pageRecordCounter-failedRecordCounter) + ' of ' + datasetArray.length + ' records.'); // Debug
@@ -1853,12 +1897,12 @@ exports.uploadTechCatalogDataset = async (data, response) => {
         console.log(`#### ${datasetName} #### ...... uploadEndTime: ${uploadEndTime}`);
 
         // calculate upload duration in hours, minutes, seconds
-        let uploadDuration = (uploadEndTime - uploadStartTime) / 1000 / 60;
+        let uploadDuration = formatDuration(uploadStartTime, uploadEndTime);
 
-        console.log(`#### ${datasetName} #### ...... uploadDuration: ' ${uploadDuration} minutes`);
+        console.log(`#### ${datasetName} #### ...... uploadDuration: ${uploadDuration}`);
 
-        console.log(`#### ${datasetName} #### ...... totalPages: ' ${pageCounter}`);
-        console.log(`#### ${datasetName} #### ...... totalRecords: ' ${recordCounter}`);
+        console.log(`#### ${datasetName} #### ...... totalPages: ${pageCounter}`);
+        console.log(`#### ${datasetName} #### ...... totalRecords: ${recordCounter}`);
         console.log(`#### ${datasetName} #### ...... failedRecords: ${failedRecordCounter}`);
         console.log(`## END OF ${datasetName} #####################################################################################################`);
 
@@ -1871,7 +1915,10 @@ exports.uploadTechCatalogDataset = async (data, response) => {
       }
     } catch (error) {
       let errorMsg = `#### ${datasetName} #### *************** ERROR returning response (${datasetName}) *************** \n `;
+
+      console.log('**********************************************************************************************************'  );
       console.log(errorMsg, error);  // Debug
+      console.log('**********************************************************************************************************'  );
 
       // stop the upload and return the error message
       return errorMsg;
