@@ -95,7 +95,7 @@ exports.refreshAllSystems = (req, res) => {
 
 // this function is called by the api to log an event to the database
 exports.logEvent = (req, res) => {
-  console.log("logEvent")
+  //console.log("logEvent")
   var data = req.body;
 
   res = ctrl.sendLogQuery(data.message, data.user, data.message, res);
@@ -109,6 +109,17 @@ exports.runUploadTechCatalogDataset = (req, res) => {
     .then((response) => {
       let json = response;
       //console.log("final response msg: " + json); 
+      res.status(200).json({ message: json, });
+    });
+};
+
+// this function is called by the api to get a list of records that need to be syncronized
+exports.getTechCatalogUpdatedRecords = (req, res) => {
+  var data = req.body;
+
+  ctrl.getTechCatalogUpdatedRecords(data, res)
+    .then((response) => {
+      let json = response;
       res.status(200).json({ message: json, });
     });
 };

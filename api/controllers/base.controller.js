@@ -1624,16 +1624,25 @@ exports.uploadTechCatalogDataset = async (data, response) => {
               }
               break;
             case 'SoftwareRelease':
+              // check if scaOpenSource has data
               if (datasetObject.scaOpenSource === null) {
                 datasetObject.scaOpenSource = null;
               } else {
                 datasetObject.scaOpenSource = datasetObject.scaOpenSource.id;
               }
 
+              // check if softwareEdition has data
               if (datasetObject.softwareEdition === null) {
                 datasetObject.softwareEdition = null;
               } else {
                 datasetObject.softwareEdition = datasetObject.softwareEdition.id;
+              }
+
+              // check if softwareVersion has data
+              if (datasetObject.softwareVersion === null) {
+                datasetObject.softwareVersion = null;
+              } else {
+                datasetObject.softwareVersion = datasetObject.softwareVersion.id;
               }
 
               insertValuesMap = recordsToInsert.map(recordsToInsert => 
@@ -1657,7 +1666,7 @@ exports.uploadTechCatalogDataset = async (data, response) => {
                 datasetObject.scaOpenSource,	// dt:VARCHAR
                 datasetObject.softwareEdition,	// dt:VARCHAR
                 datasetObject.softwareProduct.id,	// dt:VARCHAR
-                datasetObject.softwareVersion.id,	// dt:VARCHAR
+                datasetObject.softwareVersion,	// dt:VARCHAR
               ]);
               
               break;
@@ -1925,3 +1934,5 @@ exports.uploadTechCatalogDataset = async (data, response) => {
     }
   } while (!isLastPage);
 }
+
+

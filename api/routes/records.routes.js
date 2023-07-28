@@ -25,5 +25,7 @@ router.route('/logEvent')
 router.route('/runUploadTechCatalogDataset')
   .post(recordsCtrl.runUploadTechCatalogDataset);
 
+router.route('/getTechCatalogUpdatedRecords')
+  .post(recordsCtrl.getTechCatalogUpdatedRecords);
 
 module.exports = router;
