@@ -114,10 +114,10 @@ exports.runUploadTechCatalogDataset = (req, res) => {
 };
 
 // this function is called by the api to get a list of records that need to be syncronized
-exports.getTechCatalogUpdatedRecords = (req, res) => {
+exports.getSyncList = (req, res) => {
   var data = req.body;
 
-  ctrl.getTechCatalogUpdatedRecords(data, res)
+  ctrl.getSyncList(data, res)
     .then((response) => {
       let json = response;
       res.status(200).json({ message: json, });

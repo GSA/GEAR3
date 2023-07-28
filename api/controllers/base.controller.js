@@ -1823,7 +1823,7 @@ exports.uploadTechCatalogDataset = async (data, response) => {
             console.log('**********************************************************************************************************'  );
 
             // log the error to file
-            fs.appendFileSync(errorLogPath, errorMsg + error + '\n\n');
+            fs.appendFileSync(errorLogPath, errorMsg + error + '\r\n');
           }
 
           // get value for affectedRows
@@ -1936,3 +1936,421 @@ exports.uploadTechCatalogDataset = async (data, response) => {
 }
 
 
+
+// exports a list of ids from a dataset that need to be re-synced
+exports.getSyncList = async (data, response) => {
+
+  // VARIABLES
+
+  const refreshToken = data.refreshToken;
+  const datasetName = data.dataset;
+  
+  const takeAmt = "10000";
+  let accessToken = '';
+  let additionalQueryParameters = null;
+  let graphqlQuery = '';
+  let columnList = `id
+  createdDate
+  deleteReason
+  isToBeDeleted
+  replacementId
+  synchronizedDate
+  toBeDeletedOn
+  updatedDate
+  `;
+  
+  const tableName = `tech_catalog.tp_${datasetName}_tmp`;
+
+  var pageCounter = 0;
+  var recordCounter = 0;
+  var failedRecordCounter = 0;
+  var syncCounter = 0;
+
+  var isLastPage = false;
+  var lastRecordId = null;
+  let lastSynchronizedDate = null;
+  const uploadStartTime = new Date().getTime();
+  var uploadEndTime = null;
+
+  // FUNCTIONS FOR UPLOAD
+
+  function formatDateTime(dateObj) {
+    var formattedDate = new Date(dateObj);
+
+    if (formattedDate === null || formattedDate === '') {
+      return null;
+    } else {
+      // Get the individual date components
+      const year = formattedDate.getFullYear();
+      const month = String(formattedDate.getMonth() + 1).padStart(2, '0');
+      const day = String(formattedDate.getDate()).padStart(2, '0');
+
+      // Get the individual time components
+      const hours = String(formattedDate.getHours()).padStart(2, '0');
+      const minutes = String(formattedDate.getMinutes()).padStart(2, '0');
+      const seconds = String(formattedDate.getSeconds()).padStart(2, '0');
+      const milliseconds = String(formattedDate.getMilliseconds()).padStart(3, '0');
+
+      // Combine the components into the desired format
+      formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
+
+      return formattedDate;
+    }
+  }
+
+  function formatFileDateTime(dateObj) {
+    var formattedDate = new Date(dateObj);
+
+    if (formattedDate === null || formattedDate === '') {
+      return null;
+    } else {
+      // Get the individual date components
+      const year = formattedDate.getFullYear();
+      const month = String(formattedDate.getMonth() + 1).padStart(2, '0');
+      const day = String(formattedDate.getDate()).padStart(2, '0');
+
+      // Get the individual time components
+      const hours = String(formattedDate.getHours()).padStart(2, '0');
+      const minutes = String(formattedDate.getMinutes()).padStart(2, '0');
+      const seconds = String(formattedDate.getSeconds()).padStart(2, '0');
+
+      // Combine the components into the desired format
+      formattedDate = `${year}${month}${day}_${hours}.${minutes}`;
+
+      return formattedDate;
+    }
+  }
+
+  function formatDuration(start_date, end_date) {
+    const duration = new Date(end_date - start_date);
+  
+    const hours = duration.getUTCHours();
+    const minutes = duration.getUTCMinutes();
+    const seconds = duration.getUTCSeconds();
+  
+    let result = "";
+    if (hours > 0) {
+      result += hours + (hours === 1 ? " hour" : " hours");
+    }
+    if (minutes > 0) {
+      if (result !== "") {
+        result += ", ";
+      }
+      result += minutes + (minutes === 1 ? " minute" : " minutes");
+    }
+    if (seconds > 0) {
+      if (result !== "") {
+        result += ", ";
+      }
+      result += seconds + (seconds === 1 ? " second" : " seconds");
+    }
+    
+    return result;
+  }
+
+  function stringToDate (dateString) {
+    if (dateString === null || dateString === '' || dateString === undefined) {
+      return null;
+    } else {
+      if (dateString.includes('T') && dateString.slice(-1) === 'Z') {
+        dateString = dateString.replace('T', ' ').replace('Z', '');
+      }
+      
+      var newDate = new Date(dateString);
+      newDate = newDate.getFullYear() + "-" + 
+                    String(newDate.getMonth() + 1).padStart(2, '0') + "-" +
+                    String(newDate.getDate()).padStart(2, '0') +  " " +
+                    String(newDate.getHours()).padStart(2, '0') +  ":" +
+                    String(newDate.getMinutes()).padStart(2, '0') +  ":" +
+                    String(newDate.getSeconds()).padStart(2, '0');
+      if (newDate === 'NaN-NaN-NaN NaN:NaN:NaN') {
+        return null;
+      } else {
+        return newDate;
+      }
+    }
+  }
+
+  function logger(msg, error) {
+    if (error === undefined) {
+      console.log(`(${formatDateTime(Date.now())}): ${datasetName} - ${msg}`);
+    } else {
+      console.log(`(${formatDateTime(Date.now())}): ${datasetName} - ${msg}... \n`, error);
+    }
+  }
+
+  try {
+    
+    logger(`Starting Get Sync List...`);
+
+    // DEFINE FILE PATHS
+
+    const syncPath = `tech_catalog_data/sync/sync_${datasetName}_${formatFileDateTime(uploadStartTime)}.log`
+    const errorLogPath = `tech_catalog_data/logs/errors_${datasetName}_${formatFileDateTime(uploadStartTime)}.log`;
+
+    // PRE-UPLOAD CHECKS
+    logger(`...... Verifying Parameters`);
+    try {
+      if (refreshToken === undefined || refreshToken === null || refreshToken === '') {
+        let errorMsg = `No Token Provided`;
+        logger(errorMsg);
+        return errorMsg;
+      }
+
+      if (datasetName === undefined || datasetName === null || datasetName === '') {
+        let errorMsg = `No Dataset Provided`;
+        logger(errorMsg);
+        return errorMsg;
+      } else if (datasetName !== 'Manufacturer' && 
+                  datasetName !== 'Platform' && 
+                  datasetName !== 'SoftwareEdition' && 
+                  datasetName !== 'SoftwareFamily' && 
+                  datasetName !== 'SoftwareLifecycle' && 
+                  datasetName !== 'SoftwareMarketVersion' && 
+                  datasetName !== 'SoftwareProduct' && 
+                  datasetName !== 'SoftwareProductLink' && 
+                  datasetName !== 'SoftwareRelease' && 
+                  datasetName !== 'SoftwareReleaseLink' && 
+                  datasetName !== 'SoftwareReleasePlatform' && 
+                  datasetName !== 'SoftwareVersion' && 
+                  datasetName !== 'Taxonomy') {
+        let errorMsg = `Dataset Provided is not valid`;
+        logger(errorMsg);
+        return errorMsg;
+      }
+    } catch (error) {
+      let errorMsg = `An error occured while checking the parameters`;
+      logger(errorMsg);
+      return errorMsg;
+    }
+    logger(`...... Parameters Verified`);
+
+    // GET THE MAX SYNCRONIZED DATE FROM THE DATASETS TABLE
+
+    logger(`...... Getting Last Synchronized Date`);
+    try {
+      let [rows, fields] = await sql_promise.query(`select max(synchronizedDate) as lastSynchronizedDate from ${tableName};`);
+
+      lastSynchronizedDate = new Date(rows[0].lastSynchronizedDate);
+
+      if (lastSynchronizedDate === null) {
+        let errorMsg = 'No Synchronized Date Found';
+        logger(errorMsg);
+        return errorMsg;
+      } 
+
+      // write lastRecordId to file
+      fs.appendFileSync(syncPath, `"Max Synchronized Date:", "${formatDateTime(lastSynchronizedDate)}"\r\n`);
+    } catch (error) {
+      let errorMsg = `An error occured while getting the last synchronized date`;
+      logger(errorMsg, error);
+      return errorMsg;
+    }
+    logger(`...... Last Synchronized Date Found: ${formatDateTime(lastSynchronizedDate)}`);
+
+    // LOOP THROUGH EACH PAGE...
+
+    do {
+
+      // SETUP PAGE VARIABLES
+
+      pageCounter++;
+      let pageStartTime = new Date();
+      let pageJson = null;
+
+      logger(`PAGE ${pageCounter}`);
+
+      // FETCH ACCESS TOKEN FROM API
+
+      if (accessToken === ''){
+        logger(`...... Fetching Access Token`);
+        try {
+          const response = await fetch('https://login.flexera.com/oidc/token', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              grant_type: 'refresh_token',
+              refresh_token: refreshToken,
+            }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            accessToken = String(data.access_token);
+          } else {
+            let errorMsg = `Fetching the access token returned a ${response.status} error`;
+            logger(errorMsg, response);
+            return errorMsg;
+          }
+        } catch (error) {
+          let errorMsg = `An error occured while fetching the access token`;
+          logger(errorMsg, error);
+          return errorMsg;
+        }
+        logger(`...... Access Token Fetched`);
+      } else {
+        logger(`...... Access Token already exists`);
+      }
+
+      // BUILD GRAPHQL QUERY
+
+      logger(`...... Building GraphQL Query`);
+      try {
+        if (lastRecordId !== null) {
+          additionalQueryParameters = ` afterId: "${lastRecordId}"`;
+        } else {
+          additionalQueryParameters = '';
+        }
+
+        graphqlQuery = JSON.stringify({
+          query: `{
+            ${datasetName}(take: ${takeAmt}${additionalQueryParameters} ) {
+                ${columnList}
+          }
+        }`,});
+      } catch (error) {
+        let errorMsg = `An error occurred while building the GraphQL query.`;
+        logger(errorMsg, error);
+        return errorMsg;
+      }
+      logger(`...... GraphQL query built`);
+      //console.log(graphqlQuery) // DEBUGGING
+
+      // FETCH DATA FROM API
+
+      logger(`...... Fetching data from API`);
+      let durationStartTime = new Date().getTime();
+
+      const apiResponse = await fetch("https://beta.api.flexera.com/content/v2/orgs/35253/graphql", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: "Bearer " + accessToken,
+        },
+        body: graphqlQuery,
+      });
+
+      if (apiResponse.ok) {
+        pageJson = await apiResponse.json();
+        
+        let durationEndTime = new Date().getTime();
+        logger(`...... Data fetched from API... ${formatDuration(durationStartTime, durationEndTime)}`);
+      } else {
+        let errorMsg = `Fetching the data from the API returned a ${apiResponse.status} error`;
+        logger(errorMsg, apiResponse);
+        //console.log('Error GraphQL Query: ' + graphqlQuery) // DEBUGGING
+        return errorMsg;
+      }
+
+      // SETUP PAGE RECORD VARIABLES
+
+      let pageRecordCounter = 0;
+      let pageFailedRecordCounter = 0;
+      let pageSyncCounter = 0;
+      let consecutiveFailedRecordCounter = 0;
+      let notificationCounter = 0;
+
+      let datasetArray = pageJson.data[datasetName];
+
+
+      // PROCESS ALL RECORDS ON A PAGE DATA
+
+      logger(`...... Processing Page ${pageCounter} data`);
+      try {
+
+        if (datasetArray.length === 0) {
+          logger(`...... No records found on Page ${pageCounter}`);
+          isLastPage = true;
+          pageCounter--;
+        } else {
+          logger(`...... Processing ${datasetArray.length} records on Page ${pageCounter}`);
+
+          // LOOP THROUGH EACH RECORD IN THE PAGE...
+
+          for (let datasetObject of datasetArray) {
+            recordCounter++;
+            pageRecordCounter++;
+            notificationCounter++;
+
+            lastRecordId = datasetObject.id;
+
+            // COMPARE SYNCRONIZEDDATE (synchronizedDate)
+
+            try {
+              let recordSynchronizedDate = new Date(stringToDate(datasetObject.synchronizedDate));
+
+              if (recordSynchronizedDate > lastSynchronizedDate){
+                syncCounter++;
+                pageSyncCounter++;
+
+                let insertTxt = `"${lastRecordId}", "${datasetObject.synchronizedDate}"\r\n`;
+
+                // write lastRecordId to file
+                fs.appendFileSync(syncPath, insertTxt);
+              }
+            } catch (error) {
+              pageFailedRecordCounter++;
+              let errorMsg = `...... An error occurred while comparing the synchronizedDate (id:${lastRecordId})`;
+              logger(errorMsg, error);
+
+              // write errored lastRecordId to file
+              fs.appendFileSync(errorLogPath, `"${lastRecordId}"\r\n`);
+              //return errorMsg;
+            }
+
+          } // ... END LOOP THROUGH EACH RECORD IN THE PAGE
+        } 
+      
+        logger(`...... Page ${pageCounter} data processed`);
+        
+        // PAGE SUMMARY
+
+        failedRecordCounter = failedRecordCounter + pageFailedRecordCounter;
+
+        let pageEndTime = new Date();
+
+        let pageDuration = formatDuration(pageStartTime, pageEndTime);
+
+        logger(`Page ${pageCounter}... Summary: ${pageSyncCounter}/${pageRecordCounter} records require re-syncing w/ ${pageFailedRecordCounter} failed verification... ${pageDuration}`);
+
+        if (datasetArray.length < takeAmt || pageFailedRecordCounter >= 10) {
+          uploadEndTime = new Date();
+          logger(`...... ending Get Sync List`);
+          isLastPage = true;
+        }
+      } catch (error) {
+        let returnMsg = `An error occurred while processing the page data.`;
+        logger(returnMsg, error);
+        return returnMsg;
+      }
+
+      // UPLOAD SUMMARY
+
+      try {
+        if (isLastPage) {
+          uploadDuration = formatDuration(uploadStartTime, uploadEndTime);
+
+          let returnMsg = `Get ${datasetName} Sync List Summary: ${syncCounter}/${recordCounter} records (${pageCounter} pages) require re-syncing and ${failedRecordCounter} records failed to be verified... ${uploadDuration}`;
+          logger(returnMsg);
+
+          // write summary to file
+          fs.appendFileSync(syncPath, returnMsg);
+
+          return returnMsg;
+        }
+      } catch (error) {
+        let errorMsg = `An error occurred while sending the response.`;
+        logger(errorMsg, error);
+        return errorMsg;
+      }
+    } while (!isLastPage);
+    // ... END LOOP THROUGH EACH PAGE
+
+  } catch (error) {
+    let returnMsg = `An unexpected error occurred during the Get Sync List process.`;
+        logger(returnMsg, error);
+        return returnMsg;
+  }
+}

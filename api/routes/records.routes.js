@@ -25,7 +25,7 @@ router.route('/logEvent')
 router.route('/runUploadTechCatalogDataset')
   .post(recordsCtrl.runUploadTechCatalogDataset);
 
-router.route('/getTechCatalogUpdatedRecords')
-  .post(recordsCtrl.getTechCatalogUpdatedRecords);
+router.route('/getSyncList')
+  .post(recordsCtrl.getSyncList);
 
 module.exports = router;
