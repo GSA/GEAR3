@@ -23,8 +23,6 @@ const bodyParser = require('body-parser'),
   ExtractJWT = passportJWT.ExtractJwt,
   JWTStrategy = passportJWT.Strategy;
 
-  const CryptoJS = require("crypto-js")
-
 // Proxy Settings for Google API to use
 // process.env.HTTP_PROXY="http://patchproxyr13.gsa.gov:3128";
 // process.env.http_proxy="http://patchproxyr13.gsa.gov:3128";
@@ -179,23 +177,6 @@ app.post(samlConfig.path,
 
           // JWT TOKEN SIGNED HERE TO BE USED IN INLINE HTML PAGE NEXT
           const token = jsonwebtoken.sign(jwt, process.env.SECRET);
-
-          const key = "94a74618-f4d3-4970-ae71-5eb4bca410a9"+jwt.exp.toString()
-
-          const encryptJWT = CryptoJS.AES.encrypt(`${jwt.sub}`, key)
-        
-          // console.log("UNIQUE ID: " + encryptJWT)
-
-          // const decryptJWT = CryptoJS.AES.decrypt(encryptJWT, key)
-
-          // console.log("UNIQUE ID decrypted:" + decryptJWT)
-
-          db.query(`CALL acl.setJwt ('${jwt.sub}', '${token}');`,
-          (err) => {
-            if (err) {
-              console.log(err)
-            }
-          })
 
           let adminRoute = (process.env.SAML_HOST === 'localhost') ? 'http://localhost:3000' : '/#';
 
@@ -442,4 +423,3 @@ function getCurrentDatetime() {
   const datetimeString = currentDate.toISOString().slice(0, 19).replace('T', ' ') + ': ';
   return datetimeString;
 }
-
