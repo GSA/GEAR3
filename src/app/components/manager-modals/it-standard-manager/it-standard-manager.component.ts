@@ -20,8 +20,11 @@ declare var $: any;
 export class ItStandardManagerComponent implements OnInit {
 
   itStandardsForm: FormGroup = new FormGroup({
+    tcManufacturer: new FormControl(null, [Validators.required]),
+    tcSoftwareProduct: new FormControl(null, [Validators.required]),
+    tcSoftwareVersion: new FormControl(null, [Validators.required]),
     itStandStatus: new FormControl(null, [Validators.required]),
-    itStandName: new FormControl(null, [Validators.required]),
+    //itStandName: new FormControl(null, [Validators.required]),
     itStandPOC: new FormControl(null, [Validators.required]),
     itStandDesc: new FormControl(),
     itStandType: new FormControl(null, [Validators.required]),
@@ -45,6 +48,20 @@ export class ItStandardManagerComponent implements OnInit {
   pocsLoading = false;
   pocsBuffer = [];
   bufferSize = 50;
+
+  manufacturers: any = [];
+  manufacturersLoading = false;
+  manufacturersBuffer = [];
+
+  softwareProducts: any = [];
+  softwareProductsLoading = false;
+  softwareProductsBuffer = [];
+  softwareProductPH: string = "Select a Manufacturer first";
+
+  softwareVersions: any = [];
+  softwareVersionsLoading = false;
+  softwareVersionsBuffer = [];
+  softwareVersionPH: string = "Select a Software Product first";
 
   types: any[] = [];
 
@@ -73,6 +90,17 @@ export class ItStandardManagerComponent implements OnInit {
 
     this.modalService.currentITStand.subscribe(itStandard => this.itStandard = itStandard);
     this.modalService.currentCreate.subscribe(createBool => this.createBool = createBool);
+
+    // Populate Manufacturer Options
+    this.manufacturersLoading = true;
+    this.apiService.getManufacturers().subscribe((data: any[]) => {
+      this.manufacturers = data;
+      this.manufacturersBuffer = this.POCs.slice(0, this.bufferSize);
+      this.manufacturersLoading = false;
+    });
+
+    this.disableSoftwareProduct();
+    this.disableSoftwareVersion();
 
     // Populate Statuses
     this.apiService.getITStandStatuses().subscribe((data: any[]) => { this.statuses = data });
@@ -172,8 +200,11 @@ export class ItStandardManagerComponent implements OnInit {
 
       // Set default values for form with current values
       this.itStandardsForm.patchValue({
+        tcManufacturer: this.sharedService.findInArray(this.manufacturers, 'Name', this.itStandard.Manufacturer),
+        tcSoftwareProduct: this.sharedService.findInArray(this.softwareProducts, 'Name', this.itStandard.SoftwareProduct),
+        tcSoftwareVersion: this.sharedService.findInArray(this.softwareVersions, 'Name', this.itStandard.SoftwareVersion),
         itStandStatus: this.sharedService.findInArray(this.statuses, 'Name', this.itStandard.Status),
-        itStandName: this.itStandard.Name,
+        //itStandName: this.itStandard.Name,
         itStandPOC: pocIDs,
         itStandDesc: this.itStandard.Description,
         itStandType: this.sharedService.findInArray(this.types, 'Name', this.itStandard.StandardType),
@@ -267,6 +298,64 @@ export class ItStandardManagerComponent implements OnInit {
     $('#itStandardsManager').modal('hide');
     this.tableService.itStandTableClick(data, false);
     $('#itStandardDetail').modal('show');
+  }
+
+  manufacturerChange(event: any) {
+    //console.log("Manufacturer Change: ", event.target.value);  // Debug
+    this.softwareProductsLoading = true;
+    this.apiService.getSoftwareProducts(event.target.value).subscribe((data: any[]) => {
+      this.softwareProducts = data;
+      this.softwareProductsBuffer = this.softwareProducts.slice(0, this.bufferSize);
+      this.softwareProductsLoading = false;
+    });
+    this.softwareProductPH = "Search & Select Software Product";
+    this.enableSoftwareProduct();
+  }
+
+  softwareProductChange(event: any) {
+    //console.log("Software Product Change: ", event.target.value);  // Debug
+    this.softwareVersionsLoading = true;
+    this.apiService.getSoftwareVersions(event.target.value).subscribe((data: any[]) => {
+      this.softwareVersions = data;
+      this.softwareVersionsBuffer = this.softwareVersions.slice(0, this.bufferSize);
+      this.softwareVersionsLoading = false;
+    });
+    this.softwareVersionPH = "Search & Select Version Here";
+    this.enableSoftwareVersion();
+  }
+
+  // enable the software product field
+  enableSoftwareProduct(): void {
+    this.disableSoftwareProduct();
+  }
+
+  // enable the software version field
+  enableSoftwareVersion(): void {
+    this.disableSoftwareVersion();
+  }
+
+  // disable the software product field
+  disableSoftwareProduct(): void {
+    $("#divProduct").attr("disabled", "disabled").off('click');
+    var x1=$("#divProduct").hasClass("disabledDivProduct");
+        
+    (x1==true)?$("#divProduct").removeClass("disabledDivProduct"):$("#divProduct").addClass("disabledDivProduct");
+    this.sah1(document.getElementById("divProduct"));
+
+  }
+
+  // disable the software version field
+  disableSoftwareVersion(): void {
+    $("#divVersion").attr("disabled", "disabled").off('click');
+    var x1=$("#divVersion").hasClass("disabledDivVersion");
+        
+    (x1==true)?$("#divVersion").removeClass("disabledDivVersion"):$("#divVersion").addClass("disabledDivVersion");
+    this.sah1(document.getElementById("divVersion"));
+
+  }
+
+  sah1(el: any): void {
+    el.disabled = el.disabled ? false : true;
   }
 
 }

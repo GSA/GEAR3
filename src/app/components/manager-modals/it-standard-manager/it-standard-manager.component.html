@@ -28,8 +28,96 @@
           <div class="tab-content mt-3">
             <div class="tab-pane fade show active" id="itStandMngrOverview">
 
+              <!-- Tech Catalog Information -->
               <div class="row align-items-center">
-                <div class="form-group col-3">
+                <div class="form-group col">
+                  <label for="tcManufacturer">Manufacturer Name<span class="text-danger">*</span></label>
+                    <ng-select id="tcManufacturer" formControlName="tcManufacturer"
+                      [items]="manufacturers"
+                      [multiple]="false"
+                      appendTo="#itStandardsManager"
+                      bindLabel="name"
+                      bindValue="id"
+                      clearAllText="Clear All"
+                      [clearSearchOnAdd]="true"
+                      [closeOnSelect]="false"
+                      [loading]="manufacturersLoading"
+                      placeholder="Search & Select Manufacturer Here"
+                      [virtualScroll]="true"
+                      (scroll)="modalService.onScroll($event, manufacturersBuffer, bufferSize, manufacturers, manufacturersLoading)"
+                      (scrollToEnd)="modalService.onScrollToEnd(manufacturersBuffer, bufferSize, manufacturers, manufacturersLoading)"
+                      required>
+                      <ng-template ng-header-tmp>
+                        <small class="form-text text-muted">Loaded {{ manufacturersBuffer.length }} of {{ manufacturers.length }}</small>
+                      </ng-template>
+                    </ng-select>
+                    <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'tcManufacturer')">
+                      <div class="invalid-feedback" *ngIf="itStandardsForm.controls['tcManufacturer'].errors.required">
+                        One Manufacturer Required
+                      </div>
+                    </div>
+                </div>
+  
+                <div class="form-group col" id="divProduct">
+                  <label for="tcSoftwareProduct">Software Product Name<span class="text-danger">*</span></label>
+                    <ng-select id="tcSoftwareProduct" formControlName="tcSoftwareProduct"
+                      [items]="softwareProducts"
+                      [multiple]="false"
+                      appendTo="#itStandardsManager"
+                      bindLabel="name"
+                      bindValue="id"
+                      clearAllText="Clear All"
+                      [clearSearchOnAdd]="true"
+                      [closeOnSelect]="false"
+                      [loading]="softwareProductsLoading"
+                      placeholder="Search & Select Software Product"
+                      [virtualScroll]="true"
+                      (scroll)="modalService.onScroll($event, softwareProductsBuffer, bufferSize, softwareProducts, softwareProductsLoading)"
+                      (scrollToEnd)="modalService.onScrollToEnd(softwareProductsBuffer, bufferSize, softwareProducts, softwareProductsLoading)"
+                      required>
+                      <ng-template ng-header-tmp>
+                        <small class="form-text text-muted">Loaded {{ softwareProductsBuffer.length }} of {{ softwareProducts.length }}</small>
+                      </ng-template>
+                    </ng-select>
+                    <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'tcSoftwareProduct')">
+                      <div class="invalid-feedback" *ngIf="itStandardsForm.controls['tcSoftwareProduct'].errors.required">
+                        One Software Product Required
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group col" id="divVersion">
+                    <label for="tcSoftwareVersion">Software Version<span class="text-danger">*</span></label>
+                      <ng-select id="tcSoftwareVersion" formControlName="tcSoftwareVersion"
+                        [items]="softwareVersions"
+                        [multiple]="false"
+                        appendTo="#itStandardsManager"
+                        bindLabel="name"
+                        bindValue="id"
+                        clearAllText="Clear All"
+                        [clearSearchOnAdd]="true"
+                        [closeOnSelect]="false"
+                        [loading]="softwareVersionsLoading"
+                        placeholder="Search & Select Software Version"
+                        [virtualScroll]="true"
+                        (scroll)="modalService.onScroll($event, softwareVersionsBuffer, bufferSize, softwareVersions, softwareVersionsLoading)"
+                        (scrollToEnd)="modalService.onScrollToEnd(softwareVersionsBuffer, bufferSize, softwareVersions, softwareVersionsLoading)"
+                        required>
+                        <ng-template ng-header-tmp>
+                          <small class="form-text text-muted">Loaded {{ pocsBuffer.length }} of {{ POCs.length }}</small>
+                        </ng-template>
+                      </ng-select>
+                      <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'tcSoftwareVersion')">
+                        <div class="invalid-feedback" *ngIf="itStandardsForm.controls['tcSoftwareVersion'].errors.required">
+                          One Software Version Required
+                        </div>
+                      </div>
+                    </div>
+              </div>
+
+              <!-- Status & POCs -->
+              <div class="row align-items-center">
+                <div class="form-group col-6">
                   <label for="itStandStatus">Status<span class="text-danger">*</span></label>
                   <select class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(itStandardsForm, 'itStandStatus')}" id="itStandStatus"
                     formControlName="itStandStatus" required>
@@ -43,7 +131,7 @@
                   </div>
                 </div>
 
-                <div class="form-group col">
+                <!--<div class="form-group col">
                   <label for="itStandName">IT-Standard Name<span class="text-danger">*</span></label>
                   <input type="text" class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(itStandardsForm, 'itStandName')}" id="itStandName"
                     formControlName="itStandName" placeholder="Enter a Name" [value]="itStandard.Name" required>
@@ -52,9 +140,9 @@
                       IT Standard Name Required
                     </div>
                   </div>
-                </div>
+                </div>-->
 
-                <div class="form-group col-3">
+                <div class="form-group col-6">
                   <label for="itStandPOC">POC(s)<span class="text-danger">*</span></label>
                   <ng-select id="itStandPOC" formControlName="itStandPOC"
                     [items]="POCs"

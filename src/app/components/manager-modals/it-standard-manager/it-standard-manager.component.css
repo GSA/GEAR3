@@ -1,0 +1,15 @@
+#divProduct{
+    background-color: inherit;
+  }
+  .disabledDivProduct {
+      pointer-events: none;
+      opacity: 0.4;
+  }
+
+#divVersion{
+    background-color: inherit;
+  }
+  .disabledDivVersion {
+      pointer-events: none;
+      opacity: 0.4;
+  }

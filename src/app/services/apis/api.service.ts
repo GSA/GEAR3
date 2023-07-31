@@ -36,6 +36,10 @@ import { Website } from '@api/models/websites.model';
 import { WebsiteScan } from '@api/models/website-scan.model';
 import { WebsiteServiceCategory } from '@api/models/website-service-category.model';
 
+import { Manufacturer } from '@api/models/tc-manufacturer.model';
+import { SoftwareProduct } from '@api/models/tc-softwareproduct.model';
+import { SoftwareVersion } from '@api/models/tc-softwareversion.model';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -56,9 +60,7 @@ export class ApiService {
   investUrl: string = this.sharedService.internalURLFmt('/api/investments');
 
   // Investment Types
-  investTypeUrl: string = this.sharedService.internalURLFmt(
-    '/api/investments/types'
-  );
+  investTypeUrl: string = this.sharedService.internalURLFmt('/api/investments/types');
 
   // Organizations
   orgUrl: string = this.sharedService.internalURLFmt('/api/organizations');
@@ -70,15 +72,16 @@ export class ApiService {
   recordsUrl: string = this.sharedService.internalURLFmt('/api/records');
 
   // Service Category
-  websiteServiceCategoryUrl: string = this.sharedService.internalURLFmt(
-    '/api/website_service_category'
-  );
+  websiteServiceCategoryUrl: string = this.sharedService.internalURLFmt('/api/website_service_category');
 
   // Systems
   sysUrl: string = this.sharedService.internalURLFmt('/api/systems');
 
   // Systems TIME
   timeUrl: string = this.sharedService.internalURLFmt('/api/system_time');
+
+  // Websites
+  techCatalogUrl: string = this.sharedService.internalURLFmt('/api/tech_catalog');
 
   // IT Standards
   techUrl: string = this.sharedService.internalURLFmt('/api/it_standards');
@@ -741,6 +744,43 @@ export class ApiService {
       )
       .pipe(
         catchError(this.handleError<Website[]>('UPDATE Website-System', []))
+      );
+  }
+
+  //// Tech Catalog
+  public getManufacturers(): Observable<Manufacturer[]> {
+    return this.http
+      .get<Manufacturer[]>(this.techCatalogUrl + '/get/manufacturers')
+      .pipe(
+        catchError(
+          this.handleError<Manufacturer[]>('GET Tech Catalog Manufacturers', [])
+        )
+      );
+  }
+  
+  public getSoftwareProducts(id: string): Observable<SoftwareProduct[]> {
+    return this.http
+      .get<SoftwareProduct[]>(this.techCatalogUrl + '/get/software_products/' + id)
+      .pipe(
+        catchError(
+          this.handleError<SoftwareProduct[]>(
+            'GET Tech Catalog Software Products',
+            []
+          )
+        )
+      );
+  }
+
+  public getSoftwareVersions(id: string): Observable<SoftwareVersion[]> {
+    return this.http
+      .get<SoftwareVersion[]>(this.techCatalogUrl + '/get/software_versions/' + id)
+      .pipe(
+        catchError(
+          this.handleError<SoftwareVersion[]>(
+            'GET Tech Catalog Software Versions',
+            []
+          )
+        )
       );
   }
 
