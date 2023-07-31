@@ -945,7 +945,7 @@ exports.uploadTechCatalogDataset = async (data, response) => {
       }
 
       // write pageJson to file
-      fs.appendFileSync('tech_catalog_data/json/' + datasetName + '_page_' + pageCounter + '_' + String(uploadStartTime).replace(/:/g, '_').replace(/ /g, '_') + '.log', JSON.stringify(pageJson));
+      fs.appendFileSync('tech_catalog_data/json/' + datasetName + '_page_' + pageCounter + '_' + String(uploadStartTime).replace(/:/g, '_').replace(/ /g, '_') + '.json', JSON.stringify(pageJson));
     } catch (error) {
       let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### *************** ERROR getting ${datasetName} data from api... ending upload. *************** \n `;
 
