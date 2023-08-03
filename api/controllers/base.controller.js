@@ -440,13 +440,25 @@ exports.uploadTechCatalogDataset = async (data, response) => {
     // stores the error log path
     let errorLogPath = 'tech_catalog_data/logs/errors_' + datasetName + '_' + String(uploadStartTime).replace(/:/g, '_').replace(/ /g, '_') + '.log';
 
+    function logger(msg, error) {
+      if (error === undefined || error === null || error === '') {
+        //console.log(`(${formatDateTime(Date.now())}): ${datasetName} - ${msg}`);
+        console.log(`${msg}`);
+
+      } else {
+        //console.log(`(${formatDateTime(Date.now())}): ${datasetName} - ${msg}... \n`, error);
+        console.log(`${msg}\n`, error);
+
+        // log the error to file
+        fs.appendFileSync(errorLogPath, msg + '\n' + error + '\r\n');
+      }
+    }
+
     // verify if refreskToken was provided
     if (refreshToken === undefined || refreshToken === null || refreshToken === '') {
       let errorMsg = `#### ${datasetName} #### *************** ERROR no refresh token provided... ending upload. *************** \n`;
 
-      console.log('**********************************************************************************************************'  );
-      console.log(errorMsg);
-      console.log('**********************************************************************************************************'  );
+      logger(errorMsg, '');
 
       return errorMsg;
     }
@@ -454,7 +466,8 @@ exports.uploadTechCatalogDataset = async (data, response) => {
     // verify if datasetName was provided and is supported
     if (datasetName === undefined || datasetName === null || datasetName === '') {
       let errorMsg = `#### ${datasetName} #### *************** ERROR no dataset name provided... ending upload. *************** \n`;
-      console.log(errorMsg);
+      
+      logger(errorMsg, '');
 
       return errorMsg;
     } else if (datasetName !== 'Manufacturer' && 
@@ -473,9 +486,7 @@ exports.uploadTechCatalogDataset = async (data, response) => {
                datasetName !== 'Taxonomy') {
       let errorMsg = `#### ${datasetName} #### *************** ERROR dataset name provided is not supported... ending upload. *************** \n`;
 
-      console.log('**********************************************************************************************************'  );
-      console.log(errorMsg);
-      console.log('**********************************************************************************************************'  );
+      logger(errorMsg, '');
 
       return errorMsg;
     }
@@ -532,9 +543,7 @@ exports.uploadTechCatalogDataset = async (data, response) => {
   } catch (error) {
     let errorMsg = `#### ${datasetName} #### *************** ERROR getting last ${datasetName} record id from database... ending upload. *************** \n`;
 
-    console.log('**********************************************************************************************************'  );
-    console.log(errorMsg);
-    console.log('**********************************************************************************************************'  );
+    logger(errorMsg, error);
 
     return errorMsg;
   }
@@ -558,17 +567,46 @@ exports.uploadTechCatalogDataset = async (data, response) => {
     // check if start time is greater than 45 minutes
     //if ((uploadStartTime.getMinutes() + 45) < pageStartTime || accessToken === "") {
       try {
-        // get access token from flexera api
-        const response = await fetch('https://login.flexera.com/oidc/token', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            grant_type: 'refresh_token',
-            refresh_token: refreshToken,
-          }),
-        });
+        let response = null;
+
+        try {
+          // get access token from flexera api
+          response = await fetch('https://login.flexera.com/oidc/token', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              grant_type: 'refresh_token',
+              refresh_token: refreshToken,
+            }),
+          });
+        } catch (error) {
+          let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### *************** ERROR getting access token (1st attempt). *************** \n`;
+
+          logger(errorMsg, error);
+
+          try {            
+            // get access token from flexera api
+            response = await fetch('https://login.flexera.com/oidc/token', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                grant_type: 'refresh_token',
+                refresh_token: refreshToken,
+              }),
+            });
+          } catch (error) {
+            let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### *************** ERROR getting access token (2nd attempt). *************** \n`;
+
+            logger(errorMsg, error);
+
+            // return the error message
+            return errorMsg;
+          }
+        }
 
         // check if response is ok
         if (response.ok) {
@@ -582,18 +620,14 @@ exports.uploadTechCatalogDataset = async (data, response) => {
         } else {
           let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### *************** ERROR access token api call returned bad response ... ending upload. *************** \n ${response.status} ${response.statusText} \n`;
 
-          console.log('**********************************************************************************************************'  );
-          console.log(errorMsg);
-          console.log('**********************************************************************************************************'  );
+          logger(errorMsg, '');
 
           return errorMsg;
         }
       } catch (error) {
         let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### *************** ERROR getting access token. *************** \n`;
 
-        console.log('**********************************************************************************************************'  );
-        console.log(errorMsg, error);
-        console.log('**********************************************************************************************************'  );
+        logger(errorMsg, error);
 
         // return the error message
         return errorMsg;
@@ -936,9 +970,7 @@ exports.uploadTechCatalogDataset = async (data, response) => {
       } else {
         let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### *************** ERROR getting ${datasetName} data from api, bad response... ending upload. *************** \n`;
 
-        console.log('**********************************************************************************************************'  );
-        console.log(errorMsg, apiResponse, `\ngraphqlQuery: ${graphqlQuery}`);
-        console.log('**********************************************************************************************************'  );
+        logger(errorMsg, '');
 
         // return the error message
         return errorMsg;
@@ -949,9 +981,7 @@ exports.uploadTechCatalogDataset = async (data, response) => {
     } catch (error) {
       let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### *************** ERROR getting ${datasetName} data from api... ending upload. *************** \n `;
 
-      console.log('**********************************************************************************************************'  );
-      console.log(errorMsg, error);
-      console.log('**********************************************************************************************************'  );
+      logger(errorMsg, error);
 
       // return the error message
       return errorMsg;
@@ -1793,9 +1823,7 @@ exports.uploadTechCatalogDataset = async (data, response) => {
         } catch (error) {
           let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### Record: ${pageRecordCounter} #### *************** ERROR: Column Values id: ${lastRecordId} ***************  \n${error} \n`;
 
-          console.log('**********************************************************************************************************'  );
-          console.log(errorMsg);
-          console.log('**********************************************************************************************************'  );
+          logger(errorMsg, error);
 
           //console.log(JSON.stringify(datasetObject)); // Debug
 
@@ -1806,7 +1834,6 @@ exports.uploadTechCatalogDataset = async (data, response) => {
 
         try {
           // execute the insert statement in db
-          //let responseDB = await sql_promise.query(insertStatement);
           let responseDB = await sql_promise.query(insertQuery, [insertValuesMap]);
 
           // reset failed record counter
@@ -1821,16 +1848,11 @@ exports.uploadTechCatalogDataset = async (data, response) => {
           } catch (error) {
             let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### Record: ${pageRecordCounter} #### *************** ERROR inserting SoftwareSupportStage data for SoftwareLifecycle id: ${lastRecordId} ***************  \n ${error} \n`;
 
-            console.log('**********************************************************************************************************'  );
-            console.log(errorMsg); // ERROR MSG
-            console.log('**********************************************************************************************************'  );
+            logger(errorMsg, error);
 
             // log the error to file
-            fs.appendFileSync(errorLogPath, errorMsg + error + '\r\n');
+            //fs.appendFileSync(errorLogPath, errorMsg + error + '\r\n');
           }
-
-          // get value for affectedRows
-          //let affectedRows = responseDB[0].affectedRows;
         } catch (error) {
           // increment failed record counter
           pageFailedRecordCounter++;
@@ -1838,10 +1860,7 @@ exports.uploadTechCatalogDataset = async (data, response) => {
 
           let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### Record: ${pageRecordCounter} #### *************** ERROR inserting ${datasetName} data id: ${lastRecordId} ***************  \n ${error} \n`;
 
-          console.log('**********************************************************************************************************'  );
-          console.log(errorMsg); // Debug
-          console.log('**********************************************************************************************************'  );
-
+          logger(errorMsg, error);
 
           // log the error to file
           fs.appendFileSync(errorLogPath, errorMsg + error + '\n\n');
@@ -1850,9 +1869,7 @@ exports.uploadTechCatalogDataset = async (data, response) => {
           if (consecutiveFailedRecordCounter === 25) {
             errorMsg = errorMsg + `\n#### ${datasetName} #### Page: ${pageCounter} #### *************** ERROR: 25 consecutive failed records, stopping upload. *************** \n`;
 
-            console.log('**********************************************************************************************************'  );
-            console.log(errorMsg);
-            console.log('**********************************************************************************************************'  );
+            logger(errorMsg, '');
 
             return errorMsg;
           }
@@ -1928,9 +1945,7 @@ exports.uploadTechCatalogDataset = async (data, response) => {
     } catch (error) {
       let errorMsg = `#### ${datasetName} #### *************** ERROR returning response (${datasetName}) *************** \n `;
 
-      console.log('**********************************************************************************************************'  );
-      console.log(errorMsg, error);  // Debug
-      console.log('**********************************************************************************************************'  );
+      logger(errorMsg, error);
 
       // stop the upload and return the error message
       return errorMsg;
