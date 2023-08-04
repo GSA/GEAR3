@@ -6,21 +6,32 @@ const path = require('path');
 const queryPath = '../queries/';
 
 exports.getManufacturers = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_tc_manufacturers.sql')).toString() + ";";
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_tc_manufacturers.sql')).toString() +
+  ` order by name asc;`;
 
   res = ctrl.sendQuery(query, 'Manufacturers', res);
 };
 
-exports.getSoftwareProduct = (req, res) => {
+exports.getSoftwareProducts = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_tc_softwareproducts.sql')).toString() + 
-  ` where manufacturer = '${req.params.id}';`;
+  ` where manufacturer = '${req.params.id}'
+   order by 2 asc;`;
 
   res = ctrl.sendQuery(query, 'SoftwareProducts', res);
 };
 
-exports.getSoftwareVersion = (req, res) => {
+exports.getSoftwareVersions = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_tc_softwareversions.sql')).toString() + 
-  ` where softwareProduct = '${req.params.id}';`;
+  ` where softwareProduct = '${req.params.id}'
+   order by order_ desc;`;
 
   res = ctrl.sendQuery(query, 'SoftwareVersions', res);
+};
+
+exports.getSoftwareReleases = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_tc_softwarereleases.sql')).toString() + 
+  ` where softwareVersion = '${req.params.id}'
+   order by 2 desc;`;
+
+  res = ctrl.sendQuery(query, 'SoftwareReleases', res);
 };

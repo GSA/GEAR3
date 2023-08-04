@@ -60,8 +60,47 @@ export class ItStandardsComponent implements OnInit {
     sortable: true,
     visible: false
   }, {
+    field: 'Manufacturer',
+    title: 'Manufacturer',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'SoftwareProduct',
+    title: 'SoftwareProduct',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'SoftwareVersion',
+    title: 'SoftwareVersion',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'SoftwareRelease',
+    title: 'SoftwareRelease',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'ManufacturerName',
+    title: 'Manufacturer',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'SoftwareProductName',
+    title: 'Software Product',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'SoftwareVersionName',
+    title: 'Software Version',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'SoftwareReleaseName',
+    title: 'Software Release',
+    sortable: true
+  }, {
     field: 'Name',
-    title: 'Standard Name',
+    title: 'IT Standard Name (Legacy)',
     sortable: true
   }, {
     field: 'Description',

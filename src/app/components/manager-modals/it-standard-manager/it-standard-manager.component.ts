@@ -23,8 +23,9 @@ export class ItStandardManagerComponent implements OnInit {
     tcManufacturer: new FormControl(null, [Validators.required]),
     tcSoftwareProduct: new FormControl(null, [Validators.required]),
     tcSoftwareVersion: new FormControl(null, [Validators.required]),
+    tcSoftwareRelease: new FormControl(),
     itStandStatus: new FormControl(null, [Validators.required]),
-    //itStandName: new FormControl(null, [Validators.required]),
+    itStandName: new FormControl(),
     itStandPOC: new FormControl(null, [Validators.required]),
     itStandDesc: new FormControl(),
     itStandType: new FormControl(null, [Validators.required]),
@@ -56,12 +57,14 @@ export class ItStandardManagerComponent implements OnInit {
   softwareProducts: any = [];
   softwareProductsLoading = false;
   softwareProductsBuffer = [];
-  softwareProductPH: string = "Select a Manufacturer first";
 
   softwareVersions: any = [];
   softwareVersionsLoading = false;
   softwareVersionsBuffer = [];
-  softwareVersionPH: string = "Select a Software Product first";
+
+  softwareReleases: any = [];
+  softwareReleasesLoading = false;
+  softwareReleasesBuffer = [];
 
   types: any[] = [];
 
@@ -83,6 +86,7 @@ export class ItStandardManagerComponent implements OnInit {
     private tableService: TableService) { }
 
   ngOnInit(): void {
+
     // Emit setFormDefaults for when edit button is pressed
     if (this.sharedService.itStandardsFormSub == undefined) {
       this.sharedService.itStandardsFormSub = this.sharedService.itStandardsFormEmitter.subscribe(() => { this.setFormDefaults(); });
@@ -95,12 +99,16 @@ export class ItStandardManagerComponent implements OnInit {
     this.manufacturersLoading = true;
     this.apiService.getManufacturers().subscribe((data: any[]) => {
       this.manufacturers = data;
-      this.manufacturersBuffer = this.POCs.slice(0, this.bufferSize);
+      this.manufacturersBuffer = this.manufacturers.slice(0, this.bufferSize);
       this.manufacturersLoading = false;
     });
 
     this.disableSoftwareProduct();
     this.disableSoftwareVersion();
+    this.disableSoftwareRelease();
+
+    // disable the old IT Standard Name field
+    this.disableOldITStandardName();
 
     // Populate Statuses
     this.apiService.getITStandStatuses().subscribe((data: any[]) => { this.statuses = data });
@@ -152,6 +160,7 @@ export class ItStandardManagerComponent implements OnInit {
   }
 
   setFormDefaults(): void {
+
     // Only set status default for creating new record
     const twoYearsLater = new Date();
     twoYearsLater.setFullYear(twoYearsLater.getFullYear() + 2);
@@ -184,6 +193,34 @@ export class ItStandardManagerComponent implements OnInit {
         });
       };
 
+      // if Manufacturer is not null, set the Software Product options
+      if (this.itStandard.Manufacturer) {
+        this.manufacturerChange(this.itStandard.Manufacturer);
+        //this.enableSoftwareProduct();
+
+        if (this.itStandard.SoftwareProduct) {
+          this.softwareProductChange(this.itStandard.SoftwareProduct);
+          //this.enableSoftwareVersion();
+
+          if (this.itStandard.SoftwareVersion) {
+            this.softwareVersionChange(this.itStandard.SoftwareVersion);
+            //this.enableSoftwareRelease();
+          } else {
+            this.disableSoftwareRelease();
+          }
+        } else {
+          this.disableSoftwareVersion();
+          this.disableSoftwareRelease();
+        }
+      } else {
+        this.disableSoftwareProduct();
+        this.disableSoftwareVersion();
+        this.disableSoftwareRelease();
+      }
+
+      
+
+
       // Adjust MyView for rendering - could turn this into one line:
       var myView = this.itStandard.Available_through_Myview === 'T' 
 
@@ -200,11 +237,12 @@ export class ItStandardManagerComponent implements OnInit {
 
       // Set default values for form with current values
       this.itStandardsForm.patchValue({
-        tcManufacturer: this.sharedService.findInArray(this.manufacturers, 'Name', this.itStandard.Manufacturer),
-        tcSoftwareProduct: this.sharedService.findInArray(this.softwareProducts, 'Name', this.itStandard.SoftwareProduct),
-        tcSoftwareVersion: this.sharedService.findInArray(this.softwareVersions, 'Name', this.itStandard.SoftwareVersion),
+        tcManufacturer: this.itStandard.Manufacturer,
+        tcSoftwareProduct: this.itStandard.SoftwareProduct,
+        tcSoftwareVersion: this.itStandard.SoftwareVersion,
+        tcSoftwareRelease: this.itStandard.SoftwareRelease,
         itStandStatus: this.sharedService.findInArray(this.statuses, 'Name', this.itStandard.Status),
-        //itStandName: this.itStandard.Name,
+        itStandName: this.itStandard.Name,
         itStandPOC: pocIDs,
         itStandDesc: this.itStandard.Description,
         itStandType: this.sharedService.findInArray(this.types, 'Name', this.itStandard.StandardType),
@@ -247,7 +285,32 @@ export class ItStandardManagerComponent implements OnInit {
       // Add username to payload
       this.itStandardsForm.value.auditUser = this.globals.authUser;
 
-      // console.log("Form values before committing to database: ", this.itStandardsForm.value); // Debug
+      // add ManufacturerName to payload
+      if (this.itStandardsForm.value.tcManufacturer) {
+        this.itStandardsForm.value.tcManufacturerName = this.sharedService.findInArray(this.manufacturers, 'id', this.itStandardsForm.value.tcManufacturer, 'name');
+        //console.log("ManufacturerName: ", this.itStandardsForm.value.tcManufacturerName);
+      }
+
+      // add SoftwareProductName to payload
+      if (this.itStandardsForm.value.tcSoftwareProduct) {
+        this.itStandardsForm.value.tcSoftwareProductName = this.sharedService.findInArray(this.softwareProducts, 'id', this.itStandardsForm.value.tcSoftwareProduct, 'name');
+        //console.log("SoftwareProductName: ", this.itStandardsForm.value.tcSoftwareProductName);
+      }
+
+      // add SoftwareVersionName to payload
+      if (this.itStandardsForm.value.tcSoftwareVersion) {
+        this.itStandardsForm.value.tcSoftwareVersionName = this.sharedService.findInArray(this.softwareVersions, 'id', this.itStandardsForm.value.tcSoftwareVersion, 'name');
+        //console.log("SoftwareVersionName: ", this.itStandardsForm.value.tcSoftwareVersionName);
+      }
+
+      // add SoftwareReleaseName to payload
+      if (this.itStandardsForm.value.tcSoftwareRelease) {
+        this.itStandardsForm.value.tcSoftwareReleaseName = this.sharedService.findInArray(this.softwareReleases, 'id', this.itStandardsForm.value.tcSoftwareRelease, 'application');
+        //console.log("SoftwareReleaseName: ", this.itStandardsForm.value.tcSoftwareReleaseName);
+      }
+
+
+      //console.log("Form values before committing to database: ", this.itStandardsForm.value); // Debug
 
       // Send data to database
       if (this.createBool) {
@@ -300,62 +363,99 @@ export class ItStandardManagerComponent implements OnInit {
     $('#itStandardDetail').modal('show');
   }
 
-  manufacturerChange(event: any) {
-    //console.log("Manufacturer Change: ", event.target.value);  // Debug
+  manufacturerChange(manufacturer: string) {
     this.softwareProductsLoading = true;
-    this.apiService.getSoftwareProducts(event.target.value).subscribe((data: any[]) => {
+    this.softwareVersionsLoading = true;
+    this.softwareReleasesLoading = true;
+    this.itStandardsForm.get('tcSoftwareProduct')?.reset();
+    this.itStandardsForm.get('tcSoftwareVersion')?.reset();
+    this.itStandardsForm.get('tcSoftwareRelease')?.reset();
+
+    this.apiService.getSoftwareProducts(manufacturer).subscribe((data: any[]) => {
       this.softwareProducts = data;
+      this.softwareVersions = [];
+      this.softwareReleases = [];
+
       this.softwareProductsBuffer = this.softwareProducts.slice(0, this.bufferSize);
+
       this.softwareProductsLoading = false;
+      this.softwareVersionsLoading = false;
+      this.softwareReleasesLoading = false;
+      this.enableSoftwareProduct();
+      this.disableSoftwareVersion();
+      this.disableSoftwareRelease();
     });
-    this.softwareProductPH = "Search & Select Software Product";
-    this.enableSoftwareProduct();
   }
 
-  softwareProductChange(event: any) {
-    //console.log("Software Product Change: ", event.target.value);  // Debug
+  softwareProductChange(softwareProduct: string) {
     this.softwareVersionsLoading = true;
-    this.apiService.getSoftwareVersions(event.target.value).subscribe((data: any[]) => {
+    this.softwareReleasesLoading = true;
+    this.itStandardsForm.get('tcSoftwareVersion')?.reset();
+    this.itStandardsForm.get('tcSoftwareRelease')?.reset();
+
+    this.apiService.getSoftwareVersions(softwareProduct).subscribe((data: any[]) => {
       this.softwareVersions = data;
+      this.softwareReleases = [];
+
       this.softwareVersionsBuffer = this.softwareVersions.slice(0, this.bufferSize);
+
       this.softwareVersionsLoading = false;
+      this.softwareReleasesLoading = false;
+      this.enableSoftwareVersion();
+      this.disableSoftwareRelease();
     });
-    this.softwareVersionPH = "Search & Select Version Here";
-    this.enableSoftwareVersion();
+  }
+
+  softwareVersionChange(softwareVersion: string) {
+    this.softwareReleasesLoading = true;
+    this.itStandardsForm.get('tcSoftwareRelease')?.reset();
+
+    this.apiService.getSoftwareReleases(softwareVersion).subscribe((data: any[]) => {
+      this.softwareReleases = data;
+
+      this.softwareReleasesBuffer = this.softwareReleases.slice(0, this.bufferSize);
+
+      this.softwareReleasesLoading = false;
+      this.enableSoftwareRelease();
+    });
   }
 
   // enable the software product field
   enableSoftwareProduct(): void {
-    this.disableSoftwareProduct();
+    //console.log("Enabling Product");
+    $("#divProduct").removeClass("disabledDivProduct");
+  }
+
+  disableSoftwareProduct(): void {
+    //console.log("Disabling Product");
+    $("#divProduct").addClass("disabledDivProduct");
   }
 
   // enable the software version field
   enableSoftwareVersion(): void {
-    this.disableSoftwareVersion();
+    //console.log("Enabling Version");
+    $("#divVersion").removeClass("disabledDivVersion");
   }
 
-  // disable the software product field
-  disableSoftwareProduct(): void {
-    $("#divProduct").attr("disabled", "disabled").off('click');
-    var x1=$("#divProduct").hasClass("disabledDivProduct");
-        
-    (x1==true)?$("#divProduct").removeClass("disabledDivProduct"):$("#divProduct").addClass("disabledDivProduct");
-    this.sah1(document.getElementById("divProduct"));
-
-  }
-
-  // disable the software version field
   disableSoftwareVersion(): void {
-    $("#divVersion").attr("disabled", "disabled").off('click');
-    var x1=$("#divVersion").hasClass("disabledDivVersion");
-        
-    (x1==true)?$("#divVersion").removeClass("disabledDivVersion"):$("#divVersion").addClass("disabledDivVersion");
-    this.sah1(document.getElementById("divVersion"));
-
+    //console.log("Disabling Version"); 
+    $("#divVersion").addClass("disabledDivVersion");
   }
 
-  sah1(el: any): void {
-    el.disabled = el.disabled ? false : true;
+  // enable the software release field
+  enableSoftwareRelease(): void {
+    //console.log("Enabling Release");
+    $("#divRelease").removeClass("disabledDivRelease");
+  }
+
+  disableSoftwareRelease(): void {
+    //console.log("Disabling Release");
+    $("#divRelease").addClass("disabledDivRelease");
+  }
+
+  disableOldITStandardName(): void {
+    //console.log("Disabling Old Name");
+    $("#divOldName").addClass("disabledDivOldName");
   }
 
 }

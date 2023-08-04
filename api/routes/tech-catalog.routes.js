@@ -7,9 +7,12 @@ router.route('/get/manufacturers')
   .get(techCatalogCtrl.getManufacturers);
 
 router.route('/get/software_products/:id')
-  .get(techCatalogCtrl.getSoftwareProduct);
+  .get(techCatalogCtrl.getSoftwareProducts);
 
 router.route('/get/software_versions/:id')
-  .get(techCatalogCtrl.getSoftwareVersion);
+  .get(techCatalogCtrl.getSoftwareVersions);
+
+router.route('/get/software_releases/:id')
+  .get(techCatalogCtrl.getSoftwareReleases);
 
 module.exports = router;

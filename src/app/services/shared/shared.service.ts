@@ -122,12 +122,12 @@ export class SharedService {
   //// Check if user is authenticated to GEAR Manager
   public get loggedIn(): boolean {
     //return localStorage.getItem('jwt') !== null && localStorage.getItem('jwt') === this.globals.jwtToken;
-    /*return (localStorage.getItem('jwt') === this.globals.jwtToken &&
+    return (localStorage.getItem('jwt') === this.globals.jwtToken &&
             localStorage.getItem('jwt') !== null &&
             localStorage.getItem('jwt') !== undefined &&
             this.globals.jwtToken !== null &&
-            this.globals.jwtToken !== undefined);*/
-    return true
+            this.globals.jwtToken !== undefined);
+    //return true
   };
 
   //// Get Authenticated Username

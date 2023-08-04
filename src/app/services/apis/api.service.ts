@@ -39,6 +39,7 @@ import { WebsiteServiceCategory } from '@api/models/website-service-category.mod
 import { Manufacturer } from '@api/models/tc-manufacturer.model';
 import { SoftwareProduct } from '@api/models/tc-softwareproduct.model';
 import { SoftwareVersion } from '@api/models/tc-softwareversion.model';
+import { SoftwareRelease } from '@api/models/tc-softwarerelease.model';
 
 @Injectable({
   providedIn: 'root',
@@ -778,6 +779,19 @@ export class ApiService {
         catchError(
           this.handleError<SoftwareVersion[]>(
             'GET Tech Catalog Software Versions',
+            []
+          )
+        )
+      );
+  }
+
+  public getSoftwareReleases(id: string): Observable<SoftwareRelease[]> {
+    return this.http
+      .get<SoftwareRelease[]>(this.techCatalogUrl + '/get/software_Releases/' + id)
+      .pipe(
+        catchError(
+          this.handleError<SoftwareRelease[]>(
+            'GET Tech Catalog Software Releases',
             []
           )
         )
