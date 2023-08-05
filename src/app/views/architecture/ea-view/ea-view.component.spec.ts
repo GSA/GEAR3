@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { ArtifactsComponent } from './artifacts.component';
+import { EAViewComponent } from './ea-view.component';
 
-describe('ArtifactsComponent', () => {
-  let component: ArtifactsComponent;
-  let fixture: ComponentFixture<ArtifactsComponent>;
+describe('EAViewComponent', () => {
+  let component: EAViewComponent;
+  let fixture: ComponentFixture<EAViewComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ArtifactsComponent ]
+      declarations: [ EAViewComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ArtifactsComponent);
+    fixture = TestBed.createComponent(EAViewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
