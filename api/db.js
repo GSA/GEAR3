@@ -31,10 +31,13 @@ dbCredentials = {
 // Create DB Connection
 const pool = mysql.createPool(dbCredentials)
 
+const promisePool = pool.promise();
+
 // const pool_cowboy = mysql.createPool(dbCredentials_cowboy)
 
 module.exports = {
   dbCredentials: dbCredentials,
-  connection: pool
+  connection: pool,
+  connection_promise: promisePool
   // connection_cowboy: pool_cowboy
 };

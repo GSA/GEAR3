@@ -369,23 +369,27 @@ cron.schedule('0 7 * * WED', () => {
 });
 
 // Google API Pull to run every weekday at 2:00 AM
-cron.schedule('0 2 * * 1-5', () => { //PRODUCTION
-//cron.schedule('*/10 * * * 1-5', () => { //DEBUGGING
-  
-  console.log(getCurrentDatetime() + 'CRON JOB: Update All Related Records (runs every weekday at 2:00 AM) - Starting');
-  
-  let logData = {"message": "CRON JOB: Update All Related Records", "userId":"GearCronJ"};
-  logServerEvent(logData);
-  
-  // run the fetch request to get the data from the Google Sheet
-  putUpdateAllSystems("");
+//cron.schedule('0 2 * * 1-5', () => { //PRODUCTION
+cron.schedule('*/10 * * * 1-5', () => { //DEBUGGING
+  try {
+    console.log(getCurrentDatetime() + 'CRON JOB: Update All Related Records (runs every weekday at 2:00 AM) - Starting');
+    
+    let logData = {"message": "CRON JOB: Update All Related Records", "userId":"GearCronJ"};
+    logServerEvent(logData);
+    
+    // run the fetch request to get the data from the Google Sheet
+    putUpdateAllSystems("");
+  } catch (error) {
+    // log any errors
+    console.log(getCurrentDatetime() + `: CRON JOB: Update All Related Records - An unexpected error occurred while running:  \n` + error);
+  }
 });
 
 // called by Google API Pull
 const putUpdateAllSystems = async data => {
   try {
     // run the fetch request to update all systems
-    const response = await fetch('http://localhost:3000/api/records/updateAllSystems', {
+    const response = await fetch(`${getAppURL()}/api/records/updateAllSystems`, {
       method: 'PUT',
       headers: {
         "Content-Type": "application/json",
@@ -408,14 +412,14 @@ const putUpdateAllSystems = async data => {
 
 // logs an event on the server to the db
 const logServerEvent = async data => {
-  console.log("logServerEvent ("+data.message+")")
+  //console.log("logServerEvent ("+data.message+")")
 
   // create the data object to send to the server
   data = {type: 'log/error', message: data.message, user: data.userId};
 
   try {
     // run the fetch request to post the log event
-    const response = await fetch('http://localhost:3000/api/records/logEvent', {
+    const response = await fetch(`${getAppURL()}/api/records/logEvent`, {
       method: 'POST',
       headers: {
         "Content-Type": "application/json",
@@ -427,7 +431,7 @@ const logServerEvent = async data => {
     const responseJson = await response.json();
   } catch (error) {
     // log any errors
-    console.log(getCurrentDatetime()+" "+error);
+    console.log(getCurrentDatetime() + `: logServerEvent - An unexpected error occurred:  \n` + error);
   };
 };
 
@@ -435,4 +439,16 @@ function getCurrentDatetime() {
   const currentDate = new Date();
   const datetimeString = currentDate.toISOString().slice(0, 19).replace('T', ' ') + ': ';
   return datetimeString;
+}
+
+function getAppURL () {
+  if (process.env.ENVIRONMENT === 'production') {
+    return 'https://ea.gsa.gov';
+  } else if (process.env.ENVIRONMENT === 'staging') {
+    return 'https://stage.ea.gsa.gov';
+  } else if (process.env.ENVIRONMENT === 'development') {
+    return 'https://dev1.ea.gsa.gov';
+  } else {
+    return 'http://localhost:3000';
+  }
 }

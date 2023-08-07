@@ -22,5 +22,10 @@ router.route('/updateAllSystems')
 router.route('/logEvent')
   .post(recordsCtrl.logEvent);
 
+router.route('/runUploadTechCatalogDataset')
+  .post(recordsCtrl.runUploadTechCatalogDataset);
+
+router.route('/getSyncList')
+  .post(recordsCtrl.getSyncList);
 
 module.exports = router;

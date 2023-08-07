@@ -93,10 +93,33 @@ exports.refreshAllSystems = (req, res) => {
   }
 };
 
-//
+// this function is called by the api to log an event to the database
 exports.logEvent = (req, res) => {
-  console.log("logEvent")
+  //console.log("logEvent")
   var data = req.body;
 
   res = ctrl.sendLogQuery(data.message, data.user, data.message, res);
+};
+
+// this function is called by the api to upload a tech catalog dataset to the database
+exports.runUploadTechCatalogDataset = (req, res) => {
+  var data = req.body;
+
+  ctrl.uploadTechCatalogDataset(data, res)
+    .then((response) => {
+      let json = response;
+      console.log('End of uploadTechCatalogDataset'); 
+      res.status(200).json({ message: json, });
+    });
+};
+
+// this function is called by the api to get a list of records that need to be syncronized
+exports.getSyncList = (req, res) => {
+  var data = req.body;
+
+  ctrl.getSyncList(data, res)
+    .then((response) => {
+      let json = response;
+      res.status(200).json({ message: json, });
+    });
 };

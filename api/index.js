@@ -17,6 +17,7 @@ const search = require(routesPath + "search.routes");
 const serviceCategory = require(routesPath + "website-service-category.routes");
 const system = require(routesPath + "systems.routes");
 const sysTIME = require(routesPath + "systime.routes");
+const techCatalog = require(routesPath + "tech-catalog.routes");
 const websites = require(routesPath + "websites.routes");
 
 const router = express.Router();
@@ -39,6 +40,7 @@ router.use("/search", search);
 router.use("/website_service_category", serviceCategory);
 router.use("/systems", system);
 router.use("/system_time", sysTIME);
+router.use("/tech_catalog", techCatalog);
 router.use("/websites", websites);
 
 module.exports = router;
