@@ -127,6 +127,7 @@ export class SharedService {
             localStorage.getItem('jwt') !== undefined &&
             this.globals.jwtToken !== null &&
             this.globals.jwtToken !== undefined);
+    //return true
   };
 
   //// Get Authenticated Username

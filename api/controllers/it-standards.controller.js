@@ -88,7 +88,15 @@ exports.update = (req, res) => {
         Comments                        = '${data.itStandComments}',
         Reference_documents             = ${data.itStandRefDocs},
         ChangeAudit                     = '${data.auditUser}',
-        ChangeDTG                       = NOW()
+        ChangeDTG                       = NOW(),
+        manufacturer                    = '${data.tcManufacturer}',
+        softwareProduct                 = '${data.tcSoftwareProduct}',
+        softwareVersion                 = '${data.tcSoftwareVersion}',
+        softwareRelease                 = '${data.tcSoftwareRelease}',
+        manufacturerName                = '${data.tcManufacturerName}',
+        softwareProductName             = '${data.tcSoftwareProductName}',
+        softwareVersionName             = '${data.tcSoftwareVersionName}',
+        softwareReleaseName             = '${data.tcSoftwareReleaseName}'
       WHERE Id = ${req.params.id};
       SET FOREIGN_KEY_CHECKS=1;
       ${catString}
@@ -126,7 +134,15 @@ exports.create = (req, res) => {
       obj_508_compliance_status_Id,
       Reference_documents,
       CreateAudit,
-      ChangeAudit) VALUES (
+      ChangeAudit,
+      manufacturer,
+      softwareProduct,
+      softwareVersion,
+      softwareRelease,
+      manufacturerName,
+      softwareProductName,
+      softwareVersionName,
+      softwareReleaseName) VALUES (
         '${data.itStandName}',
         ${data.itStandDesc},
         ${data.itStandAprvExp},
@@ -141,7 +157,15 @@ exports.create = (req, res) => {
         ${data.itStand508},
         ${data.itStandRefDocs},
         '${data.auditUser}',
-        '${data.auditUser}');`
+        '${data.auditUser}',
+        '${data.tcManufacturer}',
+        '${data.tcSoftwareProduct}',
+        '${data.tcSoftwareVersion}',
+        '${data.tcSoftwareRelease}',
+        '${data.tcManufacturerName}',
+        '${data.tcSoftwareProductName}',
+        '${data.tcSoftwareVersionName}',
+        '${data.tcSoftwareReleaseName}');`
 
     res = ctrl.sendQuery(query, 'create IT Standard', res); //removed sendQuery_cowboy reference
   } else {

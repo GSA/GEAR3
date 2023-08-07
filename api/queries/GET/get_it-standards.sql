@@ -13,6 +13,15 @@ SELECT
   tech.CreateDTG,
   tech.ChangeDTG,
 
+  tech.manufacturer                     AS Manufacturer,
+  tech.softwareProduct                  AS SoftwareProduct,
+  tech.softwareVersion                  AS SoftwareVersion,
+  tech.softwareRelease                  AS SoftwareRelease,
+  tech.manufacturerName                 AS ManufacturerName,
+  tech.softwareProductName              AS SoftwareProductName,
+  tech.softwareVersionName              AS SoftwareVersionName,
+  tech.softwareReleaseName              AS SoftwareReleaseName,
+
   obj_technology_status.Keyname         AS Status,
   obj_deployment_type.Keyname           AS DeploymentType,
   obj_standard_type.Keyname             AS StandardType,
