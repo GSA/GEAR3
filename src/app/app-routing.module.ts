@@ -38,7 +38,8 @@ import { FismaPocsComponent } from './views/security/fisma-pocs/fisma-pocs.compo
 import { ItStandardsComponent } from './views/technologies/it-standards/it-standards.component';
 
 // Enterprise Architecture
-import { ArtifactsComponent } from './views/architecture/artifacts/artifacts.component';
+//import { ArtifactsComponent } from './views/architecture/artifacts/artifacts.component';
+import { EAViewComponent } from './views/architecture/ea-view/ea-view.component';
 import { GearModelComponent } from './views/architecture/gear-model/gear-model.component';
 import { Title } from '@angular/platform-browser';
 
@@ -173,7 +174,8 @@ const routes: Routes = [
     title: 'IT Standard',
   },
 
-  { path: 'artifacts', component: ArtifactsComponent, title: 'Artifacts' },
+  //{ path: 'artifacts', component: ArtifactsComponent, title: 'Artifacts' },
+  { path: 'ea_view', component: EAViewComponent, title: 'EA View' },
   { path: 'gear_model', component: GearModelComponent, title: 'GEAR Model' },
 
   {
