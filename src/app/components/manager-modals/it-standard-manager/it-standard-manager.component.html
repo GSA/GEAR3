@@ -47,7 +47,7 @@
                       [virtualScroll]="true"
                       (scroll)="modalService.onScroll($event, manufacturersBuffer, bufferSize, manufacturers, manufacturersLoading)"
                       (scrollToEnd)="modalService.onScrollToEnd(manufacturersBuffer, bufferSize, manufacturers, manufacturersLoading)"
-                      (change)="manufacturerChange($event.id)"
+                      (change)="manufacturerChange($event)"
                       required>
                       <ng-template ng-header-tmp>
                         <small class="form-text text-muted">Loaded {{ manufacturersBuffer.length }} of {{ manufacturers.length }}</small>
@@ -76,7 +76,7 @@
                       [virtualScroll]="true"
                       (scroll)="modalService.onScroll($event, softwareProductsBuffer, bufferSize, softwareProducts, softwareProductsLoading)"
                       (scrollToEnd)="modalService.onScrollToEnd(softwareProductsBuffer, bufferSize, softwareProducts, softwareProductsLoading)"
-                      (change)="softwareProductChange($event.id)"
+                      (change)="softwareProductChange($event)"
                       required>
                       <ng-template ng-header-tmp>
                         <small class="form-text text-muted">Loaded {{ softwareProductsBuffer.length }} of {{ softwareProducts.length }}</small>
@@ -108,7 +108,7 @@
                       [virtualScroll]="true"
                       (scroll)="modalService.onScroll($event, softwareVersionsBuffer, bufferSize, softwareVersions, softwareVersionsLoading)"
                       (scrollToEnd)="modalService.onScrollToEnd(softwareVersionsBuffer, bufferSize, softwareVersions, softwareVersionsLoading)"
-                      (change)="softwareVersionChange($event.id)"
+                      (change)="softwareVersionChange($event)"
                       required>
                       <ng-template ng-header-tmp>
                         <small class="form-text text-muted">Loaded {{ softwareVersionsBuffer.length }} of {{ softwareVersions.length }}</small>

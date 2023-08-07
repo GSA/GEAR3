@@ -203,6 +203,11 @@ export class ItStandardsComponent implements OnInit {
     this.sharedService.setITStandardsForm();
     this.modalService.updateDetails(emptyITStand, 'it-standard', false);
     $('#itStandardsManager').modal('show');
+
+    // disable the tcSoftwareProduct on the itStandardsManager modal
+    $('#divProduct').addClass("disabledDivProduct");
+    $('#divVersion').addClass("disabledDivVersion");
+    $('#divRelease').addClass("disabledDivRelease");
   }
 
   // Update table from filter buttons

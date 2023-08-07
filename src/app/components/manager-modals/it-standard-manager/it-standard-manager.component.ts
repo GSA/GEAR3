@@ -195,15 +195,15 @@ export class ItStandardManagerComponent implements OnInit {
 
       // if Manufacturer is not null, set the Software Product options
       if (this.itStandard.Manufacturer) {
-        this.manufacturerChange(this.itStandard.Manufacturer);
+        this.manufacturerChange({ id: this.itStandard.Manufacturer, name: this.itStandard.ManufacturerName });
         //this.enableSoftwareProduct();
 
         if (this.itStandard.SoftwareProduct) {
-          this.softwareProductChange(this.itStandard.SoftwareProduct);
+          this.softwareProductChange({ id: this.itStandard.SoftwareProduct, name: this.itStandard.SoftwareProductName });
           //this.enableSoftwareVersion();
 
           if (this.itStandard.SoftwareVersion) {
-            this.softwareVersionChange(this.itStandard.SoftwareVersion);
+            this.softwareVersionChange({ id: this.itStandard.SoftwareVersion, name: this.itStandard.SoftwareVersionName });
             //this.enableSoftwareRelease();
           } else {
             this.disableSoftwareRelease();
@@ -237,9 +237,13 @@ export class ItStandardManagerComponent implements OnInit {
 
       // Set default values for form with current values
       this.itStandardsForm.patchValue({
+        //tcManufacturer: this.sharedService.findInArray(this.manufacturers, 'id', this.itStandard.Manufacturer, 'id'),
         tcManufacturer: this.itStandard.Manufacturer,
+        //tcSoftwareProduct: this.sharedService.findInArray(this.softwareProducts, 'id', this.itStandard.SoftwareProduct, 'id'),
         tcSoftwareProduct: this.itStandard.SoftwareProduct,
+        //tcSoftwareVersion: this.sharedService.findInArray(this.softwareVersions, 'id', this.itStandard.SoftwareVersion, 'id'),
         tcSoftwareVersion: this.itStandard.SoftwareVersion,
+        //tcSoftwareRelease: this.sharedService.findInArray(this.softwareReleases, 'id', this.itStandard.SoftwareRelease, 'id'),
         tcSoftwareRelease: this.itStandard.SoftwareRelease,
         itStandStatus: this.sharedService.findInArray(this.statuses, 'Name', this.itStandard.Status),
         itStandName: this.itStandard.Name,
@@ -281,6 +285,9 @@ export class ItStandardManagerComponent implements OnInit {
       if (!this.itStandardsForm.value.itStandGoldComment) this.itStandardsForm.value.itStandGoldComment = 'N/A';
       if (!this.itStandardsForm.value.itStandComments) this.itStandardsForm.value.itStandComments = 'N/A';
       if (!this.itStandardsForm.value.itStand508) this.itStandardsForm.value.itStand508 = '3';
+
+      // replace ' from description
+      this.itStandardsForm.value.itStandDesc = this.itStandardsForm.value.itStandDesc.replace(/'/g, "''");
 
       // Add username to payload
       this.itStandardsForm.value.auditUser = this.globals.authUser;
@@ -363,61 +370,123 @@ export class ItStandardManagerComponent implements OnInit {
     $('#itStandardDetail').modal('show');
   }
 
-  manufacturerChange(manufacturer: string) {
+  manufacturerChange(manufacturer: any) {
+    //console.log("Manufacturer changed to: ", manufacturer); //DEBUG
+
     this.softwareProductsLoading = true;
-    this.softwareVersionsLoading = true;
-    this.softwareReleasesLoading = true;
     this.itStandardsForm.get('tcSoftwareProduct')?.reset();
     this.itStandardsForm.get('tcSoftwareVersion')?.reset();
     this.itStandardsForm.get('tcSoftwareRelease')?.reset();
 
-    this.apiService.getSoftwareProducts(manufacturer).subscribe((data: any[]) => {
-      this.softwareProducts = data;
+    try {
+      if (manufacturer) {
+        //console.log("(IF) Manufacturer ID: ", manufacturer["id"]); //DEBUG
+
+        this.apiService.getSoftwareProducts(manufacturer["id"]).subscribe((data: any[]) => {
+          this.softwareProducts = data;
+          this.softwareProductsBuffer = this.softwareProducts.slice(0, this.bufferSize);
+          this.softwareProductsLoading = false;
+          this.enableSoftwareProduct();
+          this.disableSoftwareVersion();
+        });
+      } else {
+        //console.log("(ELSE) Manufacturer ID: ", manufacturer["id"]); //DEBUG
+
+        this.softwareProducts = [];
+        this.softwareVersions = [];
+        this.softwareReleases = [];
+        this.softwareProductsLoading = false;
+        this.softwareVersionsLoading = false;
+        this.softwareReleasesLoading = false;
+        this.disableSoftwareProduct();
+        this.disableSoftwareVersion();
+        this.disableSoftwareRelease();
+      }
+    } catch (error) {
+      //console.log("manufacturerChange Error: ", error); //DEBUG
+
+      this.softwareProducts = [];
       this.softwareVersions = [];
       this.softwareReleases = [];
-
-      this.softwareProductsBuffer = this.softwareProducts.slice(0, this.bufferSize);
-
       this.softwareProductsLoading = false;
       this.softwareVersionsLoading = false;
       this.softwareReleasesLoading = false;
-      this.enableSoftwareProduct();
+      this.disableSoftwareProduct();
       this.disableSoftwareVersion();
       this.disableSoftwareRelease();
-    });
+    }
   }
 
-  softwareProductChange(softwareProduct: string) {
+  softwareProductChange(softwareProduct: any) {
+    //console.log("Software Product changed to: ", softwareProduct); //DEBUG
+
     this.softwareVersionsLoading = true;
-    this.softwareReleasesLoading = true;
     this.itStandardsForm.get('tcSoftwareVersion')?.reset();
     this.itStandardsForm.get('tcSoftwareRelease')?.reset();
 
-    this.apiService.getSoftwareVersions(softwareProduct).subscribe((data: any[]) => {
-      this.softwareVersions = data;
+    try {
+      if (softwareProduct) {
+        //console.log("Software Product ID: ", softwareProduct["id"]); //DEBUG
+
+        this.apiService.getSoftwareVersions(softwareProduct["id"]).subscribe((data: any[]) => {
+          this.softwareVersions = data;
+          this.softwareVersionsBuffer = this.softwareVersions.slice(0, this.bufferSize);
+          this.softwareVersionsLoading = false;
+          this.enableSoftwareVersion();
+          this.disableSoftwareRelease();
+        });
+      } else {
+        //console.log("Software Product ID: ", softwareProduct["id"]); //DEBUG
+
+        this.softwareVersions = [];
+        this.softwareReleases = [];
+        this.softwareVersionsLoading = false;
+        this.softwareReleasesLoading = false;
+        this.disableSoftwareVersion();
+        this.disableSoftwareRelease();
+      }
+    } catch (error) {
+      //console.log("softwareProductChange Error: ", error); //DEBUG
+
+      this.softwareVersions = [];
       this.softwareReleases = [];
-
-      this.softwareVersionsBuffer = this.softwareVersions.slice(0, this.bufferSize);
-
       this.softwareVersionsLoading = false;
       this.softwareReleasesLoading = false;
-      this.enableSoftwareVersion();
-      this.disableSoftwareRelease();
-    });
+      this.disableSoftwareVersion();
+      this.disableSoftwareVersion();
+    }
   }
 
-  softwareVersionChange(softwareVersion: string) {
+  softwareVersionChange(softwareVersion: any) {
+    //console.log("Software Version changed to: ", softwareVersion); //DEBUG
+
     this.softwareReleasesLoading = true;
     this.itStandardsForm.get('tcSoftwareRelease')?.reset();
 
-    this.apiService.getSoftwareReleases(softwareVersion).subscribe((data: any[]) => {
-      this.softwareReleases = data;
+    try {
+      if (softwareVersion) {
+        //console.log("(IF) Software Version ID: ", softwareVersion["id"]); //DEBUG
 
-      this.softwareReleasesBuffer = this.softwareReleases.slice(0, this.bufferSize);
+        this.apiService.getSoftwareReleases(softwareVersion["id"]).subscribe((data: any[]) => {
+          this.softwareReleases = data;
+          this.softwareReleasesBuffer = this.softwareReleases.slice(0, this.bufferSize);
+          this.softwareReleasesLoading = false;
+          this.enableSoftwareRelease();
+        });
+      } else {
+        //console.log("(ELSE) Software Version ID: ", softwareVersion["id"]); //DEBUG
 
+        this.softwareReleases = [];
+        this.softwareReleasesLoading = false;
+        this.disableSoftwareRelease();
+      }
+    } catch (error) {
+      //console.log("softwareVersionChange Error: ", error); //DEBUG
+
+      this.softwareReleases = [];
       this.softwareReleasesLoading = false;
-      this.enableSoftwareRelease();
-    });
+      this.disableSoftwareRelease();
+    }
   }
 
   // enable the software product field
