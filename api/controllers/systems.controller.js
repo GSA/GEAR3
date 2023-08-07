@@ -30,7 +30,7 @@ exports.findCapabilities = (req, res) => {
 };
 
 exports.updateCaps = (req, res) => {
-  if (req.headers.authorization) {
+  if (ctrl.getApiToken (req.headers.authorization, req.headers.requester)) {
     var data = req.body;
 
     // Create string to update system-business capability relationship
@@ -67,7 +67,7 @@ exports.findInvestments = (req, res) => {
 };
 
 exports.updateInvest = (req, res) => {
-  if (req.headers.authorization) {
+  if (ctrl.getApiToken (req.headers.authorization, req.headers.requester)) {
     var data = req.body;
 
     // Create string to update system-investments relationship
@@ -129,7 +129,7 @@ exports.findTechnologies = (req, res) => {
 };
 
 exports.updateTech = (req, res) => {
-  if (req.headers.authorization) {
+  if (ctrl.getApiToken (req.headers.authorization, req.headers.requester)) {
     var data = req.body;
 
     // Create string to update system-IT Standards relationship

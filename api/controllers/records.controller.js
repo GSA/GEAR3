@@ -52,7 +52,7 @@ exports.findSystems = (req, res) => {
 };
 
 exports.updateSystems = (req, res) => {
-  if (req.headers.authorization) {
+  if (ctrl.getApiToken (req.headers.authorization, req.headers.requester)) {
     var data = req.body;
 
     // Create string to update record-system relationship

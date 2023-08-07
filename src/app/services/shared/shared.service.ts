@@ -114,6 +114,7 @@ export class SharedService {
       setTimeout(() => {
         this.globals.jwtToken = localStorage.getItem('jwt');
         this.globals.authUser = localStorage.getItem('user');
+        this.globals.apiToken = localStorage.getItem('apiToken');
         $('#loggedIn').toast('show');
       }, 1000);  // Wait for 1 sec to propogate after logging in
     }

@@ -757,8 +757,9 @@ export class ApiService {
     return {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
-        Authorization: this.globals.jwtToken,
+        //Authorization: this.globals.jwtToken,
         Requester: this.globals.authUser,
+        ApiToken: this.globals.apiToken
       }),
     };
   }

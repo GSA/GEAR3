@@ -40,7 +40,12 @@ exports.findSystems = (req, res) => {
 };
 
 exports.update = (req, res) => {
-  if (req.headers.authorization) {
+  console.log('it-standard update starting...');
+
+  // let authApi = await ctrl.getApiToken (req, res);
+
+  if (authApi) {
+    console.log('it-standard update authorized...');
     var data = req.body;
 
     // Create string to update IT Standards Categories
@@ -96,6 +101,7 @@ exports.update = (req, res) => {
 
     res = ctrl.sendQuery(query, 'update IT Standard', res); //removed sendQuery_cowboy reference
   } else {
+    console.log('it-standard update no valid token!!!!');
     res.status(502).json({
       message: "No authorization token present. Not allowed to update IT-Standards"
     });
@@ -103,7 +109,7 @@ exports.update = (req, res) => {
 };
 
 exports.create = (req, res) => {
-  if (req.headers.authorization) {
+  if (ctrl.getApiToken (req.headers.authorization, req.headers.requester)) {
     var data = req.body;
 
     // Null any empty text fields

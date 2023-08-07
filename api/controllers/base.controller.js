@@ -12,6 +12,26 @@ const SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
 // time.
 const TOKEN_PATH = "token.json";
 
+exports.getApiToken = (req, res) => {
+  //console.log('req.headers: ', req.headers); //debugging
+  //console.log(`requester: ${req.header.Requester}, auth: ${req.header.Authorization}`); //debugging
+  sql.query(`CALL acl.verifyJwt ('${req.header.requester}', '${req.header.apiToken}');`,
+    (data, err) => {
+      console.log('CALL acl.verifyJwt returned: ', data);
+
+      if (err) {
+        console.log(err);
+        return false;
+      } else if (data) {
+        console.log('verifyJwt results: ' + data); //debugging
+        return true;
+      } else {
+        console.log('err and data are null.');
+        return false;
+      }
+    });    
+}
+
 exports.sendQuery = (query, msg, response) => {
   return buildQuery(sql, query, msg, response);
 };
