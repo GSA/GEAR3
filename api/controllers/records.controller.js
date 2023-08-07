@@ -108,7 +108,7 @@ exports.runUploadTechCatalogDataset = (req, res) => {
   ctrl.uploadTechCatalogDataset(data, res)
     .then((response) => {
       let json = response;
-      //console.log("final response msg: " + json); 
+      console.log('End of uploadTechCatalogDataset'); 
       res.status(200).json({ message: json, });
     });
 };
