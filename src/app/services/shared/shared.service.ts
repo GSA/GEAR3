@@ -98,7 +98,6 @@ export class SharedService {
           email: pieces[1],
           org: pieces[2]
         }
-
         pocObjs.push(tmpObj);
       })
     }
@@ -110,7 +109,7 @@ export class SharedService {
   // JWT Handling
   //// Set JWT on log in to be tracked when checking for authentication
   public setJWTonLogIn(): void {
-    console.log("setJWTonLogIn")
+    console.log("Current Jwt: " + localStorage.getItem('jwt'))
     if (localStorage.getItem('jwt') !== null) {  // If successful set of JWT
       setTimeout(() => {
         this.globals.jwtToken = localStorage.getItem('jwt');
@@ -122,12 +121,15 @@ export class SharedService {
 
   //// Check if user is authenticated to GEAR Manager
   public get loggedIn(): boolean {
-    if (this.globals.jwtToken === null || this.globals.authUser === null) {
-      //console.log("No JWT or Auth UserXX");
-      return false;
-    } else if (this.globals.jwtToken === localStorage.getItem('jwt') &&
+    if (this.globals.jwtToken === "" ||
+    this.globals.jwtToken === null || 
+    this.globals.authUser === "" ||
+    this.globals.authUser === null) {
+    //console.log("JWT/Auth User have not been set 🤖");
+    return false;
+    }
+     if (this.globals.jwtToken === localStorage.getItem('jwt') &&
       this.globals.authUser === localStorage.getItem('user')) {
-      console.log("JWT and Auth User match");
       return true;
     }
     return false;
