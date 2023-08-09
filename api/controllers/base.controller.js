@@ -420,10 +420,10 @@ exports.uploadTechCatalogDataset = async (data, response) => {
     let columnList = '';
 
     // insert query
-    let tableName = `tech_catalog.tp_${datasetName}_tmp`;
+    let tableName = `tech_catalog.tp_${datasetName}`;
     let insertQuery = `insert into ${tableName} (`;
 
-    let insertQuerySftwSupportStage = `insert into tech_catalog.tp_SoftwareSupportStage_tmp (softwareLifecycleId, definition, endDate, manufacturerId, name, order_, policy, publishedEndDate) values ?`;
+    let insertQuerySftwSupportStage = `insert into tech_catalog.tp_SoftwareSupportStage (softwareLifecycleId, definition, endDate, manufacturerId, name, order_, policy, publishedEndDate) values ?`;
 
     // total number of pages received (aka API calls made)
     var pageCounter = 0;
@@ -1959,7 +1959,7 @@ exports.getSyncList = async (data, response) => {
   updatedDate
   `;
   
-  const tableName = `tech_catalog.tp_${datasetName}_tmp`;
+  const tableName = `tech_catalog.tp_${datasetName}`;
 
   var pageCounter = 0;
   var recordCounter = 0;
