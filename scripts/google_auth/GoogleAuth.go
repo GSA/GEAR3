@@ -18,17 +18,24 @@ var err error
 // init is called before main
 func init() {
 	// Read the client secret file
-	clientSecretData, err = os.ReadFile("google_gear_credentials.json")
+	clientSecretData, err = os.ReadFile("gear_google_credentials.json")
 	if err != nil {
 		log.Printf("Unable to read client secret file: %v", err)
 		panic(err)
 	}
 
 	// Add the scopes for the Gmail API
-	scopes = append(scopes, "https://www.googleapis.com/auth/gmail.readonly")
+	scopes = append(scopes, "https://www.googleapis.com/auth/spreadsheets.readonly")
 }
 
 func main() {
+	if args := os.Args; len(args) > 1 {
+		log.Println("Manual save token mode")
+		if args[1] == "saveToken" {
+			ManualSaveToken()
+			os.Exit(0)
+		}
+	}
 	//Start the server
 	http.HandleFunc("/", BeginAuth)
 	http.HandleFunc("/saveToken", SaveToken)
@@ -78,6 +85,46 @@ func SaveToken(w http.ResponseWriter, r *http.Request) {
 	token, err := config.Exchange(context.Background(), r.URL.Query().Get("code"))
 	if err != nil {
 		log.Fatalf("Unable to retrieve token from web: %v", err)
+	}
+
+	// Marshal the token to JSON
+	tokenData, err := json.Marshal(token)
+	if err != nil {
+		log.Fatalf("Unable to marshal token to JSON %v", err)
+	}
+
+	// Write the token to a file
+	tokenName := "token.json"
+	err = os.WriteFile(tokenName, tokenData, 0644)
+	if err != nil {
+		log.Fatalf("Unable to write token to file %v", err)
+	}
+
+	log.Printf("Token saved at %s", tokenName)
+	os.Exit(0)
+}
+
+func ManualSaveToken(){
+	log.Println("Obtaining config from client secret data...")
+	config, err := google.ConfigFromJSON(clientSecretData, scopes...)
+	if err != nil {
+		log.Fatalf("Unable to parse client secret file to config: %v", err)
+	}
+
+	fmt.Println("Paste response url here:")
+
+	// Use fmt.Scan() to read from stdin instead of bufio.NewReader(os.Stdin).ReadString('\n')
+	var authCode string
+	// Read the auth code from the command-lin
+
+	if _, err := fmt.Scan(&authCode); err != nil {
+		log.Fatalf("Unable to read authorization code %v", err)
+	}
+
+	// Exchange the auth code for a token
+	token, err := config.Exchange(context.Background(), authCode)
+	if err != nil {
+		log.Fatalf("Unable to retrieve token from web %v", err)
 	}
 
 	// Marshal the token to JSON
