@@ -172,11 +172,12 @@ app.post(samlConfig.path,
             un: results[0][0].Username,
             exp: Math.floor(Date.now() / 1000) + 60 * 60,
             scopes: results[0][0].PERMS,
-            auditID: results[0][0].AuditID
+            auditID: results[0][0].AuditID,
           };
 
           // JWT TOKEN SIGNED HERE TO BE USED IN INLINE HTML PAGE NEXT
           const token = jsonwebtoken.sign(jwt, process.env.SECRET);
+          //console.log("Debugging token: " + ${token})
 
           let adminRoute = (process.env.SAML_HOST === 'localhost') ? 'http://localhost:3000' : '/#';
 

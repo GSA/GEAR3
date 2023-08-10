@@ -1,9 +1,9 @@
-import { Injectable, EventEmitter } from '@angular/core';
-import { formatDate, Location } from '@angular/common';
-import { Subscription } from 'rxjs/internal/Subscription';
-import { Router } from '@angular/router';
+import {Injectable, EventEmitter} from '@angular/core';
+import {formatDate, Location} from '@angular/common';
+import {Subscription} from 'rxjs/internal/Subscription';
+import {Router} from '@angular/router';
 
-import { Globals } from '@common/globals';
+import {Globals} from '@common/globals';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -29,14 +29,15 @@ export class SharedService {
 
   systemFormEmitter = new EventEmitter();
   systemFormSub: Subscription;
-  
+
   websiteFormEmitter = new EventEmitter();
   websiteFormSub: Subscription;
 
   constructor(
     private globals: Globals,
     private location: Location,
-    private router: Router) { }
+    private router: Router) {
+  }
 
   // Sidebar Toggle
   public toggleClick() {
@@ -62,7 +63,8 @@ export class SharedService {
     if (result) {
       if (field) return result[field];
       else return result.ID;
-    };
+    }
+    ;
   };
 
   // Have to render POC info separately as anchor links dont work with ngFor
@@ -98,7 +100,6 @@ export class SharedService {
           email: pieces[1],
           org: pieces[2]
         }
-
         pocObjs.push(tmpObj);
       })
     }
@@ -106,10 +107,10 @@ export class SharedService {
     return pocObjs;
   }
 
-
   // JWT Handling
   //// Set JWT on log in to be tracked when checking for authentication
   public setJWTonLogIn(): void {
+    console.log("Current Jwt: " + localStorage.getItem('jwt'))
     if (localStorage.getItem('jwt') !== null) {  // If successful set of JWT
       setTimeout(() => {
         this.globals.jwtToken = localStorage.getItem('jwt');
@@ -117,17 +118,24 @@ export class SharedService {
         $('#loggedIn').toast('show');
       }, 1000);  // Wait for 1 sec to propogate after logging in
     }
-  };
+    console.log('JWT and USER have been set');
+  }
 
   //// Check if user is authenticated to GEAR Manager
   public get loggedIn(): boolean {
-    //return localStorage.getItem('jwt') !== null && localStorage.getItem('jwt') === this.globals.jwtToken;
-    return (localStorage.getItem('jwt') === this.globals.jwtToken &&
-            localStorage.getItem('jwt') !== null &&
-            localStorage.getItem('jwt') !== undefined &&
-            this.globals.jwtToken !== null &&
-            this.globals.jwtToken !== undefined);
-    //return true
+    if (this.globals.jwtToken === "" ||
+    this.globals.jwtToken === null || 
+    this.globals.authUser === "" ||
+    this.globals.authUser === null) {
+    //console.log("JWT/Auth User have not been set 🤖");
+    return false;
+    }
+     if (this.globals.jwtToken === localStorage.getItem('jwt') &&
+      this.globals.authUser === localStorage.getItem('user')) {
+      return true;
+    }
+    console.log('GEAR Manager is not logged in');
+    return false;
   };
 
   //// Get Authenticated Username
@@ -165,7 +173,10 @@ export class SharedService {
   public systemFormatter(value, row, index, field) {
     var finalVal = value;
 
-    if (value == '' || value == undefined) { finalVal = "N/A" };
+    if (value == '' || value == undefined) {
+      finalVal = "N/A"
+    }
+    ;
 
     return finalVal;
   };
@@ -212,7 +223,7 @@ export class SharedService {
     let names = [];
     let pocs = value.split(':')[1];  // Retrieve POC after colon
     pocs = pocs.split('; ');  // Retrieve POC after colon
-    for (let i=0; i<pocs.length; i++) {
+    for (let i = 0; i < pocs.length; i++) {
       let singleName = pocs[i].split(', ')[0];
       if (singleName != '') names.push(singleName);  // Add only if there is a name
     }
