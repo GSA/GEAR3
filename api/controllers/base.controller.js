@@ -13,24 +13,19 @@ const SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
 // time.
 const TOKEN_PATH = "token.json";
 
-exports.getApiToken = (req, res) => {
-  //console.log('req.headers: ', req.headers); //debugging
-  //console.log(`requester: ${req.header.Requester}, auth: ${req.header.Authorization}`); //debugging
-  sql.query(`CALL acl.verifyJwt ('${req.header.requester}', '${req.header.apiToken}');`,
-    (data, err) => {
-      console.log('CALL acl.verifyJwt returned: ', data);
+exports.getApiToken = async (req, res) => {
+  console.log('req.headers: ', req.headers); //debugging
+  console.log(`requester: ${req.headers.requester}, apitoken: ${req.headers.apitoken}`); //debugging
 
-      if (err) {
-        console.log(err);
-        return false;
-      } else if (data) {
-        console.log('verifyJwt results: ' + data); //debugging
-        return true;
-      } else {
-        console.log('err and data are null.');
-        return false;
-      }
-    });    
+  //let [rows, fields] = await sql_promise.query(`CALL acl.verifyJwt ('${req.headers.requester}', '${req.headers.apitoken}');`);
+
+  let [rows, fields] = await sql_promise.query(`select count(*) as sessions_cnt from acl.logins where email = '${req.headers.requester}' and jwt = '${req.headers.apitoken}';`);
+
+  return rows[0].sessions_cnt;
+
+  //const response = await sql_promise.query(`CALL acl.verifyJwt ('${req.headers.requester}', '${req.headers.apitoken}');`);
+
+  //return response;
 }
 
 exports.sendQuery = (query, msg, response) => {

@@ -52,7 +52,12 @@ exports.findSystems = (req, res) => {
 };
 
 exports.updateSystems = (req, res) => {
-  if (ctrl.getApiToken (req.headers.authorization, req.headers.requester)) {
+  ctrl.getApiToken (req, res)
+  .then((response) => {
+    console.log('*** API Security Testing - getApiToken response: ', response); //DEBUGGING
+
+    if (response === 1) {
+      console.log('*** API Security Testing - API Auth Validation: PASSED'); //DEBUGGING
     var data = req.body;
 
     // Create string to update record-system relationship
@@ -73,10 +78,13 @@ exports.updateSystems = (req, res) => {
     //res = ctrl.sendQuery(query, 'updating systems for record', res);
 
   } else {
+    console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
+
     res.status(502).json({
       message: "No authorization token present. Not allowed to update systems-business capabilities mapping."
-    });
-  }
+      });
+    }
+  });
 };
 
 // This function is called by the api to update all the records using a Google Sheet
@@ -111,6 +119,8 @@ exports.runUploadTechCatalogDataset = (req, res) => {
       console.log('End of uploadTechCatalogDataset'); 
       res.status(200).json({ message: json, });
     });
+
+  console.log
 };
 
 // this function is called by the api to get a list of records that need to be syncronized

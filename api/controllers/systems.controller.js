@@ -30,30 +30,39 @@ exports.findCapabilities = (req, res) => {
 };
 
 exports.updateCaps = (req, res) => {
-  if (ctrl.getApiToken (req.headers.authorization, req.headers.requester)) {
-    var data = req.body;
+  ctrl.getApiToken (req, res)
+  .then((response) => {
+    console.log('*** API Security Testing - getApiToken response: ', response); //DEBUGGING
 
-    // Create string to update system-business capability relationship
-    var capString = '';
-    if (data.relatedCaps) {
-      // Delete any references first
-      capString += `DELETE FROM zk_systems_subsystems_capabilities WHERE obj_systems_subsystems_Id=${req.params.id}; `;
+    if (response === 1) {
+      console.log('*** API Security Testing - API Auth Validation: PASSED'); //DEBUGGING
 
-      // Insert new IDs
-      data.relatedCaps.forEach(capID => {
-        capString += `INSERT INTO zk_systems_subsystems_capabilities (obj_capability_Id, obj_systems_subsystems_Id) VALUES (${capID}, ${req.params.id}); `;
-      });
-    };
+      var data = req.body;
 
-    var query = `${capString}`;
-    
-    res = ctrl.sendQuery(query, 'updating capabilities for system', res);
+      // Create string to update system-business capability relationship
+      var capString = '';
+      if (data.relatedCaps) {
+        // Delete any references first
+        capString += `DELETE FROM zk_systems_subsystems_capabilities WHERE obj_systems_subsystems_Id=${req.params.id}; `;
 
-  } else {
-    res.status(502).json({
-      message: "No authorization token present. Not allowed to update systems-business capabilities mapping."
-    });
-  }
+        // Insert new IDs
+        data.relatedCaps.forEach(capID => {
+          capString += `INSERT INTO zk_systems_subsystems_capabilities (obj_capability_Id, obj_systems_subsystems_Id) VALUES (${capID}, ${req.params.id}); `;
+        });
+      };
+
+      var query = `${capString}`;
+      
+      res = ctrl.sendQuery(query, 'updating capabilities for system', res);
+
+    } else {
+      console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
+
+      res.status(502).json({
+        message: "No authorization token present. Not allowed to update systems-business capabilities mapping."
+        });
+    }
+  });
 };
 
 
@@ -67,7 +76,13 @@ exports.findInvestments = (req, res) => {
 };
 
 exports.updateInvest = (req, res) => {
-  if (ctrl.getApiToken (req.headers.authorization, req.headers.requester)) {
+  ctrl.getApiToken (req, res)
+  .then((response) => {
+    console.log('*** API Security Testing - getApiToken response: ', response); //DEBUGGING
+
+    if (response === 1) {
+      console.log('*** API Security Testing - API Auth Validation: PASSED'); //DEBUGGING
+
     var data = req.body;
 
     // Create string to update system-investments relationship
@@ -87,10 +102,13 @@ exports.updateInvest = (req, res) => {
     res = ctrl.sendQuery(query, 'updating investments for system', res);
 
   } else {
+    console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
+
     res.status(502).json({
       message: "No authorization token present. Not allowed to update systems-investments mapping."
-    });
-  }
+      });
+    }
+  });
 };
 
 
@@ -129,30 +147,39 @@ exports.findTechnologies = (req, res) => {
 };
 
 exports.updateTech = (req, res) => {
-  if (ctrl.getApiToken (req.headers.authorization, req.headers.requester)) {
-    var data = req.body;
+  ctrl.getApiToken (req, res)
+  .then((response) => {
+    console.log('*** API Security Testing - getApiToken response: ', response); //DEBUGGING
 
-    // Create string to update system-IT Standards relationship
-    var techString = '';
-    if (data.relatedTech) {
-      // Delete any references first
-      techString += `DELETE FROM zk_systems_subsystems_technology WHERE obj_systems_subsystems_Id=${req.params.id}; `;
+    if (response === 1) {
+      console.log('*** API Security Testing - API Auth Validation: PASSED'); //DEBUGGING
 
-      // Insert new IDs
-      data.relatedTech.forEach(techID => {
-        techString += `INSERT INTO zk_systems_subsystems_technology (obj_systems_subsystems_Id, obj_technology_Id) VALUES (${req.params.id}, ${techID}); `;
-      });
-    };
+      var data = req.body;
 
-    var query = `${techString}`;
-    
-    res = ctrl.sendQuery(query, 'updating IT Standards for system', res);
+      // Create string to update system-IT Standards relationship
+      var techString = '';
+      if (data.relatedTech) {
+        // Delete any references first
+        techString += `DELETE FROM zk_systems_subsystems_technology WHERE obj_systems_subsystems_Id=${req.params.id}; `;
 
-  } else {
-    res.status(502).json({
-      message: "No authorization token present. Not allowed to update systems-business capabilities mapping."
-    });
-  }
+        // Insert new IDs
+        data.relatedTech.forEach(techID => {
+          techString += `INSERT INTO zk_systems_subsystems_technology (obj_systems_subsystems_Id, obj_technology_Id) VALUES (${req.params.id}, ${techID}); `;
+        });
+      };
+
+      var query = `${techString}`;
+      
+      res = ctrl.sendQuery(query, 'updating IT Standards for system', res);
+
+    } else {
+      console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
+
+      res.status(502).json({
+        message: "No authorization token present. Not allowed to update systems-business capabilities mapping."
+        });
+    }
+  });
 };
 
 

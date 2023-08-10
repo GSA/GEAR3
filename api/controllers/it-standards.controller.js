@@ -40,115 +40,130 @@ exports.findSystems = (req, res) => {
 };
 
 exports.update = (req, res) => {
-  console.log('it-standard update starting...');
+  //console.log('it-standard update starting...');
 
-  // let authApi = await ctrl.getApiToken (req, res);
+  ctrl.getApiToken (req, res)
+  .then((response) => {
+    console.log('*** API Security Testing - getApiToken response: ', response); //DEBUGGING
 
-  if (authApi) {
-    console.log('it-standard update authorized...');
-    var data = req.body;
+    if (response === 1) {
+      console.log('*** API Security Testing - API Auth Validation: PASSED'); //DEBUGGING
 
-    // Create string to update IT Standards Categories
-    var catString = '';
-    if (data.itStandCategory) {
-      // Delete any references first
-      catString += `DELETE FROM zk_technology_standard_category WHERE obj_technology_Id=${req.params.id}; `;
+    //if (req.headers.authorization)
+      console.log('it-standard update authorized...');
+      var data = req.body;
 
-      // Insert new IDs
-      data.itStandCategory.forEach(catID => {
-        catString += `INSERT INTO zk_technology_standard_category (obj_standard_category_Id, obj_technology_Id) VALUES (${catID}, ${req.params.id}); `;
+      // Create string to update IT Standards Categories
+      var catString = '';
+      if (data.itStandCategory) {
+        // Delete any references first
+        catString += `DELETE FROM zk_technology_standard_category WHERE obj_technology_Id=${req.params.id}; `;
+
+        // Insert new IDs
+        data.itStandCategory.forEach(catID => {
+          catString += `INSERT INTO zk_technology_standard_category (obj_standard_category_Id, obj_technology_Id) VALUES (${catID}, ${req.params.id}); `;
+        });
+      };
+
+      // Create string to update IT Standards POCs
+      var pocString = '';
+      if (data.itStandPOC) {
+        // Delete any references first
+        pocString += `DELETE FROM zk_technology_poc WHERE obj_technology_Id=${req.params.id}; `;
+
+        // Insert new IDs
+        data.itStandPOC.forEach(pocSamName => {
+          pocString += `INSERT INTO zk_technology_poc (obj_technology_Id, obj_ldap_SamAccountName) VALUES (${req.params.id}, '${pocSamName}'); `;
+        });
+      };
+
+      // Null any empty text fields
+      data.itStandDesc = ctrl.emptyTextFieldHandler(data.itStandDesc);
+      data.itStandAprvExp = ctrl.emptyTextFieldHandler(data.itStandAprvExp);
+      data.itStandRefDocs = ctrl.emptyTextFieldHandler(data.itStandRefDocs);
+
+      var query = `SET FOREIGN_KEY_CHECKS=0;
+        UPDATE obj_technology
+        SET Keyname                       = '${data.itStandName}',
+          obj_technology_status_Id        = ${data.itStandStatus},
+          Description                     = ${data.itStandDesc},
+          obj_standard_type_Id            = ${data.itStandType},
+          obj_508_compliance_status_Id    = ${data.itStand508},
+          Available_through_Myview        = '${data.itStandMyView}',
+          Vendor_Standard_Organization    = '${data.itStandVendorOrg}',
+          obj_deployment_type_Id          = ${data.itStandDeployment},
+          Gold_Image                      = '${data.itStandGoldImg}',
+          Gold_Image_Comment              = '${data.itStandGoldComment}',
+          Approved_Status_Expiration_Date = ${data.itStandAprvExp},
+          Comments                        = '${data.itStandComments}',
+          Reference_documents             = ${data.itStandRefDocs},
+          ChangeAudit                     = '${data.auditUser}',
+          ChangeDTG                       = NOW(),
+          manufacturer                    = '${data.tcManufacturer}',
+          softwareProduct                 = '${data.tcSoftwareProduct}',
+          softwareVersion                 = '${data.tcSoftwareVersion}',
+          softwareRelease                 = '${data.tcSoftwareRelease}',
+          manufacturerName                = '${data.tcManufacturerName}',
+          softwareProductName             = '${data.tcSoftwareProductName}',
+          softwareVersionName             = '${data.tcSoftwareVersionName}',
+          softwareReleaseName             = '${data.tcSoftwareReleaseName}'
+        WHERE Id = ${req.params.id};
+        SET FOREIGN_KEY_CHECKS=1;
+        ${catString}
+        ${pocString}`
+
+      res = ctrl.sendQuery(query, 'update IT Standard', res); //removed sendQuery_cowboy reference
+    } else {
+      console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
+      
+      console.log('it-standard update no valid token!!!!');
+      res.status(502).json({
+        message: "No authorization token present. Not allowed to update IT-Standards"
       });
-    };
-
-    // Create string to update IT Standards POCs
-    var pocString = '';
-    if (data.itStandPOC) {
-      // Delete any references first
-      pocString += `DELETE FROM zk_technology_poc WHERE obj_technology_Id=${req.params.id}; `;
-
-      // Insert new IDs
-      data.itStandPOC.forEach(pocSamName => {
-        pocString += `INSERT INTO zk_technology_poc (obj_technology_Id, obj_ldap_SamAccountName) VALUES (${req.params.id}, '${pocSamName}'); `;
-      });
-    };
-
-    // Null any empty text fields
-    data.itStandDesc = ctrl.emptyTextFieldHandler(data.itStandDesc);
-    data.itStandAprvExp = ctrl.emptyTextFieldHandler(data.itStandAprvExp);
-    data.itStandRefDocs = ctrl.emptyTextFieldHandler(data.itStandRefDocs);
-
-    var query = `SET FOREIGN_KEY_CHECKS=0;
-      UPDATE obj_technology
-      SET Keyname                       = '${data.itStandName}',
-        obj_technology_status_Id        = ${data.itStandStatus},
-        Description                     = ${data.itStandDesc},
-        obj_standard_type_Id            = ${data.itStandType},
-        obj_508_compliance_status_Id    = ${data.itStand508},
-        Available_through_Myview        = '${data.itStandMyView}',
-        Vendor_Standard_Organization    = '${data.itStandVendorOrg}',
-        obj_deployment_type_Id          = ${data.itStandDeployment},
-        Gold_Image                      = '${data.itStandGoldImg}',
-        Gold_Image_Comment              = '${data.itStandGoldComment}',
-        Approved_Status_Expiration_Date = ${data.itStandAprvExp},
-        Comments                        = '${data.itStandComments}',
-        Reference_documents             = ${data.itStandRefDocs},
-        ChangeAudit                     = '${data.auditUser}',
-        ChangeDTG                       = NOW(),
-        manufacturer                    = '${data.tcManufacturer}',
-        softwareProduct                 = '${data.tcSoftwareProduct}',
-        softwareVersion                 = '${data.tcSoftwareVersion}',
-        softwareRelease                 = '${data.tcSoftwareRelease}',
-        manufacturerName                = '${data.tcManufacturerName}',
-        softwareProductName             = '${data.tcSoftwareProductName}',
-        softwareVersionName             = '${data.tcSoftwareVersionName}',
-        softwareReleaseName             = '${data.tcSoftwareReleaseName}'
-      WHERE Id = ${req.params.id};
-      SET FOREIGN_KEY_CHECKS=1;
-      ${catString}
-      ${pocString}`
-
-    res = ctrl.sendQuery(query, 'update IT Standard', res); //removed sendQuery_cowboy reference
-  } else {
-    console.log('it-standard update no valid token!!!!');
-    res.status(502).json({
-      message: "No authorization token present. Not allowed to update IT-Standards"
-    });
-  }
+    }
+  }); //end getApiToken
 };
 
 exports.create = (req, res) => {
-  if (ctrl.getApiToken (req.headers.authorization, req.headers.requester)) {
-    var data = req.body;
+  // api GEAR Manager authorization
+  ctrl.getApiToken (req, res)
+  .then((response) => {
+    console.log('*** API Security Testing - getApiToken response: ', response); //DEBUGGING
 
-    // Null any empty text fields
-    data.itStandDesc = ctrl.emptyTextFieldHandler(data.itStandDesc);
-    data.itStandAprvExp = ctrl.emptyTextFieldHandler(data.itStandAprvExp);
-    data.itStandRefDocs = ctrl.emptyTextFieldHandler(data.itStandRefDocs);
+    if (response === 1) {
+      console.log('*** API Security Testing - API Auth Validation: PASSED'); //DEBUGGING
+    //if (req.headers.authorization) {
+      var data = req.body;
 
-    var query = `INSERT INTO obj_technology(
-      Keyname,
-      Description,
-      Approved_Status_Expiration_Date,
-      Vendor_Standard_Organization,
-      Available_through_Myview,
-      Gold_Image,
-      Gold_Image_Comment,
-      Comments,
-      obj_technology_status_Id,
-      obj_deployment_type_Id,
-      obj_standard_type_Id,
-      obj_508_compliance_status_Id,
-      Reference_documents,
-      CreateAudit,
-      ChangeAudit,
-      manufacturer,
-      softwareProduct,
-      softwareVersion,
-      softwareRelease,
-      manufacturerName,
-      softwareProductName,
-      softwareVersionName,
-      softwareReleaseName) VALUES (
+      // Null any empty text fields
+      data.itStandDesc = ctrl.emptyTextFieldHandler(data.itStandDesc);
+      data.itStandAprvExp = ctrl.emptyTextFieldHandler(data.itStandAprvExp);
+      data.itStandRefDocs = ctrl.emptyTextFieldHandler(data.itStandRefDocs);
+
+      var query = `INSERT INTO obj_technology(
+        Keyname,
+        Description,
+        Approved_Status_Expiration_Date,
+        Vendor_Standard_Organization,
+        Available_through_Myview,
+        Gold_Image,
+        Gold_Image_Comment,
+        Comments,
+        obj_technology_status_Id,
+        obj_deployment_type_Id,
+        obj_standard_type_Id,
+        obj_508_compliance_status_Id,
+        Reference_documents,
+        CreateAudit,
+        ChangeAudit,
+        manufacturer,
+        softwareProduct,
+        softwareVersion,
+        softwareRelease,
+        manufacturerName,
+        softwareProductName,
+        softwareVersionName,
+        softwareReleaseName) VALUES (
         '${data.itStandName}',
         ${data.itStandDesc},
         ${data.itStandAprvExp},
@@ -173,12 +188,15 @@ exports.create = (req, res) => {
         '${data.tcSoftwareVersionName}',
         '${data.tcSoftwareReleaseName}');`
 
-    res = ctrl.sendQuery(query, 'create IT Standard', res); //removed sendQuery_cowboy reference
-  } else {
-    res.status(502).json({
-      message: "No authorization token present. Not allowed to create IT Standard"
-    });
-  }
+      res = ctrl.sendQuery(query, 'create IT Standard', res); //removed sendQuery_cowboy reference
+    } else {
+      console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
+
+      res.status(502).json({
+        message: "No authorization token present. Not allowed to create IT Standard"
+      });
+    };
+  }); //end getApiToken
 };
 
 exports.find508Compliance = (req, res) => {
