@@ -61,7 +61,7 @@
     "ldapjs": "^2.3.1",
     "make-fetch-happen": "^10.1.2",
     "mysql2": "^2.3.2",
-    "ng-sidebar": "^9.4.2",
+    "ng-sidebar-v2": "^16.0.4",
     "ng2-pdf-viewer": "^9.1.2",
     "node-cron": "^2.0.3",
     "node-fetch": "^2.6.7",
