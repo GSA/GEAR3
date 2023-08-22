@@ -110,7 +110,6 @@ export class SharedService {
   // JWT Handling
   //// Set JWT on log in to be tracked when checking for authentication
   public setJWTonLogIn(): void {
-    console.log("Current Jwt: " + localStorage.getItem('jwt'))
     if (localStorage.getItem('jwt') !== null) {  // If successful set of JWT
       setTimeout(() => {
         this.globals.jwtToken = localStorage.getItem('jwt');
@@ -119,7 +118,6 @@ export class SharedService {
         $('#loggedIn').toast('show');
       }, 1000);  // Wait for 1 sec to propogate after logging in
     }
-    console.log('JWT and USER have been set');
   }
 
   //// Check if user is authenticated to GEAR Manager
@@ -128,14 +126,12 @@ export class SharedService {
     this.globals.jwtToken === null || 
     this.globals.authUser === "" ||
     this.globals.authUser === null) {
-    //console.log("JWT/Auth User have not been set 🤖");
     return false;
     }
      if (this.globals.jwtToken === localStorage.getItem('jwt') &&
       this.globals.authUser === localStorage.getItem('user')) {
       return true;
     }
-    console.log('GEAR Manager is not logged in');
     return false;
   };
 
