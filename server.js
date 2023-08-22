@@ -23,6 +23,8 @@ const bodyParser = require('body-parser'),
   ExtractJWT = passportJWT.ExtractJwt,
   JWTStrategy = passportJWT.Strategy;
 
+  const CryptoJS = require("crypto-js")
+
 // Proxy Settings for Google API to use
 // process.env.HTTP_PROXY="http://patchproxyr13.gsa.gov:3128";
 // process.env.http_proxy="http://patchproxyr13.gsa.gov:3128";
@@ -175,9 +177,18 @@ app.post(samlConfig.path,
             auditID: results[0][0].AuditID,
           };
 
-          // JWT TOKEN SIGNED HERE TO BE USED IN INLINE HTML PAGE NEXT
+          // API TOKEN GENERATED HERE TO BE USED IN INLINE HTML PAGE NEXT
           const token = jsonwebtoken.sign(jwt, process.env.SECRET);
-          //console.log("Debugging token: " + ${token})
+          //const key = "94a74618-f4d3-4970-ae71-5eb4bca410a9" + jwt.exp.toString();
+          const key = process.env.SECRET + jwt.exp.toString();
+          const encryptJWT = CryptoJS.AES.encrypt(`${jwt.auditID}`, key);
+
+          db.query(`CALL acl.setJwt ('${jwt.auditID}', '${encryptJWT}');`,
+          (err) => {
+            if (err) {
+              console.log(err);
+            }
+          });
 
           let adminRoute = (process.env.SAML_HOST === 'localhost') ? 'http://localhost:3000' : '/#';
 
@@ -190,6 +201,7 @@ app.post(samlConfig.path,
       const path = localStorage.redirectPath || '';
       delete localStorage.redirectPath;
       localStorage.jwt = '${token}';
+      localStorage.apiToken = '${encryptJWT}';
       localStorage.user = '${results[0][0].AuditID}';
       localStorage.samlEntryPoint = '${process.env.SAML_ENTRY_POINT}';
       window.location.replace('${adminRoute}' + path);
@@ -357,8 +369,8 @@ cron.schedule('0 7 * * WED', () => {
 });
 
 // Google API Pull to run every weekday at 2:00 AM
-//cron.schedule('0 2 * * 1-5', () => { //PRODUCTION
-cron.schedule('*/10 * * * 1-5', () => { //DEBUGGING
+cron.schedule('0 2 * * 1-5', () => { //PRODUCTION
+//cron.schedule('*/10 * * * 1-5', () => { //DEBUGGING
   try {
     console.log(getCurrentDatetime() + 'CRON JOB: Update All Related Records (runs every weekday at 2:00 AM) - Starting');
     
