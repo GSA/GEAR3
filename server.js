@@ -356,8 +356,8 @@ cron.schedule('0 7 * * WED', () => {
 });
 
 // Google API Pull to run every weekday at 2:00 AM
-//cron.schedule('0 2 * * 1-5', () => { //PRODUCTION
-cron.schedule('*/10 * * * 1-5', () => { //DEBUGGING
+cron.schedule('0 2 * * 1-5', () => { //PRODUCTION
+//cron.schedule('*/10 * * * 1-5', () => { //DEBUGGING
   try {
     console.log(getCurrentDatetime() + 'CRON JOB: Update All Related Records (runs every weekday at 2:00 AM) - Starting');
     

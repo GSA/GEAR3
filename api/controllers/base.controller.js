@@ -383,195 +383,194 @@ function sendResponse(response, data) {
 }
 
 
+// ========================================================================================================================================
+// Technopedia
+// ========================================================================================================================================
+// ... the code below facilitates the integration with Flexera to import the Technopedia data
+// ========================================================================================================================================
 
 
+// ===================================
+// log folder paths
 
+const logFolderPath = `tech_catalog_data/logs`;     // path for main log folder
 
+// ===================================
+// import component functions
 
+function getValidDatasets() {
+  const validDatasets = 
+  ['Manufacturer', 
+  'Platform', 
+  'SoftwareEdition', 
+  'SoftwareFamily', 
+  'SoftwareLifecycle', 
+  'SoftwareMarketVersion', 
+  'SoftwareProduct', 
+  'SoftwareProductLink', 
+  'SoftwareRelease', 
+  'SoftwareReleaseLink', 
+  'SoftwareReleasePlatform', 
+  'SoftwareVersion', 
+  'Taxonomy'];
 
+  return validDatasets;
+}
 
+async function validateRequest(data, logHeader = null) {
 
+  // - description: validates the refresh token and dataset name
+  // - parameters: refreshToken (string), datasetName (string)
+  // - returns: result (boolean)
+  // - throws: error (string)
 
+  const refreshToken = data.refreshtoken;
+  const datasetName = data.dataset;
+  const takeAmount = data.takeamount;
+  const importId = data.importid;
 
+  let validationMsg = '';
+  let result = true;
 
-// ###########################################################################
-// ########################## FLEXERA TECHNOPEDIA ############################
-// ###########################################################################
+  logger(`${formatDateTime(new Date())}${logHeader}`, `... validating import request parameters`);
 
-// upload technopedia api data to database by dataset
-exports.uploadTechCatalogDataset = async (data, response) => {
-
-  // TO DO: remove variables below and add them as parameters to this function
-  // refresh token for flexera api
-  const refreshToken = data.refreshToken;
-  // dataset name to be pulled
-  const datasetName = data.dataset; // ie. "Taxonomy";
-
-  console.log('############################################################################################################');
-  console.log('#### START - UPLOAD TECH CATALOG DATASET: #### ' + datasetName);
-  console.log('############################################################################################################'); 
-  
-  // GLOBAL VARIABLES
-    // number of records to retrieve per api call
-    const takeAmt = "10000";
-    // stores the flerera api access token
-    let accessToken = "";
-    // select column list based on dataset name
-    let columnList = '';
-
-    // insert query
-    let tableName = `tech_catalog.tp_${datasetName}_tmp`;
-    let insertQuery = `insert into ${tableName} (`;
-
-    let insertQuerySftwSupportStage = `insert into tech_catalog.tp_SoftwareSupportStage_tmp (softwareLifecycleId, definition, endDate, manufacturerId, name, order_, policy, publishedEndDate) values ?`;
-
-    // total number of pages received (aka API calls made)
-    var pageCounter = 0;
-    // total number of records received
-    var recordCounter = 0;
-    // total number of records that failed to insert into db
-    var failedRecordCounter = 0;
-    // flag to determine if this is the last page
-    var isLastPage = false;
-    // id of last record processed
-    var lastRecordId = null;
-    // upload start time
-    var uploadStartTime = new Date(); //TIMESTAMP();
-    // stores the error log path
-    let errorLogPath = 'tech_catalog_data/logs/errors_' + datasetName + '_' + String(uploadStartTime).replace(/:/g, '_').replace(/ /g, '_') + '.log';
-
-    function logger(msg, error) {
-      if (error === undefined || error === null || error === '') {
-        //console.log(`(${formatDateTime(Date.now())}): ${datasetName} - ${msg}`);
-        console.log(`${msg}`);
-
-      } else {
-        //console.log(`(${formatDateTime(Date.now())}): ${datasetName} - ${msg}... \n`, error);
-        console.log(`${msg}\n`, error);
-
-        // log the error to file
-        fs.appendFileSync(errorLogPath, msg + '\n' + error + '\r\n');
-      }
-    }
-
-    // verify if refreskToken was provided
-    if (refreshToken === undefined || refreshToken === null || refreshToken === '') {
-      let errorMsg = `#### ${datasetName} #### *************** ERROR no refresh token provided... ending upload. *************** \n`;
-
-      logger(errorMsg, '');
-
-      return errorMsg;
-    }
-
-    // verify if datasetName was provided and is supported
-    if (datasetName === undefined || datasetName === null || datasetName === '') {
-      let errorMsg = `#### ${datasetName} #### *************** ERROR no dataset name provided... ending upload. *************** \n`;
-      
-      logger(errorMsg, '');
-
-      return errorMsg;
-    } else if (datasetName !== 'Manufacturer' && 
-               datasetName !== 'Platform' && 
-               datasetName !== 'SoftwareEdition' && 
-               datasetName !== 'SoftwareFamily' && 
-               datasetName !== 'SoftwareLifecycle' && 
-               datasetName !== 'SoftwareMarketVersion' && 
-               datasetName !== 'SoftwareProduct' && 
-               datasetName !== 'SoftwareProductLink' && 
-               datasetName !== 'SoftwareRelease' && 
-               datasetName !== 'SoftwareReleaseLink' && 
-               datasetName !== 'SoftwareReleasePlatform' && 
-               //datasetName !== 'SoftwareSupportStage' && 
-               datasetName !== 'SoftwareVersion' && 
-               datasetName !== 'Taxonomy') {
-      let errorMsg = `#### ${datasetName} #### *************** ERROR dataset name provided is not supported... ending upload. *************** \n`;
-
-      logger(errorMsg, '');
-
-      return errorMsg;
-    }
-
-    // display the upload start time
-    console.log(`#### ${datasetName} #### Upload Start Time: ${uploadStartTime}`);
-
-    // calcs the duration between two date times and returns a string
-    function formatDuration(start_date, end_date) {
-      const duration = new Date(end_date - start_date);
-    
-      const hours = duration.getUTCHours();
-      const minutes = duration.getUTCMinutes();
-      const seconds = duration.getUTCSeconds();
-    
-      let result = "";
-      if (hours > 0) {
-        result += hours + (hours === 1 ? " hour" : " hours");
-      }
-      if (minutes > 0) {
-        if (result !== "") {
-          result += ", ";
-        }
-        result += minutes + (minutes === 1 ? " minute" : " minutes");
-      }
-      if (seconds > 0) {
-        if (result !== "") {
-          result += ", ";
-        }
-        result += seconds + (seconds === 1 ? " second" : " seconds");
-      }
-      
-      //console.log(result);
-      return result;
-    }
-
-  
-  // ############################################################################################################
-  console.log(`#### ${datasetName} #### Pre-cleaning: Getting last ${datasetName} record id from database.`);
-  // ############################################################################################################
-  
-  try {
-    // get the max id from the database
-    let [rows, fields] = await sql_promise.query(`select max(id) as lastId from ${tableName};`);
-
-    // set the lastRecordId
-    lastRecordId = rows[0].lastId;
-
-    if (lastRecordId === null) {
-      console.log(`#### ${datasetName} #### ...... No ${datasetName} records found in database.`);
-    } else {
-      console.log(`#### ${datasetName} #### ...... Last ${datasetName} record id successfully retrieved from database: ${lastRecordId}`);
-    }
-  } catch (error) {
-    let errorMsg = `#### ${datasetName} #### *************** ERROR getting last ${datasetName} record id from database... ending upload. *************** \n`;
-
-    logger(errorMsg, error);
-
-    return errorMsg;
+  // validating refreshToken
+  // verify if refreskToken was provided
+  if (refreshToken === undefined || refreshToken === null || refreshToken === '') {
+    validationMsg = validationMsg + `- refresh token provided is empty or invalid\n`;
+    result = false;
   }
 
-  // loop through each page for the entire dataset (or calls to api)
-  do {    
-    // increment page counter
-    pageCounter++;
+  // validating datasetName
+  // verify if datasetName was provided
+  if (datasetName === undefined || datasetName === null || datasetName === '') {
+    validationMsg = validationMsg + `- dataset name provided is empty or invalid\n`;
+    result = false;
+  }
 
-    // page proceessing start time
-    var pageStartTime = new Date();
-    console.log(`#### ${datasetName} #### Page: ${pageCounter} #### Page Start Time: ${pageStartTime}`);
-    
-    // ############################################################################################################
-    console.log(`#### ${datasetName} #### Page: ${pageCounter} #### Step #1: Get Access Token `);
-    // ############################################################################################################
+  // validating datasetName
+  // TO DO: update this to verify by querying the datasets db table
+  // verify if datasetName is supported
+  if (!getValidDatasets().includes(datasetName)) {
+    validationMsg = validationMsg + `- dataset name provided is not supported\n`;
+    result = false;
+  }
 
-    // stores the page data from the flexera api
-    let pageJson = null;
+  // validating takeAmount
+  if (takeAmount === undefined || takeAmount === null || takeAmount === '') {
+    validationMsg = validationMsg + `- take amount provided is empty or invalid\n`;
+    result = false;
+  } else if (takeAmount < 1 || takeAmount > 10000) {
+    validationMsg = validationMsg + `- take amount provided is out of range\n`;
+    result = false;
+  }
 
-    // check if start time is greater than 45 minutes
-    //if ((uploadStartTime.getMinutes() + 45) < pageStartTime || accessToken === "") {
-      try {
-        let response = null;
+  // TO DO: validating importId
 
-        try {
-          // get access token from flexera api
-          response = await fetch('https://login.flexera.com/oidc/token', {
+  
+
+  if (result) {
+    logger(`${formatDateTime(new Date())}${logHeader}`, `... request parameters are valid`);
+    return result;
+  } else {
+    throw validationMsg;
+  }
+}
+
+async function getLastRecordId(tableName, logHeader = null) {
+
+  // - description: gets the id for the last record inserted into the database table for a dataset
+  // - parameters: tableName (string)
+  // - returns: lastRecordId (string)
+
+  let timer = timer ();
+
+  logger(`${formatDateTime(new Date())}${logHeader}`, `... getting the last id from ${tableName}`);
+
+  let lastRecordId = null;
+
+  // get the max id from the database
+  let [rows, fields] = await sql_promise.query(`select max(id) as lastId from ${tableName};`);
+
+  // set the lastRecordId
+  lastRecordId = rows[0].lastId;
+
+  if (lastRecordId === null || lastRecordId === '') {
+    throw `database returned null for last record id`;
+  }
+
+  timer = timer(timer);
+
+  logger(`${formatDateTime(new Date())}${logHeader}`, `... retrieved last id: [${lastRecordId}] in ${timer}`);
+
+  return lastRecordId;
+}
+
+async function getLastSyncDate(tableName, logHeader = null) {
+
+  // - description: gets the max synchronizedDate value from the database table for a dataset
+  // - parameters: tableName (string)
+  // - returns: lastSynchronizedDate (string)
+
+  logger(`${formatDateTime(new Date())}${logHeader}`, `... getting the last synchronizedDate from db table ${tableName}`);
+
+  let lastSynchronizedDate = null;
+
+  // send request for the max synchronizedDate from the database
+  let [rows, fields] = await sql_promise.query(`select max(synchronizedDate) as lastSynchronizedDate from ${tableName};`);
+
+  // get lastSynchronizedDate from response
+  lastSynchronizedDate = rows[0].lastSynchronizedDate;
+
+  // check if lastSynchronizedDate is null
+  if (lastSynchronizedDate === null || lastSynchronizedDate === undefined) {
+    throw `database returned null for last synchronized date`;
+  }
+
+  logger(`${formatDateTime(new Date())}${logHeader}`, `... retrieved last synchronizedDate: [${formatDateTime(lastSynchronizedDate)}]`);
+
+  return lastSynchronizedDate;
+
+}
+
+async function getTableRecordCount(tableName, logHeader = null) {
+
+  // - description: gets the total record count of a database table for a dataset
+  // - parameters: tableName (string)
+  // - returns: count (int)
+
+  logger(`${formatDateTime(new Date())}${logHeader}`, `... getting table record count from ${tableName}`);
+
+  let count = null;
+
+  // send request
+  let [rows, fields] = await sql_promise.query(`select count(*) as totalCount from ${tableName};`);
+
+  // get lastSynchronizedDate from response
+  count = rows[0].totalCount;
+
+  // check if lastSynchronizedDate is null
+  if (count === null || count === undefined) {
+    throw `database returned null for total record count`;
+  }
+
+  logger(`${formatDateTime(new Date())}${logHeader}`, `... ${count} records in ${tableName}`);
+
+  return count;
+
+}
+
+async function getAccessToken(refreshToken, logHeader = null) {
+
+  // - description: get a new access token from flexera API
+  // - parameters: refreshToken
+  // - returns: accessToken, errorMessage
+
+  logger(`${formatDateTime(new Date())}${logHeader}`, `... getting the access token`);
+
+  let accessToken = null;
+
+  const response = await fetch('https://login.flexera.com/oidc/token', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -581,1794 +580,2459 @@ exports.uploadTechCatalogDataset = async (data, response) => {
               refresh_token: refreshToken,
             }),
           });
-        } catch (error) {
-          let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### *************** ERROR getting access token (1st attempt). *************** \n`;
 
-          logger(errorMsg, error);
+  // check if response is ok
+  if (response.ok) {
 
-          try {            
-            // get access token from flexera api
-            response = await fetch('https://login.flexera.com/oidc/token', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                grant_type: 'refresh_token',
-                refresh_token: refreshToken,
-              }),
-            });
-          } catch (error) {
-            let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### *************** ERROR getting access token (2nd attempt). *************** \n`;
+    // get json from response
+    const data = await response.json();
 
-            logger(errorMsg, error);
+    // set the access token
+    accessToken = String(data.access_token);
 
-            // return the error message
-            return errorMsg;
-          }
-        }
-
-        // check if response is ok
-        if (response.ok) {
-          // get json from response
-          const data = await response.json();
-
-          // set the access token
-          accessToken = String(data.access_token);
-
-          console.log(`#### ${datasetName} #### Page: ${pageCounter} #### ...... Access Token Received.`);
-        } else {
-          let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### *************** ERROR access token api call returned bad response ... ending upload. *************** \n ${response.status} ${response.statusText} \n`;
-
-          logger(errorMsg, '');
-
-          return errorMsg;
-        }
-      } catch (error) {
-        let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### *************** ERROR getting access token. *************** \n`;
-
-        logger(errorMsg, error);
-
-        // return the error message
-        return errorMsg;
-      }
-    //} else {
-    //  console.log(`#### ${datasetName} #### Page: ${pageCounter} #### ...... Access Token is still good, duration: ${(uploadStartTime + 3300000 - pageStartTime) / 60000} minutes`);
-    //  console.log(uploadStartTime + 3300000);
-    //}
-
-
-    // ############################################################################################################
-    console.log(`#### ${datasetName} #### Page: ${pageCounter} #### Step #2: Build ${datasetName} graphQL query `);
-    // ############################################################################################################
-
-    // stores the additional graphql query parameters
-    let additionalQueryParameters = '';
+    // check if accessToken is empty
+    if (accessToken === null || accessToken === '') {
+      throw `access token api call returned null`;
+    }
     
-    // add afterId parameter if this is not the first page
-    if (lastRecordId !== null) {
-      additionalQueryParameters = ` afterId: "${lastRecordId}"`;
-    }
+  } else {
+    throw `access token api call returned bad response: ${response.status} ${response.statusText}`;
+  }
 
-    // ############################################################################################################
-    // #1 select the dataset and build column list for graphql query
-    if (columnList === '') {
-      switch (await datasetName) {
-        case 'Manufacturer':
-          columnList = `id
-          acquiredDate
-          city
-          country
-          createdDate
-          deleteReason
-          description
-          email
-          employees
-          employeesDate
-          fax
-          fiscalEndDate
-          isPubliclyTraded
-          isToBeDeleted
-          knownAs
-          legal
-          name
-          ownerId
-          phone
-          profitsDate
-          profitsPerYear
-          replacementId
-          revenue
-          revenueDate
-          state
-          street
-          symbol
-          synchronizedDate
-          tier
-          toBeDeletedOn
-          updatedDate
-          website
-          zip
-          `;
-          break;
-        case 'Platform':
-          columnList = `id
-          createdDate
-          deleteReason
-          isToBeDeleted
-          name
-          replacementId
-          synchronizedDate
-          toBeDeletedOn
-          updatedDate
-          `;
-          break;
-        case 'SoftwareEdition':
-          columnList = `id
-          createdDate
-          deleteReason
-          isDesupported
-          isDiscontinued
-          isToBeDeleted
-          name
-          order
-          replacementId
-          synchronizedDate
-          toBeDeletedOn
-          updatedDate
-          softwareProduct { id }
-          `;
-          break;
-        case 'SoftwareFamily':
-          columnList = `id
-          createdDate
-          deleteReason
-          isDesupported
-          isDiscontinued
-          isToBeDeleted
-          name
-          replacementId
-          synchronizedDate
-          toBeDeletedOn
-          updatedDate
-          manufacturer { id }
-          taxonomy { id }
-          `;
-          break;
-        case 'SoftwareLifecycle':
-          columnList = `id
-          createdDate
-          deleteReason
-          endOfLife
-          endOfLifeCalculatedCase
-          endOfLifeDate
-          endOfLifeDateCalculated
-          endOfLifeException
-          endOfLifeSupportLevel
-          generalAvailability
-          generalAvailabilityDate
-          generalAvailabilityDateCalculated
-          generalAvailabilityException
-          isToBeDeleted
-          obsolete
-          obsoleteCalculatedCase
-          obsoleteDate
-          obsoleteDateCalculated
-          obsoleteException
-          obsoleteSupportLevel
-          replacementId
-          synchronizedDate
-          toBeDeletedOn
-          updatedDate
-          softwareRelease { id }
-          softwareSupportStage {
-            definition
-            endDate
-            manufacturerId
-            name
-            order
-            policy
-            publishedEndDate
-          }
-          `;
-          break;
-        case 'SoftwareMarketVersion':
-          columnList = `id
-          createdDate
-          deleteReason
-          isDesupported
-          isDiscontinued
-          isToBeDeleted
-          name
-          order
-          replacementId
-          synchronizedDate
-          toBeDeletedOn
-          updatedDate
-          softwareProduct { id }
-          `;
-          break;
-        case 'SoftwareProduct':
-          columnList = `id
-          alias
-          application
-          cloud
-          component
-          createdDate
-          deleteReason
-          isDesupported
-          isDiscontinued
-          isFamilyInFullName
-          isSuite
-          isToBeDeleted
-          name
-          productLicensable
-          replacementId
-          synchronizedDate
-          toBeDeletedOn
-          updatedDate
-          manufacturer { id }
-          softwareFamily { id }
-          taxonomy { id }
-          `;
-          break;
-        case 'SoftwareProductLink':
-          columnList = `id
-          cloud
-          createdDate
-          deleteReason
-          formerSoftwareProductId
-          isToBeDeleted
-          laterSoftwareProductId
-          latestSoftwareProductId
-          oldestSoftwareProductId
-          replacementId
-          softwareCloudId
-          softwareOnPremId
-          synchronizedDate
-          toBeDeletedOn
-          updatedDate
-          `;
-          break;
-        case 'SoftwareRelease':
-          columnList = `id
-          application
-          cloud
-          createdDate
-          deleteReason
-          isDesupported
-          isDiscontinued
-          isLicensable
-          isMajor
-          isToBeDeleted
-          majorSoftwareReleaseId
-          name
-          patchLevel
-          replacementId
-          synchronizedDate
-          toBeDeletedOn
-          updatedDate
-          scaOpenSource { id }
-          softwareEdition { id }
-          softwareProduct { id }
-          softwareVersion { id }
-          `;
-          break;
-        case 'SoftwareReleaseLink':
-          columnList = `id
-          createdDate
-          deleteReason
-          formerSoftwareReleaseId
-          isToBeDeleted
-          laterSoftwareReleaseId
-          latestSoftwareReleaseId
-          oldestSoftwareReleaseId
-          replacementId
-          synchronizedDate
-          toBeDeletedOn
-          updatedDate
-          softwareRelease { id }
-          `;
-          break;
-        case 'SoftwareReleasePlatform':
-          columnList = `id
-          createdDate
-          deleteReason
-          isDesupported
-          isDiscontinued
-          isToBeDeleted
-          platformLabel
-          platformType
-          replacementId
-          synchronizedDate
-          toBeDeletedOn
-          updatedDate
-          platform { id }
-          softwareRelease { id }
-          `;
-          break;
-        case 'SoftwareSupportStage':
-          columnList = `
-          `;
-          break;
-        case 'SoftwareVersion':
-          columnList = `id
-          createdDate
-          deleteReason
-          isDesupported
-          isDiscontinued
-          isMajor
-          isToBeDeleted
-          majorSoftwareVersionId
-          name
-          order
-          patchLevel
-          replacementId
-          synchronizedDate
-          toBeDeletedOn
-          updatedDate
-          versionStage
-          softwareMarketVersion { id }
-          softwareProduct { id }
-          `;
-          break;
-        case 'Taxonomy':
-          columnList = `id
-          category
-          categoryGroup
-          categoryId
-          createdDate
-          deleteReason
-          description
-          isToBeDeleted
-          replacementId
-          softwareOrHardware
-          subcategory
-          synchronizedDate
-          toBeDeletedOn
-          updatedDate
-          `;
-          break;
-      }
-    }
-    // ############################################################################################################
+  logger(`${formatDateTime(new Date())}${logHeader}`, `... retrieved access token (${accessToken.length})`);
 
+  return accessToken;
 
-    //console.log(`...... (DEBUGGING) columnList: ${columnList}`); // Debugging
+}
+
+async function buildAPIQuery(datasetName, takeAmt, afterId, queryColumnType, logHeader = null, recordId = null) {
+
+  // - description: assembles the graphql query that gets the correct data by dataset
+  // - parameters: datasetName, takeAmt(default:10,000), afterId(string), queryColumnType("all" or "meta")
+  // - returns: apiQuery(string), errorMessage(string)
+  // - throws: error when datasetName is not supported
+
+  logger(`${formatDateTime(new Date())}${logHeader}`, `... building graphql query (afterId:${afterId}, columns:${queryColumnType})`);
+
+  let graphqlQuery = null;              // stores the graphql query to return
+  let additionalQueryParameters = '';   // stores the additional graphql query parameters
+  let columnList = '';                  // stores the column list to add to graphql query
+  
+  // ... check if requesting for specific record
+  if (recordId !== null) {
+    // ... add recordId to the query
+    additionalQueryParameters = ` id: "${recordId}"`;
+  }
+
+  // ... add afterId parameter and lastRecordId value to the query, if afterId is not null
+  if (afterId !== null) {
+    additionalQueryParameters = ` afterId: "${afterId}"`;
+  }
+
+  // TO DO: change this to get the value from the db datasets table
+  
+  if (queryColumnType === 'all') {
     
-    // build graphql query
-    let graphqlQuery = JSON.stringify({
-      query: `{
-        ${datasetName}(take: ${takeAmt}${additionalQueryParameters} ) {
-            ${columnList}
+    // ... select column list to add to graphql query to get data for ALL columns
+    switch (await datasetName) {
+      case 'Manufacturer':
+        columnList = `id
+        acquiredDate
+        city
+        country
+        createdDate
+        deleteReason
+        description
+        email
+        employees
+        employeesDate
+        fax
+        fiscalEndDate
+        isPubliclyTraded
+        isToBeDeleted
+        knownAs
+        legal
+        name
+        ownerId
+        phone
+        profitsDate
+        profitsPerYear
+        replacementId
+        revenue
+        revenueDate
+        state
+        street
+        symbol
+        synchronizedDate
+        tier
+        toBeDeletedOn
+        updatedDate
+        website
+        zip
+        `;
+        break;
+      case 'Platform':
+        columnList = `id
+        createdDate
+        deleteReason
+        isToBeDeleted
+        name
+        replacementId
+        synchronizedDate
+        toBeDeletedOn
+        updatedDate
+        `;
+        break;
+      case 'SoftwareEdition':
+        columnList = `id
+        createdDate
+        deleteReason
+        isDesupported
+        isDiscontinued
+        isToBeDeleted
+        name
+        order
+        replacementId
+        synchronizedDate
+        toBeDeletedOn
+        updatedDate
+        softwareProduct { id }
+        `;
+        break;
+      case 'SoftwareFamily':
+        columnList = `id
+        createdDate
+        deleteReason
+        isDesupported
+        isDiscontinued
+        isToBeDeleted
+        name
+        replacementId
+        synchronizedDate
+        toBeDeletedOn
+        updatedDate
+        manufacturer { id }
+        taxonomy { id }
+        `;
+        break;
+      case 'SoftwareLifecycle':
+        columnList = `id
+        createdDate
+        deleteReason
+        endOfLife
+        endOfLifeCalculatedCase
+        endOfLifeDate
+        endOfLifeDateCalculated
+        endOfLifeException
+        endOfLifeSupportLevel
+        generalAvailability
+        generalAvailabilityDate
+        generalAvailabilityDateCalculated
+        generalAvailabilityException
+        isToBeDeleted
+        obsolete
+        obsoleteCalculatedCase
+        obsoleteDate
+        obsoleteDateCalculated
+        obsoleteException
+        obsoleteSupportLevel
+        replacementId
+        synchronizedDate
+        toBeDeletedOn
+        updatedDate
+        softwareRelease { id }
+        softwareSupportStage {
+          definition
+          endDate
+          manufacturerId
+          name
+          order
+          policy
+          publishedEndDate
         }
-    }`,});
+        `;
+        break;
+      case 'SoftwareMarketVersion':
+        columnList = `id
+        createdDate
+        deleteReason
+        isDesupported
+        isDiscontinued
+        isToBeDeleted
+        name
+        order
+        replacementId
+        synchronizedDate
+        toBeDeletedOn
+        updatedDate
+        softwareProduct { id }
+        `;
+        break;
+      case 'SoftwareProduct':
+        columnList = `id
+        alias
+        application
+        cloud
+        component
+        createdDate
+        deleteReason
+        isDesupported
+        isDiscontinued
+        isFamilyInFullName
+        isSuite
+        isToBeDeleted
+        name
+        productLicensable
+        replacementId
+        synchronizedDate
+        toBeDeletedOn
+        updatedDate
+        manufacturer { id }
+        softwareFamily { id }
+        taxonomy { id }
+        `;
+        break;
+      case 'SoftwareProductLink':
+        columnList = `id
+        cloud
+        createdDate
+        deleteReason
+        formerSoftwareProductId
+        isToBeDeleted
+        laterSoftwareProductId
+        latestSoftwareProductId
+        oldestSoftwareProductId
+        replacementId
+        softwareCloudId
+        softwareOnPremId
+        synchronizedDate
+        toBeDeletedOn
+        updatedDate
+        `;
+        break;
+      case 'SoftwareRelease':
+        columnList = `id
+        application
+        cloud
+        createdDate
+        deleteReason
+        isDesupported
+        isDiscontinued
+        isLicensable
+        isMajor
+        isToBeDeleted
+        majorSoftwareReleaseId
+        name
+        patchLevel
+        replacementId
+        synchronizedDate
+        toBeDeletedOn
+        updatedDate
+        scaOpenSource { id }
+        softwareEdition { id }
+        softwareProduct { id }
+        softwareVersion { id }
+        `;
+        break;
+      case 'SoftwareReleaseLink':
+        columnList = `id
+        createdDate
+        deleteReason
+        formerSoftwareReleaseId
+        isToBeDeleted
+        laterSoftwareReleaseId
+        latestSoftwareReleaseId
+        oldestSoftwareReleaseId
+        replacementId
+        synchronizedDate
+        toBeDeletedOn
+        updatedDate
+        softwareRelease { id }
+        `;
+        break;
+      case 'SoftwareReleasePlatform':
+        columnList = `id
+        createdDate
+        deleteReason
+        isDesupported
+        isDiscontinued
+        isToBeDeleted
+        platformLabel
+        platformType
+        replacementId
+        synchronizedDate
+        toBeDeletedOn
+        updatedDate
+        platform { id }
+        softwareRelease { id }
+        `;
+        break;
+      case 'SoftwareVersion':
+        columnList = `id
+        createdDate
+        deleteReason
+        isDesupported
+        isDiscontinued
+        isMajor
+        isToBeDeleted
+        majorSoftwareVersionId
+        name
+        order
+        patchLevel
+        replacementId
+        synchronizedDate
+        toBeDeletedOn
+        updatedDate
+        versionStage
+        softwareMarketVersion { id }
+        softwareProduct { id }
+        `;
+        break;
+      case 'Taxonomy':
+        columnList = `id
+        category
+        categoryGroup
+        categoryId
+        createdDate
+        deleteReason
+        description
+        isToBeDeleted
+        replacementId
+        softwareOrHardware
+        subcategory
+        synchronizedDate
+        toBeDeletedOn
+        updatedDate
+        `;
+        break;
+      default:
+        throw 'invalid dataset name provided when building graphql query';
+    }
 
-    //console.log(`...... (DEBUGGING) graphqlQuery: ${graphqlQuery}`); // Debugging
+  } else if (queryColumnType === "meta") {
 
-    // ############################################################################################################
-    console.log(`#### ${datasetName} #### Page: ${pageCounter} #### Step #3: Send ${datasetName} graphql query to api  `);
-    // ############################################################################################################
-    try {
-      // get data from api
-      const apiResponse = await fetch("https://beta.api.flexera.com/content/v2/orgs/35253/graphql", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: "Bearer " + accessToken,
-        },
-        body: graphqlQuery,
-      });
-
-      // check if api response is ok
-      if (apiResponse.ok) {
-        // get json from api response
-        pageJson = await apiResponse.json();
-
-        //console.log(`...... (DEBUGGING) pageJson: ${JSON.stringify(pageJson)}`); // Debugging
-        
-        console.log(`#### ${datasetName} #### Page: ${pageCounter} #### ...... Page ${pageCounter} Data Received.`);
-      } else {
-        let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### *************** ERROR getting ${datasetName} data from api, bad response... ending upload. *************** \n`;
-
-        logger(errorMsg, '');
-
-        // return the error message
-        return errorMsg;
+    columnList = `id
+                  createdDate
+                  deleteReason
+                  isToBeDeleted
+                  replacementId
+                  synchronizedDate
+                  toBeDeletedOn
+                  updatedDate
+                  `;
+  
+  } else {
+    throw `invalid queryColumnType provided when building graphql query`;
+  }
+  
+  // build graphql query
+  graphqlQuery = JSON.stringify({
+    query: `{
+      ${datasetName}(take: ${takeAmt}${additionalQueryParameters} ) {
+          ${columnList}
       }
+    }`,
+  });
 
-      // write pageJson to file
-      fs.appendFileSync('tech_catalog_data/json/' + datasetName + '_page_' + pageCounter + '_' + String(uploadStartTime).replace(/:/g, '_').replace(/ /g, '_') + '.json', JSON.stringify(pageJson));
-    } catch (error) {
-      let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### *************** ERROR getting ${datasetName} data from api... ending upload. *************** \n `;
+  logger(`${formatDateTime(new Date())}${logHeader}`, `... completed building graphql query`);
 
-      logger(errorMsg, error);
+  //logger(`${formatDateTime(new Date())}${logHeader}`, `(TESTING) graphql query: ${graphqlQuery}`); // DEBUG
 
-      // return the error message
-      return errorMsg;
-    }
+  // return query string
+  return graphqlQuery;
+}
 
-    // ############################################################################################################
-    console.log(`#### ${datasetName} #### Page: ${pageCounter} #### Step #4: Insert ${datasetName} data into database `);
-    // ############################################################################################################
+async function sendAPIQuery(graphqlQuery, accessToken, logHeader = null) {
+  
+  // - description: sends the graphql query to flexeras api and returns the json response
+  // - parameters: graphqlQuery (string), accessToken (string)
+  // - returns: pageJson (json object)
 
-    // loop iteration counter
-    let pageRecordCounter = 0;
-    let pageFailedRecordCounter = 0;
+  logger(`${formatDateTime(new Date())}${logHeader}`, `... sending API request for page data`);
 
-    // stores the dataset array
-    let datasetArray = pageJson.data[datasetName];
+  let pageJson = {};      // json object to hold the json response from the api
 
-    console.log(`#### ${datasetName} #### Page: ${pageCounter} #### ...... ${datasetArray.length} ${datasetName} records received.`);
+  // get data from api
+  const apiResponse = await fetch("https://beta.api.flexera.com/content/v2/orgs/35253/graphql", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: "Bearer " + accessToken,
+    },
+    body: graphqlQuery,
+  });
 
-    // check if dataset array is empty
-    if (datasetArray.length === 0) {
-      console.log(`#### ${datasetName} #### Page: ${pageCounter} #### ...... page contains ${datasetArray.length} records, finishing up the upload...`);
-      isLastPage = true;
-      pageCounter--;
-    } else {
-      // store consecutive failed record counter
-      let consecutiveFailedRecordCounter = 0;
-      let notificationCounter = 0;
+  // check if api response is ok
+  if (apiResponse.ok) {
 
-      console.log(`#### ${datasetName} #### Page: ${pageCounter} #### ...... starting the inserts for ${datasetArray.length} records...`);
+    // get json from api response
+    pageJson = await apiResponse.json();
 
-      // #############################################################################
-      // ############### loop through each object in the dataset array ###############
-      for (let datasetObject of datasetArray) {
-        pageRecordCounter++;
-        notificationCounter++;
+    logger(`${formatDateTime(new Date())}${logHeader}`, `... request for page data returned ok response`);
 
-        // set the lastRecordId
-        lastRecordId = datasetObject.id;
+    return pageJson;
 
-        if (pageCounter === 1 && pageRecordCounter === 1) {
-          // ############################################################################################################
-          // #3 select and add columns to insert statement
-          switch (datasetName) {
-            case 'Manufacturer':
-              insertQuery = insertQuery
-              + 'id,'	   // dt:VARCHAR
-              + 'acquiredDate,'	   // dt:DATETIME
-              + 'city,'	   // dt:VARCHAR
-              + 'country,'	   // dt:VARCHAR
-              + 'createdDate,'	   // dt:DATETIME
-              + 'deleteReason,'	   // dt:VARCHAR
-              + 'description,'	   // dt:VARCHAR
-              + 'email,'	   // dt:VARCHAR
-              + 'employees,'	   // dt:VARCHAR
-              + 'employeesDate,'	   // dt:DATETIME
-              + 'fax,'	   // dt:VARCHAR
-              + 'fiscalEndDate,'	   // dt:DATETIME
-              + 'isPubliclyTraded,'	   // dt:VARCHAR
-              + 'isToBeDeleted,'	   // dt:TINYINT
-              + 'knownAs,'	   // dt:VARCHAR
-              + 'legal,'	   // dt:VARCHAR
-              + 'name,'	   // dt:VARCHAR
-              + 'ownerId,'	   // dt:VARCHAR
-              + 'phone,'	   // dt:VARCHAR
-              + 'profitsDate,'	   // dt:DATETIME
-              + 'profitsPerYear,'	   // dt:INT
-              + 'replacementId,'	   // dt:VARCHAR
-              + 'revenue,'	   // dt:INT
-              + 'revenueDate,'	   // dt:DATETIME
-              + 'state,'	   // dt:VARCHAR
-              + 'street,'	   // dt:VARCHAR
-              + 'symbol,'	   // dt:VARCHAR
-              + 'synchronizedDate,'	   // dt:DATETIME
-              + 'tier,'	   // dt:INT
-              + 'toBeDeletedOn,'	   // dt:DATETIME
-              + 'updatedDate,'	   // dt:DATETIME
-              + 'website,'	   // dt:VARCHAR
-              + 'zip,'	   // dt:VARCHAR
-              break;
-            case 'Platform':
-              insertQuery = insertQuery
-              + 'id,'	   // dt:VARCHAR
-              + 'createdDate,'	   // dt:DATETIME
-              + 'deleteReason,'	   // dt:VARCHAR
-              + 'isToBeDeleted,'	   // dt:TINYINT
-              + 'name,'	   // dt:VARCHAR
-              + 'replacementId,'	   // dt:VARCHAR
-              + 'synchronizedDate,'	   // dt:DATETIME
-              + 'toBeDeletedOn,'	   // dt:DATETIME
-              + 'updatedDate,'	   // dt:DATETIME
-              break;
-            case 'SoftwareEdition':
-              insertQuery = insertQuery
-              + 'id,'	   // dt:VARCHAR
-              + 'createdDate,'	   // dt:DATETIME
-              + 'deleteReason,'	   // dt:VARCHAR
-              + 'isDesupported,'	   // dt:TINYINT
-              + 'isDiscontinued,'	   // dt:TINYINT
-              + 'isToBeDeleted,'	   // dt:TINYINT
-              + 'name,'	   // dt:VARCHAR
-              + 'order_,'	   // dt:INT
-              + 'replacementId,'	   // dt:INT
-              + 'synchronizedDate,'	   // dt:DATETIME
-              + 'toBeDeletedOn,'	   // dt:DATETIME
-              + 'updatedDate,'	   // dt:DATETIME
-              + 'softwareProduct,'	   // dt:VARCHAR
-              break;
-            case 'SoftwareFamily':
-              insertQuery = insertQuery
-              + 'id,'	   // dt:VARCHAR
-              + 'createdDate,'	   // dt:TIMESTAMP
-              + 'deleteReason,'	   // dt:VARCHAR
-              + 'isDesupported,'	   // dt:TINYINT
-              + 'isDiscontinued,'	   // dt:TINYINT
-              + 'isToBeDeleted,'	   // dt:TINYINT
-              + 'name,'	   // dt:VARCHAR
-              + 'replacementId,'	   // dt:INT
-              + 'synchronizedDate,'	   // dt:TIMESTAMP
-              + 'toBeDeletedOn,'	   // dt:DATE
-              + 'updatedDate,'	   // dt:TIMESTAMP
-              + 'manufacturer,'	   // dt:VARCHAR
-              + 'taxonomy,'	   // dt:VARCHAR
-              break;
-            case 'SoftwareLifecycle':
-              insertQuery = insertQuery
-              + 'id,'	   // dt:VARCHAR
-              + 'createdDate,'	   // dt:TIMESTAMP
-              + 'deleteReason,'	   // dt:VARCHAR
-              + 'endOfLife,'	   // dt:VARCHAR
-              + 'endOfLifeCalculatedCase,'	   // dt:VARCHAR
-              + 'endOfLifeDate,'	   // dt:DATE
-              + 'endOfLifeDateCalculated,'	   // dt:TIMESTAMP
-              + 'endOfLifeException,'	   // dt:VARCHAR
-              + 'endOfLifeSupportLevel,'	   // dt:VARCHAR
-              + 'generalAvailability,'	   // dt:VARCHAR
-              + 'generalAvailabilityDate,'	   // dt:TIMESTAMP
-              + 'generalAvailabilityDateCalculated,'	   // dt:TIMESTAMP
-              + 'generalAvailabilityException,'	   // dt:VARCHAR
-              + 'isToBeDeleted,'	   // dt:TINYINT
-              + 'obsolete,'	   // dt:VARCHAR
-              + 'obsoleteCalculatedCase,'	   // dt:VARCHAR
-              + 'obsoleteDate,'	   // dt:TIMESTAMP
-              + 'obsoleteDateCalculated,'	   // dt:TIMESTAMP
-              + 'obsoleteException,'	   // dt:VARCHAR
-              + 'obsoleteSupportLevel,'	   // dt:VARCHAR
-              + 'replacementId,'	   // dt:VARCHAR
-              + 'synchronizedDate,'	   // dt:TIMESTAMP
-              + 'toBeDeletedOn,'	   // dt:DATE
-              + 'updatedDate,'	   // dt:TIMESTAMP
-              + 'softwareRelease,'	   // dt:VARCHAR
-              break;
-            case 'SoftwareMarketVersion':
-              insertQuery = insertQuery
-              + 'id,'	   // dt:VARCHAR
-              + 'createdDate,'	   // dt:TIMESTAMP
-              + 'deleteReason,'	   // dt:VARCHAR
-              + 'isDesupported,'	   // dt:TINYINT
-              + 'isDiscontinued,'	   // dt:TINYINT
-              + 'isToBeDeleted,'	   // dt:TINYINT
-              + 'name,'	   // dt:VARCHAR
-              + 'order_,'	   // dt:INT
-              + 'replacementId,'	   // dt:VARCHAR
-              + 'synchronizedDate,'	   // dt:TIMESTAMP
-              + 'toBeDeletedOn,'	   // dt:DATE
-              + 'updatedDate,'	   // dt:TIMESTAMP
-              + 'softwareProduct,'	   // dt:VARCHAR
-              break;
-            case 'SoftwareProduct':
-              insertQuery = insertQuery
-              + 'id,'	   // dt:VARCHAR
-              + 'alias,'	   // dt:VARCHAR
-              + 'application,'	   // dt:VARCHAR
-              + 'cloud,'	   // dt:VARCHAR
-              + 'component,'	   // dt:VARCHAR
-              + 'createdDate,'	   // dt:TIMESTAMP
-              + 'deleteReason,'	   // dt:VARCHAR
-              + 'isDesupported,'	   // dt:TINYINT
-              + 'isDiscontinued,'	   // dt:TINYINT
-              + 'isFamilyInFullName,'	   // dt:TINYINT
-              + 'isSuite,'	   // dt:TINYINT
-              + 'isToBeDeleted,'	   // dt:TINYINT
-              + 'name,'	   // dt:VARCHAR
-              + 'productLicensable,'	   // dt:INT
-              + 'replacementId,'	   // dt:VARCHAR
-              + 'synchronizedDate,'	   // dt:TIMESTAMP
-              + 'toBeDeletedOn,'	   // dt:DATE
-              + 'updatedDate,'	   // dt:TIMESTAMP
-              + 'manufacturer,'	   // dt:VARCHAR
-              + 'softwareFamily,'	   // dt:VARCHAR
-              + 'taxonomy,'	   // dt:VARCHAR
-              break;
-            case 'SoftwareProductLink':
-              insertQuery = insertQuery
-              + 'id,'	   // dt:VARCHAR
-              + 'cloud,'	   // dt:VARCHAR
-              + 'createdDate,'	   // dt:TIMESTAMP
-              + 'deleteReason,'	   // dt:VARCHAR
-              + 'formerSoftwareProductId,'	   // dt:VARCHAR
-              + 'isToBeDeleted,'	   // dt:TINYINT
-              + 'laterSoftwareProductId,'	   // dt:VARCHAR
-              + 'latestSoftwareProductId,'	   // dt:VARCHAR
-              + 'oldestSoftwareProductId,'	   // dt:VARCHAR
-              + 'replacementId,'	   // dt:VARCHAR
-              + 'softwareCloudId,'	   // dt:VARCHAR
-              + 'softwareOnPremId,'	   // dt:VARCHAR
-              + 'synchronizedDate,'	   // dt:TIMESTAMP
-              + 'toBeDeletedOn,'	   // dt:DATE
-              + 'updatedDate,'	   // dt:TIMESTAMP
-              + 'softwareProduct,'	   // dt:VARCHAR
-              break;
-            case 'SoftwareRelease':
-              insertQuery = insertQuery
-              + 'id,'	   // dt:VARCHAR
-              + 'application,'	   // dt:VARCHAR
-              + 'cloud,'	   // dt:VARCHAR
-              + 'createdDate,'	   // dt:TIMESTAMP
-              + 'deleteReason,'	   // dt:VARCHAR
-              + 'isDesupported,'	   // dt:TINYINT
-              + 'isDiscontinued,'	   // dt:TINYINT
-              + 'isLicensable,'	   // dt:TINYINT
-              + 'isMajor,'	   // dt:TINYINT
-              + 'isToBeDeleted,'	   // dt:TINYINT
-              + 'majorSoftwareReleaseId,'	   // dt:VARCHAR
-              + 'name,'	   // dt:VARCHAR
-              + 'patchLevel,'	   // dt:VARCHAR
-              + 'replacementId,'	   // dt:VARCHAR
-              + 'synchronizedDate,'	   // dt:TIMESTAMP
-              + 'toBeDeletedOn,'	   // dt:DATE
-              + 'updatedDate,'	   // dt:TIMESTAMP
-              + 'scaOpenSource,'	   // dt:VARCHAR
-              + 'softwareEdition,'	   // dt:VARCHAR
-              + 'softwareProduct,'	   // dt:VARCHAR
-              + 'softwareVersion,'	   // dt:VARCHAR
-              break;
-            case 'SoftwareReleaseLink':
-              insertQuery = insertQuery
-              + 'id,'	   // dt:VARCHAR
-              + 'createdDate,'	   // dt:TIMESTAMP
-              + 'deleteReason,'	   // dt:VARCHAR
-              + 'formerSoftwareReleaseId,'	   // dt:VARCHAR
-              + 'isToBeDeleted,'	   // dt:TINYINT
-              + 'laterSoftwareReleaseId,'	   // dt:VARCHAR
-              + 'latestSoftwareReleaseId,'	   // dt:VARCHAR
-              + 'oldestSoftwareReleaseId,'	   // dt:VARCHAR
-              + 'replacementId,'	   // dt:VARCHAR
-              + 'synchronizedDate,'	   // dt:TIMESTAMP
-              + 'toBeDeletedOn,'	   // dt:DATE
-              + 'updatedDate,'	   // dt:TIMESTAMP
-              + 'softwareRelease,'	   // dt:VARCHAR
-              break;
-            case 'SoftwareReleasePlatform':
-              insertQuery = insertQuery
-              + 'id,'	   // dt:VARCHAR
-              + 'createdDate,'	   // dt:TIMESTAMP
-              + 'deleteReason,'	   // dt:VARCHAR
-              + 'isDesupported,'	   // dt:TINYINT
-              + 'isDiscontinued,'	   // dt:TINYINT
-              + 'isToBeDeleted,'	   // dt:TINYINT
-              + 'platformLabel,'	   // dt:VARCHAR
-              + 'platformType,'	   // dt:VARCHAR
-              + 'replacementId,'	   // dt:VARCHAR
-              + 'synchronizedDate,'	   // dt:TIMESTAMP
-              + 'toBeDeletedOn,'	   // dt:DATE
-              + 'updatedDate,'	   // dt:TIMESTAMP
-              + 'platform,'	   // dt:VARCHAR
-              + 'softwareRelease,'	   // dt:VARCHAR
-              break;
-            case 'SoftwareSupportStage':
-              insertQuery = insertQuery
+  } else {
+    throw `ERROR: the flexera api returned a bad response when sending the flexera api query: \n${graphqlQuery} \nFlexera API Response: \n${apiResponse.status} - ${apiResponse.statusText}`;
+  }
 
-              break;
-            case 'SoftwareVersion':
-              insertQuery = insertQuery
-              + 'id,'	   // dt:VARCHAR
-              + 'createdDate,'	   // dt:DATETIME
-              + 'deleteReason,'	   // dt:VARCHAR
-              + 'isDesupported,'	   // dt:TINYINT
-              + 'isDiscontinued,'	   // dt:TINYINT
-              + 'isMajor,'	   // dt:TINYINT
-              + 'isToBeDeleted,'	   // dt:TINYINT
-              + 'majorSoftwareVersionId,'	   // dt:VARCHAR
-              + 'name,'	   // dt:VARCHAR
-              + 'order_,'	   // dt:INT
-              + 'patchLevel,'	   // dt:VARCHAR
-              + 'replacementId,'	   // dt:VARCHAR
-              + 'synchronizedDate,'	   // dt:DATETIME
-              + 'toBeDeletedOn,'	   // dt:DATETIME
-              + 'updatedDate,'	   // dt:DATETIME
-              + 'versionStage,'	   // dt:VARCHAR
-              + 'softwareMarketVersion,'	   // dt:VARCHAR
-              + 'softwareProduct,'	   // dt:VARCHAR
-              break;
-            case 'Taxonomy':
-              insertQuery = insertQuery
-              + 'id,'	   // dt:VARCHAR
-              + 'category,'	   // dt:VARCHAR
-              + 'categoryGroup,'	   // dt:VARCHAR
-              + 'categoryId,'	   // dt:VARCHAR
-              + 'createdDate,'	   // dt:DATETIME
-              + 'deleteReason,'	   // dt:VARCHAR
-              + 'description,'	   // dt:VARCHAR
-              + 'isToBeDeleted,'	   // dt:TINYINT
-              + 'replacementId,'	   // dt:VARCHAR
-              + 'softwareOrHardware,'	   // dt:VARCHAR
-              + 'subcategory,'	   // dt:VARCHAR
-              + 'synchronizedDate,'	   // dt:DATETIME
-              + 'toBeDeletedOn,'	   // dt:DATETIME
-              + 'updatedDate,'	   // dt:DATETIME
-              break;
-          }
-          // ############################################################################################################
+}
 
-          // remove , from the end of insert query if it exists
-          if (insertQuery.endsWith(',')) {
-            insertQuery = insertQuery.substring(0, insertQuery.length - 1);
-          }
+function getInsertColumnsList(datasetName) {
 
-          // add values syntax to insert query
-          insertQuery = insertQuery + ') values ?';
-        }
-        
-        // #################################################################################
-        // data cleaning functions
-        
-        // perform data cleaning
-        function stringToDate (dateString) {
-          //console.log(' - Converting stringToDate: ', dateString); // Debug
-          if (dateString === null || dateString === '') {
-            return null;
-          } else {
-            if (dateString.includes('T') && dateString.slice(-1) === 'Z') {
-              dateString = dateString.replace('T', ' ').replace('Z', '');
-            }
-            
-            var newDate = new Date(dateString);
-            newDate = newDate.getFullYear() + "-" + 
-                          String(newDate.getMonth() + 1).padStart(2, '0') + "-" +
-                          String(newDate.getDate()).padStart(2, '0') +  " " +
-                          String(newDate.getHours()).padStart(2, '0') +  ":" +
-                          String(newDate.getMinutes()).padStart(2, '0') +  ":" +
-                          String(newDate.getSeconds()).padStart(2, '0');
-            if (newDate === 'NaN-NaN-NaN NaN:NaN:NaN') {
-              return null;
-            } else {
-              return newDate;
-            }
-          }
-        }
+  // - description: gets the list of columns used when inserting a record for a dataset
+  // - parameters: datasetName (string)
+  // - returns: insertColumnsList (string)
+  // - throws: error if invalid datasetName provided
 
-        // remove special characters from string
-        function removeSpecialChar (string) {
-          //console.log(' - Removing special characters: ', string); // Debug
-          if (string === null) {
-            return null;
-          } else {
-            return string = string.replace(/'/g, "").replace(/\r/g, ' ').replace(/\n/g, ' ').replace(/\"/g, ' ').replace(/\\/g, ' ');
-          }
-        }
+  let insertStatement = '';     // string to hold the insert query
 
-        // convert boolean to tinyint
-        function booleanToTinyint (boolean) {
-          //console.log(' - Converting booleanToTinyint: ', boolean); // Debug
-          if (boolean === null) {
-            return null;
-          } else {
-            if (boolean === true) {
-              return '1';
-            } else {
-              return '0';
-            }
-          }
-        }
+  // select and add columns list for the insert statement
+  switch (datasetName) {
+    case 'Manufacturer':
+      insertStatement = insertStatement
+      + 'id,'	   // dt:VARCHAR
+      + 'acquiredDate,'	   // dt:DATETIME
+      + 'city,'	   // dt:VARCHAR
+      + 'country,'	   // dt:VARCHAR
+      + 'createdDate,'	   // dt:DATETIME
+      + 'deleteReason,'	   // dt:VARCHAR
+      + 'description,'	   // dt:VARCHAR
+      + 'email,'	   // dt:VARCHAR
+      + 'employees,'	   // dt:VARCHAR
+      + 'employeesDate,'	   // dt:DATETIME
+      + 'fax,'	   // dt:VARCHAR
+      + 'fiscalEndDate,'	   // dt:DATETIME
+      + 'isPubliclyTraded,'	   // dt:VARCHAR
+      + 'isToBeDeleted,'	   // dt:TINYINT
+      + 'knownAs,'	   // dt:VARCHAR
+      + 'legal,'	   // dt:VARCHAR
+      + 'name,'	   // dt:VARCHAR
+      + 'ownerId,'	   // dt:VARCHAR
+      + 'phone,'	   // dt:VARCHAR
+      + 'profitsDate,'	   // dt:DATETIME
+      + 'profitsPerYear,'	   // dt:INT
+      + 'replacementId,'	   // dt:VARCHAR
+      + 'revenue,'	   // dt:INT
+      + 'revenueDate,'	   // dt:DATETIME
+      + 'state,'	   // dt:VARCHAR
+      + 'street,'	   // dt:VARCHAR
+      + 'symbol,'	   // dt:VARCHAR
+      + 'synchronizedDate,'	   // dt:DATETIME
+      + 'tier,'	   // dt:INT
+      + 'toBeDeletedOn,'	   // dt:DATETIME
+      + 'updatedDate,'	   // dt:DATETIME
+      + 'website,'	   // dt:VARCHAR
+      + 'zip,'	   // dt:VARCHAR
+      break;
+    case 'Platform':
+      insertStatement = insertStatement
+      + 'id,'	   // dt:VARCHAR
+      + 'createdDate,'	   // dt:DATETIME
+      + 'deleteReason,'	   // dt:VARCHAR
+      + 'isToBeDeleted,'	   // dt:TINYINT
+      + 'name,'	   // dt:VARCHAR
+      + 'replacementId,'	   // dt:VARCHAR
+      + 'synchronizedDate,'	   // dt:DATETIME
+      + 'toBeDeletedOn,'	   // dt:DATETIME
+      + 'updatedDate,'	   // dt:DATETIME
+      break;
+    case 'SoftwareEdition':
+      insertStatement = insertStatement
+      + 'id,'	   // dt:VARCHAR
+      + 'createdDate,'	   // dt:DATETIME
+      + 'deleteReason,'	   // dt:VARCHAR
+      + 'isDesupported,'	   // dt:TINYINT
+      + 'isDiscontinued,'	   // dt:TINYINT
+      + 'isToBeDeleted,'	   // dt:TINYINT
+      + 'name,'	   // dt:VARCHAR
+      + 'order_,'	   // dt:INT
+      + 'replacementId,'	   // dt:INT
+      + 'synchronizedDate,'	   // dt:DATETIME
+      + 'toBeDeletedOn,'	   // dt:DATETIME
+      + 'updatedDate,'	   // dt:DATETIME
+      + 'softwareProduct,'	   // dt:VARCHAR
+      break;
+    case 'SoftwareFamily':
+      insertStatement = insertStatement
+      + 'id,'	   // dt:VARCHAR
+      + 'createdDate,'	   // dt:TIMESTAMP
+      + 'deleteReason,'	   // dt:VARCHAR
+      + 'isDesupported,'	   // dt:TINYINT
+      + 'isDiscontinued,'	   // dt:TINYINT
+      + 'isToBeDeleted,'	   // dt:TINYINT
+      + 'name,'	   // dt:VARCHAR
+      + 'replacementId,'	   // dt:INT
+      + 'synchronizedDate,'	   // dt:TIMESTAMP
+      + 'toBeDeletedOn,'	   // dt:DATE
+      + 'updatedDate,'	   // dt:TIMESTAMP
+      + 'manufacturer,'	   // dt:VARCHAR
+      + 'taxonomy,'	   // dt:VARCHAR
+      break;
+    case 'SoftwareLifecycle':
+      insertStatement = insertStatement
+      + 'id,'	   // dt:VARCHAR
+      + 'createdDate,'	   // dt:TIMESTAMP
+      + 'deleteReason,'	   // dt:VARCHAR
+      + 'endOfLife,'	   // dt:VARCHAR
+      + 'endOfLifeCalculatedCase,'	   // dt:VARCHAR
+      + 'endOfLifeDate,'	   // dt:DATE
+      + 'endOfLifeDateCalculated,'	   // dt:TIMESTAMP
+      + 'endOfLifeException,'	   // dt:VARCHAR
+      + 'endOfLifeSupportLevel,'	   // dt:VARCHAR
+      + 'generalAvailability,'	   // dt:VARCHAR
+      + 'generalAvailabilityDate,'	   // dt:TIMESTAMP
+      + 'generalAvailabilityDateCalculated,'	   // dt:TIMESTAMP
+      + 'generalAvailabilityException,'	   // dt:VARCHAR
+      + 'isToBeDeleted,'	   // dt:TINYINT
+      + 'obsolete,'	   // dt:VARCHAR
+      + 'obsoleteCalculatedCase,'	   // dt:VARCHAR
+      + 'obsoleteDate,'	   // dt:TIMESTAMP
+      + 'obsoleteDateCalculated,'	   // dt:TIMESTAMP
+      + 'obsoleteException,'	   // dt:VARCHAR
+      + 'obsoleteSupportLevel,'	   // dt:VARCHAR
+      + 'replacementId,'	   // dt:VARCHAR
+      + 'synchronizedDate,'	   // dt:TIMESTAMP
+      + 'toBeDeletedOn,'	   // dt:DATE
+      + 'updatedDate,'	   // dt:TIMESTAMP
+      + 'softwareRelease,'	   // dt:VARCHAR
+      break;
+    case 'SoftwareMarketVersion':
+      insertStatement = insertStatement
+      + 'id,'	   // dt:VARCHAR
+      + 'createdDate,'	   // dt:TIMESTAMP
+      + 'deleteReason,'	   // dt:VARCHAR
+      + 'isDesupported,'	   // dt:TINYINT
+      + 'isDiscontinued,'	   // dt:TINYINT
+      + 'isToBeDeleted,'	   // dt:TINYINT
+      + 'name,'	   // dt:VARCHAR
+      + 'order_,'	   // dt:INT
+      + 'replacementId,'	   // dt:VARCHAR
+      + 'synchronizedDate,'	   // dt:TIMESTAMP
+      + 'toBeDeletedOn,'	   // dt:DATE
+      + 'updatedDate,'	   // dt:TIMESTAMP
+      + 'softwareProduct,'	   // dt:VARCHAR
+      break;
+    case 'SoftwareProduct':
+      insertStatement = insertStatement
+      + 'id,'	   // dt:VARCHAR
+      + 'alias,'	   // dt:VARCHAR
+      + 'application,'	   // dt:VARCHAR
+      + 'cloud,'	   // dt:VARCHAR
+      + 'component,'	   // dt:VARCHAR
+      + 'createdDate,'	   // dt:TIMESTAMP
+      + 'deleteReason,'	   // dt:VARCHAR
+      + 'isDesupported,'	   // dt:TINYINT
+      + 'isDiscontinued,'	   // dt:TINYINT
+      + 'isFamilyInFullName,'	   // dt:TINYINT
+      + 'isSuite,'	   // dt:TINYINT
+      + 'isToBeDeleted,'	   // dt:TINYINT
+      + 'name,'	   // dt:VARCHAR
+      + 'productLicensable,'	   // dt:INT
+      + 'replacementId,'	   // dt:VARCHAR
+      + 'synchronizedDate,'	   // dt:TIMESTAMP
+      + 'toBeDeletedOn,'	   // dt:DATE
+      + 'updatedDate,'	   // dt:TIMESTAMP
+      + 'manufacturer,'	   // dt:VARCHAR
+      + 'softwareFamily,'	   // dt:VARCHAR
+      + 'taxonomy,'	   // dt:VARCHAR
+      break;
+    case 'SoftwareProductLink':
+      insertStatement = insertStatement
+      + 'id,'	   // dt:VARCHAR
+      + 'cloud,'	   // dt:VARCHAR
+      + 'createdDate,'	   // dt:TIMESTAMP
+      + 'deleteReason,'	   // dt:VARCHAR
+      + 'formerSoftwareProductId,'	   // dt:VARCHAR
+      + 'isToBeDeleted,'	   // dt:TINYINT
+      + 'laterSoftwareProductId,'	   // dt:VARCHAR
+      + 'latestSoftwareProductId,'	   // dt:VARCHAR
+      + 'oldestSoftwareProductId,'	   // dt:VARCHAR
+      + 'replacementId,'	   // dt:VARCHAR
+      + 'softwareCloudId,'	   // dt:VARCHAR
+      + 'softwareOnPremId,'	   // dt:VARCHAR
+      + 'synchronizedDate,'	   // dt:TIMESTAMP
+      + 'toBeDeletedOn,'	   // dt:DATE
+      + 'updatedDate,'	   // dt:TIMESTAMP
+      + 'softwareProduct,'	   // dt:VARCHAR
+      break;
+    case 'SoftwareRelease':
+      insertStatement = insertStatement
+      + 'id,'	   // dt:VARCHAR
+      + 'application,'	   // dt:VARCHAR
+      + 'cloud,'	   // dt:VARCHAR
+      + 'createdDate,'	   // dt:TIMESTAMP
+      + 'deleteReason,'	   // dt:VARCHAR
+      + 'isDesupported,'	   // dt:TINYINT
+      + 'isDiscontinued,'	   // dt:TINYINT
+      + 'isLicensable,'	   // dt:TINYINT
+      + 'isMajor,'	   // dt:TINYINT
+      + 'isToBeDeleted,'	   // dt:TINYINT
+      + 'majorSoftwareReleaseId,'	   // dt:VARCHAR
+      + 'name,'	   // dt:VARCHAR
+      + 'patchLevel,'	   // dt:VARCHAR
+      + 'replacementId,'	   // dt:VARCHAR
+      + 'synchronizedDate,'	   // dt:TIMESTAMP
+      + 'toBeDeletedOn,'	   // dt:DATE
+      + 'updatedDate,'	   // dt:TIMESTAMP
+      + 'scaOpenSource,'	   // dt:VARCHAR
+      + 'softwareEdition,'	   // dt:VARCHAR
+      + 'softwareProduct,'	   // dt:VARCHAR
+      + 'softwareVersion,'	   // dt:VARCHAR
+      break;
+    case 'SoftwareReleaseLink':
+      insertStatement = insertStatement
+      + 'id,'	   // dt:VARCHAR
+      + 'createdDate,'	   // dt:TIMESTAMP
+      + 'deleteReason,'	   // dt:VARCHAR
+      + 'formerSoftwareReleaseId,'	   // dt:VARCHAR
+      + 'isToBeDeleted,'	   // dt:TINYINT
+      + 'laterSoftwareReleaseId,'	   // dt:VARCHAR
+      + 'latestSoftwareReleaseId,'	   // dt:VARCHAR
+      + 'oldestSoftwareReleaseId,'	   // dt:VARCHAR
+      + 'replacementId,'	   // dt:VARCHAR
+      + 'synchronizedDate,'	   // dt:TIMESTAMP
+      + 'toBeDeletedOn,'	   // dt:DATE
+      + 'updatedDate,'	   // dt:TIMESTAMP
+      + 'softwareRelease,'	   // dt:VARCHAR
+      break;
+    case 'SoftwareReleasePlatform':
+      insertStatement = insertStatement
+      + 'id,'	   // dt:VARCHAR
+      + 'createdDate,'	   // dt:TIMESTAMP
+      + 'deleteReason,'	   // dt:VARCHAR
+      + 'isDesupported,'	   // dt:TINYINT
+      + 'isDiscontinued,'	   // dt:TINYINT
+      + 'isToBeDeleted,'	   // dt:TINYINT
+      + 'platformLabel,'	   // dt:VARCHAR
+      + 'platformType,'	   // dt:VARCHAR
+      + 'replacementId,'	   // dt:VARCHAR
+      + 'synchronizedDate,'	   // dt:TIMESTAMP
+      + 'toBeDeletedOn,'	   // dt:DATE
+      + 'updatedDate,'	   // dt:TIMESTAMP
+      + 'platform,'	   // dt:VARCHAR
+      + 'softwareRelease,'	   // dt:VARCHAR
+      break;
+    case 'SoftwareVersion':
+      insertStatement = insertStatement
+      + 'id,'	   // dt:VARCHAR
+      + 'createdDate,'	   // dt:DATETIME
+      + 'deleteReason,'	   // dt:VARCHAR
+      + 'isDesupported,'	   // dt:TINYINT
+      + 'isDiscontinued,'	   // dt:TINYINT
+      + 'isMajor,'	   // dt:TINYINT
+      + 'isToBeDeleted,'	   // dt:TINYINT
+      + 'majorSoftwareVersionId,'	   // dt:VARCHAR
+      + 'name,'	   // dt:VARCHAR
+      + 'order_,'	   // dt:INT
+      + 'patchLevel,'	   // dt:VARCHAR
+      + 'replacementId,'	   // dt:VARCHAR
+      + 'synchronizedDate,'	   // dt:DATETIME
+      + 'toBeDeletedOn,'	   // dt:DATETIME
+      + 'updatedDate,'	   // dt:DATETIME
+      + 'versionStage,'	   // dt:VARCHAR
+      + 'softwareMarketVersion,'	   // dt:VARCHAR
+      + 'softwareProduct,'	   // dt:VARCHAR
+      break;
+    case 'Taxonomy':
+      insertStatement = insertStatement
+      + 'id,'	   // dt:VARCHAR
+      + 'category,'	   // dt:VARCHAR
+      + 'categoryGroup,'	   // dt:VARCHAR
+      + 'categoryId,'	   // dt:VARCHAR
+      + 'createdDate,'	   // dt:DATETIME
+      + 'deleteReason,'	   // dt:VARCHAR
+      + 'description,'	   // dt:VARCHAR
+      + 'isToBeDeleted,'	   // dt:TINYINT
+      + 'replacementId,'	   // dt:VARCHAR
+      + 'softwareOrHardware,'	   // dt:VARCHAR
+      + 'subcategory,'	   // dt:VARCHAR
+      + 'synchronizedDate,'	   // dt:DATETIME
+      + 'toBeDeletedOn,'	   // dt:DATETIME
+      + 'updatedDate,'	   // dt:DATETIME
+      break;
+    default:
+      throw `dataset provide when getting insert columns list is not supported: ${datasetName}`;
+  }
 
-        // handling null/no id field objects in json
-        function handleNullId (record) {
-          //console.log(' - Handling null id: ', id); // Debug
-          try {
-            if (record.id === null) {
-              return null;
-            } else {
-              return record.id;
-            }
-          } catch (error) {
-            return null;
-          }
-        }
+  return insertStatement;
+}
 
-        // data cleaning functions
-        // #################################################################################
+async function getUpdateColumnsList(datasetName) {
 
-        let recordsToInsert = [];
-        let insertValuesMap = new Map();
+  // - description: gets the list of columns used when inserting a record for a dataset
+  // - parameters: datasetName (string)
+  // - returns: insertColumnsList (string)
+  // - throws: error if invalid datasetName provided
 
-        // to store SoftwareLifecycle.softwareSupportStage Object data
-        let recordsToInsertSftwSupportStage = [];
-        let insertValuesMapSftwSupportStage = new Map();
+  let setStatement = '';
 
-        recordsToInsert.push(datasetObject);
+  // ... add column names to SET clause
+  switch (await datasetName) {
+    case 'Manufacturer':
+      setStatement = `
+        acquiredDate = VALUES(acquiredDate),
+        city = VALUES(city),
+        country = VALUES(country),
+        createdDate = VALUES(createdDate),
+        deleteReason = VALUES(deleteReason),
+        description = VALUES(description),
+        email = VALUES(email),
+        employees = VALUES(employees),
+        employeesDate = VALUES(employeesDate),
+        fax = VALUES(fax),
+        fiscalEndDate = VALUES(fiscalEndDate),
+        isPubliclyTraded = VALUES(isPubliclyTraded),
+        isToBeDeleted = VALUES(isToBeDeleted),
+        knownAs = VALUES(knownAs),
+        legal = VALUES(legal),
+        name = VALUES(name),
+        ownerId = VALUES(ownerId),
+        phone = VALUES(phone),
+        profitsDate = VALUES(profitsDate),
+        profitsPerYear = VALUES(profitsPerYear),
+        replacementId = VALUES(replacementId),
+        revenue = VALUES(revenue),
+        revenueDate = VALUES(revenueDate),
+        state = VALUES(state),
+        street = VALUES(street),
+        symbol = VALUES(symbol),
+        synchronizedDate = VALUES(synchronizedDate),
+        tier = VALUES(tier),
+        toBeDeletedOn = VALUES(toBeDeletedOn),
+        updatedDate = VALUES(updatedDate),
+        website = VALUES(website),
+        zip = VALUES(zip); `;
+      break;
+    case 'Platform':
+      setStatement = `
+        createdDate = VALUES(createdDate),
+        deleteReason = VALUES(deleteReason),
+        isToBeDeleted = VALUES(isToBeDeleted),
+        name = VALUES(name),
+        replacementId = VALUES(replacementId),
+        synchronizedDate = VALUES(synchronizedDate),
+        toBeDeletedOn = VALUES(toBeDeletedOn),
+        updatedDate = VALUES(updatedDate); `;
+      break;
+    case 'SoftwareEdition':
+      setStatement = `
+        createdDate = VALUES(createdDate),
+        deleteReason = VALUES(deleteReason),
+        isDesupported = VALUES(isDesupported),
+        isDiscontinued = VALUES(isDiscontinued),
+        isToBeDeleted = VALUES(isToBeDeleted),
+        name = VALUES(name),
+        order_ = VALUES(order_),
+        replacementId = VALUES(replacementId),
+        synchronizedDate = VALUES(synchronizedDate),
+        toBeDeletedOn = VALUES(toBeDeletedOn),
+        updatedDate = VALUES(updatedDate),
+        softwareProduct = VALUES(softwareProduct); `;
+      break;
+    case 'SoftwareFamily':
+      setStatement = `
+        createdDate = VALUES(createdDate),
+        deleteReason = VALUES(deleteReason),
+        isDesupported = VALUES(isDesupported),
+        isDiscontinued = VALUES(isDiscontinued),
+        isToBeDeleted = VALUES(isToBeDeleted),
+        name = VALUES(name),
+        replacementId = VALUES(replacementId),
+        synchronizedDate = VALUES(synchronizedDate),
+        toBeDeletedOn = VALUES(toBeDeletedOn),
+        updatedDate = VALUES(updatedDate),
+        manufacturer = VALUES(manufacturer),
+        taxonomy = VALUES(taxonomy); `;
+      break;
+    case 'SoftwareLifecycle':
+      setStatement = `
+        createdDate = VALUES(createdDate),
+        deleteReason = VALUES(deleteReason),
+        endOfLife = VALUES(endOfLife),
+        endOfLifeCalculatedCase = VALUES(endOfLifeCalculatedCase),
+        endOfLifeDate = VALUES(endOfLifeDate),
+        endOfLifeDateCalculated = VALUES(endOfLifeDateCalculated),
+        endOfLifeException = VALUES(endOfLifeException),
+        endOfLifeSupportLevel = VALUES(endOfLifeSupportLevel),
+        generalAvailability = VALUES(generalAvailability),
+        generalAvailabilityDate = VALUES(generalAvailabilityDate),
+        generalAvailabilityDateCalculated = VALUES(generalAvailabilityDateCalculated),
+        generalAvailabilityException = VALUES(generalAvailabilityException),
+        isToBeDeleted = VALUES(isToBeDeleted),
+        obsolete = VALUES(obsolete),
+        obsoleteCalculatedCase = VALUES(obsoleteCalculatedCase),
+        obsoleteDate = VALUES(obsoleteDate),
+        obsoleteDateCalculated = VALUES(obsoleteDateCalculated),
+        obsoleteException = VALUES(obsoleteException),
+        obsoleteSupportLevel = VALUES(obsoleteSupportLevel),
+        replacementId = VALUES(replacementId),
+        synchronizedDate = VALUES(synchronizedDate),
+        toBeDeletedOn = VALUES(toBeDeletedOn),
+        updatedDate = VALUES(updatedDate),
+        softwareRelease = VALUES(softwareRelease); `;
+      break;
+    case 'SoftwareMarketVersion':
+      setStatement = `
+        createdDate = VALUES(createdDate),
+        deleteReason = VALUES(deleteReason),
+        isDesupported = VALUES(isDesupported),
+        isDiscontinued = VALUES(isDiscontinued),
+        isToBeDeleted = VALUES(isToBeDeleted),
+        name = VALUES(name),
+        order_ = VALUES(order_),
+        replacementId = VALUES(replacementId),
+        synchronizedDate = VALUES(synchronizedDate),
+        toBeDeletedOn = VALUES(toBeDeletedOn),
+        updatedDate = VALUES(updatedDate),
+        softwareProduct = VALUES(softwareProduct); `;
+      break;
+    case 'SoftwareProduct':
+      setStatement = `
+        alias = VALUES(alias),
+        application = VALUES(application),
+        cloud = VALUES(cloud),
+        component = VALUES(component),
+        createdDate = VALUES(createdDate),
+        deleteReason = VALUES(deleteReason),
+        isDesupported = VALUES(isDesupported),
+        isDiscontinued = VALUES(isDiscontinued),
+        isFamilyInFullName = VALUES(isFamilyInFullName),
+        isSuite = VALUES(isSuite),
+        isToBeDeleted = VALUES(isToBeDeleted),
+        name = VALUES(name),
+        productLicensable = VALUES(productLicensable),
+        replacementId = VALUES(replacementId),
+        synchronizedDate = VALUES(synchronizedDate),
+        toBeDeletedOn = VALUES(toBeDeletedOn),
+        updatedDate = VALUES(updatedDate),
+        manufacturer = VALUES(manufacturer),
+        softwareFamily = VALUES(softwareFamily),
+        taxonomy = VALUES(taxonomy); `;
+      break;
+    case 'SoftwareProductLink':
+      setStatement = `
+        cloud = VALUES(cloud),
+        createdDate = VALUES(createdDate),
+        deleteReason = VALUES(deleteReason),
+        formerSoftwareProductId = VALUES(formerSoftwareProductId),
+        isToBeDeleted = VALUES(isToBeDeleted),
+        laterSoftwareProductId = VALUES(laterSoftwareProductId),
+        latestSoftwareProductId = VALUES(latestSoftwareProductId),
+        oldestSoftwareProductId = VALUES(oldestSoftwareProductId),
+        replacementId = VALUES(replacementId),
+        softwareCloudId = VALUES(softwareCloudId),
+        softwareOnPremId = VALUES(softwareOnPremId),
+        synchronizedDate = VALUES(synchronizedDate),
+        toBeDeletedOn = VALUES(toBeDeletedOn),
+        updatedDate = VALUES(updatedDate),
+        softwareProduct = VALUES(softwareProduct); `;
+      break;
+    case 'SoftwareRelease':
+      setStatement = `
+        application = VALUES(application),
+        cloud = VALUES(cloud),
+        createdDate = VALUES(createdDate),
+        deleteReason = VALUES(deleteReason),
+        isDesupported = VALUES(isDesupported),
+        isDiscontinued = VALUES(isDiscontinued),
+        isLicensable = VALUES(isLicensable),
+        isMajor = VALUES(isMajor),
+        isToBeDeleted = VALUES(isToBeDeleted),
+        majorSoftwareReleaseId = VALUES(majorSoftwareReleaseId),
+        name = VALUES(name),
+        patchLevel = VALUES(patchLevel),
+        replacementId = VALUES(replacementId),
+        synchronizedDate = VALUES(synchronizedDate),
+        toBeDeletedOn = VALUES(toBeDeletedOn),
+        updatedDate = VALUES(updatedDate),
+        scaOpenSource = VALUES(scaOpenSource),
+        softwareEdition = VALUES(softwareEdition),
+        softwareProduct = VALUES(softwareProduct),
+        softwareVersion = VALUES(softwareVersion); `;
+      break;
+    case 'SoftwareReleaseLink':
+      setStatement = `
+        createdDate = VALUES(createdDate),
+        deleteReason = VALUES(deleteReason),
+        formerSoftwareReleaseId = VALUES(formerSoftwareReleaseId),
+        isToBeDeleted = VALUES(isToBeDeleted),
+        laterSoftwareReleaseId = VALUES(laterSoftwareReleaseId),
+        latestSoftwareReleaseId = VALUES(latestSoftwareReleaseId),
+        oldestSoftwareReleaseId = VALUES(oldestSoftwareReleaseId),
+        replacementId = VALUES(replacementId),
+        synchronizedDate = VALUES(synchronizedDate),
+        toBeDeletedOn = VALUES(toBeDeletedOn),
+        updatedDate = VALUES(updatedDate),
+        softwareRelease = VALUES(softwareRelease); `;
+      break;
+    case 'SoftwareReleasePlatform':
+      setStatement = `
+        createdDate = VALUES(createdDate),
+        deleteReason = VALUES(deleteReason),
+        isDesupported = VALUES(isDesupported),
+        isDiscontinued = VALUES(isDiscontinued),
+        isToBeDeleted = VALUES(isToBeDeleted),
+        platformLabel = VALUES(platformLabel),
+        platformType = VALUES(platformType),
+        replacementId = VALUES(replacementId),
+        synchronizedDate = VALUES(synchronizedDate),
+        toBeDeletedOn = VALUES(toBeDeletedOn),
+        updatedDate = VALUES(updatedDate),
+        platform = VALUES(platform),
+        softwareRelease = VALUES(softwareRelease); `;
+      break;
+    case 'SoftwareVersion':
+      setStatement = `
+        createdDate = VALUES(createdDate),
+        deleteReason = VALUES(deleteReason),
+        isDesupported = VALUES(isDesupported),
+        isDiscontinued = VALUES(isDiscontinued),
+        isMajor = VALUES(isMajor),
+        isToBeDeleted = VALUES(isToBeDeleted),
+        majorSoftwareVersionId = VALUES(majorSoftwareVersionId),
+        name = VALUES(name),
+        order_ = VALUES(order_),
+        patchLevel = VALUES(patchLevel),
+        replacementId = VALUES(replacementId),
+        synchronizedDate = VALUES(synchronizedDate),
+        toBeDeletedOn = VALUES(toBeDeletedOn),
+        updatedDate = VALUES(updatedDate),
+        versionStage = VALUES(versionStage),
+        softwareMarketVersion = VALUES(softwareMarketVersion),
+        softwareProduct = VALUES(softwareProduct); `;
+      break;
+    case 'Taxonomy':
+      setStatement = `
+        category = VALUES(category),
+        categoryGroup = VALUES(categoryGroup),
+        categoryId = VALUES(categoryId),
+        createdDate = VALUES(createdDate),
+        deleteReason = VALUES(deleteReason),
+        description = VALUES(description),
+        isToBeDeleted = VALUES(isToBeDeleted),
+        replacementId = VALUES(replacementId),
+        softwareOrHardware = VALUES(softwareOrHardware),
+        subcategory = VALUES(subcategory),
+        synchronizedDate = VALUES(synchronizedDate),
+        toBeDeletedOn = VALUES(toBeDeletedOn),
+        updatedDate = VALUES(updatedDate); `;
+      break;
+    default:
+      throw 'invalid dataset name provided when building update statement';
+  }
 
-        try {
-          // ############################################################################################################
-          // #4 add the column values to query
-          switch (datasetName) {
-            case 'Manufacturer':
-              insertValuesMap = recordsToInsert.map(recordsToInsert => 
-                [datasetObject.id,	// dt:VARCHAR
-                datasetObject.acquiredDate,	// dt:DATETIME
-                datasetObject.city,	// dt:VARCHAR
-                datasetObject.country,	// dt:VARCHAR
-                stringToDate(datasetObject.createdDate),	// dt:DATETIME
-                datasetObject.deleteReason,	// dt:VARCHAR
-                datasetObject.description,	// dt:VARCHAR
-                datasetObject.email,	// dt:VARCHAR
-                datasetObject.employees,	// dt:VARCHAR
-                stringToDate(datasetObject.employeesDate),	// dt:DATETIME
-                datasetObject.fax,	// dt:VARCHAR
-                stringToDate(datasetObject.fiscalEndDate),	// dt:DATETIME
-                //datasetObject.idLegacy,	// dt:INT
-                datasetObject.isPubliclyTraded,	// dt:VARCHAR
-                booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
-                datasetObject.knownAs,	// dt:VARCHAR
-                datasetObject.legal,	// dt:VARCHAR
-                datasetObject.name,	// dt:VARCHAR
-                datasetObject.ownerId,	// dt:VARCHAR
-                //datasetObject.ownerIdLegacy,	// dt:INT
-                datasetObject.phone,	// dt:VARCHAR
-                stringToDate(datasetObject.profitsDate),	// dt:DATETIME
-                datasetObject.profitsPerYear,	// dt:INT
-                datasetObject.replacementId,	// dt:VARCHAR
-                //datasetObject.replacementIdLegacy,	// dt:INT
-                datasetObject.revenue,	// dt:INT
-                stringToDate(datasetObject.revenueDate),	// dt:DATETIME
-                datasetObject.state,	// dt:VARCHAR
-                datasetObject.street,	// dt:VARCHAR
-                datasetObject.symbol,	// dt:VARCHAR
-                stringToDate(datasetObject.synchronizedDate),	// dt:DATETIME
-                datasetObject.tier,	// dt:INT
-                stringToDate(datasetObject.toBeDeletedOn),	// dt:DATETIME
-                stringToDate(datasetObject.updatedDate),	// dt:DATETIME
-                datasetObject.website,	// dt:VARCHAR
-                datasetObject.zip,	// dt:VARCHAR
-              ]);
-              break;
-            case 'Platform':
-              insertValuesMap = recordsToInsert.map(recordsToInsert => 
-                [datasetObject.id,	// dt:VARCHAR
-                stringToDate(datasetObject.createdDate),	// dt:TIMESTAMP
-                datasetObject.deleteReason,	// dt:VARCHAR
-                //datasetObject.idLegacy,	// dt:INT
-                booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
-                datasetObject.name,	// dt:VARCHAR
-                datasetObject.replacementId,	// dt:VARCHAR
-                //datasetObject.replacementIdLegacy,	// dt:INT
-                stringToDate(datasetObject.synchronizedDate),	// dt:TIMESTAMP
-                stringToDate(datasetObject.toBeDeletedOn),	// dt:DATE
-                stringToDate(datasetObject.updatedDate),	// dt:TIMESTAMP
-              ]);
-              break;
-            case 'SoftwareEdition':
-              insertValuesMap = recordsToInsert.map(recordsToInsert => 
-                [datasetObject.id,	// dt:VARCHAR
-                stringToDate(datasetObject.createdDate),	// dt:TIMESTAMP
-                datasetObject.deleteReason,	// dt:VARCHAR
-                booleanToTinyint(datasetObject.isDesupported),	// dt:TINYINT
-                booleanToTinyint(datasetObject.isDiscontinued),	// dt:TINYINT
-                booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
-                datasetObject.name,	// dt:VARCHAR
-                datasetObject.order,	// dt:INT
-                datasetObject.replacementId,	// dt:INT
-                stringToDate(datasetObject.synchronizedDate),	// dt:TIMESTAMP
-                stringToDate(datasetObject.toBeDeletedOn),	// dt:DATE
-                stringToDate(datasetObject.updatedDate),	// dt:TIMESTAMP
-                datasetObject.softwareProduct.id,	// dt:VARCHAR
-              ]);
-              break;
-            case 'SoftwareFamily':
-              try {
-                insertValuesMap = recordsToInsert.map(recordsToInsert => 
-                  [datasetObject.id,	// dt:VARCHAR
-                  stringToDate(datasetObject.createdDate),	// dt:TIMESTAMP
-                  datasetObject.deleteReason,	// dt:VARCHAR
-                  booleanToTinyint(datasetObject.isDesupported),	// dt:TINYINT
-                  booleanToTinyint(datasetObject.isDiscontinued),	// dt:TINYINT
-                  booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
-                  datasetObject.name,	// dt:VARCHAR
-                  datasetObject.replacementId,	// dt:INT
-                  //datasetObject.replacementIdLegacy,	// dt:INT
-                  stringToDate(datasetObject.synchronizedDate),	// dt:TIMESTAMP
-                  stringToDate(datasetObject.toBeDeletedOn),	// dt:DATE
-                  stringToDate(datasetObject.updatedDate),	// dt:TIMESTAMP
-                  datasetObject.manufacturer.id,	// dt:VARCHAR
-                  datasetObject.taxonomy.id,	// dt:VARCHAR
-                ]);
-              } catch (error) {
-                try {
-                  insertValuesMap = recordsToInsert.map(recordsToInsert => 
-                    [datasetObject.id,	// dt:VARCHAR
-                    stringToDate(datasetObject.createdDate),	// dt:TIMESTAMP
-                    datasetObject.deleteReason,	// dt:VARCHAR
-                    booleanToTinyint(datasetObject.isDesupported),	// dt:TINYINT
-                    booleanToTinyint(datasetObject.isDiscontinued),	// dt:TINYINT
-                    booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
-                    datasetObject.name,	// dt:VARCHAR
-                    datasetObject.replacementId,	// dt:INT
-                    //datasetObject.replacementIdLegacy,	// dt:INT
-                    stringToDate(datasetObject.synchronizedDate),	// dt:TIMESTAMP
-                    stringToDate(datasetObject.toBeDeletedOn),	// dt:DATE
-                    stringToDate(datasetObject.updatedDate),	// dt:TIMESTAMP
-                    datasetObject.manufacturer.id,	// dt:VARCHAR
-                    datasetObject.taxonomy,	// dt:VARCHAR
-                  ]);
-                  } catch (error) {
-                    insertValuesMap = recordsToInsert.map(recordsToInsert => 
-                      [datasetObject.id,	// dt:VARCHAR
-                      stringToDate(datasetObject.createdDate),	// dt:TIMESTAMP
-                      datasetObject.deleteReason,	// dt:VARCHAR
-                      booleanToTinyint(datasetObject.isDesupported),	// dt:TINYINT
-                      booleanToTinyint(datasetObject.isDiscontinued),	// dt:TINYINT
-                      booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
-                      datasetObject.name,	// dt:VARCHAR
-                      datasetObject.replacementId,	// dt:INT
-                      //datasetObject.replacementIdLegacy,	// dt:INT
-                      stringToDate(datasetObject.synchronizedDate),	// dt:TIMESTAMP
-                      stringToDate(datasetObject.toBeDeletedOn),	// dt:DATE
-                      stringToDate(datasetObject.updatedDate),	// dt:TIMESTAMP
-                      datasetObject.manufacturer,	// dt:VARCHAR
-                      datasetObject.taxonomy,	// dt:VARCHAR
-                    ]);
-                  }
-              }
-              break;
-            case 'SoftwareLifecycle':
-              insertValuesMap = recordsToInsert.map(recordsToInsert => 
-                [datasetObject.id,	// dt:VARCHAR
-                stringToDate(datasetObject.createdDate),	// dt:TIMESTAMP
-                datasetObject.deleteReason,	// dt:VARCHAR
-                datasetObject.endOfLife,	// dt:VARCHAR
-                datasetObject.endOfLifeCalculatedCase,	// dt:VARCHAR
-                stringToDate(datasetObject.endOfLifeDate),	// dt:DATE
-                stringToDate(datasetObject.endOfLifeDateCalculated),	// dt:TIMESTAMP
-                datasetObject.endOfLifeException,	// dt:VARCHAR
-                datasetObject.endOfLifeSupportLevel,	// dt:VARCHAR
-                datasetObject.generalAvailability,	// dt:VARCHAR
-                stringToDate(datasetObject.generalAvailabilityDate),	// dt:TIMESTAMP
-                stringToDate(datasetObject.generalAvailabilityDateCalculated),	// dt:TIMESTAMP
-                datasetObject.generalAvailabilityException,	// dt:VARCHAR
-                booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
-                datasetObject.obsolete,	// dt:VARCHAR
-                datasetObject.obsoleteCalculatedCase,	// dt:VARCHAR
-                stringToDate(datasetObject.obsoleteDate),	// dt:TIMESTAMP
-                stringToDate(datasetObject.obsoleteDateCalculated),	// dt:TIMESTAMP
-                datasetObject.obsoleteException,	// dt:VARCHAR
-                datasetObject.obsoleteSupportLevel,	// dt:VARCHAR
-                datasetObject.replacementId,	// dt:VARCHAR
-                stringToDate(datasetObject.synchronizedDate),	// dt:TIMESTAMP
-                stringToDate(datasetObject.toBeDeletedOn),	// dt:DATE
-                stringToDate(datasetObject.updatedDate),	// dt:TIMESTAMP
-                datasetObject.softwareRelease.id,	// dt:VARCHAR
-              ]);
-
-              // check if softwareSupportStage has data
-              if (datasetObject.softwareSupportStage !== null && datasetObject.softwareSupportStage !== undefined) {
-                for (let supportStageObject of datasetObject.softwareSupportStage) {
-                  recordsToInsertSftwSupportStage.push(supportStageObject);
-
-                  insertValuesMapSftwSupportStage = recordsToInsertSftwSupportStage.map(recordsToInsertSftwSupportStage => 
-                    [lastRecordId,	// dt:VARCHAR)
-                    supportStageObject.definition,	// dt:VARCHAR
-                    stringToDate(supportStageObject.endDate),	// dt:DATETIME
-                    supportStageObject.manufacturerId,	// dt:VARCHAR
-                    supportStageObject.name,	// dt:VARCHAR
-                    supportStageObject.order,	// dt:INT
-                    supportStageObject.policy,	// dt:VARCHAR
-                    supportStageObject.publishedEndDate,	// dt:VARCHAR
-                    ]);
-                }
-                //.log(' - SoftwareSupportStage data found:' + datasetObject.softwareSupportStage.length + ' records.'); // Debug
-              } 
-              break;
-            case 'SoftwareMarketVersion':
-              insertValuesMap = recordsToInsert.map(recordsToInsert => 
-                [datasetObject.id,	// dt:VARCHAR
-                stringToDate(datasetObject.createdDate),	// dt:TIMESTAMP
-                datasetObject.deleteReason,	// dt:VARCHAR
-                booleanToTinyint(datasetObject.isDesupported),	// dt:TINYINT
-                booleanToTinyint(datasetObject.isDiscontinued),	// dt:TINYINT
-                booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
-                datasetObject.name,	// dt:VARCHAR
-                datasetObject.order,	// dt:INT
-                datasetObject.replacementId,	// dt:VARCHAR
-                stringToDate(datasetObject.synchronizedDate),	// dt:TIMESTAMP
-                stringToDate(datasetObject.toBeDeletedOn),	// dt:DATE
-                stringToDate(datasetObject.updatedDate),	// dt:TIMESTAMP
-                datasetObject.softwareProduct.id,	// dt:VARCHAR
-              ]);
-              break;
-            case 'SoftwareProduct':
-              if (datasetObject.softwareFamily === null){
-                datasetObject.softwareFamily = null;
-              } else {
-                datasetObject.softwareFamily = datasetObject.softwareFamily.id;
-              }
-
-              if (datasetObject.taxonomy === null){
-                datasetObject.taxonomy = null;
-              } else {
-                datasetObject.taxonomy = datasetObject.taxonomy.id;
-              }
-
-              insertValuesMap = recordsToInsert.map(recordsToInsert => 
-                [datasetObject.id,	// dt:VARCHAR
-                datasetObject.alias,	// dt:VARCHAR
-                datasetObject.application,	// dt:VARCHAR
-                datasetObject.cloud,	// dt:VARCHAR
-                datasetObject.component,	// dt:VARCHAR
-                stringToDate(datasetObject.createdDate),	// dt:DATETIME
-                datasetObject.deleteReason,	// dt:VARCHAR
-                booleanToTinyint(datasetObject.isDesupported),	// dt:TINYINT
-                booleanToTinyint(datasetObject.isDiscontinued),	// dt:TINYINT
-                booleanToTinyint(datasetObject.isFamilyInFullName),	// dt:TINYINT
-                booleanToTinyint(datasetObject.isSuite),	// dt:TINYINT
-                booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
-                datasetObject.name,	// dt:VARCHAR
-                datasetObject.productLicensable,	// dt:INT
-                datasetObject.replacementId,	// dt:VARCHAR
-                stringToDate(datasetObject.synchronizedDate),	// dt:DATETIME
-                stringToDate(datasetObject.toBeDeletedOn),	// dt:DATETIME
-                stringToDate(datasetObject.updatedDate),	// dt:DATETIME
-                datasetObject.manufacturer.id,	// dt:VARCHAR
-                datasetObject.softwareFamily,	// dt:VARCHAR
-                datasetObject.taxonomy,	// dt:VARCHAR
-                ]);
-              break;
-            case 'SoftwareProductLink':
-              try {
-                insertValuesMap = recordsToInsert.map(recordsToInsert => 
-                  [datasetObject.id,	// dt:VARCHAR
-                  datasetObject.cloud,	// dt:VARCHAR
-                  stringToDate(datasetObject.createdDate),	// dt:TIMESTAMP
-                  datasetObject.deleteReason,	// dt:VARCHAR
-                  datasetObject.formerSoftwareProductId,	// dt:VARCHAR
-                  booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
-                  datasetObject.laterSoftwareProductId,	// dt:VARCHAR
-                  datasetObject.latestSoftwareProductId,	// dt:VARCHAR
-                  datasetObject.oldestSoftwareProductId,	// dt:VARCHAR
-                  datasetObject.replacementId,	// dt:VARCHAR
-                  datasetObject.softwareCloudId,	// dt:VARCHAR
-                  datasetObject.softwareOnPremId,	// dt:VARCHAR
-                  stringToDate(datasetObject.synchronizedDate),	// dt:TIMESTAMP
-                  stringToDate(datasetObject.toBeDeletedOn),	// dt:DATE
-                  stringToDate(datasetObject.updatedDate),	// dt:TIMESTAMP
-                  datasetObject.softwareProduct.id,	// dt:VARCHAR
-                ]);
-              } catch (error) {
-                insertValuesMap = recordsToInsert.map(recordsToInsert => 
-                  [datasetObject.id,	// dt:VARCHAR
-                  datasetObject.cloud,	// dt:VARCHAR
-                  stringToDate(datasetObject.createdDate),	// dt:TIMESTAMP
-                  datasetObject.deleteReason,	// dt:VARCHAR
-                  datasetObject.formerSoftwareProductId,	// dt:VARCHAR
-                  booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
-                  datasetObject.laterSoftwareProductId,	// dt:VARCHAR
-                  datasetObject.latestSoftwareProductId,	// dt:VARCHAR
-                  datasetObject.oldestSoftwareProductId,	// dt:VARCHAR
-                  datasetObject.replacementId,	// dt:VARCHAR
-                  datasetObject.softwareCloudId,	// dt:VARCHAR
-                  datasetObject.softwareOnPremId,	// dt:VARCHAR
-                  stringToDate(datasetObject.synchronizedDate),	// dt:TIMESTAMP
-                  stringToDate(datasetObject.toBeDeletedOn),	// dt:DATE
-                  stringToDate(datasetObject.updatedDate),	// dt:TIMESTAMP
-                  datasetObject.softwareProduct,	// dt:VARCHAR
-                ]);
-              }
-              break;
-            case 'SoftwareRelease':
-              // check if scaOpenSource has data
-              if (datasetObject.scaOpenSource === null) {
-                datasetObject.scaOpenSource = null;
-              } else {
-                datasetObject.scaOpenSource = datasetObject.scaOpenSource.id;
-              }
-
-              // check if softwareEdition has data
-              if (datasetObject.softwareEdition === null) {
-                datasetObject.softwareEdition = null;
-              } else {
-                datasetObject.softwareEdition = datasetObject.softwareEdition.id;
-              }
-
-              // check if softwareVersion has data
-              if (datasetObject.softwareVersion === null) {
-                datasetObject.softwareVersion = null;
-              } else {
-                datasetObject.softwareVersion = datasetObject.softwareVersion.id;
-              }
-
-              insertValuesMap = recordsToInsert.map(recordsToInsert => 
-                [datasetObject.id,	// dt:VARCHAR
-                datasetObject.application,	// dt:VARCHAR
-                datasetObject.cloud,	// dt:VARCHAR
-                stringToDate(datasetObject.createdDate),	// dt:TIMESTAMP
-                datasetObject.deleteReason,	// dt:VARCHAR
-                booleanToTinyint(datasetObject.isDesupported),	// dt:TINYINT
-                booleanToTinyint(datasetObject.isDiscontinued),	// dt:TINYINT
-                booleanToTinyint(datasetObject.isLicensable),	// dt:TINYINT
-                booleanToTinyint(datasetObject.isMajor),	// dt:TINYINT
-                booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
-                datasetObject.majorSoftwareReleaseId,	// dt:VARCHAR
-                datasetObject.name,	// dt:VARCHAR
-                datasetObject.patchLevel,	// dt:VARCHAR
-                datasetObject.replacementId,	// dt:VARCHAR
-                stringToDate(datasetObject.synchronizedDate),	// dt:TIMESTAMP
-                stringToDate(datasetObject.toBeDeletedOn),	// dt:DATE
-                stringToDate(datasetObject.updatedDate),	// dt:TIMESTAMP
-                datasetObject.scaOpenSource,	// dt:VARCHAR
-                datasetObject.softwareEdition,	// dt:VARCHAR
-                datasetObject.softwareProduct.id,	// dt:VARCHAR
-                datasetObject.softwareVersion,	// dt:VARCHAR
-              ]);
-              
-              break;
-            case 'SoftwareReleaseLink':
-              insertValuesMap = recordsToInsert.map(recordsToInsert => 
-                [datasetObject.id,	// dt:VARCHAR
-                stringToDate(datasetObject.createdDate),	// dt:TIMESTAMP
-                datasetObject.deleteReason,	// dt:VARCHAR
-                datasetObject.formerSoftwareReleaseId,	// dt:VARCHAR
-                booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
-                datasetObject.laterSoftwareReleaseId,	// dt:VARCHAR
-                datasetObject.latestSoftwareReleaseId,	// dt:VARCHAR
-                datasetObject.oldestSoftwareReleaseId,	// dt:VARCHAR
-                datasetObject.replacementId,	// dt:VARCHAR
-                stringToDate(datasetObject.synchronizedDate),	// dt:TIMESTAMP
-                stringToDate(datasetObject.toBeDeletedOn),	// dt:DATE
-                stringToDate(datasetObject.updatedDate),	// dt:TIMESTAMP
-                datasetObject.softwareRelease.id,	// dt:VARCHAR
-              ]);
-              break;
-            case 'SoftwareReleasePlatform':
-              insertValuesMap = recordsToInsert.map(recordsToInsert => 
-                [datasetObject.id,	// dt:VARCHAR
-                stringToDate(datasetObject.createdDate),	// dt:TIMESTAMP
-                datasetObject.deleteReason,	// dt:VARCHAR
-                booleanToTinyint(datasetObject.isDesupported),	// dt:TINYINT
-                booleanToTinyint(datasetObject.isDiscontinued),	// dt:TINYINT
-                booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
-                datasetObject.platformLabel,	// dt:VARCHAR
-                datasetObject.platformType,	// dt:VARCHAR
-                datasetObject.replacementId,	// dt:VARCHAR
-                stringToDate(datasetObject.synchronizedDate),	// dt:TIMESTAMP
-                stringToDate(datasetObject.toBeDeletedOn),	// dt:DATE
-                stringToDate(datasetObject.updatedDate),	// dt:TIMESTAMP
-                datasetObject.platform.id,	// dt:VARCHAR
-                datasetObject.softwareRelease.id,	// dt:VARCHAR
-              ]);
-              break;
-            case 'SoftwareSupportStage':
-              insertValuesMap = recordsToInsert.map(recordsToInsert => 
-                [datasetObject.softwareLifecycle.id,	// dt:VARCHAR
-                datasetObject.definition,	// dt:VARCHAR
-                stringToDate(datasetObject.endDate),	// dt:DATE
-                datasetObject.manufacturerId,	// dt:VARCHAR
-                datasetObject.name,	// dt:VARCHAR
-                datasetObject.order,	// dt:INT
-                datasetObject.policy,	// dt:VARCHAR
-                datasetObject.publishedEndDate,	// dt:VARCHAR
-              ]);
-              break;
-            case 'SoftwareVersion':
-              try {
-                insertValuesMap = recordsToInsert.map(recordsToInsert => 
-                  [datasetObject.id,	// dt:VARCHAR
-                  stringToDate(datasetObject.createdDate),	// dt:DATETIME
-                  datasetObject.deleteReason,	// dt:VARCHAR
-                  //datasetObject.idLegacy,	// dt:INT
-                  booleanToTinyint(datasetObject.isDesupported),	// dt:TINYINT
-                  booleanToTinyint(datasetObject.isDiscontinued),	// dt:TINYINT
-                  booleanToTinyint(datasetObject.isMajor),	// dt:TINYINT
-                  booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
-                  datasetObject.majorSoftwareVersionId,	// dt:VARCHAR
-                  //datasetObject.majorVersionIdLegacy,	// dt:INT
-                  datasetObject.name,	// dt:VARCHAR
-                  datasetObject.order,	// dt:INT
-                  datasetObject.patchLevel,	// dt:VARCHAR
-                  datasetObject.replacementId,	// dt:VARCHAR
-                  //datasetObject.replacementIdLegacy,	// dt:INT
-                  stringToDate(datasetObject.synchronizedDate),	// dt:DATETIME
-                  stringToDate(datasetObject.toBeDeletedOn),	// dt:DATETIME
-                  stringToDate(datasetObject.updatedDate),	// dt:DATETIME
-                  datasetObject.versionStage,	// dt:VARCHAR
-                  datasetObject.softwareMarketVersion.id,	// dt:VARCHAR
-                  datasetObject.softwareProduct.id,	// dt:VARCHAR
-                ]);
-              } catch (error) {
-                insertValuesMap = recordsToInsert.map(recordsToInsert => 
-                  [datasetObject.id,	// dt:VARCHAR
-                  stringToDate(datasetObject.createdDate),	// dt:DATETIME
-                  datasetObject.deleteReason,	// dt:VARCHAR
-                  //datasetObject.idLegacy,	// dt:INT
-                  booleanToTinyint(datasetObject.isDesupported),	// dt:TINYINT
-                  booleanToTinyint(datasetObject.isDiscontinued),	// dt:TINYINT
-                  booleanToTinyint(datasetObject.isMajor),	// dt:TINYINT
-                  booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
-                  datasetObject.majorSoftwareVersionId,	// dt:VARCHAR
-                  //datasetObject.majorVersionIdLegacy,	// dt:INT
-                  datasetObject.name,	// dt:VARCHAR
-                  datasetObject.order,	// dt:INT
-                  datasetObject.patchLevel,	// dt:VARCHAR
-                  datasetObject.replacementId,	// dt:VARCHAR
-                  //datasetObject.replacementIdLegacy,	// dt:INT
-                  stringToDate(datasetObject.synchronizedDate),	// dt:DATETIME
-                  stringToDate(datasetObject.toBeDeletedOn),	// dt:DATETIME
-                  stringToDate(datasetObject.updatedDate),	// dt:DATETIME
-                  datasetObject.versionStage,	// dt:VARCHAR
-                  datasetObject.softwareMarketVersion,	// dt:VARCHAR
-                  datasetObject.softwareProduct.id,	// dt:VARCHAR
-                ]);
-              }
-              break;
-            case 'Taxonomy':
-              insertValuesMap = recordsToInsert.map(recordsToInsert => 
-                [datasetObject.id,	// dt:VARCHAR
-                datasetObject.category,	// dt:VARCHAR
-                datasetObject.categoryGroup,	// dt:VARCHAR
-                datasetObject.categoryId,	// dt:VARCHAR
-                stringToDate(datasetObject.createdDate),	// dt:DATETIME
-                datasetObject.deleteReason,	// dt:VARCHAR
-                datasetObject.description,	// dt:VARCHAR
-                booleanToTinyint(datasetObject.isToBeDeleted),	// dt:TINYINT
-                datasetObject.replacementId,	// dt:VARCHAR
-                datasetObject.softwareOrHardware,	// dt:VARCHAR
-                datasetObject.subcategory,	// dt:VARCHAR
-                stringToDate(datasetObject.synchronizedDate),	// dt:DATETIME
-                stringToDate(datasetObject.toBeDeletedOn),	// dt:DATETIME
-                stringToDate(datasetObject.updatedDate),	// dt:DATETIME
-              ]);
-              break;
-          }
-        } catch (error) {
-          let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### Record: ${pageRecordCounter} #### *************** ERROR: Column Values id: ${lastRecordId} ***************  \n${error} \n`;
-
-          logger(errorMsg, error);
-
-          //console.log(JSON.stringify(datasetObject)); // Debug
-
-          // stop the upload and return the error message
-          return errorMsg;
-        }
-        // ############################################################################################################
-
-        try {
-          // execute the insert statement in db
-          let responseDB = await sql_promise.query(insertQuery, [insertValuesMap]);
-
-          // reset failed record counter
-          consecutiveFailedRecordCounter = 0;
-
-          // handling SoftwareLifecycle.SoftwareSupportStage[] data
-          try {
-            if (datasetName === 'SoftwareLifecycle' && insertValuesMapSftwSupportStage.length > 0) {
-              //console.log('... inserting SoftwareSupportStage data'); // Debug
-              let responseDB = await sql_promise.query(insertQuerySftwSupportStage, [insertValuesMapSftwSupportStage]);
-            }
-          } catch (error) {
-            let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### Record: ${pageRecordCounter} #### *************** ERROR inserting SoftwareSupportStage data for SoftwareLifecycle id: ${lastRecordId} ***************  \n ${error} \n`;
-
-            logger(errorMsg, error);
-
-            // log the error to file
-            //fs.appendFileSync(errorLogPath, errorMsg + error + '\r\n');
-          }
-        } catch (error) {
-          // increment failed record counter
-          pageFailedRecordCounter++;
-          consecutiveFailedRecordCounter++;
-
-          let errorMsg = `#### ${datasetName} #### Page: ${pageCounter} #### Record: ${pageRecordCounter} #### *************** ERROR inserting ${datasetName} data id: ${lastRecordId} ***************  \n ${error} \n`;
-
-          logger(errorMsg, error);
-
-          // log the error to file
-          fs.appendFileSync(errorLogPath, errorMsg + error + '\n\n');
-
-          // stop the upload and return the error message
-          if (consecutiveFailedRecordCounter === 25) {
-            errorMsg = errorMsg + `\n#### ${datasetName} #### Page: ${pageCounter} #### *************** ERROR: 25 consecutive failed records, stopping upload. *************** \n`;
-
-            logger(errorMsg, '');
-
-            return errorMsg;
-          }
-        }
-
-        // 1000 records notification
-        if (notificationCounter === 1000) {
-          let pageCurrentTime = new Date();
-          let pageCurrentDuration = formatDuration(pageStartTime, pageCurrentTime);
-          console.log(`#### ${datasetName} #### Page: ${pageCounter} #### ...... ${pageRecordCounter} of ${datasetArray.length} records process with ${pageFailedRecordCounter} error(s) at ${pageCurrentTime}.(.... ${pageCurrentDuration})`); // Debug
-          notificationCounter = 0;
-        }
-      } // ####################### end page records FOR LOOP #######################
-      // #############################################################################
-    }
-
-    // #################### PAGE SUMMARY ####################
-    // page processing end time
-    var pageEndTime = new Date();
-    console.log(`#### ${datasetName} #### Page: ${pageCounter} #### Page End Time: ${pageEndTime}`);
-
-    // calculate page duration in seconds
-    let pageDuration = formatDuration(pageStartTime, pageEndTime);
-    console.log(`#### ${datasetName} #### Page: ${pageCounter} #### ...... Page Duration: ${pageDuration}`);
-
-    // display summary of page
-    console.log(`#### ${datasetName} #### Page: ${pageCounter} #### Summary of Page Processing: completed inserting ` + (pageRecordCounter-failedRecordCounter) + ' of ' + datasetArray.length + ' records.'); // Debug
-
-    // #################### END PAGE SUMMARY ####################
-
-
-    // #################### UPLOAD SUMMARY ####################
-
-    // update global variables
-    recordCounter = recordCounter + pageRecordCounter;
-
-    // update global variables
-    failedRecordCounter = failedRecordCounter + pageFailedRecordCounter;
-
-    // determine if this is the last page
-    if (datasetArray.length < takeAmt /*|| pageCounter === 2*/ || pageFailedRecordCounter >= 10) {
-      console.log(`#### ${datasetName} #### Page: ${pageCounter} #### ....... Last Page Reached! `);
-      isLastPage = true;
-    }
-
-    try {
-      // success response to client
-      if (isLastPage) {
-        console.log(`#### ${datasetName} ####  UPLOAD ${datasetName} DATA COMPLETED!`);
-        console.log(`#### ${datasetName} #### ...... uploadStartTime: ${uploadStartTime}`);
-
-        // display end time
-        let uploadEndTime = new Date();
-        console.log(`#### ${datasetName} #### ...... uploadEndTime: ${uploadEndTime}`);
-
-        // calculate upload duration in hours, minutes, seconds
-        let uploadDuration = formatDuration(uploadStartTime, uploadEndTime);
-
-        console.log(`#### ${datasetName} #### ...... uploadDuration: ${uploadDuration}`);
-
-        console.log(`#### ${datasetName} #### ...... totalPages: ${pageCounter}`);
-        console.log(`#### ${datasetName} #### ...... totalRecords: ${recordCounter}`);
-        console.log(`#### ${datasetName} #### ...... failedRecords: ${failedRecordCounter}`);
-        console.log(`## END OF ${datasetName} #####################################################################################################`);
-
-        let returnMsg = datasetName + ' data upload completed with ' + (recordCounter-failedRecordCounter) + ' records successfully inserted and ' + failedRecordCounter + ' records failed to insert from ' + pageCounter + ' pages.';
-
-        // return the success message
-        return returnMsg;
-      } else {
-        console.log(`#### ${datasetName} #### ...... Next Page.`);
-      }
-    } catch (error) {
-      let errorMsg = `#### ${datasetName} #### *************** ERROR returning response (${datasetName}) *************** \n `;
-
-      logger(errorMsg, error);
-
-      // stop the upload and return the error message
-      return errorMsg;
-    }
-  } while (!isLastPage);
+  return setStatement;
 }
 
 
+// TO DO: incomplete functions
+/*
+async function getDatasetDetails(datasetName) {
 
-// exports a list of ids from a dataset that need to be re-synced
-exports.getSyncList = async (data, response) => {
+  // - description: 
+  // - parameters: datasetName (string)
+  // - returns: datasetDetails (string)
 
-  // VARIABLES
 
-  const refreshToken = data.refreshToken;
-  const datasetName = data.dataset;
-  
-  const takeAmt = "10000";
-  let accessToken = '';
-  let additionalQueryParameters = null;
-  let graphqlQuery = '';
-  let columnList = `id
-  createdDate
-  deleteReason
-  isToBeDeleted
-  replacementId
-  synchronizedDate
-  toBeDeletedOn
-  updatedDate
-  `;
-  
-  const tableName = `tech_catalog.tp_${datasetName}_tmp`;
 
-  var pageCounter = 0;
-  var recordCounter = 0;
-  var failedRecordCounter = 0;
-  var syncCounter = 0;
+}
 
-  var isLastPage = false;
-  var lastRecordId = null;
-  let lastSynchronizedDate = null;
-  const uploadStartTime = new Date().getTime();
-  var uploadEndTime = null;
+async function insertUpdateRecordAsync (insertStatement, insertValuesMap, importType, datasetName) {
 
-  // FUNCTIONS FOR UPLOAD
+  // - description: insert a record into the database and will wait until the reponse is returned
+  // - parameters: 
+  // - returns: 
 
-  function formatDateTime(dateObj) {
-    var formattedDate = new Date(dateObj);
 
-    if (formattedDate === null || formattedDate === '') {
-      return null;
-    } else {
-      // Get the individual date components
-      const year = formattedDate.getFullYear();
-      const month = String(formattedDate.getMonth() + 1).padStart(2, '0');
-      const day = String(formattedDate.getDate()).padStart(2, '0');
+  //logger(`${getLogHeader()}`, `... executing ${importType} statement`);
 
-      // Get the individual time components
-      const hours = String(formattedDate.getHours()).padStart(2, '0');
-      const minutes = String(formattedDate.getMinutes()).padStart(2, '0');
-      const seconds = String(formattedDate.getSeconds()).padStart(2, '0');
-      const milliseconds = String(formattedDate.getMilliseconds()).padStart(3, '0');
+  // ... insert the record
+  // ... send request to insert record into db table and wait for response
+  let responseDB = await sql_promise.query(insertStatement, [insertValuesMap]);
 
-      // Combine the components into the desired format
-      formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
+  //console.log(responseDB);
 
-      return formattedDate;
-    }
+  affectRowsCounter = affectRowsCounter + responseDB[0].affectedRows;
+
+  // ... verify in response that correct number of records inserted
+  //if (responseDB[0].affectedRows !== insertValuesMap.length) {
+  if (responseDB[0].affectedRows <= 0) {
+
+    // ... log error message and continue with the next record
+    throw `ERROR: failed to ${importType} ${insertValuesMap.length} ${datasetName} records`;
+
   }
 
-  function formatFileDateTime(dateObj) {
-    var formattedDate = new Date(dateObj);
+  //logger(`${getLogHeader()}`, `... completed update updating record`);
 
-    if (formattedDate === null || formattedDate === '') {
-      return null;
-    } else {
-      // Get the individual date components
-      const year = formattedDate.getFullYear();
-      const month = String(formattedDate.getMonth() + 1).padStart(2, '0');
-      const day = String(formattedDate.getDate()).padStart(2, '0');
+}
 
-      // Get the individual time components
-      const hours = String(formattedDate.getHours()).padStart(2, '0');
-      const minutes = String(formattedDate.getMinutes()).padStart(2, '0');
-      const seconds = String(formattedDate.getSeconds()).padStart(2, '0');
+async function insertUpdateSoftwareSupportStageAsync (insertStatement, insertValuesMap, insertValuesMapSftwSupportStage, importType, datasetName, lastRecordId) {
 
-      // Combine the components into the desired format
-      formattedDate = `${year}${month}${day}_${hours}.${minutes}`;
+  let deleteStatementSftwSupportStage = `DELETE FROM tech_catalog.tp_softwareSupportStage WHERE softwareLifecycleId = '${lastRecordId}'; `;
+  let insertStatementSftwSupportStage = ``;
+    
+  
+  // DELETE OLD
+  // ... delete all existing SoftwareLifecycle.softwareSupportStage records for this softwareLifecycleId
+  // ... send request to delete softwareSupportStage records from db table and wait for response
+  let responseDB = await sql_promise.query(deleteStatementSftwSupportStage);
 
-      return formattedDate;
-    }
+  // ... verify in response that correct number of records deleted
+  //if (responseDB[0].affectedRows !== insertValuesMapSftwSupportStage.length) {
+  if (responseDB[0].affectedRows <= 0) {
+    // ... log error message and continue with the next record
+    throw `ERROR: failed to delete old tp_softwareSupportStage ${insertValuesMapSftwSupportStage.length} SoftwareLifecycle.softwareSupportStage records`;
   }
 
-  function formatDuration(start_date, end_date) {
-    const duration = new Date(end_date - start_date);
+  // INSERT NEW RECORDS
+  // ... send request to inSsert softwareSupportStage record into db table and wait for response
+  const responseDBSftwSupportStage = await sql_promise.query(insertStatementSftwSupportStage, [insertValuesMapSftwSupportStage]);
+
+  // ... verify in response that correct number of records inserted
+  //if (responseDBSftwSupportStage[0].affectedRows !== insertValuesMapSftwSupportStage.length) {
+  if (responseDBSftwSupportStage[0].affectedRows <= 0) {
+    // ... log error message and continue with the next record
+    throw `failed to ${importType} tp_softwareSupportStage ${insertValuesMapSftwSupportStage.length} SoftwareLifecycle.softwareSupportStage records`;
+  }
+
+}
+
+function insertUpdateRecord (record, insertStatement, columnList) {
   
-    const hours = duration.getUTCHours();
-    const minutes = duration.getUTCMinutes();
-    const seconds = duration.getUTCSeconds();
+  // - description: 
+  // - parameters: 
+  // - returns: 
+
+
+
+}
+
+async function insertUpdateSoftwareSupportStage (insertStatement, insertValuesMap, insertValuesMapSftwSupportStage, importType, datasetName, lastRecordId) {
+
+  let deleteStatementSftwSupportStage = `DELETE FROM tech_catalog.tp_softwareSupportStage WHERE softwareLifecycleId = '${lastRecordId}'; `;
+  let insertStatementSftwSupportStage = ``;
+    
   
-    let result = "";
-    if (hours > 0) {
-      result += hours + (hours === 1 ? " hour" : " hours");
+  // DELETE OLD
+  // ... delete all existing SoftwareLifecycle.softwareSupportStage records for this softwareLifecycleId
+  // ... send request to delete softwareSupportStage records from db table and wait for response
+  let responseDB = await sql_promise.query(deleteStatementSftwSupportStage);
+
+  // ... verify in response that correct number of records deleted
+  //if (responseDB[0].affectedRows !== insertValuesMapSftwSupportStage.length) {
+  if (responseDB[0].affectedRows <= 0) {
+    // ... log error message and continue with the next record
+    throw `ERROR: failed to delete old tp_softwareSupportStage ${insertValuesMapSftwSupportStage.length} SoftwareLifecycle.softwareSupportStage records`;
+  }
+
+  // INSERT NEW RECORDS
+  // ... send request to inSsert softwareSupportStage record into db table and wait for response
+  const responseDBSftwSupportStage = await sql_promise.query(insertStatementSftwSupportStage, [insertValuesMapSftwSupportStage]);
+
+  // ... verify in response that correct number of records inserted
+  //if (responseDBSftwSupportStage[0].affectedRows !== insertValuesMapSftwSupportStage.length) {
+  if (responseDBSftwSupportStage[0].affectedRows <= 0) {
+    // ... log error message and continue with the next record
+    throw `failed to ${importType} tp_softwareSupportStage ${insertValuesMapSftwSupportStage.length} SoftwareLifecycle.softwareSupportStage records`;
+  }
+
+}
+*/
+
+// ===================================
+// import utility functions
+
+//const logMode = '';    
+
+function logger(heading, msg, error = null, logFileName = null) {
+
+  // - description: logs a message to the console, db, and/or file
+  // - parameters: msg (string), error (string), errorLogPath (string
+  // - returns: msg (string)(optional for returning the response)
+
+  let logMsg = heading + ' ' + msg;
+
+  if (error) {
+    logMsg = `${logMsg}\n ${error}`;
+  }
+
+  // log to console
+  console.log(`${logMsg}`);
+
+  // log to file
+  if (logFileName !== null && logFileName !== '' && logFileName !== undefined) {
+    fs.appendFileSync(logFileName, logMsg);
+  }
+
+  // log to db
+
+
+  return msg;
+}
+
+function writeToLogFile(msg, logFileName = null) {
+
+  // - description: writes a message to a log file
+  // - parameters: msg (string), logFileName (string)
+  // - returns: none
+
+  fs.appendFileSync(logFileName, msg);
+
+}
+
+function formatDateTime(dateObj) {
+  
+  // - description: formats the date and time for logging
+  // - parameters: dateObj (date object)
+  // - returns: formattedDate (string)
+  
+  let formattedDate = new Date(dateObj);
+
+  if (formattedDate === null || formattedDate === '') {
+    return null;
+  } else {
+    // Get the individual date components
+    const year = formattedDate.getFullYear();
+    const month = String(formattedDate.getMonth() + 1).padStart(2, '0');
+    const day = String(formattedDate.getDate()).padStart(2, '0');
+
+    // Get the individual time components
+    const hours = String(formattedDate.getHours()).padStart(2, '0');
+    const minutes = String(formattedDate.getMinutes()).padStart(2, '0');
+    const seconds = String(formattedDate.getSeconds()).padStart(2, '0');
+    const milliseconds = String(formattedDate.getMilliseconds()).padStart(3, '0');
+
+    // Combine the components into the desired format
+    formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
+
+    return formattedDate;
+  }
+}
+
+function formatFileDateTime(dateObj) {
+
+  // - description: formats a date object to the format used in the file name
+  // - parameters: dateObj (date object)
+  // - returns: formattedDate (string)
+
+  var formattedDate = new Date(dateObj);
+
+  if (formattedDate === null || formattedDate === '') {
+    return null;
+  } else {
+    // Get the individual date components
+    const year = formattedDate.getFullYear();
+    const month = String(formattedDate.getMonth() + 1).padStart(2, '0');
+    const day = String(formattedDate.getDate()).padStart(2, '0');
+
+    // Get the individual time components
+    const hours = String(formattedDate.getHours()).padStart(2, '0');
+    const minutes = String(formattedDate.getMinutes()).padStart(2, '0');
+    const seconds = String(formattedDate.getSeconds()).padStart(2, '0');
+
+    // Combine the components into the desired format
+    formattedDate = `${year}${month}${day}_${hours}.${minutes}`;
+
+    return formattedDate;
+  }
+}
+
+function formatDuration(start_date, end_date) {
+
+  // - description: calculates the duration between two dates and returns a formatted date string
+  // - parameters: start_date (date object), end_date (date object)
+  // - returns: result (string)
+
+  const duration = new Date(end_date - start_date);
+
+  const hours = duration.getUTCHours();
+  const minutes = duration.getUTCMinutes();
+  const seconds = duration.getUTCSeconds();
+
+  let result = "";
+  if (hours > 0) {
+    result += hours + (hours === 1 ? " hour" : " hours");
+  }
+  if (minutes > 0) {
+    if (result !== "") {
+      result += ", ";
     }
-    if (minutes > 0) {
-      if (result !== "") {
-        result += ", ";
-      }
-      result += minutes + (minutes === 1 ? " minute" : " minutes");
+    result += minutes + (minutes === 1 ? " minute" : " minutes");
+  }
+  if (seconds > 0) {
+    if (result !== "") {
+      result += ", ";
     }
-    if (seconds > 0) {
-      if (result !== "") {
-        result += ", ";
-      }
-      result += seconds + (seconds === 1 ? " second" : " seconds");
+    result += seconds + (seconds === 1 ? " second" : " seconds");
+  }
+  
+  return result;
+}
+
+function stringToDate (dateString) {
+
+  // - description: converts a date formatted string to a date object
+  // - parameters: dateString (string)
+  // - returns: newDate (date object)
+
+  if (dateString === null || dateString === '' || dateString === undefined) {
+    return null;
+  } else {
+    if (dateString.includes('T') && dateString.slice(-1) === 'Z') {
+      dateString = dateString.replace('T', ' ').replace('Z', '');
     }
     
-    return result;
-  }
-
-  function stringToDate (dateString) {
-    if (dateString === null || dateString === '' || dateString === undefined) {
+    var newDate = new Date(dateString);
+    newDate = newDate.getFullYear() + "-" + 
+                  String(newDate.getMonth() + 1).padStart(2, '0') + "-" +
+                  String(newDate.getDate()).padStart(2, '0') +  " " +
+                  String(newDate.getHours()).padStart(2, '0') +  ":" +
+                  String(newDate.getMinutes()).padStart(2, '0') +  ":" +
+                  String(newDate.getSeconds()).padStart(2, '0');
+    if (newDate === 'NaN-NaN-NaN NaN:NaN:NaN') {
       return null;
     } else {
-      if (dateString.includes('T') && dateString.slice(-1) === 'Z') {
-        dateString = dateString.replace('T', ' ').replace('Z', '');
-      }
-      
-      var newDate = new Date(dateString);
-      newDate = newDate.getFullYear() + "-" + 
-                    String(newDate.getMonth() + 1).padStart(2, '0') + "-" +
-                    String(newDate.getDate()).padStart(2, '0') +  " " +
-                    String(newDate.getHours()).padStart(2, '0') +  ":" +
-                    String(newDate.getMinutes()).padStart(2, '0') +  ":" +
-                    String(newDate.getSeconds()).padStart(2, '0');
-      if (newDate === 'NaN-NaN-NaN NaN:NaN:NaN') {
-        return null;
-      } else {
-        return newDate;
-      }
+      return newDate;
     }
   }
+}
 
-  function logger(msg, error) {
-    if (error === undefined) {
-      console.log(`(${formatDateTime(Date.now())}): ${datasetName} - ${msg}`);
+function removeSpecialChar (string) {
+
+  // - description: removes special characters from a string that have been identified as causing issues during insert
+  // - parameters: string (string)
+  // - returns: string (string)
+
+  if (string === null) {
+    return null;
+  } else {
+    return string = string.replace(/'/g, "").replace(/\r/g, ' ').replace(/\n/g, ' ').replace(/\"/g, ' ').replace(/\\/g, ' ');
+  }
+}
+
+function booleanToTinyint (boolean) {
+
+  // - description: converts a boolean to a tinyint when inserting booleans into the database
+  // - parameters: boolean (boolean)
+  // - returns: tinyint (string)
+
+  if (boolean === null) {
+    return null;
+  } else {
+    if (boolean === true) {
+      return '1';
     } else {
-      console.log(`(${formatDateTime(Date.now())}): ${datasetName} - ${msg}... \n`, error);
+      return '0';
     }
   }
+}
+
+function handleNullId (record) {
+
+  // - description: handles null id values returned from the database
+  // - parameters: record (object)
+  // - returns: id (string)
 
   try {
+    if (record.id === null) {
+      return null;
+    } else {
+      return record.id;
+    }
+  } catch (error) {
+    return null;
+  }
+}
+
+let timerArray = [];  // array to hold timer objects
+function timer (timerObj = null) {
+
+  if (timerObj === null) { // starts timer
+
+    // create new timer object
+    let newTimer = new Date();
+    let newTimerObject = {
+      id : timerArray.length + 1,
+      start : newTimer,
+      end : null,
+      duration : null
+    };
     
-    logger(`Starting Get Sync List...`);
+    // add timer to array
+    timerArray.push(newTimerObject);
 
-    // DEFINE FILE PATHS
+    logger(`new timer created: `, newTimerObject); // DEBUG
+    
+    // return new timer object
+    return newTimerObject;
 
-    const syncPath = `tech_catalog_data/sync/sync_${datasetName}_${formatFileDateTime(uploadStartTime)}.log`
-    const errorLogPath = `tech_catalog_data/logs/errors_${datasetName}_${formatFileDateTime(uploadStartTime)}.log`;
+  } else { // stops timer
 
-    // PRE-UPLOAD CHECKS
-    logger(`...... Verifying Parameters`);
+    // add end and duration to timer object
+    timerObj.end = formatDateTime(new Date());
+    timerObj.duration = formatDuration(timerObj.start, timerObj.end);
+
+    // replace existing log with updated log
+    timerArray[timerObj.id] = timerObj;
+    
+    // return timer object
+    return timerObj;
+
+  }
+
+}
+
+
+// ===================================
+// import process functions
+
+exports.importTechCatlogData = async (data, response) => {
+
+  // -----------------------------------------------
+  // import variables and functions
+
+    //console.log('data: ', data); // debugging
+
+    const refreshToken = data.refreshtoken;                   // retrieved from the requests body, stores the refresh token for the flexera api to get a new access token
+    const datasetName = data.dataset;                         // dataset name to be pulled // ie. "Taxonomy";
+    const takeAmt = data.takeamount;                          // amount of records to pull per page
+    const importId = data.importid;                           // import id identifies a group of import requests to be used for logging
+    const isDryRun = data.dryrun;                             // flag to determine if the import insert/update statement or not
+    const importType = data.importtype;                       // import type identifies the type of import to be used for logging
+    const lastSyncDateOverride = data.lastsyncdateoverride;   // last synchronized date to override the last sync date in the database
+    const lastIdOverride = data.lastidoverride;               // last id to override the last id in the database
+
+    let accessToken = '';                                 // stores the flerera api access token
+    let graphqlQuery = '';                                // stores the graphql query to be sent to the flexera api
+    let columnList = '';                                  // select column list based on dataset name
+
+    const tableName = `tech_catalog.tp_${datasetName}`;   // table name based on dataset name// insert table name based on dataset name
+    let insertStatement = `insert into ${tableName} (`;   // insert statement for table records
+    let updateStatement = `update ${tableName} set `;
+    let isStatementBuilt = false;                         // flag to determine if the update statement has been built
+
+    // (only used for SoftwareLifecycle dataset ONLY)
+    const insertStatementSftwSupportStage =
+          `insert into tech_catalog.tp_SoftwareSupportStage (softwareLifecycleId, definition, endDate, manufacturerId, name, order_, policy, publishedEndDate) values ?`;
+    
+    let pageCounter = 0;                                  // total number of pages processed
+    let pageRequestCounter = 0;                           // total number of page requests made
+    let recordCounter = 0;                                // total number of records received
+    let recordRequestCounter = 0;                         // total number of record requests made
+    let recordsFailedCounter = 0;                         // total number of records that failed to insert into db
+
+    let recordsInsertedCounter = 0;                       // total number of records inserted into db
+
+    let recordToUpdateCounter = 0;                        // total number of records to update
+    let recordsUpdatedCounter = 0;                        // total number of records updated
+    let recordsUpdateFailedCounter = 0;                   // total number of records that failed to update
+    
+    let pageSummaryArray = [];                            // array of page summary objects, page added after completed
+    let recordsFailedList = [];                           // list of records that failed to insert into db
+
+    let beginTableRecordCount = 0;                        // number of records in the table before the import process begins
+    let endTableRecordCount = 0;                          // number of records in the table after the import process ends
+    
+    let isLastPage = false;                               // flag to determine if this is the last page
+    let lastRecordId = null;                              // id of last record processed
+    let lastRecordIdUsed = null;                          // the inital last id value used to start the import process
+
+    let lastSynchronizedDate = null;                      // the last synchronized date for the dataset
+    const uploadStartTime = new Date();                   // upload start time //TIMESTAMP();
+    let uploadEndTime = null;                             // upload end time //TIMESTAMP();
+    let recordCountDisplay = 0;
+    let affectRowsCounter = 0;                            // number of rows affected by the insert/update statement
+
+    // path and insert import log file name
+    const insertLogFileName = `${logFolderPath}/${formatFileDateTime(uploadStartTime)}_insert_${datasetName}.log`
+    // path and update import log file name
+    const updateLogFileName = `${logFolderPath}/${formatFileDateTime(uploadStartTime)}_update_${datasetName}.log`
+    // path and test log file name
+    const updateRecListLogFileName = `${logFolderPath}/${formatFileDateTime(uploadStartTime)}_${importType}_update_${datasetName}_records_list.log`
+    // path and error log file name
+    const errorLogFileName  = `${logFolderPath}/${formatFileDateTime(uploadStartTime)}_${importType}_${datasetName}_errors.log`;
+    // path and test log file name
+    const testLogFileName   = `${logFolderPath}/${formatFileDateTime(uploadStartTime)}_${importType}_${datasetName}_json_data.log`
+
+    
+    // ... prepares a header to be put in front of each logger message
+    function getLogHeaderNoTime () {
+      return `/${importId}/${datasetName}/` 
+              + (pageCounter > 0 ? `p${pageCounter}/` 
+              + (recordCountDisplay > 0 ? `r${recordCountDisplay}/` : '') : '');
+    }
+
+    function getLogHeader () {
+      return `${formatDateTime(new Date())}${getLogHeaderNoTime()}`;
+    }
+
+
+    // ... returns the import summary at any point in the import process
+    function getImportSummary () {
+      const summary = {
+        message : `Technopedia Data Import`,
+        importId : importId,
+        importType : importType,
+        //importStatus : (uploadEndTime == null ? 'in progress' : ('complete')),
+        dataset : datasetName,
+        takeAmount : takeAmt,
+        dryRun : (isDryRun === 'true' ? 'true' : 'false'),
+        lastSyncDateOverride : lastSyncDateOverride,
+        lastIdOverride : lastIdOverride,
+        lastRecordId : lastRecordId,
+        lastRecordIdUsed : lastRecordIdUsed,
+        lastSynchronizedDate : lastSynchronizedDate,
+        startTime : formatDateTime(uploadStartTime),
+        endTime : formatDateTime(uploadEndTime),
+        duration : formatDuration(uploadStartTime, uploadEndTime),
+        pageRequestsMade : pageRequestCounter,
+        pagesProcessed : pageCounter,
+        recordsProcessed : recordCounter,
+        recordsToBeInsertOrUpdate : recordToUpdateCounter,
+        recordsInsertedOrUpdated : recordsInsertedCounter,
+        recordsFailed : recordsFailedCounter,
+        databaseAffectedRows : affectRowsCounter,
+        //recordRequestsMade : recordRequestCounter
+        //recordsUpdated : recordsUpdatedCounter,
+        //recordsUpdateFailed : recordsUpdateFailedCounter,
+        //recordsFailedList : recordsFailedList,
+        beginTableRecordCount : beginTableRecordCount,
+        endTableRecordCount : endTableRecordCount,
+        logDateTime : formatDateTime(new Date()),
+        pageSummaries : pageSummaryArray
+      };
+      return summary;
+    }
+
+    // ... performs the required tasks before ending the import process
+    async function endImport() {
+
+      // ... get the ending table record count
+      endTableRecordCount = await getTableRecordCount(tableName, getLogHeaderNoTime());
+
+      uploadEndTime = new Date();
+
+      // ... get the import summary
+      let summary = getImportSummary();
+
+      // ... log import summary and complete import request.
+      //logger(`${getLogHeader()}`, `IMPORT SUMMARY: \n${JSON.stringify(summary)}`);
+      logger(`${getLogHeader()}`, `... import summary logged`);
+
+      logger(`${getLogHeader()}`, `********** ENDING ${importType} IMPORT PROCESS **********\n\n`);
+
+      return summary;
+
+    }
+
+  // -----------------------------------------------
+
+  // -----------------------------------------------
+  // import process
+  try {
+
+    logger(`${getLogHeader()}`, `********** STARTING ${importType} IMPORT PROCESS **********`);
+
+    // -----------------------------------------------
+    // pre-import steps
     try {
-      if (refreshToken === undefined || refreshToken === null || refreshToken === '') {
-        let errorMsg = `No Token Provided`;
-        logger(errorMsg);
-        return errorMsg;
+
+      logger(`${getLogHeader()}`, `*** STARTING PRE-IMPORT STEPS ***`);
+
+
+      // -----------------------------------------------
+      // 1. validate parameters
+      try {
+
+        // ... run validation
+        await validateRequest(data, getLogHeaderNoTime());
+
+      } catch (error) {
+        // ... log failure, end import.
+        logger(`${getLogHeader()}`, `failed validating request parameters`, error, errorLogFileName);
+        return endImport();
       }
 
-      if (datasetName === undefined || datasetName === null || datasetName === '') {
-        let errorMsg = `No Dataset Provided`;
-        logger(errorMsg);
-        return errorMsg;
-      } else if (datasetName !== 'Manufacturer' && 
-                  datasetName !== 'Platform' && 
-                  datasetName !== 'SoftwareEdition' && 
-                  datasetName !== 'SoftwareFamily' && 
-                  datasetName !== 'SoftwareLifecycle' && 
-                  datasetName !== 'SoftwareMarketVersion' && 
-                  datasetName !== 'SoftwareProduct' && 
-                  datasetName !== 'SoftwareProductLink' && 
-                  datasetName !== 'SoftwareRelease' && 
-                  datasetName !== 'SoftwareReleaseLink' && 
-                  datasetName !== 'SoftwareReleasePlatform' && 
-                  datasetName !== 'SoftwareVersion' && 
-                  datasetName !== 'Taxonomy') {
-        let errorMsg = `Dataset Provided is not valid`;
-        logger(errorMsg);
-        return errorMsg;
-      }
-    } catch (error) {
-      let errorMsg = `An error occured while checking the parameters`;
-      logger(errorMsg);
-      return errorMsg;
-    }
-    logger(`...... Parameters Verified`);
 
-    // GET THE MAX SYNCRONIZED DATE FROM THE DATASETS TABLE
+      // -----------------------------------------------
+      // 2. get the last id and the last synchronizedDate
+      try {
 
-    logger(`...... Getting Last Synchronized Date`);
-    try {
-      let [rows, fields] = await sql_promise.query(`select max(synchronizedDate) as lastSynchronizedDate from ${tableName};`);
-
-      lastSynchronizedDate = new Date(rows[0].lastSynchronizedDate);
-
-      if (lastSynchronizedDate === null) {
-        let errorMsg = 'No Synchronized Date Found';
-        logger(errorMsg);
-        return errorMsg;
-      } 
-
-      // write lastRecordId to file
-      fs.appendFileSync(syncPath, `"Max Synchronized Date:", "${formatDateTime(lastSynchronizedDate)}"\r\n`);
-    } catch (error) {
-      let errorMsg = `An error occured while getting the last synchronized date`;
-      logger(errorMsg, error);
-      return errorMsg;
-    }
-    logger(`...... Last Synchronized Date Found: ${formatDateTime(lastSynchronizedDate)}`);
-
-    // LOOP THROUGH EACH PAGE...
-
-    do {
-
-      // SETUP PAGE VARIABLES
-
-      pageCounter++;
-      let pageStartTime = new Date();
-      let pageJson = null;
-
-      logger(`PAGE ${pageCounter}`);
-
-      // FETCH ACCESS TOKEN FROM API
-
-      if (accessToken === ''){
-        logger(`...... Fetching Access Token`);
+        // handle overrides
         try {
-          const response = await fetch('https://login.flexera.com/oidc/token', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              grant_type: 'refresh_token',
-              refresh_token: refreshToken,
-            }),
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            accessToken = String(data.access_token);
-          } else {
-            let errorMsg = `Fetching the access token returned a ${response.status} error`;
-            logger(errorMsg, response);
-            return errorMsg;
+          if (data.lastidoverride) {
+            lastRecordId = lastRecordIdUsed = data.lastidoverride;
           }
         } catch (error) {
-          let errorMsg = `An error occured while fetching the access token`;
-          logger(errorMsg, error);
-          return errorMsg;
-        }
-        logger(`...... Access Token Fetched`);
-      } else {
-        logger(`...... Access Token already exists`);
-      }
-
-      // BUILD GRAPHQL QUERY
-
-      logger(`...... Building GraphQL Query`);
-      try {
-        if (lastRecordId !== null) {
-          additionalQueryParameters = ` afterId: "${lastRecordId}"`;
-        } else {
-          additionalQueryParameters = '';
+          lastRecordId = lastRecordIdUsed = null;
         }
 
-        graphqlQuery = JSON.stringify({
-          query: `{
-            ${datasetName}(take: ${takeAmt}${additionalQueryParameters} ) {
-                ${columnList}
+        try {
+          if (data.lastsyncdateoverride) {
+            lastSynchronizedDate = new Date(stringToDate(data.lastsyncdateoverride));
           }
-        }`,});
+        } catch (error) {
+          lastSynchronizedDate = null;
+        }
+
+        // get last id
+        if (importType === 'insert' && !lastRecordId) {
+
+          // ... get the last record id from the database
+          lastRecordId = lastRecordIdUsed = await getLastRecordId(tableName, getLogHeaderNoTime());
+          
+        }
+
+        //get  last synchronizedDate
+        if (!lastSynchronizedDate) {
+          
+          // ... get the last synchronizedDate from the database
+          lastSynchronizedDate = await getLastSyncDate(tableName,  getLogHeaderNoTime());
+
+        }
+
       } catch (error) {
-        let errorMsg = `An error occurred while building the GraphQL query.`;
-        logger(errorMsg, error);
-        return errorMsg;
-      }
-      logger(`...... GraphQL query built`);
-      //console.log(graphqlQuery) // DEBUGGING
-
-      // FETCH DATA FROM API
-
-      logger(`...... Fetching data from API`);
-      let durationStartTime = new Date().getTime();
-
-      const apiResponse = await fetch("https://beta.api.flexera.com/content/v2/orgs/35253/graphql", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: "Bearer " + accessToken,
-        },
-        body: graphqlQuery,
-      });
-
-      if (apiResponse.ok) {
-        pageJson = await apiResponse.json();
-        
-        let durationEndTime = new Date().getTime();
-        logger(`...... Data fetched from API... ${formatDuration(durationStartTime, durationEndTime)}`);
-      } else {
-        let errorMsg = `Fetching the data from the API returned a ${apiResponse.status} error`;
-        logger(errorMsg, apiResponse);
-        //console.log('Error GraphQL Query: ' + graphqlQuery) // DEBUGGING
-        return errorMsg;
+        // ... log failure, end import.
+        logger(`${getLogHeader()}`, `failed getting the last id and synchronizedDate`, error, errorLogFileName);
+        return endImport();
       }
 
-      // SETUP PAGE RECORD VARIABLES
+      // ... get the beginning table record count
+      beginTableRecordCount = await getTableRecordCount(tableName, getLogHeaderNoTime());
 
-      let pageRecordCounter = 0;
-      let pageFailedRecordCounter = 0;
-      let pageSyncCounter = 0;
-      let consecutiveFailedRecordCounter = 0;
-      let notificationCounter = 0;
+    } catch (error) {
+      // ... log error, end import.
+      logger(`${getLogHeader()}`, `an unexpected error occurred during pre-import steps`, error, errorLogFileName);
+      return endImport();
+    }
+    // end pre-import --------------------------------
 
-      let datasetArray = pageJson.data[datasetName];
+
+    // -----------------------------------------------
+    // import steps
+    try {
+
+      logger(`${getLogHeader()}`, `*** STARTING IMPORT STEPS ***`);
+
+      // -----------------------------------------------
+      // page process
+      do {
+
+        // ... increment import counters
+        pageCounter++;
+
+        // ... setting page variables and functions
+        const pageStartTime = new Date();
+        let pageEndTime = null;
+        let pageDuration = null;
+        let pageRecordCounter = 0;
+        let pageRecordsInsertedCounter = 0;
+        let pageRecordsToUpdateCounter = 0;
+        let pageRecordsUpdatedCounter = 0;
+        let pageRecordsUpdateFailedCounter = 0;
+        let pageRecordsFailedCounter = 0;
+        let consecutiveFailedRecordCounter = 0;
+        let notificationCounter = 0;
+
+        let pageJson = null;
+        let datasetArray = [];
+
+        // ... returns the page summary at any point in the import process
+        function getPageSummary () {
+          pageEndTime = new Date();
+          const summary = {
+              importId : importId,
+              page : pageCounter,
+              startTime : formatDateTime(pageStartTime),
+              endTime : formatDateTime(pageEndTime),
+              duration : formatDuration(pageStartTime, pageEndTime),
+              arraySize : datasetArray.length,
+              pageRecordsProcessed : pageRecordCounter,
+              pageRecordsInserted : pageRecordsInsertedCounter,
+              pageRecordsToUpdate : pageRecordsToUpdateCounter,
+              //pageRecordsUpdated : pageRecordsUpdatedCounter,
+              pageRecordsFailed : pageRecordsFailedCounter,
+              consecutiveFailedRecords : consecutiveFailedRecordCounter,
+              isLastPage : isLastPage,
+              logDateTime : formatDateTime(new Date())
+            };
+          pageSummaryArray.push(summary);
+          return summary;
+        }
 
 
-      // PROCESS ALL RECORDS ON A PAGE DATA
+        // -----------------------------------------------
+        // part 1: page request
+        try {
 
-      logger(`...... Processing Page ${pageCounter} data`);
-      try {
+          logger(`${getLogHeader()}`, `------ PAGE ${pageCounter} ------`);
 
-        if (datasetArray.length === 0) {
-          logger(`...... No records found on Page ${pageCounter}`);
-          isLastPage = true;
-          pageCounter--;
-        } else {
-          logger(`...... Processing ${datasetArray.length} records on Page ${pageCounter}`);
 
-          // LOOP THROUGH EACH RECORD IN THE PAGE...
+          // -----------------------------------------------
+          // 1. get the access token
+          try {
 
-          for (let datasetObject of datasetArray) {
-            recordCounter++;
-            pageRecordCounter++;
-            notificationCounter++;
-
-            lastRecordId = datasetObject.id;
-
-            // COMPARE SYNCRONIZEDDATE (synchronizedDate)
-
-            try {
-              let recordSynchronizedDate = new Date(stringToDate(datasetObject.synchronizedDate));
-
-              if (recordSynchronizedDate > lastSynchronizedDate){
-                syncCounter++;
-                pageSyncCounter++;
-
-                let insertTxt = `"${lastRecordId}", "${datasetObject.synchronizedDate}"\r\n`;
-
-                // write lastRecordId to file
-                fs.appendFileSync(syncPath, insertTxt);
-              }
-            } catch (error) {
-              pageFailedRecordCounter++;
-              let errorMsg = `...... An error occurred while comparing the synchronizedDate (id:${lastRecordId})`;
-              logger(errorMsg, error);
-
-              // write errored lastRecordId to file
-              fs.appendFileSync(errorLogPath, `"${lastRecordId}"\r\n`);
-              //return errorMsg;
+            if (accessToken === '') {
+              // ... get the access token from the flexera api
+              accessToken = await getAccessToken(refreshToken, getLogHeaderNoTime());
             }
 
-          } // ... END LOOP THROUGH EACH RECORD IN THE PAGE
-        } 
-      
-        logger(`...... Page ${pageCounter} data processed`);
+          } catch (error) {
+            // ... log failure, end import.
+            logger(`${getLogHeader()}`, `failed getting the access token`, error, errorLogFileName);
+            return endImport();
+          }
+
+
+          // -----------------------------------------------
+          // 2. build graphql query
+          try {
+
+            // ... build graphql query
+            graphqlQuery = await buildAPIQuery(datasetName, takeAmt, lastRecordId, 'all', getLogHeaderNoTime());
+
+            // ... (TESTING) log graphql query
+            writeToLogFile(`page ${pageCounter} graphqlQuery: ` + graphqlQuery + `,\n`, testLogFileName); // DEBUG
+
+          } catch (error) {
+            // ... log failure, end import.
+            logger(`${getLogHeader()}`, `failed building the graphql query`, error, errorLogFileName);
+            return endImport();
+          }
+
         
-        // PAGE SUMMARY
+          // -----------------------------------------------
+          // 3. execute page request
+          try {
 
-        failedRecordCounter = failedRecordCounter + pageFailedRecordCounter;
+            // ... sending api request for page data to flexera
+            pageJson = await sendAPIQuery(graphqlQuery, accessToken, getLogHeaderNoTime());
 
-        let pageEndTime = new Date();
+            writeToLogFile(`page ${pageCounter} graphqlQuery: ` + JSON.stringify(pageJson) + `,\n`, testLogFileName); // DEBUG
 
-        let pageDuration = formatDuration(pageStartTime, pageEndTime);
+            pageRequestCounter++;
 
-        logger(`Page ${pageCounter}... Summary: ${pageSyncCounter}/${pageRecordCounter} records require re-syncing w/ ${pageFailedRecordCounter} failed verification... ${pageDuration}`);
+          } catch (error) {
+            // ... log failure, end import.
+            logger(`${getLogHeader()}`, `failed executing page request`, error, errorLogFileName);
+            return endImport();
+          }
+        
+        
+          // -----------------------------------------------
+          // 4. verifying page response
+          try {
 
-        if (datasetArray.length < takeAmt || pageFailedRecordCounter >= 10) {
-          uploadEndTime = new Date();
-          logger(`...... ending Get Sync List`);
+            logger(`${getLogHeader()}`, `... verifying page response`);
+
+            // ... get the dataset array from the page json
+            datasetArray = pageJson.data[datasetName];
+
+            // ... check if dataset array is empty
+            if (datasetArray.length === 0) {
+              
+              // ... if array is empty,
+              // ... logging no records returned
+              logger(`${getLogHeader()}`, `... no records returned from flexera api for this page`);
+
+              // ... set isLastPage to true to end the import process
+              isLastPage = true;
+
+              // ... decrement page counter since page contains no records
+              pageCounter--;
+
+            } else {
+
+              // ... logging number of records on page
+              logger(`${getLogHeader()}`, `... ${datasetArray.length} records received`);
+
+            }
+        
+          } catch (error) {
+            // ... log failure, end import.
+            logger(`${getLogHeader()}`, `failed verifying api response`, error, errorLogFileName);
+            return endImport();
+          }
+
+        } catch (error) {
+          // ... log error, end import.
+          logger(`${getLogHeader()}`, `unexpected error occurred during page request`, error, errorLogFileName);
+          return endImport();
+        }
+
+
+        // -----------------------------------------------
+        // (parts: 2 and 3)
+        // if page request returned data,
+        if (!isLastPage) {
+
+          // -----------------------------------------------
+          // part 2: import page record
+          try {
+
+            logger(`${getLogHeader()}`, `--- STARTING PAGE ${pageCounter} RECORD IMPORT ---`);
+          
+            // -----------------------------------------------
+            // records process
+            for (let datasetObject of datasetArray) {
+
+              // ... increment record loop iteration counters
+              recordCounter++;
+              pageRecordCounter++;
+              notificationCounter++;
+              recordCountDisplay++;
+
+              // ... set the current record as lastRecordId
+              lastRecordId = datasetObject.id;
+
+              let recordsToInsert = [];           // stores the array of record objects to insert
+              let insertValuesMap = new Map();    // stores the map of record values to columns for insert statement
+
+              let recordsToUpdate = [];           // stores the array of record objects to update
+              let updateValuesMap = new Map();    // stores the map of record values to columns for update statement
+
+              // ... (for SoftwareLifecycle ONLY) stores SoftwareLifecycle.softwareSupportStage Object data 
+              let recordsToInsertSftwSupportStage = [];
+              let insertValuesMapSftwSupportStage = new Map();
+
+              let recordGraphqlQuery = null;
+              let updateDatasetArray = [];
+              let pageRecordJson = null;
+              let insertUpdateRequired = false;
+
+              if (importType === 'insert') {
+
+                insertUpdateRequired = true;
+
+              } else if (importType === 'update') {
+
+
+                // -----------------------------------------------
+                // 1. compare synchronizedDate values
+                try {
+
+                  //logger(`${getLogHeader()}`, `comparing synchronizedDate values`);
+
+                  // ... get the record's synchronizedDate
+                  let recordSynchronizedDate = new Date(stringToDate(datasetObject.synchronizedDate));
+
+                  // ... compare the record's synchronizedDate to the lastSynchronizedDate from the db
+                  if (recordSynchronizedDate > lastSynchronizedDate){
+
+                    logger(`${getLogHeader()}`, `...... updating id:"${lastRecordId}"`);
+
+                    // *************** export json for testing only ****************
+                    try{
+                      // ... log text
+                      let insertTxt = `"${lastRecordId}", "${datasetObject.synchronizedDate}"\r\n`;
+                      // ... (TESTING ONLY) write record json to file
+                      fs.appendFileSync(testLogFileName, JSON.stringify(insertTxt) + ',\n');
+                      // ... log record to update
+                      //logger(`${getLogHeader()}`, `......adding to update log file ${insertTxt}`);
+                    } catch (error) {
+                      logger(`${getLogHeader()}`, `TESTING - failed writing record to file`, error, errorLogFileName);
+                    }
+                    // *************************************************************
+                      
+                    // ... increment the counters when a record to update is found
+                    recordToUpdateCounter++;
+                    insertUpdateRequired = true;
+
+                  } else {
+
+                    insertUpdateRequired = false;
+
+                  }
+
+                } catch (error) {
+                  // ... raise error
+                  throw error;
+                }
+
+              } else {
+                // ... raise error
+                throw `importType value is invalid`;
+              }
+
+
+              // -----------------------------------------------
+              // insert/update statement
+              if (insertUpdateRequired) {
+
+                // -----------------------------------------------
+                // 1. build insert/update statement
+                try{
+                  
+                  //logger(`${getLogHeader()}`, `building insert statement`);
+
+
+                  // ... add the record object to array 
+                  recordsToInsert.push(datasetObject);
+
+                  // ... add the column values to map
+                  switch (datasetName) {
+                    case 'Manufacturer':
+                      insertValuesMap = recordsToInsert.map(recordsToInsert => 
+                        [datasetObject.id,	
+                        datasetObject.acquiredDate,	
+                        datasetObject.city,	
+                        datasetObject.country,	
+                        stringToDate(datasetObject.createdDate),	
+                        datasetObject.deleteReason,	
+                        datasetObject.description,	
+                        datasetObject.email,	
+                        datasetObject.employees,	
+                        stringToDate(datasetObject.employeesDate),	
+                        datasetObject.fax,	
+                        stringToDate(datasetObject.fiscalEndDate),	
+                        datasetObject.isPubliclyTraded,	
+                        booleanToTinyint(datasetObject.isToBeDeleted),	
+                        datasetObject.knownAs,	
+                        datasetObject.legal,	
+                        datasetObject.name,	
+                        datasetObject.ownerId,	
+                        datasetObject.phone,	
+                        stringToDate(datasetObject.profitsDate),	
+                        datasetObject.profitsPerYear,	
+                        datasetObject.replacementId,	
+                        datasetObject.revenue,	
+                        stringToDate(datasetObject.revenueDate),	
+                        datasetObject.state,	
+                        datasetObject.street,	
+                        datasetObject.symbol,	
+                        stringToDate(datasetObject.synchronizedDate),	
+                        datasetObject.tier,	
+                        stringToDate(datasetObject.toBeDeletedOn),	
+                        stringToDate(datasetObject.updatedDate),	
+                        datasetObject.website,	
+                        datasetObject.zip,	
+                      ]);
+                      break;
+                    case 'Platform':
+                      insertValuesMap = recordsToInsert.map(recordsToInsert => 
+                        [datasetObject.id,	
+                        stringToDate(datasetObject.createdDate),	
+                        datasetObject.deleteReason,	
+                        booleanToTinyint(datasetObject.isToBeDeleted),	
+                        datasetObject.name,	
+                        datasetObject.replacementId,	
+                        stringToDate(datasetObject.synchronizedDate),	
+                        stringToDate(datasetObject.toBeDeletedOn),	
+                        stringToDate(datasetObject.updatedDate),	
+                      ]);
+                      break;
+                    case 'SoftwareEdition':
+                      insertValuesMap = recordsToInsert.map(recordsToInsert => 
+                        [datasetObject.id,	
+                        stringToDate(datasetObject.createdDate),	
+                        datasetObject.deleteReason,	
+                        booleanToTinyint(datasetObject.isDesupported),	
+                        booleanToTinyint(datasetObject.isDiscontinued),	
+                        booleanToTinyint(datasetObject.isToBeDeleted),	
+                        datasetObject.name,	
+                        datasetObject.order,	
+                        datasetObject.replacementId,	
+                        stringToDate(datasetObject.synchronizedDate),	
+                        stringToDate(datasetObject.toBeDeletedOn),	
+                        stringToDate(datasetObject.updatedDate),	
+                        datasetObject.softwareProduct.id,	
+                      ]);
+                      break;
+                    case 'SoftwareFamily':
+                      try {
+                        insertValuesMap = recordsToInsert.map(recordsToInsert => 
+                          [datasetObject.id,	
+                          stringToDate(datasetObject.createdDate),	
+                          datasetObject.deleteReason,	
+                          booleanToTinyint(datasetObject.isDesupported),	
+                          booleanToTinyint(datasetObject.isDiscontinued),	
+                          booleanToTinyint(datasetObject.isToBeDeleted),	
+                          datasetObject.name,	
+                          datasetObject.replacementId,	
+                          stringToDate(datasetObject.synchronizedDate),	
+                          stringToDate(datasetObject.toBeDeletedOn),	
+                          stringToDate(datasetObject.updatedDate),	
+                          datasetObject.manufacturer.id,	
+                          datasetObject.taxonomy.id,	
+                        ]);
+                      } catch (error) {
+                        try {
+                          insertValuesMap = recordsToInsert.map(recordsToInsert => 
+                            [datasetObject.id,	
+                            stringToDate(datasetObject.createdDate),	
+                            datasetObject.deleteReason,	
+                            booleanToTinyint(datasetObject.isDesupported),	
+                            booleanToTinyint(datasetObject.isDiscontinued),	
+                            booleanToTinyint(datasetObject.isToBeDeleted),	
+                            datasetObject.name,	
+                            datasetObject.replacementId,	
+                            stringToDate(datasetObject.synchronizedDate),	
+                            stringToDate(datasetObject.toBeDeletedOn),	
+                            stringToDate(datasetObject.updatedDate),	
+                            datasetObject.manufacturer.id,	
+                            datasetObject.taxonomy,	
+                          ]);
+                          } catch (error) {
+                            insertValuesMap = recordsToInsert.map(recordsToInsert => 
+                              [datasetObject.id,	
+                              stringToDate(datasetObject.createdDate),	
+                              datasetObject.deleteReason,	
+                              booleanToTinyint(datasetObject.isDesupported),	
+                              booleanToTinyint(datasetObject.isDiscontinued),	
+                              booleanToTinyint(datasetObject.isToBeDeleted),	
+                              datasetObject.name,	
+                              datasetObject.replacementId,	
+                              stringToDate(datasetObject.synchronizedDate),	
+                              stringToDate(datasetObject.toBeDeletedOn),	
+                              stringToDate(datasetObject.updatedDate),	
+                              datasetObject.manufacturer,	
+                              datasetObject.taxonomy,	
+                            ]);
+                          }
+                      }
+                      break;
+                    case 'SoftwareLifecycle':
+                      insertValuesMap = recordsToInsert.map(recordsToInsert => 
+                        [datasetObject.id,	
+                        stringToDate(datasetObject.createdDate),	
+                        datasetObject.deleteReason,	
+                        datasetObject.endOfLife,	
+                        datasetObject.endOfLifeCalculatedCase,	
+                        stringToDate(datasetObject.endOfLifeDate),	
+                        stringToDate(datasetObject.endOfLifeDateCalculated),	
+                        datasetObject.endOfLifeException,	
+                        datasetObject.endOfLifeSupportLevel,	
+                        datasetObject.generalAvailability,	
+                        stringToDate(datasetObject.generalAvailabilityDate),	
+                        stringToDate(datasetObject.generalAvailabilityDateCalculated),	
+                        datasetObject.generalAvailabilityException,	
+                        booleanToTinyint(datasetObject.isToBeDeleted),	
+                        datasetObject.obsolete,	
+                        datasetObject.obsoleteCalculatedCase,	
+                        stringToDate(datasetObject.obsoleteDate),	
+                        stringToDate(datasetObject.obsoleteDateCalculated),	
+                        datasetObject.obsoleteException,	
+                        datasetObject.obsoleteSupportLevel,	
+                        datasetObject.replacementId,	
+                        stringToDate(datasetObject.synchronizedDate),	
+                        stringToDate(datasetObject.toBeDeletedOn),	
+                        stringToDate(datasetObject.updatedDate),	
+                        datasetObject.softwareRelease.id,	
+                      ]);
+
+                      // check if softwareSupportStage has data
+                      if (datasetObject.softwareSupportStage !== null && datasetObject.softwareSupportStage !== undefined) {
+                        for (let supportStageObject of datasetObject.softwareSupportStage) {
+                          recordsToInsertSftwSupportStage.push(supportStageObject);
+
+                          insertValuesMapSftwSupportStage = recordsToInsertSftwSupportStage.map(recordsToInsertSftwSupportStage => 
+                            [lastRecordId,
+                            supportStageObject.definition,	
+                            stringToDate(supportStageObject.endDate),	
+                            supportStageObject.manufacturerId,	
+                            supportStageObject.name,	
+                            supportStageObject.order,	
+                            supportStageObject.policy,	
+                            supportStageObject.publishedEndDate,	
+                            ]);
+                        }
+                        //.log(' - SoftwareSupportStage data found:' + datasetObject.softwareSupportStage.length + ' records.'); // Debug
+                      }
+                      break;
+                    case 'SoftwareMarketVersion':
+                      insertValuesMap = recordsToInsert.map(recordsToInsert => 
+                        [datasetObject.id,	
+                        stringToDate(datasetObject.createdDate),	
+                        datasetObject.deleteReason,	
+                        booleanToTinyint(datasetObject.isDesupported),	
+                        booleanToTinyint(datasetObject.isDiscontinued),	
+                        booleanToTinyint(datasetObject.isToBeDeleted),	
+                        datasetObject.name,	
+                        datasetObject.order,	
+                        datasetObject.replacementId,	
+                        stringToDate(datasetObject.synchronizedDate),	
+                        stringToDate(datasetObject.toBeDeletedOn),	
+                        stringToDate(datasetObject.updatedDate),	
+                        datasetObject.softwareProduct.id,	
+                      ]);
+                      break;
+                    case 'SoftwareProduct':
+                      if (datasetObject.softwareFamily === null){
+                        datasetObject.softwareFamily = null;
+                      } else {
+                        datasetObject.softwareFamily = datasetObject.softwareFamily.id;
+                      }
+
+                      if (datasetObject.taxonomy === null){
+                        datasetObject.taxonomy = null;
+                      } else {
+                        datasetObject.taxonomy = datasetObject.taxonomy.id;
+                      }
+
+                      insertValuesMap = recordsToInsert.map(recordsToInsert => 
+                        [datasetObject.id,	
+                        datasetObject.alias,	
+                        datasetObject.application,	
+                        datasetObject.cloud,	
+                        datasetObject.component,	
+                        stringToDate(datasetObject.createdDate),	
+                        datasetObject.deleteReason,	
+                        booleanToTinyint(datasetObject.isDesupported),	
+                        booleanToTinyint(datasetObject.isDiscontinued),	
+                        booleanToTinyint(datasetObject.isFamilyInFullName),	
+                        booleanToTinyint(datasetObject.isSuite),	
+                        booleanToTinyint(datasetObject.isToBeDeleted),	
+                        datasetObject.name,	
+                        datasetObject.productLicensable,	
+                        datasetObject.replacementId,	
+                        stringToDate(datasetObject.synchronizedDate),	
+                        stringToDate(datasetObject.toBeDeletedOn),	
+                        stringToDate(datasetObject.updatedDate),	
+                        datasetObject.manufacturer.id,	
+                        datasetObject.softwareFamily,	
+                        datasetObject.taxonomy,	
+                        ]);
+                      break;
+                    case 'SoftwareProductLink':
+                      try {
+                        insertValuesMap = recordsToInsert.map(recordsToInsert => 
+                          [datasetObject.id,	
+                          datasetObject.cloud,	
+                          stringToDate(datasetObject.createdDate),	
+                          datasetObject.deleteReason,	
+                          datasetObject.formerSoftwareProductId,	
+                          booleanToTinyint(datasetObject.isToBeDeleted),	
+                          datasetObject.laterSoftwareProductId,	
+                          datasetObject.latestSoftwareProductId,	
+                          datasetObject.oldestSoftwareProductId,	
+                          datasetObject.replacementId,	
+                          datasetObject.softwareCloudId,	
+                          datasetObject.softwareOnPremId,	
+                          stringToDate(datasetObject.synchronizedDate),	
+                          stringToDate(datasetObject.toBeDeletedOn),	
+                          stringToDate(datasetObject.updatedDate),	
+                          datasetObject.softwareProduct.id,	
+                        ]);
+                      } catch (error) {
+                        insertValuesMap = recordsToInsert.map(recordsToInsert => 
+                          [datasetObject.id,	
+                          datasetObject.cloud,	
+                          stringToDate(datasetObject.createdDate),	
+                          datasetObject.deleteReason,	
+                          datasetObject.formerSoftwareProductId,	
+                          booleanToTinyint(datasetObject.isToBeDeleted),	
+                          datasetObject.laterSoftwareProductId,	
+                          datasetObject.latestSoftwareProductId,	
+                          datasetObject.oldestSoftwareProductId,	
+                          datasetObject.replacementId,	
+                          datasetObject.softwareCloudId,	
+                          datasetObject.softwareOnPremId,	
+                          stringToDate(datasetObject.synchronizedDate),	
+                          stringToDate(datasetObject.toBeDeletedOn),	
+                          stringToDate(datasetObject.updatedDate),	
+                          datasetObject.softwareProduct,	
+                        ]);
+                      }
+                      break;
+                    case 'SoftwareRelease':
+                      // check if scaOpenSource has data
+                      if (datasetObject.scaOpenSource === null) {
+                        datasetObject.scaOpenSource = null;
+                      } else {
+                        datasetObject.scaOpenSource = datasetObject.scaOpenSource.id;
+                      }
+
+                      // check if softwareEdition has data
+                      if (datasetObject.softwareEdition === null) {
+                        datasetObject.softwareEdition = null;
+                      } else {
+                        datasetObject.softwareEdition = datasetObject.softwareEdition.id;
+                      }
+
+                      // check if softwareVersion has data
+                      if (datasetObject.softwareVersion === null) {
+                        datasetObject.softwareVersion = null;
+                      } else {
+                        datasetObject.softwareVersion = datasetObject.softwareVersion.id;
+                      }
+
+                      insertValuesMap = recordsToInsert.map(recordsToInsert => 
+                        [datasetObject.id,	
+                        datasetObject.application,	
+                        datasetObject.cloud,	
+                        stringToDate(datasetObject.createdDate),	
+                        datasetObject.deleteReason,	
+                        booleanToTinyint(datasetObject.isDesupported),	
+                        booleanToTinyint(datasetObject.isDiscontinued),	
+                        booleanToTinyint(datasetObject.isLicensable),	
+                        booleanToTinyint(datasetObject.isMajor),	
+                        booleanToTinyint(datasetObject.isToBeDeleted),	
+                        datasetObject.majorSoftwareReleaseId,	
+                        datasetObject.name,	
+                        datasetObject.patchLevel,	
+                        datasetObject.replacementId,	
+                        stringToDate(datasetObject.synchronizedDate),	
+                        stringToDate(datasetObject.toBeDeletedOn),	
+                        stringToDate(datasetObject.updatedDate),	
+                        datasetObject.scaOpenSource,	
+                        datasetObject.softwareEdition,	
+                        datasetObject.softwareProduct.id,	
+                        datasetObject.softwareVersion,	
+                      ]);
+                      
+                      break;
+                    case 'SoftwareReleaseLink':
+                      insertValuesMap = recordsToInsert.map(recordsToInsert => 
+                        [datasetObject.id,	
+                        stringToDate(datasetObject.createdDate),	
+                        datasetObject.deleteReason,	
+                        datasetObject.formerSoftwareReleaseId,	
+                        booleanToTinyint(datasetObject.isToBeDeleted),	
+                        datasetObject.laterSoftwareReleaseId,	
+                        datasetObject.latestSoftwareReleaseId,	
+                        datasetObject.oldestSoftwareReleaseId,	
+                        datasetObject.replacementId,	
+                        stringToDate(datasetObject.synchronizedDate),	
+                        stringToDate(datasetObject.toBeDeletedOn),	
+                        stringToDate(datasetObject.updatedDate),	
+                        datasetObject.softwareRelease.id,	
+                      ]);
+                      break;
+                    case 'SoftwareReleasePlatform':
+                      insertValuesMap = recordsToInsert.map(recordsToInsert => 
+                        [datasetObject.id,	
+                        stringToDate(datasetObject.createdDate),	
+                        datasetObject.deleteReason,	
+                        booleanToTinyint(datasetObject.isDesupported),	
+                        booleanToTinyint(datasetObject.isDiscontinued),	
+                        booleanToTinyint(datasetObject.isToBeDeleted),	
+                        datasetObject.platformLabel,	
+                        datasetObject.platformType,	
+                        datasetObject.replacementId,	
+                        stringToDate(datasetObject.synchronizedDate),	
+                        stringToDate(datasetObject.toBeDeletedOn),	
+                        stringToDate(datasetObject.updatedDate),	
+                        datasetObject.platform.id,	
+                        datasetObject.softwareRelease.id,	
+                      ]);
+                      break;
+                    case 'SoftwareSupportStage':
+                      insertValuesMap = recordsToInsert.map(recordsToInsert => 
+                        [datasetObject.softwareLifecycle.id,	
+                        datasetObject.definition,	
+                        stringToDate(datasetObject.endDate),	
+                        datasetObject.manufacturerId,	
+                        datasetObject.name,	
+                        datasetObject.order,	
+                        datasetObject.policy,	
+                        datasetObject.publishedEndDate,	
+                      ]);
+                      break;
+                    case 'SoftwareVersion':
+                      try {
+                        insertValuesMap = recordsToInsert.map(recordsToInsert => 
+                          [datasetObject.id,	
+                          stringToDate(datasetObject.createdDate),	
+                          datasetObject.deleteReason,	
+                          booleanToTinyint(datasetObject.isDesupported),	
+                          booleanToTinyint(datasetObject.isDiscontinued),	
+                          booleanToTinyint(datasetObject.isMajor),	
+                          booleanToTinyint(datasetObject.isToBeDeleted),	
+                          datasetObject.majorSoftwareVersionId,	
+                          datasetObject.name,	
+                          datasetObject.order,	
+                          datasetObject.patchLevel,	
+                          datasetObject.replacementId,	
+                          stringToDate(datasetObject.synchronizedDate),	
+                          stringToDate(datasetObject.toBeDeletedOn),	
+                          stringToDate(datasetObject.updatedDate),	
+                          datasetObject.versionStage,	
+                          datasetObject.softwareMarketVersion.id,	
+                          datasetObject.softwareProduct.id,	
+                        ]);
+                      } catch (error) {
+                        insertValuesMap = recordsToInsert.map(recordsToInsert => 
+                          [datasetObject.id,	
+                          stringToDate(datasetObject.createdDate),	
+                          datasetObject.deleteReason,	
+                          booleanToTinyint(datasetObject.isDesupported),	
+                          booleanToTinyint(datasetObject.isDiscontinued),	
+                          booleanToTinyint(datasetObject.isMajor),	
+                          booleanToTinyint(datasetObject.isToBeDeleted),	
+                          datasetObject.majorSoftwareVersionId,	
+                          datasetObject.name,	
+                          datasetObject.order,	
+                          datasetObject.patchLevel,	
+                          datasetObject.replacementId,	
+                          stringToDate(datasetObject.synchronizedDate),	
+                          stringToDate(datasetObject.toBeDeletedOn),	
+                          stringToDate(datasetObject.updatedDate),	
+                          datasetObject.versionStage,	
+                          datasetObject.softwareMarketVersion,	
+                          datasetObject.softwareProduct.id,	
+                        ]);
+                      }
+                      break;
+                    case 'Taxonomy':
+                      insertValuesMap = recordsToInsert.map(recordsToInsert => 
+                        [datasetObject.id,	
+                        datasetObject.category,	
+                        datasetObject.categoryGroup,	
+                        datasetObject.categoryId,	
+                        stringToDate(datasetObject.createdDate),	
+                        datasetObject.deleteReason,	
+                        datasetObject.description,	
+                        booleanToTinyint(datasetObject.isToBeDeleted),	
+                        datasetObject.replacementId,	
+                        datasetObject.softwareOrHardware,	
+                        datasetObject.subcategory,	
+                        stringToDate(datasetObject.synchronizedDate),	
+                        stringToDate(datasetObject.toBeDeletedOn),	
+                        stringToDate(datasetObject.updatedDate),	
+                      ]);
+                      break;
+                  }
+
+                  // ... check if this is the first record on the first page for an import request
+                  if (!isStatementBuilt) {
+                      
+                    // ... get the list of columns for the insert statement
+                    insertStatement = insertStatement + getInsertColumnsList(datasetName);
+
+                    // ... if insert statements column list end with a comma
+                    if (insertStatement.endsWith(',')) {
+
+                      // ... remove last comma from the insert statements column list
+                      insertStatement = insertStatement.substring(0, insertStatement.length - 1);
+
+                    }
+
+                    // ... assemble the insert statement to be used for this import request
+                    insertStatement = insertStatement + ') values ?';
+
+                    if (importType === 'update') {
+                      
+                      // add ON DUPLICATE KEY UPDATE
+                      insertStatement = insertStatement + ' ON DUPLICATE KEY UPDATE ';
+
+                      // add each column name to the ON DUPLICATE KEY UPDATE clause
+                      insertStatement = insertStatement + await getUpdateColumnsList(datasetName);
+
+                    }
+
+                    isStatementBuilt = true;
+
+                    logger(`${getLogHeader()}`, `... completed building ${importType} statement`); //: \n` + insertStatement);
+
+                  }
+
+                  // ... log SUCCESS building update statement
+                  //logger(`${getLogHeader()}`, `completed building insert statement`);
+
+                } catch (error) {
+                  // ... raise error
+                  throw error;
+                }
+
+
+                // ---------------------------------------------
+                // 2. execute insert/update statement
+                try {
+
+                  //logger(`${getLogHeader()}`, `executing ${importType} statement`);
+
+                  if (isDryRun === 'true') {
+
+                    // ... skip inserting 
+                    logger(`${getLogHeader()}`, `... skipping executing ${importType} statement (dry run)`);
+
+                  } else {
+
+                    //logger(`${getLogHeader()}`, `... executing ${importType} statement`);
+
+                    // ... insert the record
+                    // ... send request to insert record into db table and wait for response
+                    let responseDB = await sql_promise.query(insertStatement, [insertValuesMap]);
+
+                    //console.log(responseDB);
+
+                    affectRowsCounter = affectRowsCounter + responseDB[0].affectedRows;
+
+                    // ... verify in response that correct number of records inserted
+                    //if (responseDB[0].affectedRows !== insertValuesMap.length) {
+                    if (responseDB[0].affectedRows <= 0) {
+
+                      // ... log error message and continue with the next record
+                      throw `ERROR: failed to ${importType} ${insertValuesMap.length} ${datasetName} records`;
+
+                    }
+
+                    // ... (for SoftwareLifecycle ONLY) handling SoftwareLifecycle.SoftwareSupportStage[] data
+                    try {
+
+                      if (datasetName === 'SoftwareLifecycle' && insertValuesMapSftwSupportStage.length > 0) {
+
+                        if (importType === 'update') {
+                          // DELETE OLD
+                          // ... delete all existing SoftwareLifecycle.softwareSupportStage records for this softwareLifecycleId
+                          let deleteStatementSftwSupportStage = `DELETE FROM tech_catalog.tp_softwareSupportStage WHERE softwareLifecycleId = '${lastRecordId}'; `;
+                          //let deleteValuesMapSftwSupportStage = [updateValuesMap[0][0]];
+
+                          // ... send request to delete softwareSupportStage records from db table and wait for response
+                          let responseDB = await sql_promise.query(deleteStatementSftwSupportStage);
+
+                          // ... verify in response that correct number of records deleted
+                          //if (responseDB[0].affectedRows !== insertValuesMapSftwSupportStage.length) {
+                          //if (responseDB[0].affectedRows <= 0) {
+
+                            // ... log error message and continue with the next record
+                            //throw `ERROR: failed to delete old tp_softwareSupportStage ${insertValuesMapSftwSupportStage.length} SoftwareLifecycle.softwareSupportStage records`;
+
+                          //}
+                        } // end if update
+
+                        // INSERT NEW RECORDS
+                        // ... send request to insert softwareSupportStage record into db table and wait for response
+                        const responseDBSftwSupportStage = await sql_promise.query(insertStatementSftwSupportStage, [insertValuesMapSftwSupportStage]);
+
+                        // ... verify in response that correct number of records inserted
+                        //if (responseDBSftwSupportStage[0].affectedRows !== insertValuesMapSftwSupportStage.length) {
+                        if (responseDBSftwSupportStage[0].affectedRows <= 0) {
+
+                          // ... log error message and continue with the next record
+                          throw `failed to ${importType} tp_softwareSupportStage ${insertValuesMapSftwSupportStage.length} SoftwareLifecycle.softwareSupportStage records`;
+
+                        }
+
+                      } // end if SoftwareLifecycle 
+
+                    } catch (error) {
+                      // ... raise error
+                      logger(`${getLogHeader()}`, `failed to insert SoftwareLifecycle.softwareSupportStage records`, error, errorLogFileName);
+                      throw error;
+                    }
+
+                    //logger(`${getLogHeader()}`, `... completed update updating record`);
+
+                  } // end if (isDryRun === 'true')
+
+                  // ... increment counters when insert is successful
+                  recordsInsertedCounter++;
+                  pageRecordsInsertedCounter++;
+                  consecutiveFailedRecordCounter = 0;
+
+                } catch (error) {
+                  // ... increment counters when fails
+                  recordsFailedCounter++;
+                  pageRecordsFailedCounter++;
+                  consecutiveFailedRecordCounter++;
+                  // ... log failure and continue to next record
+                  logger(`${getLogHeader()}`, `failed ${importType} record`, error, errorLogFileName);
+                }
+
+              } // END IF (insertUpdateRequired)
+
+              // ... notification log after every 1000 records have been processed from a page
+              if (notificationCounter === 1000) {
+                // ... log 1,000 records processed notification
+                logger(`${getLogHeader()}`, `... ${pageRecordCounter} of ${datasetArray.length} records processed, ${pageRecordsInsertedCounter} inserted/updated, ${pageRecordsFailedCounter} failed in ${formatDuration(pageStartTime, new Date())}`);
+                // ... reset notification counter
+                notificationCounter = 0;
+              }
+
+              // ... stop the upload and return the error message
+              if (consecutiveFailedRecordCounter === 25) {
+                // ... log error message and end the import request
+                logger(`${getLogHeader()}`, `ERROR: previous 25 records failed to ${importType}, ending import.`, error, errorLogFileName);
+                return endImport();
+              }          
+
+            } // end of records loop
+            // -----------------------------------------------
+
+            recordCountDisplay = 0;
+
+            logger(`${getLogHeader()}`, `... completed page ${pageCounter} record import`);
+
+          } catch (error) {
+            // ... log error, end import.
+            logger(`${getLogHeader()}`, `an unexpected error occurred while processing the page records`, error, errorLogFileName);
+            return endImport();
+          }
+
+
+          // -----------------------------------------------
+          // part 3: summarize page imported
+          try {
+
+             if (!isLastPage) {
+
+              logger(`${getLogHeader()}`, `... summarizing page ${pageCounter} data imported`);
+
+              // ... get the page summary object
+              const pageSummary = getPageSummary();
+
+              // ... log page summary
+              //logger(`${getLogHeader()}`, `PAGE ${pageCounter} SUMMARY: \n${JSON.stringify(pageSummary)}`);
+              logger(`${getLogHeader()}`, `... page summary logged`);
+          
+            } // end of !isLastPage
+
+          } catch (error) {
+            // ... log failure
+            logger(`${getLogHeader()}`, `an unexpected error occurred while calculating and logging page summary`, error, errorLogFileName);
+            return endImport();
+          }
+
+        } // end of !isLastPage
+        // -----------------------------------------------
+
+
+        // ... if the data returned is less than the takeAmt, then this is the last page
+        if (datasetArray.length != takeAmt) {
           isLastPage = true;
+
+          logger(`${getLogHeader()}`, `... last page reached`);
         }
-      } catch (error) {
-        let returnMsg = `An error occurred while processing the page data.`;
-        logger(returnMsg, error);
-        return returnMsg;
-      }
 
-      // UPLOAD SUMMARY
+      } while (!isLastPage);  // end of page loop
+      // -----------------------------------------------
 
-      try {
-        if (isLastPage) {
-          uploadDuration = formatDuration(uploadStartTime, uploadEndTime);
+    } catch (error) {
+      // ... log error, end import.
+      logger(`${getLogHeader()}`, `an unexpected error occurred during the import steps`, error, errorLogFileName);
+      return endImport();
+    }
+    // end import steps ------------------------------
 
-          let returnMsg = `Get ${datasetName} Sync List Summary: ${syncCounter}/${recordCounter} records (${pageCounter} pages) require re-syncing and ${failedRecordCounter} records failed to be verified... ${uploadDuration}`;
-          logger(returnMsg);
 
-          // write summary to file
-          fs.appendFileSync(syncPath, returnMsg);
+    // -----------------------------------------------
+    // post-import steps
+    try {
 
-          return returnMsg;
-        }
-      } catch (error) {
-        let errorMsg = `An error occurred while sending the response.`;
-        logger(errorMsg, error);
-        return errorMsg;
-      }
-    } while (!isLastPage);
-    // ... END LOOP THROUGH EACH PAGE
+      logger(`${getLogHeader()}`, `*** STARTING POST-IMPORT STEPS ***`);
+
+
+      // -----------------------------------------------
+      // 1. calc, log summary, and complete import request
+        
+      return endImport();
+
+    } catch (error) {
+      // ... log error, end import.
+      logger(`${getLogHeader()}`, `an unexpected error occurred during the post-import steps`, error, errorLogFileName);
+      return endImport();
+    }
+    // end post-import -------------------------------
+
 
   } catch (error) {
-    let returnMsg = `An unexpected error occurred during the Get Sync List process.`;
-        logger(returnMsg, error);
-        return returnMsg;
+    // ... log error, end import.
+   logger(`${getLogHeader()}`, `an unexpected error occurred during the import process`, error, errorLogFileName);
+   return endImport();
   }
+  // end import process -----------------------------
+
 }
