@@ -20,8 +20,12 @@ declare var $: any;
 export class ItStandardManagerComponent implements OnInit {
 
   itStandardsForm: FormGroup = new FormGroup({
+    tcManufacturer: new FormControl(null, [Validators.required]),
+    tcSoftwareProduct: new FormControl(null, [Validators.required]),
+    tcSoftwareVersion: new FormControl(null, [Validators.required]),
+    tcSoftwareRelease: new FormControl(),
     itStandStatus: new FormControl(null, [Validators.required]),
-    itStandName: new FormControl(null, [Validators.required]),
+    itStandName: new FormControl(),
     itStandPOC: new FormControl(null, [Validators.required]),
     itStandDesc: new FormControl(),
     itStandType: new FormControl(null, [Validators.required]),
@@ -46,6 +50,22 @@ export class ItStandardManagerComponent implements OnInit {
   pocsBuffer = [];
   bufferSize = 50;
 
+  manufacturers: any = [];
+  manufacturersLoading = false;
+  manufacturersBuffer = [];
+
+  softwareProducts: any = [];
+  softwareProductsLoading = false;
+  softwareProductsBuffer = [];
+
+  softwareVersions: any = [];
+  softwareVersionsLoading = false;
+  softwareVersionsBuffer = [];
+
+  softwareReleases: any = [];
+  softwareReleasesLoading = false;
+  softwareReleasesBuffer = [];
+
   types: any[] = [];
 
   categories: any = [];
@@ -66,6 +86,7 @@ export class ItStandardManagerComponent implements OnInit {
     private tableService: TableService) { }
 
   ngOnInit(): void {
+
     // Emit setFormDefaults for when edit button is pressed
     if (this.sharedService.itStandardsFormSub == undefined) {
       this.sharedService.itStandardsFormSub = this.sharedService.itStandardsFormEmitter.subscribe(() => { this.setFormDefaults(); });
@@ -73,6 +94,21 @@ export class ItStandardManagerComponent implements OnInit {
 
     this.modalService.currentITStand.subscribe(itStandard => this.itStandard = itStandard);
     this.modalService.currentCreate.subscribe(createBool => this.createBool = createBool);
+
+    // Populate Manufacturer Options
+    this.manufacturersLoading = true;
+    this.apiService.getManufacturers().subscribe((data: any[]) => {
+      this.manufacturers = data;
+      this.manufacturersBuffer = this.manufacturers.slice(0, this.bufferSize);
+      this.manufacturersLoading = false;
+    });
+
+    this.disableSoftwareProduct();
+    this.disableSoftwareVersion();
+    this.disableSoftwareRelease();
+
+    // disable the old IT Standard Name field
+    this.disableOldITStandardName();
 
     // Populate Statuses
     this.apiService.getITStandStatuses().subscribe((data: any[]) => { this.statuses = data });
@@ -124,6 +160,7 @@ export class ItStandardManagerComponent implements OnInit {
   }
 
   setFormDefaults(): void {
+
     // Only set status default for creating new record
     const twoYearsLater = new Date();
     twoYearsLater.setFullYear(twoYearsLater.getFullYear() + 2);
@@ -156,6 +193,34 @@ export class ItStandardManagerComponent implements OnInit {
         });
       };
 
+      // if Manufacturer is not null, set the Software Product options
+      if (this.itStandard.Manufacturer) {
+        this.manufacturerChange({ id: this.itStandard.Manufacturer, name: this.itStandard.ManufacturerName });
+        //this.enableSoftwareProduct();
+
+        if (this.itStandard.SoftwareProduct) {
+          this.softwareProductChange({ id: this.itStandard.SoftwareProduct, name: this.itStandard.SoftwareProductName });
+          //this.enableSoftwareVersion();
+
+          if (this.itStandard.SoftwareVersion) {
+            this.softwareVersionChange({ id: this.itStandard.SoftwareVersion, name: this.itStandard.SoftwareVersionName });
+            //this.enableSoftwareRelease();
+          } else {
+            this.disableSoftwareRelease();
+          }
+        } else {
+          this.disableSoftwareVersion();
+          this.disableSoftwareRelease();
+        }
+      } else {
+        this.disableSoftwareProduct();
+        this.disableSoftwareVersion();
+        this.disableSoftwareRelease();
+      }
+
+      
+
+
       // Adjust MyView for rendering - could turn this into one line:
       var myView = this.itStandard.Available_through_Myview === 'T' 
 
@@ -172,6 +237,14 @@ export class ItStandardManagerComponent implements OnInit {
 
       // Set default values for form with current values
       this.itStandardsForm.patchValue({
+        //tcManufacturer: this.sharedService.findInArray(this.manufacturers, 'id', this.itStandard.Manufacturer, 'id'),
+        tcManufacturer: this.itStandard.Manufacturer,
+        //tcSoftwareProduct: this.sharedService.findInArray(this.softwareProducts, 'id', this.itStandard.SoftwareProduct, 'id'),
+        tcSoftwareProduct: this.itStandard.SoftwareProduct,
+        //tcSoftwareVersion: this.sharedService.findInArray(this.softwareVersions, 'id', this.itStandard.SoftwareVersion, 'id'),
+        tcSoftwareVersion: this.itStandard.SoftwareVersion,
+        //tcSoftwareRelease: this.sharedService.findInArray(this.softwareReleases, 'id', this.itStandard.SoftwareRelease, 'id'),
+        tcSoftwareRelease: this.itStandard.SoftwareRelease,
         itStandStatus: this.sharedService.findInArray(this.statuses, 'Name', this.itStandard.Status),
         itStandName: this.itStandard.Name,
         itStandPOC: pocIDs,
@@ -213,10 +286,42 @@ export class ItStandardManagerComponent implements OnInit {
       if (!this.itStandardsForm.value.itStandComments) this.itStandardsForm.value.itStandComments = 'N/A';
       if (!this.itStandardsForm.value.itStand508) this.itStandardsForm.value.itStand508 = '3';
 
+      // replace ' from all text fields
+      this.itStandardsForm.value.itStandDesc = this.itStandardsForm.value.itStandDesc.replace(/'/g, "''");
+      this.itStandardsForm.value.itStandVendorOrg = this.itStandardsForm.value.itStandVendorOrg.replace(/'/g, "''");
+      this.itStandardsForm.value.itStandGoldComment = this.itStandardsForm.value.itStandGoldComment.replace(/'/g, "''");
+      this.itStandardsForm.value.itStandComments = this.itStandardsForm.value.itStandComments.replace(/'/g, "''");
+      this.itStandardsForm.value.itStandRefDocs = this.itStandardsForm.value.itStandRefDocs.replace(/'/g, "''");
+
       // Add username to payload
       this.itStandardsForm.value.auditUser = this.globals.authUser;
 
-      // console.log("Form values before committing to database: ", this.itStandardsForm.value); // Debug
+      // add ManufacturerName to payload
+      if (this.itStandardsForm.value.tcManufacturer) {
+        this.itStandardsForm.value.tcManufacturerName = this.sharedService.findInArray(this.manufacturers, 'id', this.itStandardsForm.value.tcManufacturer, 'name');
+        //console.log("ManufacturerName: ", this.itStandardsForm.value.tcManufacturerName);
+      }
+
+      // add SoftwareProductName to payload
+      if (this.itStandardsForm.value.tcSoftwareProduct) {
+        this.itStandardsForm.value.tcSoftwareProductName = this.sharedService.findInArray(this.softwareProducts, 'id', this.itStandardsForm.value.tcSoftwareProduct, 'name');
+        //console.log("SoftwareProductName: ", this.itStandardsForm.value.tcSoftwareProductName);
+      }
+
+      // add SoftwareVersionName to payload
+      if (this.itStandardsForm.value.tcSoftwareVersion) {
+        this.itStandardsForm.value.tcSoftwareVersionName = this.sharedService.findInArray(this.softwareVersions, 'id', this.itStandardsForm.value.tcSoftwareVersion, 'name');
+        //console.log("SoftwareVersionName: ", this.itStandardsForm.value.tcSoftwareVersionName);
+      }
+
+      // add SoftwareReleaseName to payload
+      if (this.itStandardsForm.value.tcSoftwareRelease) {
+        this.itStandardsForm.value.tcSoftwareReleaseName = this.sharedService.findInArray(this.softwareReleases, 'id', this.itStandardsForm.value.tcSoftwareRelease, 'application');
+        //console.log("SoftwareReleaseName: ", this.itStandardsForm.value.tcSoftwareReleaseName);
+      }
+
+
+      //console.log("Form values before committing to database: ", this.itStandardsForm.value); // Debug
 
       // Send data to database
       if (this.createBool) {
@@ -267,6 +372,163 @@ export class ItStandardManagerComponent implements OnInit {
     $('#itStandardsManager').modal('hide');
     this.tableService.itStandTableClick(data, false);
     $('#itStandardDetail').modal('show');
+  }
+
+  manufacturerChange(manufacturer: any) {
+    //console.log("Manufacturer changed to: ", manufacturer); //DEBUG
+
+    this.softwareProductsLoading = true;
+    this.itStandardsForm.get('tcSoftwareProduct')?.reset();
+    this.itStandardsForm.get('tcSoftwareVersion')?.reset();
+    this.itStandardsForm.get('tcSoftwareRelease')?.reset();
+
+    try {
+      if (manufacturer) {
+        //console.log("(IF) Manufacturer ID: ", manufacturer["id"]); //DEBUG
+
+        this.apiService.getSoftwareProducts(manufacturer["id"]).subscribe((data: any[]) => {
+          this.softwareProducts = data;
+          this.softwareProductsBuffer = this.softwareProducts.slice(0, this.bufferSize);
+          this.softwareProductsLoading = false;
+          this.enableSoftwareProduct();
+          this.disableSoftwareVersion();
+        });
+      } else {
+        //console.log("(ELSE) Manufacturer ID: ", manufacturer["id"]); //DEBUG
+
+        this.softwareProducts = [];
+        this.softwareVersions = [];
+        this.softwareReleases = [];
+        this.softwareProductsLoading = false;
+        this.softwareVersionsLoading = false;
+        this.softwareReleasesLoading = false;
+        this.disableSoftwareProduct();
+        this.disableSoftwareVersion();
+        this.disableSoftwareRelease();
+      }
+    } catch (error) {
+      //console.log("manufacturerChange Error: ", error); //DEBUG
+
+      this.softwareProducts = [];
+      this.softwareVersions = [];
+      this.softwareReleases = [];
+      this.softwareProductsLoading = false;
+      this.softwareVersionsLoading = false;
+      this.softwareReleasesLoading = false;
+      this.disableSoftwareProduct();
+      this.disableSoftwareVersion();
+      this.disableSoftwareRelease();
+    }
+  }
+
+  softwareProductChange(softwareProduct: any) {
+    //console.log("Software Product changed to: ", softwareProduct); //DEBUG
+
+    this.softwareVersionsLoading = true;
+    this.itStandardsForm.get('tcSoftwareVersion')?.reset();
+    this.itStandardsForm.get('tcSoftwareRelease')?.reset();
+
+    try {
+      if (softwareProduct) {
+        //console.log("Software Product ID: ", softwareProduct["id"]); //DEBUG
+
+        this.apiService.getSoftwareVersions(softwareProduct["id"]).subscribe((data: any[]) => {
+          this.softwareVersions = data;
+          this.softwareVersionsBuffer = this.softwareVersions.slice(0, this.bufferSize);
+          this.softwareVersionsLoading = false;
+          this.enableSoftwareVersion();
+          this.disableSoftwareRelease();
+        });
+      } else {
+        //console.log("Software Product ID: ", softwareProduct["id"]); //DEBUG
+
+        this.softwareVersions = [];
+        this.softwareReleases = [];
+        this.softwareVersionsLoading = false;
+        this.softwareReleasesLoading = false;
+        this.disableSoftwareVersion();
+        this.disableSoftwareRelease();
+      }
+    } catch (error) {
+      //console.log("softwareProductChange Error: ", error); //DEBUG
+
+      this.softwareVersions = [];
+      this.softwareReleases = [];
+      this.softwareVersionsLoading = false;
+      this.softwareReleasesLoading = false;
+      this.disableSoftwareVersion();
+      this.disableSoftwareVersion();
+    }
+  }
+
+  softwareVersionChange(softwareVersion: any) {
+    //console.log("Software Version changed to: ", softwareVersion); //DEBUG
+
+    this.softwareReleasesLoading = true;
+    this.itStandardsForm.get('tcSoftwareRelease')?.reset();
+
+    try {
+      if (softwareVersion) {
+        //console.log("(IF) Software Version ID: ", softwareVersion["id"]); //DEBUG
+
+        this.apiService.getSoftwareReleases(softwareVersion["id"]).subscribe((data: any[]) => {
+          this.softwareReleases = data;
+          this.softwareReleasesBuffer = this.softwareReleases.slice(0, this.bufferSize);
+          this.softwareReleasesLoading = false;
+          this.enableSoftwareRelease();
+        });
+      } else {
+        //console.log("(ELSE) Software Version ID: ", softwareVersion["id"]); //DEBUG
+
+        this.softwareReleases = [];
+        this.softwareReleasesLoading = false;
+        this.disableSoftwareRelease();
+      }
+    } catch (error) {
+      //console.log("softwareVersionChange Error: ", error); //DEBUG
+
+      this.softwareReleases = [];
+      this.softwareReleasesLoading = false;
+      this.disableSoftwareRelease();
+    }
+  }
+
+  // enable the software product field
+  enableSoftwareProduct(): void {
+    //console.log("Enabling Product");
+    $("#divProduct").removeClass("disabledDivProduct");
+  }
+
+  disableSoftwareProduct(): void {
+    //console.log("Disabling Product");
+    $("#divProduct").addClass("disabledDivProduct");
+  }
+
+  // enable the software version field
+  enableSoftwareVersion(): void {
+    //console.log("Enabling Version");
+    $("#divVersion").removeClass("disabledDivVersion");
+  }
+
+  disableSoftwareVersion(): void {
+    //console.log("Disabling Version"); 
+    $("#divVersion").addClass("disabledDivVersion");
+  }
+
+  // enable the software release field
+  enableSoftwareRelease(): void {
+    //console.log("Enabling Release");
+    $("#divRelease").removeClass("disabledDivRelease");
+  }
+
+  disableSoftwareRelease(): void {
+    //console.log("Disabling Release");
+    $("#divRelease").addClass("disabledDivRelease");
+  }
+
+  disableOldITStandardName(): void {
+    //console.log("Disabling Old Name");
+    $("#divOldName").addClass("disabledDivOldName");
   }
 
 }

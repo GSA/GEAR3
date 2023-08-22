@@ -1,0 +1,31 @@
+#divProduct{
+    background-color: inherit;
+  }
+  .disabledDivProduct {
+      pointer-events: none;
+      opacity: 0.4;
+  }
+
+#divVersion{
+    background-color: inherit;
+  }
+  .disabledDivVersion {
+      pointer-events: none;
+      opacity: 0.4;
+  }
+
+#divRelease{
+    background-color: inherit;
+  }
+  .disabledDivRelease {
+      pointer-events: none;
+      opacity: 0.4;
+  }
+
+#divOldName{
+    background-color: inherit;
+  }
+  .disabledDivOldName {
+      pointer-events: none;
+      opacity: 0.4;
+  }

@@ -60,4 +60,9 @@ export class ItStandardsModalComponent implements OnInit {
     $('#itStandardsManager').modal('show');
   }
 
+  
+  getTitle (title1: string, title2: string): string {
+    return (title1) ? title1 : title2;
+  }
+
 }

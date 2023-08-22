@@ -13,6 +13,21 @@ const SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
 // time.
 const TOKEN_PATH = "token.json";
 
+exports.getApiToken = async (req, res) => {
+  console.log('req.headers: ', req.headers); //debugging
+  console.log(`requester: ${req.headers.requester}, apitoken: ${req.headers.apitoken}`); //debugging
+
+  //let [rows, fields] = await sql_promise.query(`CALL acl.verifyJwt ('${req.headers.requester}', '${req.headers.apitoken}');`);
+
+  let [rows, fields] = await sql_promise.query(`select count(*) as sessions_cnt from acl.logins where email = '${req.headers.requester}' and jwt = '${req.headers.apitoken}';`);
+
+  return rows[0].sessions_cnt;
+
+  //const response = await sql_promise.query(`CALL acl.verifyJwt ('${req.headers.requester}', '${req.headers.apitoken}');`);
+
+  //return response;
+}
+
 exports.sendQuery = (query, msg, response) => {
   return buildQuery(sql, query, msg, response);
 };
@@ -420,10 +435,10 @@ exports.uploadTechCatalogDataset = async (data, response) => {
     let columnList = '';
 
     // insert query
-    let tableName = `tech_catalog.tp_${datasetName}_tmp`;
+    let tableName = `tech_catalog.tp_${datasetName}`;
     let insertQuery = `insert into ${tableName} (`;
 
-    let insertQuerySftwSupportStage = `insert into tech_catalog.tp_SoftwareSupportStage_tmp (softwareLifecycleId, definition, endDate, manufacturerId, name, order_, policy, publishedEndDate) values ?`;
+    let insertQuerySftwSupportStage = `insert into tech_catalog.tp_SoftwareSupportStage (softwareLifecycleId, definition, endDate, manufacturerId, name, order_, policy, publishedEndDate) values ?`;
 
     // total number of pages received (aka API calls made)
     var pageCounter = 0;
@@ -1977,7 +1992,7 @@ exports.getSyncList = async (data, response) => {
   updatedDate
   `;
   
-  const tableName = `tech_catalog.tp_${datasetName}_tmp`;
+  const tableName = `tech_catalog.tp_${datasetName}`;
 
   var pageCounter = 0;
   var recordCounter = 0;
