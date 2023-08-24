@@ -397,6 +397,33 @@ const putUpdateAllSystems = async data => {
   };
 };
 
+/*
+// -------------------------------------------------------
+// (Technopedia) Tech Catalog Daily Import Job
+// 
+// -------------------------------------------------------
+cron.schedule('0 4 * * 1-7', () => { //PRODUCTION
+
+  try {
+
+    console.log(getCurrentDatetime() + 'CRON JOB: Tech Catalog Daily Import - Starting');
+
+    // log cron job start to db
+    let logData = {"message": "CRON JOB: Tech Catalog Daily Import has started", "userId":"GearCronJ"};
+    logServerEvent(logData);
+
+
+
+
+
+  } catch (error) {
+    // log unexpected errors to console
+    console.log(getCurrentDatetime() + `: CRON JOB: Tech Catalog Daily Import - An unexpected error occurred while running:  \n` + error);
+  }
+
+});
+*/
+
 // logs an event on the server to the db
 const logServerEvent = async data => {
   //console.log("logServerEvent ("+data.message+")")

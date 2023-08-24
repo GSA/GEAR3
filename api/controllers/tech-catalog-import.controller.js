@@ -26,50 +26,88 @@ exports.runTechCatalogImport = (req, res) => {
   });
 };
 /*
-exports.runImport = (req, res) => {
-  var data = req.body;
+exports.runDailyTechCatalogImport = (req, res) => {
+  
+  const group1 = [
+    {},
+    {},
+    {}
+  ];
 
-  if (data.importtype == 'insert') {
+  const group2 = [
+    {},
+    {},
+    {}
+  ]
 
-    // insert new records
-    ctrl.importNewRecords(data, res)
-      .then((response) => {
-        //let json = response;
-        
-        // check datatype of response
-        if (typeof response === 'object') {
-          res.status(200).json(response);
-        } else if (typeof response === 'string') {
-          res.status(200).json({ message: response, });
-        } else {
-          res.status(400).json({ message: 'Invalid response type', });
-        }
+  const group3 = [
+    {},
+    {},
+    {}
+  ]
 
-      });
+  const group4 = [
+    {},
+    {},
+    {}
+  ]
 
-  } else if (data.importtype == 'update') {
+  const group5 = [
+    {},
+    {},
+    {}
+  ]
 
-    // update existing records
-    ctrl.importUpdatedRecords(data, res)
-    .then((response) => {
-      //let json = response;
+  const group6 = [
+    {},
+    {},
+    {}
+  ]
 
-      // check datatype of response
-      if (typeof response === 'object') {
-        res.status(200).json(response);
-      } else if (typeof response === 'string') {
-        res.status(200).json({ message: response, });
-      } else {
-        res.status(400).json({ message: 'Invalid response type', });
-      }
+  const group7 = [
+    {},
+    {},
+    {}
+  ]
 
-    });
-    
+  // run group 1
+  try {
+    const promisesGroup1 = group1.map(data => ctrl.importTechCatlogData(data, res));
+
+    const group1Summary = await Promise.all(promisesGroup1);
+
+    const errors = group1Summary.filter(result => result.errors > 0);
+
+    if (errors.length > 0) {
+        console.error("an error occurred while importing group 1:", errors);
+    } else {
+        console.log("All datasets in group 1 have been imported successfully!");
+    }
+  } catch (err) {
+    console.error("an error occurred while importing group 1:", err);
+  }
+
+  // run group 2
+
+  // run group 3
+
+  // run group 4
+
+  // run group 5
+
+  // run group 6
+
+  // run group 7
+
+  // end daily import ----------------------
+      
+  // check datatype of response
+  if (typeof response === 'object') {
+    res.status(200).json(response);
+  } else if (typeof response === 'string') {
+    res.status(200).json({ message: response, });
   } else {
-
-    // return invalid import type
-    res.status(400).json({ message: 'Invalid import type', });
-
+    res.status(400).json({ message: 'Invalid response type', });
   }
 };
 */
