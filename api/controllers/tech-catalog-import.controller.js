@@ -4,7 +4,41 @@ const ctrl = require('./base.controller'),
 
   queryPath = '../queries/';
 
+const cron = require('node-cron');
 
+// CRON JOB: Tech Catalog Daily Import (runs daily at 5:00 AM)
+cron.schedule('0 6 * * *', () => { //PRODUCTION
+  //cron.schedule('*/1 * * * 1-5', () => { //DEBUGGING
+
+  const jobName = 'CRON JOB: Tech Catalog Daily Import';
+  const jobUser = 'GearCronJ';
+  let status = 'running';
+
+  console.log(jobName + ' - ' + status);
+
+  try {
+
+    let res = {};
+
+    ctrl.sendLogQuery(jobName + ' - ' + status, jobUser, jobName, res);
+
+    // run daily import
+    exports.runDailyTechCatalogImport({ body : { refreshtoken: process.env.FLEXERA_REFRESH_TOKEN } }, res)
+    .then((response) => {
+      status = `finished successfully:  \n` + response;
+      console.log(jobName + ' - ' + status);
+    })
+    .catch((error) => {
+      status = `error occurred while running:  \n` + error;
+      console.log(jobName + ' - ' + status);
+    });
+
+  } catch (error) {
+    status = `error occurred starting:  \n` + error;
+    console.log(jobName + ' - ' + status);
+  }
+
+});
 
 exports.runTechCatalogImport = (req, res) => {
   var data = req.body;

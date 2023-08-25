@@ -86,10 +86,13 @@ exports.googleMain = (response, method, sheetID, dataRange, requester, key = nul
   // Load client secrets from a local file.
   fs.readFile("certs/gear_google_credentials.json", (err, content) => {
     if (err) {
-      response = response
-        .status(504)
-        .json({ error: "Error loading client secret file: " + err });
-      return;
+      if (requester === "GearCronJ") {
+        console.log("Error loading client secret file: " + err);
+        return;
+      } else {
+        response = response.status(504).json({ error: "Error loading client secret file: " + err });
+        return;
+      }
     }
 
     // Set callback based on method
@@ -219,8 +222,13 @@ function refresh(auth, response, sheetID, dataRange, requester) {
 
       // If there is an error with the API call to the spreadsheet return the error
       if (err) {
-        sendResponse(response, { error: "The API returned an error: " + err });
-        return;
+        if (requester === "GearCronJ") {
+          console.log("The API returned an error: " + err);
+          return;
+        } else {
+          sendResponse(response, { error: "The API returned an error: " + err });
+          return;
+        }
       }
 
       // Get the rows from the spreadsheet
@@ -228,8 +236,13 @@ function refresh(auth, response, sheetID, dataRange, requester) {
 
       // If rows is not empty
       if (rows.length <= 0 || rows == undefined) {
-        sendResponse(response, { error: "No data found." });
-        return;
+        if (requester === "GearCronJ") {
+          console.log("No data found.");
+          return;
+        } else {
+          sendResponse(response, { error: "No data found." });
+          return;
+        }
       }
       console.log("Mapping values...")
       // Map values
@@ -291,21 +304,32 @@ function refresh(auth, response, sheetID, dataRange, requester) {
           // log the error to the database
           buildLogQuery(sql, `Update All Related Records - ${msg}: ` || error.message, requester, `log_update_zk_systems_subsystems_records`, response);
 
-          response.status(501).json({message: error.message || `DB Query Error while executing ${msg}`,});
+          if (requester === "GearCronJ") {
+            console.log(error.message || `DB Query Error while executing ${msg}`);
+            return;
+          } else {
+            response.status(501).json({message: error.message || `DB Query Error while executing ${msg}`,});
+          }
         } else {
           //console.log("Query Response: ", response);  // Debug
 
           // log the success to the database
           buildLogQuery(sql, `Update All Related Records - ${insertCounter} rows inserted`, requester, `log_update_zk_systems_subsystems_records`, response);
 
-          response.status(200)
-            .json({
-              "tot_executions": dmlStatementCounter,
-              "tot_inserts": insertCounter,
-              "tot_rows": rowCounter,
-              "ran_by": requester,
-              "last_ran": (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds(),              
-            });
+          const summary = {
+            "tot_executions": dmlStatementCounter,
+            "tot_inserts": insertCounter,
+            "tot_rows": rowCounter,
+            "ran_by": requester,
+            "last_ran": (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds(),              
+          };
+
+          if (requester === "GearCronJ") {
+            console.log(summary);
+            return;
+          } else {
+            response.status(200).json(summary);
+          }
         }
         console.log("Finished sending DML Statements")
       });
@@ -1655,7 +1679,7 @@ function logger(heading, msg, error = null, logFileName = null) {
   let logMsg = heading + ' ' + msg;
 
   if (error) {
-    logMsg = `${logMsg}\n ${error}`;
+    logMsg = `${logMsg}\n ${error}\n\n`;
   }
 
   // log to console
@@ -1799,7 +1823,7 @@ function stringToDate (dateString) {
   }
 }
 
-function removeSpecialChar (string) {
+/*function removeSpecialChar (string) {
 
   // - description: removes special characters from a string that have been identified as causing issues during insert
   // - parameters: string (string)
@@ -1810,7 +1834,7 @@ function removeSpecialChar (string) {
   } else {
     return string = string.replace(/'/g, "").replace(/\r/g, ' ').replace(/\n/g, ' ').replace(/\"/g, ' ').replace(/\\/g, ' ');
   }
-}
+}*/
 
 function booleanToTinyint (boolean) {
 
@@ -1829,7 +1853,7 @@ function booleanToTinyint (boolean) {
   }
 }
 
-function handleNullId (record) {
+/*function handleNullId (record) {
 
   // - description: handles null id values returned from the database
   // - parameters: record (object)
@@ -1844,7 +1868,7 @@ function handleNullId (record) {
   } catch (error) {
     return null;
   }
-}
+}*/
 
 let timerArray = [];  // array to hold timer objects
 function timer (timerObj = null) {
@@ -1908,16 +1932,14 @@ exports.importTechCatlogData = async (data, response) => {
   // -----------------------------------------------
   // import variables and functions
 
-    //console.log('data: ', data); // debugging
-
     const refreshToken = data.refreshtoken;                   // retrieved from the requests body, stores the refresh token for the flexera api to get a new access token
     const datasetName = data.dataset;                         // dataset name to be pulled // ie. "Taxonomy";
     const takeAmt = data.takeamount;                          // amount of records to pull per page
     const importId = getImportId();                           // import id identifies a group of import requests to be used for logging
     const isDryRun = data.dryrun;                             // flag to determine if the import insert/update statement or not
     const importType = data.importtype;                       // import type identifies the type of import to be used for logging
-    const lastSyncDateOverride = null;   // last synchronized date to override the last sync date in the database
-    const lastIdOverride = null;               // last id to override the last id in the database
+    const lastSyncDateOverride = null;                        // last synchronized date to override the last sync date in the database
+    const lastIdOverride = null;                              // last id to override the last id in the database
 
     let accessToken = '';                                 // stores the flerera api access token
     let graphqlQuery = '';                                // stores the graphql query to be sent to the flexera api
@@ -1925,7 +1947,7 @@ exports.importTechCatlogData = async (data, response) => {
 
     const tableName = `tech_catalog.tp_${datasetName}`;   // table name based on dataset name// insert table name based on dataset name
     let insertStatement = `insert into ${tableName} (`;   // insert statement for table records
-    let updateStatement = `update ${tableName} set `;
+    let updateStatement = `update ${tableName} set `;     
     let isStatementBuilt = false;                         // flag to determine if the update statement has been built
 
     // (only used for SoftwareLifecycle dataset ONLY)
@@ -1966,33 +1988,29 @@ exports.importTechCatlogData = async (data, response) => {
     let affectRowsCounter3 = 0;                           // number of rows affected by the insert/update statement
     let recordsToBeDeletedArray = [];
 
-
-    const importLogFileName         = `${logFolderPath}/${importType}_${datasetName}_import_${importId}_log_${formatFileDateTime(uploadStartTime)}.log`;
-    const syncListLogFileName       = `${logFolderPath}/${importType}_${datasetName}_import_${importId}_sync_list_${formatFileDateTime(uploadStartTime)}.log`;
-    const deleteListLogFileName     = `${logFolderPath}/${importType}_${datasetName}_import_${importId}_delete_list_${formatFileDateTime(uploadStartTime)}.log`;
-    const errorLogFileName          = `${logFolderPath}/${importType}_${datasetName}_import_${importId}_ERRORs_${formatFileDateTime(uploadStartTime)}.log`;
-    const importSummaryLogFileName  = `${logFolderPath}/${importType}_${datasetName}_import_${importId}_summary_${formatFileDateTime(uploadStartTime)}.log`;
+    const importLogFileName         = `${logFolderPath}/import_${importType}_${datasetName}_import_log_${formatFileDateTime(uploadStartTime)}.log`;
+    const syncListLogFileName       = `${logFolderPath}/import_${importType}_${datasetName}_records_to_sync_list_${formatFileDateTime(uploadStartTime)}.log`;
+    const deleteListLogFileName     = `${logFolderPath}/import_${importType}_${datasetName}_records_to_delete_list_${formatFileDateTime(uploadStartTime)}.log`;
+    const errorLogFileName          = `${logFolderPath}/import_${importType}_${datasetName}_ERRORs_${formatFileDateTime(uploadStartTime)}.log`;
+    const importSummaryLogFileName  = `${logFolderPath}/import_${importType}_${datasetName}_import_summary_${formatFileDateTime(uploadStartTime)}.log`;
 
     
-    // ... prepares a header to be put in front of each logger message
+    // ... prepares a header without the time to be put in front of each logger message
     function getLogHeaderNoTime () {
       return `/${importId}/${datasetName}/` 
               + (pageCounter > 0 ? `p${pageCounter}/` 
               + (recordCountDisplay > 0 ? `r${recordCountDisplay}/` : '') : '');
     }
-
+    // ... prepares a header to be put in front of each logger message
     function getLogHeader () {
       return `${formatDateTime(new Date())}${getLogHeaderNoTime()}`;
     }
-
-
     // ... returns the import summary at any point in the import process
     function getImportSummary () {
       const summary = {
         message : `Technopedia Data Import`,
         importId : importId,
         importType : importType,
-        //importStatus : (uploadEndTime == null ? 'in progress' : ('complete')),
         dataset : datasetName,
         takeAmount : takeAmt,
         dryRun : (isDryRun === 'true' ? 'true' : 'false'),
@@ -2007,7 +2025,8 @@ exports.importTechCatlogData = async (data, response) => {
         totalPageRequestsMade : pageRequestCounter,
         totalPages : pageCounter,
         totalRecords : recordCounter,
-        totalRecordsToInsertUpdate : recordToUpdateCounter,
+        totalRecordsToBeInsertedUpdated : recordToUpdateCounter,
+        totalRecordsInsertedUpdated : recordsInsertedCounter,
         totalRecordsFailed : recordsFailedCounter,
         totalSoftwareSupportStageRecords : softwareSupportStageCounter,
         beginTableRecordCount : beginTableRecordCount,
@@ -2022,7 +2041,6 @@ exports.importTechCatlogData = async (data, response) => {
       };
       return summary;
     }
-
     // ... performs the required tasks before ending the import process
     async function endImport() {
 
@@ -2415,31 +2433,34 @@ exports.importTechCatlogData = async (data, response) => {
                     fs.appendFileSync(deleteListLogFileName, JSON.stringify(deleteTxt) + ',\n');
 
                     recordsToBeDeletedArray.push(deleteTxt);
-
-                    let toBeDeletedOnValue = null;
-
-                    if (datasetObject.toBeDeletedOn === null || datasetObject.toBeDeletedOn === "") {
-                      toBeDeletedOnValue = "null";
-                    } else {
-                      toBeDeletedOnValue = `${stringToDate(datasetObject.toBeDeletedOn)}`;
-                    }
-
                     
-
+                    // for SoftwareRelease, updating obj_technology table ToBeDelete columns
                     if (datasetName === 'SoftwareRelease') {
-                      const updateObjTechStatement =
-                        `update gear_schema.obj_technology 
-                          set softwareReleaseIsToBeDeleted = ${booleanToTinyint(datasetObject.isToBeDeleted)},
-                              softwareReleaseToBeDeletedOn = ${toBeDeletedOnValue}
-                          where softwareRelease = "${lastRecordId}"; `;
+                      try {
+                        let toBeDeletedOnValue = null;
 
-                      sql.query(updateObjTechStatement, (error, data) => {
-                        if (error) {
-                          logger(`${getLogHeader()}`, `...... failed updating obj_technology table ToBeDelete columns for id:"${lastRecordId}"`, error, errorLogFileName);
+                        if (datasetObject.toBeDeletedOn === null || datasetObject.toBeDeletedOn === "") {
+                          toBeDeletedOnValue = `null`;
                         } else {
-                          logger(`${getLogHeader()}`, `...... updated obj_technology table ToBeDelete columns for id:"${lastRecordId}"`);
+                          toBeDeletedOnValue = `"${stringToDate(datasetObject.toBeDeletedOn)}"`;
                         }
-                      });
+
+                        const updateObjTechStatement =
+                          `update gear_schema.obj_technology 
+                              set softwareReleaseIsToBeDeleted = ${booleanToTinyint(datasetObject.isToBeDeleted)},
+                                  softwareReleaseToBeDeletedOn = ${toBeDeletedOnValue}
+                            where softwareRelease = "${lastRecordId}"; `;
+
+                        sql.query(updateObjTechStatement, (error, data) => {
+                          if (error) {
+                            logger(`${getLogHeader()}`, `...... failed updating obj_technology table ToBeDelete columns for id:"${lastRecordId}"`, error, errorLogFileName);
+                          } else {
+                            logger(`${getLogHeader()}`, `...... updated obj_technology table ToBeDelete columns for id:"${lastRecordId}"`);
+                          }
+                        });
+                      } catch (error) {
+                        logger(`${getLogHeader()}`, `...... failed updating obj_technology table ToBeDelete columns for id:"${lastRecordId}"`, error, errorLogFileName);
+                      }
                     }
                   }
 
@@ -3006,7 +3027,10 @@ exports.importTechCatlogData = async (data, response) => {
                     sql.query(insertStatement, [insertValuesMap], (error, data) => {
 
                       if (error) {
-                        logger(`${getLogHeader()}`, `ERROR: failed executing the insert/update ${insertValuesMap.length} ${datasetName} records for id: ${lastRecordId}`, error, errorLogFileName);
+                        // get the id value from the insertValuesMap
+                        let idValue = insertValuesMap[0][0];
+
+                        logger(`${getLogHeader()}`, `ERROR: failed executing the insert/update ${insertValuesMap.length} ${datasetName} records for id: ${idValue}`, error, errorLogFileName);
                         recordsFailedCounter++;
                         pageRecordsFailedCounter++;
                       } else {
@@ -3018,7 +3042,7 @@ exports.importTechCatlogData = async (data, response) => {
                         } else if (data.affectedRows == 3) {
                           affectRowsCounter3++;
                         } else {
-                          throw `ERROR: failed to ${importType} ${insertValuesMap.length} ${datasetName} records (affectedRows: ${data.affectedRows})`;
+                          throw `ERROR: record was not inserted/updated id: ${idValue}(affectedRows: ${data.affectedRows})`;
                         }
 
                         recordsInsertedCounter++;
@@ -3065,7 +3089,7 @@ exports.importTechCatlogData = async (data, response) => {
 
                         } catch (error) {
                           // ... raise error
-                          logger(`${getLogHeader()}`, `failed to insert SoftwareLifecycle.softwareSupportStage records for id: ${lastRecordId}`, error, errorLogFileName);
+                          logger(`${getLogHeader()}`, `failed to insert SoftwareLifecycle.softwareSupportStage records for id: ${idValue}`, error, errorLogFileName);
                           throw error;
                         }
                       }

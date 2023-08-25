@@ -9,6 +9,33 @@ const ctrl = require('./base.controller'),
 
 // @see https://docs.google.com/spreadsheets/d/1eSoyn7-2EZMqbohzTMNDcFmNBbkl-CzXtpwNXHNHD1A
 
+const cron = require('node-cron');
+
+// CRON JOB: Google Sheets API - Update All Related Records (runs every weekday at 2:00 AM)
+cron.schedule('0 5 * * 1-5', () => { //PRODUCTION
+  //cron.schedule('*/2 * * * 1-5', () => { //DEBUGGING
+  const jobName = `CRON JOB: Update All Related Records`;
+  const jobUser = `GearCronJ`;
+  let status = 'executed';
+
+  try {
+    let res = {};
+    
+    // log start of job
+    console.log(jobName + ' - ' + status);
+
+    // log start of job to db
+    exports.logEvent({ body : { message: jobName + ' - ' + status, user: jobUser, } }, res);
+    
+    // run refreshAllSystems
+    ctrl.googleMain(res, 'refresh', SHEET_ID, RANGE, jobUser);
+  } catch (error) {
+    // log any errors
+    status = `error occurred while running:  \n` + error;
+    console.log(jobName + ' - ' + status);
+  }
+});
+  
 
 // Create and Save a new Record
 // This can be called in the browser using the following URL: http://localhost:3000/api/records
