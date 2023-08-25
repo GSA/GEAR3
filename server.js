@@ -23,6 +23,8 @@ const bodyParser = require('body-parser'),
   ExtractJWT = passportJWT.ExtractJwt,
   JWTStrategy = passportJWT.Strategy;
 
+  const CryptoJS = require("crypto-js")
+
 // Proxy Settings for Google API to use
 // process.env.HTTP_PROXY="http://patchproxyr13.gsa.gov:3128";
 // process.env.http_proxy="http://patchproxyr13.gsa.gov:3128";
@@ -170,11 +172,21 @@ app.post(samlConfig.path,
             un: results[0][0].Username,
             exp: Math.floor(Date.now() / 1000) + 60 * 60,
             scopes: results[0][0].PERMS,
-            auditID: results[0][0].AuditID
+            auditID: results[0][0].AuditID,
           };
 
-          // JWT TOKEN SIGNED HERE TO BE USED IN INLINE HTML PAGE NEXT
+          // API TOKEN GENERATED HERE TO BE USED IN INLINE HTML PAGE NEXT
           const token = jsonwebtoken.sign(jwt, process.env.SECRET);
+          //const key = "94a74618-f4d3-4970-ae71-5eb4bca410a9" + jwt.exp.toString();
+          const key = process.env.SECRET + jwt.exp.toString();
+          const encryptJWT = CryptoJS.AES.encrypt(`${jwt.auditID}`, key);
+
+          db.query(`CALL acl.setJwt ('${jwt.auditID}', '${encryptJWT}');`,
+          (err) => {
+            if (err) {
+              console.log(err);
+            }
+          });
 
           let adminRoute = (process.env.SAML_HOST === 'localhost') ? 'http://localhost:3000' : '/#';
 
@@ -187,6 +199,7 @@ app.post(samlConfig.path,
       const path = localStorage.redirectPath || '';
       delete localStorage.redirectPath;
       localStorage.jwt = '${token}';
+      localStorage.apiToken = '${encryptJWT}';
       localStorage.user = '${results[0][0].AuditID}';
       localStorage.samlEntryPoint = '${process.env.SAML_ENTRY_POINT}';
       window.location.replace('${adminRoute}' + path);

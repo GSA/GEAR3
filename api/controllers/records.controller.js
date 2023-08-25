@@ -79,7 +79,12 @@ exports.findSystems = (req, res) => {
 };
 
 exports.updateSystems = (req, res) => {
-  if (req.headers.authorization) {
+  ctrl.getApiToken (req, res)
+  .then((response) => {
+    console.log('*** API Security Testing - getApiToken response: ', response); //DEBUGGING
+
+    if (response === 1) {
+      console.log('*** API Security Testing - API Auth Validation: PASSED'); //DEBUGGING
     var data = req.body;
 
     // Create string to update record-system relationship
@@ -100,24 +105,37 @@ exports.updateSystems = (req, res) => {
     //res = ctrl.sendQuery(query, 'updating systems for record', res);
 
   } else {
+    console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
+
     res.status(502).json({
       message: "No authorization token present. Not allowed to update systems-business capabilities mapping."
-    });
-  }
+      });
+    }
+  });
 };
 
 // This function is called by the api to update all the records using a Google Sheet
 exports.refreshAllSystems = (req, res) => {
-  console.log("refreshAllSystems")
+  ctrl.getApiToken (req, res)
+  .then((response) => {
+    console.log('*** API Security Testing - getApiToken response: ', response); //DEBUGGING
+
+    if (response === 1) {
+      console.log('*** API Security Testing - API Auth Validation: PASSED'); //DEBUGGING
+    var data = req.body;
   
-  if (req.headers.authorization) {
+    console.log("refreshAllSystems")
+  
+  // if (req.headers.authorization) {
     // 'refresh' is used to set the callback_method = "refresh"
     ctrl.googleMain(res, 'refresh', SHEET_ID, RANGE, req.headers.requester);
   } else {
+    console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
     res.status(502).json({
       message: "No authorization token present."
-    });
-  }
+      });
+    }
+  });
 };
 
 // this function is called by the api to log an event to the database

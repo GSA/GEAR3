@@ -73,7 +73,12 @@ exports.findSystems = (req, res) => {
 };
 
 exports.updateSystems = (req, res) => {
-  if (req.headers.authorization) {
+  ctrl.getApiToken (req, res)
+  .then((response) => {
+    console.log('*** API Security Testing - getApiToken response: ', response); //DEBUGGING
+
+    if (response === 1) {
+      console.log('*** API Security Testing - API Auth Validation: PASSED'); //DEBUGGING
     var data = req.body;
 
     // Create string to update website-system relationship
@@ -92,9 +97,12 @@ exports.updateSystems = (req, res) => {
 
     res = ctrl.sendQuery(query, "updating systems for website", res);
   } else {
+    console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
+
     res.status(502).json({
       message:
         "No authorization token present. Not allowed to update systems-business website mapping.",
-    });
-  }
+      });
+    }
+  });
 };

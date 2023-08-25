@@ -34,6 +34,13 @@ exports.findRetired = (req, res) => {
 };
 
 exports.updateAll = (req, res) => {
+  ctrl.getApiToken (req, res)
+  .then((response) => {
+    console.log('*** API Security Testing - getApiToken response: ', response); //DEBUGGING
+
+    if (response === 1) {
+      console.log('*** API Security Testing - API Auth Validation: PASSED'); //DEBUGGING
+
   console.log("Updating FISMA table");
 
   var query = "SET FOREIGN_KEY_CHECKS=0; TRUNCATE TABLE obj_fisma_archer; ";
@@ -73,7 +80,10 @@ exports.updateAll = (req, res) => {
       }
 
       else element[key] = `'${value}'`;
-    };
+      console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
+      }
+    }
+  };
 
     query += `INSERT INTO obj_fisma_archer 
         (\`ex:GEAR_ID\`,
@@ -188,7 +198,7 @@ exports.updateAll = (req, res) => {
       ${element.u_systemlevel},
       -- ${element.u_parent_system},
       ${element.u_fisma_reportable}); `;
-  };
+  });
 
   query += " SET FOREIGN_KEY_CHECKS=1;";
   // console.log("Final query string: ", query); // Debug

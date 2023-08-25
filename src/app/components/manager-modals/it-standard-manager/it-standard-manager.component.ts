@@ -286,8 +286,12 @@ export class ItStandardManagerComponent implements OnInit {
       if (!this.itStandardsForm.value.itStandComments) this.itStandardsForm.value.itStandComments = 'N/A';
       if (!this.itStandardsForm.value.itStand508) this.itStandardsForm.value.itStand508 = '3';
 
-      // replace ' from description
+      // replace ' from all text fields
       this.itStandardsForm.value.itStandDesc = this.itStandardsForm.value.itStandDesc.replace(/'/g, "''");
+      this.itStandardsForm.value.itStandVendorOrg = this.itStandardsForm.value.itStandVendorOrg.replace(/'/g, "''");
+      this.itStandardsForm.value.itStandGoldComment = this.itStandardsForm.value.itStandGoldComment.replace(/'/g, "''");
+      this.itStandardsForm.value.itStandComments = this.itStandardsForm.value.itStandComments.replace(/'/g, "''");
+      this.itStandardsForm.value.itStandRefDocs = this.itStandardsForm.value.itStandRefDocs.replace(/'/g, "''");
 
       // Add username to payload
       this.itStandardsForm.value.auditUser = this.globals.authUser;
