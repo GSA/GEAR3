@@ -1938,6 +1938,7 @@ exports.importTechCatlogData = async (data, response) => {
     let recordCounter = 0;                                // total number of records received
     let recordRequestCounter = 0;                         // total number of record requests made
     let recordsFailedCounter = 0;                         // total number of records that failed to insert into db
+    let isFatalError = 0;
 
     let recordsInsertedCounter = 0;                       // total number of records inserted into db
 
@@ -1998,31 +1999,26 @@ exports.importTechCatlogData = async (data, response) => {
         lastSyncDateOverride : lastSyncDateOverride,
         lastIdOverride : lastIdOverride,
         lastRecordId : lastRecordId,
-        lastRecordIdUsed : lastRecordIdUsed,
-        lastSynchronizedDate : lastSynchronizedDate,
+        firstAfterIdUsed : lastRecordIdUsed,
+        lastSynchronizedDateUsed : lastSynchronizedDate,
         startTime : formatDateTime(uploadStartTime),
         endTime : formatDateTime(uploadEndTime),
         duration : formatDuration(uploadStartTime, uploadEndTime),
-        pageRequestsMade : pageRequestCounter,
-        pagesProcessed : pageCounter,
-        recordsProcessed : recordCounter,
-        recordsToBeInsertOrUpdate : recordToUpdateCounter,
-        recordsInsertedOrUpdated : recordsInsertedCounter,
-        recordsFailed : recordsFailedCounter,
-        softwareSupportStageInserted : softwareSupportStageCounter,
-        databaseAffectedRows : affectRowsCounter,
-        //recordRequestsMade : recordRequestCounter
-        //recordsUpdated : recordsUpdatedCounter,
-        //recordsUpdateFailed : recordsUpdateFailedCounter,
-        //recordsFailedList : recordsFailedList,
+        totalPageRequestsMade : pageRequestCounter,
+        totalPages : pageCounter,
+        totalRecords : recordCounter,
+        totalRecordsToInsertUpdate : recordToUpdateCounter,
+        totalRecordsFailed : recordsFailedCounter,
+        totalSoftwareSupportStageRecords : softwareSupportStageCounter,
         beginTableRecordCount : beginTableRecordCount,
         endTableRecordCount : endTableRecordCount,
         affectRowsCounter1 : affectRowsCounter1,
         affectRowsCounter2 : affectRowsCounter2,
         affectRowsCounter3 : affectRowsCounter3,
+        fatalError : isFatalError,
         logDateTime : formatDateTime(new Date()),
-        pageSummaries : pageSummaryArray,
-        recordsToBeDeleted : recordsToBeDeletedArray,
+        pageSummaries : "see logs",
+        recordsToBeDeleted : "see logs"
       };
       return summary;
     }
@@ -2078,6 +2074,7 @@ exports.importTechCatlogData = async (data, response) => {
       } catch (error) {
         // ... log failure, end import.
         logger(`${getLogHeader()}`, `failed validating request parameters`, error, errorLogFileName);
+        isFatalError=1;
         return endImport();
       }
 
@@ -2127,6 +2124,7 @@ exports.importTechCatlogData = async (data, response) => {
       } catch (error) {
         // ... log failure, end import.
         logger(`${getLogHeader()}`, `failed getting the last id and synchronizedDate`, error, errorLogFileName);
+        isFatalError=1;
         return endImport();
       }
 
@@ -2136,6 +2134,7 @@ exports.importTechCatlogData = async (data, response) => {
     } catch (error) {
       // ... log error, end import.
       logger(`${getLogHeader()}`, `an unexpected error occurred during pre-import steps`, error, errorLogFileName);
+      isFatalError=1;
       return endImport();
     }
     // end pre-import --------------------------------
@@ -2213,6 +2212,7 @@ exports.importTechCatlogData = async (data, response) => {
           } catch (error) {
             // ... log failure, end import.
             logger(`${getLogHeader()}`, `failed getting the access token`, error, errorLogFileName);
+            isFatalError=1;
             return endImport();
           }
 
@@ -2230,6 +2230,7 @@ exports.importTechCatlogData = async (data, response) => {
           } catch (error) {
             // ... log failure, end import.
             logger(`${getLogHeader()}`, `failed building the graphql query`, error, errorLogFileName);
+            isFatalError=1;
             return endImport();
           }
 
@@ -2249,6 +2250,7 @@ exports.importTechCatlogData = async (data, response) => {
           } catch (error) {
             // ... log failure, end import.
             logger(`${getLogHeader()}`, `failed executing page request`, error, errorLogFileName);
+            isFatalError=1;
             return endImport();
           }
         
@@ -2285,12 +2287,15 @@ exports.importTechCatlogData = async (data, response) => {
           } catch (error) {
             // ... log failure, end import.
             logger(`${getLogHeader()}`, `failed verifying api response`, error, errorLogFileName);
+            isFatalError=1;
+
             return endImport();
           }
 
         } catch (error) {
           // ... log error, end import.
           logger(`${getLogHeader()}`, `unexpected error occurred during page request`, error, errorLogFileName);
+          isFatalError=1;
           return endImport();
         }
 
@@ -2396,7 +2401,7 @@ exports.importTechCatlogData = async (data, response) => {
                   // ... check isToBeDeleted value
                   if (datasetObject.isToBeDeleted === true) {
 
-                    logger(`${getLogHeader()}`, `...... id:"${lastRecordId}" will be deleted on ${datasetObject.toBeDeletedOn}`);
+                    logger(`${getLogHeader()}`, `...... id:"${lastRecordId}" will be deleted on "${datasetObject.toBeDeletedOn}"`);
 
                     let deleteTxt = 
                     {
@@ -2411,20 +2416,31 @@ exports.importTechCatlogData = async (data, response) => {
 
                     recordsToBeDeletedArray.push(deleteTxt);
 
-                    /*let toBeDeletedOnDate = new Date(stringToDate(datasetObject.toBeDeletedOn));
+                    let toBeDeletedOnValue = null;
 
-                    if (toBeDeletedOnDate < new Date()) {
+                    if (datasetObject.toBeDeletedOn === null || datasetObject.toBeDeletedOn === "") {
+                      toBeDeletedOnValue = "null";
+                    } else {
+                      toBeDeletedOnValue = `${stringToDate(datasetObject.toBeDeletedOn)}`;
+                    }
 
-                      logger(`${getLogHeader()}`, `...... id:"${lastRecordId}" has been deleted`);
+                    
 
-                      // ... if isToBeDeleted is true, update flag on obj_technology table
-                      
+                    if (datasetName === 'SoftwareRelease') {
+                      const updateObjTechStatement =
+                        `update gear_schema.obj_technology 
+                          set softwareReleaseIsToBeDeleted = ${booleanToTinyint(datasetObject.isToBeDeleted)},
+                              softwareReleaseToBeDeletedOn = ${toBeDeletedOnValue}
+                          where softwareRelease = "${lastRecordId}"; `;
 
-                      // ... and log this record to the delete list file
-
-                      
-                    }*/
-
+                      sql.query(updateObjTechStatement, (error, data) => {
+                        if (error) {
+                          logger(`${getLogHeader()}`, `...... failed updating obj_technology table ToBeDelete columns for id:"${lastRecordId}"`, error, errorLogFileName);
+                        } else {
+                          logger(`${getLogHeader()}`, `...... updated obj_technology table ToBeDelete columns for id:"${lastRecordId}"`);
+                        }
+                      });
+                    }
                   }
 
                 } catch (error) {
@@ -2994,8 +3010,16 @@ exports.importTechCatlogData = async (data, response) => {
                         recordsFailedCounter++;
                         pageRecordsFailedCounter++;
                       } else {
-                        //console.log(`id:${lastRecordId} affectedRows: ${data.affectedRows}`);
-                        // 1 = insert, 2 = update, 3 = ?
+                        // ... verify in response that correct number of records inserted
+                        if (data.affectedRows == 1) {
+                          affectRowsCounter1++;
+                        } else if (data.affectedRows == 2) {
+                          affectRowsCounter2++;
+                        } else if (data.affectedRows == 3) {
+                          affectRowsCounter3++;
+                        } else {
+                          throw `ERROR: failed to ${importType} ${insertValuesMap.length} ${datasetName} records (affectedRows: ${data.affectedRows})`;
+                        }
 
                         recordsInsertedCounter++;
                         pageRecordsInsertedCounter++;
@@ -3016,8 +3040,8 @@ exports.importTechCatlogData = async (data, response) => {
                             //  if (error) {
                             //    logger(`${getLogHeader()}`, `ERROR: failed executing the delete ${insertValuesMapSftwSupportStage.length} SoftwareLifecycle.softwareSupportStage records`, error, errorLogFileName);
                             //  } else {
-                                sql.query(insertStatementSftwSupportStage, [insertValuesMapSftwSupportStage]);
-                                softwareSupportStageCounter = softwareSupportStageCounter + insertValuesMapSftwSupportStage.length;
+                            sql.query(insertStatementSftwSupportStage, [insertValuesMapSftwSupportStage]);
+                            softwareSupportStageCounter = softwareSupportStageCounter + insertValuesMapSftwSupportStage.length;
                             //  }
                             //});
 
@@ -3079,6 +3103,7 @@ exports.importTechCatlogData = async (data, response) => {
               if (consecutiveFailedRecordCounter === 25) {
                 // ... log error message and end the import request
                 logger(`${getLogHeader()}`, `ERROR: previous 25 records failed to ${importType}, ending import.`, error, errorLogFileName);
+                isFatalError=1;
                 return endImport();
               }          
 
@@ -3092,6 +3117,7 @@ exports.importTechCatlogData = async (data, response) => {
           } catch (error) {
             // ... log error, end import.
             logger(`${getLogHeader()}`, `an unexpected error occurred while processing the page records`, error, errorLogFileName);
+            isFatalError=1;
             return endImport();
           }
 
@@ -3116,6 +3142,7 @@ exports.importTechCatlogData = async (data, response) => {
           } catch (error) {
             // ... log failure
             logger(`${getLogHeader()}`, `an unexpected error occurred while calculating and logging page summary`, error, errorLogFileName);
+            isFatalError=1;
             return endImport();
           }
 
@@ -3136,6 +3163,7 @@ exports.importTechCatlogData = async (data, response) => {
     } catch (error) {
       // ... log error, end import.
       logger(`${getLogHeader()}`, `an unexpected error occurred during the import steps`, error, errorLogFileName);
+      isFatalError=1;
       return endImport();
     }
     // end import steps ------------------------------
@@ -3156,6 +3184,7 @@ exports.importTechCatlogData = async (data, response) => {
     } catch (error) {
       // ... log error, end import.
       logger(`${getLogHeader()}`, `an unexpected error occurred during the post-import steps`, error, errorLogFileName);
+      isFatalError=1;
       return endImport();
     }
     // end post-import -------------------------------
@@ -3164,6 +3193,7 @@ exports.importTechCatlogData = async (data, response) => {
   } catch (error) {
     // ... log error, end import.
    logger(`${getLogHeader()}`, `an unexpected error occurred during the import process`, error, errorLogFileName);
+   isFatalError=1;
    return endImport();
   }
   // end import process -----------------------------

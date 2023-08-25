@@ -25,89 +25,205 @@ exports.runTechCatalogImport = (req, res) => {
 
   });
 };
-/*
-exports.runDailyTechCatalogImport = (req, res) => {
+
+exports.runDailyTechCatalogImport = async (req, res) => {
+
+  const maxJobs = 7;
+
+  const defaultImportType = 'update';
+  const refreshToken = req.body.refreshtoken;
+  const defaultTakeAmount = '10000';
+  const defaultDryRun = 'false';
+
+  let importSummaries = [];
+
+  let groupNumber = 0;
   
-  const group1 = [
-    {},
-    {},
-    {}
-  ];
+  const importGroups = {
+    group1 : [  
+      {
+        importtype : "update",
+        refreshtoken : refreshToken,
+        dataset : "Manufacturer",
+        takeamount : "10000",
+        dryrun : "false"
+      },
+      {
+        importtype : "update",
+        refreshtoken : refreshToken,
+        dataset : "Platform",
+        takeamount : "10000",
+        dryrun : "false"
+      },
+      {
+        importtype : "update",
+        refreshtoken : refreshToken,
+        dataset : "Taxonomy",
+        takeamount : "10000",
+        dryrun : "false"
+      }
+    ],
+    group2 : [
+      {
+        importtype : "update",
+        refreshtoken : refreshToken,
+        dataset : "SoftwareFamily",
+        takeamount : "10000",
+        dryrun : "false"
+      }
+    ],
+    group3 : [
+      {
+        importtype : "update",
+        refreshtoken : refreshToken,
+        dataset : "SoftwareProduct",
+        takeamount : "10000",
+        dryrun : "false"
+      }
+    ],
+    group4 : [
+      {
+        importtype : "update",
+        refreshtoken : refreshToken,
+        dataset : "SoftwareMarketVersion",
+        takeamount : "10000",
+        dryrun : "false"
+      },
+      {
+        importtype : "update",
+        refreshtoken : refreshToken,
+        dataset : "SoftwareEdition",
+        takeamount : "10000",
+        dryrun : "false"
+      },
+      {
+        importtype : "update",
+        refreshtoken : refreshToken,
+        dataset : "SoftwareProductLink",
+        takeamount : "10000",
+        dryrun : "false"
+      }
+    ],
+    group5 : [
+      {
+        importtype : "update",
+        refreshtoken : refreshToken,
+        dataset : "SoftwareVersion",
+        takeamount : "10000",
+        dryrun : "false"
+      }
+    ],
+    group6 : [
+      {
+        importtype : "update",
+        refreshtoken : refreshToken,
+        dataset : "SoftwareRelease",
+        takeamount : "10000",
+        dryrun : "false"
+      }
+    ],
+    group7 : [
+      {
+        importtype : "update",
+        refreshtoken : refreshToken,
+        dataset : "SoftwareLifecycle",
+        takeamount : "10000",
+        dryrun : "false"
+      },
+      {
+        importtype : "update",
+        refreshtoken : refreshToken,
+        dataset : "SoftwareReleaseLink",
+        takeamount : "10000",
+        dryrun : "false"
+      },
+      {
+        importtype : "update",
+        refreshtoken : refreshToken,
+        dataset : "SoftwareReleasePlatform",
+        takeamount : "10000",
+        dryrun : "false"
+      }
+    ]
+  };
 
-  const group2 = [
-    {},
-    {},
-    {}
-  ]
+  function formatDuration(start_date, end_date) {
 
-  const group3 = [
-    {},
-    {},
-    {}
-  ]
-
-  const group4 = [
-    {},
-    {},
-    {}
-  ]
-
-  const group5 = [
-    {},
-    {},
-    {}
-  ]
-
-  const group6 = [
-    {},
-    {},
-    {}
-  ]
-
-  const group7 = [
-    {},
-    {},
-    {}
-  ]
-
-  // run group 1
-  try {
-    const promisesGroup1 = group1.map(data => ctrl.importTechCatlogData(data, res));
-
-    const group1Summary = await Promise.all(promisesGroup1);
-
-    const errors = group1Summary.filter(result => result.errors > 0);
-
-    if (errors.length > 0) {
-        console.error("an error occurred while importing group 1:", errors);
-    } else {
-        console.log("All datasets in group 1 have been imported successfully!");
+    // - description: calculates the duration between two dates and returns a formatted date string
+    // - parameters: start_date (date object), end_date (date object)
+    // - returns: result (string)
+  
+    const duration = new Date(end_date - start_date);
+  
+    const hours = duration.getUTCHours();
+    const minutes = duration.getUTCMinutes();
+    const seconds = duration.getUTCSeconds();
+  
+    let result = "";
+    if (hours > 0) {
+      result += hours + (hours === 1 ? " hour" : " hours");
     }
-  } catch (err) {
-    console.error("an error occurred while importing group 1:", err);
+    if (minutes > 0) {
+      if (result !== "") {
+        result += ", ";
+      }
+      result += minutes + (minutes === 1 ? " minute" : " minutes");
+    }
+    if (seconds > 0) {
+      if (result !== "") {
+        result += ", ";
+      }
+      result += seconds + (seconds === 1 ? " second" : " seconds");
+    }
+    
+    return result;
   }
 
-  // run group 2
+  let startTime = new Date();
 
-  // run group 3
+  do {
 
-  // run group 4
+    try {
 
-  // run group 5
+      console.log(`... Starting import for group ${groupNumber}`);
 
-  // run group 6
+      // set the current group number
+      groupNumber++;
+      // get the current group dataset(s)
+      const promisesGroup = importGroups[`group${groupNumber}`].map(data => ctrl.importTechCatlogData(data, res));
+      // run the import for each dataset in the group and wait until all are complete
+      const groupSummary = await Promise.all(promisesGroup);
+      // add groupSummary to importSummaries
+      importSummaries.push(groupSummary);
+      // verify the response for each dataset in the group for any fatal errors
+      const errors = groupSummary.filter(result => result.fatalError > 0);
+      // if any fatal errors occurred, log them and return a 500 error
+      if (errors.length > 0) {
+          throw `ERROR: 1 or more datasets in group ${groupNumber} failed to import`;
+      // otherwise, log the success and continue to the next group
+      } else {
+          console.log(`... Import group ${groupNumber} has successfully completed imported!`);
+          // return the response once all groups have been imported
+          if (groupNumber === maxJobs) {
+            res.status(200).json({message : `All ${groupNumber} of ${maxJobs} groups have successfully completed imported!`,
+                                starttime : startTime,
+                                  endtime : new Date(),
+                                 duration : formatDuration(startTime, new Date()),
+                                    error : null,
+                          importSummaries : importSummaries });
+          }
+      }
 
-  // run group 7
+    } catch (error) {
+      console.error(`an error occurred while importing group ${groupNumber} of ${maxJobs}: \n`, error);
+      res.status(500).json({ message : `an error occurred while importing group ${groupNumber}`,
+                           starttime : startTime,
+                             endtime : new Date(),
+                            duration : formatDuration(startTime, new Date()),
+                               error : error,
+                     importSummaries : importSummaries });
+    }
 
-  // end daily import ----------------------
+  } while (groupNumber < maxJobs);
       
-  // check datatype of response
-  if (typeof response === 'object') {
-    res.status(200).json(response);
-  } else if (typeof response === 'string') {
-    res.status(200).json({ message: response, });
-  } else {
-    res.status(400).json({ message: 'Invalid response type', });
-  }
 };
-*/

@@ -355,8 +355,8 @@ cron.schedule('0 7 * * WED', () => {
   stream.pipe(csvStream);
 });
 
-// Google API Pull to run every weekday at 2:00 AM
-cron.schedule('0 2 * * 1-5', () => { //PRODUCTION
+// Google API Pull to run every weekday at 6:00 AM
+cron.schedule('0 6 * * 1-5', () => { //PRODUCTION
 //cron.schedule('*/10 * * * 1-5', () => { //DEBUGGING
   try {
     console.log(getCurrentDatetime() + 'CRON JOB: Update All Related Records (runs every weekday at 2:00 AM) - Starting');
@@ -392,7 +392,7 @@ const putUpdateAllSystems = async data => {
     // log any errors
     console.log(getCurrentDatetime()+error);
 
-    let logData = {"message": "CRON JOB: Update All Related Records - Errored with " + json.stringify(error), "userId":"GearCronJ"};
+    let logData = {"message": "CRON JOB: Update All Related Records - Errored with " + JSON.stringify(error), "userId":"GearCronJ"};
     logServerEvent(logData);
   };
 };
@@ -402,7 +402,7 @@ const putUpdateAllSystems = async data => {
 // (Technopedia) Tech Catalog Daily Import Job
 // 
 // -------------------------------------------------------
-cron.schedule('0 4 * * 1-7', () => { //PRODUCTION
+cron.schedule('0 4 * * *', () => { //PRODUCTION
 
   try {
 
@@ -412,9 +412,15 @@ cron.schedule('0 4 * * 1-7', () => { //PRODUCTION
     let logData = {"message": "CRON JOB: Tech Catalog Daily Import has started", "userId":"GearCronJ"};
     logServerEvent(logData);
 
-
-
-
+    const response = await fetch(`${getAppURL()}/api/tech_catalog_import/runDailyImport`, {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "true",
+        Requester: "gearCronJ"
+      },
+      body: JSON.stringify({ refreshtoken : process.env.FLEXERA_REFRESH_TOKEN })
+    });
 
   } catch (error) {
     // log unexpected errors to console
