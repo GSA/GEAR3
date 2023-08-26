@@ -49,7 +49,7 @@ exports.update = (req, res) => {
     if (response === 1) {
       console.log('*** API Security Testing - API Auth Validation: PASSED'); //DEBUGGING
 
-    //if (req.headers.authorization)
+      //if (req.headers.authorization)
       console.log('it-standard update authorized...');
       var data = req.body;
 
@@ -84,8 +84,8 @@ exports.update = (req, res) => {
 
       var query = `SET FOREIGN_KEY_CHECKS=0;
         UPDATE obj_technology
-        SET Keyname                       = '${data.itStandName}',
-          obj_technology_status_Id        = ${data.itStandStatus},
+        SET `+ //Keyname                       = '${data.itStandName}',
+          `obj_technology_status_Id        = ${data.itStandStatus},
           Description                     = ${data.itStandDesc},
           obj_standard_type_Id            = ${data.itStandType},
           obj_508_compliance_status_Id    = ${data.itStand508},
@@ -110,13 +110,15 @@ exports.update = (req, res) => {
         WHERE Id = ${req.params.id};
         SET FOREIGN_KEY_CHECKS=1;
         ${catString}
-        ${pocString}`
+        ${pocString}`;
 
-      res = ctrl.sendQuery(query, 'update IT Standard', res); //removed sendQuery_cowboy reference
+      var logStatement = `insert into log.event (Event, User, DTG) values ('update IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
+
+      res = ctrl.sendQuery(query + ' ' + logStatement, 'update IT Standard', res); //removed sendQuery_cowboy reference
     } else {
-      console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
+      //console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
       
-      console.log('it-standard update no valid token!!!!');
+      //console.log('it-standard update no valid token!!!!');
       res.status(502).json({
         message: "No authorization token present. Not allowed to update IT-Standards"
       });
@@ -164,8 +166,9 @@ exports.create = (req, res) => {
         softwareProductName,
         softwareVersionName,
         softwareReleaseName) VALUES (
-        '${data.itStandName}',
-        ${data.itStandDesc},
+        `+//'${data.itStandName}',
+        `'none',`
+        `${data.itStandDesc},
         ${data.itStandAprvExp},
         '${data.itStandVendorOrg}',
         '${data.itStandMyView}',
@@ -186,11 +189,13 @@ exports.create = (req, res) => {
         '${data.tcManufacturerName}',
         '${data.tcSoftwareProductName}',
         '${data.tcSoftwareVersionName}',
-        '${data.tcSoftwareReleaseName}');`
+        '${data.tcSoftwareReleaseName}');`;
 
-      res = ctrl.sendQuery(query, 'create IT Standard', res); //removed sendQuery_cowboy reference
+      var logStatement = `insert into log.event (Event, User, DTG) values ('create IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
+
+      res = ctrl.sendQuery(query + ' ' + logStatement, 'create IT Standard', res); //removed sendQuery_cowboy reference
     } else {
-      console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
+      //console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
 
       res.status(502).json({
         message: "No authorization token present. Not allowed to create IT Standard"

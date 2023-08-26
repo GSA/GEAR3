@@ -79,11 +79,11 @@ export class ItStandardsComponent implements OnInit {
     title: 'SoftwareRelease',
     sortable: true,
     visible: false
-  }, {
-    field: 'ManufacturerName',
-    title: 'Manufacturer',
-    sortable: true,
-    visible: false
+  //}, {
+  //  field: 'ManufacturerName',
+  //  title: 'Manufacturer',
+  //  sortable: true,
+  //  visible: false
   }, {
     field: 'SoftwareProductName',
     title: 'Software Product',
@@ -97,10 +97,20 @@ export class ItStandardsComponent implements OnInit {
   }, {
     field: 'SoftwareReleaseName',
     title: 'Software Release',
-    sortable: true
+    sortable: true,
+    visible: false
   }, {
     field: 'Name',
-    title: 'IT Standard Name (Legacy)',
+    title: 'IT Standard Name',
+    sortable: true
+  }, {
+    field: 'OldName',
+    title: 'Old IT Standard Name',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'ManufacturerName',
+    title: 'Manufacturer',
     sortable: true
   }, {
     field: 'Description',

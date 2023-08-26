@@ -137,6 +137,7 @@
                       [virtualScroll]="true"
                       (scroll)="modalService.onScroll($event, softwareReleasesBuffer, bufferSize, softwareReleases, softwareReleasesLoading)"
                       (scrollToEnd)="modalService.onScrollToEnd(softwareReleasesBuffer, bufferSize, softwareReleases, softwareReleasesLoading)"
+                      (change)="setApprovalExpirationDate($event)"
                       required>
                       <ng-template ng-header-tmp>
                         <small class="form-text text-muted">Loaded {{ softwareReleasesBuffer.length }} of {{ softwareReleases.length }}</small>
@@ -167,9 +168,9 @@
                 </div>
 
                 <div class="form-group col-6" id="divOldName">
-                  <label for="itStandName">IT-Standard Name (Legacy)</label>
+                  <label for="itStandName">Old IT-Standard Name (Legacy)</label>
                   <input type="text" class="form-control" id="itStandName"
-                    formControlName="itStandName" placeholder="" [value]="itStandard.Name" >
+                    formControlName="itStandName" placeholder="" [value]="itStandard.OldName" >
                   <!--<div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'itStandName')">
                     <div class="invalid-feedback" *ngIf="itStandardsForm.controls['itStandName'].errors.required">
                       IT Standard Name Required
