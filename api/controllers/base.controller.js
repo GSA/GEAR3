@@ -4,7 +4,8 @@ const sql = require("../db.js").connection,
   path = require("path"),
   fs = require("fs"),
   readline = require("readline"),
-  { google } = require("googleapis");
+  { google } = require("googleapis")
+  fastcsv = require("fast-csv");
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
@@ -419,6 +420,28 @@ function sendResponse(response, data) {
     response = response
       .status(507)
       .json({ error: "The API returned an error: " + err });
+}
+
+exports.updatePocs = (req, res) => {
+  let stream = fs.createReadStream("./pocs/GSA_Pocs.csv");
+  let pocCsv = [];
+  let csvStream = fastcsv
+    .parse()
+    .on("data", function (data) {
+      pocCsv.push(data);
+    })
+    .on("end", function () {
+      // remove the first line: header
+      pocCsv.shift();
+
+      let query = "REPLACE INTO obj_ldap_poc (SamAccountName, FirstName, LastName, Email, Phone, OrgCode, Position, EmployeeType) VALUES ?";
+      
+      sql.query(query, [pocCsv], (error, response) => {
+        console.log(error || response);
+      });
+    });
+
+  stream.pipe(csvStream);
 }
 
 
@@ -1884,7 +1907,7 @@ function booleanToTinyint (boolean) {
     return null;
   }
 }*/
-
+/*
 let timerArray = [];  // array to hold timer objects
 function timer (timerObj = null) {
 
@@ -1921,7 +1944,7 @@ function timer (timerObj = null) {
 
   }
 
-}
+}*/
 
 function getImportId() {
 
@@ -1958,11 +1981,11 @@ exports.importTechCatlogData = async (data, response) => {
 
     let accessToken = '';                                 // stores the flerera api access token
     let graphqlQuery = '';                                // stores the graphql query to be sent to the flexera api
-    let columnList = '';                                  // select column list based on dataset name
+    //let columnList = '';                                  // select column list based on dataset name
 
     const tableName = `tech_catalog.tp_${datasetName}`;   // table name based on dataset name// insert table name based on dataset name
     let insertStatement = `insert into ${tableName} (`;   // insert statement for table records
-    let updateStatement = `update ${tableName} set `;     
+    //let updateStatement = `update ${tableName} set `;     
     let isStatementBuilt = false;                         // flag to determine if the update statement has been built
 
     // (only used for SoftwareLifecycle dataset ONLY)
@@ -1973,18 +1996,18 @@ exports.importTechCatlogData = async (data, response) => {
     let pageCounter = 0;                                  // total number of pages processed
     let pageRequestCounter = 0;                           // total number of page requests made
     let recordCounter = 0;                                // total number of records received
-    let recordRequestCounter = 0;                         // total number of record requests made
+    //let recordRequestCounter = 0;                         // total number of record requests made
     let recordsFailedCounter = 0;                         // total number of records that failed to insert into db
     let isFatalError = 0;
 
     let recordsInsertedCounter = 0;                       // total number of records inserted into db
 
     let recordToUpdateCounter = 0;                        // total number of records to update
-    let recordsUpdatedCounter = 0;                        // total number of records updated
-    let recordsUpdateFailedCounter = 0;                   // total number of records that failed to update
+    //let recordsUpdatedCounter = 0;                        // total number of records updated
+    //let recordsUpdateFailedCounter = 0;                   // total number of records that failed to update
     
     let pageSummaryArray = [];                            // array of page summary objects, page added after completed
-    let recordsFailedList = [];                           // list of records that failed to insert into db
+    //let recordsFailedList = [];                           // list of records that failed to insert into db
 
     let beginTableRecordCount = 0;                        // number of records in the table before the import process begins
     let endTableRecordCount = 0;                          // number of records in the table after the import process ends
@@ -1997,7 +2020,7 @@ exports.importTechCatlogData = async (data, response) => {
     const uploadStartTime = new Date();                   // upload start time //TIMESTAMP();
     let uploadEndTime = null;                             // upload end time //TIMESTAMP();
     let recordCountDisplay = 0;
-    let affectRowsCounter = 0;                            // number of rows affected by the insert/update statement
+    //let affectRowsCounter = 0;                            // number of rows affected by the insert/update statement
     let affectRowsCounter1 = 0;                           // number of rows affected by the insert/update statement
     let affectRowsCounter2 = 0;                           // number of rows affected by the insert/update statement
     let affectRowsCounter3 = 0;                           // number of rows affected by the insert/update statement
@@ -2189,12 +2212,12 @@ exports.importTechCatlogData = async (data, response) => {
         // ... setting page variables and functions
         const pageStartTime = new Date();
         let pageEndTime = null;
-        let pageDuration = null;
+        //let pageDuration = null;
         let pageRecordCounter = 0;
         let pageRecordsInsertedCounter = 0;
         let pageRecordsToUpdateCounter = 0;
-        let pageRecordsUpdatedCounter = 0;
-        let pageRecordsUpdateFailedCounter = 0;
+        //let pageRecordsUpdatedCounter = 0;
+        //let pageRecordsUpdateFailedCounter = 0;
         let pageRecordsFailedCounter = 0;
         let consecutiveFailedRecordCounter = 0;
         let notificationCounter = 0;
@@ -2361,16 +2384,16 @@ exports.importTechCatlogData = async (data, response) => {
               let recordsToInsert = [];           // stores the array of record objects to insert
               let insertValuesMap = new Map();    // stores the map of record values to columns for insert statement
 
-              let recordsToUpdate = [];           // stores the array of record objects to update
-              let updateValuesMap = new Map();    // stores the map of record values to columns for update statement
+              //let recordsToUpdate = [];           // stores the array of record objects to update
+              //let updateValuesMap = new Map();    // stores the map of record values to columns for update statement
 
               // ... (for SoftwareLifecycle ONLY) stores SoftwareLifecycle.softwareSupportStage Object data 
               let recordsToInsertSftwSupportStage = [];
               let insertValuesMapSftwSupportStage = new Map();
 
-              let recordGraphqlQuery = null;
-              let updateDatasetArray = [];
-              let pageRecordJson = null;
+              //let recordGraphqlQuery = null;
+              //let updateDatasetArray = [];
+              //let pageRecordJson = null;
               let insertUpdateRequired = false;
 
               // ... if the 
@@ -2849,18 +2872,6 @@ exports.importTechCatlogData = async (data, response) => {
                         stringToDate(datasetObject.updatedDate),	
                         datasetObject.platform.id,	
                         datasetObject.softwareRelease.id,	
-                      ]);
-                      break;
-                    case 'SoftwareSupportStage':
-                      insertValuesMap = recordsToInsert.map(recordsToInsert => 
-                        [datasetObject.softwareLifecycle.id,	
-                        datasetObject.definition,	
-                        stringToDate(datasetObject.endDate),	
-                        datasetObject.manufacturerId,	
-                        datasetObject.name,	
-                        datasetObject.order,	
-                        datasetObject.policy,	
-                        datasetObject.publishedEndDate,	
                       ]);
                       break;
                     case 'SoftwareVersion':
