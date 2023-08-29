@@ -27,6 +27,9 @@ router.route('/updateInvest/:id')
 router.route('/get/:id/records')
   .get(sysCtrl.findRecords);
 
+router.route('/get/:id/websites')
+  .get(sysCtrl.findWebsites);
+
 router.route('/get/:id/technologies')
   .get(sysCtrl.findTechnologies);
 

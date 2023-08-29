@@ -497,7 +497,7 @@ export class ApiService {
   }
   public getSysWebsites(id: number): Observable<Website[]> {
     return this.http
-      .get<Website[]>(this.sysUrl + '/get/' + String(id) + '/website')
+      .get<Website[]>(this.sysUrl + '/get/' + String(id) + '/websites')
       .pipe(
         catchError(
           this.handleError<Website[]>('GET System Related Websites', [])

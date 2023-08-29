@@ -440,6 +440,7 @@ export class TableService {
     var system_related_websites = <any>[];
 
     // Join Websites to System for Related Systems
+    
     this.apiService
       .getSysWebsites(data.ID)
       .subscribe((websites_mappings: any[]) => {
@@ -453,7 +454,7 @@ export class TableService {
             websiteID_from_mappings.has(parseInt(Website_ID))
           ); // Parse into int as GoogleAPI makes everything strings
           // Update related websites table with filtered systems
-          $('#systemWebsiteTable').bootstrapTable('refreshOptions', {
+          $('#systemWebsitesTable').bootstrapTable('refreshOptions', {
             data: system_related_websites,
           });
         });
