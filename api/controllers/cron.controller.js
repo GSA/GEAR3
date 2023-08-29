@@ -1,16 +1,27 @@
 const ctrl = require('./base.controller'),
   records = require('./records.controller'),
   techCatImport = require('./tech-catalog-import.controller'),
-  cron = require('node-cron'),
+  //cron = require('node-cron'),
   fs = require('fs'),
   path = require('path'),
-  queryPath = '../queries/';
-const jobUser = 'GearCronJ';
+  queryPath = '../queries/'
+  SHEET_ID = '1eSoyn7-2EZMqbohzTMNDcFmNBbkl-CzXtpwNXHNHD1A', // FOR PRODUCTION
+  //SHEET_ID = '1ytXm7qf96aP7XS6zA8nu7wLQpRGshc4IOPp8orv7bSI', // FOR TESTING
+  RANGE = 'Master Junction with Business Systems!A2:B',
+  jobUser = 'GearCronJ';
+
+
 
 // -------------------------------------------------------------------------------------------------
-// CRON JOB: Google Sheets API - Update All Related Records (runs every weekday at 2:00 AM)
-cron.schedule('0 5 * * 1-5', () => { //PRODUCTION
-  //cron.schedule('*/2 * * * 1-5', () => { //DEBUGGING
+// CRON JOB: Google Sheets API - Update All Related Records
+exports.runTESTJob = async () => {
+  console.log('CRON JOB: TEST - executed at ', new Date());
+};
+
+// -------------------------------------------------------------------------------------------------
+// CRON JOB: Google Sheets API - Update All Related Records
+exports.runUpdateAllRelatedRecordsJob = async () => {
+
   const jobName = `CRON JOB: Update All Related Records`;
   let status = 'executed';
 
@@ -32,12 +43,11 @@ cron.schedule('0 5 * * 1-5', () => { //PRODUCTION
     status = `error occurred while running:  \n` + error;
     console.log(jobName + ' - ' + status);
   }
-});
+};
 
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Tech Catalog Daily Import (runs daily at 5:00 AM)
-cron.schedule('0 6 * * *', () => { //PRODUCTION
-  //cron.schedule('*/1 * * * 1-5', () => { //DEBUGGING
+exports.runTechCatalogImportJob = async () => {
 
   const jobName = 'CRON JOB: Tech Catalog Daily Import';
   let status = 'executed';
@@ -67,7 +77,7 @@ cron.schedule('0 6 * * *', () => { //PRODUCTION
     console.log(jobName + ' - ' + status);
   }
 
-});
+};
 
 /*
  * Function to get FISMA info from ServiceNow API
@@ -132,7 +142,7 @@ const putData = async data => {
 
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Update GSA POCs (runs every Wednesday at 7:00 AM)
-cron.schedule('0 7 * * 3', () => {
+/*cron.schedule('0 7 * * 3', () => {
 
   const jobName = 'CRON JOB: Update GSA POCs';
   let status = 'executed';
@@ -153,4 +163,4 @@ cron.schedule('0 7 * * 3', () => {
     console.log(jobName + ' - ' + status);
   }
 
-});
+});*/

@@ -84,7 +84,7 @@ function buildLogQuery(conn, event, user, msg, response) {
       console.log(`DB Log Event Query Error while executing ${msg}: `, error);
       return {message: error.message || `DB Query Error while executing ${msg}`,};
     } else {
-      console.log("DB Log Event Query Response: ");  // Debug
+      //console.log("Event Logged");  // Debug
       return JSON.stringify(data);
     }
   });
@@ -2094,6 +2094,18 @@ exports.importTechCatlogData = async (data, response) => {
       let summary = getImportSummary();
 
       writeToLogFile(JSON.stringify(summary), importSummaryLogFileName);
+
+      let logStatement = null;
+
+      if (isFatalError === 1) {
+        logStatement = `insert into log.event (Event, User, DTG) values ('${datasetName} import FAILED', 'GearCronJ', now());`;
+      } else if (recordsFailedCounter > 0) {
+        logStatement = `insert into log.event (Event, User, DTG) values ('${datasetName} import completed with errors', 'GearCronJ', now());`;
+      } else {
+        logStatement = `insert into log.event (Event, User, DTG) values ('${datasetName} import completed successful', 'GearCronJ', now());`;
+      }
+
+      sql.query(logStatement);
 
       // ... log import summary and complete import request.
       //logger(`${getLogHeader()}`, `IMPORT SUMMARY: \n${JSON.stringify(summary)}`);
