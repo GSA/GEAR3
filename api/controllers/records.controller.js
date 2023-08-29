@@ -8,7 +8,7 @@ const ctrl = require('./base.controller'),
   RANGE = 'Master Junction with Business Systems!A2:B';
 
 // @see https://docs.google.com/spreadsheets/d/1eSoyn7-2EZMqbohzTMNDcFmNBbkl-CzXtpwNXHNHD1A
-
+  
 
 // Create and Save a new Record
 // This can be called in the browser using the following URL: http://localhost:3000/api/records
@@ -117,29 +117,4 @@ exports.logEvent = (req, res) => {
   var data = req.body;
 
   res = ctrl.sendLogQuery(data.message, data.user, data.message, res);
-};
-
-// this function is called by the api to upload a tech catalog dataset to the database
-exports.runUploadTechCatalogDataset = (req, res) => {
-  var data = req.body;
-
-  ctrl.uploadTechCatalogDataset(data, res)
-    .then((response) => {
-      let json = response;
-      console.log('End of uploadTechCatalogDataset'); 
-      res.status(200).json({ message: json, });
-    });
-
-  console.log
-};
-
-// this function is called by the api to get a list of records that need to be syncronized
-exports.getSyncList = (req, res) => {
-  var data = req.body;
-
-  ctrl.getSyncList(data, res)
-    .then((response) => {
-      let json = response;
-      res.status(200).json({ message: json, });
-    });
 };

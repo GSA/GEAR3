@@ -24,4 +24,5 @@ export class ITStandards {
   public StandardType: string = null;
   public POC: string = null;
   public Category: string = null;
+  public OldName: string = null;
 }

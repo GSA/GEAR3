@@ -287,11 +287,21 @@ export class ItStandardManagerComponent implements OnInit {
       if (!this.itStandardsForm.value.itStand508) this.itStandardsForm.value.itStand508 = '3';
 
       // replace ' from all text fields
-      this.itStandardsForm.value.itStandDesc = this.itStandardsForm.value.itStandDesc.replace(/'/g, "''");
-      this.itStandardsForm.value.itStandVendorOrg = this.itStandardsForm.value.itStandVendorOrg.replace(/'/g, "''");
-      this.itStandardsForm.value.itStandGoldComment = this.itStandardsForm.value.itStandGoldComment.replace(/'/g, "''");
-      this.itStandardsForm.value.itStandComments = this.itStandardsForm.value.itStandComments.replace(/'/g, "''");
-      this.itStandardsForm.value.itStandRefDocs = this.itStandardsForm.value.itStandRefDocs.replace(/'/g, "''");
+      if (String(this.itStandardsForm.value.itStandDesc).includes("'")) {
+        this.itStandardsForm.value.itStandDesc = this.itStandardsForm.value.itStandDesc.replace(/'/g, "''");
+      }
+      if (String(this.itStandardsForm.value.itStandVendorOrg).includes("'")) {
+        this.itStandardsForm.value.itStandVendorOrg = this.itStandardsForm.value.itStandVendorOrg.replace(/'/g, "''");
+      }
+      if (String(this.itStandardsForm.value.itStandGoldComment).includes("'")) {
+        this.itStandardsForm.value.itStandGoldComment = this.itStandardsForm.value.itStandGoldComment.replace(/'/g, "''");
+      }
+      if (String(this.itStandardsForm.value.itStandComments).includes("'")) {
+        this.itStandardsForm.value.itStandComments = this.itStandardsForm.value.itStandComments.replace(/'/g, "''");
+      }
+      if (String(this.itStandardsForm.value.itStandRefDocs).includes("'")) {
+        this.itStandardsForm.value.itStandRefDocs = this.itStandardsForm.value.itStandRefDocs.replace(/'/g, "''");
+      }
 
       // Add username to payload
       this.itStandardsForm.value.auditUser = this.globals.authUser;
@@ -374,6 +384,13 @@ export class ItStandardManagerComponent implements OnInit {
     $('#itStandardDetail').modal('show');
   }
 
+  setApprovalExpirationDate(data: any) {
+    if (data.endOfLifeDate  !== '' && data.endOfLifeDate !== null) {
+      console.log("setting approval expiration date to: ", data.endOfLifeDate); //DEBUG
+      $('#itStandAprvExp').datepicker('setDate', new Date(data.endOfLifeDate));
+    }
+  }
+
   manufacturerChange(manufacturer: any) {
     //console.log("Manufacturer changed to: ", manufacturer); //DEBUG
 
@@ -391,7 +408,7 @@ export class ItStandardManagerComponent implements OnInit {
           this.softwareProductsBuffer = this.softwareProducts.slice(0, this.bufferSize);
           this.softwareProductsLoading = false;
           this.enableSoftwareProduct();
-          this.disableSoftwareVersion();
+          //this.disableSoftwareVersion();
         });
       } else {
         //console.log("(ELSE) Manufacturer ID: ", manufacturer["id"]); //DEBUG
@@ -402,9 +419,9 @@ export class ItStandardManagerComponent implements OnInit {
         this.softwareProductsLoading = false;
         this.softwareVersionsLoading = false;
         this.softwareReleasesLoading = false;
-        this.disableSoftwareProduct();
-        this.disableSoftwareVersion();
-        this.disableSoftwareRelease();
+        //this.disableSoftwareProduct();
+        //this.disableSoftwareVersion();
+        //this.disableSoftwareRelease();
       }
     } catch (error) {
       //console.log("manufacturerChange Error: ", error); //DEBUG
@@ -415,9 +432,9 @@ export class ItStandardManagerComponent implements OnInit {
       this.softwareProductsLoading = false;
       this.softwareVersionsLoading = false;
       this.softwareReleasesLoading = false;
-      this.disableSoftwareProduct();
-      this.disableSoftwareVersion();
-      this.disableSoftwareRelease();
+      //this.disableSoftwareProduct();
+      //this.disableSoftwareVersion();
+      //this.disableSoftwareRelease();
     }
   }
 
@@ -437,7 +454,7 @@ export class ItStandardManagerComponent implements OnInit {
           this.softwareVersionsBuffer = this.softwareVersions.slice(0, this.bufferSize);
           this.softwareVersionsLoading = false;
           this.enableSoftwareVersion();
-          this.disableSoftwareRelease();
+          //this.disableSoftwareRelease();
         });
       } else {
         //console.log("Software Product ID: ", softwareProduct["id"]); //DEBUG
@@ -446,8 +463,8 @@ export class ItStandardManagerComponent implements OnInit {
         this.softwareReleases = [];
         this.softwareVersionsLoading = false;
         this.softwareReleasesLoading = false;
-        this.disableSoftwareVersion();
-        this.disableSoftwareRelease();
+        //this.disableSoftwareVersion();
+        //this.disableSoftwareRelease();
       }
     } catch (error) {
       //console.log("softwareProductChange Error: ", error); //DEBUG
@@ -456,8 +473,8 @@ export class ItStandardManagerComponent implements OnInit {
       this.softwareReleases = [];
       this.softwareVersionsLoading = false;
       this.softwareReleasesLoading = false;
-      this.disableSoftwareVersion();
-      this.disableSoftwareVersion();
+      //this.disableSoftwareVersion();
+      //this.disableSoftwareVersion();
     }
   }
 
@@ -482,14 +499,14 @@ export class ItStandardManagerComponent implements OnInit {
 
         this.softwareReleases = [];
         this.softwareReleasesLoading = false;
-        this.disableSoftwareRelease();
+        //this.disableSoftwareRelease();
       }
     } catch (error) {
       //console.log("softwareVersionChange Error: ", error); //DEBUG
 
       this.softwareReleases = [];
       this.softwareReleasesLoading = false;
-      this.disableSoftwareRelease();
+      //this.disableSoftwareRelease();
     }
   }
 

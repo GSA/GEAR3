@@ -146,8 +146,7 @@ app.post(samlConfig.path,
       (err, results, fields) => {
         if (err) {
           // log call return error
-          let logData = {"message": "GEAR Manager - Login Error", "userId":`${samlProfile.nameID}`};
-          logServerEvent(logData);
+          db.query(`insert into log.event (Event, User, DTG) values ('GEAR Manager - Login Error', '${samlProfile.nameID}', now());`);
           
           res.status(500);
           res.json({ error: err });
@@ -158,8 +157,7 @@ app.post(samlConfig.path,
 
           if (results[0].length === 0) {
             // log no data returned
-            let logData = {"message": "GEAR Manager - Unable to Verify User", "userId":`${samlProfile.nameID}`};
-            logServerEvent(logData);
+            db.query(`insert into log.event (Event, User, DTG) values ('GEAR Manager - Unable to Verify User', '${samlProfile.nameID}', now());`);
             
             userLookupStatus = `Unable to verify user, <strong>${samlProfile.nameID}</strong><br/><a href="${process.env.SAML_ENTRY_POINT}">TRY AGAIN</a>`;
             html = `<html><body style="font-family:sans-serif;"><p>${userLookupStatus}</p></body></html>`;
@@ -211,8 +209,7 @@ app.post(samlConfig.path,
 `
           
           // Log GEAR Manager login
-          let logData = {"message": "GEAR Manager - Successful Login", "userId":`${results[0][0].AuditID}`};
-          logServerEvent(logData);
+          db.query(`insert into log.event (Event, User, DTG) values ('GEAR Manager - Successful Login', '${samlProfile.nameID}', now());`);
 
           res.send(html);
         }
@@ -283,6 +280,8 @@ const request = require('request');
 const cron = require('node-cron');
 const fetch = require("node-fetch");
 let base64 = require('base-64');
+let cronCtrl = require("./api/controllers/cron.controller.js")
+
 /* 
 cron.schedule('0 20 * * *', () => {
   getData(fismaOptions.url);
@@ -368,87 +367,24 @@ cron.schedule('0 7 * * WED', () => {
   stream.pipe(csvStream);
 });
 
-// Google API Pull to run every weekday at 2:00 AM
-cron.schedule('0 2 * * 1-5', () => { //PRODUCTION
-//cron.schedule('*/10 * * * 1-5', () => { //DEBUGGING
-  try {
-    console.log(getCurrentDatetime() + 'CRON JOB: Update All Related Records (runs every weekday at 2:00 AM) - Starting');
-    
-    let logData = {"message": "CRON JOB: Update All Related Records", "userId":"GearCronJ"};
-    logServerEvent(logData);
-    
-    // run the fetch request to get the data from the Google Sheet
-    putUpdateAllSystems("");
-  } catch (error) {
-    // log any errors
-    console.log(getCurrentDatetime() + `: CRON JOB: Update All Related Records - An unexpected error occurred while running:  \n` + error);
-  }
+// -------------------------------------------------------------------------------------------------
+// CRON JOB: Google Sheets API - Update All Related Records (runs every weekday at 2:00 AM)
+cron.schedule('0 5 * * 1-5', () => { //PRODUCTION
+//cron.schedule('50 14 * * 1-5', () => { //DEBUGGING
+
+  cronCtrl.runUpdateAllRelatedRecordsJob();
+  
 });
 
-// called by Google API Pull
-const putUpdateAllSystems = async data => {
-  try {
-    // run the fetch request to update all systems
-    const response = await fetch(`${getAppURL()}/api/records/updateAllSystems`, {
-      method: 'PUT',
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "true",
-        Requester: "gearCronJ"
-      },
-      body: data//JSON.stringify(data)
-    });
+// -------------------------------------------------------------------------------------------------
+// CRON JOB: Tech Catalog Daily Import (runs daily at 5:00 AM)
+cron.schedule('0 6 * * *', () => { //PRODUCTION
+//cron.schedule('55 14 * * *', () => { //DEBUGGING
 
-    const responseJson = await response.json();
-    console.log(getCurrentDatetime()+'CRON JOB: Update All Related Records (runs every weekday at 2:00 AM) - Finished')
-  } catch (error) {
-    // log any errors
-    console.log(getCurrentDatetime()+error);
+  cronCtrl.runTechCatalogImportJob();
 
-    let logData = {"message": "CRON JOB: Update All Related Records - Errored with " + json.stringify(error), "userId":"GearCronJ"};
-    logServerEvent(logData);
-  };
-};
-
-// logs an event on the server to the db
-const logServerEvent = async data => {
-  //console.log("logServerEvent ("+data.message+")")
-
-  // create the data object to send to the server
-  data = {type: 'log/error', message: data.message, user: data.userId};
-
-  try {
-    // run the fetch request to post the log event
-    const response = await fetch(`${getAppURL()}/api/records/logEvent`, {
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "true",
-      },
-      body: JSON.stringify(data)
-    });
-
-    const responseJson = await response.json();
-  } catch (error) {
-    // log any errors
-    console.log(getCurrentDatetime() + `: logServerEvent - An unexpected error occurred:  \n` + error);
-  };
-};
-
-function getCurrentDatetime() {
-  const currentDate = new Date();
-  const datetimeString = currentDate.toISOString().slice(0, 19).replace('T', ' ') + ': ';
-  return datetimeString;
-}
-
-function getAppURL () {
-  if (process.env.ENVIRONMENT === 'production') {
-    return 'https://ea.gsa.gov';
-  } else if (process.env.ENVIRONMENT === 'staging') {
-    return 'https://stage.ea.gsa.gov';
-  } else if (process.env.ENVIRONMENT === 'development') {
-    return 'https://dev1.ea.gsa.gov';
-  } else {
-    return 'http://localhost:3000';
-  }
-}
+});
+/*
+cron.schedule('* /5 * * * *', () => { //PRODUCTION
+  cronCtrl.runTESTJob();
+});*/
