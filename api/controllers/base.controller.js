@@ -2260,10 +2260,16 @@ exports.importTechCatlogData = async (data, response) => {
           // 1. get the access token
           try {
 
-            //if (accessToken === '') {
-              // ... get the access token from the flexera api
+            try {
+              //if (accessToken === '') {
+                // ... get the access token from the flexera api
+                accessToken = await getAccessToken(refreshToken, getLogHeaderNoTime());
+              //}
+            } catch (error) {
+              // wait 10 sec and try again
+              await new Promise(resolve => setTimeout(resolve, 10000));
               accessToken = await getAccessToken(refreshToken, getLogHeaderNoTime());
-            //}
+            }
 
           } catch (error) {
             // ... log failure, end import.
@@ -2295,14 +2301,21 @@ exports.importTechCatlogData = async (data, response) => {
           // 3. execute page request
           try {
 
-            // ... sending api request for page data to flexera
-            pageJson = await sendAPIQuery(graphqlQuery, accessToken, getLogHeaderNoTime());
+            try {
+              
+              // ... sending api request for page data to flexera
+              pageJson = await sendAPIQuery(graphqlQuery, accessToken, getLogHeaderNoTime());
 
-            // (TESTING ONLY)
-            //writeToLogFile(`page ${pageCounter} graphqlQuery: ` + JSON.stringify(pageJson) + `,\n`, importLogFileName);
+              // (TESTING ONLY)
+              //writeToLogFile(`page ${pageCounter} graphqlQuery: ` + JSON.stringify(pageJson) + `,\n`, importLogFileName);
+
+            } catch (error) {
+              // wait 10 sec and try again
+              await new Promise(resolve => setTimeout(resolve, 10000));
+              pageJson = await sendAPIQuery(graphqlQuery, accessToken, getLogHeaderNoTime());
+            }
 
             pageRequestCounter++;
-
           } catch (error) {
             // ... log failure, end import.
             logger(`${getLogHeader()}`, `failed executing page request`, error, errorLogFileName);
