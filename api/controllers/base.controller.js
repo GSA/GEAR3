@@ -2095,17 +2095,46 @@ exports.importTechCatlogData = async (data, response) => {
 
       writeToLogFile(JSON.stringify(summary), importSummaryLogFileName);
 
-      let logStatement = null;
+      let logMessage = null;
 
       if (isFatalError === 1) {
-        logStatement = `insert into log.event (Event, User, DTG) values ('${datasetName} import FAILED', 'GearCronJ', now());`;
+        logMessage = `${datasetName} import FAILED`;
       } else if (recordsFailedCounter > 0) {
-        logStatement = `insert into log.event (Event, User, DTG) values ('${datasetName} import completed with errors', 'GearCronJ', now());`;
+        logMessage = `${datasetName} import completed with errors`;
       } else {
-        logStatement = `insert into log.event (Event, User, DTG) values ('${datasetName} import completed successful', 'GearCronJ', now());`;
+        logMessage = `${datasetName} import completed successful`;
       }
 
-      sql.query(logStatement);
+      sql.query(`insert into log.event (Event, User, DTG) values ('${logStatement}', 'GearCronJ', now());`);
+
+      let importLogStatement = 
+      `update tech_catalog.dataset_import_log
+      SET
+      import_status = '${logMessage}',
+      takeAmount = ${takeAmt},
+      dryRun = ${(isDryRun === 'true' ? 'true' : 'false')},
+      lastSyncDateOverride = '${lastSyncDateOverride}',
+      lastIdOverride = '${lastIdOverride}',
+      lastRecordId = '${lastRecordId}',
+      firstAfterIdUsed = '${lastRecordIdUsed}',
+      lastSynchronizedDateUsed = '${lastSynchronizedDate}',
+      startTime = '${formatDateTime(uploadStartTime)}',
+      endTime = '${formatDateTime(uploadEndTime)}',
+      duration = '${formatDuration(uploadStartTime, uploadEndTime)}',
+      totalPageRequestsMade = ${pageRequestCounter},
+      totalPages = ${pageCounter},
+      totalRecords = ${pageCounter},
+      totalRecordsToBeInsertedUpdated = ${recordToUpdateCounter},
+      totalRecordsInsertedUpdated = ${recordsInsertedCounter},
+      totalRecordsFailed = ${recordsFailedCounter},
+      totalSoftwareSupportStageRecords = ${softwareSupportStageCounter},
+      beginTableRecordCount = ${beginTableRecordCount},
+      endTableRecordCount = ${endTableRecordCount},
+      fatalError = ${isFatalError},
+      fatalErrorMessage =  = 'see error log file'
+      WHERE import_id = '${importId}' AND datasetName = '${datasetName}'; `;
+
+      sql.query(importLogStatement);
 
       // ... log import summary and complete import request.
       //logger(`${getLogHeader()}`, `IMPORT SUMMARY: \n${JSON.stringify(summary)}`);
@@ -2122,6 +2151,14 @@ exports.importTechCatlogData = async (data, response) => {
   // -----------------------------------------------
   // import process
   try {
+
+    try {
+      // log start to db
+      await sql_promise.query(`insert into tech_catalog.dataset_import_log (import_id, datasetName, import_status) values ('${importId}', '${datasetName}', 'in progress'); `);
+    } catch (er) {
+      console.log(`${datasetName} import is already in progress\n`, er);
+      return { message : `${datasetName} import is already in progress` };
+    }
 
     logger(`${getLogHeader()}`, `********** STARTING ${importType} IMPORT PROCESS **********`, null, importLogFileName);
 
