@@ -495,7 +495,7 @@ export class ApiService {
         catchError(this.handleError<Record[]>('GET System Related Records', []))
       );
   }
-  /*public getSysWebsites(id: number): Observable<Website[]> {
+  public getSysWebsites(id: number): Observable<Website[]> {
     return this.http
       .get<Website[]>(this.sysUrl + '/get/' + String(id) + '/websites')
       .pipe(
@@ -503,7 +503,7 @@ export class ApiService {
           this.handleError<Website[]>('GET System Related Websites', [])
         )
       );
-  }*/
+  }
   public getSysITStandards(id: number): Observable<ITStandards[]> {
     return this.http
       .get<ITStandards[]>(this.sysUrl + '/get/' + String(id) + '/technologies')

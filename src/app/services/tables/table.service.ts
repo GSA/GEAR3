@@ -441,7 +441,7 @@ export class TableService {
       
     // Update related websites table in detail modal with clicked system
     var system_related_websites = <any>[];
-     /* 
+    
     // Join Websites to System for Related Systems
     
     this.apiService
@@ -461,7 +461,7 @@ export class TableService {
             data: system_related_websites,
           });
         });
-      });*/
+      });
   }
   
   private clickMethod(options: ClickOptions) {
