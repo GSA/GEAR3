@@ -1,7 +1,6 @@
 const ctrl = require('./base.controller'),
   records = require('./records.controller'),
   techCatImport = require('./tech-catalog-import.controller'),
-  //cron = require('node-cron'),
   fs = require('fs'),
   path = require('path'),
   queryPath = '../queries/'

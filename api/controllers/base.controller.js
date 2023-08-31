@@ -1954,9 +1954,10 @@ function getImportId() {
   const year = formattedDate.getFullYear();
   const month = String(formattedDate.getMonth() + 1).padStart(2, '0');
   const day = String(formattedDate.getDate()).padStart(2, '0');
+  const hours = String(formattedDate.getUTCHours()).padStart(2, '0');
 
   // Combine the components into the desired format
-  formattedDate = parseInt(`${year}${month}${day}`);
+  formattedDate = parseInt(`${year}${month}${day}${hours}`);
 
   return formattedDate;
 }
@@ -2105,21 +2106,21 @@ exports.importTechCatlogData = async (data, response) => {
         logMessage = `${datasetName} import completed successful`;
       }
 
-      sql.query(`insert into log.event (Event, User, DTG) values ('${logStatement}', 'GearCronJ', now());`);
+      sql.query(`insert into log.event (Event, User, DTG) values ('${logMessage}', 'GearCronJ', now());`);
 
       let importLogStatement = 
       `update tech_catalog.dataset_import_log
       SET
       import_status = '${logMessage}',
       takeAmount = ${takeAmt},
-      dryRun = ${(isDryRun === 'true' ? 'true' : 'false')},
-      lastSyncDateOverride = '${lastSyncDateOverride}',
+      dryRun = '${(isDryRun === 'true' ? 'true' : 'false')}',
+      lastSyncDateOverride = ${formatDateTime(lastSyncDateOverride) === 'null' ? null : "'" + formatDateTime(lastSyncDateOverride) + "'"},
       lastIdOverride = '${lastIdOverride}',
       lastRecordId = '${lastRecordId}',
       firstAfterIdUsed = '${lastRecordIdUsed}',
-      lastSynchronizedDateUsed = '${lastSynchronizedDate}',
-      startTime = '${formatDateTime(uploadStartTime)}',
-      endTime = '${formatDateTime(uploadEndTime)}',
+      lastSynchronizedDateUsed = ${formatDateTime(lastSynchronizedDate) === 'null' ? null : "'" + formatDateTime(lastSynchronizedDate) + "'"},
+      startTime = ${formatDateTime(uploadStartTime) === 'null' ? null : "'" + formatDateTime(uploadStartTime) + "'"},
+      endTime = ${formatDateTime(uploadEndTime) === 'null' ? null : "'" + formatDateTime(uploadEndTime) + "'"},
       duration = '${formatDuration(uploadStartTime, uploadEndTime)}',
       totalPageRequestsMade = ${pageRequestCounter},
       totalPages = ${pageCounter},
@@ -2131,7 +2132,7 @@ exports.importTechCatlogData = async (data, response) => {
       beginTableRecordCount = ${beginTableRecordCount},
       endTableRecordCount = ${endTableRecordCount},
       fatalError = ${isFatalError},
-      fatalErrorMessage =  = 'see error log file'
+      fatalErrorMessage = ${isFatalError === 1 ? 'see error log file' : 'null'}
       WHERE import_id = '${importId}' AND datasetName = '${datasetName}'; `;
 
       sql.query(importLogStatement);
@@ -2156,7 +2157,7 @@ exports.importTechCatlogData = async (data, response) => {
       // log start to db
       await sql_promise.query(`insert into tech_catalog.dataset_import_log (import_id, datasetName, import_status) values ('${importId}', '${datasetName}', 'in progress'); `);
     } catch (er) {
-      console.log(`${datasetName} import is already in progress\n`, er);
+      console.log(`\n****** ${datasetName} import is already in progress ******\n`); //, er);
       return { message : `${datasetName} import is already in progress` };
     }
 
