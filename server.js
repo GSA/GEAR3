@@ -334,7 +334,7 @@ const putData = async data => {
  * every Monday at 07:00 Eastern Time
 */
 const fastcsv = require("fast-csv");
-
+/*
 cron.schedule('0 7 * * WED', () => {
   let stream = fs.createReadStream("./pocs/GSA_Pocs.csv");
   let pocCsv = [];
@@ -365,8 +365,8 @@ cron.schedule('0 7 * * WED', () => {
     });
 
   stream.pipe(csvStream);
-});
-
+});*/
+/*
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Google Sheets API - Update All Related Records (runs every weekday at 2:00 AM)
 cron.schedule('0 5 * * 1-5', () => { //PRODUCTION
@@ -374,7 +374,7 @@ cron.schedule('0 5 * * 1-5', () => { //PRODUCTION
 
   cronCtrl.runUpdateAllRelatedRecordsJob();
   
-});
+});*/
 
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Tech Catalog Daily Import (runs daily at 5:00 AM)

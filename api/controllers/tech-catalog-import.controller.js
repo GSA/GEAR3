@@ -27,7 +27,7 @@ exports.runTechCatalogImport = (req, res) => {
 
 exports.runDailyTechCatalogImport = async (req, res) => {
 
-  const maxJobs = 7;
+  const maxJobs = 8;
 
   const defaultImportType = 'update';
   const refreshToken = req.body.refreshtoken;
@@ -134,7 +134,9 @@ exports.runDailyTechCatalogImport = async (req, res) => {
         dataset: "SoftwareReleaseLink",
         takeamount: defaultTakeAmount,
         dryrun: defaultDryRun
-      },
+      }
+    ],
+    group8: [
       {
         importtype: defaultImportType,
         refreshtoken: refreshToken,

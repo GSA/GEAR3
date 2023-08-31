@@ -1977,8 +1977,8 @@ exports.importTechCatlogData = async (data, response) => {
     const importId = getImportId();                           // import id identifies a group of import requests to be used for logging
     const isDryRun = data.dryrun;                             // flag to determine if the import insert/update statement or not
     const importType = data.importtype;                       // import type identifies the type of import to be used for logging
-    const lastSyncDateOverride = null;                        // last synchronized date to override the last sync date in the database
-    const lastIdOverride = null;                              // last id to override the last id in the database
+    let lastSyncDateOverride = null;                        // last synchronized date to override the last sync date in the database
+    let lastIdOverride = null;                              // last id to override the last id in the database
 
     let accessToken = '';                                 // stores the flerera api access token
     let graphqlQuery = '';                                // stores the graphql query to be sent to the flexera api
@@ -2082,68 +2082,73 @@ exports.importTechCatlogData = async (data, response) => {
     }
     // ... performs the required tasks before ending the import process
     async function endImport() {
+      try {
 
-      uploadEndTime = new Date();
+        uploadEndTime = new Date();
 
-      // wait 5 seconds
-      await new Promise(resolve => setTimeout(resolve, 5000));
+        // wait 5 seconds
+        await new Promise(resolve => setTimeout(resolve, 5000));
 
-      // ... get the ending table record count
-      endTableRecordCount = await getTableRecordCount(tableName, getLogHeaderNoTime());
+        // ... get the ending table record count
+        endTableRecordCount = await getTableRecordCount(tableName, getLogHeaderNoTime());
 
-      // ... get the import summary
-      let summary = getImportSummary();
+        // ... get the import summary
+        let summary = getImportSummary();
 
-      writeToLogFile(JSON.stringify(summary), importSummaryLogFileName);
+        writeToLogFile(JSON.stringify(summary), importSummaryLogFileName);
 
-      let logMessage = null;
+        let logMessage = null;
 
-      if (isFatalError === 1) {
-        logMessage = `${datasetName} import FAILED`;
-      } else if (recordsFailedCounter > 0) {
-        logMessage = `${datasetName} import completed with errors`;
-      } else {
-        logMessage = `${datasetName} import completed successful`;
+        if (isFatalError === 1) {
+          logMessage = `${datasetName} import FAILED`;
+        } else if (recordsFailedCounter > 0) {
+          logMessage = `${datasetName} import completed with errors (${recordsFailedCounter})`;
+        } else {
+          logMessage = `${datasetName} import completed successful`;
+        }
+
+        sql.query(`insert into log.event (Event, User, DTG) values ('${logMessage}', 'GearCronJ', now());`);
+
+        let importLogStatement = 
+        `update tech_catalog.dataset_import_log
+        SET
+        import_status = '${logMessage}',
+        takeAmount = ${takeAmt},
+        dryRun = '${(isDryRun === 'true' ? 'true' : 'false')}',
+        lastSyncDateOverride = ${formatDateTime(lastSyncDateOverride) === 'null' ? null : "'" + formatDateTime(lastSyncDateOverride) + "'"},
+        lastIdOverride = '${lastIdOverride}',
+        lastRecordId = '${lastRecordId}',
+        firstAfterIdUsed = '${lastRecordIdUsed}',
+        lastSynchronizedDateUsed = ${formatDateTime(lastSynchronizedDate) === 'null' ? null : "'" + formatDateTime(lastSynchronizedDate) + "'"},
+        startTime = ${formatDateTime(uploadStartTime) === 'null' ? null : "'" + formatDateTime(uploadStartTime) + "'"},
+        endTime = ${formatDateTime(uploadEndTime) === 'null' ? null : "'" + formatDateTime(uploadEndTime) + "'"},
+        duration = '${formatDuration(uploadStartTime, uploadEndTime)}',
+        totalPageRequestsMade = ${pageRequestCounter},
+        totalPages = ${pageCounter},
+        totalRecords = ${pageCounter},
+        totalRecordsToBeInsertedUpdated = ${recordToUpdateCounter},
+        totalRecordsInsertedUpdated = ${recordsInsertedCounter},
+        totalRecordsFailed = ${recordsFailedCounter},
+        totalSoftwareSupportStageRecords = ${softwareSupportStageCounter},
+        beginTableRecordCount = ${beginTableRecordCount},
+        endTableRecordCount = ${endTableRecordCount},
+        fatalError = ${isFatalError},
+        fatalErrorMessage = ${isFatalError === 1 ? 'see error log file' : 'null'}
+        WHERE import_id = '${importId}' AND datasetName = '${datasetName}'; `;
+
+        sql.query(importLogStatement);
+
+        // ... log import summary and complete import request.
+        //logger(`${getLogHeader()}`, `IMPORT SUMMARY: \n${JSON.stringify(summary)}`);
+        logger(`${getLogHeader()}`, `... import summary logged`);
+
+        logger(`${getLogHeader()}`, `********** ENDING ${importType} IMPORT PROCESS **********\n\n`);
+
+        return summary;
+      } catch (error) {
+        logger(`${getLogHeader()}`, `an unexpected error occurred during endImport()`, error, errorLogFileName);
+        return error;
       }
-
-      sql.query(`insert into log.event (Event, User, DTG) values ('${logMessage}', 'GearCronJ', now());`);
-
-      let importLogStatement = 
-      `update tech_catalog.dataset_import_log
-      SET
-      import_status = '${logMessage}',
-      takeAmount = ${takeAmt},
-      dryRun = '${(isDryRun === 'true' ? 'true' : 'false')}',
-      lastSyncDateOverride = ${formatDateTime(lastSyncDateOverride) === 'null' ? null : "'" + formatDateTime(lastSyncDateOverride) + "'"},
-      lastIdOverride = '${lastIdOverride}',
-      lastRecordId = '${lastRecordId}',
-      firstAfterIdUsed = '${lastRecordIdUsed}',
-      lastSynchronizedDateUsed = ${formatDateTime(lastSynchronizedDate) === 'null' ? null : "'" + formatDateTime(lastSynchronizedDate) + "'"},
-      startTime = ${formatDateTime(uploadStartTime) === 'null' ? null : "'" + formatDateTime(uploadStartTime) + "'"},
-      endTime = ${formatDateTime(uploadEndTime) === 'null' ? null : "'" + formatDateTime(uploadEndTime) + "'"},
-      duration = '${formatDuration(uploadStartTime, uploadEndTime)}',
-      totalPageRequestsMade = ${pageRequestCounter},
-      totalPages = ${pageCounter},
-      totalRecords = ${pageCounter},
-      totalRecordsToBeInsertedUpdated = ${recordToUpdateCounter},
-      totalRecordsInsertedUpdated = ${recordsInsertedCounter},
-      totalRecordsFailed = ${recordsFailedCounter},
-      totalSoftwareSupportStageRecords = ${softwareSupportStageCounter},
-      beginTableRecordCount = ${beginTableRecordCount},
-      endTableRecordCount = ${endTableRecordCount},
-      fatalError = ${isFatalError},
-      fatalErrorMessage = ${isFatalError === 1 ? 'see error log file' : 'null'}
-      WHERE import_id = '${importId}' AND datasetName = '${datasetName}'; `;
-
-      sql.query(importLogStatement);
-
-      // ... log import summary and complete import request.
-      //logger(`${getLogHeader()}`, `IMPORT SUMMARY: \n${JSON.stringify(summary)}`);
-      logger(`${getLogHeader()}`, `... import summary logged`);
-
-      logger(`${getLogHeader()}`, `********** ENDING ${importType} IMPORT PROCESS **********\n\n`);
-
-      return summary;
 
     }
 
@@ -2155,7 +2160,7 @@ exports.importTechCatlogData = async (data, response) => {
 
     try {
       // log start to db
-      await sql_promise.query(`insert into tech_catalog.dataset_import_log (import_id, datasetName, import_status) values ('${importId}', '${datasetName}', 'in progress'); `);
+      await sql_promise.query(`insert into tech_catalog.dataset_import_log (import_id, datasetName, import_status) values ('${importId}', '${datasetName}', '${datasetName} import in progress...'); `);
     } catch (er) {
       console.log(`\n****** ${datasetName} import is already in progress ******\n`); //, er);
       return { message : `${datasetName} import is already in progress` };
@@ -2192,7 +2197,7 @@ exports.importTechCatlogData = async (data, response) => {
         // handle overrides
         try {
           if (data.lastidoverride) {
-            lastRecordId = lastRecordIdUsed = data.lastidoverride;
+            lastRecordId = lastRecordIdUsed = lastIdOverride =  data.lastidoverride;
             logger(`${getLogHeader()}`, `... OVERRIDING last id = ${lastRecordId}`, null, importLogFileName);
           }
         } catch (error) {
@@ -2201,7 +2206,9 @@ exports.importTechCatlogData = async (data, response) => {
 
         try {
           if (data.lastsyncdateoverride) {
-            lastSynchronizedDate = new Date(stringToDate(data.lastsyncdateoverride));
+            lastSynchronizedDate = lastSyncDateOverride = new Date(stringToDate(String(data.lastsyncdateoverride).replace('T', ' ').replace('Z', '')));
+            lastSynchronizedDate.setHours(0, 0, 0, 0);
+            lastSyncDateOverride.setHours(0, 0, 0, 0);
             logger(`${getLogHeader()}`, `... OVERRIDING last sync date = ${formatDateTime(lastSynchronizedDate)}`, null, importLogFileName);
           }
         } catch (error) {
@@ -2221,7 +2228,7 @@ exports.importTechCatlogData = async (data, response) => {
           
           // ... get the last synchronizedDate from the database
           lastSynchronizedDate = await getLastSyncDate(tableName,  getLogHeaderNoTime());
-
+          lastSynchronizedDate.setHours(0, 0, 0, 0);
         }
 
         logger(`${getLogHeader()}`, `... last record id: ${lastRecordId}`, null, importLogFileName);
