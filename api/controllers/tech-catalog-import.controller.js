@@ -33,9 +33,24 @@ exports.runDailyTechCatalogImport = async (req, res) => {
   const refreshToken = req.body.refreshtoken;
   const defaultTakeAmount = '10000';
   const defaultDryRun = 'false';
+  let lastSyncDateOverride = null;
+  let lastIdOverride = null;
   let importSummaries = [];
   let groupNumber = 0;
   let returnType = 'response';
+
+  try {
+    lastSyncDateOverride = req.body.lastsyncdateoverride;
+  } catch (error) {
+    console.log('no lastsyncdateoverride found')
+  }
+
+  try {
+    lastIdOverride = req.body.lastidoverride;
+  } catch (error) {
+    console.log('no lastidoverride found')
+  }
+
 
   const importGroups = {
     group1: [
@@ -44,7 +59,9 @@ exports.runDailyTechCatalogImport = async (req, res) => {
         refreshtoken: refreshToken,
         dataset: "Manufacturer",
         takeamount: defaultTakeAmount,
-        dryrun: defaultDryRun
+        dryrun: defaultDryRun,
+        lastidoverride : lastIdOverride,
+        lastsyncdateoverride : lastSyncDateOverride
       }
     ],
     group2: [
@@ -53,14 +70,18 @@ exports.runDailyTechCatalogImport = async (req, res) => {
         refreshtoken: refreshToken,
         dataset: "Platform",
         takeamount: defaultTakeAmount,
-        dryrun: defaultDryRun
+        dryrun: defaultDryRun,
+        lastidoverride : lastIdOverride,
+        lastsyncdateoverride : lastSyncDateOverride
       },
       {
         importtype: defaultImportType,
         refreshtoken: refreshToken,
         dataset: "Taxonomy",
         takeamount: defaultTakeAmount,
-        dryrun: defaultDryRun
+        dryrun: defaultDryRun,
+        lastidoverride : lastIdOverride,
+        lastsyncdateoverride : lastSyncDateOverride
       }
     ],
     group3: [
@@ -69,7 +90,9 @@ exports.runDailyTechCatalogImport = async (req, res) => {
         refreshtoken: refreshToken,
         dataset: "SoftwareFamily",
         takeamount: defaultTakeAmount,
-        dryrun: defaultDryRun
+        dryrun: defaultDryRun,
+        lastidoverride : lastIdOverride,
+        lastsyncdateoverride : lastSyncDateOverride
       }
     ],
     group4: [
@@ -78,7 +101,9 @@ exports.runDailyTechCatalogImport = async (req, res) => {
         refreshtoken: refreshToken,
         dataset: "SoftwareProduct",
         takeamount: defaultTakeAmount,
-        dryrun: defaultDryRun
+        dryrun: defaultDryRun,
+        lastidoverride : lastIdOverride,
+        lastsyncdateoverride : lastSyncDateOverride
       }
     ],
     group5: [
@@ -87,21 +112,27 @@ exports.runDailyTechCatalogImport = async (req, res) => {
         refreshtoken: refreshToken,
         dataset: "SoftwareMarketVersion",
         takeamount: defaultTakeAmount,
-        dryrun: defaultDryRun
+        dryrun: defaultDryRun,
+        lastidoverride : lastIdOverride,
+        lastsyncdateoverride : lastSyncDateOverride
       },
       {
         importtype: defaultImportType,
         refreshtoken: refreshToken,
         dataset: "SoftwareEdition",
         takeamount: defaultTakeAmount,
-        dryrun: defaultDryRun
+        dryrun: defaultDryRun,
+        lastidoverride : lastIdOverride,
+        lastsyncdateoverride : lastSyncDateOverride
       },
       {
         importtype: defaultImportType,
         refreshtoken: refreshToken,
         dataset: "SoftwareProductLink",
         takeamount: defaultTakeAmount,
-        dryrun: defaultDryRun
+        dryrun: defaultDryRun,
+        lastidoverride : lastIdOverride,
+        lastsyncdateoverride : lastSyncDateOverride
       }
     ],
     group6: [
@@ -110,7 +141,9 @@ exports.runDailyTechCatalogImport = async (req, res) => {
         refreshtoken: refreshToken,
         dataset: "SoftwareVersion",
         takeamount: defaultTakeAmount,
-        dryrun: defaultDryRun
+        dryrun: defaultDryRun,
+        lastidoverride : lastIdOverride,
+        lastsyncdateoverride : lastSyncDateOverride
       }
     ],
     group7: [
@@ -119,7 +152,9 @@ exports.runDailyTechCatalogImport = async (req, res) => {
         refreshtoken: refreshToken,
         dataset: "SoftwareRelease",
         takeamount: defaultTakeAmount,
-        dryrun: defaultDryRun
+        dryrun: defaultDryRun,
+        lastidoverride : lastIdOverride,
+        lastsyncdateoverride : lastSyncDateOverride
       }
     ],
     group8: [
@@ -128,7 +163,9 @@ exports.runDailyTechCatalogImport = async (req, res) => {
         refreshtoken: refreshToken,
         dataset: "SoftwareLifecycle",
         takeamount: defaultTakeAmount,
-        dryrun: defaultDryRun
+        dryrun: defaultDryRun,
+        lastidoverride : lastIdOverride,
+        lastsyncdateoverride : lastSyncDateOverride
       },
       {
         importtype: defaultImportType,
@@ -144,7 +181,9 @@ exports.runDailyTechCatalogImport = async (req, res) => {
         refreshtoken: refreshToken,
         dataset: "SoftwareReleasePlatform",
         takeamount: defaultTakeAmount,
-        dryrun: defaultDryRun
+        dryrun: defaultDryRun,
+        lastidoverride : lastIdOverride,
+        lastsyncdateoverride : lastSyncDateOverride
       }
     ]
   };
@@ -229,7 +268,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
         }
 
         // return the response once all groups have been imported
-        if (groupNumber >== maxJobs) {
+        if (groupNumber >= maxJobs) {
           const responseObject = {
             message: `All ${groupNumber} of ${maxJobs} groups have successfully completed imported!`,
             starttime: startTime,
