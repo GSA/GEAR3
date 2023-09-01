@@ -2163,7 +2163,8 @@ exports.importTechCatlogData = async (data, response) => {
       await sql_promise.query(`insert into tech_catalog.dataset_import_log (import_id, datasetName, import_status) values ('${importId}', '${datasetName}', '${datasetName} import in progress...'); `);
     } catch (er) {
       console.log(`\n****** ${datasetName} import is already in progress ******\n`); //, er);
-      return { message : `${datasetName} import is already in progress` };
+      let duplicateJobsRunning=1;
+      return { message : `${datasetName} import is already in progress`, fatalError : 0, duplicateJobsRunning : duplicateJobsRunning };
     }
 
     logger(`${getLogHeader()}`, `********** STARTING ${importType} IMPORT PROCESS **********`, null, importLogFileName);

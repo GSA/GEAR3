@@ -27,7 +27,7 @@ exports.runTechCatalogImport = (req, res) => {
 
 exports.runDailyTechCatalogImport = async (req, res) => {
 
-  const maxJobs = 8;
+  const maxJobs = 9;
 
   const defaultImportType = 'update';
   const refreshToken = req.body.refreshtoken;
@@ -45,7 +45,9 @@ exports.runDailyTechCatalogImport = async (req, res) => {
         dataset: "Manufacturer",
         takeamount: defaultTakeAmount,
         dryrun: defaultDryRun
-      },
+      }
+    ],
+    group2: [
       {
         importtype: defaultImportType,
         refreshtoken: refreshToken,
@@ -61,7 +63,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
         dryrun: defaultDryRun
       }
     ],
-    group2: [
+    group3: [
       {
         importtype: defaultImportType,
         refreshtoken: refreshToken,
@@ -70,7 +72,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
         dryrun: defaultDryRun
       }
     ],
-    group3: [
+    group4: [
       {
         importtype: defaultImportType,
         refreshtoken: refreshToken,
@@ -79,7 +81,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
         dryrun: defaultDryRun
       }
     ],
-    group4: [
+    group5: [
       {
         importtype: defaultImportType,
         refreshtoken: refreshToken,
@@ -102,7 +104,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
         dryrun: defaultDryRun
       }
     ],
-    group5: [
+    group6: [
       {
         importtype: defaultImportType,
         refreshtoken: refreshToken,
@@ -111,7 +113,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
         dryrun: defaultDryRun
       }
     ],
-    group6: [
+    group7: [
       {
         importtype: defaultImportType,
         refreshtoken: refreshToken,
@@ -120,7 +122,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
         dryrun: defaultDryRun
       }
     ],
-    group7: [
+    group8: [
       {
         importtype: defaultImportType,
         refreshtoken: refreshToken,
@@ -136,7 +138,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
         dryrun: defaultDryRun
       }
     ],
-    group8: [
+    group9: [
       {
         importtype: defaultImportType,
         refreshtoken: refreshToken,
@@ -212,27 +214,44 @@ exports.runDailyTechCatalogImport = async (req, res) => {
       } else {
         console.log(`... Import group ${groupNumber} has successfully completed imported!`);
 
-        const responseObject = {
-          message: `All ${groupNumber} of ${maxJobs} groups have successfully completed imported!`,
-          starttime: startTime,
-          endtime: new Date(),
-          duration: formatDuration(startTime, new Date()),
-          error: null,
-          importSummaries: importSummaries
-        };
+        try {
+          const duplicateJobsRunning = groupSummary.filter(result => result.duplicateJobsRunning > 0);
+
+          if (duplicateJobsRunning.length > 0) {
+            if (returnType === 'object') {
+              return { message: `Daily Import is already in progress`, };
+            } else {
+              return res.status(200).json({ message: `Daily Import is already in progress`, });
+            }
+          }
+        } catch (error) {
+          console.log('no duplicateJobsRunning found')
+        }
 
         // return the response once all groups have been imported
-        if (groupNumber === maxJobs) {
+        if (groupNumber >== maxJobs) {
+          const responseObject = {
+            message: `All ${groupNumber} of ${maxJobs} groups have successfully completed imported!`,
+            starttime: startTime,
+            endtime: new Date(),
+            duration: formatDuration(startTime, new Date()),
+            error: null,
+            importSummaries: importSummaries
+          };
+
+          console.log(responseObject);
+
           if (returnType === 'object') {
             return responseObject;
           } else {
-            res.status(200).json(responseObject);
+            return res.status(200).json(responseObject);
           }
         }
       }
 
     } catch (error) {
       console.error(`an error occurred while importing group ${groupNumber} of ${maxJobs}: \n`, error);
+
       const responseObject = {
         message: `an error occurred while importing group ${groupNumber}`,
         starttime: startTime,
@@ -241,10 +260,11 @@ exports.runDailyTechCatalogImport = async (req, res) => {
         error: error,
         importSummaries: importSummaries
       };
+
       if (returnType === 'object') {
         return responseObject;
       } else {
-        res.status(500).json(responseObject);
+        return res.status(500).json(responseObject);
       }
 
     }
