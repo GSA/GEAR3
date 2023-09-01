@@ -2125,7 +2125,7 @@ exports.importTechCatlogData = async (data, response) => {
         duration = '${formatDuration(uploadStartTime, uploadEndTime)}',
         totalPageRequestsMade = ${pageRequestCounter},
         totalPages = ${pageCounter},
-        totalRecords = ${pageCounter},
+        totalRecords = ${recordCounter},
         totalRecordsToBeInsertedUpdated = ${recordToUpdateCounter},
         totalRecordsInsertedUpdated = ${recordsInsertedCounter},
         totalRecordsFailed = ${recordsFailedCounter},
