@@ -161,7 +161,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
       {
         importtype: defaultImportType,
         refreshtoken: refreshToken,
-        dataset: "SoftwareLifecycle",
+        dataset: "SoftwareReleaseLink",
         takeamount: defaultTakeAmount,
         dryrun: defaultDryRun,
         lastidoverride : lastIdOverride,
@@ -170,16 +170,18 @@ exports.runDailyTechCatalogImport = async (req, res) => {
       {
         importtype: defaultImportType,
         refreshtoken: refreshToken,
-        dataset: "SoftwareReleaseLink",
+        dataset: "SoftwareReleasePlatform",
         takeamount: defaultTakeAmount,
-        dryrun: defaultDryRun
+        dryrun: defaultDryRun,
+        lastidoverride : lastIdOverride,
+        lastsyncdateoverride : lastSyncDateOverride
       }
     ],
     group9: [
       {
         importtype: defaultImportType,
         refreshtoken: refreshToken,
-        dataset: "SoftwareReleasePlatform",
+        dataset: "SoftwareLifecycle",
         takeamount: defaultTakeAmount,
         dryrun: defaultDryRun,
         lastidoverride : lastIdOverride,
@@ -242,10 +244,14 @@ exports.runDailyTechCatalogImport = async (req, res) => {
       const promisesGroup = importGroups[`group${groupNumber}`].map(data => ctrl.importTechCatlogData(data, res));
       // run the import for each dataset in the group and wait until all are complete
       const groupSummary = await Promise.all(promisesGroup);
+
       // add groupSummary to importSummaries
       importSummaries.push(groupSummary);
       // verify the response for each dataset in the group for any fatal errors
       const errors = groupSummary.filter(result => result.fatalError > 0);
+      // verify the response for each dataset in the group for any duplicate jobs running
+      const duplicateJobsRunning = groupSummary.filter(result => result.duplicateJobsRunning > 0);
+
       // if any fatal errors occurred, log them and return a 500 error
       if (errors.length > 0) {
         throw `ERROR: 1 or more datasets in group ${groupNumber} failed to import`;
@@ -254,8 +260,6 @@ exports.runDailyTechCatalogImport = async (req, res) => {
         console.log(`... Import group ${groupNumber} has successfully completed imported!`);
 
         try {
-          const duplicateJobsRunning = groupSummary.filter(result => result.duplicateJobsRunning > 0);
-
           if (duplicateJobsRunning.length > 0) {
             if (returnType === 'object') {
               return { message: `Daily Import is already in progress`, };

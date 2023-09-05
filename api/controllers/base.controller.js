@@ -2080,14 +2080,78 @@ exports.importTechCatlogData = async (data, response) => {
       };
       return summary;
     }
+    // ... 
+    function updateImportLog (logMessage) {
+      try {
+        let importLogStatement = null;
+
+        if (uploadEndTime) {
+          importLogStatement =
+            `update tech_catalog.dataset_import_log
+            SET
+            import_status = '${logMessage}',
+            takeAmount = ${takeAmt},
+            dryRun = '${(isDryRun === 'true' ? 'true' : 'false')}',
+            lastSyncDateOverride = ${formatDateTime(lastSyncDateOverride) === 'null' ? null : "'" + formatDateTime(lastSyncDateOverride) + "'"},
+            lastIdOverride = '${lastIdOverride}',
+            lastRecordId = '${lastRecordId}',
+            firstAfterIdUsed = '${lastRecordIdUsed}',
+            lastSynchronizedDateUsed = ${formatDateTime(lastSynchronizedDate) === 'null' ? null : "'" + formatDateTime(lastSynchronizedDate) + "'"},
+            startTime = ${formatDateTime(uploadStartTime) === 'null' ? null : "'" + formatDateTime(uploadStartTime) + "'"},
+            endTime = ${formatDateTime(uploadEndTime) === 'null' ? null : "'" + formatDateTime(uploadEndTime) + "'"},
+            duration = '${formatDuration(uploadStartTime, uploadEndTime)}',
+            totalPageRequestsMade = ${pageRequestCounter},
+            totalPages = ${pageCounter},
+            totalRecords = ${recordCounter},
+            totalRecordsToBeInsertedUpdated = ${recordToUpdateCounter},
+            totalRecordsInsertedUpdated = ${recordsInsertedCounter},
+            totalRecordsFailed = ${recordsFailedCounter},
+            totalSoftwareSupportStageRecords = ${softwareSupportStageCounter},
+            beginTableRecordCount = ${beginTableRecordCount},
+            endTableRecordCount = ${endTableRecordCount},
+            fatalError = ${isFatalError},
+            fatalErrorMessage = ${isFatalError === 1 ? 'see error log file' : 'null'}
+            WHERE import_id = '${importId}' AND datasetName = '${datasetName}'; `;
+        } else {
+          importLogStatement =
+            `update tech_catalog.dataset_import_log
+            SET
+            takeAmount = ${takeAmt},
+            dryRun = '${(isDryRun === 'true' ? 'true' : 'false')}',
+            lastSyncDateOverride = ${formatDateTime(lastSyncDateOverride) === 'null' ? null : "'" + formatDateTime(lastSyncDateOverride) + "'"},
+            lastIdOverride = '${lastIdOverride}',
+            lastRecordId = '${lastRecordId}',
+            firstAfterIdUsed = '${lastRecordIdUsed}',
+            lastSynchronizedDateUsed = ${formatDateTime(lastSynchronizedDate) === 'null' ? null : "'" + formatDateTime(lastSynchronizedDate) + "'"},
+            startTime = ${formatDateTime(uploadStartTime) === 'null' ? null : "'" + formatDateTime(uploadStartTime) + "'"},
+            totalPageRequestsMade = ${pageRequestCounter},
+            totalPages = ${pageCounter},
+            totalRecords = ${recordCounter},
+            totalRecordsToBeInsertedUpdated = ${recordToUpdateCounter},
+            totalRecordsInsertedUpdated = ${recordsInsertedCounter},
+            totalRecordsFailed = ${recordsFailedCounter},
+            totalSoftwareSupportStageRecords = ${softwareSupportStageCounter},
+            beginTableRecordCount = ${beginTableRecordCount},
+            fatalError = ${isFatalError}
+            WHERE import_id = '${importId}' AND datasetName = '${datasetName}'; `;
+        }
+
+        sql.query(importLogStatement);
+      } catch (error) {
+        logger(`${getLogHeader()}`, `an unexpected error occurred during updateImportLog()`, error, errorLogFileName);
+      }
+    }
     // ... performs the required tasks before ending the import process
     async function endImport() {
       try {
 
+        let logMessage = null;
+
+        // ... setting end time
         uploadEndTime = new Date();
 
-        // wait 5 seconds
-        await new Promise(resolve => setTimeout(resolve, 5000));
+        // ... wait 10 seconds
+        await new Promise(resolve => setTimeout(resolve, 10000));
 
         // ... get the ending table record count
         endTableRecordCount = await getTableRecordCount(tableName, getLogHeaderNoTime());
@@ -2095,10 +2159,10 @@ exports.importTechCatlogData = async (data, response) => {
         // ... get the import summary
         let summary = getImportSummary();
 
+        // ... log import summary file
         writeToLogFile(JSON.stringify(summary), importSummaryLogFileName);
 
-        let logMessage = null;
-
+        // ... set the import status message
         if (isFatalError === 1) {
           logMessage = `${datasetName} import FAILED`;
         } else if (recordsFailedCounter > 0) {
@@ -2107,46 +2171,23 @@ exports.importTechCatlogData = async (data, response) => {
           logMessage = `${datasetName} import completed successful`;
         }
 
+        // ... log to event table
         sql.query(`insert into log.event (Event, User, DTG) values ('${logMessage}', 'GearCronJ', now());`);
 
-        let importLogStatement = 
-        `update tech_catalog.dataset_import_log
-        SET
-        import_status = '${logMessage}',
-        takeAmount = ${takeAmt},
-        dryRun = '${(isDryRun === 'true' ? 'true' : 'false')}',
-        lastSyncDateOverride = ${formatDateTime(lastSyncDateOverride) === 'null' ? null : "'" + formatDateTime(lastSyncDateOverride) + "'"},
-        lastIdOverride = '${lastIdOverride}',
-        lastRecordId = '${lastRecordId}',
-        firstAfterIdUsed = '${lastRecordIdUsed}',
-        lastSynchronizedDateUsed = ${formatDateTime(lastSynchronizedDate) === 'null' ? null : "'" + formatDateTime(lastSynchronizedDate) + "'"},
-        startTime = ${formatDateTime(uploadStartTime) === 'null' ? null : "'" + formatDateTime(uploadStartTime) + "'"},
-        endTime = ${formatDateTime(uploadEndTime) === 'null' ? null : "'" + formatDateTime(uploadEndTime) + "'"},
-        duration = '${formatDuration(uploadStartTime, uploadEndTime)}',
-        totalPageRequestsMade = ${pageRequestCounter},
-        totalPages = ${pageCounter},
-        totalRecords = ${recordCounter},
-        totalRecordsToBeInsertedUpdated = ${recordToUpdateCounter},
-        totalRecordsInsertedUpdated = ${recordsInsertedCounter},
-        totalRecordsFailed = ${recordsFailedCounter},
-        totalSoftwareSupportStageRecords = ${softwareSupportStageCounter},
-        beginTableRecordCount = ${beginTableRecordCount},
-        endTableRecordCount = ${endTableRecordCount},
-        fatalError = ${isFatalError},
-        fatalErrorMessage = ${isFatalError === 1 ? 'see error log file' : 'null'}
-        WHERE import_id = '${importId}' AND datasetName = '${datasetName}'; `;
-
-        sql.query(importLogStatement);
+        // ... log to dataset import log table
+        updateImportLog(logMessage);
 
         // ... log import summary and complete import request.
         //logger(`${getLogHeader()}`, `IMPORT SUMMARY: \n${JSON.stringify(summary)}`);
         logger(`${getLogHeader()}`, `... import summary logged`);
-
         logger(`${getLogHeader()}`, `********** ENDING ${importType} IMPORT PROCESS **********\n\n`);
 
+        // ... return the import summary object
         return summary;
+
       } catch (error) {
         logger(`${getLogHeader()}`, `an unexpected error occurred during endImport()`, error, errorLogFileName);
+        isFatalError=1;
         return error;
       }
 
@@ -3253,6 +3294,8 @@ exports.importTechCatlogData = async (data, response) => {
 
               // ... get the page summary object
               const pageSummary = getPageSummary();
+
+              updateImportLog();
 
               // ... log page summary
               //logger(`${getLogHeader()}`, `PAGE ${pageCounter} SUMMARY: \n${JSON.stringify(pageSummary)}`);
