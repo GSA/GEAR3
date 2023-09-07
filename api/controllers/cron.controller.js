@@ -10,13 +10,6 @@ const ctrl = require('./base.controller'),
   jobUser = 'GearCronJ';
 
 
-
-// -------------------------------------------------------------------------------------------------
-// CRON JOB: Google Sheets API - Update All Related Records
-exports.runTESTJob = async () => {
-  console.log('CRON JOB: TEST - executed at ', new Date());
-};
-
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Google Sheets API - Update All Related Records
 exports.runUpdateAllRelatedRecordsJob = async () => {

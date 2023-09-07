@@ -368,7 +368,7 @@ cron.schedule('0 7 * * WED', () => {
 });
 
 // -------------------------------------------------------------------------------------------------
-// CRON JOB: Google Sheets API - Update All Related Records (runs every weekday at 2:00 AM)
+// CRON JOB: Google Sheets API - Update All Related Records (runs every weekday at 5:00 AM)
 cron.schedule('0 5 * * 1-5', () => { //PRODUCTION
 //cron.schedule('50 14 * * 1-5', () => { //DEBUGGING
 
@@ -378,7 +378,7 @@ cron.schedule('0 5 * * 1-5', () => { //PRODUCTION
 
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Tech Catalog Daily Import (runs daily at 5:00 AM)
-cron.schedule('30 5 * * *', () => { //PRODUCTION
+cron.schedule('0 6 * * *', () => { //PRODUCTION
 //cron.schedule('55 14 * * *', () => { //DEBUGGING
 
   cronCtrl.runTechCatalogImportJob();

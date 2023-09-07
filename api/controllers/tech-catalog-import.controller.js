@@ -222,8 +222,10 @@ exports.runDailyTechCatalogImport = async (req, res) => {
     return result;
   }
 
+  // setting the daily import start time
   let startTime = new Date();
 
+  // check if the requester is GearCronJ
   try {
     if (req.headers.requester === 'GearCronJ') {
       returnType = 'object';
@@ -232,12 +234,13 @@ exports.runDailyTechCatalogImport = async (req, res) => {
     returnType = 'response';
   }
 
+  // loop through each import group
   do {
 
     try {
 
+      // log start of the import group
       console.log(`... Starting import for group ${groupNumber}`);
-
       // set the current group number
       groupNumber++;
       // get the current group dataset(s)

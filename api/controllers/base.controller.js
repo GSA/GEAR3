@@ -99,6 +99,10 @@ exports.emptyTextFieldHandler = (content) => {
 All this needs to be refactored as to not be so redundant*/
 exports.googleMain = (response, method, sheetID, dataRange, requester, key = null) => {
   console.log("googleMain()");
+
+  // log the start of the refresh to the database
+  buildLogQuery(sql, `Update All Related Records - Starting`, requester, "log_update_zk_systems_subsystems_records", response);
+
   // Load client secrets from a local file.
   fs.readFile("certs/gear_google_credentials.json", (err, content) => {
     if (err) {
@@ -113,11 +117,13 @@ exports.googleMain = (response, method, sheetID, dataRange, requester, key = nul
 
     // Set callback based on method
     var callback_method = null;
+
     if (method === "all") callback_method = retrieveAll;
     else if (method === "single") callback_method = single;
     else if (method === "refresh") callback_method = refresh;
 
     console.log("callback_method: ", callback_method);
+
     // Authorize a client with credentials, then call the Google Sheets API.
     authorize(
       JSON.parse(content),
@@ -225,7 +231,7 @@ function retrieveAll(auth, response, sheetID, dataRange, requester) {
 function refresh(auth, response, sheetID, dataRange, requester) {
 
   // log the start of the refresh to the database
-  //buildLogQuery(sql, `Update All Related Records - Start`, requester, "log_update_zk_systems_subsystems_records", response);
+  buildLogQuery(sql, `Update All Related Records - Refreshing Data`, requester, "log_update_zk_systems_subsystems_records", response);
   
   // Get the data from the spreadsheet
   const sheets = google.sheets({ version: "v4", auth });
@@ -238,11 +244,13 @@ function refresh(auth, response, sheetID, dataRange, requester) {
 
       // If there is an error with the API call to the spreadsheet return the error
       if (err) {
+        buildLogQuery(sql, `Update All Related Records - ERROR: Google Sheets API returned`, requester, "log_update_zk_systems_subsystems_records", response);
+
         if (requester === "GearCronJ") {
           console.log("The API returned an error: " + err);
           return;
         } else {
-          sendResponse(response, { error: "The API returned an error: " + err });
+          sendResponse(response, { error : "The API returned an error: " + err });
           return;
         }
       }
@@ -252,6 +260,8 @@ function refresh(auth, response, sheetID, dataRange, requester) {
 
       // If rows is not empty
       if (rows.length <= 0 || rows == undefined) {
+        buildLogQuery(sql, `Update All Related Records - ERROR: No Data Found`, requester, "log_update_zk_systems_subsystems_records", response);
+
         if (requester === "GearCronJ") {
           console.log("No data found.");
           return;
@@ -283,6 +293,7 @@ function refresh(auth, response, sheetID, dataRange, requester) {
 
       // Build DML statements from the map ================================================================================
       console.log("Building DML Statements...")
+
       // Insert new IDs
       let systemString = ""
 
@@ -318,7 +329,7 @@ function refresh(auth, response, sheetID, dataRange, requester) {
           console.log(`DB Query Error while executing ${msg}: `, error);
 
           // log the error to the database
-          buildLogQuery(sql, `Update All Related Records - ${msg}: ` || error.message, requester, `log_update_zk_systems_subsystems_records`, response);
+          buildLogQuery(sql, `Update All Related Records - ERROR: ${msg}: ` || error.message, requester, `log_update_zk_systems_subsystems_records`, response);
 
           if (requester === "GearCronJ") {
             console.log(error.message || `DB Query Error while executing ${msg}`);
@@ -327,10 +338,8 @@ function refresh(auth, response, sheetID, dataRange, requester) {
             response.status(501).json({message: error.message || `DB Query Error while executing ${msg}`,});
           }
         } else {
-          //console.log("Query Response: ", response);  // Debug
-
           // log the success to the database
-          buildLogQuery(sql, `Update All Related Records - ${insertCounter} rows inserted`, requester, `log_update_zk_systems_subsystems_records`, response);
+          buildLogQuery(sql, `Update All Related Records - ${insertCounter} rows inserted successfully`, requester, `log_update_zk_systems_subsystems_records`, response);
 
           const summary = {
             "tot_executions": dmlStatementCounter,
@@ -1968,25 +1977,22 @@ function getImportId() {
 
 exports.importTechCatlogData = async (data, response) => {
 
-  // -----------------------------------------------
   // import variables and functions
-
     const refreshToken = data.refreshtoken;                   // retrieved from the requests body, stores the refresh token for the flexera api to get a new access token
     const datasetName = data.dataset;                         // dataset name to be pulled // ie. "Taxonomy";
     const takeAmt = data.takeamount;                          // amount of records to pull per page
     const importId = getImportId();                           // import id identifies a group of import requests to be used for logging
     const isDryRun = data.dryrun;                             // flag to determine if the import insert/update statement or not
     const importType = data.importtype;                       // import type identifies the type of import to be used for logging
-    let lastSyncDateOverride = null;                        // last synchronized date to override the last sync date in the database
-    let lastIdOverride = null;                              // last id to override the last id in the database
+    let lastSyncDateOverride = null;                          // last synchronized date to override the last sync date in the database
+    let lastIdOverride = null;                                // last id to override the last id in the database
+    let maxSyncDateOverride = null;                           // max sync date to override the max sync date in the database
 
     let accessToken = '';                                 // stores the flerera api access token
     let graphqlQuery = '';                                // stores the graphql query to be sent to the flexera api
-    //let columnList = '';                                  // select column list based on dataset name
 
     const tableName = `tech_catalog.tp_${datasetName}`;   // table name based on dataset name// insert table name based on dataset name
     let insertStatement = `insert into ${tableName} (`;   // insert statement for table records
-    //let updateStatement = `update ${tableName} set `;     
     let isStatementBuilt = false;                         // flag to determine if the update statement has been built
 
     // (only used for SoftwareLifecycle dataset ONLY)
@@ -1997,15 +2003,12 @@ exports.importTechCatlogData = async (data, response) => {
     let pageCounter = 0;                                  // total number of pages processed
     let pageRequestCounter = 0;                           // total number of page requests made
     let recordCounter = 0;                                // total number of records received
-    //let recordRequestCounter = 0;                         // total number of record requests made
     let recordsFailedCounter = 0;                         // total number of records that failed to insert into db
     let isFatalError = 0;
 
     let recordsInsertedCounter = 0;                       // total number of records inserted into db
 
     let recordToUpdateCounter = 0;                        // total number of records to update
-    //let recordsUpdatedCounter = 0;                        // total number of records updated
-    //let recordsUpdateFailedCounter = 0;                   // total number of records that failed to update
     
     let pageSummaryArray = [];                            // array of page summary objects, page added after completed
     //let recordsFailedList = [];                           // list of records that failed to insert into db
@@ -2021,11 +2024,14 @@ exports.importTechCatlogData = async (data, response) => {
     const uploadStartTime = new Date();                   // upload start time //TIMESTAMP();
     let uploadEndTime = null;                             // upload end time //TIMESTAMP();
     let recordCountDisplay = 0;
-    //let affectRowsCounter = 0;                            // number of rows affected by the insert/update statement
     let affectRowsCounter1 = 0;                           // number of rows affected by the insert/update statement
     let affectRowsCounter2 = 0;                           // number of rows affected by the insert/update statement
     let affectRowsCounter3 = 0;                           // number of rows affected by the insert/update statement
     let recordsToBeDeletedArray = [];
+
+    let earliestSyncDate = null;                          // earliest sync date for the dataset
+    let latestSyncDate = null;                            // latest sync date for the dataset
+    let syncYYYYMMDDArray = [];                             // array of sync dates in YYYYMMDD format
 
     const importLogFileName         = `${logFolderPath}/import_${importType}_${datasetName}_import_log_${formatFileDateTime(uploadStartTime)}.log`;
     const syncListLogFileName       = `${logFolderPath}/import_${importType}_${datasetName}_records_to_sync_list_${formatFileDateTime(uploadStartTime)}.log`;
@@ -2076,7 +2082,10 @@ exports.importTechCatlogData = async (data, response) => {
         fatalError : isFatalError,
         logDateTime : formatDateTime(new Date()),
         pageSummaries : "see logs",
-        recordsToBeDeleted : "see logs"
+        recordsToBeDeleted : "see logs",
+        earliestSyncDate : formatDateTime(earliestSyncDate),
+        latestSyncDate : formatDateTime(latestSyncDate),
+        syncYYYYMMDDArray : syncYYYYMMDDArray
       };
       return summary;
     }
@@ -2086,57 +2095,62 @@ exports.importTechCatlogData = async (data, response) => {
         let importLogStatement = null;
 
         if (uploadEndTime) {
+          // get update statement for end of import
           importLogStatement =
             `update tech_catalog.dataset_import_log
-            SET
-            import_status = '${logMessage}',
-            takeAmount = ${takeAmt},
-            dryRun = '${(isDryRun === 'true' ? 'true' : 'false')}',
-            lastSyncDateOverride = ${formatDateTime(lastSyncDateOverride) === 'null' ? null : "'" + formatDateTime(lastSyncDateOverride) + "'"},
-            lastIdOverride = '${lastIdOverride}',
-            lastRecordId = '${lastRecordId}',
-            firstAfterIdUsed = '${lastRecordIdUsed}',
-            lastSynchronizedDateUsed = ${formatDateTime(lastSynchronizedDate) === 'null' ? null : "'" + formatDateTime(lastSynchronizedDate) + "'"},
-            startTime = ${formatDateTime(uploadStartTime) === 'null' ? null : "'" + formatDateTime(uploadStartTime) + "'"},
-            endTime = ${formatDateTime(uploadEndTime) === 'null' ? null : "'" + formatDateTime(uploadEndTime) + "'"},
-            duration = '${formatDuration(uploadStartTime, uploadEndTime)}',
-            totalPageRequestsMade = ${pageRequestCounter},
-            totalPages = ${pageCounter},
-            totalRecords = ${recordCounter},
-            totalRecordsToBeInsertedUpdated = ${recordToUpdateCounter},
-            totalRecordsInsertedUpdated = ${recordsInsertedCounter},
-            totalRecordsFailed = ${recordsFailedCounter},
-            totalSoftwareSupportStageRecords = ${softwareSupportStageCounter},
-            beginTableRecordCount = ${beginTableRecordCount},
-            endTableRecordCount = ${endTableRecordCount},
-            fatalError = ${isFatalError},
-            fatalErrorMessage = ${isFatalError === 1 ? 'see error log file' : 'null'}
+              set import_status = '${logMessage}',
+                  takeAmount = ${takeAmt},
+                  dryRun = '${(isDryRun === 'true' ? 'true' : 'false')}',
+                  lastSyncDateOverride = ${lastSyncDateOverride === null ? 'null' : "'" + formatDateTime(lastSyncDateOverride) + "'"},
+                  lastIdOverride = ${lastIdOverride === null ? 'null' : "'" + lastIdOverride + "'"},
+                  lastRecordId = '${lastRecordId}',
+                  firstAfterIdUsed = '${lastRecordIdUsed}',
+                  lastSynchronizedDateUsed = ${lastSynchronizedDate === null ? 'null' : "'" + formatDateTime(lastSynchronizedDate) + "'"},
+                  startTime = ${uploadStartTime === null ? 'null' : "'" + formatDateTime(uploadStartTime) + "'"},
+                  endTime = ${uploadEndTime === null ? 'null' : "'" + formatDateTime(uploadEndTime) + "'"},
+                  duration = '${formatDuration(uploadStartTime, uploadEndTime)}',
+                  totalPageRequestsMade = ${pageRequestCounter},
+                  totalPages = ${pageCounter},
+                  totalRecords = ${recordCounter},
+                  totalRecordsToBeInsertedUpdated = ${recordToUpdateCounter},
+                  totalRecordsInsertedUpdated = ${recordsInsertedCounter},
+                  totalRecordsFailed = ${recordsFailedCounter},
+                  totalSoftwareSupportStageRecords = ${softwareSupportStageCounter},
+                  beginTableRecordCount = ${beginTableRecordCount},
+                  endTableRecordCount = ${endTableRecordCount},
+                  fatalError = ${isFatalError},
+                  fatalErrorMessage = ${isFatalError === 1 ? 'see error log file' : 'null'}
             WHERE import_id = '${importId}' AND datasetName = '${datasetName}'; `;
         } else {
+          // get update statement for end of a page
           importLogStatement =
             `update tech_catalog.dataset_import_log
-            SET
-            takeAmount = ${takeAmt},
-            dryRun = '${(isDryRun === 'true' ? 'true' : 'false')}',
-            lastSyncDateOverride = ${formatDateTime(lastSyncDateOverride) === 'null' ? null : "'" + formatDateTime(lastSyncDateOverride) + "'"},
-            lastIdOverride = '${lastIdOverride}',
-            lastRecordId = '${lastRecordId}',
-            firstAfterIdUsed = '${lastRecordIdUsed}',
-            lastSynchronizedDateUsed = ${formatDateTime(lastSynchronizedDate) === 'null' ? null : "'" + formatDateTime(lastSynchronizedDate) + "'"},
-            startTime = ${formatDateTime(uploadStartTime) === 'null' ? null : "'" + formatDateTime(uploadStartTime) + "'"},
-            totalPageRequestsMade = ${pageRequestCounter},
-            totalPages = ${pageCounter},
-            totalRecords = ${recordCounter},
-            totalRecordsToBeInsertedUpdated = ${recordToUpdateCounter},
-            totalRecordsInsertedUpdated = ${recordsInsertedCounter},
-            totalRecordsFailed = ${recordsFailedCounter},
-            totalSoftwareSupportStageRecords = ${softwareSupportStageCounter},
-            beginTableRecordCount = ${beginTableRecordCount},
-            fatalError = ${isFatalError}
+              set takeAmount = ${takeAmt},
+                  dryRun = '${(isDryRun === 'true' ? 'true' : 'false')}',
+                  lastSyncDateOverride = ${lastSyncDateOverride === null ? 'null' : "'" + formatDateTime(lastSyncDateOverride) + "'"},
+                  lastIdOverride = ${lastIdOverride === null ? 'null' : "'" + lastIdOverride + "'"},
+                  lastRecordId = '${lastRecordId}',
+                  firstAfterIdUsed = '${lastRecordIdUsed}',
+                  lastSynchronizedDateUsed = ${lastSynchronizedDate === null ? 'null' : "'" + formatDateTime(lastSynchronizedDate) + "'"},
+                  startTime = ${uploadStartTime === null ? 'null' : "'" + formatDateTime(uploadStartTime) + "'"},
+                  totalPageRequestsMade = ${pageRequestCounter},
+                  totalPages = ${pageCounter},
+                  totalRecords = ${recordCounter},
+                  totalRecordsToBeInsertedUpdated = ${recordToUpdateCounter},
+                  totalRecordsInsertedUpdated = ${recordsInsertedCounter},
+                  totalRecordsFailed = ${recordsFailedCounter},
+                  totalSoftwareSupportStageRecords = ${softwareSupportStageCounter},
+                  beginTableRecordCount = ${beginTableRecordCount},
+                  fatalError = ${isFatalError}
             WHERE import_id = '${importId}' AND datasetName = '${datasetName}'; `;
         }
 
-        sql.query(importLogStatement);
+        sql.query(importLogStatement, (err, result) => {
+          if (err) {
+            logger(`${getLogHeader()}`, `failed to update import log`, err, errorLogFileName);
+          }
+        });
+        
       } catch (error) {
         logger(`${getLogHeader()}`, `an unexpected error occurred during updateImportLog()`, error, errorLogFileName);
       }
@@ -2149,6 +2163,19 @@ exports.importTechCatlogData = async (data, response) => {
 
         // ... setting end time
         uploadEndTime = new Date();
+
+        // ... inserting the record count summary by syncdate
+        let syncDateInsertStatements = '';
+
+        for (let i = 0; i < syncYYYYMMDDArray.length; i++) {
+          syncDateInsertStatements = syncDateInsertStatements + ` insert into tech_catalog.dataset_syncdate_log (import_id, datasetName, syncDate, recordCount) values ( '${importId}', '${datasetName}', '${syncYYYYMMDDArray[i].syncDate}', ${syncYYYYMMDDArray[i].recordCount}); `;
+        }
+
+        sql.query(syncDateInsertStatements, (err, result) => {
+          if (err) {
+            logger(`${getLogHeader()}`, `failed to insert sync date log`, err, errorLogFileName);
+          }
+        });
 
         // ... wait 10 seconds
         await new Promise(resolve => setTimeout(resolve, 10000));
@@ -2172,13 +2199,16 @@ exports.importTechCatlogData = async (data, response) => {
         }
 
         // ... log to event table
-        sql.query(`insert into log.event (Event, User, DTG) values ('${logMessage}', 'GearCronJ', now());`);
+        sql.query(`insert into log.event (Event, User, DTG) values ('${logMessage}', 'GearCronJ', now());`, (err, result) => {
+          if (err) {
+            logger(`${getLogHeader()}`, `failed to log event`, err, errorLogFileName);
+          }
+        });
 
         // ... log to dataset import log table
         updateImportLog(logMessage);
 
         // ... log import summary and complete import request.
-        //logger(`${getLogHeader()}`, `IMPORT SUMMARY: \n${JSON.stringify(summary)}`);
         logger(`${getLogHeader()}`, `... import summary logged`);
         logger(`${getLogHeader()}`, `********** ENDING ${importType} IMPORT PROCESS **********\n\n`);
 
@@ -2199,6 +2229,8 @@ exports.importTechCatlogData = async (data, response) => {
   // import process
   try {
 
+    // log start of import to DB (this will fail if another import is already running)
+    // TEMP FIX for duplicate cron job issue
     try {
       // log start to db
       await sql_promise.query(`insert into tech_catalog.dataset_import_log (import_id, datasetName, import_status) values ('${importId}', '${datasetName}', '${datasetName} import in progress...'); `);
@@ -2237,6 +2269,8 @@ exports.importTechCatlogData = async (data, response) => {
       try {
 
         // handle overrides
+
+        // lastIdOverride
         try {
           if (data.lastidoverride) {
             lastRecordId = lastRecordIdUsed = lastIdOverride =  data.lastidoverride;
@@ -2246,6 +2280,7 @@ exports.importTechCatlogData = async (data, response) => {
           lastRecordId = lastRecordIdUsed = null;
         }
 
+        // lastSyncDateOverride
         try {
           if (data.lastsyncdateoverride) {
             lastSynchronizedDate = lastSyncDateOverride = new Date(stringToDate(String(data.lastsyncdateoverride).replace('T', ' ').replace('Z', '')));
@@ -2257,17 +2292,29 @@ exports.importTechCatlogData = async (data, response) => {
           lastSynchronizedDate = null;
         }
 
+        // maxSyncDateOverride
+        try {
+          if (data.maxsyncdateoverride) {
+            maxSyncDateOverride = new Date(stringToDate(String(data.maxsyncdateoverride).replace('T', ' ').replace('Z', '')));
+
+            // set time to 23:59:59.999
+            maxSyncDateOverride.setHours(23, 59, 59, 999);
+
+            logger(`${getLogHeader()}`, `... OVERRIDING max sync date = ${formatDateTime(maxSyncDateOverride)}`, null, importLogFileName);
+          } 
+        } catch (error) {
+          maxSyncDateOverride = null;
+        }
+
         // get last id
         if (importType === 'insert' && !lastRecordId) {
-
           // ... get the last record id from the database
           lastRecordId = lastRecordIdUsed = await getLastRecordId(tableName, getLogHeaderNoTime());
-          
+        
         }
 
         // get last synchronizedDate
         if (!lastSynchronizedDate) {
-          
           // ... get the last synchronizedDate from the database
           lastSynchronizedDate = await getLastSyncDate(tableName,  getLogHeaderNoTime());
           lastSynchronizedDate.setHours(0, 0, 0, 0);
@@ -2311,12 +2358,9 @@ exports.importTechCatlogData = async (data, response) => {
         // ... setting page variables and functions
         const pageStartTime = new Date();
         let pageEndTime = null;
-        //let pageDuration = null;
         let pageRecordCounter = 0;
         let pageRecordsInsertedCounter = 0;
         let pageRecordsToUpdateCounter = 0;
-        //let pageRecordsUpdatedCounter = 0;
-        //let pageRecordsUpdateFailedCounter = 0;
         let pageRecordsFailedCounter = 0;
         let consecutiveFailedRecordCounter = 0;
         let notificationCounter = 0;
@@ -2337,7 +2381,6 @@ exports.importTechCatlogData = async (data, response) => {
               pageRecordsProcessed : pageRecordCounter,
               pageRecordsInserted : pageRecordsInsertedCounter,
               pageRecordsToUpdate : pageRecordsToUpdateCounter,
-              //pageRecordsUpdated : pageRecordsUpdatedCounter,
               pageRecordsFailed : pageRecordsFailedCounter,
               consecutiveFailedRecords : consecutiveFailedRecordCounter,
               isLastPage : isLastPage,
@@ -2508,14 +2551,14 @@ exports.importTechCatlogData = async (data, response) => {
               //let pageRecordJson = null;
               let insertUpdateRequired = false;
 
-              // ... if the 
               if (importType === 'insert') {
 
+                // ... when importType = insert, all records will be inserted or updated
                 insertUpdateRequired = true;
 
               } else if (importType === 'update') {
 
-
+                // ... when importType = update, only records that have a later synchronizedDate will be updated
                 // -----------------------------------------------
                 // 1. compare synchronizedDate values
                 try {
@@ -2523,35 +2566,67 @@ exports.importTechCatlogData = async (data, response) => {
                   // ... get the record's synchronizedDate
                   let recordSynchronizedDate = new Date(stringToDate(datasetObject.synchronizedDate));
 
+
+                  // ... add recordSynchronizedDate to syncYYYYMMDDArray as an object { yearMonthDay : YYYYMMDD, count : count + 1 }
+                  let recordSynchronizedDateYYYYMMDD = recordSynchronizedDate.getFullYear() + '-' + String(recordSynchronizedDate.getMonth() + 1).padStart(2, '0') + '-' +  String(recordSynchronizedDate.getDay()).padStart(2, '0');
+                  let recordSynchronizedDateYYYYMMDDObject = syncYYYYMMDDArray.find(syncYYYYMMDDArray => syncYYYYMMDDArray.syncDate === recordSynchronizedDateYYYYMMDD);
+                  if (recordSynchronizedDateYYYYMMDDObject) {
+                    recordSynchronizedDateYYYYMMDDObject.recordCount++;
+                  } else {
+                    syncYYYYMMDDArray.push({ import_id : importId, datasetName : datasetName, syncDate : recordSynchronizedDateYYYYMMDD, recordCount : 1 });
+                  }
+
+
                   // ... compare the record's synchronizedDate to the lastSynchronizedDate from the db
-                  if (recordSynchronizedDate > lastSynchronizedDate){
+                  if (recordSynchronizedDate > lastSynchronizedDate) {
 
-                    logger(`${getLogHeader()}`, `...... updating id:"${lastRecordId}"`);
+                    // if maxSyncDateOverride has a value and the recordSynchronizedDate is later than the maxSyncDateOverride value
+                    if (maxSyncDateOverride && recordSynchronizedDate > maxSyncDateOverride) {
 
-                    // 
-                    try {
+                      logger(`${getLogHeader()}`, `...... ignoring update id:"${lastRecordId}", synchronizedDate > maxSyncDate`);
 
-                      // ... create record object
-                      let insertTxt = 
-                      {
-                        id : lastRecordId,
-                        synchronizedDate : datasetObject.synchronizedDate
-                      };
+                    } else {
 
-                      // ... write record to sync list log
-                      fs.appendFileSync(syncListLogFileName, JSON.stringify(insertTxt) + ',\n');
+                      logger(`${getLogHeader()}`, `...... updating id:"${lastRecordId}"`);
 
-                    } catch (error) {
-                      logger(`${getLogHeader()}`, `failed writing record to sync list log`, error, errorLogFileName);
+                      // ... logging record to sync list log
+                      try {
+
+                        // ... create record object
+                        let insertTxt = 
+                        {
+                          id : lastRecordId,
+                          synchronizedDate : datasetObject.synchronizedDate
+                        };
+
+                        // ... write record to sync list log
+                        fs.appendFileSync(syncListLogFileName, JSON.stringify(insertTxt) + ',\n');
+
+                      } catch (error) {
+                        logger(`${getLogHeader()}`, `failed writing record to sync list log`, error, errorLogFileName);
+                      }
+                        
+                      // ... increment the counters when a record to update is found
+                      recordToUpdateCounter++;
+
+                      // ... this record needs to be updated
+                      insertUpdateRequired = true;
+
+                      // ... determine if recordSynchronizedDate is later than the latestSyncDate
+                      if (latestSyncDate === null || recordSynchronizedDate > latestSyncDate) {
+                        latestSyncDate = recordSynchronizedDate;
+                      }
+
                     }
-                    // *************************************************************
-                      
-                    // ... increment the counters when a record to update is found
-                    recordToUpdateCounter++;
-                    insertUpdateRequired = true;
 
                   } else {
 
+                    // ... determine if recordSynchronizedDate is earlier than the earliestSyncDate
+                    if (earliestSyncDate === null || recordSynchronizedDate < earliestSyncDate) {
+                      earliestSyncDate = recordSynchronizedDate;
+                    }
+
+                    // ... this record does NOT need to be updated
                     insertUpdateRequired = false;
 
                   }
@@ -2622,7 +2697,7 @@ exports.importTechCatlogData = async (data, response) => {
               } else {
                 // ... raise error
                 throw `importType value is invalid`;
-              }
+              }        
 
 
               // -----------------------------------------------
@@ -2632,9 +2707,6 @@ exports.importTechCatlogData = async (data, response) => {
                 // -----------------------------------------------
                 // 1. build insert/update statement
                 try{
-                  
-                  //logger(`${getLogHeader()}`, `building insert statement`);
-
 
                   // ... add the record object to array 
                   recordsToInsert.push(datasetObject);
@@ -3084,9 +3156,6 @@ exports.importTechCatlogData = async (data, response) => {
 
                   }
 
-                  // ... log SUCCESS building update statement
-                  //logger(`${getLogHeader()}`, `completed building insert statement`);
-
                 } catch (error) {
                   // ... raise error
                   throw error;
@@ -3105,73 +3174,35 @@ exports.importTechCatlogData = async (data, response) => {
                     logger(`${getLogHeader()}`, `... skipping executing ${importType} statement (dry run)`);
 
                   } else {
-                    /*
-                    // ... insert the record
-                    // ... send request to insert record into db table and wait for response
-                    let responseDB = await sql_promise.query(insertStatement, [insertValuesMap]);
-
-                    affectRowsCounter = affectRowsCounter + responseDB[0].affectedRows;
-
-                    // ... verify in response that correct number of records inserted
-                    if (responseDB[0].affectedRows == 1) {
-                      affectRowsCounter1++;
-                    } else if (responseDB[0].affectedRows == 2) {
-                      affectRowsCounter2++;
-                    } else if (responseDB[0].affectedRows == 3) {
-                      affectRowsCounter3++;
-                    } else {
-                      throw `ERROR: failed to ${importType} ${insertValuesMap.length} ${datasetName} records (affectedRows: ${responseDB[0].affectedRows})`;
-                    }
-
-                    // ... (for SoftwareLifecycle ONLY) handling SoftwareLifecycle.SoftwareSupportStage[] data
-                    try {
-
-                      if (datasetName === 'SoftwareLifecycle' && insertValuesMapSftwSupportStage.length > 0) {
-
-                        // DELETE OLD SoftwareSupportStage
-
-                        // ... delete all existing SoftwareLifecycle.softwareSupportStage records for this softwareLifecycleId
-                        let deleteStatementSftwSupportStage = `DELETE FROM tech_catalog.tp_SoftwareSupportStage WHERE softwareLifecycleId = '${lastRecordId}'; `;
-
-                        // ... send request to delete softwareSupportStage records from db table and wait for response
-                        let responseDB = await sql_promise.query(deleteStatementSftwSupportStage);
-
-                        // ... verify in response that correct number of records deleted
-                        if (responseDB[0].affectedRows <= 0) {
-                          throw `ERROR: failed to delete old tp_SoftwareSupportStage ${insertValuesMapSftwSupportStage.length} SoftwareLifecycle.softwareSupportStage records`;
-                        }
-
-                        // INSERT NEW SoftwareSupportStage
-
-                        // ... send request to insert softwareSupportStage record into db table and wait for response
-                        const responseDBSftwSupportStage = await sql_promise.query(insertStatementSftwSupportStage, [insertValuesMapSftwSupportStage]);
-
-                        softwareSupportStageCounter = softwareSupportStageCounter + insertValuesMapSftwSupportStage.length;
-
-                        // ... verify in response that correct number of records inserted
-                        if (responseDBSftwSupportStage[0].affectedRows <= 0) {
-                          throw `failed to ${importType} tp_SoftwareSupportStage ${insertValuesMapSftwSupportStage.length} SoftwareLifecycle.softwareSupportStage records`;
-                        }
-
-                      } // end if SoftwareLifecycle 
-
-                    } catch (error) {
-                      // ... raise error
-                      logger(`${getLogHeader()}`, `failed to insert SoftwareLifecycle.softwareSupportStage records`, error, errorLogFileName);
-                      throw error;
-                    }
-                    */
                     
+                    // ... execute insert/update statement
                     sql.query(insertStatement, [insertValuesMap], (error, data) => {
 
                       if (error) {
-                        // get the id value from the insertValuesMap
-                        let idValue = insertValuesMap[0][0];
+                        // when insert/update FAILS
 
-                        logger(`${getLogHeader()}`, `ERROR: failed executing the insert/update ${insertValuesMap.length} ${datasetName} records for id: ${idValue}`, error, errorLogFileName);
+                        // ... increment counters when fails
                         recordsFailedCounter++;
                         pageRecordsFailedCounter++;
+
+                        // ... get the id value from the insertValuesMap
+                        let idValue = insertValuesMap[0][0];
+
+                        // ... log failure
+                        logger(`${getLogHeader()}`, `ERROR: failed executing the insert/update ${insertValuesMap.length} ${datasetName} records for id: ${idValue}`, error, errorLogFileName);
+
+                        let errorLogInsert = `insert into tech_catalog.dataset_record_error_log (import_id, datasetName, id, import_error) values ('${importId}', '${datasetName}', '${idValue}', '${error}'); `;
+
+                        // ... execute insert statement
+                        sql.query(errorLogInsert, (error, data) => {
+                          if (error) {
+                            logger(`${getLogHeader()}`, `ERROR: failed inserting into dataset_record_error_log table`, error, errorLogFileName);
+                          }
+                        });
+
                       } else {
+                        // when insert/update SUCCEEDS
+
                         // ... verify in response that correct number of records inserted
                         if (data.affectedRows == 1) {
                           affectRowsCounter1++;
@@ -3180,94 +3211,88 @@ exports.importTechCatlogData = async (data, response) => {
                         } else if (data.affectedRows == 3) {
                           affectRowsCounter3++;
                         } else {
-                          throw `ERROR: record was not inserted/updated id: ${idValue}(affectedRows: ${data.affectedRows})`;
+                          // ... get the id value from the insertValuesMap
+                          let idValue = insertValuesMap[0][0];
+
+                          // ... log bad affectedRows response received
+                          logger(`${getLogHeader()}`, `ERROR: record was not inserted/updated id: ${idValue}(affectedRows: ${data.affectedRows})`, error, errorLogFileName);
+
+                          let errorLogInsert = `insert into tech_catalog.dataset_record_error_log (import_id, datasetName, id, import_error) values ('${importId}', '${datasetName}', '${idValue}', '${error}'); `;
+
+                          // ... execute insert statement
+                          sql.query(errorLogInsert, (error, data) => {
+                            if (error) {
+                              logger(`${getLogHeader()}`, `ERROR: failed inserting into dataset_record_error_log table`, error, errorLogFileName);
+                            }
+                          });
                         }
 
+                        // ... increment counters when insert is successful
                         recordsInsertedCounter++;
                         pageRecordsInsertedCounter++;
 
-                        // ... (for SoftwareLifecycle ONLY) handling SoftwareLifecycle.SoftwareSupportStage[] data
-                        try {
+                        // ***SoftwareLifecycle ONLY***
+                        // handling SoftwareLifecycle.SoftwareSupportStage[] data
+                        if (datasetName === 'SoftwareLifecycle' && insertValuesMapSftwSupportStage.length > 0) {
 
-                          if (datasetName === 'SoftwareLifecycle' && insertValuesMapSftwSupportStage.length > 0) {
+                          // ... execute insert statement
+                          sql.query(insertStatementSftwSupportStage, [insertValuesMapSftwSupportStage], (error, data) => {
 
-                            // DELETE OLD SoftwareSupportStage
+                            if (error) {
+                              // when insert/update FAILS
 
-                            // ... delete all existing SoftwareLifecycle.softwareSupportStage records for this softwareLifecycleId
-                            //let deleteStatementSftwSupportStage = `DELETE FROM tech_catalog.tp_SoftwareSupportStage WHERE softwareLifecycleId = '${lastRecordId}'; `;
+                              // ... get the id value from the insertValuesMap
+                              let idValue = insertValuesMap[0][0];
 
-                            // ... send request to delete softwareSupportStage records from db table and wait for response
-                            //let responseDB = await 
-                            //sql.query(deleteStatementSftwSupportStage, (error, data) => {
-                            //  if (error) {
-                            //    logger(`${getLogHeader()}`, `ERROR: failed executing the delete ${insertValuesMapSftwSupportStage.length} SoftwareLifecycle.softwareSupportStage records`, error, errorLogFileName);
-                            //  } else {
-                            sql.query(insertStatementSftwSupportStage, [insertValuesMapSftwSupportStage]);
-                            softwareSupportStageCounter = softwareSupportStageCounter + insertValuesMapSftwSupportStage.length;
-                            //  }
-                            //});
-
-                            // ... verify in response that correct number of records deleted
-                            //if (responseDB[0].affectedRows <= 0) {
-                            //  throw `ERROR: failed to delete old tp_SoftwareSupportStage ${insertValuesMapSftwSupportStage.length} SoftwareLifecycle.softwareSupportStage records`;
-                            //}
-
-                            // INSERT NEW SoftwareSupportStage
-
-                            // ... send request to insert softwareSupportStage record into db table and wait for response
-                            //const responseDBSftwSupportStage = 
+                              // ... log failure
+                              logger(`${getLogHeader()}`, `ERROR: failed executing the insert ${insertValuesMapSftwSupportStage.length} SoftwareLifecycle.softwareSupportStage records for id: ${idValue}`, error, errorLogFileName);
 
 
-                            // ... verify in response that correct number of records inserted
-                            //if (responseDBSftwSupportStage[0].affectedRows <= 0) {
-                            //  throw `failed to ${importType} tp_SoftwareSupportStage ${insertValuesMapSftwSupportStage.length} SoftwareLifecycle.softwareSupportStage records`;
-                            //}
+                              let errorLogInsert = `insert into tech_catalog.dataset_record_error_log (import_id, datasetName, id, import_error) values ('${importId}', '${datasetName}', '${idValue}', '${error}'); `;
 
-                          } // end if SoftwareLifecycle 
+                              // ... execute insert statement
+                              sql.query(errorLogInsert, (error, data) => {
+                                if (error) {
+                                  logger(`${getLogHeader()}`, `ERROR: failed inserting into dataset_record_error_log table`, error, errorLogFileName);
+                                }
+                              });
 
-                        } catch (error) {
-                          // ... raise error
-                          logger(`${getLogHeader()}`, `failed to insert SoftwareLifecycle.softwareSupportStage records for id: ${idValue}`, error, errorLogFileName);
-                          throw error;
-                        }
+                              
+                            } else {
+                              // when insert/update SUCCEEDS
+                              softwareSupportStageCounter = softwareSupportStageCounter + insertValuesMapSftwSupportStage.length;
+                            }
+                          });
+
+                        } // end if SoftwareLifecycle 
+
                       }
 
                     });
                     
 
                   } // end if
-                  /*
-                  // ... increment counters when insert is successful
-                  recordsInsertedCounter++;
-                  pageRecordsInsertedCounter++;
-                  consecutiveFailedRecordCounter = 0;
-                  */
+                  
                 } catch (error) {
                   // ... increment counters when fails
                   recordsFailedCounter++;
                   pageRecordsFailedCounter++;
                   consecutiveFailedRecordCounter++;
+
                   // ... log failure and continue to next record
                   logger(`${getLogHeader()}`, `failed ${importType} record`, error, errorLogFileName);
+
+                  let errorLogInsert = `insert into tech_catalog.dataset_record_error_log (import_id, datasetName, id, import_error) values ('${importId}', '${datasetName}', '${lastRecordId}', '${error}'); `;
+
+                  // ... execute insert statement
+                  sql.query(errorLogInsert, (error, data) => {
+                    if (error) {
+                      logger(`${getLogHeader()}`, `ERROR: failed inserting into dataset_record_error_log table for id:${lastRecordId}`, error, errorLogFileName);
+                    }
+                  });
                 }
 
               } // END IF (insertUpdateRequired)
-
-              // ... notification log after every 1000 records have been processed from a page
-              /*if (notificationCounter === 1000) {
-                // ... log 1,000 records processed notification
-                logger(`${getLogHeader()}`, `... ${pageRecordCounter} of ${datasetArray.length} records processed, ${pageRecordsInsertedCounter} inserted/updated, ${pageRecordsFailedCounter} failed in ${formatDuration(pageStartTime, new Date())}`);
-                // ... reset notification counter
-                notificationCounter = 0;
-              }*/
-
-              // ... stop the upload and return the error message
-              if (consecutiveFailedRecordCounter === 25) {
-                // ... log error message and end the import request
-                logger(`${getLogHeader()}`, `ERROR: previous 25 records failed to ${importType}, ending import.`, error, errorLogFileName);
-                isFatalError=1;
-                return endImport();
-              }          
 
             } // end of records loop
             // -----------------------------------------------
@@ -3295,6 +3320,7 @@ exports.importTechCatlogData = async (data, response) => {
               // ... get the page summary object
               const pageSummary = getPageSummary();
 
+              // ... updates the dataset import log table with the page summary
               updateImportLog();
 
               // ... log page summary
