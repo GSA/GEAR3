@@ -2083,7 +2083,7 @@ exports.importTechCatlogData = async (data, response) => {
         logDateTime : formatDateTime(new Date()),
         pageSummaries : "see logs",
         recordsToBeDeleted : "see logs",
-        earliestSyncDate : formatDateTime(earliestSyncDate),
+        earliestSyncDate : (earliestSyncDate === null ? null : formatDateTime(earliestSyncDate)),
         latestSyncDate : formatDateTime(latestSyncDate),
         syncYYYYMMDDArray : syncYYYYMMDDArray
       };
@@ -2566,16 +2566,31 @@ exports.importTechCatlogData = async (data, response) => {
                   // ... get the record's synchronizedDate
                   let recordSynchronizedDate = new Date(stringToDate(datasetObject.synchronizedDate));
 
-
                   // ... add recordSynchronizedDate to syncYYYYMMDDArray as an object { yearMonthDay : YYYYMMDD, count : count + 1 }
-                  let recordSynchronizedDateYYYYMMDD = recordSynchronizedDate.getFullYear() + '-' + String(recordSynchronizedDate.getMonth() + 1).padStart(2, '0') + '-' +  String(recordSynchronizedDate.getDay()).padStart(2, '0');
-                  let recordSynchronizedDateYYYYMMDDObject = syncYYYYMMDDArray.find(syncYYYYMMDDArray => syncYYYYMMDDArray.syncDate === recordSynchronizedDateYYYYMMDD);
+                  let recordSynchronizedDateYYYYMMDD = recordSynchronizedDate.getFullYear() + '-' + String(recordSynchronizedDate.getMonth() + 1).padStart(2, '0') + '-' +  String(recordSynchronizedDate.getDate()).padStart(2, '0');
+
+                  /*console.log(`id:"${lastRecordId}"
+                  - datasetObject.synchronizedDate: ${datasetObject.synchronizedDate}
+                  - recordSynchronizedDate:         ${recordSynchronizedDate}
+                  - recordSynchronizedDateYYYYMMDD: ${recordSynchronizedDateYYYYMMDD}`);*/
+
+                  let recordSynchronizedDateYYYYMMDDObject = syncYYYYMMDDArray.find(syncYYYYMMDDArray => String(syncYYYYMMDDArray.syncDate) === recordSynchronizedDateYYYYMMDD);
+
                   if (recordSynchronizedDateYYYYMMDDObject) {
                     recordSynchronizedDateYYYYMMDDObject.recordCount++;
                   } else {
                     syncYYYYMMDDArray.push({ import_id : importId, datasetName : datasetName, syncDate : recordSynchronizedDateYYYYMMDD, recordCount : 1 });
                   }
 
+                  // ... determine if recordSynchronizedDate is earlier than the earliestSyncDate
+                  if (earliestSyncDate === null || recordSynchronizedDate < earliestSyncDate) {
+                    earliestSyncDate = recordSynchronizedDate;
+                  }
+
+                  // ... determine if recordSynchronizedDate is later than the latestSyncDate
+                  if (latestSyncDate === null || recordSynchronizedDate > latestSyncDate) {
+                    latestSyncDate = recordSynchronizedDate;
+                  }
 
                   // ... compare the record's synchronizedDate to the lastSynchronizedDate from the db
                   if (recordSynchronizedDate > lastSynchronizedDate) {
@@ -2612,19 +2627,9 @@ exports.importTechCatlogData = async (data, response) => {
                       // ... this record needs to be updated
                       insertUpdateRequired = true;
 
-                      // ... determine if recordSynchronizedDate is later than the latestSyncDate
-                      if (latestSyncDate === null || recordSynchronizedDate > latestSyncDate) {
-                        latestSyncDate = recordSynchronizedDate;
-                      }
-
                     }
 
                   } else {
-
-                    // ... determine if recordSynchronizedDate is earlier than the earliestSyncDate
-                    if (earliestSyncDate === null || recordSynchronizedDate < earliestSyncDate) {
-                      earliestSyncDate = recordSynchronizedDate;
-                    }
 
                     // ... this record does NOT need to be updated
                     insertUpdateRequired = false;

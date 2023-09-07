@@ -203,6 +203,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
     const seconds = duration.getUTCSeconds();
 
     let result = "";
+    
     if (hours > 0) {
       result += hours + (hours === 1 ? " hour" : " hours");
     }
@@ -316,5 +317,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
     }
 
   } while (groupNumber < maxJobs);
+
+
 
 };
