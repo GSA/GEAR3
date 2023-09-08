@@ -1758,27 +1758,32 @@ function formatDateTime(dateObj) {
   // - description: formats the date and time for logging
   // - parameters: dateObj (date object)
   // - returns: formattedDate (string)
-  
-  let formattedDate = new Date(dateObj);
 
-  if (formattedDate === null || formattedDate === '') {
+  if (dateObj === null || dateObj === '') {
     return null;
   } else {
-    // Get the individual date components
-    const year = formattedDate.getFullYear();
-    const month = String(formattedDate.getMonth() + 1).padStart(2, '0');
-    const day = String(formattedDate.getDate()).padStart(2, '0');
+  
+    let formattedDate = new Date(dateObj);
 
-    // Get the individual time components
-    const hours = String(formattedDate.getHours()).padStart(2, '0');
-    const minutes = String(formattedDate.getMinutes()).padStart(2, '0');
-    const seconds = String(formattedDate.getSeconds()).padStart(2, '0');
-    const milliseconds = String(formattedDate.getMilliseconds()).padStart(3, '0');
+    if (formattedDate === null || formattedDate === '') {
+      return null;
+    } else {
+      // Get the individual date components
+      const year = formattedDate.getFullYear();
+      const month = String(formattedDate.getMonth() + 1).padStart(2, '0');
+      const day = String(formattedDate.getDate()).padStart(2, '0');
 
-    // Combine the components into the desired format
-    formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
+      // Get the individual time components
+      const hours = String(formattedDate.getHours()).padStart(2, '0');
+      const minutes = String(formattedDate.getMinutes()).padStart(2, '0');
+      const seconds = String(formattedDate.getSeconds()).padStart(2, '0');
+      const milliseconds = String(formattedDate.getMilliseconds()).padStart(3, '0');
 
-    return formattedDate;
+      // Combine the components into the desired format
+      formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
+
+      return formattedDate;
+    }
   }
 }
 
@@ -1788,11 +1793,11 @@ function formatFileDateTime(dateObj) {
   // - parameters: dateObj (date object)
   // - returns: formattedDate (string)
 
-  var formattedDate = new Date(dateObj);
-
-  if (formattedDate === null || formattedDate === '') {
+  if (dateObj === null || dateObj === '') {
     return null;
   } else {
+    let formattedDate = new Date(dateObj);
+
     // Get the individual date components
     const year = formattedDate.getFullYear();
     const month = String(formattedDate.getMonth() + 1).padStart(2, '0');
@@ -1815,31 +1820,34 @@ function formatDuration(start_date, end_date) {
   // - description: calculates the duration between two dates and returns a formatted date string
   // - parameters: start_date (date object), end_date (date object)
   // - returns: result (string)
+  if (start_date === null || start_date === '' || end_date === null || end_date === '') {
+    return null;
+  } else {
+    const duration = new Date(end_date - start_date);
 
-  const duration = new Date(end_date - start_date);
+    const hours = duration.getUTCHours();
+    const minutes = duration.getUTCMinutes();
+    const seconds = duration.getUTCSeconds();
 
-  const hours = duration.getUTCHours();
-  const minutes = duration.getUTCMinutes();
-  const seconds = duration.getUTCSeconds();
-
-  let result = "";
-  if (hours > 0) {
-    result += hours + (hours === 1 ? " hour" : " hours");
-  }
-  if (minutes > 0) {
-    if (result !== "") {
-      result += ", ";
+    let result = "";
+    if (hours > 0) {
+      result += hours + (hours === 1 ? " hour" : " hours");
     }
-    result += minutes + (minutes === 1 ? " minute" : " minutes");
-  }
-  if (seconds > 0) {
-    if (result !== "") {
-      result += ", ";
+    if (minutes > 0) {
+      if (result !== "") {
+        result += ", ";
+      }
+      result += minutes + (minutes === 1 ? " minute" : " minutes");
     }
-    result += seconds + (seconds === 1 ? " second" : " seconds");
+    if (seconds > 0) {
+      if (result !== "") {
+        result += ", ";
+      }
+      result += seconds + (seconds === 1 ? " second" : " seconds");
+    }
+    
+    return result;
   }
-  
-  return result;
 }
 
 function stringToDate (dateString) {
@@ -1963,7 +1971,7 @@ function getImportId() {
   const year = formattedDate.getFullYear();
   const month = String(formattedDate.getMonth() + 1).padStart(2, '0');
   const day = String(formattedDate.getDate()).padStart(2, '0');
-  const hours = String(formattedDate.getUTCHours()).padStart(2, '0');
+  const hours = String(formattedDate.getHours()).padStart(2, '0');
 
   // Combine the components into the desired format
   formattedDate = parseInt(`${year}${month}${day}${hours}`);
@@ -2059,11 +2067,12 @@ exports.importTechCatlogData = async (data, response) => {
         dataset : datasetName,
         takeAmount : takeAmt,
         dryRun : (isDryRun === 'true' ? 'true' : 'false'),
-        lastSyncDateOverride : lastSyncDateOverride,
+        lastSyncDateOverride : formatDateTime(lastSyncDateOverride),
+        maxSyncDateOverride : formatDateTime(maxSyncDateOverride),
         lastIdOverride : lastIdOverride,
         lastRecordId : lastRecordId,
         firstAfterIdUsed : lastRecordIdUsed,
-        lastSynchronizedDateUsed : lastSynchronizedDate,
+        lastSynchronizedDateUsed : formatDateTime(lastSynchronizedDate),
         startTime : formatDateTime(uploadStartTime),
         endTime : formatDateTime(uploadEndTime),
         duration : formatDuration(uploadStartTime, uploadEndTime),
@@ -2300,7 +2309,7 @@ exports.importTechCatlogData = async (data, response) => {
             // set time to 23:59:59.999
             maxSyncDateOverride.setHours(23, 59, 59, 999);
 
-            logger(`${getLogHeader()}`, `... OVERRIDING max sync date = ${formatDateTime(maxSyncDateOverride)}`, null, importLogFileName);
+            logger(`${getLogHeader()}`, `... enforcing OVERRIDING max sync date = ${formatDateTime(maxSyncDateOverride)}`, null, importLogFileName);
           } 
         } catch (error) {
           maxSyncDateOverride = null;
@@ -2566,16 +2575,9 @@ exports.importTechCatlogData = async (data, response) => {
                   // ... get the record's synchronizedDate
                   let recordSynchronizedDate = new Date(stringToDate(datasetObject.synchronizedDate));
 
-                  // ... add recordSynchronizedDate to syncYYYYMMDDArray as an object { yearMonthDay : YYYYMMDD, count : count + 1 }
+                  // gathering counts of records by sync date to insert into tech_catalog.dataset_syncdate_log
                   let recordSynchronizedDateYYYYMMDD = recordSynchronizedDate.getFullYear() + '-' + String(recordSynchronizedDate.getMonth() + 1).padStart(2, '0') + '-' +  String(recordSynchronizedDate.getDate()).padStart(2, '0');
-
-                  /*console.log(`id:"${lastRecordId}"
-                  - datasetObject.synchronizedDate: ${datasetObject.synchronizedDate}
-                  - recordSynchronizedDate:         ${recordSynchronizedDate}
-                  - recordSynchronizedDateYYYYMMDD: ${recordSynchronizedDateYYYYMMDD}`);*/
-
                   let recordSynchronizedDateYYYYMMDDObject = syncYYYYMMDDArray.find(syncYYYYMMDDArray => String(syncYYYYMMDDArray.syncDate) === recordSynchronizedDateYYYYMMDD);
-
                   if (recordSynchronizedDateYYYYMMDDObject) {
                     recordSynchronizedDateYYYYMMDDObject.recordCount++;
                   } else {
@@ -2596,13 +2598,16 @@ exports.importTechCatlogData = async (data, response) => {
                   if (recordSynchronizedDate > lastSynchronizedDate) {
 
                     // if maxSyncDateOverride has a value and the recordSynchronizedDate is later than the maxSyncDateOverride value
-                    if (maxSyncDateOverride && recordSynchronizedDate > maxSyncDateOverride) {
+                    if (maxSyncDateOverride !== null && recordSynchronizedDate > maxSyncDateOverride) {
 
-                      logger(`${getLogHeader()}`, `...... ignoring update id:"${lastRecordId}", synchronizedDate > maxSyncDate`);
+                      // ... this record needs to be updated
+                      insertUpdateRequired = false;
+
+                      //logger(`${getLogHeader()}`, `...... ignoring update id:"${lastRecordId}", synchronizedDate > maxSyncDate`);
 
                     } else {
 
-                      logger(`${getLogHeader()}`, `...... updating id:"${lastRecordId}"`);
+                      //logger(`${getLogHeader()}`, `...... updating id:"${lastRecordId}"`);
 
                       // ... logging record to sync list log
                       try {
@@ -3157,7 +3162,7 @@ exports.importTechCatlogData = async (data, response) => {
 
                     isStatementBuilt = true;
 
-                    logger(`${getLogHeader()}`, `... completed building ${importType} statement`); //: \n` + insertStatement);
+                    logger(`${getLogHeader()}`, `... completed building ${importType} statement (on first page only)`); //: \n` + insertStatement);
 
                   }
 
@@ -3179,6 +3184,15 @@ exports.importTechCatlogData = async (data, response) => {
                     logger(`${getLogHeader()}`, `... skipping executing ${importType} statement (dry run)`);
 
                   } else {
+
+                    // check if recordsInsertedCounter is divisible by 20
+                    //if (importType === 'insert' && recordsInsertedCounter % 20 === 0) {
+
+
+                    if (pageRecordsInsertedCounter < 20) {
+                      // wait 1/1000 of the second
+                      await new Promise(resolve => setTimeout(resolve, 1));
+                    }
                     
                     // ... execute insert/update statement
                     sql.query(insertStatement, [insertValuesMap], (error, data) => {
@@ -3194,7 +3208,7 @@ exports.importTechCatlogData = async (data, response) => {
                         let idValue = insertValuesMap[0][0];
 
                         // ... log failure
-                        logger(`${getLogHeader()}`, `ERROR: failed executing the insert/update ${insertValuesMap.length} ${datasetName} records for id: ${idValue}`, error, errorLogFileName);
+                        logger(`${getLogHeader()}`, `ERROR: database returned error when executing the insert/update ${insertValuesMap.length} ${datasetName} records for id: ${idValue}`, error, errorLogFileName);
 
                         let errorLogInsert = `insert into tech_catalog.dataset_record_error_log (import_id, datasetName, id, import_error) values ('${importId}', '${datasetName}', '${idValue}', '${error}'); `;
 
@@ -3275,7 +3289,6 @@ exports.importTechCatlogData = async (data, response) => {
 
                     });
                     
-
                   } // end if
                   
                 } catch (error) {

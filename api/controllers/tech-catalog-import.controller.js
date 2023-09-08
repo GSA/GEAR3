@@ -38,6 +38,10 @@ exports.runDailyTechCatalogImport = async (req, res) => {
   let importSummaries = [];
   let groupNumber = 0;
   let returnType = 'response';
+  let endDailyImport = false;
+  let endMessage = null;
+  let endError = null;
+  let endStatus = 200;
 
   try {
     lastSyncDateOverride = req.body.lastsyncdateoverride;
@@ -203,7 +207,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
     const seconds = duration.getUTCSeconds();
 
     let result = "";
-    
+
     if (hours > 0) {
       result += hours + (hours === 1 ? " hour" : " hours");
     }
@@ -256,68 +260,69 @@ exports.runDailyTechCatalogImport = async (req, res) => {
       // verify the response for each dataset in the group for any duplicate jobs running
       const duplicateJobsRunning = groupSummary.filter(result => result.duplicateJobsRunning > 0);
 
-      // if any fatal errors occurred, log them and return a 500 error
+      
       if (errors.length > 0) {
-        throw `ERROR: 1 or more datasets in group ${groupNumber} failed to import`;
-        // otherwise, log the success and continue to the next group
+        // if any fatal errors occurred, log them and return a 500 error
+
+        endMessage = `ERROR: 1 or more datasets in group ${groupNumber} failed to import`;
+        endStatus = 500;
+        endDailyImport = true;
+        
       } else {
-        console.log(`... Import group ${groupNumber} has successfully completed imported!`);
+        // if any duplicate jobs are running, log them and return a 200 error
 
         try {
+
           if (duplicateJobsRunning.length > 0) {
-            if (returnType === 'object') {
-              return { message: `Daily Import is already in progress`, };
-            } else {
-              return res.status(200).json({ message: `Daily Import is already in progress`, });
-            }
+            // if any duplicate jobs are running, log them and return a 200 error
+
+            endMessage = `Daily Import is already in progress`;
+            endStatus = 200;
+            endDailyImport = true;
+            
           }
+
         } catch (error) {
           console.log('no duplicateJobsRunning found')
         }
 
+        // otherwise, log the success and continue to the next group
+
+        console.log(`... Import group ${groupNumber} has successfully completed imported!`);
+
         // return the response once all groups have been imported
         if (groupNumber >= maxJobs) {
-          const responseObject = {
-            message: `All ${groupNumber} of ${maxJobs} groups have successfully completed imported!`,
-            starttime: startTime,
-            endtime: new Date(),
-            duration: formatDuration(startTime, new Date()),
-            error: null,
-            importSummaries: importSummaries
-          };
-
-          console.log(responseObject);
-
-          if (returnType === 'object') {
-            return responseObject;
-          } else {
-            return res.status(200).json(responseObject);
-          }
+          endMessage = `All ${groupNumber} of ${maxJobs} groups have successfully completed imported!`,
+          endStatus = 200;
+          endDailyImport = true;
         }
       }
 
     } catch (error) {
       console.error(`an error occurred while importing group ${groupNumber} of ${maxJobs}: \n`, error);
-
-      const responseObject = {
-        message: `an error occurred while importing group ${groupNumber}`,
-        starttime: startTime,
-        endtime: new Date(),
-        duration: formatDuration(startTime, new Date()),
-        error: error,
-        importSummaries: importSummaries
-      };
-
-      if (returnType === 'object') {
-        return responseObject;
-      } else {
-        return res.status(500).json(responseObject);
-      }
-
+      endMessage = `ERROR: an error occurred while importing group ${groupNumber} of ${maxJobs}`;
+      endError = error;
+      endStatus = 500;
+      endDailyImport = true;
     }
 
-  } while (groupNumber < maxJobs);
+  } while (groupNumber < maxJobs && endDailyImport !== true);
 
+  const responseObject = {
+    message: endMessage,
+    starttime: startTime,
+    endtime: new Date(),
+    duration: formatDuration(startTime, new Date()),
+    error: endError,
+    importSummaries: importSummaries
+  };
 
+  console.log(responseObject);
+
+  if (returnType === 'object') {
+    return responseObject;
+  } else {
+    return res.status(endStatus).json(responseObject);
+  }
 
 };
