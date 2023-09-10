@@ -106,6 +106,8 @@ exports.googleMain = (response, method, sheetID, dataRange, requester, key = nul
   // Load client secrets from a local file.
   fs.readFile("certs/gear_google_credentials.json", (err, content) => {
     if (err) {
+      buildLogQuery(sql, `Update All Related Records - ERROR: loading client secret file`, requester, "log_update_zk_systems_subsystems_records", response);
+
       if (requester === "GearCronJ") {
         console.log("Error loading client secret file: " + err);
         return;
@@ -244,7 +246,7 @@ function refresh(auth, response, sheetID, dataRange, requester) {
 
       // If there is an error with the API call to the spreadsheet return the error
       if (err) {
-        buildLogQuery(sql, `Update All Related Records - ERROR: Google Sheets API returned`, requester, "log_update_zk_systems_subsystems_records", response);
+        buildLogQuery(sql, `Update All Related Records - ERROR: Google Sheets API returned...\n${err.message}`, requester, "log_update_zk_systems_subsystems_records", response);
 
         if (requester === "GearCronJ") {
           console.log("The API returned an error: " + err);
@@ -676,7 +678,7 @@ async function getAccessToken(refreshToken, logHeader = null) {
 
 }
 
-async function buildAPIQuery(datasetName, takeAmt, afterId, queryColumnType, logHeader = null, recordId = null) {
+async function buildAPIQuery(datasetName, takeAmt, afterId, queryColumnType, isToBeDeleted = null, logHeader = null, recordId = null) {
 
   // - description: assembles the graphql query that gets the correct data by dataset
   // - parameters: datasetName, takeAmt(default:10,000), afterId(string), queryColumnType("all" or "meta")
@@ -692,15 +694,18 @@ async function buildAPIQuery(datasetName, takeAmt, afterId, queryColumnType, log
   // ... check if requesting for specific record
   if (recordId !== null) {
     // ... add recordId to the query
-    additionalQueryParameters = ` id: "${recordId}"`;
+    additionalQueryParameters = additionalQueryParameters + ` id: "${recordId}"`;
   }
 
   // ... add afterId parameter and lastRecordId value to the query, if afterId is not null
   if (afterId !== null) {
-    additionalQueryParameters = ` afterId: "${afterId}"`;
+    additionalQueryParameters = additionalQueryParameters + ` afterId: "${afterId}"`;
   }
 
-  // TO DO: change this to get the value from the db datasets table
+  // ... add isToBeDeleted parameter and isToBeDeleted value to the query, if isToBeDeleted is not null
+  if (isToBeDeleted !== null) {
+    additionalQueryParameters = additionalQueryParameters + ` isToBeDeleted: ${isToBeDeleted}`;
+  }
   
   if (queryColumnType === 'all') {
     
@@ -982,6 +987,8 @@ async function buildAPIQuery(datasetName, takeAmt, afterId, queryColumnType, log
 
   } else if (queryColumnType === "meta") {
 
+    // ... select column list to add to graphql query to get data for meta columns
+    // ...... these columns are shared by all datasets
     columnList = `id
                   createdDate
                   deleteReason
@@ -999,7 +1006,7 @@ async function buildAPIQuery(datasetName, takeAmt, afterId, queryColumnType, log
   // build graphql query
   graphqlQuery = JSON.stringify({
     query: `{
-      ${datasetName}(take: ${takeAmt}${additionalQueryParameters} ) {
+      ${datasetName}(take: ${takeAmt}${additionalQueryParameters}  ) {
           ${columnList}
       }
     }`,
@@ -1986,251 +1993,255 @@ function getImportId() {
 exports.importTechCatlogData = async (data, response) => {
 
   // import variables and functions
-    const refreshToken = data.refreshtoken;                   // retrieved from the requests body, stores the refresh token for the flexera api to get a new access token
-    const datasetName = data.dataset;                         // dataset name to be pulled // ie. "Taxonomy";
-    const takeAmt = data.takeamount;                          // amount of records to pull per page
-    const importId = getImportId();                           // import id identifies a group of import requests to be used for logging
-    const isDryRun = data.dryrun;                             // flag to determine if the import insert/update statement or not
-    const importType = data.importtype;                       // import type identifies the type of import to be used for logging
-    let lastSyncDateOverride = null;                          // last synchronized date to override the last sync date in the database
-    let lastIdOverride = null;                                // last id to override the last id in the database
-    let maxSyncDateOverride = null;                           // max sync date to override the max sync date in the database
+  const refreshToken = data.refreshtoken;                   // retrieved from the requests body, stores the refresh token for the flexera api to get a new access token
+  const datasetName = data.dataset;                         // dataset name to be pulled // ie. "Taxonomy";
+  const takeAmt = data.takeamount;                          // amount of records to pull per page
+  const importId = getImportId();                           // import id identifies a group of import requests to be used for logging
+  const isDryRun = data.dryrun;                             // flag to determine if the import insert/update statement or not
+  const importType = data.importtype;                       // import type identifies the type of import to be used for logging
+  let lastSyncDateOverride = null;                          // last synchronized date to override the last sync date in the database
+  let lastIdOverride = null;                                // last id to override the last id in the database
+  let maxSyncDateOverride = null;                           // max sync date to override the max sync date in the database
+  let isToBeDeletedOnly = null;                            // flag to determine if only records istobedeleted=true should be returned by the flexera api
 
-    let accessToken = '';                                 // stores the flerera api access token
-    let graphqlQuery = '';                                // stores the graphql query to be sent to the flexera api
+  let accessToken = '';                                 // stores the flerera api access token
+  let graphqlQuery = '';                                // stores the graphql query to be sent to the flexera api
 
-    const tableName = `tech_catalog.tp_${datasetName}`;   // table name based on dataset name// insert table name based on dataset name
-    let insertStatement = `insert into ${tableName} (`;   // insert statement for table records
-    let isStatementBuilt = false;                         // flag to determine if the update statement has been built
+  const tableName = `tech_catalog.tp_${datasetName}`;   // table name based on dataset name// insert table name based on dataset name
+  let insertStatement = `insert into ${tableName} (`;   // insert statement for table records
+  let isStatementBuilt = false;                         // flag to determine if the update statement has been built
 
-    // (only used for SoftwareLifecycle dataset ONLY)
-    const insertStatementSftwSupportStage =
-          `insert into tech_catalog.tp_SoftwareSupportStage (softwareLifecycleId, definition, endDate, manufacturerId, name, order_, policy, publishedEndDate) values ?`;
-    let softwareSupportStageCounter = 0;
-    
-    let pageCounter = 0;                                  // total number of pages processed
-    let pageRequestCounter = 0;                           // total number of page requests made
-    let recordCounter = 0;                                // total number of records received
-    let recordsFailedCounter = 0;                         // total number of records that failed to insert into db
-    let isFatalError = 0;
+  // (only used for SoftwareLifecycle dataset ONLY)
+  const insertStatementSftwSupportStage =
+        `insert into tech_catalog.tp_SoftwareSupportStage (softwareLifecycleId, definition, endDate, manufacturerId, name, order_, policy, publishedEndDate) values ?`;
+  let softwareSupportStageCounter = 0;
+  
+  let pageCounter = 0;                                  // total number of pages processed
+  let pageRequestCounter = 0;                           // total number of page requests made
+  let recordCounter = 0;                                // total number of records received
+  let recordsFailedCounter = 0;                         // total number of records that failed to insert into db
+  let isFatalError = 0;
 
-    let recordsInsertedCounter = 0;                       // total number of records inserted into db
+  let recordsInsertedCounter = 0;                       // total number of records inserted into db
 
-    let recordToUpdateCounter = 0;                        // total number of records to update
-    
-    let pageSummaryArray = [];                            // array of page summary objects, page added after completed
-    //let recordsFailedList = [];                           // list of records that failed to insert into db
+  let recordToUpdateCounter = 0;                        // total number of records to update
+  
+  let pageSummaryArray = [];                            // array of page summary objects, page added after completed
+  //let recordsFailedList = [];                         // list of records that failed to insert into db
 
-    let beginTableRecordCount = 0;                        // number of records in the table before the import process begins
-    let endTableRecordCount = 0;                          // number of records in the table after the import process ends
-    
-    let isLastPage = false;                               // flag to determine if this is the last page
-    let lastRecordId = null;                              // id of last record processed
-    let lastRecordIdUsed = null;                          // the inital last id value used to start the import process
+  let beginTableRecordCount = 0;                        // number of records in the table before the import process begins
+  let endTableRecordCount = 0;                          // number of records in the table after the import process ends
+  
+  let isLastPage = false;                               // flag to determine if this is the last page
+  let lastRecordId = null;                              // id of last record processed
+  let lastRecordIdUsed = null;                          // the inital last id value used to start the import process
 
-    let lastSynchronizedDate = null;                      // the last synchronized date for the dataset
-    const uploadStartTime = new Date();                   // upload start time //TIMESTAMP();
-    let uploadEndTime = null;                             // upload end time //TIMESTAMP();
-    let recordCountDisplay = 0;
-    let affectRowsCounter1 = 0;                           // number of rows affected by the insert/update statement
-    let affectRowsCounter2 = 0;                           // number of rows affected by the insert/update statement
-    let affectRowsCounter3 = 0;                           // number of rows affected by the insert/update statement
-    let recordsToBeDeletedArray = [];
+  let lastSynchronizedDate = null;                      // the last synchronized date for the dataset
+  const uploadStartTime = new Date();                   // upload start time //TIMESTAMP();
+  let uploadEndTime = null;                             // upload end time //TIMESTAMP();
+  let recordCountDisplay = 0;
+  let affectRowsCounter1 = 0;                           // number of rows affected by the insert/update statement
+  let affectRowsCounter2 = 0;                           // number of rows affected by the insert/update statement
+  let affectRowsCounter3 = 0;                           // number of rows affected by the insert/update statement
+  let recordsToBeDeletedArray = [];
+  let deletedRecsNotRemovedCounter = 0;                 // number of records deleted from the table
 
-    let earliestSyncDate = null;                          // earliest sync date for the dataset
-    let latestSyncDate = null;                            // latest sync date for the dataset
-    let syncYYYYMMDDArray = [];                             // array of sync dates in YYYYMMDD format
+  let earliestSyncDate = null;                          // earliest sync date for the dataset
+  let latestSyncDate = null;                            // latest sync date for the dataset
+  let syncYYYYMMDDArray = [];                           // array of sync dates in YYYYMMDD format
 
-    const importLogFileName         = `${logFolderPath}/import_${importType}_${datasetName}_import_log_${formatFileDateTime(uploadStartTime)}.log`;
-    const syncListLogFileName       = `${logFolderPath}/import_${importType}_${datasetName}_records_to_sync_list_${formatFileDateTime(uploadStartTime)}.log`;
-    const deleteListLogFileName     = `${logFolderPath}/import_${importType}_${datasetName}_records_to_delete_list_${formatFileDateTime(uploadStartTime)}.log`;
-    const errorLogFileName          = `${logFolderPath}/import_${importType}_${datasetName}_ERRORs_${formatFileDateTime(uploadStartTime)}.log`;
-    const importSummaryLogFileName  = `${logFolderPath}/import_${importType}_${datasetName}_import_summary_${formatFileDateTime(uploadStartTime)}.log`;
+  const importLogFileName         = `${logFolderPath}/import_${importType}_${datasetName}_import_log_${formatFileDateTime(uploadStartTime)}.log`;
+  const syncListLogFileName       = `${logFolderPath}/import_${importType}_${datasetName}_records_to_sync_list_${formatFileDateTime(uploadStartTime)}.log`;
+  const deleteListLogFileName     = `${logFolderPath}/import_${importType}_${datasetName}_records_to_delete_list_${formatFileDateTime(uploadStartTime)}.log`;
+  const errorLogFileName          = `${logFolderPath}/import_${importType}_${datasetName}_ERRORs_${formatFileDateTime(uploadStartTime)}.log`;
+  const importSummaryLogFileName  = `${logFolderPath}/import_${importType}_${datasetName}_import_summary_${formatFileDateTime(uploadStartTime)}.log`;
 
-    
-    // ... prepares a header without the time to be put in front of each logger message
-    function getLogHeaderNoTime () {
-      return `/${importId}/${datasetName}/` 
-              + (pageCounter > 0 ? `p${pageCounter}/` 
-              + (recordCountDisplay > 0 ? `r${recordCountDisplay}/` : '') : '');
+  
+  // ... prepares a header without the time to be put in front of each logger message
+  function getLogHeaderNoTime () {
+    return `/${importId}/${datasetName}/` 
+            + (pageCounter > 0 ? `p${pageCounter}/` 
+            + (recordCountDisplay > 0 ? `r${recordCountDisplay}/` : '') : '');
+  }
+  // ... prepares a header to be put in front of each logger message
+  function getLogHeader () {
+    return `${formatDateTime(new Date())}${getLogHeaderNoTime()}`;
+  }
+  // ... returns the import summary at any point in the import process
+  function getImportSummary () {
+    const summary = {
+      message : `Technopedia Data Import`,
+      importId : importId,
+      importType : importType,
+      dataset : datasetName,
+      takeAmount : takeAmt,
+      dryRun : (isDryRun === 'true' ? 'true' : 'false'),
+      lastSyncDateOverride : formatDateTime(lastSyncDateOverride),
+      maxSyncDateOverride : formatDateTime(maxSyncDateOverride),
+      lastIdOverride : lastIdOverride,
+      isToBeDeletedRecordsOnly : isToBeDeletedOnly,
+      lastRecordId : lastRecordId,
+      firstAfterIdUsed : lastRecordIdUsed,
+      lastSynchronizedDateUsed : formatDateTime(lastSynchronizedDate),
+      startTime : formatDateTime(uploadStartTime),
+      endTime : formatDateTime(uploadEndTime),
+      duration : formatDuration(uploadStartTime, uploadEndTime),
+      totalPageRequestsMade : pageRequestCounter,
+      totalPages : pageCounter,
+      totalRecords : recordCounter,
+      totalRecordsToBeInsertedUpdated : recordToUpdateCounter,
+      totalRecordsInsertedUpdated : recordsInsertedCounter,
+      totalRecordsFailed : recordsFailedCounter,
+      totalSoftwareSupportStageRecords : softwareSupportStageCounter,
+      beginTableRecordCount : beginTableRecordCount,
+      endTableRecordCount : endTableRecordCount,
+      affectRowsCounter1 : affectRowsCounter1,
+      affectRowsCounter2 : affectRowsCounter2,
+      affectRowsCounter3 : affectRowsCounter3,
+      fatalError : isFatalError,
+      logDateTime : formatDateTime(new Date()),
+      pageSummaries : "see logs",
+      deletedRecsNotRemovedCounter : deletedRecsNotRemovedCounter,
+      recordsToBeDeleted : "see logs",
+      earliestSyncDate : (earliestSyncDate === null ? null : formatDateTime(earliestSyncDate)),
+      latestSyncDate : formatDateTime(latestSyncDate),
+      syncYYYYMMDDArray : syncYYYYMMDDArray
+    };
+    return summary;
+  }
+  // ... 
+  function updateImportLog (logMessage) {
+    try {
+      let importLogStatement = null;
+
+      if (uploadEndTime) {
+        // get update statement for end of import
+        importLogStatement =
+          `update tech_catalog.dataset_import_log
+            set import_status = '${logMessage}',
+                takeAmount = ${takeAmt},
+                dryRun = '${(isDryRun === 'true' ? 'true' : 'false')}',
+                lastSyncDateOverride = ${lastSyncDateOverride === null ? 'null' : "'" + formatDateTime(lastSyncDateOverride) + "'"},
+                lastIdOverride = ${lastIdOverride === null ? 'null' : "'" + lastIdOverride + "'"},
+                lastRecordId = '${lastRecordId}',
+                firstAfterIdUsed = '${lastRecordIdUsed}',
+                lastSynchronizedDateUsed = ${lastSynchronizedDate === null ? 'null' : "'" + formatDateTime(lastSynchronizedDate) + "'"},
+                startTime = ${uploadStartTime === null ? 'null' : "'" + formatDateTime(uploadStartTime) + "'"},
+                endTime = ${uploadEndTime === null ? 'null' : "'" + formatDateTime(uploadEndTime) + "'"},
+                duration = '${formatDuration(uploadStartTime, uploadEndTime)}',
+                totalPageRequestsMade = ${pageRequestCounter},
+                totalPages = ${pageCounter},
+                totalRecords = ${recordCounter},
+                totalRecordsToBeInsertedUpdated = ${recordToUpdateCounter},
+                totalRecordsInsertedUpdated = ${recordsInsertedCounter},
+                totalRecordsFailed = ${recordsFailedCounter},
+                totalSoftwareSupportStageRecords = ${softwareSupportStageCounter},
+                beginTableRecordCount = ${beginTableRecordCount},
+                endTableRecordCount = ${endTableRecordCount},
+                fatalError = ${isFatalError},
+                fatalErrorMessage = ${isFatalError === 1 ? 'see error log file' : 'null'}
+          WHERE import_id = '${importId}' AND datasetName = '${datasetName}'; `;
+      } else {
+        // get update statement for end of a page
+        importLogStatement =
+          `update tech_catalog.dataset_import_log
+            set takeAmount = ${takeAmt},
+                dryRun = '${(isDryRun === 'true' ? 'true' : 'false')}',
+                lastSyncDateOverride = ${lastSyncDateOverride === null ? 'null' : "'" + formatDateTime(lastSyncDateOverride) + "'"},
+                lastIdOverride = ${lastIdOverride === null ? 'null' : "'" + lastIdOverride + "'"},
+                lastRecordId = '${lastRecordId}',
+                firstAfterIdUsed = '${lastRecordIdUsed}',
+                lastSynchronizedDateUsed = ${lastSynchronizedDate === null ? 'null' : "'" + formatDateTime(lastSynchronizedDate) + "'"},
+                startTime = ${uploadStartTime === null ? 'null' : "'" + formatDateTime(uploadStartTime) + "'"},
+                totalPageRequestsMade = ${pageRequestCounter},
+                totalPages = ${pageCounter},
+                totalRecords = ${recordCounter},
+                totalRecordsToBeInsertedUpdated = ${recordToUpdateCounter},
+                totalRecordsInsertedUpdated = ${recordsInsertedCounter},
+                totalRecordsFailed = ${recordsFailedCounter},
+                totalSoftwareSupportStageRecords = ${softwareSupportStageCounter},
+                beginTableRecordCount = ${beginTableRecordCount},
+                fatalError = ${isFatalError}
+          WHERE import_id = '${importId}' AND datasetName = '${datasetName}'; `;
+      }
+
+      sql.query(importLogStatement, (err, result) => {
+        if (err) {
+          logger(`${getLogHeader()}`, `failed to update import log`, err, errorLogFileName);
+        }
+      });
+      
+    } catch (error) {
+      logger(`${getLogHeader()}`, `an unexpected error occurred during updateImportLog()`, error, errorLogFileName);
     }
-    // ... prepares a header to be put in front of each logger message
-    function getLogHeader () {
-      return `${formatDateTime(new Date())}${getLogHeaderNoTime()}`;
-    }
-    // ... returns the import summary at any point in the import process
-    function getImportSummary () {
-      const summary = {
-        message : `Technopedia Data Import`,
-        importId : importId,
-        importType : importType,
-        dataset : datasetName,
-        takeAmount : takeAmt,
-        dryRun : (isDryRun === 'true' ? 'true' : 'false'),
-        lastSyncDateOverride : formatDateTime(lastSyncDateOverride),
-        maxSyncDateOverride : formatDateTime(maxSyncDateOverride),
-        lastIdOverride : lastIdOverride,
-        lastRecordId : lastRecordId,
-        firstAfterIdUsed : lastRecordIdUsed,
-        lastSynchronizedDateUsed : formatDateTime(lastSynchronizedDate),
-        startTime : formatDateTime(uploadStartTime),
-        endTime : formatDateTime(uploadEndTime),
-        duration : formatDuration(uploadStartTime, uploadEndTime),
-        totalPageRequestsMade : pageRequestCounter,
-        totalPages : pageCounter,
-        totalRecords : recordCounter,
-        totalRecordsToBeInsertedUpdated : recordToUpdateCounter,
-        totalRecordsInsertedUpdated : recordsInsertedCounter,
-        totalRecordsFailed : recordsFailedCounter,
-        totalSoftwareSupportStageRecords : softwareSupportStageCounter,
-        beginTableRecordCount : beginTableRecordCount,
-        endTableRecordCount : endTableRecordCount,
-        affectRowsCounter1 : affectRowsCounter1,
-        affectRowsCounter2 : affectRowsCounter2,
-        affectRowsCounter3 : affectRowsCounter3,
-        fatalError : isFatalError,
-        logDateTime : formatDateTime(new Date()),
-        pageSummaries : "see logs",
-        recordsToBeDeleted : "see logs",
-        earliestSyncDate : (earliestSyncDate === null ? null : formatDateTime(earliestSyncDate)),
-        latestSyncDate : formatDateTime(latestSyncDate),
-        syncYYYYMMDDArray : syncYYYYMMDDArray
-      };
+  }
+  // ... performs the required tasks before ending the import process
+  async function endImport() {
+    try {
+
+      let logMessage = null;
+
+      // ... setting end time
+      uploadEndTime = new Date();
+
+      // ... inserting the record count summary by syncdate
+      let syncDateInsertStatements = '';
+
+      for (let i = 0; i < syncYYYYMMDDArray.length; i++) {
+        syncDateInsertStatements = syncDateInsertStatements + ` insert into tech_catalog.dataset_syncdate_log (import_id, datasetName, syncDate, recordCount) values ( '${importId}', '${datasetName}', '${syncYYYYMMDDArray[i].syncDate}', ${syncYYYYMMDDArray[i].recordCount}); `;
+      }
+
+      sql.query(syncDateInsertStatements, (err, result) => {
+        if (err) {
+          logger(`${getLogHeader()}`, `failed to insert sync date log`, err, errorLogFileName);
+        }
+      });
+
+      // ... wait 10 seconds
+      await new Promise(resolve => setTimeout(resolve, 10000));
+
+      // ... get the ending table record count
+      endTableRecordCount = await getTableRecordCount(tableName, getLogHeaderNoTime());
+
+      // ... get the import summary
+      let summary = getImportSummary();
+
+      // ... log import summary file
+      writeToLogFile(JSON.stringify(summary), importSummaryLogFileName);
+
+      // ... set the import status message
+      if (isFatalError === 1) {
+        logMessage = `${datasetName} import FAILED`;
+      } else if (recordsFailedCounter > 0) {
+        logMessage = `${datasetName} import completed with errors (${recordsFailedCounter})`;
+      } else {
+        logMessage = `${datasetName} import completed successful`;
+      }
+
+      // ... log to event table
+      sql.query(`insert into log.event (Event, User, DTG) values ('${logMessage}', 'GearCronJ', now());`, (err, result) => {
+        if (err) {
+          logger(`${getLogHeader()}`, `failed to log event`, err, errorLogFileName);
+        }
+      });
+
+      // ... log to dataset import log table
+      updateImportLog(logMessage);
+
+      // ... log import summary and complete import request.
+      logger(`${getLogHeader()}`, `... import summary logged`);
+      logger(`${getLogHeader()}`, `********** ENDING ${importType} IMPORT PROCESS **********\n\n`);
+
+      // ... return the import summary object
       return summary;
+
+    } catch (error) {
+      logger(`${getLogHeader()}`, `an unexpected error occurred during endImport()`, error, errorLogFileName);
+      isFatalError=1;
+      return error;
     }
-    // ... 
-    function updateImportLog (logMessage) {
-      try {
-        let importLogStatement = null;
 
-        if (uploadEndTime) {
-          // get update statement for end of import
-          importLogStatement =
-            `update tech_catalog.dataset_import_log
-              set import_status = '${logMessage}',
-                  takeAmount = ${takeAmt},
-                  dryRun = '${(isDryRun === 'true' ? 'true' : 'false')}',
-                  lastSyncDateOverride = ${lastSyncDateOverride === null ? 'null' : "'" + formatDateTime(lastSyncDateOverride) + "'"},
-                  lastIdOverride = ${lastIdOverride === null ? 'null' : "'" + lastIdOverride + "'"},
-                  lastRecordId = '${lastRecordId}',
-                  firstAfterIdUsed = '${lastRecordIdUsed}',
-                  lastSynchronizedDateUsed = ${lastSynchronizedDate === null ? 'null' : "'" + formatDateTime(lastSynchronizedDate) + "'"},
-                  startTime = ${uploadStartTime === null ? 'null' : "'" + formatDateTime(uploadStartTime) + "'"},
-                  endTime = ${uploadEndTime === null ? 'null' : "'" + formatDateTime(uploadEndTime) + "'"},
-                  duration = '${formatDuration(uploadStartTime, uploadEndTime)}',
-                  totalPageRequestsMade = ${pageRequestCounter},
-                  totalPages = ${pageCounter},
-                  totalRecords = ${recordCounter},
-                  totalRecordsToBeInsertedUpdated = ${recordToUpdateCounter},
-                  totalRecordsInsertedUpdated = ${recordsInsertedCounter},
-                  totalRecordsFailed = ${recordsFailedCounter},
-                  totalSoftwareSupportStageRecords = ${softwareSupportStageCounter},
-                  beginTableRecordCount = ${beginTableRecordCount},
-                  endTableRecordCount = ${endTableRecordCount},
-                  fatalError = ${isFatalError},
-                  fatalErrorMessage = ${isFatalError === 1 ? 'see error log file' : 'null'}
-            WHERE import_id = '${importId}' AND datasetName = '${datasetName}'; `;
-        } else {
-          // get update statement for end of a page
-          importLogStatement =
-            `update tech_catalog.dataset_import_log
-              set takeAmount = ${takeAmt},
-                  dryRun = '${(isDryRun === 'true' ? 'true' : 'false')}',
-                  lastSyncDateOverride = ${lastSyncDateOverride === null ? 'null' : "'" + formatDateTime(lastSyncDateOverride) + "'"},
-                  lastIdOverride = ${lastIdOverride === null ? 'null' : "'" + lastIdOverride + "'"},
-                  lastRecordId = '${lastRecordId}',
-                  firstAfterIdUsed = '${lastRecordIdUsed}',
-                  lastSynchronizedDateUsed = ${lastSynchronizedDate === null ? 'null' : "'" + formatDateTime(lastSynchronizedDate) + "'"},
-                  startTime = ${uploadStartTime === null ? 'null' : "'" + formatDateTime(uploadStartTime) + "'"},
-                  totalPageRequestsMade = ${pageRequestCounter},
-                  totalPages = ${pageCounter},
-                  totalRecords = ${recordCounter},
-                  totalRecordsToBeInsertedUpdated = ${recordToUpdateCounter},
-                  totalRecordsInsertedUpdated = ${recordsInsertedCounter},
-                  totalRecordsFailed = ${recordsFailedCounter},
-                  totalSoftwareSupportStageRecords = ${softwareSupportStageCounter},
-                  beginTableRecordCount = ${beginTableRecordCount},
-                  fatalError = ${isFatalError}
-            WHERE import_id = '${importId}' AND datasetName = '${datasetName}'; `;
-        }
-
-        sql.query(importLogStatement, (err, result) => {
-          if (err) {
-            logger(`${getLogHeader()}`, `failed to update import log`, err, errorLogFileName);
-          }
-        });
-        
-      } catch (error) {
-        logger(`${getLogHeader()}`, `an unexpected error occurred during updateImportLog()`, error, errorLogFileName);
-      }
-    }
-    // ... performs the required tasks before ending the import process
-    async function endImport() {
-      try {
-
-        let logMessage = null;
-
-        // ... setting end time
-        uploadEndTime = new Date();
-
-        // ... inserting the record count summary by syncdate
-        let syncDateInsertStatements = '';
-
-        for (let i = 0; i < syncYYYYMMDDArray.length; i++) {
-          syncDateInsertStatements = syncDateInsertStatements + ` insert into tech_catalog.dataset_syncdate_log (import_id, datasetName, syncDate, recordCount) values ( '${importId}', '${datasetName}', '${syncYYYYMMDDArray[i].syncDate}', ${syncYYYYMMDDArray[i].recordCount}); `;
-        }
-
-        sql.query(syncDateInsertStatements, (err, result) => {
-          if (err) {
-            logger(`${getLogHeader()}`, `failed to insert sync date log`, err, errorLogFileName);
-          }
-        });
-
-        // ... wait 10 seconds
-        await new Promise(resolve => setTimeout(resolve, 10000));
-
-        // ... get the ending table record count
-        endTableRecordCount = await getTableRecordCount(tableName, getLogHeaderNoTime());
-
-        // ... get the import summary
-        let summary = getImportSummary();
-
-        // ... log import summary file
-        writeToLogFile(JSON.stringify(summary), importSummaryLogFileName);
-
-        // ... set the import status message
-        if (isFatalError === 1) {
-          logMessage = `${datasetName} import FAILED`;
-        } else if (recordsFailedCounter > 0) {
-          logMessage = `${datasetName} import completed with errors (${recordsFailedCounter})`;
-        } else {
-          logMessage = `${datasetName} import completed successful`;
-        }
-
-        // ... log to event table
-        sql.query(`insert into log.event (Event, User, DTG) values ('${logMessage}', 'GearCronJ', now());`, (err, result) => {
-          if (err) {
-            logger(`${getLogHeader()}`, `failed to log event`, err, errorLogFileName);
-          }
-        });
-
-        // ... log to dataset import log table
-        updateImportLog(logMessage);
-
-        // ... log import summary and complete import request.
-        logger(`${getLogHeader()}`, `... import summary logged`);
-        logger(`${getLogHeader()}`, `********** ENDING ${importType} IMPORT PROCESS **********\n\n`);
-
-        // ... return the import summary object
-        return summary;
-
-      } catch (error) {
-        logger(`${getLogHeader()}`, `an unexpected error occurred during endImport()`, error, errorLogFileName);
-        isFatalError=1;
-        return error;
-      }
-
-    }
+  }
 
   // -----------------------------------------------
 
@@ -2274,10 +2285,10 @@ exports.importTechCatlogData = async (data, response) => {
 
 
       // -----------------------------------------------
-      // 2. get the last id and the last synchronizedDate
+      // 2. get the last id and/or the last synchronizedDate from the database and apply OVERRIDEs
       try {
 
-        // handle overrides
+        // handle OVERRIDE values
 
         // lastIdOverride
         try {
@@ -2306,13 +2317,21 @@ exports.importTechCatlogData = async (data, response) => {
           if (data.maxsyncdateoverride) {
             maxSyncDateOverride = new Date(stringToDate(String(data.maxsyncdateoverride).replace('T', ' ').replace('Z', '')));
 
-            // set time to 23:59:59.999
+            // set time to end of day (23:59:59.999)
             maxSyncDateOverride.setHours(23, 59, 59, 999);
 
             logger(`${getLogHeader()}`, `... enforcing OVERRIDING max sync date = ${formatDateTime(maxSyncDateOverride)}`, null, importLogFileName);
-          } 
+          } else {
+            maxSyncDateOverride = new Date();
+
+            // set time to beginning of currday (00:00:00.000)
+            maxSyncDateOverride.setHours(0, 0, 0, 0);
+          }
         } catch (error) {
-          maxSyncDateOverride = null;
+          maxSyncDateOverride = new Date();
+
+          // set time to beginning of currday (00:00:00.000)
+          maxSyncDateOverride.setHours(0, 0, 0, 0);
         }
 
         // get last id
@@ -2320,6 +2339,16 @@ exports.importTechCatlogData = async (data, response) => {
           // ... get the last record id from the database
           lastRecordId = lastRecordIdUsed = await getLastRecordId(tableName, getLogHeaderNoTime());
         
+        }
+
+        // isToBeDeletedOnlyOverride
+        try {
+          if (data.istobedeletedonlyoverride) {
+            isToBeDeletedOnly = data.istobedeletedonlyoverride;
+            logger(`${getLogHeader()}`, `... OVERRIDING isToBeDeletedOnly = ${isToBeDeletedOnly}`, null, importLogFileName);
+          }
+        } catch (error) {
+          isToBeDeletedOnly = null;
         }
 
         // get last synchronizedDate
@@ -2435,7 +2464,7 @@ exports.importTechCatlogData = async (data, response) => {
           try {
 
             // ... build graphql query
-            graphqlQuery = await buildAPIQuery(datasetName, takeAmt, lastRecordId, 'all', getLogHeaderNoTime());
+            graphqlQuery = await buildAPIQuery(datasetName, takeAmt, lastRecordId, 'all', isToBeDeletedOnly, getLogHeaderNoTime());
 
             // ... log graphql query
             writeToLogFile(`page ${pageCounter} graphqlQuery: ` + graphqlQuery + `,\n`, importLogFileName);
@@ -2653,15 +2682,34 @@ exports.importTechCatlogData = async (data, response) => {
 
                   // ... check isToBeDeleted value
                   if (datasetObject.isToBeDeleted === true) {
+                    let deletedNotRemoved = false;
 
-                    logger(`${getLogHeader()}`, `...... id:"${lastRecordId}" will be deleted on "${datasetObject.toBeDeletedOn}"`);
+                    // check if toBeDeletedOn is less than the beginning of the current day
+                    if (datasetObject.toBeDeletedOn !== null && datasetObject.toBeDeletedOn !== "") {
+                      let toBeDeletedOnDate = new Date(stringToDate(datasetObject.toBeDeletedOn));
+                      toBeDeletedOnDate.setHours(0, 0, 0, 0);
 
+                      if (toBeDeletedOnDate < new Date()) {
+                        // ... this record needs to be deleted
+                        deletedRecsNotRemovedCounter++;
+                        deletedNotRemoved = true;
+
+                        logger(`${getLogHeader()}`, `...... id:"${lastRecordId}" already deleted... should have been removed on "${datasetObject.toBeDeletedOn}"`);
+                      } else {
+                        logger(`${getLogHeader()}`, `...... id:"${lastRecordId}" will be deleted on "${datasetObject.toBeDeletedOn}"`);
+                      }
+                    } else {
+                      logger(`${getLogHeader()}`, `...... id:"${lastRecordId}" will be deleted in the near future`);
+                    }
+                    
                     let deleteTxt = 
                     {
                       id : lastRecordId,
                       synchronizedDate : datasetObject.synchronizedDate,
                       isToBeDeleted : datasetObject.isToBeDeleted,
-                      toBeDeletedOn : datasetObject.toBeDeletedOn
+                      toBeDeletedOn : datasetObject.toBeDeletedOn,
+                      deleteReason : datasetObject.deleteReason,
+                      deletedNotRemoved : deletedNotRemoved
                     };
 
                     // ... write record to sync list log

@@ -245,7 +245,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
     try {
 
       // log start of the import group
-      console.log(`... Starting import for group ${groupNumber}`);
+      console.log(`... Starting import for group ${groupNumber}\n`);
       // set the current group number
       groupNumber++;
       // get the current group dataset(s)
@@ -264,7 +264,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
       if (errors.length > 0) {
         // if any fatal errors occurred, log them and return a 500 error
 
-        endMessage = `ERROR: 1 or more datasets in group ${groupNumber} failed to import`;
+        endMessage = `ERROR: 1 or more datasets in group ${groupNumber} failed to import.\n`;
         endStatus = 500;
         endDailyImport = true;
         
@@ -276,23 +276,23 @@ exports.runDailyTechCatalogImport = async (req, res) => {
           if (duplicateJobsRunning.length > 0) {
             // if any duplicate jobs are running, log them and return a 200 error
 
-            endMessage = `Daily Import is already in progress`;
+            endMessage = `Daily Import is already in progress.\n`;
             endStatus = 200;
             endDailyImport = true;
             
           }
 
         } catch (error) {
-          console.log('no duplicateJobsRunning found')
+          console.log('no duplicateJobsRunning found.\n')
         }
 
         // otherwise, log the success and continue to the next group
 
-        console.log(`... Import group ${groupNumber} has successfully completed imported!`);
+        console.log(`... Import group ${groupNumber} has successfully completed imported!...\n`);
 
         // return the response once all groups have been imported
         if (groupNumber >= maxJobs) {
-          endMessage = `All ${groupNumber} of ${maxJobs} groups have successfully completed imported!`,
+          endMessage = `All ${groupNumber} of ${maxJobs} groups have successfully completed imported!\n`,
           endStatus = 200;
           endDailyImport = true;
         }
@@ -300,7 +300,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
 
     } catch (error) {
       console.error(`an error occurred while importing group ${groupNumber} of ${maxJobs}: \n`, error);
-      endMessage = `ERROR: an error occurred while importing group ${groupNumber} of ${maxJobs}`;
+      endMessage = `ERROR: an error occurred while importing group ${groupNumber} of ${maxJobs}.\n`;
       endError = error;
       endStatus = 500;
       endDailyImport = true;
