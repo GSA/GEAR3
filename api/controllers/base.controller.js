@@ -695,11 +695,11 @@ async function buildAPIQuery(datasetName, takeAmt, afterId, queryColumnType, isT
   if (recordId !== null) {
     // ... add recordId to the query
     additionalQueryParameters = additionalQueryParameters + ` id: "${recordId}"`;
-  }
-
-  // ... add afterId parameter and lastRecordId value to the query, if afterId is not null
-  if (afterId !== null) {
-    additionalQueryParameters = additionalQueryParameters + ` afterId: "${afterId}"`;
+  } else {
+    // ... add afterId parameter and lastRecordId value to the query, if afterId is not null
+    if (afterId !== null) {
+      additionalQueryParameters = additionalQueryParameters + ` afterId: "${afterId}"`;
+    }
   }
 
   // ... add isToBeDeleted parameter and isToBeDeleted value to the query, if isToBeDeleted is not null
@@ -1006,7 +1006,7 @@ async function buildAPIQuery(datasetName, takeAmt, afterId, queryColumnType, isT
   // build graphql query
   graphqlQuery = JSON.stringify({
     query: `{
-      ${datasetName}(take: ${takeAmt}${additionalQueryParameters}  ) {
+      ${datasetName}(take: ${takeAmt}${additionalQueryParameters} ) {
           ${columnList}
       }
     }`,
@@ -1970,7 +1970,7 @@ function timer (timerObj = null) {
 
 }*/
 
-function getImportId() {
+function getImportId(data = null) {
 
   var formattedDate = new Date();
 
@@ -1979,9 +1979,21 @@ function getImportId() {
   const month = String(formattedDate.getMonth() + 1).padStart(2, '0');
   const day = String(formattedDate.getDate()).padStart(2, '0');
   const hours = String(formattedDate.getHours()).padStart(2, '0');
+  let minutes = '';
+  let seconds = '';
+
+  try {
+    if (data.singlerecimportidoverride) {
+      minutes = String(formattedDate.getMinutes()).padStart(2, '0');
+      //seconds = String(formattedDate.getSeconds()).padStart(2, '0');
+    } 
+  } catch (error) {
+    minutes = '';
+    seconds = '';
+  }
 
   // Combine the components into the desired format
-  formattedDate = parseInt(`${year}${month}${day}${hours}`);
+  formattedDate = parseInt(`${year}${month}${day}${hours}${minutes}${seconds}`);
 
   return formattedDate;
 }
@@ -1996,13 +2008,14 @@ exports.importTechCatlogData = async (data, response) => {
   const refreshToken = data.refreshtoken;                   // retrieved from the requests body, stores the refresh token for the flexera api to get a new access token
   const datasetName = data.dataset;                         // dataset name to be pulled // ie. "Taxonomy";
   const takeAmt = data.takeamount;                          // amount of records to pull per page
-  const importId = getImportId();                           // import id identifies a group of import requests to be used for logging
+  const importId = getImportId(data);                       // import id identifies a group of import requests to be used for logging
   const isDryRun = data.dryrun;                             // flag to determine if the import insert/update statement or not
   const importType = data.importtype;                       // import type identifies the type of import to be used for logging
   let lastSyncDateOverride = null;                          // last synchronized date to override the last sync date in the database
   let lastIdOverride = null;                                // last id to override the last id in the database
   let maxSyncDateOverride = null;                           // max sync date to override the max sync date in the database
-  let isToBeDeletedOnly = null;                            // flag to determine if only records istobedeleted=true should be returned by the flexera api
+  let isToBeDeletedOnly = null;                             // flag to determine if only records istobedeleted=true should be returned by the flexera api
+  let singleRecImportId = null;                             // import id for a single record import
 
   let accessToken = '';                                 // stores the flerera api access token
   let graphqlQuery = '';                                // stores the graphql query to be sent to the flexera api
@@ -2023,11 +2036,11 @@ exports.importTechCatlogData = async (data, response) => {
   let isFatalError = 0;
 
   let recordsInsertedCounter = 0;                       // total number of records inserted into db
-
   let recordToUpdateCounter = 0;                        // total number of records to update
   
   let pageSummaryArray = [];                            // array of page summary objects, page added after completed
-  //let recordsFailedList = [];                         // list of records that failed to insert into db
+  let recordsFailedList = [];                           // list of records that failed to insert into db
+  let reImportNeeded = false;
 
   let beginTableRecordCount = 0;                        // number of records in the table before the import process begins
   let endTableRecordCount = 0;                          // number of records in the table after the import process ends
@@ -2079,6 +2092,7 @@ exports.importTechCatlogData = async (data, response) => {
       lastSyncDateOverride : formatDateTime(lastSyncDateOverride),
       maxSyncDateOverride : formatDateTime(maxSyncDateOverride),
       lastIdOverride : lastIdOverride,
+      singleRecImportIdOverride : singleRecImportId,
       isToBeDeletedRecordsOnly : isToBeDeletedOnly,
       lastRecordId : lastRecordId,
       firstAfterIdUsed : lastRecordIdUsed,
@@ -2105,7 +2119,8 @@ exports.importTechCatlogData = async (data, response) => {
       recordsToBeDeleted : "see logs",
       earliestSyncDate : (earliestSyncDate === null ? null : formatDateTime(earliestSyncDate)),
       latestSyncDate : formatDateTime(latestSyncDate),
-      syncYYYYMMDDArray : syncYYYYMMDDArray
+      syncYYYYMMDDArray : `see tech_catalog.dataset_syncdate_log table`,
+      failedRecordsList : recordsFailedList
     };
     return summary;
   }
@@ -2288,78 +2303,99 @@ exports.importTechCatlogData = async (data, response) => {
       // 2. get the last id and/or the last synchronizedDate from the database and apply OVERRIDEs
       try {
 
-        // handle OVERRIDE values
-
-        // lastIdOverride
+        // check singleRecImportId exists (for single record imports ONLY)
         try {
-          if (data.lastidoverride) {
-            lastRecordId = lastRecordIdUsed = lastIdOverride =  data.lastidoverride;
-            logger(`${getLogHeader()}`, `... OVERRIDING last id = ${lastRecordId}`, null, importLogFileName);
-          }
-        } catch (error) {
-          lastRecordId = lastRecordIdUsed = null;
-        }
+          if (data.singlerecimportidoverride) {
+            singleRecImportId = data.singlerecimportidoverride;
 
-        // lastSyncDateOverride
-        try {
-          if (data.lastsyncdateoverride) {
-            lastSynchronizedDate = lastSyncDateOverride = new Date(stringToDate(String(data.lastsyncdateoverride).replace('T', ' ').replace('Z', '')));
-            lastSynchronizedDate.setHours(0, 0, 0, 0);
-            lastSyncDateOverride.setHours(0, 0, 0, 0);
-            logger(`${getLogHeader()}`, `... OVERRIDING last sync date = ${formatDateTime(lastSynchronizedDate)}`, null, importLogFileName);
-          }
-        } catch (error) {
-          lastSynchronizedDate = null;
-        }
+            // if string singleRecImportId contains a comma, throw error
+            if (singleRecImportId.includes(',')) {
+              throw `single record import id cannot contain a comma`;
+            }
 
-        // maxSyncDateOverride
-        try {
-          if (data.maxsyncdateoverride) {
-            maxSyncDateOverride = new Date(stringToDate(String(data.maxsyncdateoverride).replace('T', ' ').replace('Z', '')));
-
-            // set time to end of day (23:59:59.999)
-            maxSyncDateOverride.setHours(23, 59, 59, 999);
-
-            logger(`${getLogHeader()}`, `... enforcing OVERRIDING max sync date = ${formatDateTime(maxSyncDateOverride)}`, null, importLogFileName);
+            logger(`${getLogHeader()}`, `... ***OVERRIDING*** to perform single import for id: ${singleRecImportId}`, null, importLogFileName);
           } else {
+            singleRecImportId = null;
+          }
+        } catch (error) {
+          singleRecImportId = null;
+        }
+
+        if (!singleRecImportId) {
+          // handle OVERRIDE values
+          
+          // check lastIdOverride exists
+          try {
+            if (data.lastidoverride) {
+              lastRecordId = lastRecordIdUsed = lastIdOverride =  data.lastidoverride;
+              logger(`${getLogHeader()}`, `... ***OVERRIDING*** last id = ${lastRecordId}`, null, importLogFileName);
+            }
+          } catch (error) {
+            lastRecordId = lastRecordIdUsed = null;
+          }
+
+          // check lastSyncDateOverride exists
+          try {
+            if (data.lastsyncdateoverride) {
+              lastSynchronizedDate = lastSyncDateOverride = new Date(stringToDate(String(data.lastsyncdateoverride).replace('T', ' ').replace('Z', '')));
+              lastSynchronizedDate.setHours(0, 0, 0, 0);
+              lastSyncDateOverride.setHours(0, 0, 0, 0);
+              logger(`${getLogHeader()}`, `... ***OVERRIDING*** last sync date = ${formatDateTime(lastSynchronizedDate)}`, null, importLogFileName);
+            }
+          } catch (error) {
+            lastSynchronizedDate = null;
+          }
+
+          // check maxSyncDateOverride exists
+          try {
+            if (data.maxsyncdateoverride) {
+              maxSyncDateOverride = new Date(stringToDate(String(data.maxsyncdateoverride).replace('T', ' ').replace('Z', '')));
+
+              // set time to end of day (23:59:59.999)
+              maxSyncDateOverride.setHours(23, 59, 59, 999);
+
+              logger(`${getLogHeader()}`, `... ***OVERRIDING*** max sync date = ${formatDateTime(maxSyncDateOverride)}`, null, importLogFileName);
+            } else {
+              maxSyncDateOverride = new Date();
+
+              // set time to beginning of current day (06:00:00.000)
+              maxSyncDateOverride.setHours(6, 0, 0, 0);
+            }
+          } catch (error) {
             maxSyncDateOverride = new Date();
 
-            // set time to beginning of currday (00:00:00.000)
-            maxSyncDateOverride.setHours(0, 0, 0, 0);
+            // set time to beginning of current day (06:00:00.000)
+            maxSyncDateOverride.setHours(6, 0, 0, 0);
           }
-        } catch (error) {
-          maxSyncDateOverride = new Date();
 
-          // set time to beginning of currday (00:00:00.000)
-          maxSyncDateOverride.setHours(0, 0, 0, 0);
-        }
-
-        // get last id
-        if (importType === 'insert' && !lastRecordId) {
-          // ... get the last record id from the database
-          lastRecordId = lastRecordIdUsed = await getLastRecordId(tableName, getLogHeaderNoTime());
-        
-        }
-
-        // isToBeDeletedOnlyOverride
-        try {
-          if (data.istobedeletedonlyoverride) {
-            isToBeDeletedOnly = data.istobedeletedonlyoverride;
-            logger(`${getLogHeader()}`, `... OVERRIDING isToBeDeletedOnly = ${isToBeDeletedOnly}`, null, importLogFileName);
+          // check isToBeDeletedOnlyOverride exists
+          try {
+            if (data.istobedeletedonlyoverride === 'true') {
+              isToBeDeletedOnly = data.istobedeletedonlyoverride;
+              logger(`${getLogHeader()}`, `... ***OVERRIDING*** to import only records where isToBeDeletedOnly = ${isToBeDeletedOnly}`, null, importLogFileName);
+            }
+          } catch (error) {
+            isToBeDeletedOnly = null;
           }
-        } catch (error) {
-          isToBeDeletedOnly = null;
-        }
 
-        // get last synchronizedDate
-        if (!lastSynchronizedDate) {
-          // ... get the last synchronizedDate from the database
-          lastSynchronizedDate = await getLastSyncDate(tableName,  getLogHeaderNoTime());
-          lastSynchronizedDate.setHours(0, 0, 0, 0);
-        }
+          // -------
 
-        logger(`${getLogHeader()}`, `... last record id: ${lastRecordId}`, null, importLogFileName);
-        logger(`${getLogHeader()}`, `... last synchronizedDate: ${lastSynchronizedDate}`, null, importLogFileName);
+          // get last id from db if not already set
+          if (importType === 'insert' && !lastRecordId) {
+            // ... get the last record id from the database
+            lastRecordId = lastRecordIdUsed = await getLastRecordId(tableName, getLogHeaderNoTime());
+          }
+
+          // get last synchronizedDate
+          if (!lastSynchronizedDate) {
+            // ... get the last synchronizedDate from the database
+            lastSynchronizedDate = await getLastSyncDate(tableName,  getLogHeaderNoTime());
+            lastSynchronizedDate.setHours(0, 0, 0, 0);
+          }
+
+          logger(`${getLogHeader()}`, `... last record id: ${lastRecordId}`, null, importLogFileName);
+          logger(`${getLogHeader()}`, `... last synchronizedDate: ${lastSynchronizedDate}`, null, importLogFileName);
+        }
 
       } catch (error) {
         // ... log failure, end import.
@@ -2402,6 +2438,7 @@ exports.importTechCatlogData = async (data, response) => {
         let pageRecordsFailedCounter = 0;
         let consecutiveFailedRecordCounter = 0;
         let notificationCounter = 0;
+        let insertUpdatesPerformed = 0;
 
         let pageJson = null;
         let datasetArray = [];
@@ -2464,7 +2501,7 @@ exports.importTechCatlogData = async (data, response) => {
           try {
 
             // ... build graphql query
-            graphqlQuery = await buildAPIQuery(datasetName, takeAmt, lastRecordId, 'all', isToBeDeletedOnly, getLogHeaderNoTime());
+            graphqlQuery = await buildAPIQuery(datasetName, takeAmt, lastRecordId, 'all', isToBeDeletedOnly, getLogHeaderNoTime(), (singleRecImportId === null ? null : singleRecImportId));
 
             // ... log graphql query
             writeToLogFile(`page ${pageCounter} graphqlQuery: ` + graphqlQuery + `,\n`, importLogFileName);
@@ -2632,6 +2669,12 @@ exports.importTechCatlogData = async (data, response) => {
                       // ... this record needs to be updated
                       insertUpdateRequired = false;
 
+                      // when updating and no maxsyncdateoverride was provided in the request,
+                      // decrement the record counter since this record will included in the next import.
+                      if (!data.maxsyncdateoverride) {
+                        recordCounter--;
+                      }
+
                       //logger(`${getLogHeader()}`, `...... ignoring update id:"${lastRecordId}", synchronizedDate > maxSyncDate`);
 
                     } else {
@@ -2663,88 +2706,87 @@ exports.importTechCatlogData = async (data, response) => {
 
                     }
 
+                    // -----------------------------------------------
+                    // 1.5 check if the record should be deleted
+                    try {
+
+                      // ... check isToBeDeleted value
+                      if (datasetObject.isToBeDeleted === true) {
+                        let deletedNotRemoved = false;
+
+                        // check if toBeDeletedOn is less than the beginning of the current day
+                        if (datasetObject.toBeDeletedOn !== null && datasetObject.toBeDeletedOn !== "") {
+                          let toBeDeletedOnDate = new Date(stringToDate(datasetObject.toBeDeletedOn));
+                          toBeDeletedOnDate.setHours(0, 0, 0, 0);
+
+                          if (toBeDeletedOnDate < new Date()) {
+                            // ... this record needs to be deleted
+                            deletedRecsNotRemovedCounter++;
+                            deletedNotRemoved = true;
+
+                            logger(`${getLogHeader()}`, `...... id:"${lastRecordId}" already deleted... should have been removed on "${datasetObject.toBeDeletedOn}"`);
+                          } else {
+                            logger(`${getLogHeader()}`, `...... id:"${lastRecordId}" will be deleted on "${datasetObject.toBeDeletedOn}"`);
+                          }
+                        } else {
+                          logger(`${getLogHeader()}`, `...... id:"${lastRecordId}" will be deleted in the near future`);
+                        }
+                        
+                        let deleteTxt = 
+                        {
+                          id : lastRecordId,
+                          synchronizedDate : datasetObject.synchronizedDate,
+                          isToBeDeleted : datasetObject.isToBeDeleted,
+                          toBeDeletedOn : datasetObject.toBeDeletedOn,
+                          deleteReason : datasetObject.deleteReason,
+                          deletedNotRemoved : deletedNotRemoved
+                        };
+
+                        // ... write record to sync list log
+                        fs.appendFileSync(deleteListLogFileName, JSON.stringify(deleteTxt) + ',\n');
+
+                        recordsToBeDeletedArray.push(deleteTxt);
+                        
+                        // for SoftwareRelease, updating obj_technology table ToBeDelete columns
+                        if (datasetName === 'SoftwareRelease') {
+                          try {
+                            let toBeDeletedOnValue = null;
+
+                            if (datasetObject.toBeDeletedOn === null || datasetObject.toBeDeletedOn === "") {
+                              toBeDeletedOnValue = `null`;
+                            } else {
+                              toBeDeletedOnValue = `"${stringToDate(datasetObject.toBeDeletedOn)}"`;
+                            }
+
+                            const updateObjTechStatement =
+                              `update gear_schema.obj_technology 
+                                  set softwareReleaseIsToBeDeleted = ${booleanToTinyint(datasetObject.isToBeDeleted)},
+                                      softwareReleaseToBeDeletedOn = ${toBeDeletedOnValue}
+                                where softwareRelease = "${lastRecordId}"; `;
+
+                            sql.query(updateObjTechStatement, (error, data) => {
+                              if (error) {
+                                logger(`${getLogHeader()}`, `...... failed updating obj_technology table ToBeDelete columns for id:"${lastRecordId}"`, error, errorLogFileName);
+                              } else {
+                                logger(`${getLogHeader()}`, `...... updated obj_technology table ToBeDelete columns for id:"${lastRecordId}"`);
+                              }
+                            });
+                          } catch (error) {
+                            logger(`${getLogHeader()}`, `...... failed updating obj_technology table ToBeDelete columns for id:"${lastRecordId}"`, error, errorLogFileName);
+                          }
+                        }
+                      }
+
+                    } catch (error) {
+                      // ... raise error
+                      throw error;
+                    }
+
                   } else {
 
                     // ... this record does NOT need to be updated
                     insertUpdateRequired = false;
 
-                  }
-
-                } catch (error) {
-                  // ... raise error
-                  throw error;
-                }
-
-                
-                // -----------------------------------------------
-                // 1.5 check if the record should be deleted
-                try {
-
-                  // ... check isToBeDeleted value
-                  if (datasetObject.isToBeDeleted === true) {
-                    let deletedNotRemoved = false;
-
-                    // check if toBeDeletedOn is less than the beginning of the current day
-                    if (datasetObject.toBeDeletedOn !== null && datasetObject.toBeDeletedOn !== "") {
-                      let toBeDeletedOnDate = new Date(stringToDate(datasetObject.toBeDeletedOn));
-                      toBeDeletedOnDate.setHours(0, 0, 0, 0);
-
-                      if (toBeDeletedOnDate < new Date()) {
-                        // ... this record needs to be deleted
-                        deletedRecsNotRemovedCounter++;
-                        deletedNotRemoved = true;
-
-                        logger(`${getLogHeader()}`, `...... id:"${lastRecordId}" already deleted... should have been removed on "${datasetObject.toBeDeletedOn}"`);
-                      } else {
-                        logger(`${getLogHeader()}`, `...... id:"${lastRecordId}" will be deleted on "${datasetObject.toBeDeletedOn}"`);
-                      }
-                    } else {
-                      logger(`${getLogHeader()}`, `...... id:"${lastRecordId}" will be deleted in the near future`);
-                    }
-                    
-                    let deleteTxt = 
-                    {
-                      id : lastRecordId,
-                      synchronizedDate : datasetObject.synchronizedDate,
-                      isToBeDeleted : datasetObject.isToBeDeleted,
-                      toBeDeletedOn : datasetObject.toBeDeletedOn,
-                      deleteReason : datasetObject.deleteReason,
-                      deletedNotRemoved : deletedNotRemoved
-                    };
-
-                    // ... write record to sync list log
-                    fs.appendFileSync(deleteListLogFileName, JSON.stringify(deleteTxt) + ',\n');
-
-                    recordsToBeDeletedArray.push(deleteTxt);
-                    
-                    // for SoftwareRelease, updating obj_technology table ToBeDelete columns
-                    if (datasetName === 'SoftwareRelease') {
-                      try {
-                        let toBeDeletedOnValue = null;
-
-                        if (datasetObject.toBeDeletedOn === null || datasetObject.toBeDeletedOn === "") {
-                          toBeDeletedOnValue = `null`;
-                        } else {
-                          toBeDeletedOnValue = `"${stringToDate(datasetObject.toBeDeletedOn)}"`;
-                        }
-
-                        const updateObjTechStatement =
-                          `update gear_schema.obj_technology 
-                              set softwareReleaseIsToBeDeleted = ${booleanToTinyint(datasetObject.isToBeDeleted)},
-                                  softwareReleaseToBeDeletedOn = ${toBeDeletedOnValue}
-                            where softwareRelease = "${lastRecordId}"; `;
-
-                        sql.query(updateObjTechStatement, (error, data) => {
-                          if (error) {
-                            logger(`${getLogHeader()}`, `...... failed updating obj_technology table ToBeDelete columns for id:"${lastRecordId}"`, error, errorLogFileName);
-                          } else {
-                            logger(`${getLogHeader()}`, `...... updated obj_technology table ToBeDelete columns for id:"${lastRecordId}"`);
-                          }
-                        });
-                      } catch (error) {
-                        logger(`${getLogHeader()}`, `...... failed updating obj_technology table ToBeDelete columns for id:"${lastRecordId}"`, error, errorLogFileName);
-                      }
-                    }
                   }
 
                 } catch (error) {
@@ -3236,12 +3278,16 @@ exports.importTechCatlogData = async (data, response) => {
                     // check if recordsInsertedCounter is divisible by 20
                     //if (importType === 'insert' && recordsInsertedCounter % 20 === 0) {
 
-
+                    insertUpdatesPerformed++;
+                    /*
                     if (pageRecordsInsertedCounter < 20) {
                       // wait 1/1000 of the second
                       await new Promise(resolve => setTimeout(resolve, 1));
+                    } else if (insertUpdatesPerformed % 100 === 0) {
+                      // for every 100 records inserted/updated, wait 25/1000 of the second
+                      await new Promise(resolve => setTimeout(resolve, 25));
                     }
-                    
+                    */
                     // ... execute insert/update statement
                     sql.query(insertStatement, [insertValuesMap], (error, data) => {
 
@@ -3255,6 +3301,9 @@ exports.importTechCatlogData = async (data, response) => {
                         // ... get the id value from the insertValuesMap
                         let idValue = insertValuesMap[0][0];
 
+                        // ... add id to recordsFailedList
+                        recordsFailedList.push(idValue);
+
                         // ... log failure
                         logger(`${getLogHeader()}`, `ERROR: database returned error when executing the insert/update ${insertValuesMap.length} ${datasetName} records for id: ${idValue}`, error, errorLogFileName);
 
@@ -3263,7 +3312,7 @@ exports.importTechCatlogData = async (data, response) => {
                         // ... execute insert statement
                         sql.query(errorLogInsert, (error, data) => {
                           if (error) {
-                            logger(`${getLogHeader()}`, `ERROR: failed inserting into dataset_record_error_log table`, error, errorLogFileName);
+                            logger(`${getLogHeader()}`, `ERROR: failed inserting into dataset_record_error_log table for id: ${idValue}`, error, errorLogFileName);
                           }
                         });
 
@@ -3281,6 +3330,9 @@ exports.importTechCatlogData = async (data, response) => {
                           // ... get the id value from the insertValuesMap
                           let idValue = insertValuesMap[0][0];
 
+                          // ... add id to recordsFailedList
+                          recordsFailedList.push(idValue);
+
                           // ... log bad affectedRows response received
                           logger(`${getLogHeader()}`, `ERROR: record was not inserted/updated id: ${idValue}(affectedRows: ${data.affectedRows})`, error, errorLogFileName);
 
@@ -3289,7 +3341,7 @@ exports.importTechCatlogData = async (data, response) => {
                           // ... execute insert statement
                           sql.query(errorLogInsert, (error, data) => {
                             if (error) {
-                              logger(`${getLogHeader()}`, `ERROR: failed inserting into dataset_record_error_log table`, error, errorLogFileName);
+                              logger(`${getLogHeader()}`, `ERROR: failed inserting into dataset_record_error_log table for id: ${idValue}`, error, errorLogFileName);
                             }
                           });
                         }
@@ -3311,6 +3363,9 @@ exports.importTechCatlogData = async (data, response) => {
                               // ... get the id value from the insertValuesMap
                               let idValue = insertValuesMap[0][0];
 
+                              // ... add id to recordsFailedList
+                              recordsFailedList.push(idValue);
+
                               // ... log failure
                               logger(`${getLogHeader()}`, `ERROR: failed executing the insert ${insertValuesMapSftwSupportStage.length} SoftwareLifecycle.softwareSupportStage records for id: ${idValue}`, error, errorLogFileName);
 
@@ -3320,7 +3375,7 @@ exports.importTechCatlogData = async (data, response) => {
                               // ... execute insert statement
                               sql.query(errorLogInsert, (error, data) => {
                                 if (error) {
-                                  logger(`${getLogHeader()}`, `ERROR: failed inserting into dataset_record_error_log table`, error, errorLogFileName);
+                                  logger(`${getLogHeader()}`, `ERROR: failed inserting into dataset_record_error_log table for id: ${idValue}`, error, errorLogFileName);
                                 }
                               });
 
