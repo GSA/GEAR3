@@ -54,7 +54,7 @@ exports.runTechCatalogImportJob = async () => {
     ctrl.sendLogQuery(jobName + ' - ' + status, jobUser, jobName, res);
 
     // run daily import
-    techCatImport.runDailyTechCatalogImport({ body : { refreshtoken: process.env.FLEXERA_REFRESH_TOKEN } }, res)
+    techCatImport.runDailyTechCatalogImport({ body : { refreshtoken : process.env.FLEXERA_REFRESH_TOKEN, requester : jobUser } }, res)
     .then((response) => {
       status = `finished successfully:  \n` + response;
       console.log(jobName + ' - ' + status);
