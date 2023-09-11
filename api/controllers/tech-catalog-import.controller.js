@@ -45,6 +45,39 @@ exports.runDailyTechCatalogImport = async (req, res) => {
   let endError = null;
   let endStatus = 200;
 
+  function formatDuration(start_date, end_date) {
+
+    // - description: calculates the duration between two dates and returns a formatted date string
+    // - parameters: start_date (date object), end_date (date object)
+    // - returns: result (string)
+
+    const duration = new Date(end_date - start_date);
+
+    const hours = duration.getUTCHours();
+    const minutes = duration.getUTCMinutes();
+    const seconds = duration.getUTCSeconds();
+
+    let result = "";
+
+    if (hours > 0) {
+      result += hours + (hours === 1 ? " hour" : " hours");
+    }
+    if (minutes > 0) {
+      if (result !== "") {
+        result += ", ";
+      }
+      result += minutes + (minutes === 1 ? " minute" : " minutes");
+    }
+    if (seconds > 0) {
+      if (result !== "") {
+        result += ", ";
+      }
+      result += seconds + (seconds === 1 ? " second" : " seconds");
+    }
+
+    return result;
+  }
+
   try {
 
     // check if the requester is GearCronJ
@@ -230,38 +263,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
       ]
     };
 
-    function formatDuration(start_date, end_date) {
-
-      // - description: calculates the duration between two dates and returns a formatted date string
-      // - parameters: start_date (date object), end_date (date object)
-      // - returns: result (string)
-
-      const duration = new Date(end_date - start_date);
-
-      const hours = duration.getUTCHours();
-      const minutes = duration.getUTCMinutes();
-      const seconds = duration.getUTCSeconds();
-
-      let result = "";
-
-      if (hours > 0) {
-        result += hours + (hours === 1 ? " hour" : " hours");
-      }
-      if (minutes > 0) {
-        if (result !== "") {
-          result += ", ";
-        }
-        result += minutes + (minutes === 1 ? " minute" : " minutes");
-      }
-      if (seconds > 0) {
-        if (result !== "") {
-          result += ", ";
-        }
-        result += seconds + (seconds === 1 ? " second" : " seconds");
-      }
-
-      return result;
-    }
+    // --------------------------------
 
     // loop through each import group
     do {
