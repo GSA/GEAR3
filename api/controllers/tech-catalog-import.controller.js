@@ -128,51 +128,56 @@ exports.runDailyTechCatalogImport = async (req, res) => {
     const importGroups = {
       group1: [
         {
-          importtype: defaultImportType,
-          refreshtoken: refreshToken,
-          dataset: "Manufacturer",
-          takeamount: defaultTakeAmount,
-          dryrun: defaultDryRun,
+          importtype : defaultImportType,
+          requester : req.body.requester,
+          refreshtoken : refreshToken,
+          dataset : "Manufacturer",
+          takeamount : defaultTakeAmount,
+          dryrun : defaultDryRun,
           lastidoverride : lastIdOverride,
           lastsyncdateoverride : lastSyncDateOverride
         }
       ],
       group2: [
         {
-          importtype: defaultImportType,
-          refreshtoken: refreshToken,
-          dataset: "Platform",
-          takeamount: defaultTakeAmount,
-          dryrun: defaultDryRun,
+          importtype : defaultImportType,
+          requester : req.body.requester,
+          refreshtoken : refreshToken,
+          dataset : "Platform",
+          takeamount : defaultTakeAmount,
+          dryrun : defaultDryRun,
           lastidoverride : lastIdOverride,
           lastsyncdateoverride : lastSyncDateOverride
         },
         {
-          importtype: defaultImportType,
-          refreshtoken: refreshToken,
-          dataset: "Taxonomy",
-          takeamount: defaultTakeAmount,
-          dryrun: defaultDryRun,
+          importtype : defaultImportType,
+          requester : req.body.requester,
+          refreshtoken : refreshToken,
+          dataset : "Taxonomy",
+          takeamount : defaultTakeAmount,
+          dryrun : defaultDryRun,
           lastidoverride : lastIdOverride,
           lastsyncdateoverride : lastSyncDateOverride
         }
       ],
       group3: [
         {
-          importtype: defaultImportType,
-          refreshtoken: refreshToken,
-          dataset: "SoftwareFamily",
+          importtype : defaultImportType,
+          requester : req.body.requester,
+          refreshtoken : refreshToken,
+          dataset : "SoftwareFamily",
           takeamount: defaultTakeAmount,
-          dryrun: defaultDryRun,
+          dryrun : defaultDryRun,
           lastidoverride : lastIdOverride,
           lastsyncdateoverride : lastSyncDateOverride
         }
       ],
       group4: [
         {
-          importtype: defaultImportType,
-          refreshtoken: refreshToken,
-          dataset: "SoftwareProduct",
+          importtype : defaultImportType,
+          requester : req.body.requester,
+          refreshtoken : refreshToken,
+          dataset : "SoftwareProduct",
           takeamount: defaultTakeAmount,
           dryrun: defaultDryRun,
           lastidoverride : lastIdOverride,
@@ -181,82 +186,90 @@ exports.runDailyTechCatalogImport = async (req, res) => {
       ],
       group5: [
         {
-          importtype: defaultImportType,
-          refreshtoken: refreshToken,
-          dataset: "SoftwareMarketVersion",
-          takeamount: defaultTakeAmount,
-          dryrun: defaultDryRun,
+          importtype : defaultImportType,
+          requester : req.body.requester,
+          refreshtoken : refreshToken,
+          dataset : "SoftwareMarketVersion",
+          takeamount : defaultTakeAmount,
+          dryrun : defaultDryRun,
           lastidoverride : lastIdOverride,
           lastsyncdateoverride : lastSyncDateOverride
         },
         {
-          importtype: defaultImportType,
-          refreshtoken: refreshToken,
-          dataset: "SoftwareEdition",
-          takeamount: defaultTakeAmount,
-          dryrun: defaultDryRun,
+          importtype : defaultImportType,
+          requester : req.body.requester,
+          refreshtoken : refreshToken,
+          dataset : "SoftwareEdition",
+          takeamount : defaultTakeAmount,
+          dryrun : defaultDryRun,
           lastidoverride : lastIdOverride,
           lastsyncdateoverride : lastSyncDateOverride
         },
         {
-          importtype: defaultImportType,
-          refreshtoken: refreshToken,
-          dataset: "SoftwareProductLink",
-          takeamount: defaultTakeAmount,
-          dryrun: defaultDryRun,
+          importtype : defaultImportType,
+          requester : req.body.requester,
+          refreshtoken : refreshToken,
+          dataset : "SoftwareProductLink",
+          takeamount : defaultTakeAmount,
+          dryrun : defaultDryRun,
           lastidoverride : lastIdOverride,
           lastsyncdateoverride : lastSyncDateOverride
         }
       ],
       group6: [
         {
-          importtype: defaultImportType,
-          refreshtoken: refreshToken,
-          dataset: "SoftwareVersion",
-          takeamount: defaultTakeAmount,
-          dryrun: defaultDryRun,
+          importtype : defaultImportType,
+          requester : req.body.requester,
+          refreshtoken : refreshToken,
+          dataset : "SoftwareVersion",
+          takeamount : defaultTakeAmount,
+          dryrun : defaultDryRun,
           lastidoverride : lastIdOverride,
           lastsyncdateoverride : lastSyncDateOverride
         }
       ],
       group7: [
         {
-          importtype: defaultImportType,
-          refreshtoken: refreshToken,
-          dataset: "SoftwareRelease",
-          takeamount: defaultTakeAmount,
-          dryrun: defaultDryRun,
+          importtype : defaultImportType,
+          requester : req.body.requester,
+          refreshtoken : refreshToken,
+          dataset : "SoftwareRelease",
+          takeamount : defaultTakeAmount,
+          dryrun : defaultDryRun,
           lastidoverride : lastIdOverride,
           lastsyncdateoverride : lastSyncDateOverride
         }
       ],
       group8: [
         {
-          importtype: defaultImportType,
-          refreshtoken: refreshToken,
-          dataset: "SoftwareReleaseLink",
-          takeamount: defaultTakeAmount,
-          dryrun: defaultDryRun,
+          importtype : defaultImportType,
+          requester : req.body.requester,
+          refreshtoken : refreshToken,
+          dataset : "SoftwareReleaseLink",
+          takeamount : defaultTakeAmount,
+          dryrun : defaultDryRun,
           lastidoverride : lastIdOverride,
           lastsyncdateoverride : lastSyncDateOverride
         },
         {
-          importtype: defaultImportType,
-          refreshtoken: refreshToken,
-          dataset: "SoftwareReleasePlatform",
-          takeamount: defaultTakeAmount,
-          dryrun: defaultDryRun,
+          importtype : defaultImportType,
+          requester : req.body.requester,
+          refreshtoken : refreshToken,
+          dataset : "SoftwareReleasePlatform",
+          takeamount : defaultTakeAmount,
+          dryrun : defaultDryRun,
           lastidoverride : lastIdOverride,
           lastsyncdateoverride : lastSyncDateOverride
         }
       ],
       group9: [
         {
-          importtype: defaultImportType,
-          refreshtoken: refreshToken,
-          dataset: "SoftwareLifecycle",
-          takeamount: defaultTakeAmount,
-          dryrun: defaultDryRun,
+          importtype : defaultImportType,
+          requester : req.body.requester,
+          refreshtoken : refreshToken,
+          dataset : "SoftwareLifecycle",
+          takeamount : defaultTakeAmount,
+          dryrun : defaultDryRun,
           lastidoverride : lastIdOverride,
           lastsyncdateoverride : lastSyncDateOverride
         }

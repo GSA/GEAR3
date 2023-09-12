@@ -377,7 +377,7 @@ cron.schedule('0 5 * * 1-5', () => { //PRODUCTION
 });
 
 // -------------------------------------------------------------------------------------------------
-// CRON JOB: Tech Catalog Daily Import (runs daily at 5:00 AM)
+// CRON JOB: Tech Catalog Daily Import (runs daily at 12:00 AM)
 cron.schedule('0 0 * * *', () => { //PRODUCTION
 //cron.schedule('55 14 * * *', () => { //DEBUGGING
 

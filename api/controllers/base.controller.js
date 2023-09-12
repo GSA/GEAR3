@@ -2006,6 +2006,7 @@ exports.importTechCatlogData = async (data, response) => {
 
   // import variables and functions
   const refreshToken = data.refreshtoken;                   // retrieved from the requests body, stores the refresh token for the flexera api to get a new access token
+  const requester = data.requester;                         // retrieved from the requests body, stores the requester's email address
   const datasetName = data.dataset;                         // dataset name to be pulled // ie. "Taxonomy";
   const takeAmt = data.takeamount;                          // amount of records to pull per page
   const importId = getImportId(data);                       // import id identifies a group of import requests to be used for logging
@@ -2155,7 +2156,7 @@ exports.importTechCatlogData = async (data, response) => {
                 beginTableRecordCount = ${beginTableRecordCount},
                 endTableRecordCount = ${endTableRecordCount},
                 fatalError = ${isFatalError},
-                fatalErrorMessage = ${isFatalError === 1 ? 'see error log file' : 'null'}
+                fatalErrorMessage = ${isFatalError === 1 ? `'see error log file'` : 'null'}
           WHERE import_id = '${importId}' AND datasetName = '${datasetName}'; `;
       } else {
         // get update statement for end of a page
@@ -2200,6 +2201,11 @@ exports.importTechCatlogData = async (data, response) => {
       // ... setting end time
       uploadEndTime = new Date();
 
+      // ... if fatalError
+      if (isFatalError === 1) {
+        logger(`${getLogHeader()}`, `ENDING IMPORT DUE TO FATAL ERROR`, null, importLogFileName);
+      }
+
       // ... inserting the record count summary by syncdate
       let syncDateInsertStatements = '';
 
@@ -2207,11 +2213,13 @@ exports.importTechCatlogData = async (data, response) => {
         syncDateInsertStatements = syncDateInsertStatements + ` insert into tech_catalog.dataset_syncdate_log (import_id, datasetName, syncDate, recordCount) values ( '${importId}', '${datasetName}', '${syncYYYYMMDDArray[i].syncDate}', ${syncYYYYMMDDArray[i].recordCount}); `;
       }
 
-      sql.query(syncDateInsertStatements, (err, result) => {
-        if (err) {
-          logger(`${getLogHeader()}`, `failed to insert sync date log`, err, errorLogFileName);
-        }
-      });
+      if (syncDateInsertStatements !== '') {
+        sql.query(syncDateInsertStatements, (err, result) => {
+          if (err) {
+            logger(`${getLogHeader()}`, `failed to insert sync date log`, err, errorLogFileName);
+          }
+        });
+      }
 
       // ... wait 10 seconds
       await new Promise(resolve => setTimeout(resolve, 10000));
@@ -2235,7 +2243,7 @@ exports.importTechCatlogData = async (data, response) => {
       }
 
       // ... log to event table
-      sql.query(`insert into log.event (Event, User, DTG) values ('${logMessage}', 'GearCronJ', now());`, (err, result) => {
+      sql.query(`insert into log.event (Event, User, DTG) values ('${logMessage}', '${requester}', now());`, (err, result) => {
         if (err) {
           logger(`${getLogHeader()}`, `failed to log event`, err, errorLogFileName);
         }
@@ -2294,6 +2302,10 @@ exports.importTechCatlogData = async (data, response) => {
 
         // ... run validation
         await validateRequest(data, getLogHeaderNoTime());
+
+        if (requester === null || requester === '' || requester === undefined) {
+          throw `requester is required`;
+        }
 
       } catch (error) {
         // ... log failure, end import.
