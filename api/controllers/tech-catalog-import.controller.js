@@ -82,7 +82,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
 
     // check if the requester is GearCronJ
     try {
-      if (req.headers.requester === 'GearCronJ') {
+      if (req.body.requester === 'GearCronJ') {
         returnType = 'object';
       }
     } catch (error) {
@@ -269,11 +269,10 @@ exports.runDailyTechCatalogImport = async (req, res) => {
     do {
 
       try {
-
-        // log start of the import group
-        console.log(`... Starting import for group ${groupNumber}\n`);
         // set the current group number
         groupNumber++;
+        // log start of the import group
+        console.log(`... Starting import for group ${groupNumber}\n`);
         // get the current group dataset(s)
         const promisesGroup = importGroups[`group${groupNumber}`].map(data => ctrl.importTechCatlogData(data, res));
         // run the import for each dataset in the group and wait until all are complete
@@ -356,6 +355,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
 
   } catch (error) {
     console.error(`an error occurred while running the daily import: \n`, error);
+
     const responseObject = {
       message: `ERROR: an error occurred while running the daily import.`,
       starttime: startTime,
@@ -363,9 +363,15 @@ exports.runDailyTechCatalogImport = async (req, res) => {
       duration: formatDuration(startTime, new Date()),
       error: error
     };
+
     // log start of daily import
     ctrl.sendLogQuery(`Tech Catalog Daily Import - error importing group ${groupNumber}`, req.body.requester, "tech catalog daily import", null);
-    return res.status(500).json(responseObject);
+    
+    if (returnType === 'object') {
+      return responseObject;
+    } else {
+      return res.status(500).json(responseObject);
+    }
   }
 
 };

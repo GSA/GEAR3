@@ -2265,22 +2265,25 @@ exports.importTechCatlogData = async (data, response) => {
   // import process
   try {
 
-    // log start of import to DB (this will fail if another import is already running)
-    // TEMP FIX for duplicate cron job issue
-    try {
-      // log start to db
-      await sql_promise.query(`insert into tech_catalog.dataset_import_log (import_id, datasetName, import_status) values ('${importId}', '${datasetName}', '${datasetName} import in progress...'); `);
-    } catch (er) {
-      console.log(`\n****** ${datasetName} import is already in progress ******\n`); //, er);
-      let duplicateJobsRunning=1;
-      return { message : `${datasetName} import is already in progress`, fatalError : 0, duplicateJobsRunning : duplicateJobsRunning };
-    }
-
-    logger(`${getLogHeader()}`, `********** STARTING ${importType} IMPORT PROCESS **********`, null, importLogFileName);
-
+  
     // -----------------------------------------------
     // pre-import steps
     try {
+
+      // 1. log start to tech_catalog.dataset_import_log
+      // log start of import to DB (this will fail if another import is already running)
+      // TEMP FIX for duplicate cron job issue
+      try {
+        // log start to db
+        await sql_promise.query(`insert into tech_catalog.dataset_import_log (import_id, datasetName, import_status) values ('${importId}', '${datasetName}', '${datasetName} import in progress...'); `);
+      } catch (er) {
+        console.log(`\n****** ${datasetName} import is already in progress ******\n`); //, er);
+        let duplicateJobsRunning=1;
+        return { message : `${datasetName} import is already in progress`, fatalError : 0, duplicateJobsRunning : duplicateJobsRunning };
+      }
+
+      logger(`${getLogHeader()}`, `********** STARTING ${importType} IMPORT PROCESS **********`, null, importLogFileName);
+
 
       logger(`${getLogHeader()}`, `*** STARTING PRE-IMPORT STEPS ***`, null, importLogFileName);
 
