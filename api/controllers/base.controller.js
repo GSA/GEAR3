@@ -2040,7 +2040,8 @@ exports.importTechCatlogData = async (data, response) => {
   
   let pageSummaryArray = [];                            // array of page summary objects, page added after completed
   let recordsFailedList = [];                           // list of records that failed to insert into db
-  let reImportNeeded = false;
+  let reImportFailedRecords = false;
+  let reImportAttempts = 0;
 
   let beginTableRecordCount = 0;                        // number of records in the table before the import process begins
   let endTableRecordCount = 0;                          // number of records in the table after the import process ends
@@ -3464,7 +3465,6 @@ exports.importTechCatlogData = async (data, response) => {
         // ... if the data returned is less than the takeAmt, then this is the last page
         if (datasetArray.length != takeAmt) {
           isLastPage = true;
-
           logger(`${getLogHeader()}`, `... last page reached`);
         }
 

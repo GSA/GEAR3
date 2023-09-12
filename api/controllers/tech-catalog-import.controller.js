@@ -122,7 +122,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
     }
 
     // log start of daily import
-    ctrl.sendLogQuery(`Tech Catalog Daily Import - Starting import groups ${groupNumber+1} - ${maxJobs}`, req.headers.requester, "tech catalog daily import", null);
+    ctrl.sendLogQuery(`Tech Catalog Daily Import - Starting import groups ${groupNumber+1} - ${maxJobs}`, req.body.requester, "tech catalog daily import", null);
 
     // LIST OF IMPORT GROUPS
     const importGroups = {
@@ -346,7 +346,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
     console.log(responseObject);
 
     // log start of daily import
-    ctrl.sendLogQuery(`Tech Catalog Daily Import - completed`, req.headers.requester, "tech catalog daily import", null);
+    ctrl.sendLogQuery(`Tech Catalog Daily Import - completed`, req.body.requester, "tech catalog daily import", null);
 
     if (returnType === 'object') {
       return responseObject;
@@ -364,7 +364,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
       error: error
     };
     // log start of daily import
-    ctrl.sendLogQuery(`Tech Catalog Daily Import - error importing group ${groupNumber}`, null, "tech catalog daily import", null);
+    ctrl.sendLogQuery(`Tech Catalog Daily Import - error importing group ${groupNumber}`, req.body.requester, "tech catalog daily import", null);
     return res.status(500).json(responseObject);
   }
 
