@@ -386,12 +386,13 @@ export class ItStandardManagerComponent implements OnInit {
 
   setApprovalExpirationDate(data: any) {
     try {
-      if (data.endOfLifeDate  !== '' && data.endOfLifeDate !== null) {
+      if (data.endOfLifeDate  !== '' && data.endOfLifeDate !== null && data.endOfLifeDate !== undefined) {
         console.log("setting approval expiration date to: ", data.endOfLifeDate); //DEBUG
         $('#itStandAprvExp').datepicker('setDate', new Date(data.endOfLifeDate));
       }
     } catch (error) {
       //console.log("setApprovalExpirationDate error: ", error); //DEBUG
+      console.log("No endOfLifeDate available"); //DEBUG
     }
   }
 

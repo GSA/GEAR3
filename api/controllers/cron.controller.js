@@ -5,7 +5,6 @@ const ctrl = require('./base.controller'),
   path = require('path'),
   queryPath = '../queries/'
   SHEET_ID = '1eSoyn7-2EZMqbohzTMNDcFmNBbkl-CzXtpwNXHNHD1A', // FOR PRODUCTION
-  //SHEET_ID = '1ytXm7qf96aP7XS6zA8nu7wLQpRGshc4IOPp8orv7bSI', // FOR TESTING
   RANGE = 'Master Junction with Business Systems!A2:B',
   jobUser = 'GearCronJ';
 
