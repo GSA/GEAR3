@@ -121,7 +121,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
       console.log('no lastidoverride provided')
     }
 
-    // log start of daily import
+    // log START of daily import
     ctrl.sendLogQuery(`Tech Catalog Daily Import - Starting import groups ${groupNumber+1} - ${maxJobs}`, req.body.requester, "tech catalog daily import", null);
 
     // LIST OF IMPORT GROUPS
@@ -282,10 +282,13 @@ exports.runDailyTechCatalogImport = async (req, res) => {
     do {
 
       try {
+
         // set the current group number
         groupNumber++;
+
         // log start of the import group
         console.log(`... Starting import for group ${groupNumber}\n`);
+
         // get the current group dataset(s)
         const promisesGroup = importGroups[`group${groupNumber}`].map(data => ctrl.importTechCatlogData(data, res));
         // run the import for each dataset in the group and wait until all are complete
@@ -293,16 +296,16 @@ exports.runDailyTechCatalogImport = async (req, res) => {
 
         // add groupSummary to importSummaries
         importSummaries.push(groupSummary);
+
         // verify the response for each dataset in the group for any fatal errors
         const errors = groupSummary.filter(result => result.fatalError > 0);
         // verify the response for each dataset in the group for any duplicate jobs running
         const duplicateJobsRunning = groupSummary.filter(result => result.duplicateJobsRunning > 0);
 
-        
         if (errors.length > 0) {
           // if any fatal errors occurred, log them and return a 500 error
 
-          endMessage = `ERROR: 1 or more datasets in group ${groupNumber} failed to import.\n`;
+          endMessage = `ERROR: 1 or more datasets in group ${groupNumber} failed to import.`;
           endStatus = 500;
           endDailyImport = true;
           
@@ -314,14 +317,14 @@ exports.runDailyTechCatalogImport = async (req, res) => {
             if (duplicateJobsRunning.length > 0) {
               // if any duplicate jobs are running, log them and return a 200 error
 
-              endMessage = `Daily Import is already in progress.\n`;
+              endMessage = `Daily Import is already in progress (duplicate).`;
               endStatus = 200;
               endDailyImport = true;
               
             }
 
           } catch (error) {
-            console.log('no duplicateJobsRunning found.\n')
+            console.log('no duplicateJobsRunning found.')
           }
 
           // otherwise, log the success and continue to the next group
@@ -330,7 +333,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
 
           // return the response once all groups have been imported
           if (groupNumber >= maxJobs) {
-            endMessage = `All ${groupNumber} of ${maxJobs} groups have successfully completed imported!\n`,
+            endMessage = `All ${groupNumber} of ${maxJobs} groups have successfully completed imported!`,
             endStatus = 200;
             endDailyImport = true;
           }
@@ -338,7 +341,8 @@ exports.runDailyTechCatalogImport = async (req, res) => {
 
       } catch (error) {
         console.error(`an error occurred while importing group ${groupNumber} of ${maxJobs}: \n`, error);
-        endMessage = `ERROR: an error occurred while importing group ${groupNumber} of ${maxJobs}.\n`;
+
+        endMessage = `ERROR: an error occurred while importing group ${groupNumber} of ${maxJobs}.`;
         endError = error;
         endStatus = 500;
         endDailyImport = true;
@@ -347,7 +351,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
     } while (groupNumber < maxJobs && endDailyImport !== true);
 
     const responseObject = {
-      message: endMessage,
+      message: 'Tech Catalog Daily Import - ' + endMessage,
       starttime: startTime,
       endtime: new Date(),
       duration: formatDuration(startTime, new Date()),
@@ -357,9 +361,10 @@ exports.runDailyTechCatalogImport = async (req, res) => {
 
     console.log(responseObject);
 
-    // log start of daily import
-    ctrl.sendLogQuery(`Tech Catalog Daily Import - completed`, req.body.requester, "tech catalog daily import", null);
+    // log END of daily import
+    ctrl.sendLogQuery(`Tech Catalog Daily Import - ${endMessage}`, req.body.requester, "tech catalog daily import", null);
 
+    // return the response once all groups have been imported
     if (returnType === 'object') {
       return responseObject;
     } else {
@@ -374,10 +379,11 @@ exports.runDailyTechCatalogImport = async (req, res) => {
       starttime: startTime,
       endtime: new Date(),
       duration: formatDuration(startTime, new Date()),
-      error: error
+      error: error,
+      importSummaries: importSummaries
     };
 
-    // log start of daily import
+    // log ERROR of daily import
     ctrl.sendLogQuery(`Tech Catalog Daily Import - error importing group ${groupNumber}`, req.body.requester, "tech catalog daily import", null);
     
     if (returnType === 'object') {

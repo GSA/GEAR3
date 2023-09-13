@@ -2036,6 +2036,7 @@ exports.importTechCatlogData = async (data, response) => {
   let recordsFailedCounter = 0;                         // total number of records that failed to insert into db
   let isFatalError = 0;
   let gatherStats = true;
+  let duplicateJobsRunning = false;
 
   let recordsInsertedCounter = 0;                       // total number of records inserted into db
   let recordToUpdateCounter = 0;                        // total number of records to update
@@ -2203,9 +2204,11 @@ exports.importTechCatlogData = async (data, response) => {
       // ... setting end time
       uploadEndTime = new Date();
 
-      // ... if fatalError
+      // ... if fatalError or duplicateJobsRunning
       if (isFatalError === 1) {
         logger(`${getLogHeader()}`, `ENDING IMPORT DUE TO FATAL ERROR`, null, importLogFileName);
+      } else if (duplicateJobsRunning === 1) { 
+        logger(`${getLogHeader()}`, `ENDING IMPORT DUE TO DUPLICATE JOB RUNNING`, null, importLogFileName);
       }
 
       // ... inserting the record count summary by syncdate
@@ -2238,6 +2241,8 @@ exports.importTechCatlogData = async (data, response) => {
       // ... set the import status message
       if (isFatalError === 1) {
         logMessage = `${datasetName} import FAILED`;
+      } else if (duplicateJobsRunning === 1) {
+        logMessage = `${datasetName} import stopped - duplicate job running`;
       } else if (recordsFailedCounter > 0) {
         logMessage = `${datasetName} import completed with errors (${recordsFailedCounter})`;
       } else {
@@ -2251,8 +2256,10 @@ exports.importTechCatlogData = async (data, response) => {
         }
       });
 
-      // ... log to dataset import log table
-      updateImportLog(logMessage);
+      if (duplicateJobsRunning !== 1) {
+        // ... log to dataset import log table
+        updateImportLog(logMessage);
+      }
 
       // ... log import summary and complete import request.
       logger(`${getLogHeader()}`, `... import summary logged`);
@@ -2288,7 +2295,7 @@ exports.importTechCatlogData = async (data, response) => {
         await sql_promise.query(`insert into tech_catalog.dataset_import_log (import_id, datasetName, import_status) values ('${importId}', '${datasetName}', '${datasetName} import in progress...'); `);
       } catch (er) {
         console.log(`\n****** ${datasetName} import is already in progress ******\n`); //, er);
-        let duplicateJobsRunning=1;
+        duplicateJobsRunning=1;
         return { message : `${datasetName} import is already in progress`, fatalError : 0, duplicateJobsRunning : duplicateJobsRunning };
       }
 
@@ -2325,6 +2332,8 @@ exports.importTechCatlogData = async (data, response) => {
         try {
           if (data.singlerecimportidoverride) {
             singleRecImportId = data.singlerecimportidoverride;
+
+            // turn off stats gathering for single record imports
             gatherStats = false;
 
             // if string singleRecImportId contains a comma, throw error
@@ -2347,7 +2356,10 @@ exports.importTechCatlogData = async (data, response) => {
           try {
             if (data.lastidoverride) {
               lastRecordId = lastRecordIdUsed = lastIdOverride =  data.lastidoverride;
+
+              // turn off stats gathering for imports using last id overrides
               gatherStats = false;
+
               logger(`${getLogHeader()}`, `... ***OVERRIDING*** last id = ${lastRecordId}`, null, importLogFileName);
             }
           } catch (error) {
@@ -2661,7 +2673,8 @@ exports.importTechCatlogData = async (data, response) => {
                   // ... get the record's synchronizedDate
                   let recordSynchronizedDate = new Date(stringToDate(datasetObject.synchronizedDate));
 
-                  if (gatheringStats) {
+                  // if gathering stats in turned on (only for imports with no override values)
+                  if (gatherStats) {
                     // gathering counts of records by sync date to insert into tech_catalog.dataset_syncdate_log
                     let recordSynchronizedDateYYYYMMDD = recordSynchronizedDate.getFullYear() + '-' + String(recordSynchronizedDate.getMonth() + 1).padStart(2, '0') + '-' +  String(recordSynchronizedDate.getDate()).padStart(2, '0');
                     // ... check if recordSynchronizedDateYYYYMMDD exists in syncYYYYMMDDArray
