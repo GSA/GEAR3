@@ -1,36 +1,271 @@
 /* Sidebar */
 
-ng-sidebar-container {
+/* ng-sidebar-container { */
   /* Position needed to render sidebar properly */
-  position: absolute;
+  /* position: absolute; */
   /* Behind the top navbar */
-  z-index: 100;
+  /* z-index: 100; */
   /* Scrollable contents if viewport is shorter than content. */
-  overflow-y: auto;
-}
+  /* overflow-y: auto; */
+/* } */
 
 /* Side Menu item*/
 
-ng-sidebar .list-group a {
-  color: white;
-}
+/* ng-sidebar .list-group a { */
+  /* color: white; */
+/* } */
 
 /* Give some more space for the text and icons */
 
-.list-group-item {
+/* .list-group-item {
   padding-right: 15px;
-}
+} */
 
 /* Fix GEAR Manager Login footer to bottom */
 
-.sidebar-footer {
+/* .sidebar-footer {
   position: absolute;
   width: 100%;
   bottom: 0;
-}
+} */
 
 /* Expand Width of Toast Notifications */
 
 .toast {
   max-width: 50% !important;
 }
+
+:root {
+  --white-color: #fafafb;
+  --background-color: #17171e;
+  --grey-color: #b5b5be;
+  --dark-grey-color: #292932;
+}
+.side-bar {
+  width: 21%;
+  height: 100%;
+  padding: 0rem 1rem;
+  background-color: white;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.5s ease;
+  /* top: 0; */
+}
+.logo-name-wrapper {
+  position: relative;
+  /* margin-bottom: .1rem; */
+  display: flex;
+  font-size: 1.2rem;
+}
+.logo-name {
+  display: flex;
+  align-items: center;
+}
+.logo-name__name {
+  margin-left: 0.9rem;
+  white-space: nowrap;
+}
+.logo-name__button {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  font-size: 1.8rem;
+  transform: translateY(-50%);
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.logo-name__icon {
+  font-size: 1.8rem;
+  /* color: var(--grey-color); */
+  color: white;
+}
+
+.features-list {
+  padding-bottom: 1rem;
+  /* border-bottom: 1px solid #292932; */
+  list-style: none;
+}
+.features-item {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: 1rem 2rem;
+  /* margin-bottom: .1rem; */
+  color: white;
+  cursor: pointer;
+  transition: 0.5s ease;
+}
+.features-item::before {
+  transition: 0.5s ease;
+  content: '';
+  position: absolute;
+  left: -1.2rem;
+  height: 100%;
+  border-left: 3px solid var(--white-color);
+  border-radius: 2px;
+  opacity: 0;
+  visibility: hidden;
+}
+.features-item:hover {
+  color: white;
+  transition: 0.5s ease;
+  opacity: .8;
+}
+.features-item:hover::before {
+  opacity: 1;
+  visibility: unset;
+}
+.features-item-icon {
+  font-size: 2rem;
+}
+.features-item-text {
+  margin-left: 1.5rem;
+  transition: opacity 0.6s ease;
+  opacity: 1;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.inbox-icon {
+  position: relative;
+  /* color: #339054; */
+}
+/* .inbox-icon .status {
+  position: absolute;
+  top: 0;
+  right: -1px;
+  background-color: #1e75ff;
+  height: 9px;
+  width: 9px;
+  border-radius: 50%;
+  border: 2px solid var(--white-color);
+  opacity: 0;
+  transition: 0.6s linear;
+} */
+/* .category-list {
+  padding-top: 2.1rem;
+  padding-bottom: 0.9rem;
+  color: var(--grey-color);
+  list-style: none;
+  font-size: 1.2rem;
+  font-weight: 500;
+  border-bottom: 1px solid #292932;
+}
+.category-header {
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  line-height: 1.8rem;
+  color: var(--white-color);
+  margin-bottom: 1.3rem;
+  white-space: nowrap;
+}
+.category-item {
+  position: relative;
+  padding: 0.9rem .5rem;
+  line-height: 1.8rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.category-item-status {
+  height: 0.8rem;
+  width: 0.8rem;
+  border-radius: 50%;
+  border: none;
+  background-color: white;
+  display: inline-block;
+}
+.category-item-text {
+  margin-left: 1rem;
+  transition: opacity 0.6s ease;
+  opacity: 1;
+}
+.category-item-number {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+} */
+.side-bar.collapse .message:hover .tooltip,
+.features-item:hover .tooltip,
+.category-item:hover .tooltip,
+.chat-new-btn:hover .tooltip {
+  top: 50%;
+  transform: translateY(-50%);
+  transition: all 0.5s ease;
+  opacity: 1;
+}
+.side-bar.collapse {
+  width: 9.6rem;
+}
+.side-bar.collapse .tooltip {
+  display: block;
+}
+.side-bar.collapse .logo-name,
+.side-bar.collapse .category-header,
+.side-bar.collapse .chat-header,
+.side-bar.collapse .chat-new-btn-text,
+.side-bar.collapse .features-item-text,
+.side-bar.collapse .inbox-number,
+.side-bar.collapse .category-item-text,
+.side-bar.collapse .category-item-number,
+.side-bar.collapse .message-text,
+.side-bar.collapse .chat-item-name,
+.side-bar.collapse .chat-item-number,
+.side-bar.collapse .chat-item-status {
+  opacity: 0;
+  pointer-events: none;
+  text-overflow: clip;
+  
+}
+.side-bar.collapse .message-text {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(0);
+}
+.side-bar.collapse .message-icon {
+  transform: translateX(0);
+}
+
+.side-bar.collapse .inbox-icon .status,
+.side-bar.collapse .chat-item-avatar-wrapper::before {
+  opacity: 1;
+}
+
+.inbox:focus .dropdown-content {
+  display: block;
+}
+
+/* Styling for collapsed menu items div */
+.ItemListCollapse {
+  height: 0%;
+  transition: all .5s ease;
+  overflow: hidden;
+  opacity: .8;
+}
+
+/* Styling for expanded menu items div */
+.ItemListExpand {
+  display: block;
+  height: 20%;
+  transition: all .5s ease;
+  opacity: 1;
+}
+
+/* Styling for sub menu items */
+.features-item-sub {
+  color: white;
+  border: 1px solid #292932;
+  cursor: pointer;
+}
+
+/* Changes opacity of sub menu items on hover */
+.features-item-sub:hover {
+  opacity: .8;
+}
+
+/* #subMenu {
+  height: max-content;
+} */

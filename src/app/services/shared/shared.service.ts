@@ -40,9 +40,9 @@ export class SharedService {
   }
 
   // Sidebar Toggle
-  public toggleClick() {
-    this.toggleEmitter.emit();
-  };
+  // public toggleClick() {
+  //   this.toggleEmitter.emit();
+  // };
 
   // File Name Formatting
   public fileNameFmt(name: string): string {
