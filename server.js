@@ -175,18 +175,21 @@ app.post(samlConfig.path,
             auditID: results[0][0].AuditID,
           };
 
-          // API TOKEN GENERATED HERE TO BE USED IN INLINE HTML PAGE NEXT
+          // GEAR MANAGER TOKEN GENERATED HERE TO BE USED IN INLINE HTML PAGE NEXT
           const token = jsonwebtoken.sign(jwt, process.env.SECRET);
-          //const key = "94a74618-f4d3-4970-ae71-5eb4bca410a9" + jwt.exp.toString();
+
+          // API SECURITY TOKEN ENCRYPTED HERE TO BE USED IN INLINE HTML PAGE NEXT
           const key = process.env.SECRET + jwt.exp.toString();
           const encryptJWT = CryptoJS.AES.encrypt(`${jwt.auditID}`, key);
 
+          // STORE ENCRYPTED API SECURITY TOKEN IN DB
           db.query(`CALL acl.setJwt ('${jwt.auditID}', '${encryptJWT}');`,
           (err) => {
             if (err) {
               console.log(err);
             }
           });
+
 
           let adminRoute = (process.env.SAML_HOST === 'localhost') ? 'http://localhost:3000' : '/#';
 
@@ -211,6 +214,11 @@ app.post(samlConfig.path,
           // Log GEAR Manager login
           db.query(`insert into log.event (Event, User, DTG) values ('GEAR Manager - Successful Login', '${samlProfile.nameID}', now());`);
 
+          res.cookie('jwt', 'test_token', { httpOnly: true });
+          res.cookie('apiToken', 'encryptJWT', { httpOnly: true });
+          res.cookie('gUser', 'results[0][0].AuditID', { httpOnly: true });
+          res.cookie('samlEntryPoint', process.env.SAML_ENTRY_POINT, { httpOnly: true });
+          
           res.send(html);
         }
       }

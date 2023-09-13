@@ -2035,6 +2035,7 @@ exports.importTechCatlogData = async (data, response) => {
   let recordCounter = 0;                                // total number of records received
   let recordsFailedCounter = 0;                         // total number of records that failed to insert into db
   let isFatalError = 0;
+  let gatherStats = true;
 
   let recordsInsertedCounter = 0;                       // total number of records inserted into db
   let recordToUpdateCounter = 0;                        // total number of records to update
@@ -2122,6 +2123,7 @@ exports.importTechCatlogData = async (data, response) => {
       earliestSyncDate : (earliestSyncDate === null ? null : formatDateTime(earliestSyncDate)),
       latestSyncDate : formatDateTime(latestSyncDate),
       syncYYYYMMDDArray : `see tech_catalog.dataset_syncdate_log table`,
+      isGatheringStats : gatherStats,
       failedRecordsList : recordsFailedList
     };
     return summary;
@@ -2323,6 +2325,7 @@ exports.importTechCatlogData = async (data, response) => {
         try {
           if (data.singlerecimportidoverride) {
             singleRecImportId = data.singlerecimportidoverride;
+            gatherStats = false;
 
             // if string singleRecImportId contains a comma, throw error
             if (singleRecImportId.includes(',')) {
@@ -2344,6 +2347,7 @@ exports.importTechCatlogData = async (data, response) => {
           try {
             if (data.lastidoverride) {
               lastRecordId = lastRecordIdUsed = lastIdOverride =  data.lastidoverride;
+              gatherStats = false;
               logger(`${getLogHeader()}`, `... ***OVERRIDING*** last id = ${lastRecordId}`, null, importLogFileName);
             }
           } catch (error) {
@@ -2657,13 +2661,19 @@ exports.importTechCatlogData = async (data, response) => {
                   // ... get the record's synchronizedDate
                   let recordSynchronizedDate = new Date(stringToDate(datasetObject.synchronizedDate));
 
-                  // gathering counts of records by sync date to insert into tech_catalog.dataset_syncdate_log
-                  let recordSynchronizedDateYYYYMMDD = recordSynchronizedDate.getFullYear() + '-' + String(recordSynchronizedDate.getMonth() + 1).padStart(2, '0') + '-' +  String(recordSynchronizedDate.getDate()).padStart(2, '0');
-                  let recordSynchronizedDateYYYYMMDDObject = syncYYYYMMDDArray.find(syncYYYYMMDDArray => String(syncYYYYMMDDArray.syncDate) === recordSynchronizedDateYYYYMMDD);
-                  if (recordSynchronizedDateYYYYMMDDObject) {
-                    recordSynchronizedDateYYYYMMDDObject.recordCount++;
-                  } else {
-                    syncYYYYMMDDArray.push({ import_id : importId, datasetName : datasetName, syncDate : recordSynchronizedDateYYYYMMDD, recordCount : 1 });
+                  if (gatheringStats) {
+                    // gathering counts of records by sync date to insert into tech_catalog.dataset_syncdate_log
+                    let recordSynchronizedDateYYYYMMDD = recordSynchronizedDate.getFullYear() + '-' + String(recordSynchronizedDate.getMonth() + 1).padStart(2, '0') + '-' +  String(recordSynchronizedDate.getDate()).padStart(2, '0');
+                    // ... check if recordSynchronizedDateYYYYMMDD exists in syncYYYYMMDDArray
+                    let recordSynchronizedDateYYYYMMDDObject = syncYYYYMMDDArray.find(syncYYYYMMDDArray => String(syncYYYYMMDDArray.syncDate) === recordSynchronizedDateYYYYMMDD);
+
+                    if (recordSynchronizedDateYYYYMMDDObject) {
+                      // ... increment the record count
+                      recordSynchronizedDateYYYYMMDDObject.recordCount++;
+                    } else {
+                      // ... add the record to the array
+                      syncYYYYMMDDArray.push({ import_id : importId, datasetName : datasetName, syncDate : recordSynchronizedDateYYYYMMDD, recordCount : 1 });
+                    }
                   }
 
                   // ... determine if recordSynchronizedDate is earlier than the earliestSyncDate
@@ -2780,13 +2790,18 @@ exports.importTechCatlogData = async (data, response) => {
                                       softwareReleaseToBeDeletedOn = ${toBeDeletedOnValue}
                                 where softwareRelease = "${lastRecordId}"; `;
 
-                            sql.query(updateObjTechStatement, (error, data) => {
-                              if (error) {
-                                logger(`${getLogHeader()}`, `...... failed updating obj_technology table ToBeDelete columns for id:"${lastRecordId}"`, error, errorLogFileName);
-                              } else {
-                                logger(`${getLogHeader()}`, `...... updated obj_technology table ToBeDelete columns for id:"${lastRecordId}"`);
-                              }
-                            });
+                            if (isDryRun === 'true') {
+                              // ... skip inserting 
+                              logger(`${getLogHeader()}`, `... skipping executing ${importType} statement obj_technology table ToBeDelete columns (dry run)`);
+                            } else {
+                              sql.query(updateObjTechStatement, (error, data) => {
+                                if (error) {
+                                  logger(`${getLogHeader()}`, `...... failed updating obj_technology table ToBeDelete columns for id:"${lastRecordId}"`, error, errorLogFileName);
+                                } else {
+                                  logger(`${getLogHeader()}`, `...... updated obj_technology table ToBeDelete columns for id:"${lastRecordId}"`);
+                                }
+                              });
+                            }
                           } catch (error) {
                             logger(`${getLogHeader()}`, `...... failed updating obj_technology table ToBeDelete columns for id:"${lastRecordId}"`, error, errorLogFileName);
                           }

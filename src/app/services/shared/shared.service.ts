@@ -5,6 +5,8 @@ import {Router} from '@angular/router';
 
 import {Globals} from '@common/globals';
 
+import jwtDecode from 'jwt-decode';
+
 // Declare jQuery symbol
 declare var $: any;
 
@@ -112,26 +114,73 @@ export class SharedService {
   public setJWTonLogIn(): void {
     if (localStorage.getItem('jwt') !== null) {  // If successful set of JWT
       setTimeout(() => {
+
+        // Set JWT in globals
         this.globals.jwtToken = localStorage.getItem('jwt');
         this.globals.authUser = localStorage.getItem('user');
         this.globals.apiToken = localStorage.getItem('apiToken');
+
+        // Show logged in banner
         $('#loggedIn').toast('show');
+
+        try {
+
+          // check if the cookie exists
+          if (this.getCookie('jwt') !== undefined) {
+
+            console.log('cookies exists');
+
+            // display the cookie
+            this.displayCookie('jwt');
+            this.displayCookie('gUser');
+            this.displayCookie('apiToken');
+
+          } else {
+
+            console.log('cookies does not exist');
+
+            console.log('setting cookies');
+
+            // Set JWT in cookies
+            this.setCookie('jwt', this.globals.jwtToken, 1);
+            this.setCookie('gUser', this.globals.authUser, 1);
+            this.setCookie('apiToken', this.globals.apiToken, 1);
+
+            // Display cookies (for debugging)
+            this.displayCookie('jwt');
+            this.displayCookie('gUser');
+            this.displayCookie('apiToken');
+
+          }
+
+        } catch (e) {
+          console.log('error setting and diaplaying cookies on setJWTonLogIn:', e);
+        }
+
+        // remove jwt from local storage
+        localStorage.removeItem('jwt');
+        localStorage.removeItem('user');
+        localStorage.removeItem('apiToken');
+
       }, 1000);  // Wait for 1 sec to propogate after logging in
     }
   }
 
   //// Check if user is authenticated to GEAR Manager
   public get loggedIn(): boolean {
+
     if (this.globals.jwtToken === "" ||
-    this.globals.jwtToken === null || 
-    this.globals.authUser === "" ||
-    this.globals.authUser === null) {
-    return false;
+        this.globals.jwtToken === null || 
+        this.globals.authUser === "" ||
+        this.globals.authUser === null) {
+      return false;
     }
-     if (this.globals.jwtToken === localStorage.getItem('jwt') &&
-      this.globals.authUser === localStorage.getItem('user')) {
+
+    if (this.globals.jwtToken/* === localStorage.getItem('jwt')*/ &&
+        this.globals.authUser/* === localStorage.getItem('user')*/) {
       return true;
     }
+
     return false;
   };
 
@@ -275,5 +324,47 @@ export class SharedService {
     var normalizedURL = this.coreURL(this.router.url);
     this.location.replaceState(`${normalizedURL}/${row[IDname]}`);
   };
+
+  // -----------------
+
+  // get a cookie
+  public getCookie(name) {
+    try {
+      const value = "; " + document.cookie;
+      const parts = value.split("; " + name + "=");
+      if (parts.length == 2) return parts.pop().split(";").shift();
+    } catch (e) {
+      console.log('error getting cookie:', e);
+    }
+  }
+
+  // display a cookie (for debugging)
+  public displayCookie(name) {
+    try {
+      console.log('cookie:', this.getCookie(name));
+      console.log('cookie_decoded:', jwtDecode(this.getCookie(name)));
+    } catch (e) {
+      console.log('error displaying cookie:', e);
+    }
+  }
+
+  // set a cookie
+  public setCookie(name, value, days) {
+    try {
+      let expires = "";
+      if (days) {
+        let date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000)); // days * hours * minutes * seconds * milliseconds
+        expires = "; expires=" + date.toUTCString();
+      }
+      // this does not work
+      //document.cookie = name + "=" + (value || "") + expires + "; path=/";
+
+      // set the cookie in the browser
+      document.cookie = name + "=" + (value || "") + expires + "; path=/; domain=.gsa.gov; secure;";
+    } catch (e) {
+      console.log('error setting cookie:', e);
+    }
+  }
 
 }
