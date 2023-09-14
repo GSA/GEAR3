@@ -2,18 +2,23 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
+	"html/template"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 )
 
-var clientSecretData []byte
-var scopes []string
+var scopes = []string{"https://www.googleapis.com/auth/spreadsheets.readonly"}
 var err error
+var clientSecretData []byte
+var CONFIG *oauth2.Config
 
 // init is called before main
 func init() {
@@ -24,27 +29,51 @@ func init() {
 		panic(err)
 	}
 
-	// Add the scopes for the Gmail API
-	scopes = append(scopes, "https://www.googleapis.com/auth/spreadsheets.readonly")
+	// Get the config from the client secret data
+	log.Println("Obtaining config from client secret data...")
+	CONFIG, err = google.ConfigFromJSON(clientSecretData, scopes...)
+	if err != nil {
+		log.Fatalf("Unable to parse client secret file to config: %v", err)
+	}
 }
 
 func main() {
-	if args := os.Args; len(args) > 1 {
-		log.Println("Manual save token mode")
-		if args[1] == "saveToken" {
-			ManualSaveToken()
-			os.Exit(0)
-		}
-	}
 	//Start the server
-	http.HandleFunc("/", BeginAuth)
-	http.HandleFunc("/saveToken", SaveToken)
-	http.ListenAndServe(":4201", nil)
+	router := gin.Default()
+	CORS := cors.DefaultConfig()
+	CORS.AllowHeaders = []string{"*"} //Allows all headers for things like htmx's hx-get, hx-target, etc
+	CORS.AllowAllOrigins = true
+	router.Use(cors.New(CORS))
+
+	router.LoadHTMLGlob("*")
+	router.GET("/", indexPage)
+	router.GET("/beginAuth", BeginAuth)
+	router.POST("/getToken", GetToken)
+
+	router.Run(":4201")
 	log.Println("Listening on port 4201...")
 }
 
+func indexPage(c *gin.Context) {
+	// Define the data to be injected into the template
+
+	// Parse the HTML template file
+	tmpl, err := template.ParseFiles("index.html") // Use "template.html" here
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Execute the template with the data
+	c.HTML(http.StatusOK, tmpl.Name(), struct {
+		ClientID string
+	}{
+		ClientID: CONFIG.ClientID,
+	}) // Use "template.html" here as well
+}
+
 // BeginAuth begins the authorization process
-func BeginAuth(w http.ResponseWriter, r *http.Request) {
+func BeginAuth(c *gin.Context) {
 	// Get the config from the client secret data
 	log.Println("Obtaining config from client secret data...")
 	config, err := google.ConfigFromJSON(clientSecretData, scopes...)
@@ -67,79 +96,35 @@ func BeginAuth(w http.ResponseWriter, r *http.Request) {
 	</html>
 	`
 
-	w.Header().Set("Content-Type", "text/html")
-	fmt.Fprint(w, html)
+	c.Writer.WriteHeader(http.StatusOK)
+	c.Writer.Header().Set("Content-Type", "text/html")
+	fmt.Fprint(c.Writer, html)
 }
 
-// SaveToken saves the token to a file
-func SaveToken(w http.ResponseWriter, r *http.Request) {
-	// Get the config from the client secret data
-	log.Println("Obtaining config from client secret data...")
-	config, err := google.ConfigFromJSON(clientSecretData, scopes...)
+// GetToken saves the token to a file
+func GetToken(c *gin.Context) {
+
+	// Parse the URL
+	parsedURL, err := url.Parse(c.PostForm("token_string"))
 	if err != nil {
-		log.Fatalf("Unable to parse client secret file to config: %v", err)
+		fmt.Println("Error parsing URL:", err)
+		return
 	}
+
+	// Get the "code" query parameter
+	code := parsedURL.Query().Get("code")
 
 	// Get the token from the user
 	log.Println("Getting token from user...")
-	token, err := config.Exchange(context.Background(), r.URL.Query().Get("code"))
+	token, err := CONFIG.Exchange(context.Background(), code)
 	if err != nil {
-		log.Fatalf("Unable to retrieve token from web: %v", err)
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
 	}
 
-	// Marshal the token to JSON
-	tokenData, err := json.Marshal(token)
-	if err != nil {
-		log.Fatalf("Unable to marshal token to JSON %v", err)
-	}
+	c.JSON(http.StatusOK, token)
 
-	// Write the token to a file
-	tokenName := "token.json"
-	err = os.WriteFile(tokenName, tokenData, 0644)
-	if err != nil {
-		log.Fatalf("Unable to write token to file %v", err)
-	}
-
-	log.Printf("Token saved at %s", tokenName)
-	os.Exit(0)
-}
-
-func ManualSaveToken(){
-	log.Println("Obtaining config from client secret data...")
-	config, err := google.ConfigFromJSON(clientSecretData, scopes...)
-	if err != nil {
-		log.Fatalf("Unable to parse client secret file to config: %v", err)
-	}
-
-	fmt.Println("Paste response url here:")
-
-	// Use fmt.Scan() to read from stdin instead of bufio.NewReader(os.Stdin).ReadString('\n')
-	var authCode string
-	// Read the auth code from the command-lin
-
-	if _, err := fmt.Scan(&authCode); err != nil {
-		log.Fatalf("Unable to read authorization code %v", err)
-	}
-
-	// Exchange the auth code for a token
-	token, err := config.Exchange(context.Background(), authCode)
-	if err != nil {
-		log.Fatalf("Unable to retrieve token from web %v", err)
-	}
-
-	// Marshal the token to JSON
-	tokenData, err := json.Marshal(token)
-	if err != nil {
-		log.Fatalf("Unable to marshal token to JSON %v", err)
-	}
-
-	// Write the token to a file
-	tokenName := "token.json"
-	err = os.WriteFile(tokenName, tokenData, 0644)
-	if err != nil {
-		log.Fatalf("Unable to write token to file %v", err)
-	}
-
-	log.Printf("Token saved at %s", tokenName)
-	os.Exit(0)
 }
