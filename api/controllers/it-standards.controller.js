@@ -10,7 +10,7 @@ exports.findAll = (req, res) => {
     ` WHERE obj_standard_type.Keyname LIKE 'Software'
       AND obj_technology_status.Keyname NOT LIKE 'Not yet submitted'
       GROUP BY tech.Id
-      ORDER BY tech.Keyname;`;
+      ORDER BY IFNULL(tech.softwareReleaseName, tech.Keyname);`;
 
   res = ctrl.sendQuery(query, 'IT Standards', res); //removed sendQuery_cowboy reference
 };
@@ -24,7 +24,8 @@ exports.findOne = (req, res) => {
 
 exports.findLatest = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
-    ` GROUP BY tech.Id ORDER BY tech.CreateDTG DESC LIMIT 1;`;
+    ` GROUP BY tech.Id
+      ORDER BY tech.CreateDTG DESC LIMIT 1;`;
 
   res = ctrl.sendQuery(query, 'latest individual IT Standard', res); //removed sendQuery_cowboy reference
 };
@@ -81,6 +82,7 @@ exports.update = (req, res) => {
       data.itStandDesc = ctrl.emptyTextFieldHandler(data.itStandDesc);
       data.itStandAprvExp = ctrl.emptyTextFieldHandler(data.itStandAprvExp);
       data.itStandRefDocs = ctrl.emptyTextFieldHandler(data.itStandRefDocs);
+      data.tcEndOfLifeDate = ctrl.emptyTextFieldHandler(data.tcEndOfLifeDate);
 
       var query = `SET FOREIGN_KEY_CHECKS=0;
         UPDATE obj_technology
@@ -106,7 +108,8 @@ exports.update = (req, res) => {
           manufacturerName                = '${data.tcManufacturerName}',
           softwareProductName             = '${data.tcSoftwareProductName}',
           softwareVersionName             = '${data.tcSoftwareVersionName}',
-          softwareReleaseName             = '${data.tcSoftwareReleaseName}'
+          softwareReleaseName             = '${data.tcSoftwareReleaseName}',
+          endOfLifeDate                   = ${data.tcEndOfLifeDate}
         WHERE Id = ${req.params.id};
         SET FOREIGN_KEY_CHECKS=1;
         ${catString}
@@ -141,6 +144,7 @@ exports.create = (req, res) => {
       data.itStandDesc = ctrl.emptyTextFieldHandler(data.itStandDesc);
       data.itStandAprvExp = ctrl.emptyTextFieldHandler(data.itStandAprvExp);
       data.itStandRefDocs = ctrl.emptyTextFieldHandler(data.itStandRefDocs);
+      data.tcEndOfLifeDate = ctrl.emptyTextFieldHandler(data.tcEndOfLifeDate);
 
       var query = `INSERT INTO obj_technology(
         Keyname,
@@ -165,7 +169,8 @@ exports.create = (req, res) => {
         manufacturerName,
         softwareProductName,
         softwareVersionName,
-        softwareReleaseName) VALUES (
+        softwareReleaseName,
+        endOfLifeDate) VALUES (
         null,`+//'${data.itStandName}',
         `${data.itStandDesc},
         ${data.itStandAprvExp},
@@ -188,7 +193,8 @@ exports.create = (req, res) => {
         '${data.tcManufacturerName}',
         '${data.tcSoftwareProductName}',
         '${data.tcSoftwareVersionName}',
-        '${data.tcSoftwareReleaseName}');`;
+        '${data.tcSoftwareReleaseName}',
+        ${data.tcEndOfLifeDate});`;
 
       var logStatement = `insert into log.event (Event, User, DTG) values ('create IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
 

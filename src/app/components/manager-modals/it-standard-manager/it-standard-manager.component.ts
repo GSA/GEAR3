@@ -65,6 +65,7 @@ export class ItStandardManagerComponent implements OnInit {
   softwareReleases: any = [];
   softwareReleasesLoading = false;
   softwareReleasesBuffer = [];
+  endOfLifeDate: any = null;
 
   types: any[] = [];
 
@@ -237,13 +238,9 @@ export class ItStandardManagerComponent implements OnInit {
 
       // Set default values for form with current values
       this.itStandardsForm.patchValue({
-        //tcManufacturer: this.sharedService.findInArray(this.manufacturers, 'id', this.itStandard.Manufacturer, 'id'),
         tcManufacturer: this.itStandard.Manufacturer,
-        //tcSoftwareProduct: this.sharedService.findInArray(this.softwareProducts, 'id', this.itStandard.SoftwareProduct, 'id'),
         tcSoftwareProduct: this.itStandard.SoftwareProduct,
-        //tcSoftwareVersion: this.sharedService.findInArray(this.softwareVersions, 'id', this.itStandard.SoftwareVersion, 'id'),
         tcSoftwareVersion: this.itStandard.SoftwareVersion,
-        //tcSoftwareRelease: this.sharedService.findInArray(this.softwareReleases, 'id', this.itStandard.SoftwareRelease, 'id'),
         tcSoftwareRelease: this.itStandard.SoftwareRelease,
         itStandStatus: this.sharedService.findInArray(this.statuses, 'Name', this.itStandard.Status),
         itStandName: this.itStandard.Name,
@@ -330,6 +327,12 @@ export class ItStandardManagerComponent implements OnInit {
         //console.log("SoftwareReleaseName: ", this.itStandardsForm.value.tcSoftwareReleaseName);
       }
 
+      // add EndOfLifeDate to payload
+      //if (this.itStandardsForm.value.tcEndOfLifeDate) {
+        this.itStandardsForm.value.tcEndOfLifeDate = this.endOfLifeDate;
+        console.log("EndOfLifeDate: ", this.itStandardsForm.value.tcEndOfLifeDate);
+      //}
+
 
       //console.log("Form values before committing to database: ", this.itStandardsForm.value); // Debug
 
@@ -388,6 +391,10 @@ export class ItStandardManagerComponent implements OnInit {
     try {
       if (data.endOfLifeDate  !== '' && data.endOfLifeDate !== null && data.endOfLifeDate !== undefined) {
         console.log("setting approval expiration date to: ", data.endOfLifeDate); //DEBUG
+        
+        this.endOfLifeDate = data.endOfLifeDate;
+
+        // Set Approval Expiration Date on Date Picker
         $('#itStandAprvExp').datepicker('setDate', new Date(data.endOfLifeDate));
       }
     } catch (error) {

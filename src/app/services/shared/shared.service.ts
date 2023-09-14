@@ -341,10 +341,13 @@ export class SharedService {
   // display a cookie (for debugging)
   public displayCookie(name) {
     try {
-      console.log('cookie:', this.getCookie(name));
-      console.log('cookie_decoded:', jwtDecode(this.getCookie(name)));
+      if (name === 'jwt') {
+        console.log('cookie_decoded:', jwtDecode(this.getCookie(name)));
+      } else {
+        console.log(`cookie ${name} is:`, this.getCookie(name));
+      }
     } catch (e) {
-      console.log('error displaying cookie:', e);
+      console.log(`error displaying cookie ${name}:`, e);
     }
   }
 
@@ -363,7 +366,7 @@ export class SharedService {
       // set the cookie in the browser
       document.cookie = name + "=" + (value || "") + expires + "; path=/; domain=.gsa.gov; secure;";
     } catch (e) {
-      console.log('error setting cookie:', e);
+      console.log(`error setting cookie ${name}:`, e);
     }
   }
 

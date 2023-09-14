@@ -70,7 +70,7 @@ export class ItStandardsComponent implements OnInit {
     visible: false
   }, {
     field: 'ManufacturerName',
-    title: 'Manufacturer',
+    title: 'Manufacturer Name',
     sortable: true
   }, {
     field: 'SoftwareProduct',
@@ -100,6 +100,11 @@ export class ItStandardsComponent implements OnInit {
   }, {
     field: 'SoftwareReleaseName',
     title: 'Software Release Name',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'EndOfLifeDate',
+    title: 'Software End of Life Date',
     sortable: true,
     visible: false
   }, {

@@ -2029,6 +2029,7 @@ exports.importTechCatlogData = async (data, response) => {
   const insertStatementSftwSupportStage =
         `insert into tech_catalog.tp_SoftwareSupportStage (softwareLifecycleId, definition, endDate, manufacturerId, name, order_, policy, publishedEndDate) values ?`;
   let softwareSupportStageCounter = 0;
+  let softwareSupportStageInsertedCounter = 0;
   
   let pageCounter = 0;                                  // total number of pages processed
   let pageRequestCounter = 0;                           // total number of page requests made
@@ -2036,7 +2037,7 @@ exports.importTechCatlogData = async (data, response) => {
   let recordsFailedCounter = 0;                         // total number of records that failed to insert into db
   let isFatalError = 0;
   let gatherStats = true;
-  let duplicateJobsRunning = false;
+  let duplicateJobsRunning = 0;
 
   let recordsInsertedCounter = 0;                       // total number of records inserted into db
   let recordToUpdateCounter = 0;                        // total number of records to update
@@ -2111,6 +2112,7 @@ exports.importTechCatlogData = async (data, response) => {
       totalRecordsInsertedUpdated : recordsInsertedCounter,
       totalRecordsFailed : recordsFailedCounter,
       totalSoftwareSupportStageRecords : softwareSupportStageCounter,
+      totalSoftwareSupportStageRecordsInsUpd : softwareSupportStageInsertedCounter,
       beginTableRecordCount : beginTableRecordCount,
       endTableRecordCount : endTableRecordCount,
       affectRowsCounter1 : affectRowsCounter1,
@@ -2287,23 +2289,9 @@ exports.importTechCatlogData = async (data, response) => {
     // pre-import steps
     try {
 
-      // 1. log start to tech_catalog.dataset_import_log
-      // log start of import to DB (this will fail if another import is already running)
-      // TEMP FIX for duplicate cron job issue
-      try {
-        // log start to db
-        await sql_promise.query(`insert into tech_catalog.dataset_import_log (import_id, datasetName, import_status) values ('${importId}', '${datasetName}', '${datasetName} import in progress...'); `);
-      } catch (er) {
-        console.log(`\n****** ${datasetName} import is already in progress ******\n`); //, er);
-        duplicateJobsRunning=1;
-        return { message : `${datasetName} import is already in progress`, fatalError : 0, duplicateJobsRunning : duplicateJobsRunning };
-      }
+      logger(`${getLogHeader()}`, `********** TECH_CATALOG [${importType}] IMPORT EXECUTED FOR DATASET [${datasetName}] IMPORT PROCESS **********`, null, importLogFileName);
 
-      logger(`${getLogHeader()}`, `********** STARTING ${importType} IMPORT PROCESS **********`, null, importLogFileName);
-
-
-      logger(`${getLogHeader()}`, `*** STARTING PRE-IMPORT STEPS ***`, null, importLogFileName);
-
+      logger(`${getLogHeader()}`, `*** STARTING PRE-IMPORT STEPS ***`);
 
       // -----------------------------------------------
       // 1. validate parameters
@@ -2319,10 +2307,20 @@ exports.importTechCatlogData = async (data, response) => {
       } catch (error) {
         // ... log failure, end import.
         logger(`${getLogHeader()}`, `failed validating request parameters`, error, errorLogFileName);
-        isFatalError=1;
-        return endImport();
+        return { message : `ERROR: Tech Catalog Import Request Parameters Contains Invalid Values:\n${error}`, fatalError : 1 };
       }
 
+      // 1. log start to tech_catalog.dataset_import_log
+      // log start of import to DB (this will fail if another import is already running)
+      // TEMP FIX for duplicate cron job issue
+      try {
+        // log start to db
+        await sql_promise.query(`insert into tech_catalog.dataset_import_log (import_id, datasetName, import_status) values ('${importId}', '${datasetName}', '${datasetName} import in progress...'); `);
+      } catch (er) {
+        console.log(`\n****** ${datasetName} import is already in progress ******\n`); //, er);
+        duplicateJobsRunning=1;
+        return { message : `${datasetName} import is already in progress`, fatalError : 0, duplicateJobsRunning : duplicateJobsRunning };
+      }
 
       // -----------------------------------------------
       // 2. get the last id and/or the last synchronizedDate from the database and apply OVERRIDEs
@@ -3022,6 +3020,8 @@ exports.importTechCatlogData = async (data, response) => {
                             supportStageObject.publishedEndDate,	
                             ]);
                         }
+
+                        softwareSupportStageCounter = softwareSupportStageCounter + insertValuesMapSftwSupportStage.length;
                         //.log(' - SoftwareSupportStage data found:' + datasetObject.softwareSupportStage.length + ' records.'); // Debug
                       }
                       break;
@@ -3323,7 +3323,9 @@ exports.importTechCatlogData = async (data, response) => {
                     //if (importType === 'insert' && recordsInsertedCounter % 20 === 0) {
 
                     insertUpdatesPerformed++;
+
                     /*
+                    // this IF was implemented to prevent the database from being overloaded with inserts/updates
                     if (pageRecordsInsertedCounter < 20) {
                       // wait 1/1000 of the second
                       await new Promise(resolve => setTimeout(resolve, 1));
@@ -3335,15 +3337,15 @@ exports.importTechCatlogData = async (data, response) => {
                     // ... execute insert/update statement
                     sql.query(insertStatement, [insertValuesMap], (error, data) => {
 
+                      // ... get the id value from the insertValuesMap
+                      let idValue = insertValuesMap[0][0];
+
                       if (error) {
                         // when insert/update FAILS
 
                         // ... increment counters when fails
                         recordsFailedCounter++;
                         pageRecordsFailedCounter++;
-
-                        // ... get the id value from the insertValuesMap
-                        let idValue = insertValuesMap[0][0];
 
                         // ... add id to recordsFailedList
                         recordsFailedList.push(idValue);
@@ -3371,8 +3373,6 @@ exports.importTechCatlogData = async (data, response) => {
                         } else if (data.affectedRows == 3) {
                           affectRowsCounter3++;
                         } else {
-                          // ... get the id value from the insertValuesMap
-                          let idValue = insertValuesMap[0][0];
 
                           // ... add id to recordsFailedList
                           recordsFailedList.push(idValue);
@@ -3402,10 +3402,6 @@ exports.importTechCatlogData = async (data, response) => {
                           sql.query(insertStatementSftwSupportStage, [insertValuesMapSftwSupportStage], (error, data) => {
 
                             if (error) {
-                              // when insert/update FAILS
-
-                              // ... get the id value from the insertValuesMap
-                              let idValue = insertValuesMap[0][0];
 
                               // ... add id to recordsFailedList
                               recordsFailedList.push(idValue);
@@ -3426,7 +3422,7 @@ exports.importTechCatlogData = async (data, response) => {
                               
                             } else {
                               // when insert/update SUCCEEDS
-                              softwareSupportStageCounter = softwareSupportStageCounter + insertValuesMapSftwSupportStage.length;
+                              softwareSupportStageInsertedCounter = softwareSupportStageInsertedCounter + insertValuesMapSftwSupportStage.length;
                             }
                           });
 
