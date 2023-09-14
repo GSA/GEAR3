@@ -341,11 +341,11 @@ export class SharedService {
   // display a cookie (for debugging)
   public displayCookie(name) {
     try {
-      if (name === 'jwt') {
-        console.log('cookie_decoded:', jwtDecode(this.getCookie(name)));
-      } else {
+      //if (name === 'jwt') {
+      //  console.log('cookie_decoded:', jwtDecode(this.getCookie(name)));
+      //} else {
         console.log(`cookie ${name} is:`, this.getCookie(name));
-      }
+      //}
     } catch (e) {
       console.log(`error displaying cookie ${name}:`, e);
     }
