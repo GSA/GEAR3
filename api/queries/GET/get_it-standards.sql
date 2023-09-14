@@ -30,7 +30,7 @@ SELECT
   GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', CONCAT(poc.FirstName, ' ', poc.LastName), poc.Email, org.Display_Name) SEPARATOR '; ')     AS POC,
   GROUP_CONCAT(DISTINCT obj_standard_category.Keyname SEPARATOR ', ')   AS Category,
   tech.Keyname                                    AS OldName,
-  tech.endOfLifeDate                              AS EndOfLifeDate
+  DATE(tech.endOfLifeDate)                        AS EndOfLifeDate
 
 FROM obj_technology AS tech
 

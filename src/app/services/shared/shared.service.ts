@@ -139,15 +139,17 @@ export class SharedService {
 
             console.log('cookies does not exist');
 
+            console.log('current jwt: ' + this.globals.jwtToken);
+
             console.log('setting cookies');
 
             // Set JWT in cookies
-            this.setCookie('jwt', this.globals.jwtToken, 1);
+            this.setCookie('gearT', this.globals.jwtToken, 1);
             this.setCookie('gUser', this.globals.authUser, 1);
             this.setCookie('apiToken', this.globals.apiToken, 1);
 
             // Display cookies (for debugging)
-            this.displayCookie('jwt');
+            this.displayCookie('gearT');
             this.displayCookie('gUser');
             this.displayCookie('apiToken');
 
