@@ -1,5 +1,5 @@
 <!-- Container for sidebar(s) + page content -->
-<!-- <ng-sidebar-container (onBackdropClicked)="_onBackdropClicked()">
+<ng-sidebar-container (onBackdropClicked)="_onBackdropClicked()">
   <ng-sidebar
     id="sidebar"
     [(opened)]="_opened"
@@ -27,7 +27,7 @@
     (mouseleave)="_opened = false"
   >
     <ul id="sideMenu" class="list-group">
-      Strategy
+      <!-- Strategy -->
       <li>
         <a
           id="strategyBttn"
@@ -74,7 +74,7 @@
         </div>
       </li>
 
-      Enterprise 
+      <!-- Enterprise  -->
       <li>
         <a
           id="enterpriseBttn"
@@ -131,7 +131,7 @@
       </li>
 
       <!-- Systems -->
-      <!-- <li>
+      <li>
         <a
           id="systemBttn"
           data-toggle="collapse"
@@ -178,10 +178,10 @@
             GSA Websites</a
           >
         </div>
-      </li> -->
+      </li>
 
       <!-- Security -->
-      <!-- <li>
+      <li>
         <a
           id="securityBttn"
           data-toggle="collapse"
@@ -216,10 +216,10 @@
             FISMA System POCs</a
           >
         </div>
-      </li> -->
+      </li>
 
       <!-- Technologies -->
-      <!-- <li>
+      <li>
         <a
           id="technologyBttn"
           data-toggle="collapse"
@@ -257,10 +257,10 @@
             <i class="fas fa-external-link-alt"></i
           ></a>
         </div>
-      </li> -->
+      </li>
 
       <!-- Enterprise Architecture -->
-      <!-- <li>
+      <li>
         <a
           id="eaBttn"
           data-toggle="collapse"
@@ -281,14 +281,14 @@
           aria-labelledby="eaDropdown"
           data-parent="#sideMenu"
           class="collapse sidebar-submenu"
-        > -->
+        >
           <!--<a
             routerLink="/artifacts"
             class="bg-dark list-group-item list-group-item-action"
           >
             Artifacts</a
           >-->
-          <!-- <a
+          <a
             routerLink="/ea_view"
             class="bg-dark list-group-item list-group-item-action"
           >
@@ -301,13 +301,13 @@
             GEAR Model Diagram</a
           >
         </div>
-      </li> -->
+      </li>
 
       <!-- Menu Break -->
-      <!-- <li><br /></li> -->
+      <li><br /></li>
 
       <!-- Access Forms & Glossary -->
-      <!-- <li>
+      <li>
         <a
           id="formsBttn"
           routerLink="/forms_glossary"
@@ -318,182 +318,20 @@
           <div class="d-flex w-100 justify-content-start align-items-center">
             Access Forms & Glossary
             <span class="submenu-icon">
-              <i class="fab fa-wpforms fa-lg fa-fw fa-fw"></i> -->
+              <i class="fab fa-wpforms fa-lg fa-fw fa-fw"></i>
               <!-- For some reason, this needs a fixed width to properly align-->
-            <!-- </span>
+            </span>
           </div>
         </a>
       </li>
     </ul>
-  </ng-sidebar> -->
+  </ng-sidebar>
 
   <!-- Page content -->
-  <!-- <div ng-sidebar-content>
+  <div ng-sidebar-content>
     <main role="main">
       <div class="container-fluid my-3">
-        <div class="col-md-12"> -->
-          <!-- Logged In Notification -->
-          <!-- <div
-            id="loggedIn"
-            class="container toast hide rounded-lg w-25"
-            role="alert"
-            aria-live="assertive"
-            aria-atomic="true"
-            data-delay="3000"
-          >
-            <div id="loggedInCollapse" class="collapse">
-              <div class="toast-header">
-                <i class="fa fa-sign-in-alt mr-2 fa-fw"></i>
-                <strong class="mr-auto text-success"
-                  >You have successfully logged into GEAR Manager!</strong
-                >
-              </div>
-            </div>
-          </div> -->
-
-        
-<!-- Beginning of sidebar -->
-<div (mouseenter)="toggleSidebar()" (mouseleave)="toggleSidebar()" class="side-bar collapse" style="margin-left:-3.8%">
-  <!-- <div class="logo-name-wrapper"> -->
-  <!-- </div> -->
-
-  <!-- First main sidebar item -->
-  <ul class="features-list">
-    <li (click)=toggleSub(1) class="features-item inbox" style="background-color: #339054;">
-        <i class="bx bxs-extension features-item-icon inbox-icon"></i>
-        <span class="features-item-text">IT Strategy</span>
-      </li>
-      <!-- First sub menu list  -->
-        <div [class]="ItemList1" id="subMenu">
-          <li routerLink="/strategic_framework" class="features-item-sub" style="background-color: rgb(70, 70, 70)">
-            <i class="features-item-icon"></i>
-            <span class="features-item-text">IT Strategic Framework</span>
-          </li>
-
-          <li routerLink="/investments" class="features-item-sub" style="background-color: rgb(70, 70, 70)">
-            <i class="features-item-icon"></i>
-            <span class="features-item-text">IT Investments</span>
-          </li>
-
-          <li onClick="location.href='https://insite.gsa.gov/directives-library/#GSAIT'" class="features-item-sub" style="background-color: rgb(70, 70, 70)">
-            <i class="features-item-icon"></i>
-            <span class="features-item-text">IT Policies</span>  <i class="bx bx-link-external"></i>
-          </li>
-        </div>
-
-    <!-- Second main sidebar item -->
-    <li (click)=toggleSub(2) class="features-item draft" style="background-color:#214598">
-      <i class="bx bx-sitemap features-item-icon"></i>
-      <span class="features-item-text">GSA Enterprise</span>
-    </li>
-        <!-- Second sub menu list -->
-        <div [class]="ItemList2" id="subMenu">
-          <li routerLink="/capabilities_model" class="features-item-sub" style="background-color: rgb(70, 70, 70)">
-            <i class="features-item-icon"></i>
-            <span class="features-item-text">Business Capabiltiy Model</span>
-
-          <li routerLink="/capabilities" class="features-item-sub" style="background-color: rgb(70, 70, 70)">
-            <i class="features-item-icon"></i>
-            <span class="features-item-text">Buisness Capability List</span>
-
-          <li routerLink="/org_chart" class="features-item-sub" style="background-color: rgb(70, 70, 70)">
-            <i class="features-item-icon"></i>
-            <span class="features-item-text">Organization Chart</span>
-
-          <li routerLink="/organizations" class="features-item-sub" style="background-color: rgb(70, 70, 70)">
-            <i class="features-item-icon"></i>
-            <span class="features-item-text">Organization List</span>
-
-          <li routerLink="/website_service_category" class="features-item-sub" style="background-color: rgb(70, 70, 70)">
-            <i class="features-item-icon"></i>
-            <span class="features-item-text">Website Service Category List</span>
-        </div>
-
-    <!-- Third main sidebar item -->
-    <li (click)=toggleSub(3) class="features-item star" style="background-color:#c9302c">
-      <i class="bx bx-laptop features-item-icon"></i>
-      <span class="features-item-text">Business Systems</span>
-    </li>
-        <!-- Third sub menu list -->
-        <div [class]="ItemList3" id="subMenu">
-          <li routerLink="/systems" class="features-item-sub" style="background-color: rgb(70, 70, 70)">
-            <i class="features-item-icon"></i>
-            <span class="features-item-text">Business Systems</span>
-
-          <li routerLink="/systems_TIME" class="features-item-sub" style="background-color: rgb(70, 70, 70)">
-            <i class="features-item-icon"></i>
-            <span class="features-item-text">TIME Report</span>
-
-          <li routerLink="/records_mgmt" class="features-item-sub" style="background-color: rgb(70, 70, 70)">
-            <i class="features-item-icon"></i>
-            <span class="features-item-text">Records Management</span>
-
-          <li routerLink="/websites" class="features-item-sub" style="background-color: rgb(70, 70, 70)">
-            <i class="features-item-icon"></i>
-            <span class="features-item-text">GSA Websites</span>
-        </div>
-
-    <!-- Fourth main sidebar item -->
-    <li (click)=toggleSub(4) class="features-item sent" style="background-color:#ec971f">
-      <i class="bx bx-shield-quarter features-item-icon"></i>
-      <span class="features-item-text">Security</span>
-    </li>
-        <!-- Fourth sub menu list -->
-        <div [class]="ItemList4">
-          <li routerLink="/FISMA" class="features-item-sub" style="background-color: rgb(70, 70, 70)">
-            <i class="features-item-icon"></i>
-            <span class="features-item-text">FISMA Systems Inventory</span>
-
-          <li routerLink="/FISMA_POC" class="features-item-sub" style="background-color: rgb(70, 70, 70)">
-            <i class="features-item-icon"></i>
-            <span class="features-item-text">FISMA System POCs</span>
-        </div>
-
-    <!-- Fifth main sidebar item -->
-    <li (click)=toggleSub(5) class="features-item trash" style="background-color:#076464">
-      <i class="bx bx-microchip features-item-icon"></i>
-      <span class="features-item-text">Technologies</span>
-    </li>
-        <!-- Fifth sub menu list -->
-        <div [class]="ItemList5">
-          <li routerLink="/it_standards" class="features-item-sub" style="background-color: rgb(70, 70, 70)">
-            <i class="features-item-icon"></i>
-            <span class="features-item-text">IT Standards List</span>
-
-          <li onClick="location.href='https://insite.gsa.gov/portal/content/500499'" class="features-item-sub" style="background-color: rgb(70, 70, 70)">
-            <i class="features-item-icon"></i>
-            <span class="features-item-text">IT standards Approval Process</span> <i class="bx bx-link-external"></i>
-        </div>
-
-    <!-- Sixth main sidebar item -->
-    <li (click)=toggleSub(6) class="features-item spam" style="background-color:#800080">
-      <i class="bx bx-vector features-item-icon"></i>
-      <span class="features-item-text">Enterprise Architecture</span>
-    </li>
-        <!-- Sixth sub menu list -->
-        <div [class]="ItemList6">
-          <li routerLink="/artifacts" class="features-item-sub" style="background-color: rgb(70, 70, 70)">
-            <i class="features-item-icon"></i>
-            <span class="features-item-text">Artifacts</span>
-            
-            <li routerLink="/gear_model" class="features-item-sub" style="background-color: rgb(70, 70, 70)">
-              <i class="features-item-icon"></i>
-              <span class="features-item-text">GEAR Model Diagram</span>
-          </div>
-    <br/>
-
-    <!-- Seventh main sidebar item -->
-    <li routerLink="/forms_glossary" class="features-item spam" style="background-color:#187aa3">
-      <i class="bx bxs-file-doc features-item-icon"></i>
-      <span class="features-item-text">Access Forms & Glossary</span>
-    </li>
-  </ul>
-
-  <!-- Page content -->
-   <div ng-sidebar-content>
-    <main role="main">
-      <div class="container-fluid my-3">
-        <div class="col-md-12"> 
+        <div class="col-md-12">
           <!-- Logged In Notification -->
           <div
             id="loggedIn"
@@ -511,10 +349,10 @@
                 >
               </div>
             </div>
-          </div> 
+          </div>
 
           <!-- Logged Out Notification -->
-           <div
+          <div
             id="loggedOut"
             class="container toast hide rounded-lg w-25"
             role="alert"
@@ -532,5 +370,12 @@
             </div>
           </div>
 
-</div>
-
+          <!-- Components Content -->
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+    </main>
+  </div>
+  <!-- End Page Content -->
+</ng-sidebar-container>
+<!-- End Side Navbar -->
