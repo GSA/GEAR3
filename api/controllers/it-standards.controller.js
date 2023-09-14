@@ -166,7 +166,7 @@ exports.create = (req, res) => {
         softwareProductName,
         softwareVersionName,
         softwareReleaseName) VALUES (
-        '${data.tcSoftwareReleaseName}',`+//'${data.itStandName}',
+        null,`+//'${data.itStandName}',
         `${data.itStandDesc},
         ${data.itStandAprvExp},
         '${data.itStandVendorOrg}',
