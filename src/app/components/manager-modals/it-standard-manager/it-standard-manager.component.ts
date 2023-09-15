@@ -65,7 +65,7 @@ export class ItStandardManagerComponent implements OnInit {
   softwareReleases: any = [];
   softwareReleasesLoading = false;
   softwareReleasesBuffer = [];
-  endOfLifeDate: any = null;
+  endOfLifeDate: Date;
 
   types: any[] = [];
 
@@ -399,7 +399,7 @@ export class ItStandardManagerComponent implements OnInit {
         //let newEndOfLifeDate = new Date(this.endOfLifeDate);
 
         // Set Approval Expiration Date on Date Picker
-        $('#itStandAprvExp').datepicker('setDate', data.endOfLifeDate);
+        $('#itStandAprvExp').datepicker('setDate', this.endOfLifeDate);
       }
     } catch (error) {
       //console.log("setApprovalExpirationDate error: ", error); //DEBUG
