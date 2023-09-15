@@ -142,11 +142,11 @@ app.post(samlConfig.path,
     const samlProfile = req.user;
     const db = mysql.createConnection(dbCredentials);
     db.connect();
-    db.query(`CALL acl.get_user_perms('${samlProfile.nameID}');`,
+    db.query(`CALL gear_acl.get_user_perms('${samlProfile.nameID}');`,
       (err, results, fields) => {
         if (err) {
           // log call return error
-          db.query(`insert into log.event (Event, User, DTG) values ('GEAR Manager - Login Error', '${samlProfile.nameID}', now());`);
+          db.query(`insert into gear_log.event (Event, User, DTG) values ('GEAR Manager - Login Error', '${samlProfile.nameID}', now());`);
           
           res.status(500);
           res.json({ error: err });
@@ -157,7 +157,7 @@ app.post(samlConfig.path,
 
           if (results[0].length === 0) {
             // log no data returned
-            db.query(`insert into log.event (Event, User, DTG) values ('GEAR Manager - Unable to Verify User', '${samlProfile.nameID}', now());`);
+            db.query(`insert into gear_log.event (Event, User, DTG) values ('GEAR Manager - Unable to Verify User', '${samlProfile.nameID}', now());`);
             
             userLookupStatus = `Unable to verify user, <strong>${samlProfile.nameID}</strong><br/><a href="${process.env.SAML_ENTRY_POINT}">TRY AGAIN</a>`;
             html = `<html><body style="font-family:sans-serif;"><p>${userLookupStatus}</p></body></html>`;
@@ -183,7 +183,7 @@ app.post(samlConfig.path,
           const encryptJWT = CryptoJS.AES.encrypt(`${jwt.auditID}`, key);
 
           // STORE ENCRYPTED API SECURITY TOKEN IN DB
-          db.query(`CALL acl.setJwt ('${jwt.auditID}', '${encryptJWT}');`,
+          db.query(`CALL gear_acl.setJwt ('${jwt.auditID}', '${encryptJWT}');`,
           (err) => {
             if (err) {
               console.log(err);
@@ -212,7 +212,7 @@ app.post(samlConfig.path,
 `
           
           // Log GEAR Manager login
-          db.query(`insert into log.event (Event, User, DTG) values ('GEAR Manager - Successful Login', '${samlProfile.nameID}', now());`);
+          db.query(`insert into gear_log.event (Event, User, DTG) values ('GEAR Manager - Successful Login', '${samlProfile.nameID}', now());`);
 
           res.cookie('jwt', 'test_token', { httpOnly: true });
           res.cookie('apiToken', 'encryptJWT', { httpOnly: true });
