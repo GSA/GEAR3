@@ -376,8 +376,8 @@ cron.schedule('0 7 * * WED', () => {
 });
 
 // -------------------------------------------------------------------------------------------------
-// CRON JOB: Google Sheets API - Update All Related Records (runs every weekday at 5:00 AM)
-cron.schedule('0 5 * * 1-5', () => { //PRODUCTION
+// CRON JOB: Google Sheets API - Update All Related Records (runs every weekday at 6:00 AM & 6:00 PM)
+cron.schedule('0 6,18 * * 1-5', () => { //PRODUCTION
 //cron.schedule('50 14 * * 1-5', () => { //DEBUGGING
 
   cronCtrl.runUpdateAllRelatedRecordsJob();

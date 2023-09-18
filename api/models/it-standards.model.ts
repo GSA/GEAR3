@@ -25,5 +25,5 @@ export class ITStandards {
   public POC: string = null;
   public Category: string = null;
   public OldName: string = null;
-  public EndOfLifeDate: string = null;
+  public EndOfLifeDate: Date = null;
 }

@@ -6,6 +6,7 @@ import {Router} from '@angular/router';
 import {Globals} from '@common/globals';
 
 import jwtDecode from 'jwt-decode';
+import { CookieService } from 'ngx-cookie-service';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -38,7 +39,12 @@ export class SharedService {
   constructor(
     private globals: Globals,
     private location: Location,
-    private router: Router) {
+    private router: Router,
+    private cookieService: CookieService) {
+  }
+
+  getJwtCookie(): string | undefined {
+    return this.cookieService.get('jwt');
   }
 
   // Sidebar Toggle
@@ -126,37 +132,22 @@ export class SharedService {
         try {
 
           // check if the cookie exists
-          if (this.getCookie('jwt') !== undefined) {
+          //if (this.getCookie('jwt') !== undefined) {
+          if (this.getJwtCookie() !== undefined) {
 
             console.log('cookies exists');
 
             // display the cookie
-            this.displayCookie('jwt');
-            this.displayCookie('gUser');
-            this.displayCookie('apiToken');
+            console.log('jwt cookie:', this.getJwtCookie());
 
           } else {
 
-            console.log('cookies does not exist');
-
-            console.log('current jwt: ' + this.globals.jwtToken);
-
-            console.log('setting cookies');
-
-            // Set JWT in cookies
-            this.setCookie('gearT', String(this.globals.jwtToken), 1);
-            this.setCookie('gUser', this.globals.authUser, 1);
-            this.setCookie('apiToken', this.globals.apiToken, 1);
-
-            // Display cookies (for debugging)
-            this.displayCookie('gearT');
-            this.displayCookie('gUser');
-            this.displayCookie('apiToken');
+            console.log('cookies do not exist');
 
           }
 
         } catch (e) {
-          console.log('error setting and diaplaying cookies on setJWTonLogIn:', e);
+          console.log('error verifying cookies on setJWTonLogIn:', e);
         }
 
         // remove jwt from local storage
@@ -326,50 +317,3 @@ export class SharedService {
     var normalizedURL = this.coreURL(this.router.url);
     this.location.replaceState(`${normalizedURL}/${row[IDname]}`);
   };
-
-  // -----------------
-
-  // get a cookie
-  public getCookie(name) {
-    try {
-      const value = "; " + document.cookie;
-      const parts = value.split("; " + name + "=");
-      if (parts.length == 2) return parts.pop().split(";").shift();
-    } catch (e) {
-      console.log('error getting cookie:', e);
-    }
-  }
-
-  // display a cookie (for debugging)
-  public displayCookie(name) {
-    try {
-      //if (name === 'jwt') {
-      //  console.log('cookie_decoded:', jwtDecode(this.getCookie(name)));
-      //} else {
-        console.log(`cookie ${name} is:`, this.getCookie(name));
-      //}
-    } catch (e) {
-      console.log(`error displaying cookie ${name}:`, e);
-    }
-  }
-
-  // set a cookie
-  public setCookie(name, value, days) {
-    try {
-      let expires = "";
-      if (days) {
-        let date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000)); // days * hours * minutes * seconds * milliseconds
-        expires = "; expires=" + date.toUTCString();
-      }
-      // this does not work
-      //document.cookie = name + "=" + (value || "") + expires + "; path=/";
-
-      // set the cookie in the browser
-      document.cookie = name + "=" + (value || "") + expires + "; path=/; domain=.gsa.gov; secure;";
-    } catch (e) {
-      console.log(`error setting cookie ${name}:`, e);
-    }
-  }
-
-}

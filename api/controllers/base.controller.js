@@ -2004,20 +2004,22 @@ function getImportId(data = null) {
 
 exports.importTechCatlogData = async (data, response) => {
 
-  // import variables and functions
+  // IMPORT PARAMETER VARIABLES
+  const importType = data.importtype;                       // import type identifies the type of import to be used for logging
   const refreshToken = data.refreshtoken;                   // retrieved from the requests body, stores the refresh token for the flexera api to get a new access token
   const requester = data.requester;                         // retrieved from the requests body, stores the requester's email address
   const datasetName = data.dataset;                         // dataset name to be pulled // ie. "Taxonomy";
   const takeAmt = data.takeamount;                          // amount of records to pull per page
   const importId = getImportId(data);                       // import id identifies a group of import requests to be used for logging
   const isDryRun = data.dryrun;                             // flag to determine if the import insert/update statement or not
-  const importType = data.importtype;                       // import type identifies the type of import to be used for logging
+  
   let lastSyncDateOverride = null;                          // last synchronized date to override the last sync date in the database
   let lastIdOverride = null;                                // last id to override the last id in the database
   let maxSyncDateOverride = null;                           // max sync date to override the max sync date in the database
   let isToBeDeletedOnly = null;                             // flag to determine if only records istobedeleted=true should be returned by the flexera api
   let singleRecImportId = null;                             // import id for a single record import
 
+  // 
   let accessToken = '';                                 // stores the flerera api access token
   let graphqlQuery = '';                                // stores the graphql query to be sent to the flexera api
 
@@ -2025,9 +2027,8 @@ exports.importTechCatlogData = async (data, response) => {
   let insertStatement = `insert into ${tableName} (`;   // insert statement for table records
   let isStatementBuilt = false;                         // flag to determine if the update statement has been built
 
-  // (only used for SoftwareLifecycle dataset ONLY)
-  const insertStatementSftwSupportStage =
-        `insert into tech_catalog.tp_SoftwareSupportStage (softwareLifecycleId, definition, endDate, manufacturerId, name, order_, policy, publishedEndDate) values ?`;
+  // SoftwareSupportStage Import (only used for SoftwareLifecycle dataset ONLY)
+  const insertStatementSftwSupportStage = `insert into tech_catalog.tp_SoftwareSupportStage (softwareLifecycleId, definition, endDate, manufacturerId, name, order_, policy, publishedEndDate) values ?`;
   let softwareSupportStageCounter = 0;
   let softwareSupportStageInsertedCounter = 0;
   
@@ -2053,7 +2054,6 @@ exports.importTechCatlogData = async (data, response) => {
   let isLastPage = false;                               // flag to determine if this is the last page
   let lastRecordId = null;                              // id of last record processed
   let lastRecordIdUsed = null;                          // the inital last id value used to start the import process
-
   let lastSynchronizedDate = null;                      // the last synchronized date for the dataset
   const uploadStartTime = new Date();                   // upload start time //TIMESTAMP();
   let uploadEndTime = null;                             // upload end time //TIMESTAMP();
@@ -2068,10 +2068,17 @@ exports.importTechCatlogData = async (data, response) => {
   let latestSyncDate = null;                            // latest sync date for the dataset
   let syncYYYYMMDDArray = [];                           // array of sync dates in YYYYMMDD format
 
+  // 
   const importLogFileName         = `${logFolderPath}/import_${importType}_${datasetName}_import_log_${formatFileDateTime(uploadStartTime)}.log`;
-  const syncListLogFileName       = `${logFolderPath}/import_${importType}_${datasetName}_records_to_sync_list_${formatFileDateTime(uploadStartTime)}.log`;
+  // 
+  const toSyncListLogFileName     = `${logFolderPath}/import_${importType}_${datasetName}_records_to_sync_list_${formatFileDateTime(uploadStartTime)}.log`;
+  // 
+  const syncedListLogFileName     = `${logFolderPath}/import_${importType}_${datasetName}_records_synced_list_${formatFileDateTime(uploadStartTime)}.log`;
+  // 
   const deleteListLogFileName     = `${logFolderPath}/import_${importType}_${datasetName}_records_to_delete_list_${formatFileDateTime(uploadStartTime)}.log`;
+  // 
   const errorLogFileName          = `${logFolderPath}/import_${importType}_${datasetName}_ERRORs_${formatFileDateTime(uploadStartTime)}.log`;
+  // 
   const importSummaryLogFileName  = `${logFolderPath}/import_${importType}_${datasetName}_import_summary_${formatFileDateTime(uploadStartTime)}.log`;
 
   
@@ -2289,7 +2296,7 @@ exports.importTechCatlogData = async (data, response) => {
     // pre-import steps
     try {
 
-      logger(`${getLogHeader()}`, `********** TECH_CATALOG [${importType}] IMPORT EXECUTED FOR DATASET [${datasetName}] IMPORT PROCESS **********`, null, importLogFileName);
+      logger(`${getLogHeader()}`, `********** TECH_CATALOG [${importType}] IMPORT EXECUTED FOR DATASET [${datasetName}] IMPORT PROCESS **********\n`, null, importLogFileName);
 
       logger(`${getLogHeader()}`, `*** STARTING PRE-IMPORT STEPS ***`);
 
@@ -2469,6 +2476,8 @@ exports.importTechCatlogData = async (data, response) => {
         let consecutiveFailedRecordCounter = 0;
         let notificationCounter = 0;
         let insertUpdatesPerformed = 0;
+        let filteredRecordsCounter = 0;
+        let lastRecordIdInArray = null;
 
         let pageJson = null;
         let datasetArray = [];
@@ -2627,6 +2636,43 @@ exports.importTechCatlogData = async (data, response) => {
           try {
 
             logger(`${getLogHeader()}`, `--- STARTING PAGE ${pageCounter} RECORD IMPORT ---`);
+
+            // remove all records from the array that have a synchronizedDate value earlier than the lastSynchronizedDate
+            if (importType === 'update' && lastSyncDateOverride !== null && datasetArray.length > 0) {
+
+              // turn off gatherStats
+              gatherStats = false;
+
+              // get the id value of the last record in the array
+              lastRecordIdInArray = datasetArray[datasetArray.length - 1].id;
+
+              const previousRecordCount = datasetArray.length;
+
+              datasetArray = datasetArray.filter(datasetArray => new Date(stringToDate(datasetArray.synchronizedDate)) > lastSynchronizedDate);
+
+              const filteredRecordCount = datasetArray.length;
+              filteredRecordsCounter = previousRecordCount - filteredRecordCount;
+
+              logger(`${getLogHeader()}`, `... *** ${previousRecordCount - filteredRecordCount} records removed *** from page array because synchronizedDate < lastSynchronizedDate`, null, importLogFileName);
+
+              if (maxSyncDateOverride !== null && datasetArray.length > 0) {
+                const previousRecordCount = datasetArray.length;
+  
+                datasetArray = datasetArray.filter(datasetArray => new Date(stringToDate(datasetArray.synchronizedDate)) <= maxSyncDateOverride);
+  
+                const filteredRecordCount = datasetArray.length;
+                filteredRecordsCounter = filteredRecordsCounter + (previousRecordCount - filteredRecordCount);
+  
+                logger(`${getLogHeader()}`, `... *** ${previousRecordCount - filteredRecordCount} records removed *** from page array because synchronizedDate > maxSyncDateOverride`, null, importLogFileName);
+              }
+  
+              if (filteredRecordsCounter > 0) {
+                logger(`${getLogHeader()}`, `... *** ${datasetArray.length} records to import after filtering ***`, null, importLogFileName);
+              }
+
+            }
+
+            
           
             // -----------------------------------------------
             // records process
@@ -2724,12 +2770,12 @@ exports.importTechCatlogData = async (data, response) => {
                         // ... create record object
                         let insertTxt = 
                         {
-                          id : lastRecordId,
-                          synchronizedDate : datasetObject.synchronizedDate
+                          id : lastRecordId
+                          // synchronizedDate : datasetObject.synchronizedDate
                         };
 
                         // ... write record to sync list log
-                        fs.appendFileSync(syncListLogFileName, JSON.stringify(insertTxt) + ',\n');
+                        fs.appendFileSync(toSyncListLogFileName, JSON.stringify(insertTxt) + ',\n');
 
                       } catch (error) {
                         logger(`${getLogHeader()}`, `failed writing record to sync list log`, error, errorLogFileName);
@@ -3365,6 +3411,18 @@ exports.importTechCatlogData = async (data, response) => {
                       } else {
                         // when insert/update SUCCEEDS
 
+                        // write to syncedListLogFileName file
+                        try {
+                          // ... create record object
+                          let insertTxt = { id : idValue };
+
+                          // ... write record to sync list log
+                          fs.appendFileSync(syncedListLogFileName, JSON.stringify(insertTxt) + ',\n');
+
+                        } catch (error) {
+                          logger(`${getLogHeader()}`, `failed writing record to sync list log`, error, errorLogFileName);
+                        }
+
                         // ... verify in response that correct number of records inserted
                         if (data.affectedRows == 1) {
                           affectRowsCounter1++;
@@ -3485,7 +3543,6 @@ exports.importTechCatlogData = async (data, response) => {
               updateImportLog();
 
               // ... log page summary
-              //logger(`${getLogHeader()}`, `PAGE ${pageCounter} SUMMARY: \n${JSON.stringify(pageSummary)}`);
               logger(`${getLogHeader()}`, `... page summary logged`);
           
             } // end of !isLastPage
@@ -3500,9 +3557,14 @@ exports.importTechCatlogData = async (data, response) => {
         } // end of !isLastPage
         // -----------------------------------------------
 
+        // set the correct lastRecordId value if any records were filtered out
+        if (filteredRecordsCounter > 0) {
+          lastRecordId = lastRecordIdInArray;
+        }
+
 
         // ... if the data returned is less than the takeAmt, then this is the last page
-        if (datasetArray.length != takeAmt) {
+        if ((datasetArray.length+filteredRecordsCounter) != takeAmt) {
           isLastPage = true;
           logger(`${getLogHeader()}`, `... last page reached`);
         }
