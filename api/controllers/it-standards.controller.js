@@ -115,7 +115,7 @@ exports.update = (req, res) => {
         ${catString}
         ${pocString}`;
 
-      var logStatement = `insert into log.event (Event, User, DTG) values ('update IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
+      var logStatement = `insert into gear_log.event (Event, User, DTG) values ('update IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
 
       res = ctrl.sendQuery(query + ' ' + logStatement, 'update IT Standard', res); //removed sendQuery_cowboy reference
     } else {
@@ -196,7 +196,7 @@ exports.create = (req, res) => {
         '${data.tcSoftwareReleaseName}',
         ${data.tcEndOfLifeDate});`;
 
-      var logStatement = `insert into log.event (Event, User, DTG) values ('create IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
+      var logStatement = `insert into gear_log.event (Event, User, DTG) values ('create IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
 
       res = ctrl.sendQuery(query + ' ' + logStatement, 'create IT Standard', res); //removed sendQuery_cowboy reference
     } else {

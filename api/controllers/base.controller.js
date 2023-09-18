@@ -18,13 +18,13 @@ exports.getApiToken = async (req, res) => {
   console.log('req.headers: ', req.headers); //debugging
   console.log(`requester: ${req.headers.requester}, apitoken: ${req.headers.apitoken}`); //debugging
 
-  //let [rows, fields] = await sql_promise.query(`CALL acl.verifyJwt ('${req.headers.requester}', '${req.headers.apitoken}');`);
+  //let [rows, fields] = await sql_promise.query(`CALL gear_acl.verifyJwt ('${req.headers.requester}', '${req.headers.apitoken}');`);
 
-  let [rows, fields] = await sql_promise.query(`select count(*) as sessions_cnt from acl.logins where email = '${req.headers.requester}' and jwt = '${req.headers.apitoken}';`);
+  let [rows, fields] = await sql_promise.query(`select count(*) as sessions_cnt from gear_acl.logins where email = '${req.headers.requester}' and jwt = '${req.headers.apitoken}';`);
 
   return rows[0].sessions_cnt;
 
-  //const response = await sql_promise.query(`CALL acl.verifyJwt ('${req.headers.requester}', '${req.headers.apitoken}');`);
+  //const response = await sql_promise.query(`CALL gear_acl.verifyJwt ('${req.headers.requester}', '${req.headers.apitoken}');`);
 
   //return response;
 }
@@ -75,7 +75,7 @@ function buildQuery(conn, query, msg, response) {
  */
 function buildLogQuery(conn, event, user, msg, response) {
   // 
-  var query = `insert into log.event (Event, User, DTG) values ('${event}', '${user}', now());`;
+  var query = `insert into gear_log.event (Event, User, DTG) values ('${event}', '${user}', now());`;
   console.log(query);
   
   //
@@ -2259,7 +2259,7 @@ exports.importTechCatlogData = async (data, response) => {
       }
 
       // ... log to event table
-      sql.query(`insert into log.event (Event, User, DTG) values ('${logMessage}', '${requester}', now());`, (err, result) => {
+      sql.query(`insert into gear_log.event (Event, User, DTG) values ('${logMessage}', '${requester}', now());`, (err, result) => {
         if (err) {
           logger(`${getLogHeader()}`, `failed to log event`, err, errorLogFileName);
         }
