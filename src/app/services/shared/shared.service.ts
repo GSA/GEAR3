@@ -45,7 +45,7 @@ export class SharedService {
 
   getJwtCookie(): string | undefined {
     return this.cookieService.get('jwt');
-  }
+  };
 
   // Sidebar Toggle
   public toggleClick() {
@@ -317,3 +317,5 @@ export class SharedService {
     var normalizedURL = this.coreURL(this.router.url);
     this.location.replaceState(`${normalizedURL}/${row[IDname]}`);
   };
+
+}
