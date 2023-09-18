@@ -392,7 +392,9 @@ export class ItStandardManagerComponent implements OnInit {
       if (data.endOfLifeDate  !== '' && data.endOfLifeDate !== null && data.endOfLifeDate !== undefined && data.endOfLifeDate !== 'null' && data.endOfLifeDate !== 'undefined') {
         console.log("setting approval expiration date to: ", data.endOfLifeDate); //DEBUG
         
-        this.endOfLifeDate = new Date(data.endOfLifeDate);
+        // set the endOfLifeDate to the value from the database
+        this.endOfLifeDate = new Date(String(data.endOfLifeDate).replace(/-/g, '\/').replace(/T.+/, ''));
+
 
         //console.log("new approval expiration date is: ", this.endOfLifeDate); //DEBUG
 

@@ -106,7 +106,8 @@ export class ItStandardsComponent implements OnInit {
     field: 'EndOfLifeDate',
     title: 'Software End of Life Date',
     sortable: true,
-    visible: false
+    visible: false,
+    formatter: this.sharedService.dateFormatter
   }, {
     field: 'OldName',
     title: 'Old IT Standard Name',
