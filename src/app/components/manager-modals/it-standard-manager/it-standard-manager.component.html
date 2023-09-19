@@ -150,7 +150,7 @@
                     </div>
                     <div *ngIf="!modalService.fieldValidCheck(itStandardsForm, 'tcSoftwareRelease')">
                       <div class="valid-feedback" *ngIf="itStandardsForm.controls['tcSoftwareRelease'].errors.required">
-                        This Softwares End of Life Date is {{ endOfLifeDate | date:'MMM d, y' }}
+                        This Softwares End of Life Date is <!--{{ endOfLifeDate | date:'MMM d, y' }}-->
                       </div>
                     </div>
                   </div>
