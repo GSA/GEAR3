@@ -2744,7 +2744,7 @@ exports.importTechCatlogData = async (data, response) => {
                   }
 
                   // ... compare the record's synchronizedDate to the lastSynchronizedDate from the db
-                  if (recordSynchronizedDate > lastSynchronizedDate) {
+                  if (recordSynchronizedDate >= lastSynchronizedDate) {
 
                     // if maxSyncDateOverride has a value and the recordSynchronizedDate is later than the maxSyncDateOverride value
                     if (maxSyncDateOverride !== null && recordSynchronizedDate > maxSyncDateOverride) {

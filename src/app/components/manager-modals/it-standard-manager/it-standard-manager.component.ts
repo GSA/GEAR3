@@ -88,6 +88,8 @@ export class ItStandardManagerComponent implements OnInit {
 
   ngOnInit(): void {
 
+    console.log("it-standard-manager.component.ts ngOnInit()"); //DEBUG
+    
     // Emit setFormDefaults for when edit button is pressed
     if (this.sharedService.itStandardsFormSub == undefined) {
       this.sharedService.itStandardsFormSub = this.sharedService.itStandardsFormEmitter.subscribe(() => { this.setFormDefaults(); });
@@ -161,6 +163,8 @@ export class ItStandardManagerComponent implements OnInit {
   }
 
   setFormDefaults(): void {
+
+    console.log("Setting form defaults"); //DEBUG
 
     // Only set status default for creating new record
     const twoYearsLater = new Date();
@@ -262,6 +266,9 @@ export class ItStandardManagerComponent implements OnInit {
   };
 
   submitForm() {
+    
+    console.log("Submitting form"); //DEBUG
+    
     //console.log("Form: ", this.itStandardsForm);  // Debug
 
     if (this.itStandardsForm.valid) {
@@ -328,10 +335,12 @@ export class ItStandardManagerComponent implements OnInit {
       }
 
       // add EndOfLifeDate to payload
-      //if (this.itStandardsForm.value.tcEndOfLifeDate) {
-        this.itStandardsForm.value.tcEndOfLifeDate = this.endOfLifeDate;
+      if (this.endOfLifeDate) {
+        this.itStandardsForm.value.tcEndOfLifeDate = this.endOfLifeDate.getFullYear() + '-' + String(this.endOfLifeDate.getMonth() + 1).padStart(2, '0') + '-' + String(this.endOfLifeDate.getDate()).padStart(2, '0');
         console.log("EndOfLifeDate: ", this.itStandardsForm.value.tcEndOfLifeDate);
-      //}
+      } else {
+        this.itStandardsForm.value.tcEndOfLifeDate = null;
+      }
 
 
       //console.log("Form values before committing to database: ", this.itStandardsForm.value); // Debug
@@ -378,6 +387,9 @@ export class ItStandardManagerComponent implements OnInit {
   }
 
   itStandDetailRefresh(data: any) {
+
+    console.log("Refreshing IT Standard Detail Modal"); //DEBUG
+
     // Refresh Table
     $('#itStandardsTable').bootstrapTable('refresh');
 
@@ -388,16 +400,23 @@ export class ItStandardManagerComponent implements OnInit {
   }
 
   setApprovalExpirationDate(data: any) {
+
+    console.log("Setting approval expiration date"); //DEBUG
+
     try {
       if (data.endOfLifeDate  !== '' && data.endOfLifeDate !== null && data.endOfLifeDate !== undefined && data.endOfLifeDate !== 'null' && data.endOfLifeDate !== 'undefined') {
         console.log("setting approval expiration date to: ", data.endOfLifeDate); //DEBUG
+
+        let date = new Date(data.endOfLifeDate);
         
         // set the endOfLifeDate to the value from the database
-        this.endOfLifeDate = new Date(data.endOfLifeDate);
+        this.endOfLifeDate = date;
 
         // Set Approval Expiration Date on Date Picker
-        $('#itStandAprvExp').datepicker('setDate', this.endOfLifeDate);
-      }
+        $('#itStandAprvExp').datepicker('setDate', new Date (data.endOfLifeDate));
+      } else {
+		    console.log("endOfLifeDate data not found");
+	    }
     } catch (error) {
       //console.log("setApprovalExpirationDate error: ", error); //DEBUG
       console.log("No endOfLifeDate available"); //DEBUG
@@ -405,7 +424,8 @@ export class ItStandardManagerComponent implements OnInit {
   }
 
   manufacturerChange(manufacturer: any) {
-    //console.log("Manufacturer changed to: ", manufacturer); //DEBUG
+    
+    console.log("Manufacturer changed to: ", manufacturer); //DEBUG
 
     this.softwareProductsLoading = true;
     this.itStandardsForm.get('tcSoftwareProduct')?.reset();
@@ -452,7 +472,8 @@ export class ItStandardManagerComponent implements OnInit {
   }
 
   softwareProductChange(softwareProduct: any) {
-    //console.log("Software Product changed to: ", softwareProduct); //DEBUG
+    
+    console.log("Software Product changed to: ", softwareProduct); //DEBUG
 
     this.softwareVersionsLoading = true;
     this.itStandardsForm.get('tcSoftwareVersion')?.reset();
@@ -492,7 +513,8 @@ export class ItStandardManagerComponent implements OnInit {
   }
 
   softwareVersionChange(softwareVersion: any) {
-    //console.log("Software Version changed to: ", softwareVersion); //DEBUG
+    
+    console.log("Software Version changed to: ", softwareVersion); //DEBUG
 
     this.softwareReleasesLoading = true;
     this.itStandardsForm.get('tcSoftwareRelease')?.reset();

@@ -148,6 +148,11 @@
                         One Software Release Required
                       </div>
                     </div>
+                    <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'tcSoftwareRelease')">
+                      <div class="valid-feedback" *ngIf="!itStandardsForm.controls['tcSoftwareRelease'].errors.required && endOfLifeDate !== null">
+                        Software End of Life Date is 
+                      </div>
+                    </div>
                   </div>
                 </div>
 

@@ -180,6 +180,8 @@ app.post(samlConfig.path,
 
           // API SECURITY TOKEN ENCRYPTED HERE TO BE USED IN INLINE HTML PAGE NEXT
           const key = process.env.SECRET + jwt.exp.toString();
+
+          // 
           const encryptJWT = CryptoJS.AES.encrypt(`${jwt.auditID}`, key);
 
           // STORE ENCRYPTED API SECURITY TOKEN IN DB
@@ -214,9 +216,22 @@ app.post(samlConfig.path,
           // Log GEAR Manager login
           db.query(`insert into gear_log.event (Event, User, DTG) values ('GEAR Manager - Successful Login', '${samlProfile.nameID}', now());`);
 
-          res.cookie('jwt', 'test_token', { httpOnly: true });
-          res.cookie('apiToken', 'encryptJWT', { httpOnly: true });
-          res.cookie('gUser', 'results[0][0].AuditID', { httpOnly: true });
+          // set the cookie expiration date
+          let date = new Date();
+
+          // set the cookie expiration date to 1 day after today
+          date.setTime(date.getTime() + (1 * 24 * 60 * 60 * 1000)); // days * hours * minutes * seconds * milliseconds
+
+          // set the cookie expiration date to 00:00:00
+          date.setHours(0, 0, 0, 0);
+          
+          // set the cookie in the browser
+          document.cookie = name + "=" + (value || "") + expires + "; path=/; domain=.gsa.gov; secure;";
+
+          // set the cookie in the browser
+          res.cookie('jwt', `${token}`, { /*httpOnly : true,*/ secure: true, domain: '.ea.gsa.gov', expires: date.toUTCString() });
+          res.cookie('apiToken', `${encryptJWT}`, { httpOnly: true });
+          res.cookie('gUser', `${results[0][0].AuditID}`, { httpOnly: true });
           res.cookie('samlEntryPoint', process.env.SAML_ENTRY_POINT, { httpOnly: true });
           
           res.send(html);

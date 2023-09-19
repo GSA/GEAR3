@@ -3,7 +3,7 @@
   }
   .disabledDivProduct {
       pointer-events: none;
-      opacity: 0.4;
+      opacity: 0.2;
   }
 
 #divVersion{
@@ -11,7 +11,7 @@
   }
   .disabledDivVersion {
       pointer-events: none;
-      opacity: 0.4;
+      opacity: 0.2;
   }
 
 #divRelease{
@@ -19,7 +19,7 @@
   }
   .disabledDivRelease {
       pointer-events: none;
-      opacity: 0.4;
+      opacity: 0.2;
   }
 
 #divOldName{
@@ -27,5 +27,5 @@
   }
   .disabledDivOldName {
       pointer-events: none;
-      opacity: 0.4;
+      opacity: 0.2;
   }

@@ -47,6 +47,37 @@ export class SharedService {
     return this.cookieService.get('jwt');
   };
 
+  getApiTokenCookie(): string | undefined {
+    return this.cookieService.get('apiToken');
+  };
+
+  getAuthUserCookie(): string | undefined {
+    return this.cookieService.get('user');
+  };
+
+  // Get JWT from Cookie
+  public getJWTfromCookie(): void {
+    const jwtCookie = this.getJwtCookie();
+
+    if (jwtCookie !== null && jwtCookie !== undefined) {  // If successful set of JWT
+      console.log('jwt cookie found');
+      // Set JWT in globals
+      this.globals.jwtToken = jwtCookie;
+      this.globals.authUser = this.getAuthUserCookie();
+      this.globals.apiToken = this.getApiTokenCookie();
+
+      // remove jwt from local storage
+      this.cookieService.delete('jwt');
+      this.cookieService.delete('user');
+      this.cookieService.delete('apiToken');
+
+      // Show logged in banner
+      $('#loggedIn').toast('show');
+    } else {
+      console.log('jwt cookie not found');
+    }
+  };
+
   // Sidebar Toggle
   public toggleClick() {
     this.toggleEmitter.emit();
@@ -118,7 +149,14 @@ export class SharedService {
   // JWT Handling
   //// Set JWT on log in to be tracked when checking for authentication
   public setJWTonLogIn(): void {
-    if (localStorage.getItem('jwt') !== null) {  // If successful set of JWT
+    const jwtCookie = this.getJwtCookie();
+
+    //if (localStorage.getItem('jwt') !== null) {  // If successful set of JWT
+    if (jwtCookie !== null && jwtCookie !== undefined) {  // If successful set of JWT
+
+      console.log('gear manager login found');
+      
+      // wait for 1 sec to propogate after logging in
       setTimeout(() => {
 
         // Set JWT in globals
@@ -126,36 +164,22 @@ export class SharedService {
         this.globals.authUser = localStorage.getItem('user');
         this.globals.apiToken = localStorage.getItem('apiToken');
 
-        // Show logged in banner
-        $('#loggedIn').toast('show');
-
-        try {
-
-          // check if the cookie exists
-          //if (this.getCookie('jwt') !== undefined) {
-          if (this.getJwtCookie() !== undefined) {
-
-            console.log('cookies exists');
-
-            // display the cookie
-            console.log('jwt cookie:', this.getJwtCookie());
-
-          } else {
-
-            console.log('cookies do not exist');
-
-          }
-
-        } catch (e) {
-          console.log('error verifying cookies on setJWTonLogIn:', e);
-        }
-
         // remove jwt from local storage
         localStorage.removeItem('jwt');
         localStorage.removeItem('user');
         localStorage.removeItem('apiToken');
 
+        console.log('jwt cookie is datatype: ' + typeof jwtCookie);
+        console.log('jwt cookie length is: ', jwtCookie.length);
+        console.log('jwt cookie: ' + jwtCookie);
+
+        // Show logged in banner
+        $('#loggedIn').toast('show');
+
       }, 1000);  // Wait for 1 sec to propogate after logging in
+
+    } else {
+      console.log('gear manager login not found');
     }
   }
 
@@ -318,4 +342,32 @@ export class SharedService {
     this.location.replaceState(`${normalizedURL}/${row[IDname]}`);
   };
 
+}
+
+public getCookie(name: string) {
+  const ca: Array<string> = document.cookie.split(';');
+  const caLen: number = ca.length;
+  const cookieName = `${name}=`;
+  let c: string;
+
+  for (let i = 0; i < caLen; i += 1) {
+    c = ca[i].replace(/^\s+/g, '');
+    if (c.indexOf(cookieName) === 0) {
+      return c.substring(cookieName.length, c.length);
+    }
+  }
+  return '';
+}
+
+public deleteCookie(name) {
+  this.setCookie(name, '', -1);
+
+}
+
+public setCookie(name: string, value: string, expireDays: number, path: string = '') {
+  const d: Date = new Date();
+  d.setTime(d.getTime() + expireDays * 24 * 60 * 60 * 1000);
+  const expires: string = `expires=${d.toUTCString()}`;
+  const cpath: string = path ? `; path=${path}` : '';
+  document.cookie = `${name}=${value}; ${expires}${cpath}`;
 }
