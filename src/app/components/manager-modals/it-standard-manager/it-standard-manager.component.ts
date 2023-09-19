@@ -393,15 +393,10 @@ export class ItStandardManagerComponent implements OnInit {
         console.log("setting approval expiration date to: ", data.endOfLifeDate); //DEBUG
         
         // set the endOfLifeDate to the value from the database
-        //this.endOfLifeDate = new Date(String(data.endOfLifeDate).replace(/-/g, '\/').replace(/T.+/, ''));
-
-
-        //console.log("new approval expiration date is: ", this.endOfLifeDate); //DEBUG
-
-        //let newEndOfLifeDate = new Date(this.endOfLifeDate);
+        this.endOfLifeDate = new Date(data.endOfLifeDate);
 
         // Set Approval Expiration Date on Date Picker
-        //$('#itStandAprvExp').datepicker('setDate', this.endOfLifeDate);
+        $('#itStandAprvExp').datepicker('setDate', this.endOfLifeDate);
       }
     } catch (error) {
       //console.log("setApprovalExpirationDate error: ", error); //DEBUG
