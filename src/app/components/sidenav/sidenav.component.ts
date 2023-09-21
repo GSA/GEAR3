@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+// import { MatSidenav } from '@angular/material/sidenav';
 import { SharedService } from '@services/shared/shared.service';
 
 // Declare jQuery symbol
@@ -37,7 +38,7 @@ export class SidenavComponent implements OnInit {
     });
   }
 
-  _opened: boolean = false;
+  _opened: boolean = true;
   _mode: string = 'push';
   _position: string = 'left';
   _dock: boolean = true;
@@ -88,5 +89,5 @@ export class SidenavComponent implements OnInit {
   _onBackdropClicked(): void {
     console.info('Backdrop clicked');
   }
-
+  
 }

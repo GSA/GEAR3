@@ -7,10 +7,14 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { SidebarModule } from 'ng-sidebar'; // Sidebar Module
+// import { SidebarModule } from 'ng-sidebar'; // Sidebar Module
 import { PdfViewerModule } from 'ng2-pdf-viewer'; // PDF Viewer
 import { NgxChartsModule } from '@swimlane/ngx-charts'; // Visualizations
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { MatCardModule } from '@angular/material/card';
+
 
 // Components
 import { TopNavbarComponent } from './components/top-navbar/top-navbar.component';
@@ -133,7 +137,10 @@ import { Globals } from './common/globals';
     NgxChartsModule,
     PdfViewerModule,
     ReactiveFormsModule,
-    SidebarModule.forRoot(),
+    // SidebarModule.forRoot(),
+    MatSidenavModule,
+    MatListModule,
+    MatCardModule,
   ],
   providers: [Globals],
   bootstrap: [AppComponent],

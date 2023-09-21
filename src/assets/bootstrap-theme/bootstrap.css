@@ -5048,6 +5048,10 @@ input[type="button"].btn-block {
   border-top: 1px solid rgba(0, 0, 0, 0.125);
 }
 
+.ng-star-inserted {
+  display: none;
+}
+
 .card-header-tabs {
   margin-right: -0.625rem;
   margin-bottom: -0.75rem;

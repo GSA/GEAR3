@@ -1,0 +1,308 @@
+<!-- Beginning of new sidebar -->
+<div
+  (mouseenter)="toggleSidebar()"
+  (mouseleave)="toggleSidebar()"
+  class="side-bar collapse"
+  style="margin-left: -3.8%"
+>
+  <!-- <div class="logo-name-wrapper"> -->
+  <!-- </div> -->
+
+  <!-- First main sidebar item -->
+  <ul class="features-list">
+    <li
+      (click)="toggleSub(1)"
+      class="features-item inbox"
+      style="background-color: #339054"
+    >
+      <i class="bx bxs-extension features-item-icon inbox-icon"></i>
+      <span class="features-item-text">IT Strategy</span>
+    </li>
+    <!-- First sub menu list  -->
+    <div [class]="ItemList1" id="subMenu">
+      <li
+        routerLink="/strategic_framework"
+        class="features-item-sub"
+        style="background-color: rgb(70, 70, 70)"
+      >
+        <i class="features-item-icon"></i>
+        <span class="features-item-text">IT Strategic Framework</span>
+      </li>
+
+      <li
+        routerLink="/investments"
+        class="features-item-sub"
+        style="background-color: rgb(70, 70, 70)"
+      >
+        <i class="features-item-icon"></i>
+        <span class="features-item-text">IT Investments</span>
+      </li>
+
+      <li
+        onClick="location.href='https://insite.gsa.gov/directives-library/#GSAIT'"
+        class="features-item-sub"
+        style="background-color: rgb(70, 70, 70)"
+      >
+        <i class="features-item-icon"></i>
+        <span class="features-item-text">IT Policies</span>
+        <i class="bx bx-link-external"></i>
+      </li>
+    </div>
+
+    <!-- Second main sidebar item -->
+    <li
+      (click)="toggleSub(2)"
+      class="features-item draft"
+      style="background-color: #214598"
+    >
+      <i class="bx bx-sitemap features-item-icon"></i>
+      <span class="features-item-text">GSA Enterprise</span>
+    </li>
+    <!-- Second sub menu list -->
+    <div [class]="ItemList2" id="subMenu">
+      <li
+        routerLink="/capabilities_model"
+        class="features-item-sub"
+        style="background-color: rgb(70, 70, 70)"
+      >
+        <i class="features-item-icon"></i>
+        <span class="features-item-text">Business Capabiltiy Model</span>
+      </li>
+
+      <li
+        routerLink="/capabilities"
+        class="features-item-sub"
+        style="background-color: rgb(70, 70, 70)"
+      >
+        <i class="features-item-icon"></i>
+        <span class="features-item-text">Buisness Capability List</span>
+      </li>
+
+      <li
+        routerLink="/org_chart"
+        class="features-item-sub"
+        style="background-color: rgb(70, 70, 70)"
+      >
+        <i class="features-item-icon"></i>
+        <span class="features-item-text">Organization Chart</span>
+      </li>
+
+      <li
+        routerLink="/organizations"
+        class="features-item-sub"
+        style="background-color: rgb(70, 70, 70)"
+      >
+        <i class="features-item-icon"></i>
+        <span class="features-item-text">Organization List</span>
+      </li>
+
+      <li
+        routerLink="/website_service_category"
+        class="features-item-sub"
+        style="background-color: rgb(70, 70, 70)"
+      >
+        <i class="features-item-icon"></i>
+        <span class="features-item-text">Website Service Category List</span>
+      </li>
+    </div>
+
+    <!-- Third main sidebar item -->
+    <li
+      (click)="toggleSub(3)"
+      class="features-item star"
+      style="background-color: #c9302c"
+    >
+      <i class="bx bx-laptop features-item-icon"></i>
+      <span class="features-item-text">Business Systems</span>
+    </li>
+    <!-- Third sub menu list -->
+    <div [class]="ItemList3" id="subMenu">
+      <li
+        routerLink="/systems"
+        class="features-item-sub"
+        style="background-color: rgb(70, 70, 70)"
+      >
+        <i class="features-item-icon"></i>
+        <span class="features-item-text">Business Systems</span>
+      </li>
+
+      <li
+        routerLink="/systems_TIME"
+        class="features-item-sub"
+        style="background-color: rgb(70, 70, 70)"
+      >
+        <i class="features-item-icon"></i>
+        <span class="features-item-text">TIME Report</span>
+      </li>
+
+      <li
+        routerLink="/records_mgmt"
+        class="features-item-sub"
+        style="background-color: rgb(70, 70, 70)"
+      >
+        <i class="features-item-icon"></i>
+        <span class="features-item-text">Records Management</span>
+      </li>
+
+      <li
+        routerLink="/websites"
+        class="features-item-sub"
+        style="background-color: rgb(70, 70, 70)"
+      >
+        <i class="features-item-icon"></i>
+        <span class="features-item-text">GSA Websites</span>
+      </li>
+    </div>
+
+    <!-- Fourth main sidebar item -->
+    <li
+      (click)="toggleSub(4)"
+      class="features-item sent"
+      style="background-color: #ec971f"
+    >
+      <i class="bx bx-shield-quarter features-item-icon"></i>
+      <span class="features-item-text">Security</span>
+    </li>
+    <!-- Fourth sub menu list -->
+    <div [class]="ItemList4">
+      <li
+        routerLink="/FISMA"
+        class="features-item-sub"
+        style="background-color: rgb(70, 70, 70)"
+      >
+        <i class="features-item-icon"></i>
+        <span class="features-item-text">FISMA Systems Inventory</span>
+      </li>
+
+      <li
+        routerLink="/FISMA_POC"
+        class="features-item-sub"
+        style="background-color: rgb(70, 70, 70)"
+      >
+        <i class="features-item-icon"></i>
+        <span class="features-item-text">FISMA System POCs</span>
+      </li>
+    </div>
+
+    <!-- Fifth main sidebar item -->
+    <li
+      (click)="toggleSub(5)"
+      class="features-item trash"
+      style="background-color: #076464"
+    >
+      <i class="bx bxs-microchip features-item-icon"></i>
+      <span class="features-item-text">Technologies</span>
+    </li>
+    <!-- Fifth sub menu list -->
+    <div [class]="ItemList5">
+      <li
+        routerLink="/it_standards"
+        class="features-item-sub"
+        style="background-color: rgb(70, 70, 70)"
+      >
+        <i class="features-item-icon"></i>
+        <span class="features-item-text">IT Standards List</span>
+      </li>
+
+      <li
+        onClick="location.href='https://insite.gsa.gov/portal/content/500499'"
+        class="features-item-sub"
+        style="background-color: rgb(70, 70, 70)"
+      >
+        <i class="features-item-icon"></i>
+        <span class="features-item-text">IT standards Approval Process</span>
+        <i class="bx bx-link-external"></i>
+      </li>
+    </div>
+
+    <!-- Sixth main sidebar item -->
+    <li
+      (click)="toggleSub(6)"
+      class="features-item spam"
+      style="background-color: #800080"
+    >
+      <i class="bx bx-vector features-item-icon"></i>
+      <span class="features-item-text">Enterprise Architecture</span>
+    </li>
+    <!-- Sixth sub menu list -->
+    <div [class]="ItemList6">
+      <li
+        routerLink="/artifacts"
+        class="features-item-sub"
+        style="background-color: rgb(70, 70, 70)"
+      >
+        <i class="features-item-icon"></i>
+        <span class="features-item-text">Artifacts</span>
+      </li>
+
+      <li
+        routerLink="/gear_model"
+        class="features-item-sub"
+        style="background-color: rgb(70, 70, 70)"
+      >
+        <i class="features-item-icon"></i>
+        <span class="features-item-text">GEAR Model Diagram</span>
+      </li>
+    </div>
+
+    <br />
+
+    <!-- Seventh main sidebar item -->
+    <li
+      routerLink="/forms_glossary"
+      class="features-item spam"
+      style="background-color: #187aa3"
+    >
+      <i class="bx bxs-file-doc features-item-icon"></i>
+      <span class="features-item-text">Access Forms & Glossary</span>
+    </li>
+  </ul>
+  <!-- Page content -->
+  <div ng-sidebar-content>
+    <main role="main">
+      <div class="container-fluid my-3">
+        <div class="col-md-12">
+          <!-- Logged In Notification -->
+          <div
+            id="loggedIn"
+            class="container toast hide rounded-lg w-25"
+            role="alert"
+            aria-live="assertive"
+            aria-atomic="true"
+            data-delay="3000"
+          >
+            <div id="loggedInCollapse" class="collapse">
+              <div class="toast-header">
+                <i class="fa fa-sign-in-alt mr-2 fa-fw"></i>
+                <strong class="mr-auto text-success"
+                  >You have successfully logged into GEAR Manager!</strong
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Logged Out Notification -->
+          <div
+            id="loggedOut"
+            class="container toast hide rounded-lg w-25"
+            role="alert"
+            aria-live="assertive"
+            aria-atomic="true"
+            data-delay="3000"
+          >
+            <div id="loggedOutCollapse" class="collapse">
+              <div class="toast-header">
+                <i class="fas fa-sign-out-alt mr-2 fa-fw"></i>
+                <strong class="mr-auto text-warning"
+                  >You have been logged out of GEAR Manager!</strong
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- End of new sidebar -->
+  </div>
+</div>

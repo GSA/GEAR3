@@ -1,32 +1,21 @@
 <!-- Container for sidebar(s) + page content -->
-<ng-sidebar-container (onBackdropClicked)="_onBackdropClicked()">
-  <ng-sidebar
+<mat-sidenav-container (onBackdropClicked)="_onBackdropClicked()">
+  <mat-sidenav
     id="sidebar"
-    [(opened)]="_opened"
-    [mode]="_mode"
-    [keyClose]="_keyClose"
+    mode="side"
     [position]="_position"
-    [dock]="_dock"
-    [dockedSize]="_dockedSize"
-    [autoCollapseHeight]="_autoCollapseHeight"
-    [autoCollapseWidth]="_autoCollapseWidth"
-    [closeOnClickOutside]="_closeOnClickOutside"
-    [closeOnClickBackdrop]="_closeOnClickBackdrop"
-    [showBackdrop]="_showBackdrop"
-    [animate]="_animate"
-    [trapFocus]="_trapFocus"
+    [(opened)]="_opened"
     [autoFocus]="_autoFocus"
-    [sidebarClass]="'w-15'"
-    [ariaLabel]="'sideNavbar'"
     (onOpenStart)="_onOpenStart()"
     (onOpened)="_onOpened()"
     (onCloseStart)="_onCloseStart()"
-    (onClosed)="_onClosed()"
+    (onClosed)="_onClosed"
     (onTransitionEnd)="_onTransitionEnd()"
     (mouseenter)="_opened = true"
     (mouseleave)="_opened = false"
+
   >
-    <ul id="sideMenu" class="list-group">
+    <mat-nav-list id="sideMenu" class="list-group">
       <!-- Strategy -->
       <li>
         <a
@@ -324,13 +313,13 @@
           </div>
         </a>
       </li>
-    </ul>
-  </ng-sidebar>
+    </mat-nav-list>
+  </mat-sidenav>
 
   <!-- Page content -->
-  <div ng-sidebar-content>
-    <main role="main">
-      <div class="container-fluid my-3">
+  <mat-sidenav-content>
+    <main role="main"> 
+      <div class="container-fluid my-2">
         <div class="col-md-12">
           <!-- Logged In Notification -->
           <div
@@ -371,11 +360,11 @@
           </div>
 
           <!-- Components Content -->
-          <router-outlet></router-outlet>
         </div>
       </div>
     </main>
-  </div>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
   <!-- End Page Content -->
-</ng-sidebar-container>
+</mat-sidenav-container>
 <!-- End Side Navbar -->

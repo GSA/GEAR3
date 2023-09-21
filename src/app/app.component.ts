@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
 
     // SideNavbar Offset
     let footerElem: HTMLElement = document.getElementById('footer');
-    let sideNavElem: any = document.getElementsByTagName('ng-sidebar-container')[0];
+    let sideNavElem: any = document.getElementsByTagName('mat-sidenav-container')[0];
     sideNavElem.style['height'] = `${window.innerHeight - topNavElem.offsetHeight - footerElem.offsetHeight}px`;
   }
 }

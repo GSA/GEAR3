@@ -1,6 +1,6 @@
 /* Sidebar */
 
-ng-sidebar-container {
+mat-sidenav-container {
   /* Position needed to render sidebar properly */
   position: absolute;
   /* Behind the top navbar */
@@ -9,16 +9,27 @@ ng-sidebar-container {
   overflow-y: auto;
 }
 
+mat-sidenav {
+  width: 280px;
+}
+
+mat-sidenav-content {
+  display: block;
+  /* width: 100%; */
+  /* margin: 0; */
+}
+
 /* Side Menu item*/
 
-ng-sidebar .list-group a {
+mat-sidenav .list-group a {
   color: white;
+  font-size: .9rem;
 }
 
 /* Give some more space for the text and icons */
 
 .list-group-item {
-  padding-right: 15px;
+  padding-right: 20px;
 }
 
 /* Fix GEAR Manager Login footer to bottom */
@@ -34,3 +45,5 @@ ng-sidebar .list-group a {
 .toast {
   max-width: 50% !important;
 }
+
+
