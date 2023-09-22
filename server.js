@@ -127,12 +127,72 @@ TODO: is this actually used by the admin app? or is it a dev tool?
 ********************************************************************/
 app.get('/verify',
   (req, res, next) => {
-    passport.authenticate('jwt', function (err, user, info) {
-      res.json(req.user);
-    });
-    // TODO: validate exp, structure etc. then pass along
+    const headers = req.headers;
+    // get ALL cookie from the request
+    const pairs = String(headers.cookie).split(';');
+    const cookies = {};
+    // parse the cookies into an object
+    for (let i = 0; i < pairs.length; i++) {
+      const pair = pairs[i].split('=');
+      cookies[(pair[0] + '').trim()] = unescape(pair.slice(1).join('='));
+    }
+    //console.log('cookies = ', cookies); // debug
+    // get the GSAGEARManUN cookie value
+    const userName = cookies.GSAGEARManUN;
+    // get the GSAGEARAPIT cookie value
+    const apiToken = cookies.GSAGEARAPIT;
+    if (apiToken) {
+      const query = `select count(*) as cnt from gear_acl.logins where email = '${userName}' and jwt = '${apiToken}' and date_add(expireDate, interval 1 day) > now();`;
+      // query the database for the api token
+      const db = mysql.createConnection(dbCredentials);
+      db.connect();
+      //console.log('query = ', query); // debug
+      db.query(query,
+        (err, results, fields) => {
+          if (err) {
+            // send the error to the client
+            res.status(500).json({ message: err });
+          } else {
+            if (results[0].cnt === 1) {
+              // send the response with the cookies
+              res.status(200).json(cookies);
+            } else {
+              //console.log('cnt = ', results[0].cnt); // debug
+              // send the response with no cookies
+              res.status(401).json({ message: 'invalid token' });
+            }
+          }
+        }
+      );
+    } else {
+      // send empty response
+      res.status(200).json({ message: 'no credentials found' });
+    }
   }
 );
+app.post('/logout', (req, res) => {
+  const headers = req.headers;
+  // remove ALL cookies from the response
+  const pairs = String(headers.cookie).split(';');
+  const cookies = {};
+  // parse the cookies into an object
+  for (let i = 0; i < pairs.length; i++) {
+    const pair = pairs[i].split('=');
+    cookies[(pair[0] + '').trim()] = unescape(pair.slice(1).join('='));
+  }
+  // get the GSAGEARManUN cookie value
+  const userName = cookies.GSAGEARManUN;
+  // remove ALL cookies from the response
+  for (let cookie in cookies) {
+    res.clearCookie(cookie);
+  }
+  // log the logout to log.event
+  const db = mysql.createConnection(dbCredentials);
+  db.connect();
+  db.query(`insert into gear_log.event (Event, User, DTG) values ('GEAR Manager - Logged Out', '${userName}', now());`);
+  // send the response with no cookies
+  res.status(200).json({ message: 'logged out' });
+});
 /********************************************************************
 3. SAML IDENTITY PROVIDER (IdP) POST-BACK HANDLER (USES INLINE HTML)
 ********************************************************************/
@@ -145,9 +205,10 @@ app.post(samlConfig.path,
     db.query(`CALL gear_acl.get_user_perms('${samlProfile.nameID}');`,
       (err, results, fields) => {
         if (err) {
-          // log call return error
+          // log error returned by get_user_perms() to log.event
           db.query(`insert into gear_log.event (Event, User, DTG) values ('GEAR Manager - Login Error', '${samlProfile.nameID}', now());`);
           
+          // send the error to the client
           res.status(500);
           res.json({ error: err });
         }
@@ -156,7 +217,7 @@ app.post(samlConfig.path,
           let userLookupStatus = ``;
 
           if (results[0].length === 0) {
-            // log no data returned
+            // log user not found to log.event
             db.query(`insert into gear_log.event (Event, User, DTG) values ('GEAR Manager - Unable to Verify User', '${samlProfile.nameID}', now());`);
             
             userLookupStatus = `Unable to verify user, <strong>${samlProfile.nameID}</strong><br/><a href="${process.env.SAML_ENTRY_POINT}">TRY AGAIN</a>`;
@@ -175,26 +236,27 @@ app.post(samlConfig.path,
             auditID: results[0][0].AuditID,
           };
 
-          // GEAR MANAGER TOKEN GENERATED HERE TO BE USED IN INLINE HTML PAGE NEXT
+          // sign and create the JWT token for GEAR Manager
           const token = jsonwebtoken.sign(jwt, process.env.SECRET);
 
-          // API SECURITY TOKEN ENCRYPTED HERE TO BE USED IN INLINE HTML PAGE NEXT
+          // create the key used to encrypt the API security token
           const key = process.env.SECRET + jwt.exp.toString();
 
-          // 
-          const encryptJWT = CryptoJS.AES.encrypt(`${jwt.auditID}`, key);
+          // encrypt and create the API security token
+          const apiToken = CryptoJS.AES.encrypt(`${jwt.auditID}`, key);
 
-          // STORE ENCRYPTED API SECURITY TOKEN IN DB
-          db.query(`CALL gear_acl.setJwt ('${jwt.auditID}', '${encryptJWT}');`,
+          // set the JWT in the database
+          db.query(`CALL gear_acl.setJwt ('${jwt.auditID}', '${apiToken}');`,
           (err) => {
             if (err) {
               console.log(err);
             }
           });
 
-
+          // set the redirect path to the admin app root 
           let adminRoute = (process.env.SAML_HOST === 'localhost') ? 'http://localhost:3000' : '/#';
 
+          // create the HTML to redirect to GEAR Manager
           html =
             `
 <html>
@@ -203,9 +265,6 @@ app.post(samlConfig.path,
     <script>
       const path = localStorage.redirectPath || '';
       delete localStorage.redirectPath;
-      localStorage.jwt = '${token}';
-      localStorage.apiToken = '${encryptJWT}';
-      localStorage.user = '${results[0][0].AuditID}';
       localStorage.samlEntryPoint = '${process.env.SAML_ENTRY_POINT}';
       window.location.replace('${adminRoute}' + path);
     </script>
@@ -218,22 +277,33 @@ app.post(samlConfig.path,
 
           // set the cookie expiration date
           let date = new Date();
-
           // set the cookie expiration date to 1 day after today
           date.setTime(date.getTime() + (1 * 24 * 60 * 60 * 1000)); // days * hours * minutes * seconds * milliseconds
-
           // set the cookie expiration date to 00:00:00
           date.setHours(0, 0, 0, 0);
-          
-          // set the cookie in the browser
-          document.cookie = name + "=" + (value || "") + expires + "; path=/; domain=.gsa.gov; secure;";
+          // get milliseconds from now to midnight
+          let msToMidnight = date.getTime() - Date.now();
+
+          // set the cookie options
+          let cookieOptions = { httpOnly : true, maxAge : msToMidnight };
 
           // set the cookie in the browser
-          res.cookie('jwt', `${token}`, { /*httpOnly : true,*/ secure: true, domain: '.ea.gsa.gov', expires: date.toUTCString() });
-          res.cookie('apiToken', `${encryptJWT}`, { httpOnly: true });
-          res.cookie('gUser', `${results[0][0].AuditID}`, { httpOnly: true });
-          res.cookie('samlEntryPoint', process.env.SAML_ENTRY_POINT, { httpOnly: true });
+          if (process.env.SAML_HOST !== 'localhost') {
+            cookieOptions.secure = true;
+          }
+
+          // divide the token into 2 cookies to avoid cookie size limit
+          let token1 = token.substring(0, 2000);
+          let token2 = token.substring(2000, token.length);
+
+          // set the cookie in the browser
+          res.cookie('GSAGEARManTK1', `"${token1}"`, cookieOptions); 
+          res.cookie('GSAGEARManTK2', `"${token2}"`, cookieOptions);
+          res.cookie('GSAGEARAPIT', `${apiToken}`, cookieOptions); 
+          res.cookie('GSAGEARManUN', `${results[0][0].AuditID}`, cookieOptions); 
+          res.cookie('samlEntryPoint', `${process.env.SAML_ENTRY_POINT}`, cookieOptions);
           
+          // send the response
           res.send(html);
         }
       }
@@ -357,6 +427,7 @@ const putData = async data => {
  * every Monday at 07:00 Eastern Time
 */
 const fastcsv = require("fast-csv");
+const { consoleTestResultHandler } = require('tslint/lib/test.js');
 
 cron.schedule('0 7 * * WED', () => {
   let stream = fs.createReadStream("./pocs/GSA_Pocs.csv");

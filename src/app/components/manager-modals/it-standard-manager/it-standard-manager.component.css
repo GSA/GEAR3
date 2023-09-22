@@ -3,7 +3,7 @@
   }
   .disabledDivProduct {
       pointer-events: none;
-      opacity: 0.2;
+      opacity: 0.5;
   }
 
 #divVersion{
@@ -11,7 +11,7 @@
   }
   .disabledDivVersion {
       pointer-events: none;
-      opacity: 0.2;
+      opacity: 0.5;
   }
 
 #divRelease{
@@ -19,7 +19,7 @@
   }
   .disabledDivRelease {
       pointer-events: none;
-      opacity: 0.2;
+      opacity: 0.5;
   }
 
 #divOldName{
@@ -27,5 +27,13 @@
   }
   .disabledDivOldName {
       pointer-events: none;
-      opacity: 0.2;
+      opacity: 0.8;
+  }
+
+#divEndOfLifeDate{
+    background-color: inherit;
+  }
+  .disabledDivEndOfLifeDate {
+      pointer-events: none;
+      opacity: 0.8;
   }

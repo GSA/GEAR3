@@ -6,7 +6,8 @@ import {Router} from '@angular/router';
 import {Globals} from '@common/globals';
 
 import jwtDecode from 'jwt-decode';
-import { CookieService } from 'ngx-cookie-service';
+import { HttpClient } from '@angular/common/http';
+import { set } from 'd3';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -40,43 +41,9 @@ export class SharedService {
     private globals: Globals,
     private location: Location,
     private router: Router,
-    private cookieService: CookieService) {
+    private http: HttpClient
+    ) {
   }
-
-  getJwtCookie(): string | undefined {
-    return this.cookieService.get('jwt');
-  };
-
-  getApiTokenCookie(): string | undefined {
-    return this.cookieService.get('apiToken');
-  };
-
-  getAuthUserCookie(): string | undefined {
-    return this.cookieService.get('user');
-  };
-
-  // Get JWT from Cookie
-  public getJWTfromCookie(): void {
-    const jwtCookie = this.getJwtCookie();
-
-    if (jwtCookie !== null && jwtCookie !== undefined) {  // If successful set of JWT
-      console.log('jwt cookie found');
-      // Set JWT in globals
-      this.globals.jwtToken = jwtCookie;
-      this.globals.authUser = this.getAuthUserCookie();
-      this.globals.apiToken = this.getApiTokenCookie();
-
-      // remove jwt from local storage
-      this.cookieService.delete('jwt');
-      this.cookieService.delete('user');
-      this.cookieService.delete('apiToken');
-
-      // Show logged in banner
-      $('#loggedIn').toast('show');
-    } else {
-      console.log('jwt cookie not found');
-    }
-  };
 
   // Sidebar Toggle
   public toggleClick() {
@@ -149,52 +116,56 @@ export class SharedService {
   // JWT Handling
   //// Set JWT on log in to be tracked when checking for authentication
   public setJWTonLogIn(): void {
-    const jwtCookie = this.getJwtCookie();
+    this.verifyCookies();
+  }
 
-    //if (localStorage.getItem('jwt') !== null) {  // If successful set of JWT
-    if (jwtCookie !== null && jwtCookie !== undefined) {  // If successful set of JWT
-
-      console.log('gear manager login found');
-      
-      // wait for 1 sec to propogate after logging in
-      setTimeout(() => {
-
-        // Set JWT in globals
-        this.globals.jwtToken = localStorage.getItem('jwt');
-        this.globals.authUser = localStorage.getItem('user');
-        this.globals.apiToken = localStorage.getItem('apiToken');
-
-        // remove jwt from local storage
-        localStorage.removeItem('jwt');
-        localStorage.removeItem('user');
-        localStorage.removeItem('apiToken');
-
-        console.log('jwt cookie is datatype: ' + typeof jwtCookie);
-        console.log('jwt cookie length is: ', jwtCookie.length);
-        console.log('jwt cookie: ' + jwtCookie);
-
-        // Show logged in banner
-        $('#loggedIn').toast('show');
-
-      }, 1000);  // Wait for 1 sec to propogate after logging in
-
-    } else {
-      console.log('gear manager login not found');
+  verifyCookies() : void {    
+    //console.log('requesting cookies...'); // debug
+    this.http.get('/verify', {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+    .subscribe(response => {
+      //console.log('verifying cookies response: ', response); // debug
+      const cookies : any = response;
+      try {
+        if (cookies.GSAGEARAPIT && cookies.GSAGEARManUN) {
+          //console.log('GEAR Manager cookie found in response', cookies); // debug
+          // Set JWT in globals
+          this.globals.jwtToken = cookies.GSAGEARAPIT;
+          this.globals.authUser = cookies.GSAGEARManUN;
+          this.globals.apiToken = cookies.GSAGEARAPIT;
+          // Show logged in banner
+          $('#loggedIn').toast('show');
+        } else {
+          //console.log('GEAR Manager cookie NOT found in response: ', cookies); // debug
+          this.globals.jwtToken = '';
+          this.globals.authUser = '';
+          this.globals.apiToken = '';
+        }
+      } catch (error) {
+        console.error('An error occurred while /verify response: ', error);
+        //console.log('Error Response: ', cookies); // debug
+      }
     }
+    , error => {
+      console.error('An error occurred while verifying cookies', error);
+    });
   }
 
   //// Check if user is authenticated to GEAR Manager
   public get loggedIn(): boolean {
 
-    if (this.globals.jwtToken === "" ||
-        this.globals.jwtToken === null || 
-        this.globals.authUser === "" ||
-        this.globals.authUser === null) {
+    if (this.globals.jwtToken === "" || this.globals.jwtToken === null ||
+        this.globals.apiToken === "" || this.globals.apiToken === null || 
+        this.globals.authUser === "" || this.globals.authUser === null) {
       return false;
     }
 
     if (this.globals.jwtToken/* === localStorage.getItem('jwt')*/ &&
-        this.globals.authUser/* === localStorage.getItem('user')*/) {
+        this.globals.authUser/* === localStorage.getItem('user')*/ &&
+        this.globals.apiToken/* === localStorage.getItem('apiToken')*/) {
       return true;
     }
 
@@ -213,8 +184,28 @@ export class SharedService {
 
   //// Remove JWT and show log out banner when logging out of GEAR Manager
   public logoutManager() {
-    localStorage.removeItem('jwt');
-    $('#loggedOut').toast('show');
+    // remove cookies
+    this.http.post('/logout', {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+    .subscribe(response => {
+      const cookies : any = response;
+      if (cookies.GSAGEARAPIT || cookies.GSAGEARManUN) {
+        console.error('Logout failed to complete');
+      } else {
+        //console.log('Logout SUCESS:', cookies); // debug
+        // remove globals
+        this.globals.jwtToken = '';
+        this.globals.authUser = '';
+        this.globals.apiToken = '';
+        // show logged out banner
+        $('#loggedOut').toast('show');
+      }
+    }, error => {
+      console.error('An error occurred while logging out Gear Manager', error); 
+    });
   };
 
 
@@ -342,32 +333,47 @@ export class SharedService {
     this.location.replaceState(`${normalizedURL}/${row[IDname]}`);
   };
 
-}
+  // cookies functions ---------------------------------------
 
-public getCookie(name: string) {
-  const ca: Array<string> = document.cookie.split(';');
-  const caLen: number = ca.length;
-  const cookieName = `${name}=`;
-  let c: string;
-
-  for (let i = 0; i < caLen; i += 1) {
-    c = ca[i].replace(/^\s+/g, '');
-    if (c.indexOf(cookieName) === 0) {
-      return c.substring(cookieName.length, c.length);
+  // get a cookie by name
+  public getCookie(name: string) {
+    const ca: Array<string> = document.cookie.split(';');
+    const caLen: number = ca.length;
+    const cookieName = `${name}=`;
+    let c: string;
+  
+    for (let i = 0; i < caLen; i += 1) {
+      c = ca[i].replace(/^\s+/g, '');
+      if (c.indexOf(cookieName) === 0) {
+        return c.substring(cookieName.length, c.length);
+      }
     }
+    return '';
   }
-  return '';
-}
+  
+  // delete a cookie by name
+  public deleteCookie(name) {
+    this.setCookie(name, '', -1);
+  }
+  
+  // set a cookie
+  public setCookie(name: string, value: string, expireDays: number, path: string = '') {
+    const d: Date = new Date();
+    d.setTime(d.getTime() + expireDays * 24 * 60 * 60 * 1000);
+    const expires: string = `expires=${d.toUTCString()}`;
+    const cpath: string = path ? `; path=${path}` : '';
+    document.cookie = `${name}=${value}; ${expires}${cpath}`;
+  }
 
-public deleteCookie(name) {
-  this.setCookie(name, '', -1);
+  // get a list of all cookies
+  public getCookies() {
+    const pairs = document.cookie.split(';');
+    const cookies = {};
+    for (let i = 0; i < pairs.length; i++) {
+      const pair = pairs[i].split('=');
+      cookies[(pair[0] + '').trim()] = unescape(pair.slice(1).join('='));
+    }
+    return cookies;
+  }
 
-}
-
-public setCookie(name: string, value: string, expireDays: number, path: string = '') {
-  const d: Date = new Date();
-  d.setTime(d.getTime() + expireDays * 24 * 60 * 60 * 1000);
-  const expires: string = `expires=${d.toUTCString()}`;
-  const cpath: string = path ? `; path=${path}` : '';
-  document.cookie = `${name}=${value}; ${expires}${cpath}`;
 }

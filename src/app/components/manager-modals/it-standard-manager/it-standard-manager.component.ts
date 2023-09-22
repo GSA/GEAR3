@@ -24,6 +24,7 @@ export class ItStandardManagerComponent implements OnInit {
     tcSoftwareProduct: new FormControl(null, [Validators.required]),
     tcSoftwareVersion: new FormControl(null, [Validators.required]),
     tcSoftwareRelease: new FormControl(),
+    tcEndOfLifeDate: new FormControl(),
     itStandStatus: new FormControl(null, [Validators.required]),
     itStandName: new FormControl(),
     itStandPOC: new FormControl(null, [Validators.required]),
@@ -88,7 +89,7 @@ export class ItStandardManagerComponent implements OnInit {
 
   ngOnInit(): void {
 
-    console.log("it-standard-manager.component.ts ngOnInit()"); //DEBUG
+    //console.log("it-standard-manager.component.ts ngOnInit()"); //DEBUG
     
     // Emit setFormDefaults for when edit button is pressed
     if (this.sharedService.itStandardsFormSub == undefined) {
@@ -112,6 +113,9 @@ export class ItStandardManagerComponent implements OnInit {
 
     // disable the old IT Standard Name field
     this.disableOldITStandardName();
+
+    // disable the End of Life Date field
+    this.disableEndOfLifeDate();
 
     // Populate Statuses
     this.apiService.getITStandStatuses().subscribe((data: any[]) => { this.statuses = data });
@@ -164,7 +168,7 @@ export class ItStandardManagerComponent implements OnInit {
 
   setFormDefaults(): void {
 
-    console.log("Setting form defaults"); //DEBUG
+    //console.log("Setting form defaults"); //DEBUG
 
     // Only set status default for creating new record
     const twoYearsLater = new Date();
@@ -185,7 +189,15 @@ export class ItStandardManagerComponent implements OnInit {
         this.aprvExpDate = new Date(this.itStandard.ApprovalExpirationDate);
         $('#itStandAprvExp').datepicker('setDate', this.aprvExpDate);
       } else {
+        this.aprvExpDate = twoYearsLater;
         $('#itStandAprvExp').datepicker('setDate', twoYearsLater);
+      }
+
+      // Set End of Life Date on Date
+      if (this.itStandard.EndOfLifeDate !== null) {
+        this.endOfLifeDate = new Date(this.itStandard.EndOfLifeDate);
+      } else {
+        this.endOfLifeDate = null;
       }
 
       // Parse and find IDs for list of POCs
@@ -201,15 +213,10 @@ export class ItStandardManagerComponent implements OnInit {
       // if Manufacturer is not null, set the Software Product options
       if (this.itStandard.Manufacturer) {
         this.manufacturerChange({ id: this.itStandard.Manufacturer, name: this.itStandard.ManufacturerName });
-        //this.enableSoftwareProduct();
-
         if (this.itStandard.SoftwareProduct) {
           this.softwareProductChange({ id: this.itStandard.SoftwareProduct, name: this.itStandard.SoftwareProductName });
-          //this.enableSoftwareVersion();
-
           if (this.itStandard.SoftwareVersion) {
             this.softwareVersionChange({ id: this.itStandard.SoftwareVersion, name: this.itStandard.SoftwareVersionName });
-            //this.enableSoftwareRelease();
           } else {
             this.disableSoftwareRelease();
           }
@@ -222,9 +229,6 @@ export class ItStandardManagerComponent implements OnInit {
         this.disableSoftwareVersion();
         this.disableSoftwareRelease();
       }
-
-      
-
 
       // Adjust MyView for rendering - could turn this into one line:
       var myView = this.itStandard.Available_through_Myview === 'T' 
@@ -246,6 +250,7 @@ export class ItStandardManagerComponent implements OnInit {
         tcSoftwareProduct: this.itStandard.SoftwareProduct,
         tcSoftwareVersion: this.itStandard.SoftwareVersion,
         tcSoftwareRelease: this.itStandard.SoftwareRelease,
+        tcEndOfLifeDate: formatDate(this.itStandard.EndOfLifeDate, 'MMMM dd, yyyy', 'en-US'),
         itStandStatus: this.sharedService.findInArray(this.statuses, 'Name', this.itStandard.Status),
         itStandName: this.itStandard.Name,
         itStandPOC: pocIDs,
@@ -267,7 +272,7 @@ export class ItStandardManagerComponent implements OnInit {
 
   submitForm() {
     
-    console.log("Submitting form"); //DEBUG
+    //console.log("Submitting form"); //DEBUG
     
     //console.log("Form: ", this.itStandardsForm);  // Debug
 
@@ -336,14 +341,9 @@ export class ItStandardManagerComponent implements OnInit {
 
       // add EndOfLifeDate to payload
       if (this.endOfLifeDate) {
-        this.itStandardsForm.value.tcEndOfLifeDate = this.endOfLifeDate.getFullYear() + '-' + String(this.endOfLifeDate.getMonth() + 1).padStart(2, '0') + '-' + String(this.endOfLifeDate.getDate()).padStart(2, '0');
-        console.log("EndOfLifeDate: ", this.itStandardsForm.value.tcEndOfLifeDate);
-      } else {
-        this.itStandardsForm.value.tcEndOfLifeDate = null;
+        this.itStandardsForm.value.tcEndOfLifeDate = formatDate(this.endOfLifeDate, 'yyyy-MM-dd', 'en-US');
+        //console.log("EndOfLifeDate: ", this.itStandardsForm.value.tcEndOfLifeDate);
       }
-
-
-      //console.log("Form values before committing to database: ", this.itStandardsForm.value); // Debug
 
       // Send data to database
       if (this.createBool) {
@@ -363,11 +363,11 @@ export class ItStandardManagerComponent implements OnInit {
                       })
                   }),
                   (error) => {
-                    console.log("Update after creating IT Standard rejected with " + JSON.stringify(error));
+                    console.log("Update after creating IT Standard rejected with ", JSON.stringify(error));
                   };
               }),
               (error) => {
-                console.log("GET Latest IT Standard rejected with " + JSON.stringify(error));
+                console.log("GET Latest IT Standard rejected with ", JSON.stringify(error));
               };
           });
       } else {
@@ -377,7 +377,7 @@ export class ItStandardManagerComponent implements OnInit {
             this.apiService.getOneITStandard(this.itStandard.ID).toPromise()
               .then(data => { this.itStandDetailRefresh(data[0]) }),
               (error) => {
-                console.log("GET One IT Standard rejected with " + JSON.stringify(error));
+                console.log("GET One IT Standard rejected with ", JSON.stringify(error));
               };
           });
       }
@@ -388,7 +388,7 @@ export class ItStandardManagerComponent implements OnInit {
 
   itStandDetailRefresh(data: any) {
 
-    console.log("Refreshing IT Standard Detail Modal"); //DEBUG
+    //console.log("Refreshing IT Standard Detail Modal"); //DEBUG
 
     // Refresh Table
     $('#itStandardsTable').bootstrapTable('refresh');
@@ -399,33 +399,106 @@ export class ItStandardManagerComponent implements OnInit {
     $('#itStandardDetail').modal('show');
   }
 
+  // handles the endOfLifeDate change event
   setApprovalExpirationDate(data: any) {
 
-    console.log("Setting approval expiration date"); //DEBUG
+    //console.log("Setting approval expiration date"); //DEBUG
 
-    try {
-      if (data.endOfLifeDate  !== '' && data.endOfLifeDate !== null && data.endOfLifeDate !== undefined && data.endOfLifeDate !== 'null' && data.endOfLifeDate !== 'undefined') {
+    setTimeout(() => {
+      try {
         console.log("setting approval expiration date to: ", data.endOfLifeDate); //DEBUG
-
-        let date = new Date(data.endOfLifeDate);
         
-        // set the endOfLifeDate to the value from the database
-        this.endOfLifeDate = date;
+        if (data.endOfLifeDate  !== '' && data.endOfLifeDate !== null && data.endOfLifeDate !== undefined && data.endOfLifeDate !== 'null' && data.endOfLifeDate !== 'undefined') {
 
-        // Set Approval Expiration Date on Date Picker
-        $('#itStandAprvExp').datepicker('setDate', new Date (data.endOfLifeDate));
+          let date = new Date(data.endOfLifeDate);
+          
+          // set the endOfLifeDate to the value from the database
+          this.endOfLifeDate = date;
+
+          // set the aprvExpDate
+          this.aprvExpDate = date;
+
+          // set the value of the endOfLifeDate field
+          this.itStandardsForm.patchValue({ tcEndOfLifeDate: formatDate(this.endOfLifeDate, 'MMMM dd, yyyy', 'en-US') });
+
+          // log the endOfLifeDate as yyyy-mm-dd
+          //console.log("endOfLifeDate: ", formatDate(this.endOfLifeDate, 'yyyy-MM-dd', 'en-US')); //DEBUG
+
+          // Set Approval Expiration Date on Date Picker
+          $('#itStandAprvExp').datepicker('setDate', new Date (data.endOfLifeDate));
+        } else {
+          //console.log("endOfLifeDate data not found"); //DEBUG
+          this.endOfLifeDate = null;
+          this.itStandardsForm.patchValue({ tcEndOfLifeDate: null });
+        }
+      } catch (error) {
+        //console.log("setApprovalExpirationDate error: ", error); //DEBUG
+        //console.log("No endOfLifeDate available"); //DEBUG
+        this.endOfLifeDate = null;
+        this.itStandardsForm.patchValue({ tcEndOfLifeDate: null });
+
+      }
+    }, 1000); // Wait 1 second before setting the date
+  }
+
+  // handles the formatting of the endOfLifeDate
+  formatEndOfLifeDate(data: any) {
+    //return data ? formatDate(data, 'yyyy-mm-dd', 'en-US') : null;
+    
+    // return the data as a string in the format Month dd, yyyy
+    return data ? formatDate(data, 'MMMM dd, yyyy', 'en-US') : null;
+  }
+
+  isAssignedToitStandAprvExp(date1: any, date2: any) {
+    //console.log("AprvExpDate: ", this.aprvExpDate); //DEBUG
+    //console.log("EndOfLifeDate: ", this.endOfLifeDate); //DEBUG
+    setTimeout(() => {
+      // if the ApprovalExpirationDate is not null
+      if (this.endOfLifeDate) {
+        const target = new Date(date1);
+        const source = new Date(date2);
+        if (target === source) {
+          return true;
+        } else {
+          return false;
+        }
       } else {
-		    console.log("endOfLifeDate data not found");
-	    }
-    } catch (error) {
-      //console.log("setApprovalExpirationDate error: ", error); //DEBUG
-      console.log("No endOfLifeDate available"); //DEBUG
+        return false;
+      }
+    }, 1200); // Wait 1 second before setting the date
+  }
+
+  // returns boolean true if the endOfLifeDate has passed, else false
+  hasEndOfLifeDatePassed(data: any) {
+    //console.log("hasEndOfLifeDatePassed data: ", data); //DEBUG
+
+    // if the endOfLifeDate is not null
+    if (data !== null) {
+      //console.log("hasEndOfLifeDatePassed data.endOfLifeDate: ", data.endOfLifeDate); //DEBUG
+      
+      // get the endOfLifeDate as a Date object
+      let date = new Date(data);
+      
+      // get today's date
+      let today = new Date();
+
+      // if the endOfLifeDate is before today's date
+      if (date < today) {
+        //console.log("hasEndOfLifeDatePassed: true"); //DEBUG
+        return true;
+      } else {
+        //console.log("hasEndOfLifeDatePassed: false"); //DEBUG
+        return false;
+      }
+    } else {
+      //console.log("hasEndOfLifeDatePassed: false"); //DEBUG
+      return false;
     }
   }
 
   manufacturerChange(manufacturer: any) {
     
-    console.log("Manufacturer changed to: ", manufacturer); //DEBUG
+    //console.log("Manufacturer changed to: ", manufacturer); //DEBUG
 
     this.softwareProductsLoading = true;
     this.itStandardsForm.get('tcSoftwareProduct')?.reset();
@@ -473,7 +546,7 @@ export class ItStandardManagerComponent implements OnInit {
 
   softwareProductChange(softwareProduct: any) {
     
-    console.log("Software Product changed to: ", softwareProduct); //DEBUG
+    //console.log("Software Product changed to: ", softwareProduct); //DEBUG
 
     this.softwareVersionsLoading = true;
     this.itStandardsForm.get('tcSoftwareVersion')?.reset();
@@ -514,7 +587,7 @@ export class ItStandardManagerComponent implements OnInit {
 
   softwareVersionChange(softwareVersion: any) {
     
-    console.log("Software Version changed to: ", softwareVersion); //DEBUG
+    //console.log("Software Version changed to: ", softwareVersion); //DEBUG
 
     this.softwareReleasesLoading = true;
     this.itStandardsForm.get('tcSoftwareRelease')?.reset();
@@ -581,6 +654,11 @@ export class ItStandardManagerComponent implements OnInit {
   disableOldITStandardName(): void {
     //console.log("Disabling Old Name");
     $("#divOldName").addClass("disabledDivOldName");
+  }
+
+  disableEndOfLifeDate(): void {
+    //console.log("Disabling End of Life Date");
+    $("#divEndOfLifeDate").addClass("disabledDivEndOfLifeDate");
   }
 
 }

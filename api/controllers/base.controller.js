@@ -644,15 +644,15 @@ async function getAccessToken(refreshToken, logHeader = null) {
   let accessToken = null;
 
   const response = await fetch('https://login.flexera.com/oidc/token', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              grant_type: 'refresh_token',
-              refresh_token: refreshToken,
-            }),
-          });
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+    }),
+});
 
   // check if response is ok
   if (response.ok) {
@@ -2005,13 +2005,16 @@ function getImportId(data = null) {
 exports.importTechCatlogData = async (data, response) => {
 
   // IMPORT PARAMETER VARIABLES
-  const importType = data.importtype;                       // import type identifies the type of import to be used for logging
-  const refreshToken = data.refreshtoken;                   // retrieved from the requests body, stores the refresh token for the flexera api to get a new access token
-  const requester = data.requester;                         // retrieved from the requests body, stores the requester's email address
-  const datasetName = data.dataset;                         // dataset name to be pulled // ie. "Taxonomy";
-  const takeAmt = data.takeamount;                          // amount of records to pull per page
-  const importId = getImportId(data);                       // import id identifies a group of import requests to be used for logging
-  const isDryRun = data.dryrun;                             // flag to determine if the import insert/update statement or not
+  const importType = data.importtype;                                     // import type identifies the type of import to be used for logging
+  const refreshToken = data.refreshtoken;                                 // retrieved from the requests body, stores the refresh token for the flexera api to get a new access token
+  const requester = data.requester;                                       // retrieved from the requests body, stores the requester's email address
+  const datasetName = data.dataset;                                       // dataset name to be pulled // ie. "Taxonomy";
+  const takeAmt = data.takeamount;                                        // amount of records to pull per page
+  const importId = getImportId(data);                                     // import id identifies a group of import requests to be used for logging
+  const isDryRun = data.dryrun;                                           // flag to determine if the import insert/update statement or not
+  const importMethod = data.importmethod ? data.importmethod : 'nowait';  // import method to be used for the performing the insert/update statement
+                                                                          // - 'nowait' or '' sends the insert/update statement to the database and does not wait for a response
+                                                                          // - 'wait' sends the insert/update statement to the database and waits for a response
   
   let lastSyncDateOverride = null;                          // last synchronized date to override the last sync date in the database
   let lastIdOverride = null;                                // last id to override the last id in the database
@@ -2478,6 +2481,7 @@ exports.importTechCatlogData = async (data, response) => {
         let insertUpdatesPerformed = 0;
         let filteredRecordsCounter = 0;
         let lastRecordIdInArray = null;
+        let lastInsertedUpdatedRecNum = 0;
 
         let pageJson = null;
         let datasetArray = [];
@@ -2648,7 +2652,7 @@ exports.importTechCatlogData = async (data, response) => {
 
               const previousRecordCount = datasetArray.length;
 
-              datasetArray = datasetArray.filter(datasetArray => new Date(stringToDate(datasetArray.synchronizedDate)) > lastSynchronizedDate);
+              datasetArray = datasetArray.filter(datasetArray => new Date(stringToDate(datasetArray.synchronizedDate)) >= lastSynchronizedDate);
 
               const filteredRecordCount = datasetArray.length;
               filteredRecordsCounter = previousRecordCount - filteredRecordCount;
@@ -2747,7 +2751,7 @@ exports.importTechCatlogData = async (data, response) => {
                   if (recordSynchronizedDate >= lastSynchronizedDate) {
 
                     // if maxSyncDateOverride has a value and the recordSynchronizedDate is later than the maxSyncDateOverride value
-                    if (maxSyncDateOverride !== null && recordSynchronizedDate > maxSyncDateOverride) {
+                    if (maxSyncDateOverride !== null && recordSynchronizedDate >= maxSyncDateOverride) {
 
                       // ... this record needs to be updated
                       insertUpdateRequired = false;
@@ -3053,10 +3057,13 @@ exports.importTechCatlogData = async (data, response) => {
                       // check if softwareSupportStage has data
                       if (datasetObject.softwareSupportStage !== null && datasetObject.softwareSupportStage !== undefined) {
                         for (let supportStageObject of datasetObject.softwareSupportStage) {
+                          // add the softwareLifecyceId to the supportStageObject
+                          supportStageObject.softwareLifecyceId = lastRecordId;
+                          // add the supportStageObject to the recordsToInsertSftwSupportStage array
                           recordsToInsertSftwSupportStage.push(supportStageObject);
-
+                          // add the supportStageObject to the insertValuesMapSftwSupportStage map
                           insertValuesMapSftwSupportStage = recordsToInsertSftwSupportStage.map(recordsToInsertSftwSupportStage => 
-                            [lastRecordId,
+                            [supportStageObject.softwareLifecyceId,
                             supportStageObject.definition,	
                             stringToDate(supportStageObject.endDate),	
                             supportStageObject.manufacturerId,	
@@ -3066,7 +3073,7 @@ exports.importTechCatlogData = async (data, response) => {
                             supportStageObject.publishedEndDate,	
                             ]);
                         }
-
+                        // increment softwareSupportStageCounter
                         softwareSupportStageCounter = softwareSupportStageCounter + insertValuesMapSftwSupportStage.length;
                         //.log(' - SoftwareSupportStage data found:' + datasetObject.softwareSupportStage.length + ' records.'); // Debug
                       }
@@ -3370,16 +3377,14 @@ exports.importTechCatlogData = async (data, response) => {
 
                     insertUpdatesPerformed++;
 
-                    /*
                     // this IF was implemented to prevent the database from being overloaded with inserts/updates
-                    if (pageRecordsInsertedCounter < 20) {
+                    if (lastInsertedUpdatedRecNum === pageRecordCounter) {
                       // wait 1/1000 of the second
                       await new Promise(resolve => setTimeout(resolve, 1));
-                    } else if (insertUpdatesPerformed % 100 === 0) {
-                      // for every 100 records inserted/updated, wait 25/1000 of the second
-                      await new Promise(resolve => setTimeout(resolve, 25));
                     }
-                    */
+
+                    lastInsertedUpdatedRecNum = pageRecordCounter+1;
+                    
                     // ... execute insert/update statement
                     sql.query(insertStatement, [insertValuesMap], (error, data) => {
 
