@@ -406,7 +406,7 @@ export class ItStandardManagerComponent implements OnInit {
 
     setTimeout(() => {
       try {
-        console.log("setting approval expiration date to: ", data.endOfLifeDate); //DEBUG
+        //console.log("setting approval expiration date to: ", data.endOfLifeDate); //DEBUG
         
         if (data.endOfLifeDate  !== '' && data.endOfLifeDate !== null && data.endOfLifeDate !== undefined && data.endOfLifeDate !== 'null' && data.endOfLifeDate !== 'undefined') {
 
@@ -457,6 +457,8 @@ export class ItStandardManagerComponent implements OnInit {
       if (this.endOfLifeDate) {
         const target = new Date(date1);
         const source = new Date(date2);
+        target.setHours(0, 0, 0, 0);
+        source.setHours(0, 0, 0, 0);
         if (target === source) {
           return true;
         } else {
@@ -590,6 +592,8 @@ export class ItStandardManagerComponent implements OnInit {
     //console.log("Software Version changed to: ", softwareVersion); //DEBUG
 
     this.softwareReleasesLoading = true;
+    this.endOfLifeDate = null;
+    this.itStandardsForm.patchValue({ tcEndOfLifeDate: null });
     this.itStandardsForm.get('tcSoftwareRelease')?.reset();
 
     try {
