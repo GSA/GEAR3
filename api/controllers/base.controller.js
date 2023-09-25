@@ -1764,7 +1764,7 @@ function formatDateTime(dateObj) {
   
   // - description: formats the date and time for logging
   // - parameters: dateObj (date object)
-  // - returns: formattedDate (string)
+  // - returns: formattedDate (string) 'yyyy-mm-dd hh:mm:ss.mmm' or null
 
   if (dateObj === null || dateObj === '') {
     return null;
@@ -2031,17 +2031,20 @@ exports.importTechCatlogData = async (data, response) => {
   let isStatementBuilt = false;                         // flag to determine if the update statement has been built
 
   // SoftwareSupportStage Import (only used for SoftwareLifecycle dataset ONLY)
-  const insertStatementSftwSupportStage = `insert into tech_catalog.tp_SoftwareSupportStage (softwareLifecycleId, definition, endDate, manufacturerId, name, order_, policy, publishedEndDate) values ?`;
-  let softwareSupportStageCounter = 0;
-  let softwareSupportStageInsertedCounter = 0;
+  //const insertStatementSftwSupportStage = `insert into tech_catalog.tp_SoftwareSupportStage (softwareLifecycleId, definition, endDate, manufacturerId, name, order_, policy, publishedEndDate) values ?`;
+  const insertStatementSftwSupportStage = `insert into tech_catalog.tp_SoftwareSupportStage (softwareLifecycleId, synchronizedDate, definition, endDate, manufacturerId, name, order_, policy, publishedEndDate) values (`;
+
+  let softwareSupportStageCounter = 0;                  // counter to determine if the softwareSupportStage insert statement should be built
+  let softwareSupportStageInsertedCounter = 0;          // total number of softwareSupportStage records inserted into db
+  let softwareSupportStageErrorCounter = 0;             // total number of softwareSupportStage records that failed to insert into db
   
   let pageCounter = 0;                                  // total number of pages processed
   let pageRequestCounter = 0;                           // total number of page requests made
   let recordCounter = 0;                                // total number of records received
   let recordsFailedCounter = 0;                         // total number of records that failed to insert into db
-  let isFatalError = 0;
-  let gatherStats = true;
-  let duplicateJobsRunning = 0;
+  let isFatalError = 0;                                 // flag to determine if a fatal error has occurred
+  let gatherStats = true;                               // flag to determine if stats should be gathered
+  let duplicateJobsRunning = 0;                         // flag to determine if duplicate jobs are running
 
   let recordsInsertedCounter = 0;                       // total number of records inserted into db
   let recordToUpdateCounter = 0;                        // total number of records to update
@@ -2064,24 +2067,25 @@ exports.importTechCatlogData = async (data, response) => {
   let affectRowsCounter1 = 0;                           // number of rows affected by the insert/update statement
   let affectRowsCounter2 = 0;                           // number of rows affected by the insert/update statement
   let affectRowsCounter3 = 0;                           // number of rows affected by the insert/update statement
-  let recordsToBeDeletedArray = [];
+  let recordsToBeDeletedArray = [];                     // array of records to be deleted
   let deletedRecsNotRemovedCounter = 0;                 // number of records deleted from the table
 
   let earliestSyncDate = null;                          // earliest sync date for the dataset
   let latestSyncDate = null;                            // latest sync date for the dataset
   let syncYYYYMMDDArray = [];                           // array of sync dates in YYYYMMDD format
 
-  // 
+
+  // log file to store general import information
   const importLogFileName         = `${logFolderPath}/import_${importType}_${datasetName}_import_log_${formatFileDateTime(uploadStartTime)}.log`;
-  // 
+  // log file to store the list of records to be inserted/updated
   const toSyncListLogFileName     = `${logFolderPath}/import_${importType}_${datasetName}_records_to_sync_list_${formatFileDateTime(uploadStartTime)}.log`;
-  // 
+  // log file to store the list of records that were inserted/updated
   const syncedListLogFileName     = `${logFolderPath}/import_${importType}_${datasetName}_records_synced_list_${formatFileDateTime(uploadStartTime)}.log`;
-  // 
+  // log file to store the list of records that failed to be inserted/updated
   const deleteListLogFileName     = `${logFolderPath}/import_${importType}_${datasetName}_records_to_delete_list_${formatFileDateTime(uploadStartTime)}.log`;
-  // 
+  // log file to store the list of records that failed to be inserted/updated or any other errors during the import process
   const errorLogFileName          = `${logFolderPath}/import_${importType}_${datasetName}_ERRORs_${formatFileDateTime(uploadStartTime)}.log`;
-  // 
+  // log file to store the import summary json
   const importSummaryLogFileName  = `${logFolderPath}/import_${importType}_${datasetName}_import_summary_${formatFileDateTime(uploadStartTime)}.log`;
 
   
@@ -2123,6 +2127,7 @@ exports.importTechCatlogData = async (data, response) => {
       totalRecordsFailed : recordsFailedCounter,
       totalSoftwareSupportStageRecords : softwareSupportStageCounter,
       totalSoftwareSupportStageRecordsInsUpd : softwareSupportStageInsertedCounter,
+      totalSoftwareSupportStageRecordsFailed : softwareSupportStageErrorCounter,
       beginTableRecordCount : beginTableRecordCount,
       endTableRecordCount : endTableRecordCount,
       affectRowsCounter1 : affectRowsCounter1,
@@ -2698,8 +2703,10 @@ exports.importTechCatlogData = async (data, response) => {
               //let updateValuesMap = new Map();    // stores the map of record values to columns for update statement
 
               // ... (for SoftwareLifecycle ONLY) stores SoftwareLifecycle.softwareSupportStage Object data 
-              let recordsToInsertSftwSupportStage = [];
-              let insertValuesMapSftwSupportStage = new Map();
+              //let recordsToInsertSftwSupportStage = [];
+              //let insertValuesMapSftwSupportStage = new Map();
+              let insertValuesMapSftwSupportStage = '';
+              //let insertValuesMapSftwSupportStageCount = 0;
 
               //let recordGraphqlQuery = null;
               //let updateDatasetArray = [];
@@ -3056,26 +3063,53 @@ exports.importTechCatlogData = async (data, response) => {
 
                       // check if softwareSupportStage has data
                       if (datasetObject.softwareSupportStage !== null && datasetObject.softwareSupportStage !== undefined) {
-                        for (let supportStageObject of datasetObject.softwareSupportStage) {
-                          // add the softwareLifecyceId to the supportStageObject
-                          supportStageObject.softwareLifecyceId = lastRecordId;
-                          // add the supportStageObject to the recordsToInsertSftwSupportStage array
-                          recordsToInsertSftwSupportStage.push(supportStageObject);
-                          // add the supportStageObject to the insertValuesMapSftwSupportStage map
-                          insertValuesMapSftwSupportStage = recordsToInsertSftwSupportStage.map(recordsToInsertSftwSupportStage => 
-                            [supportStageObject.softwareLifecyceId,
-                            supportStageObject.definition,	
-                            stringToDate(supportStageObject.endDate),	
-                            supportStageObject.manufacturerId,	
-                            supportStageObject.name,	
-                            supportStageObject.order,	
-                            supportStageObject.policy,	
-                            supportStageObject.publishedEndDate,	
-                            ]);
+
+                        let softwareSupportStageArray = datasetObject["softwareSupportStage"];
+
+                        function handleNulls(value) {
+                          if (value === null || value === undefined) {
+                            return 'null';
+                          } else {
+                            return `'${value}'`;
+                          }
                         }
+
+                        for (let supportStageObject of softwareSupportStageArray) {                          
+                          // create insert statement
+                          let insertStatementSSS = insertStatementSftwSupportStage +
+                            `'${datasetObject.id}', ` +
+                            `'${formatDateTime(String(datasetObject.synchronizedDate).replace('T', ' ').replace('Z', ''))}', ` +
+                            `${supportStageObject.definition === null || supportStageObject.definition === '' ? 'null' : "'"+String(supportStageObject.definition).replace(/'/g, "''").replace(/\n/g, "").replace(/\r/g, "\\r").replace(/\t/g, "\\t")+"'"}, ` +
+                            `${supportStageObject.endDate === null || supportStageObject.endDate === '' ? 'null' : "'"+formatDateTime(String(new Date(supportStageObject.endDate)))+"'"}, ` +
+                            `${supportStageObject.manufacturerId === null || supportStageObject.manufacturerId === '' ? 'null' : "'"+supportStageObject.manufacturerId+"'"}, ` +
+                            `'${supportStageObject.name}', ` +
+                            `${supportStageObject.order === null || supportStageObject.order === '' ? 'null' : "'"+supportStageObject.order+"'"}, ` +
+                            `${supportStageObject.policy === null || supportStageObject.policy === '' ? 'null' : "'"+supportStageObject.policy+"'"}, ` +
+                            `${supportStageObject.publishedEndDate === null || supportStageObject.publishedEndDate === '' ? 'null' : "'"+supportStageObject.publishedEndDate+"'"})`;
+
+                          // add the ON DUPLICATE KEY UPDATE clause to update the record if it already exists
+                          insertStatementSSS = insertStatementSSS + ' ON DUPLICATE KEY UPDATE ' + 
+                            // PK 'id = VALUES(id), ' +
+                            'synchronizedDate = VALUES(synchronizedDate), ' +
+                            'definition = VALUES(definition), ' +
+                            'endDate = VALUES(endDate), ' +
+                            'manufacturerId = VALUES(manufacturerId), ' +
+                            // PK 'name = VALUES(name), ' +
+                            // PK 'order = VALUES(order), ' +
+                            'policy = VALUES(policy), ' +
+                            'publishedEndDate = VALUES(publishedEndDate)';
+
+                          // add semi-colon to end of insert statement
+                          insertStatementSSS = insertStatementSSS + '; ';
+                          
+                          //console.log('INSERT STATEMENT: ' + insertStatementSSS + '\n'); // testing
+
+                          // add insert statement to insertValuesMapSftwSupportStage
+                          insertValuesMapSftwSupportStage = insertValuesMapSftwSupportStage + insertStatementSSS;
+                        }
+
                         // increment softwareSupportStageCounter
                         softwareSupportStageCounter = softwareSupportStageCounter + insertValuesMapSftwSupportStage.length;
-                        //.log(' - SoftwareSupportStage data found:' + datasetObject.softwareSupportStage.length + ' records.'); // Debug
                       }
                       break;
                     case 'SoftwareMarketVersion':
@@ -3462,19 +3496,18 @@ exports.importTechCatlogData = async (data, response) => {
                         if (datasetName === 'SoftwareLifecycle' && insertValuesMapSftwSupportStage.length > 0) {
 
                           // ... execute insert statement
-                          sql.query(insertStatementSftwSupportStage, [insertValuesMapSftwSupportStage], (error, data) => {
+                          sql.query(insertValuesMapSftwSupportStage, (error, data) => {
 
                             if (error) {
-
+                              // when insert/update FAILS
+                              softwareSupportStageErrorCounter = softwareSupportStageErrorCounter + (insertValuesMapSftwSupportStage.match(/tp_SoftwareSupportStage/g) || []).length;
                               // ... add id to recordsFailedList
                               recordsFailedList.push(idValue);
-
                               // ... log failure
                               logger(`${getLogHeader()}`, `ERROR: failed executing the insert ${insertValuesMapSftwSupportStage.length} SoftwareLifecycle.softwareSupportStage records for id: ${idValue}`, error, errorLogFileName);
-
-
+                              // ... assemble the error log insert statement
                               let errorLogInsert = `insert into tech_catalog.dataset_record_error_log (import_id, datasetName, id, import_error) values ('${importId}', '${datasetName}', '${idValue}', '${error}'); `;
-
+                              
                               // ... execute insert statement
                               sql.query(errorLogInsert, (error, data) => {
                                 if (error) {
@@ -3482,32 +3515,24 @@ exports.importTechCatlogData = async (data, response) => {
                                 }
                               });
 
-                              
                             } else {
                               // when insert/update SUCCEEDS
-                              softwareSupportStageInsertedCounter = softwareSupportStageInsertedCounter + insertValuesMapSftwSupportStage.length;
+                              softwareSupportStageInsertedCounter = softwareSupportStageInsertedCounter + (insertValuesMapSftwSupportStage.match(/tp_SoftwareSupportStage/g) || []).length;
                             }
                           });
-
                         } // end if SoftwareLifecycle 
-
                       }
-
                     });
-                    
                   } // end if
-                  
                 } catch (error) {
                   // ... increment counters when fails
                   recordsFailedCounter++;
                   pageRecordsFailedCounter++;
                   consecutiveFailedRecordCounter++;
-
                   // ... log failure and continue to next record
                   logger(`${getLogHeader()}`, `failed ${importType} record`, error, errorLogFileName);
-
+                  // ... create the error log insert statement
                   let errorLogInsert = `insert into tech_catalog.dataset_record_error_log (import_id, datasetName, id, import_error) values ('${importId}', '${datasetName}', '${lastRecordId}', '${error}'); `;
-
                   // ... execute insert statement
                   sql.query(errorLogInsert, (error, data) => {
                     if (error) {
@@ -3515,7 +3540,6 @@ exports.importTechCatlogData = async (data, response) => {
                     }
                   });
                 }
-
               } // END IF (insertUpdateRequired)
 
             } // end of records loop
