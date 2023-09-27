@@ -82,6 +82,15 @@ exports.update = (req, res) => {
       data.itStandDesc = ctrl.emptyTextFieldHandler(data.itStandDesc);
       data.itStandAprvExp = ctrl.emptyTextFieldHandler(data.itStandAprvExp);
       data.itStandRefDocs = ctrl.emptyTextFieldHandler(data.itStandRefDocs);
+
+      data.tcManufacturer = ctrl.emptyTextFieldHandler(data.tcManufacturer);
+      data.tcSoftwareProduct = ctrl.emptyTextFieldHandler(data.tcSoftwareProduct);
+      data.tcSoftwareVersion = ctrl.emptyTextFieldHandler(data.tcSoftwareVersion);
+      data.tcSoftwareRelease = ctrl.emptyTextFieldHandler(data.tcSoftwareRelease);
+      data.tcManufacturerName = ctrl.emptyTextFieldHandler(data.tcManufacturerName);
+      data.tcSoftwareProductName = ctrl.emptyTextFieldHandler(data.tcSoftwareProductName);
+      data.tcSoftwareVersionName = ctrl.emptyTextFieldHandler(data.tcSoftwareVersionName);
+      data.tcSoftwareReleaseName = ctrl.emptyTextFieldHandler(data.tcSoftwareReleaseName);
       data.tcEndOfLifeDate = ctrl.emptyTextFieldHandler(data.tcEndOfLifeDate);
 
       var query = `SET FOREIGN_KEY_CHECKS=0;
@@ -101,14 +110,14 @@ exports.update = (req, res) => {
           Reference_documents             = ${data.itStandRefDocs},
           ChangeAudit                     = '${data.auditUser}',
           ChangeDTG                       = NOW(),
-          manufacturer                    = '${data.tcManufacturer}',
-          softwareProduct                 = '${data.tcSoftwareProduct}',
-          softwareVersion                 = '${data.tcSoftwareVersion}',
-          softwareRelease                 = '${data.tcSoftwareRelease}',
-          manufacturerName                = '${data.tcManufacturerName}',
-          softwareProductName             = '${data.tcSoftwareProductName}',
-          softwareVersionName             = '${data.tcSoftwareVersionName}',
-          softwareReleaseName             = '${data.tcSoftwareReleaseName}',
+          manufacturer                    = ${data.tcManufacturer},
+          softwareProduct                 = ${data.tcSoftwareProduct},
+          softwareVersion                 = ${data.tcSoftwareVersion},
+          softwareRelease                 = ${data.tcSoftwareRelease},
+          manufacturerName                = ${data.tcManufacturerName},
+          softwareProductName             = ${data.tcSoftwareProductName},
+          softwareVersionName             = ${data.tcSoftwareVersionName},
+          softwareReleaseName             = ${data.tcSoftwareReleaseName},
           endOfLifeDate                   = ${data.tcEndOfLifeDate}
         WHERE Id = ${req.params.id};
         SET FOREIGN_KEY_CHECKS=1;
@@ -144,6 +153,15 @@ exports.create = (req, res) => {
       data.itStandDesc = ctrl.emptyTextFieldHandler(data.itStandDesc);
       data.itStandAprvExp = ctrl.emptyTextFieldHandler(data.itStandAprvExp);
       data.itStandRefDocs = ctrl.emptyTextFieldHandler(data.itStandRefDocs);
+
+      data.tcManufacturer = ctrl.emptyTextFieldHandler(data.tcManufacturer);
+      data.tcSoftwareProduct = ctrl.emptyTextFieldHandler(data.tcSoftwareProduct);
+      data.tcSoftwareVersion = ctrl.emptyTextFieldHandler(data.tcSoftwareVersion);
+      data.tcSoftwareRelease = ctrl.emptyTextFieldHandler(data.tcSoftwareRelease);
+      data.tcManufacturerName = ctrl.emptyTextFieldHandler(data.tcManufacturerName);
+      data.tcSoftwareProductName = ctrl.emptyTextFieldHandler(data.tcSoftwareProductName);
+      data.tcSoftwareVersionName = ctrl.emptyTextFieldHandler(data.tcSoftwareVersionName);
+      data.tcSoftwareReleaseName = ctrl.emptyTextFieldHandler(data.tcSoftwareReleaseName);
       data.tcEndOfLifeDate = ctrl.emptyTextFieldHandler(data.tcEndOfLifeDate);
 
       var query = `INSERT INTO obj_technology(
@@ -186,14 +204,14 @@ exports.create = (req, res) => {
         ${data.itStandRefDocs},
         '${data.auditUser}',
         '${data.auditUser}',
-        '${data.tcManufacturer}',
-        '${data.tcSoftwareProduct}',
-        '${data.tcSoftwareVersion}',
-        '${data.tcSoftwareRelease}',
-        '${data.tcManufacturerName}',
-        '${data.tcSoftwareProductName}',
-        '${data.tcSoftwareVersionName}',
-        '${data.tcSoftwareReleaseName}',
+        ${data.tcManufacturer},
+        ${data.tcSoftwareProduct},
+        ${data.tcSoftwareVersion},
+        ${data.tcSoftwareRelease},
+        ${data.tcManufacturerName},
+        ${data.tcSoftwareProductName},
+        ${data.tcSoftwareVersionName},
+        ${data.tcSoftwareReleaseName},
         ${data.tcEndOfLifeDate});`;
 
       var logStatement = `insert into gear_log.event (Event, User, DTG) values ('create IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;

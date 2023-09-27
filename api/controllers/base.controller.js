@@ -15,8 +15,8 @@ const SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
 const TOKEN_PATH = "token.json";
 
 exports.getApiToken = async (req, res) => {
-  console.log('req.headers: ', req.headers); //debugging
-  console.log(`requester: ${req.headers.requester}, apitoken: ${req.headers.apitoken}`); //debugging
+  //console.log('req.headers: ', req.headers); //debugging
+  //console.log(`requester: ${req.headers.requester}, apitoken: ${req.headers.apitoken}`); //debugging
 
   //let [rows, fields] = await sql_promise.query(`CALL gear_acl.verifyJwt ('${req.headers.requester}', '${req.headers.apitoken}');`);
 
@@ -100,42 +100,67 @@ All this needs to be refactored as to not be so redundant*/
 exports.googleMain = (response, method, sheetID, dataRange, requester, key = null) => {
   console.log("googleMain()");
 
-  // log the start of the refresh to the database
-  buildLogQuery(sql, `Update All Related Records - Starting`, requester, "log_update_zk_systems_subsystems_records", response);
+  // get the current date and format it as yyyymmddhh
+  let date = new Date();
+  let formattedDate = null;
 
-  // Load client secrets from a local file.
-  fs.readFile("certs/gear_google_credentials.json", (err, content) => {
-    if (err) {
-      buildLogQuery(sql, `Update All Related Records - ERROR: loading client secret file`, requester, "log_update_zk_systems_subsystems_records", response);
+  if (requester === "GearCronJ") {
+    formattedDate = `${date.getFullYear()}${String((date.getMonth()+1)).padStart(2, "0")}${String(date.getDate()).padStart(2, "0")}${String(date.getHours()).padStart(2, "0")}`;
+  } else {
+    formattedDate = `${date.getFullYear()}${String((date.getMonth()+1)).padStart(2, "0")}${String(date.getDate()).padStart(2, "0")}${String(date.getHours()).padStart(2, "0")}${String(date.getMinutes()).padStart(2, "0")}`;
+  }
+
+  sql.query(`insert into gear_schema.google_api_run_log (id) values ('${formattedDate}');`, (error, data) => {
+
+    if (error) {
+      console.log(`Duplicate Google Sheets API Request: `, error);
 
       if (requester === "GearCronJ") {
-        console.log("Error loading client secret file: " + err);
+        console.log("Duplicate Google Sheets API Request: " + error);
         return;
       } else {
-        response = response.status(504).json({ error: "Error loading client secret file: " + err });
+        response = response.status(504).json({ error: "Duplicate Google Sheets API Request: " + error });
         return;
       }
+    } else {
+      // log the start of the refresh to the database
+      buildLogQuery(sql, `Update All Related Records - Starting`, requester, "log_update_zk_systems_subsystems_records", response);
+
+      // Load client secrets from a local file.
+      fs.readFile("certs/gear_google_credentials.json", (err, content) => {
+        if (err) {
+          buildLogQuery(sql, `Update All Related Records - ERROR: loading client secret file`, requester, "log_update_zk_systems_subsystems_records", response);
+
+          if (requester === "GearCronJ") {
+            console.log("Error loading client secret file: " + err);
+            return;
+          } else {
+            response = response.status(504).json({ error: "Error loading client secret file: " + err });
+            return;
+          }
+        }
+
+        // Set callback based on method
+        var callback_method = null;
+
+        if (method === "all") callback_method = retrieveAll;
+        else if (method === "single") callback_method = single;
+        else if (method === "refresh") callback_method = refresh;
+
+        console.log("callback_method: ", callback_method);
+
+        // Authorize a client with credentials, then call the Google Sheets API.
+        authorize(
+          JSON.parse(content),
+          callback_method,
+          response,
+          sheetID,
+          dataRange,
+          requester,
+          key
+        );
+      });
     }
-
-    // Set callback based on method
-    var callback_method = null;
-
-    if (method === "all") callback_method = retrieveAll;
-    else if (method === "single") callback_method = single;
-    else if (method === "refresh") callback_method = refresh;
-
-    console.log("callback_method: ", callback_method);
-
-    // Authorize a client with credentials, then call the Google Sheets API.
-    authorize(
-      JSON.parse(content),
-      callback_method,
-      response,
-      sheetID,
-      dataRange,
-      requester,
-      key
-    );
   });
 };
 
@@ -2063,7 +2088,7 @@ exports.importTechCatlogData = async (data, response) => {
   let lastSynchronizedDate = null;                      // the last synchronized date for the dataset
   const uploadStartTime = new Date();                   // upload start time //TIMESTAMP();
   let uploadEndTime = null;                             // upload end time //TIMESTAMP();
-  let recordCountDisplay = 0;
+  let recordCountDisplay = 0;                           // number of records to be displayed in the log header
   let affectRowsCounter1 = 0;                           // number of rows affected by the insert/update statement
   let affectRowsCounter2 = 0;                           // number of rows affected by the insert/update statement
   let affectRowsCounter3 = 0;                           // number of rows affected by the insert/update statement
@@ -2326,8 +2351,6 @@ exports.importTechCatlogData = async (data, response) => {
       }
 
       // 1. log start to tech_catalog.dataset_import_log
-      // log start of import to DB (this will fail if another import is already running)
-      // TEMP FIX for duplicate cron job issue
       try {
         // log start to db
         await sql_promise.query(`insert into tech_catalog.dataset_import_log (import_id, datasetName, import_status) values ('${importId}', '${datasetName}', '${datasetName} import in progress...'); `);
@@ -2526,13 +2549,16 @@ exports.importTechCatlogData = async (data, response) => {
           try {
 
             try {
-              //if (accessToken === '') {
-                // ... get the access token from the flexera api
-                accessToken = await getAccessToken(refreshToken, getLogHeaderNoTime());
-              //}
+
+              // ... get the access token from the flexera api
+              accessToken = await getAccessToken(refreshToken, getLogHeaderNoTime());
+
             } catch (error) {
-              // wait 10 sec and try again
-              await new Promise(resolve => setTimeout(resolve, 10000));
+
+              logger(`${getLogHeader()}`, `WARNING: Page ${pageCounter} Access Token API request failed, waiting 30 seconds and will try again\n>>>>ERROR: ${error}`, null, importLogFileName);
+
+              // wait 30 sec and try again
+              await new Promise(resolve => setTimeout(resolve, 30000));
               accessToken = await getAccessToken(refreshToken, getLogHeaderNoTime());
             }
 
@@ -2571,13 +2597,14 @@ exports.importTechCatlogData = async (data, response) => {
               // ... sending api request for page data to flexera
               pageJson = await sendAPIQuery(graphqlQuery, accessToken, getLogHeaderNoTime());
 
-              // (TESTING ONLY)
-              //writeToLogFile(`page ${pageCounter} graphqlQuery: ` + JSON.stringify(pageJson) + `,\n`, importLogFileName);
-
             } catch (error) {
-              // wait 10 sec and try again
-              await new Promise(resolve => setTimeout(resolve, 10000));
+
+              logger(`${getLogHeader()}`, `WARNING: Page ${pageCounter} Data API request failed, waiting 30 seconds and will try again\n>>>>ERROR: ${error}`, null, importLogFileName);
+              
+              // wait 30 sec and try again
+              await new Promise(resolve => setTimeout(resolve, 30000));
               pageJson = await sendAPIQuery(graphqlQuery, accessToken, getLogHeaderNoTime());
+
             }
 
             pageRequestCounter++;
@@ -3487,40 +3514,42 @@ exports.importTechCatlogData = async (data, response) => {
                           });
                         }
 
-                        // ... increment counters when insert is successful
-                        recordsInsertedCounter++;
-                        pageRecordsInsertedCounter++;
+                        if (data.affectedRows == 1 || data.affectedRows == 2 || data.affectedRows == 3) {
+                          // ... increment counters when insert is successful
+                          recordsInsertedCounter++;
+                          pageRecordsInsertedCounter++;
 
-                        // ***SoftwareLifecycle ONLY***
-                        // handling SoftwareLifecycle.SoftwareSupportStage[] data
-                        if (datasetName === 'SoftwareLifecycle' && insertValuesMapSftwSupportStage.length > 0) {
+                          // ***SoftwareLifecycle ONLY***
+                          // handling SoftwareLifecycle.SoftwareSupportStage[] data
+                          if (datasetName === 'SoftwareLifecycle' && insertValuesMapSftwSupportStage.length > 0) {
 
-                          // ... execute insert statement
-                          sql.query(insertValuesMapSftwSupportStage, (error, data) => {
+                            // ... execute insert statement
+                            sql.query(insertValuesMapSftwSupportStage, (error, data) => {
 
-                            if (error) {
-                              // when insert/update FAILS
-                              softwareSupportStageErrorCounter = softwareSupportStageErrorCounter + (insertValuesMapSftwSupportStage.match(/tp_SoftwareSupportStage/g) || []).length;
-                              // ... add id to recordsFailedList
-                              recordsFailedList.push(idValue);
-                              // ... log failure
-                              logger(`${getLogHeader()}`, `ERROR: failed executing the insert ${insertValuesMapSftwSupportStage.length} SoftwareLifecycle.softwareSupportStage records for id: ${idValue}`, error, errorLogFileName);
-                              // ... assemble the error log insert statement
-                              let errorLogInsert = `insert into tech_catalog.dataset_record_error_log (import_id, datasetName, id, import_error) values ('${importId}', '${datasetName}', '${idValue}', '${error}'); `;
-                              
-                              // ... execute insert statement
-                              sql.query(errorLogInsert, (error, data) => {
-                                if (error) {
-                                  logger(`${getLogHeader()}`, `ERROR: failed inserting into dataset_record_error_log table for id: ${idValue}`, error, errorLogFileName);
-                                }
-                              });
+                              if (error) {
+                                // when insert/update FAILS
+                                softwareSupportStageErrorCounter = softwareSupportStageErrorCounter + (insertValuesMapSftwSupportStage.match(/tp_SoftwareSupportStage/g) || []).length;
+                                // ... add id to recordsFailedList
+                                recordsFailedList.push(idValue);
+                                // ... log failure
+                                logger(`${getLogHeader()}`, `ERROR: failed executing the insert ${insertValuesMapSftwSupportStage.length} SoftwareLifecycle.softwareSupportStage records for id: ${idValue}`, error, errorLogFileName);
+                                // ... assemble the error log insert statement
+                                let errorLogInsert = `insert into tech_catalog.dataset_record_error_log (import_id, datasetName, id, import_error) values ('${importId}', '${datasetName}', '${idValue}', '${error}'); `;
+                                
+                                // ... execute insert statement
+                                sql.query(errorLogInsert, (error, data) => {
+                                  if (error) {
+                                    logger(`${getLogHeader()}`, `ERROR: failed inserting into dataset_record_error_log table for id: ${idValue}`, error, errorLogFileName);
+                                  }
+                                });
 
-                            } else {
-                              // when insert/update SUCCEEDS
-                              softwareSupportStageInsertedCounter = softwareSupportStageInsertedCounter + (insertValuesMapSftwSupportStage.match(/tp_SoftwareSupportStage/g) || []).length;
-                            }
-                          });
-                        } // end if SoftwareLifecycle 
+                              } else {
+                                // when insert/update SUCCEEDS
+                                softwareSupportStageInsertedCounter = softwareSupportStageInsertedCounter + (insertValuesMapSftwSupportStage.match(/tp_SoftwareSupportStage/g) || []).length;
+                              }
+                            });
+                          } // end if SoftwareLifecycle 
+                        }
                       }
                     });
                   } // end if

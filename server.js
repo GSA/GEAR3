@@ -471,14 +471,29 @@ cron.schedule('0 6,18 * * 1-5', () => { //PRODUCTION
 });
 
 // -------------------------------------------------------------------------------------------------
-// CRON JOB: Tech Catalog Daily Import (runs daily at 12:01 AM)
+// CRON JOB: Tech Catalog Daily Import
+/*
+// -------------------------------------------------
+// OPTION #1: Original, 1 job (runs EVERYDAY at 12:01 AM)
 cron.schedule('1 0 * * *', () => { //PRODUCTION
-//cron.schedule('55 14 * * *', () => { //DEBUGGING
-
   cronCtrl.runTechCatalogImportJob();
+});
+*/
 
+// -------------------------------------------------
+// OPTION #2: Weekday Mornings + Sunday Afternoon
+// (runs WEEKDAYS at 12:01 AM)
+cron.schedule('1 0 * * 1-5', () => { //PRODUCTION
+  cronCtrl.runTechCatalogImportJob();
+});
+
+// (runs SUNDAY AFTERNOON at 2:01 PM)
+cron.schedule('1 14 * * 0', () => { //PRODUCTION
+  cronCtrl.runTechCatalogImportJob();
 });
 /*
-cron.schedule('* /5 * * * *', () => { //PRODUCTION
-  cronCtrl.runTESTJob();
-});*/
+// (runs SATURDAY + SUNDAY AFTERNOON at 2:01 PM)
+cron.schedule('1 14 * * 6-0', () => { //PRODUCTION
+  cronCtrl.runTechCatalogImportJob();
+});
+*/
