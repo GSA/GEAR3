@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Google Auth</title>
+</head>
+<script src="https://unpkg.com/htmx.org@1.9.5"
+        integrity="sha384-xcuj3WpfgjlKF+FXhSQFQ0ZNr39ln+hwjN3npfM9VBnUskLolQAcN80McRIVOPuO"
+        crossorigin="anonymous"></script>
+<body>
+<div style="background-color: #1e239d; color: white; text-align: center; ">
+  <p>Client ID: {{.ClientID}}</p>
+</div>
+
+<h1>Google Authentication Tool</h1>
+<hr>
+<hr>
+<div>
+  <h2 class="color:red">OAuth2</h2>
+  <div>
+    <p>
+      This tool will generate a URL that you can use to authenticate with Google. You will need to provide a client ID
+      and client secret.
+    </p>
+  </div>
+  <div>
+    <a href="/beginAuth" target="_blank">Begin OAuth Flow</a>
+  </div>
+</div>
+<hr>
+<div class="rendered-form">
+  <form hx-post="getToken" hx-encoding="multipart/form-data" hx-target="#token_result">
+    <h2>Generate Token</h2>
+    <div>
+      <p>
+        Provide the url from the redirect after authenticating with Google.
+      </p>
+    </div>
+    <div>
+      <textarea name="token_string" placeholder="http/s://localhost/?state=state-token&code=CODE_HERE&scope=SCOPES_HERE" required></textarea>
+    </div>
+    <br>
+    <button type="submit" class="tokenButton">
+      GenerateToken
+    </button>
+    <div>
+      <p>
+        The token will be displayed below.
+      </p>
+      <b>
+        <div id="token_result"></div>
+      </b>
+    </div>
+
+  </form>
+</div>
+</body>
+</html>
