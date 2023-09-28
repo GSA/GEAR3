@@ -35,11 +35,21 @@ This application demonstrates how to integrate OAuth2 for Google services, speci
 
 Ensure you have a `gear_google_credentials.json` file in your root directory which contains your Google client secret data.
 
+## Run:
+
+Follow the steps below to run the application.
+
+1. Navigate to the `./scripts/google_auth` folder in the file explorer.
+
+2. Make sure to have a copy of the `gear_google_credentials.json` file in this folder before running. 
+
+3. Open a command line prompt from this folder.
+
+4. Run the command `go run GoogleAuth.go` to start the application.
+
 ## Usage:
 
 Run the application and navigate to `http://localhost:4201/` to begin the OAuth2 authentication process.
-
-
 
 ### Getting Started:
 

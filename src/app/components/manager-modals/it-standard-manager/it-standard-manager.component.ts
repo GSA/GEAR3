@@ -250,7 +250,7 @@ export class ItStandardManagerComponent implements OnInit {
         tcSoftwareProduct: this.itStandard.SoftwareProduct,
         tcSoftwareVersion: this.itStandard.SoftwareVersion,
         tcSoftwareRelease: this.itStandard.SoftwareRelease,
-        tcEndOfLifeDate: formatDate(this.itStandard.EndOfLifeDate, 'MMMM dd, yyyy', 'en-US'),
+        tcEndOfLifeDate: (this.itStandard.EndOfLifeDate ? formatDate(this.itStandard.EndOfLifeDate, 'MMMM dd, yyyy', 'en-US') : null),
         itStandStatus: this.sharedService.findInArray(this.statuses, 'Name', this.itStandard.Status),
         itStandName: this.itStandard.OldName,
         itStandPOC: pocIDs,
@@ -463,10 +463,13 @@ export class ItStandardManagerComponent implements OnInit {
 
   // handles the formatting of the endOfLifeDate
   formatEndOfLifeDate(data: any) {
-    //return data ? formatDate(data, 'yyyy-mm-dd', 'en-US') : null;
-    
+    //console.log("Formatting endOfLifeDate:", data); //DEBUG    
     // return the data as a string in the format Month dd, yyyy
-    return data ? formatDate(data, 'MMMM dd, yyyy', 'en-US') : null;
+    if (data === null || data === undefined || data === 'null' || data === 'undefined' || data === '') {
+      return null;
+    } else {
+      return formatDate(data, 'MMMM dd, yyyy', 'en-US');
+    }
   }
 
   isAssignedToitStandAprvExp(date1: any, date2: any) {

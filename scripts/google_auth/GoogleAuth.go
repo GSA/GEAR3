@@ -45,7 +45,7 @@ func main() {
 	CORS.AllowAllOrigins = true
 	router.Use(cors.New(CORS))
 
-	router.LoadHTMLGlob("*")
+	router.LoadHTMLGlob("*.html")
 	router.GET("/", indexPage)
 	router.GET("/beginAuth", BeginAuth)
 	router.POST("/getToken", GetToken)
