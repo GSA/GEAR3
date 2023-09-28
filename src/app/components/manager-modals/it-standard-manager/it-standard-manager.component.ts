@@ -402,6 +402,15 @@ export class ItStandardManagerComponent implements OnInit {
   hasValue(data : any) {
     // check if the tcManufacturer has a value?
     if (this.itStandardsForm.value[data]) {
+      // check if the itstandname is not null
+      if (this.itStandardsForm.value.itStandName) {
+        return false;
+      } else {
+        // set tcManufacturer to be required
+        this.itStandardsForm.controls[data].setValidators([Validators.required]);
+        return true;
+      }
+
       // set tcManufacturer to be required
       this.itStandardsForm.controls[data].setValidators([Validators.required]);
       return true;

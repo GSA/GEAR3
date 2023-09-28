@@ -45,13 +45,13 @@ exports.update = (req, res) => {
 
   ctrl.getApiToken (req, res)
   .then((response) => {
-    console.log('*** API Security Testing - getApiToken response: ', response); //DEBUGGING
+    //console.log('*** API Security Testing - getApiToken response: ', response); //DEBUGGING
 
     if (response === 1) {
-      console.log('*** API Security Testing - API Auth Validation: PASSED'); //DEBUGGING
+      //console.log('*** API Security Testing - API Auth Validation: PASSED'); //DEBUGGING
 
       //if (req.headers.authorization)
-      console.log('it-standard update authorized...');
+      //console.log('it-standard update authorized...');
       var data = req.body;
 
       // Create string to update IT Standards Categories
@@ -142,11 +142,11 @@ exports.create = (req, res) => {
   // api GEAR Manager authorization
   ctrl.getApiToken (req, res)
   .then((response) => {
-    console.log('*** API Security Testing - getApiToken response: ', response); //DEBUGGING
+    //console.log('*** API Security Testing - getApiToken response: ', response); //DEBUGGING
 
     if (response === 1) {
-      console.log('*** API Security Testing - API Auth Validation: PASSED'); //DEBUGGING
-    //if (req.headers.authorization) {
+      //console.log('*** API Security Testing - API Auth Validation: PASSED'); //DEBUGGING
+      //if (req.headers.authorization) {
       var data = req.body;
 
       // Null any empty text fields
