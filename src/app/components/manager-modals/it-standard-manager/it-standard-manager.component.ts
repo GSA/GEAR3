@@ -20,9 +20,9 @@ declare var $: any;
 export class ItStandardManagerComponent implements OnInit {
 
   itStandardsForm: FormGroup = new FormGroup({
-    tcManufacturer: new FormControl(null, [Validators.required]),
-    tcSoftwareProduct: new FormControl(null, [Validators.required]),
-    tcSoftwareVersion: new FormControl(null, [Validators.required]),
+    tcManufacturer: new FormControl(null),
+    tcSoftwareProduct: new FormControl(null),
+    tcSoftwareVersion: new FormControl(null),
     tcSoftwareRelease: new FormControl(),
     tcEndOfLifeDate: new FormControl(),
     itStandStatus: new FormControl(null, [Validators.required]),
@@ -250,9 +250,9 @@ export class ItStandardManagerComponent implements OnInit {
         tcSoftwareProduct: this.itStandard.SoftwareProduct,
         tcSoftwareVersion: this.itStandard.SoftwareVersion,
         tcSoftwareRelease: this.itStandard.SoftwareRelease,
-        tcEndOfLifeDate: formatDate(this.itStandard.EndOfLifeDate, 'MMMM dd, yyyy', 'en-US'),
+        tcEndOfLifeDate: (this.itStandard.EndOfLifeDate ? formatDate(this.itStandard.EndOfLifeDate, 'MMMM dd, yyyy', 'en-US') : null),
         itStandStatus: this.sharedService.findInArray(this.statuses, 'Name', this.itStandard.Status),
-        itStandName: this.itStandard.Name,
+        itStandName: this.itStandard.OldName,
         itStandPOC: pocIDs,
         itStandDesc: this.itStandard.Description,
         itStandType: this.sharedService.findInArray(this.types, 'Name', this.itStandard.StandardType),
@@ -399,6 +399,26 @@ export class ItStandardManagerComponent implements OnInit {
     $('#itStandardDetail').modal('show');
   }
 
+  hasValue(data : any) {
+    // check if the tcManufacturer has a value?
+    if (this.itStandardsForm.value[data]) {
+      // check if the itstandname is not null
+      if (this.itStandardsForm.value.itStandName) {
+        return false;
+      } else {
+        // set tcManufacturer to be required
+        this.itStandardsForm.controls[data].setValidators([Validators.required]);
+        return true;
+      }
+
+      // set tcManufacturer to be required
+      this.itStandardsForm.controls[data].setValidators([Validators.required]);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   // handles the endOfLifeDate change event
   setApprovalExpirationDate(data: any) {
 
@@ -443,10 +463,13 @@ export class ItStandardManagerComponent implements OnInit {
 
   // handles the formatting of the endOfLifeDate
   formatEndOfLifeDate(data: any) {
-    //return data ? formatDate(data, 'yyyy-mm-dd', 'en-US') : null;
-    
+    //console.log("Formatting endOfLifeDate:", data); //DEBUG    
     // return the data as a string in the format Month dd, yyyy
-    return data ? formatDate(data, 'MMMM dd, yyyy', 'en-US') : null;
+    if (data === null || data === undefined || data === 'null' || data === 'undefined' || data === '') {
+      return null;
+    } else {
+      return formatDate(data, 'MMMM dd, yyyy', 'en-US');
+    }
   }
 
   isAssignedToitStandAprvExp(date1: any, date2: any) {
@@ -468,6 +491,15 @@ export class ItStandardManagerComponent implements OnInit {
         return false;
       }
     }, 1200); // Wait 1 second before setting the date
+  }
+
+  isOldRecord(data: any) {
+    // if the itStandName is not null, then true
+    if (data !== null && data !== undefined && data !== 'null' && data !== 'undefined') {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   // returns boolean true if the endOfLifeDate has passed, else false

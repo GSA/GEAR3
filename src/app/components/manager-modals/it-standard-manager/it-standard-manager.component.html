@@ -32,7 +32,7 @@
               <div class="row align-items-center">
                 
                 <div class="form-group col">
-                  <label for="tcManufacturer">Manufacturer Name<span class="text-danger">*</span></label>
+                  <label for="tcManufacturer">Manufacturer Name<span *ngIf="!isOldRecord(itStandard.OldName)" class="text-danger">*</span></label>
                     <ng-select id="tcManufacturer" formControlName="tcManufacturer"
                       [items]="manufacturers"
                       [multiple]="false"
@@ -47,21 +47,22 @@
                       [virtualScroll]="true"
                       (scroll)="modalService.onScroll($event, manufacturersBuffer, bufferSize, manufacturers, manufacturersLoading)"
                       (scrollToEnd)="modalService.onScrollToEnd(manufacturersBuffer, bufferSize, manufacturers, manufacturersLoading)"
-                      (change)="manufacturerChange($event)"
-                      required>
+                      (change)="manufacturerChange($event)">
                       <ng-template ng-header-tmp>
                         <small class="form-text text-muted">Loaded {{ manufacturersBuffer.length }} of {{ manufacturers.length }}</small>
                       </ng-template>
                     </ng-select>
-                    <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'tcManufacturer')">
-                      <div class="invalid-feedback" *ngIf="itStandardsForm.controls['tcManufacturer'].errors.required">
-                        One Manufacturer Required
+                    <div *ngIf="!isOldRecord(itStandard.OldName)">
+                      <div id="divIsValidManufacturer" *ngIf="!hasValue('tcManufacturer')">
+                        <div class="invalid-feedback" *ngIf="!isOldRecord(itStandard.OldName)">
+                          One Manufacturer Required
+                        </div>
                       </div>
                     </div>
                   </div>
   
                 <div class="form-group col" id="divProduct">
-                  <label for="tcSoftwareProduct">Software Product Name<span class="text-danger">*</span></label>
+                  <label for="tcSoftwareProduct">Software Product Name<span *ngIf="!isOldRecord(itStandard.OldName)" class="text-danger">*</span></label>
                     <ng-select id="tcSoftwareProduct" formControlName="tcSoftwareProduct"
                       [items]="softwareProducts"
                       [multiple]="false"
@@ -76,15 +77,16 @@
                       [virtualScroll]="true"
                       (scroll)="modalService.onScroll($event, softwareProductsBuffer, bufferSize, softwareProducts, softwareProductsLoading)"
                       (scrollToEnd)="modalService.onScrollToEnd(softwareProductsBuffer, bufferSize, softwareProducts, softwareProductsLoading)"
-                      (change)="softwareProductChange($event)"
-                      required>
+                      (change)="softwareProductChange($event)">
                       <ng-template ng-header-tmp>
                         <small class="form-text text-muted">Loaded {{ softwareProductsBuffer.length }} of {{ softwareProducts.length }}</small>
                       </ng-template>
                     </ng-select>
-                    <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'tcSoftwareProduct')">
-                      <div class="invalid-feedback" *ngIf="itStandardsForm.controls['tcSoftwareProduct'].errors.required">
-                        One Software Product Required
+                    <div *ngIf="!isOldRecord(itStandard.OldName)">
+                      <div id="divIsValidSoftwareProduct" *ngIf="!hasValue('tcSoftwareProduct')">
+                        <div class="invalid-feedback" *ngIf="!isOldRecord(itStandard.OldName)">
+                          One Software Product Required
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -93,7 +95,7 @@
               <!-- Tech Catalog Information row 2 -->
               <div class="row align-items-center">
                 <div class="form-group col-3" id="divVersion">
-                  <label for="tcSoftwareVersion">Software Version<span class="text-danger">*</span></label>
+                  <label for="tcSoftwareVersion">Software Version<span *ngIf="!isOldRecord(itStandard.OldName)" class="text-danger">*</span></label>
                     <ng-select id="tcSoftwareVersion" formControlName="tcSoftwareVersion"
                       [items]="softwareVersions"
                       [multiple]="false"
@@ -108,21 +110,22 @@
                       [virtualScroll]="true"
                       (scroll)="modalService.onScroll($event, softwareVersionsBuffer, bufferSize, softwareVersions, softwareVersionsLoading)"
                       (scrollToEnd)="modalService.onScrollToEnd(softwareVersionsBuffer, bufferSize, softwareVersions, softwareVersionsLoading)"
-                      (change)="softwareVersionChange($event)"
-                      required>
+                      (change)="softwareVersionChange($event)">
                       <ng-template ng-header-tmp>
                         <small class="form-text text-muted">Loaded {{ softwareVersionsBuffer.length }} of {{ softwareVersions.length }}</small>
                       </ng-template>
                     </ng-select>
-                    <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'tcSoftwareVersion')">
-                      <div class="invalid-feedback" *ngIf="itStandardsForm.controls['tcSoftwareVersion'].errors.required">
-                        One Software Version Required
+                    <div *ngIf="!isOldRecord(itStandard.OldName)">
+                      <div id="divIsValidSoftwareVersion" *ngIf="!hasValue('tcSoftwareVersion')">
+                        <div class="invalid-feedback" *ngIf="!isOldRecord(itStandard.OldName)">
+                          One Software Version Required
+                        </div>
                       </div>
                     </div>
                   </div>
 
                 <div class="form-group col-6" id="divRelease">
-                  <label for="tcSoftwareRelease">Software Release<span class="text-danger">*</span></label>
+                  <label for="tcSoftwareRelease">Software Release<span *ngIf="!isOldRecord(itStandard.OldName)" class="text-danger">*</span></label>
                     <ng-select id="tcSoftwareRelease" formControlName="tcSoftwareRelease"
                       [items]="softwareReleases"
                       [multiple]="false"
@@ -137,15 +140,16 @@
                       [virtualScroll]="true"
                       (scroll)="modalService.onScroll($event, softwareReleasesBuffer, bufferSize, softwareReleases, softwareReleasesLoading)"
                       (scrollToEnd)="modalService.onScrollToEnd(softwareReleasesBuffer, bufferSize, softwareReleases, softwareReleasesLoading)"
-                      (change)="setApprovalExpirationDate($event)"
-                      required>
+                      (change)="setApprovalExpirationDate($event)">
                       <ng-template ng-header-tmp>
                         <small class="form-text text-muted">Loaded {{ softwareReleasesBuffer.length }} of {{ softwareReleases.length }}</small>
                       </ng-template>
                     </ng-select>
-                    <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'tcSoftwareRelease')">
-                      <div class="invalid-feedback" *ngIf="itStandardsForm.controls['tcSoftwareRelease'].errors.required">
-                        One Software Release Required
+                    <div *ngIf="!isOldRecord(itStandard.OldName)">
+                      <div id="divIsValidSoftwareRelease" *ngIf="!hasValue('tcSoftwareRelease')">
+                        <div class="invalid-feedback" *ngIf="!isOldRecord(itStandard.OldName)">
+                          One Software Release Required
+                        </div>
                       </div>
                     </div>
                   </div>
