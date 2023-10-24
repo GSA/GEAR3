@@ -32,6 +32,8 @@
     "@angular/platform-browser": "^16.2.7",
     "@angular/platform-browser-dynamic": "^16.2.7",
     "@angular/router": "^16.2.7",
+    "@babel/core": "^7.23.2",
+    "@babel/traverse": "^7.23.2",
     "@ng-select/ng-select": "^11.1.1",
     "@swimlane/ngx-charts": "^20.4.1",
     "adjust-sourcemap-loader": "^4.0.0",
