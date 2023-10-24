@@ -15,4 +15,11 @@ router.route('/get/:id/systems')
 router.route('/updateSystems/:id')
   .put(recordsCtrl.updateSystems);
 
+  // Refresh all systems from Google Sheet
+router.route('/updateAllSystems')
+  .put(recordsCtrl.refreshAllSystems);
+
+router.route('/logEvent')
+  .post(recordsCtrl.logEvent);
+
 module.exports = router;

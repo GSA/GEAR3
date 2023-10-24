@@ -23,6 +23,8 @@ const bodyParser = require('body-parser'),
   ExtractJWT = passportJWT.ExtractJwt,
   JWTStrategy = passportJWT.Strategy;
 
+  const CryptoJS = require("crypto-js")
+
 // Proxy Settings for Google API to use
 // process.env.HTTP_PROXY="http://patchproxyr13.gsa.gov:3128";
 // process.env.http_proxy="http://patchproxyr13.gsa.gov:3128";
@@ -103,6 +105,7 @@ PASSPORT ROUTES
 1. AUTH ENTRY POINT (STARTS WITH A SAML ASSERTION)
 ********************************************************************/
 app.get('/beginAuth', passport.authenticate('saml'), (req, res) => {
+  console.log('beginAuth');
   // TODO: is this saml-protected route still necessary? or can we
   // change the client src to use /admin (no-hash) instead? Perhaps
   // it's needed while running the React app in dev b/c its proxy.
@@ -124,32 +127,99 @@ TODO: is this actually used by the admin app? or is it a dev tool?
 ********************************************************************/
 app.get('/verify',
   (req, res, next) => {
-    passport.authenticate('jwt', function (err, user, info) {
-      res.json(req.user);
-    });
-    // TODO: validate exp, structure etc. then pass along
+    const headers = req.headers;
+    // get ALL cookie from the request
+    const pairs = String(headers.cookie).split(';');
+    const cookies = {};
+    // parse the cookies into an object
+    for (let i = 0; i < pairs.length; i++) {
+      const pair = pairs[i].split('=');
+      cookies[(pair[0] + '').trim()] = unescape(pair.slice(1).join('='));
+    }
+    //console.log('cookies = ', cookies); // debug
+    // get the GSAGEARManUN cookie value
+    const userName = cookies.GSAGEARManUN;
+    // get the GSAGEARAPIT cookie value
+    const apiToken = cookies.GSAGEARAPIT;
+    if (apiToken) {
+      const query = `select count(*) as cnt from gear_acl.logins where email = '${userName}' and jwt = '${apiToken}' and date_add(expireDate, interval 1 day) > now();`;
+      // query the database for the api token
+      const db = mysql.createConnection(dbCredentials);
+      db.connect();
+      //console.log('query = ', query); // debug
+      db.query(query,
+        (err, results, fields) => {
+          if (err) {
+            // send the error to the client
+            res.status(500).json({ message: err });
+          } else {
+            if (results[0].cnt === 1) {
+              // send the response with the cookies
+              res.status(200).json(cookies);
+            } else {
+              //console.log('cnt = ', results[0].cnt); // debug
+              // send the response with no cookies
+              res.status(401).json({ message: 'invalid token' });
+            }
+          }
+        }
+      );
+    } else {
+      // send empty response
+      res.status(200).json({ message: 'no credentials found' });
+    }
   }
 );
+app.post('/logout', (req, res) => {
+  const headers = req.headers;
+  // remove ALL cookies from the response
+  const pairs = String(headers.cookie).split(';');
+  const cookies = {};
+  // parse the cookies into an object
+  for (let i = 0; i < pairs.length; i++) {
+    const pair = pairs[i].split('=');
+    cookies[(pair[0] + '').trim()] = unescape(pair.slice(1).join('='));
+  }
+  // get the GSAGEARManUN cookie value
+  const userName = cookies.GSAGEARManUN;
+  // remove ALL cookies from the response
+  for (let cookie in cookies) {
+    res.clearCookie(cookie);
+  }
+  // log the logout to log.event
+  const db = mysql.createConnection(dbCredentials);
+  db.connect();
+  db.query(`insert into gear_log.event (Event, User, DTG) values ('GEAR Manager - Logged Out', '${userName}', now());`);
+  // send the response with no cookies
+  res.status(200).json({ message: 'logged out' });
+});
 /********************************************************************
 3. SAML IDENTITY PROVIDER (IdP) POST-BACK HANDLER (USES INLINE HTML)
 ********************************************************************/
 app.post(samlConfig.path,
   passport.authenticate('saml'),
   (req, res) => {
-
     const samlProfile = req.user;
     const db = mysql.createConnection(dbCredentials);
     db.connect();
-    db.query(`CALL acl.get_user_perms('${samlProfile.nameID}');`,
+    db.query(`CALL gear_acl.get_user_perms('${samlProfile.nameID}');`,
       (err, results, fields) => {
         if (err) {
+          // log error returned by get_user_perms() to log.event
+          db.query(`insert into gear_log.event (Event, User, DTG) values ('GEAR Manager - Login Error', '${samlProfile.nameID}', now());`);
+          
+          // send the error to the client
           res.status(500);
           res.json({ error: err });
         }
         else {
           let html = ``;
           let userLookupStatus = ``;
+
           if (results[0].length === 0) {
+            // log user not found to log.event
+            db.query(`insert into gear_log.event (Event, User, DTG) values ('GEAR Manager - Unable to Verify User', '${samlProfile.nameID}', now());`);
+            
             userLookupStatus = `Unable to verify user, <strong>${samlProfile.nameID}</strong><br/><a href="${process.env.SAML_ENTRY_POINT}">TRY AGAIN</a>`;
             html = `<html><body style="font-family:sans-serif;"><p>${userLookupStatus}</p></body></html>`;
             res.status(401);
@@ -163,14 +233,30 @@ app.post(samlConfig.path,
             un: results[0][0].Username,
             exp: Math.floor(Date.now() / 1000) + 60 * 60,
             scopes: results[0][0].PERMS,
-            auditID: results[0][0].AuditID
+            auditID: results[0][0].AuditID,
           };
 
-          // JWT TOKEN SIGNED HERE TO BE USED IN INLINE HTML PAGE NEXT
+          // sign and create the JWT token for GEAR Manager
           const token = jsonwebtoken.sign(jwt, process.env.SECRET);
 
+          // create the key used to encrypt the API security token
+          const key = process.env.SECRET + jwt.exp.toString();
+
+          // encrypt and create the API security token
+          const apiToken = CryptoJS.AES.encrypt(`${jwt.auditID}`, key);
+
+          // set the JWT in the database
+          db.query(`CALL gear_acl.setJwt ('${jwt.auditID}', '${apiToken}');`,
+          (err) => {
+            if (err) {
+              console.log(err);
+            }
+          });
+
+          // set the redirect path to the admin app root 
           let adminRoute = (process.env.SAML_HOST === 'localhost') ? 'http://localhost:3000' : '/#';
 
+          // create the HTML to redirect to GEAR Manager
           html =
             `
 <html>
@@ -179,14 +265,45 @@ app.post(samlConfig.path,
     <script>
       const path = localStorage.redirectPath || '';
       delete localStorage.redirectPath;
-      localStorage.jwt = '${token}';
-      localStorage.user = '${results[0][0].AuditID}';
       localStorage.samlEntryPoint = '${process.env.SAML_ENTRY_POINT}';
       window.location.replace('${adminRoute}' + path);
     </script>
   </body>
 </html>
 `
+          
+          // Log GEAR Manager login
+          db.query(`insert into gear_log.event (Event, User, DTG) values ('GEAR Manager - Successful Login', '${samlProfile.nameID}', now());`);
+
+          // set the cookie expiration date
+          let date = new Date();
+          // set the cookie expiration date to 1 day after today
+          date.setTime(date.getTime() + (1 * 24 * 60 * 60 * 1000)); // days * hours * minutes * seconds * milliseconds
+          // set the cookie expiration date to 00:00:00
+          date.setHours(0, 0, 0, 0);
+          // get milliseconds from now to midnight
+          let msToMidnight = date.getTime() - Date.now();
+
+          // set the cookie options
+          let cookieOptions = { httpOnly : true, maxAge : msToMidnight };
+
+          // set the cookie in the browser
+          if (process.env.SAML_HOST !== 'localhost') {
+            cookieOptions.secure = true;
+          }
+
+          // divide the token into 2 cookies to avoid cookie size limit
+          let token1 = token.substring(0, 2000);
+          let token2 = token.substring(2000, token.length);
+
+          // set the cookie in the browser
+          res.cookie('GSAGEARManTK1', `"${token1}"`, cookieOptions); 
+          res.cookie('GSAGEARManTK2', `"${token2}"`, cookieOptions);
+          res.cookie('GSAGEARAPIT', `${apiToken}`, cookieOptions); 
+          res.cookie('GSAGEARManUN', `${results[0][0].AuditID}`, cookieOptions); 
+          res.cookie('samlEntryPoint', `${process.env.SAML_ENTRY_POINT}`, cookieOptions);
+          
+          // send the response
           res.send(html);
         }
       }
@@ -256,6 +373,8 @@ const request = require('request');
 const cron = require('node-cron');
 const fetch = require("node-fetch");
 let base64 = require('base-64');
+let cronCtrl = require("./api/controllers/cron.controller.js")
+
 /* 
 cron.schedule('0 20 * * *', () => {
   getData(fismaOptions.url);
@@ -308,6 +427,7 @@ const putData = async data => {
  * every Monday at 07:00 Eastern Time
 */
 const fastcsv = require("fast-csv");
+const { consoleTestResultHandler } = require('tslint/lib/test.js');
 
 cron.schedule('0 7 * * WED', () => {
   let stream = fs.createReadStream("./pocs/GSA_Pocs.csv");
@@ -340,3 +460,40 @@ cron.schedule('0 7 * * WED', () => {
 
   stream.pipe(csvStream);
 });
+
+// -------------------------------------------------------------------------------------------------
+// CRON JOB: Google Sheets API - Update All Related Records (runs every weekday at 6:00 AM & 6:00 PM)
+cron.schedule('0 6,18 * * 1-5', () => { //PRODUCTION
+//cron.schedule('50 14 * * 1-5', () => { //DEBUGGING
+
+  cronCtrl.runUpdateAllRelatedRecordsJob();
+  
+});
+
+// -------------------------------------------------------------------------------------------------
+// CRON JOB: Tech Catalog Daily Import
+/*
+// -------------------------------------------------
+// OPTION #1: Original, 1 job (runs EVERYDAY at 12:01 AM)
+cron.schedule('1 0 * * *', () => { //PRODUCTION
+  cronCtrl.runTechCatalogImportJob();
+});
+*/
+
+// -------------------------------------------------
+// OPTION #2: Weekday Mornings + Sunday Afternoon
+// (runs WEEKDAYS at 12:01 AM)
+cron.schedule('1 0 * * 1-5', () => { //PRODUCTION
+  cronCtrl.runTechCatalogImportJob();
+});
+
+// (runs SUNDAY AFTERNOON at 2:01 PM)
+cron.schedule('1 14 * * 0', () => { //PRODUCTION
+  cronCtrl.runTechCatalogImportJob();
+});
+/*
+// (runs SATURDAY + SUNDAY AFTERNOON at 2:01 PM)
+cron.schedule('1 14 * * 6-0', () => { //PRODUCTION
+  cronCtrl.runTechCatalogImportJob();
+});
+*/

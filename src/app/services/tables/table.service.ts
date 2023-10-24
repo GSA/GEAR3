@@ -276,6 +276,9 @@ export class TableService {
       systemApiStr: '/api/it_standards/get/',
       addRoute: addRoute,
     };
+    $('#divProduct').removeClass("disabledDivProduct");
+    $('#divVersion').removeClass("disabledDivVersion");
+    $('#divRelease').removeClass("disabledDivRelease");
     this.clickMethod(options);
   }
 
@@ -435,11 +438,12 @@ export class TableService {
           });
         });
       });
-
+      
     // Update related websites table in detail modal with clicked system
     var system_related_websites = <any>[];
-
+    
     // Join Websites to System for Related Systems
+    
     this.apiService
       .getSysWebsites(data.ID)
       .subscribe((websites_mappings: any[]) => {
@@ -453,13 +457,13 @@ export class TableService {
             websiteID_from_mappings.has(parseInt(Website_ID))
           ); // Parse into int as GoogleAPI makes everything strings
           // Update related websites table with filtered systems
-          $('#systemWebsiteTable').bootstrapTable('refreshOptions', {
+          $('#systemWebsitesTable').bootstrapTable('refreshOptions', {
             data: system_related_websites,
           });
         });
       });
   }
-
+  
   private clickMethod(options: ClickOptions) {
     this.modalService.updateDetails(
       options.data,

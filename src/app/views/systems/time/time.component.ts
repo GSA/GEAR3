@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { colorSets } from '@swimlane/ngx-charts/esm2015/lib/utils/color-sets';
+import { colorSets } from '@swimlane/ngx-charts';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';

@@ -20,6 +20,7 @@
       <span class="mr-2">GEAR Manager Login</span
       ><i class="fa fa-sign-in-alt fa-2x"></i>
     </a>
+
     <a
       class="btn btn-sm btn-danger text-white shadow mngr-btn d-flex align-items-center justify-content-center"
       routerLink="/systems"
@@ -60,6 +61,13 @@
   </div>
 
   <div class="card-body card-text">
+    <!-- GEAR Manager Google API Call  -->
+    <!--<a   class="btn btn-primary"
+        href="http://localhost:3000/api/records/updateAllSystems"
+        *ngIf="sharedService.loggedIn">
+        Update All Related Records
+        </a>-->
+    
     <!-- System/Sub-System Definition Popover -->
     <a
       tabindex="0"

@@ -47,7 +47,12 @@ exports.findOrgs = (req, res) => {
 };
 
 exports.updateOrgs = (req, res) => {
-  if (req.headers.authorization) {
+  ctrl.getApiToken (req, res)
+  .then((response) => {
+    console.log('*** API Security Testing - getApiToken response: ', response); //DEBUGGING
+
+    if (response === 1) {
+      console.log('*** API Security Testing - API Auth Validation: PASSED'); //DEBUGGING
     var data = req.body;
 
     // Create string to update business capability-organization relationship
@@ -67,8 +72,11 @@ exports.updateOrgs = (req, res) => {
     res = ctrl.sendQuery(query, 'updating organizations for capability', res);
 
   } else {
+    console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
+
     res.status(502).json({
       message: "No authorization token present. Not allowed to update business capabilities-organization mapping."
-    });
-  }
+      });
+    }
+  });
 };

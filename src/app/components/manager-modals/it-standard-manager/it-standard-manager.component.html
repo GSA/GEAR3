@@ -28,8 +28,148 @@
           <div class="tab-content mt-3">
             <div class="tab-pane fade show active" id="itStandMngrOverview">
 
+              <!-- Tech Catalog Information row 1 -->
               <div class="row align-items-center">
-                <div class="form-group col-3">
+                
+                <div class="form-group col">
+                  <label for="tcManufacturer">Manufacturer Name<span *ngIf="!isOldRecord(itStandard.OldName)" class="text-danger">*</span></label>
+                    <ng-select id="tcManufacturer" formControlName="tcManufacturer"
+                      [items]="manufacturers"
+                      [multiple]="false"
+                      appendTo="#itStandardsManager"
+                      bindLabel="name"
+                      bindValue="id"
+                      clearAllText="Clear All"
+                      [clearSearchOnAdd]="true"
+                      [closeOnSelect]="true"
+                      [loading]="manufacturersLoading"
+                      placeholder="Search & Select Manufacturer Here"
+                      [virtualScroll]="true"
+                      (scroll)="modalService.onScroll($event, manufacturersBuffer, bufferSize, manufacturers, manufacturersLoading)"
+                      (scrollToEnd)="modalService.onScrollToEnd(manufacturersBuffer, bufferSize, manufacturers, manufacturersLoading)"
+                      (change)="manufacturerChange($event)">
+                      <ng-template ng-header-tmp>
+                        <small class="form-text text-muted">Loaded {{ manufacturersBuffer.length }} of {{ manufacturers.length }}</small>
+                      </ng-template>
+                    </ng-select>
+                    <div *ngIf="!isOldRecord(itStandard.OldName)">
+                      <div id="divIsValidManufacturer" *ngIf="!hasValue('tcManufacturer')">
+                        <div class="invalid-feedback" *ngIf="!isOldRecord(itStandard.OldName)">
+                          One Manufacturer Required
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+  
+                <div class="form-group col" id="divProduct">
+                  <label for="tcSoftwareProduct">Software Product Name<span *ngIf="!isOldRecord(itStandard.OldName)" class="text-danger">*</span></label>
+                    <ng-select id="tcSoftwareProduct" formControlName="tcSoftwareProduct"
+                      [items]="softwareProducts"
+                      [multiple]="false"
+                      appendTo="#itStandardsManager"
+                      bindLabel="name"
+                      bindValue="id"
+                      clearAllText="Clear All"
+                      [clearSearchOnAdd]="true"
+                      [closeOnSelect]="true"
+                      [loading]="softwareProductsLoading"
+                      placeholder="Search & Select Software Product"
+                      [virtualScroll]="true"
+                      (scroll)="modalService.onScroll($event, softwareProductsBuffer, bufferSize, softwareProducts, softwareProductsLoading)"
+                      (scrollToEnd)="modalService.onScrollToEnd(softwareProductsBuffer, bufferSize, softwareProducts, softwareProductsLoading)"
+                      (change)="softwareProductChange($event)">
+                      <ng-template ng-header-tmp>
+                        <small class="form-text text-muted">Loaded {{ softwareProductsBuffer.length }} of {{ softwareProducts.length }}</small>
+                      </ng-template>
+                    </ng-select>
+                    <div *ngIf="!isOldRecord(itStandard.OldName)">
+                      <div id="divIsValidSoftwareProduct" *ngIf="!hasValue('tcSoftwareProduct')">
+                        <div class="invalid-feedback" *ngIf="!isOldRecord(itStandard.OldName)">
+                          One Software Product Required
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+
+              <!-- Tech Catalog Information row 2 -->
+              <div class="row align-items-center">
+                <div class="form-group col-3" id="divVersion">
+                  <label for="tcSoftwareVersion">Software Version<span *ngIf="!isOldRecord(itStandard.OldName)" class="text-danger">*</span></label>
+                    <ng-select id="tcSoftwareVersion" formControlName="tcSoftwareVersion"
+                      [items]="softwareVersions"
+                      [multiple]="false"
+                      appendTo="#itStandardsManager"
+                      bindLabel="name"
+                      bindValue="id"
+                      clearAllText="Clear All"
+                      [clearSearchOnAdd]="true"
+                      [closeOnSelect]="true"
+                      [loading]="softwareVersionsLoading"
+                      placeholder="Search & Select Software Version"
+                      [virtualScroll]="true"
+                      (scroll)="modalService.onScroll($event, softwareVersionsBuffer, bufferSize, softwareVersions, softwareVersionsLoading)"
+                      (scrollToEnd)="modalService.onScrollToEnd(softwareVersionsBuffer, bufferSize, softwareVersions, softwareVersionsLoading)"
+                      (change)="softwareVersionChange($event)">
+                      <ng-template ng-header-tmp>
+                        <small class="form-text text-muted">Loaded {{ softwareVersionsBuffer.length }} of {{ softwareVersions.length }}</small>
+                      </ng-template>
+                    </ng-select>
+                    <div *ngIf="!isOldRecord(itStandard.OldName)">
+                      <div id="divIsValidSoftwareVersion" *ngIf="!hasValue('tcSoftwareVersion')">
+                        <div class="invalid-feedback" *ngIf="!isOldRecord(itStandard.OldName)">
+                          One Software Version Required
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                <div class="form-group col-6" id="divRelease">
+                  <label for="tcSoftwareRelease">Software Release<span *ngIf="!isOldRecord(itStandard.OldName)" class="text-danger">*</span></label>
+                    <ng-select id="tcSoftwareRelease" formControlName="tcSoftwareRelease"
+                      [items]="softwareReleases"
+                      [multiple]="false"
+                      appendTo="#itStandardsManager"
+                      bindLabel="application"
+                      bindValue="id"
+                      clearAllText="Clear All"
+                      [clearSearchOnAdd]="true"
+                      [closeOnSelect]="true"
+                      [loading]="softwareReleasesLoading"
+                      placeholder="Search & Select Software Release"
+                      [virtualScroll]="true"
+                      (scroll)="modalService.onScroll($event, softwareReleasesBuffer, bufferSize, softwareReleases, softwareReleasesLoading)"
+                      (scrollToEnd)="modalService.onScrollToEnd(softwareReleasesBuffer, bufferSize, softwareReleases, softwareReleasesLoading)"
+                      (change)="setApprovalExpirationDate($event)">
+                      <ng-template ng-header-tmp>
+                        <small class="form-text text-muted">Loaded {{ softwareReleasesBuffer.length }} of {{ softwareReleases.length }}</small>
+                      </ng-template>
+                    </ng-select>
+                    <div *ngIf="!isOldRecord(itStandard.OldName)">
+                      <div id="divIsValidSoftwareRelease" *ngIf="!hasValue('tcSoftwareRelease')">
+                        <div class="invalid-feedback" *ngIf="!isOldRecord(itStandard.OldName)">
+                          One Software Release Required
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group col-3" id="divEndOfLifeDate">
+                    <label for="tcEndOfLifeDate">Software End of Life Date</label>
+                    <input type="text" class="form-control" id="tcEndOfLifeDate"
+                      formControlName="tcEndOfLifeDate" placeholder="Not Available" [value]="formatEndOfLifeDate(endOfLifeDate)">
+                      <!--<div class="success-feedback" *ngIf="isAssignedToitStandAprvExp(endOfLifeDate, aprvExpDate)">
+                        This date value was set to the Approval Expiration Date
+                      </div>-->
+                      <div class="invalid-feedback" *ngIf="hasEndOfLifeDatePassed(endOfLifeDate)">
+                        Note: This Software is no longer supported
+                      </div>
+                  </div>
+                </div>
+
+              <!-- Status, old IT Standard Name & POCs -->
+              <div class="row align-items-center">
+                <div class="form-group col-2">
                   <label for="itStandStatus">Status<span class="text-danger">*</span></label>
                   <select class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(itStandardsForm, 'itStandStatus')}" id="itStandStatus"
                     formControlName="itStandStatus" required>
@@ -43,18 +183,13 @@
                   </div>
                 </div>
 
-                <div class="form-group col">
-                  <label for="itStandName">IT-Standard Name<span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(itStandardsForm, 'itStandName')}" id="itStandName"
-                    formControlName="itStandName" placeholder="Enter a Name" [value]="itStandard.Name" required>
-                  <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'itStandName')">
-                    <div class="invalid-feedback" *ngIf="itStandardsForm.controls['itStandName'].errors.required">
-                      IT Standard Name Required
-                    </div>
-                  </div>
+                <div class="form-group col-6" id="divOldName">
+                  <label for="itStandName">Old IT-Standard Name (Legacy)</label>
+                  <input type="text" class="form-control" id="itStandName"
+                    formControlName="itStandName" placeholder="Not Applicable" [value]="itStandard.OldName" >
                 </div>
 
-                <div class="form-group col-3">
+                <div class="form-group col-4">
                   <label for="itStandPOC">POC(s)<span class="text-danger">*</span></label>
                   <ng-select id="itStandPOC" formControlName="itStandPOC"
                     [items]="POCs"
@@ -83,6 +218,7 @@
                 </div>
               </div>
 
+              <!-- Description -->
               <div class="form-group">
                 <label for="itStandDesc">Description</label>
                 <textarea type="text" class="form-control" id="itStandDesc" formControlName="itStandDesc"
@@ -200,6 +336,7 @@
 
               </div>
 
+              <!-- End of General Info Pane -->
               <div class="form-group">
                 <label for="itStandComments">Comments</label>
                 <textarea type="text" class="form-control" id="itStandComments" formControlName="itStandComments"

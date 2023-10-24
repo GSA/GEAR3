@@ -61,8 +61,58 @@ export class ItStandardsComponent implements OnInit {
     visible: false
   }, {
     field: 'Name',
-    title: 'Standard Name',
+    title: 'IT Standard Name',
     sortable: true
+  }, {
+    field: 'Manufacturer',
+    title: 'Manufacturer ID',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'ManufacturerName',
+    title: 'Manufacturer Name',
+    sortable: true
+  }, {
+    field: 'SoftwareProduct',
+    title: 'Software Product ID',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'SoftwareProductName',
+    title: 'Software Product Name',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'SoftwareVersion',
+    title: 'Software Version ID',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'SoftwareVersionName',
+    title: 'Software Version Name',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'SoftwareRelease',
+    title: 'Software Release ID',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'SoftwareReleaseName',
+    title: 'Software Release Name',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'EndOfLifeDate',
+    title: 'Software End of Life Date',
+    sortable: true,
+    visible: false,
+    formatter: this.sharedService.dateFormatter
+  }, {
+    field: 'OldName',
+    title: 'Old IT Standard Name',
+    sortable: true,
+    visible: false
   }, {
     field: 'Description',
     title: 'Description',
@@ -164,6 +214,11 @@ export class ItStandardsComponent implements OnInit {
     this.sharedService.setITStandardsForm();
     this.modalService.updateDetails(emptyITStand, 'it-standard', false);
     $('#itStandardsManager').modal('show');
+
+    // disable the tcSoftwareProduct on the itStandardsManager modal
+    $('#divProduct').addClass("disabledDivProduct");
+    $('#divVersion').addClass("disabledDivVersion");
+    $('#divRelease').addClass("disabledDivRelease");
   }
 
   // Update table from filter buttons

@@ -7,7 +7,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { SidebarModule } from 'ng-sidebar'; // Sidebar Module
+import { SidebarModule } from 'ng-sidebar-v2'; // Sidebar Module
 import { PdfViewerModule } from 'ng2-pdf-viewer'; // PDF Viewer
 import { NgxChartsModule } from '@swimlane/ngx-charts'; // Visualizations
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -65,7 +65,8 @@ import { ItStandardsModalComponent } from './components/modals/it-standards-moda
 import { ItStandardManagerComponent } from './components/manager-modals/it-standard-manager/it-standard-manager.component';
 
 //// Enterprise Architecture
-import { ArtifactsComponent } from './views/architecture/artifacts/artifacts.component';
+//import { ArtifactsComponent } from './views/architecture/artifacts/artifacts.component';
+import { EAViewComponent } from './views/architecture/ea-view/ea-view.component';
 import { GearModelComponent } from './views/architecture/gear-model/gear-model.component';
 
 // Global Variables
@@ -118,7 +119,8 @@ import { Globals } from './common/globals';
     ItStandardsModalComponent,
     ItStandardManagerComponent,
 
-    ArtifactsComponent,
+    //ArtifactsComponent,
+    EAViewComponent,
     GearModelComponent,
   ],
   imports: [

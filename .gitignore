@@ -3,6 +3,7 @@
 #----- Custom Ignores -----
 # sensitive data
 .env
+copy.env
 /iisnode
 /certs
 /log/*
@@ -65,3 +66,8 @@ Thumbs.db
 # Images not meant for version control
 /src/assets/website-screenshots
 /website-screenshots
+debug.log
+tech_catalog_data
+googleauthentication
+googleauthentication.exe
+*gear_google_credentials.json

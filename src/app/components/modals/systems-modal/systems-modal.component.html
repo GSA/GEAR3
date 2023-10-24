@@ -57,6 +57,11 @@
               Related Records</a
             >
           </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#relatedWebsites">
+              Related Websites</a
+            >
+          </li>
           <li class="nav-item" [hidden]="system.SystemLevel != 'System'">
             <a class="nav-link" data-toggle="tab" href="#systemSubs">
               Subsystems</a
@@ -320,12 +325,20 @@
           <div class="tab-pane fade" id="relatedInvestments">
             <table id="systemInvestTable"></table>
           </div>
-          <!-- End of Related Records Pane -->
+
+          <!-- Related Records Pane -->
 
           <div class="tab-pane fade" id="relatedRecords">
             <table id="systemRecTable"></table>
           </div>
           <!-- End of Related Records Pane -->
+
+          <!-- Related Websites Pane -->
+
+          <div class="tab-pane fade" id="relatedWebsites">
+            <table id="systemWebsitesTable"></table>
+          </div>
+          <!-- End of Related Websites Pane -->
 
           <div class="tab-pane fade" id="systemSubs">
             <table id="subSysTable"></table>

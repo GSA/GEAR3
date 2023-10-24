@@ -35,12 +35,13 @@ exports.auth = (req, res, next) => {
       prompt: 'consent',
       scope: SCOPES
     });
-    
+
     res.redirect(authUrl);
   });
 }
 
 exports.saveToken = (req, res, next) => {
+  console.log("saveToken called!!")
   let code = req.query.code;
   var credentials = {};
 
@@ -71,5 +72,5 @@ exports.saveToken = (req, res, next) => {
       });
     });
   });
-  
+
 }

@@ -350,6 +350,116 @@ export class SystemsModalComponent implements OnInit {
     sortable: true
   }];
 
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!START WEBSITES
+// Related Websites Table Options
+sysWebsitesTableOptions: {} = this.tableService.createTableOptions({
+  advancedSearch: false,
+  idTable: null,
+  classes: "table-hover table-light clickable-table",
+  showColumns: true,
+  showExport: true,
+  exportFileName: null,
+  headerStyle: "bg-danger text-white",
+  pagination: false,
+  search: true,
+  sortName: 'domain',
+  sortOrder: 'asc',
+  showToggle: true,
+  url: null
+});
+
+// Related Websites Table Columns
+sysWebsitesColumnDefs: any[] = [
+  {
+    field: 'domain',
+    title: 'Domain',
+    sortable: true,
+  },
+  {
+    field: 'office',
+    title: 'Office',
+    sortable: true,
+  },
+  {
+    field: 'site_owner_email',
+    title: 'Site Owner',
+    sortable: true,
+  },
+  {
+    field: 'contact_email',
+    title: 'Contact Email',
+    sortable: true,
+  },
+  {
+    field: 'production_status',
+    title: 'Status',
+    sortable: true,
+  },
+  {
+    field: 'redirects_to',
+    title: 'Redirect URL',
+    sortable: true,
+  },
+  {
+    field: 'required_by_law_or_policy',
+    title: 'Required?',
+    sortable: true,
+  },
+  {
+    field: 'has_dap',
+    title: 'Uses DAP?',
+    sortable: true,
+  },
+  {
+    field: 'mobile_friendly',
+    title: 'Mobile Friendly?',
+    sortable: true,
+  },
+  {
+    field: 'has_search',
+    title: 'Has Search?',
+    sortable: true,
+  },
+  {
+    field: 'repository_url',
+    title: 'Repository URL',
+    sortable: true,
+  },
+  {
+    field: 'hosting_platform',
+    title: 'Hosting Platform',
+    sortable: true,
+  },
+  {
+    field: 'cms_platform',
+    title: 'Content Management Platform',
+    sortable: true,
+  },
+  {
+    field: 'https',
+    title: 'HTTPS?',
+    sortable: true,
+  },
+  {
+    field: 'sub_office',
+    title: 'Sub-office',
+    sortable: false,
+    visible: false,
+    class: 'text-truncate',
+  },
+  {
+    field: 'type_of_site',
+    title: 'Type of Site',
+    sortable: true,
+    visible: true,
+    class: 'text-truncate',
+  },
+];
+
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!END WEBSITES
+
+
+
   ngOnInit(): void {
     this.modalService.currentSys.subscribe(system => this.system = system);
 
@@ -375,6 +485,11 @@ export class SystemsModalComponent implements OnInit {
 
     $('#systemRecTable').bootstrapTable($.extend(this.sysRecTableOptions, {
       columns: this.sysRecColumnDefs,
+      data: [],
+    }));
+
+    $('#systemWebsitesTable').bootstrapTable($.extend(this.sysWebsitesTableOptions, {
+      columns: this.sysWebsitesColumnDefs,
       data: [],
     }));
 
@@ -408,13 +523,23 @@ export class SystemsModalComponent implements OnInit {
       }.bind(this)
       ));
 
-    // Method to handle click events on the Related Systems table
+    // Method to handle click events on the Related Records table
     $(document).ready(
       $('#systemRecTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#systemDetail').modal('hide');
 
         this.tableService.recordsTableClick(row);
+      }.bind(this)
+      ));
+
+    // Method to handle click events on the Related Websites table
+    $(document).ready(
+      $('#systemWebsitesTable').on('click-row.bs.table', function (e, row) {
+        // Hide First Modal before showing new modal
+        $('#systemDetail').modal('hide');
+
+        this.tableService.websitesTableClick(row);
       }.bind(this)
       ));
 

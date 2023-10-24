@@ -1,9 +1,13 @@
-import { Injectable, EventEmitter } from '@angular/core';
-import { formatDate, Location } from '@angular/common';
-import { Subscription } from 'rxjs/internal/Subscription';
-import { Router } from '@angular/router';
+import {Injectable, EventEmitter} from '@angular/core';
+import {formatDate, Location} from '@angular/common';
+import {Subscription} from 'rxjs/internal/Subscription';
+import {Router} from '@angular/router';
 
-import { Globals } from '@common/globals';
+import {Globals} from '@common/globals';
+
+import jwtDecode from 'jwt-decode';
+import { HttpClient } from '@angular/common/http';
+import { set } from 'd3';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -29,14 +33,17 @@ export class SharedService {
 
   systemFormEmitter = new EventEmitter();
   systemFormSub: Subscription;
-  
+
   websiteFormEmitter = new EventEmitter();
   websiteFormSub: Subscription;
 
   constructor(
     private globals: Globals,
     private location: Location,
-    private router: Router) { }
+    private router: Router,
+    private http: HttpClient
+    ) {
+  }
 
   // Sidebar Toggle
   public toggleClick() {
@@ -62,7 +69,8 @@ export class SharedService {
     if (result) {
       if (field) return result[field];
       else return result.ID;
-    };
+    }
+    ;
   };
 
   // Have to render POC info separately as anchor links dont work with ngFor
@@ -98,7 +106,6 @@ export class SharedService {
           email: pieces[1],
           org: pieces[2]
         }
-
         pocObjs.push(tmpObj);
       })
     }
@@ -106,22 +113,68 @@ export class SharedService {
     return pocObjs;
   }
 
-
   // JWT Handling
   //// Set JWT on log in to be tracked when checking for authentication
   public setJWTonLogIn(): void {
-    if (localStorage.getItem('jwt') !== null) {  // If successful set of JWT
-      setTimeout(() => {
-        this.globals.jwtToken = localStorage.getItem('jwt');
-        this.globals.authUser = localStorage.getItem('user');
-        $('#loggedIn').toast('show');
-      }, 1000);  // Wait for 1 sec to propogate after logging in
+    this.verifyCookies();
+  }
+
+  verifyCookies() : void {    
+    //console.log('requesting cookies...'); // debug
+    this.http.get('/verify', {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+    .subscribe(response => {
+      //console.log('verifying cookies response: ', response); // debug
+      const cookies : any = response;
+      try {
+        if (cookies.GSAGEARAPIT && cookies.GSAGEARManUN) {
+          //console.log('GEAR Manager cookie found in response', cookies); // debug
+          // Set JWT in globals
+          this.globals.jwtToken = cookies.GSAGEARAPIT;
+          this.globals.authUser = cookies.GSAGEARManUN;
+          this.globals.apiToken = cookies.GSAGEARAPIT;
+          // Show logged in banner
+          $('#loggedIn').toast('show');
+        } else {
+          //console.log('GEAR Manager cookie NOT found in response: ', cookies); // debug
+          this.globals.jwtToken = '';
+          this.globals.authUser = '';
+          this.globals.apiToken = '';
+        }
+      } catch (error) {
+        console.error('An error occurred while /verify response: ', error);
+        //console.log('Error Response: ', cookies); // debug
+      }
     }
-  };
+    , error => {
+      console.error('An error occurred while verifying cookies', error);
+    });
+  }
 
   //// Check if user is authenticated to GEAR Manager
   public get loggedIn(): boolean {
-    return localStorage.getItem('jwt') !== null && localStorage.getItem('jwt') == this.globals.jwtToken;
+
+    if (this.globals.jwtToken === "" || this.globals.jwtToken === null ||
+        this.globals.apiToken === "" || this.globals.apiToken === null || 
+        this.globals.authUser === "" || this.globals.authUser === null) {
+      return false;
+    }
+
+    if (this.globals.jwtToken/* === localStorage.getItem('jwt')*/ &&
+        this.globals.authUser/* === localStorage.getItem('user')*/ &&
+        this.globals.apiToken/* === localStorage.getItem('apiToken')*/) {
+      return true;
+    }
+
+    return false;
+  };
+
+  //// Get Authenticated Username
+  public get authUser(): string {
+    return this.globals.authUser;
   };
 
   //// Set Redirect Path to come back to page after GEAR Manager login
@@ -131,8 +184,28 @@ export class SharedService {
 
   //// Remove JWT and show log out banner when logging out of GEAR Manager
   public logoutManager() {
-    localStorage.removeItem('jwt');
-    $('#loggedOut').toast('show');
+    // remove cookies
+    this.http.post('/logout', {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+    .subscribe(response => {
+      const cookies : any = response;
+      if (cookies.GSAGEARAPIT || cookies.GSAGEARManUN) {
+        console.error('Logout failed to complete');
+      } else {
+        //console.log('Logout SUCESS:', cookies); // debug
+        // remove globals
+        this.globals.jwtToken = '';
+        this.globals.authUser = '';
+        this.globals.apiToken = '';
+        // show logged out banner
+        $('#loggedOut').toast('show');
+      }
+    }, error => {
+      console.error('An error occurred while logging out Gear Manager', error); 
+    });
   };
 
 
@@ -154,7 +227,10 @@ export class SharedService {
   public systemFormatter(value, row, index, field) {
     var finalVal = value;
 
-    if (value == '' || value == undefined) { finalVal = "N/A" };
+    if (value == '' || value == undefined) {
+      finalVal = "N/A"
+    }
+    ;
 
     return finalVal;
   };
@@ -201,7 +277,7 @@ export class SharedService {
     let names = [];
     let pocs = value.split(':')[1];  // Retrieve POC after colon
     pocs = pocs.split('; ');  // Retrieve POC after colon
-    for (let i=0; i<pocs.length; i++) {
+    for (let i = 0; i < pocs.length; i++) {
       let singleName = pocs[i].split(', ')[0];
       if (singleName != '') names.push(singleName);  // Add only if there is a name
     }
@@ -256,5 +332,48 @@ export class SharedService {
     var normalizedURL = this.coreURL(this.router.url);
     this.location.replaceState(`${normalizedURL}/${row[IDname]}`);
   };
+
+  // cookies functions ---------------------------------------
+
+  // get a cookie by name
+  public getCookie(name: string) {
+    const ca: Array<string> = document.cookie.split(';');
+    const caLen: number = ca.length;
+    const cookieName = `${name}=`;
+    let c: string;
+  
+    for (let i = 0; i < caLen; i += 1) {
+      c = ca[i].replace(/^\s+/g, '');
+      if (c.indexOf(cookieName) === 0) {
+        return c.substring(cookieName.length, c.length);
+      }
+    }
+    return '';
+  }
+  
+  // delete a cookie by name
+  public deleteCookie(name) {
+    this.setCookie(name, '', -1);
+  }
+  
+  // set a cookie
+  public setCookie(name: string, value: string, expireDays: number, path: string = '') {
+    const d: Date = new Date();
+    d.setTime(d.getTime() + expireDays * 24 * 60 * 60 * 1000);
+    const expires: string = `expires=${d.toUTCString()}`;
+    const cpath: string = path ? `; path=${path}` : '';
+    document.cookie = `${name}=${value}; ${expires}${cpath}`;
+  }
+
+  // get a list of all cookies
+  public getCookies() {
+    const pairs = document.cookie.split(';');
+    const cookies = {};
+    for (let i = 0; i < pairs.length; i++) {
+      const pair = pairs[i].split('=');
+      cookies[(pair[0] + '').trim()] = unescape(pair.slice(1).join('='));
+    }
+    return cookies;
+  }
 
 }
