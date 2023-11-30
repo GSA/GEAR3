@@ -110,7 +110,7 @@ export class ItStandardsComponent implements OnInit {
     formatter: this.sharedService.dateFormatter
   }, {
     field: 'OldName',
-    title: 'Old IT Standard Name',
+    title: 'Previously Known As',
     sortable: true,
     visible: false
   }, {
