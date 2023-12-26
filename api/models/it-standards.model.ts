@@ -26,4 +26,8 @@ export class ITStandards {
   public Category: string = null;
   public OldName: string = null;
   public EndOfLifeDate: Date = null;
+  public AttestationRequired: string = null;
+  public AttestationLink: string = null;
+  public Fedramp: string = null;
+  public OpenSource: string = null;
 }

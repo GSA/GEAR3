@@ -155,6 +155,26 @@ export class ItStandardsComponent implements OnInit {
     sortable: true,
     visible: false
   }, {
+    field: 'AttestationRequired',
+    title: 'Attestation Required',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'AttestationLink',
+    title: 'Attestation Link',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'Fedramp',
+    title: 'Fedramp',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'OpenSource',
+    title: 'Open Source',
+    sortable: true,
+    visible: false
+  }, {
     field: 'ApprovalExpirationDate',
     title: 'Approval Expiration Date',
     sortable: true,
