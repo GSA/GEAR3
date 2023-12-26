@@ -30,10 +30,10 @@ SELECT
   GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', CONCAT(poc.FirstName, ' ', poc.LastName), poc.Email, org.Display_Name) SEPARATOR '; ')     AS POC,
   GROUP_CONCAT(DISTINCT obj_standard_category.Keyname SEPARATOR ', ')   AS Category,
   tech.Keyname                                    AS OldName,
-  DATE(tech.endOfLifeDate)                        AS EndOfLifeDate
-  tech.Attestation_Required                       AS AttestationRequired
-  tech.Attestation_Link                           AS AttestationLink
-  tech.Fedramp                                    AS Fedramp
+  DATE(tech.endOfLifeDate)                        AS EndOfLifeDate,
+  tech.Attestation_Required                       AS AttestationRequired,
+  tech.Attestation_Link                           AS AttestationLink,
+  tech.Fedramp                                    AS Fedramp,
   tech.Open_Source                                AS OpenSource
 FROM obj_technology AS tech
 
