@@ -22,6 +22,8 @@ const techCatalog = require(routesPath + "tech-catalog.routes");
 const websites = require(routesPath + "websites.routes");
 
 const router = express.Router();
+const app = express()
+app.set('trust proxy', true);
 let limiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
   max: 20, // 20 requests
