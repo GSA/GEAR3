@@ -7,7 +7,11 @@ SELECT
   tech.Vendor_Standard_Organization,
   tech.Available_through_Myview,
   tech.Gold_Image,
+  tech.Attestation_Required                       AS AttestationRequired,
+  tech.Fedramp                                    AS Fedramp,
+  tech.Open_Source                                AS OpenSource,
   tech.Gold_Image_Comment,
+  tech.Attestation_Link                           AS AttestationLink,
   tech.Comments,
   tech.old_Id,
   tech.Reference_Documents                        AS ReferenceDocument,
@@ -30,11 +34,7 @@ SELECT
   GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', CONCAT(poc.FirstName, ' ', poc.LastName), poc.Email, org.Display_Name) SEPARATOR '; ')     AS POC,
   GROUP_CONCAT(DISTINCT obj_standard_category.Keyname SEPARATOR ', ')   AS Category,
   tech.Keyname                                    AS OldName,
-  DATE(tech.endOfLifeDate)                        AS EndOfLifeDate,
-  tech.Attestation_Required                       AS AttestationRequired,
-  tech.Attestation_Link                           AS AttestationLink,
-  tech.Fedramp                                    AS Fedramp,
-  tech.Open_Source                                AS OpenSource
+  DATE(tech.endOfLifeDate)                        AS EndOfLifeDate
 FROM obj_technology AS tech
 
 LEFT JOIN obj_technology_status               ON tech.obj_technology_status_Id = obj_technology_status.Id

@@ -320,16 +320,25 @@
                       </div>
                     </div>
 
-                    <div class="form-group col-5">
+                    <div class="form-group col-9">
+                      <label for="itStandAtteLink">Attestation Link</label>
+                      <input type="text" class="form-control" id="itStandGoldLink"
+                        formControlName="itStandAtteLink" placeholder="Enter the link for the attestation"
+                        [value]="itStandard.Attestation_Link">
+                    </div>
+                  </div>
+
+                  <div class="row align-items-center">
+                    <div class="form-group col-3 text-center mb-0">
                       <label for="itStandFedramp">Fedramp</label>
                       <div id="itStandFedramp" class="custom-control custom-switch">
-                        <input type="checkbox" class="custom-control-input" id="itStandfedrampSwitch"
+                        <input type="checkbox" class="custom-control-input" id="itStandFedrampSwitch"
                           formControlName="itStandFedramp" [checked]="itStandard.Fedramp === 'T'">
                         <label class="custom-control-label" for="itStandFedrampSwitch">True</label>
                       </div>
                     </div>
 
-                    <div class="form-group col-4">
+                    <div class="form-group col-5">
                       <label for="itStandOpenSource">Open Source</label>
                       <div id="itStandOpenSource" class="custom-control custom-switch">
                         <input type="checkbox" class="custom-control-input" id="itStandOpenSourceSwitch"
@@ -337,6 +346,8 @@
                         <label class="custom-control-label" for="itStandOpenSourceSwitch">True</label>
                       </div>
                     </div>
+
+                    <div class="form-group col-4"></div>
                   </div>
 
                   <div class="row align-items-center">

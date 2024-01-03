@@ -34,7 +34,7 @@ exports.findSystems = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
     ` LEFT JOIN zk_systems_subsystems_technology AS mappings ON systems.\`ex:GEAR_ID\` = mappings.obj_systems_subsystems_Id
       LEFT JOIN obj_technology AS tech                                ON mappings.obj_technology_Id = tech.Id
-      
+
       WHERE tech.Id = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`; //removed LEFT JOIN cowboy_ods.obj_technology reference
 
   res = ctrl.sendQuery(query, 'systems using IT Standard', res);
@@ -104,7 +104,11 @@ exports.update = (req, res) => {
           Vendor_Standard_Organization    = '${data.itStandVendorOrg}',
           obj_deployment_type_Id          = ${data.itStandDeployment},
           Gold_Image                      = '${data.itStandGoldImg}',
+          Attestation_Required            = '${data.itStandReqAtte}',
+          Fedramp                         = '${data.itStandFedramp}',
+          Open_Source                     = '${data.itStandOpenSource}',
           Gold_Image_Comment              = '${data.itStandGoldComment}',
+          Attestation_Link                = '${data.itStandAtteLink}',
           Approved_Status_Expiration_Date = ${data.itStandAprvExp},
           Comments                        = '${data.itStandComments}',
           Reference_documents             = ${data.itStandRefDocs},
@@ -129,7 +133,7 @@ exports.update = (req, res) => {
       res = ctrl.sendQuery(query + ' ' + logStatement, 'update IT Standard', res); //removed sendQuery_cowboy reference
     } else {
       //console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
-      
+
       //console.log('it-standard update no valid token!!!!');
       res.status(502).json({
         message: "No authorization token present. Not allowed to update IT-Standards"
@@ -171,7 +175,11 @@ exports.create = (req, res) => {
         Vendor_Standard_Organization,
         Available_through_Myview,
         Gold_Image,
+        Attestation_Required,
+        Fedramp,
+        Open_Source,
         Gold_Image_Comment,
+        Attestation_Link,
         Comments,
         obj_technology_status_Id,
         obj_deployment_type_Id,
@@ -195,7 +203,11 @@ exports.create = (req, res) => {
         '${data.itStandVendorOrg}',
         '${data.itStandMyView}',
         '${data.itStandGoldImg}',
+        '${data.itStandReqAtte}',
+        '${data.itStandFedramp}',
+        '${data.itStandOpenSource}',
         '${data.itStandGoldComment}',
+        '${data.itStandAtteLink}',
         '${data.itStandComments}',
         ${data.itStandStatus},
         ${data.itStandDeployment},

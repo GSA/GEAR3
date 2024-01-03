@@ -240,6 +240,10 @@ export class ItStandardManagerComponent implements OnInit {
       // Adjust Gold Image for rendering
       var goldImg = this.itStandard.Gold_Image === 'T'
 
+      var goldImg = this.itStandard.Attestation_Required === 'T'
+      var goldImg = this.itStandard.Fedramp === 'T'
+      var goldImg = this.itStandard.Open_Source === 'T'
+
       // Parse and find IDs for list of Categories
       var categoryIDs = [];
       if (this.itStandard.Category) {

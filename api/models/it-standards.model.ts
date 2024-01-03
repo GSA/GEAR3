@@ -6,7 +6,11 @@ export class ITStandards {
   public Vendor_Standard_Organization: string = null;
   public Available_through_Myview: string = null;
   public Gold_Image: string = null;
+  public AttestationRequired: string = null;
+  public Fedramp: string = null;
+  public OpenSource: string = null;
   public Gold_Image_Comment: string = null;
+  public AttestationLink: string = null;
   public Comments: string = null;
   public old_Id: string = null;
   public POCorg: string = null;
@@ -26,8 +30,4 @@ export class ITStandards {
   public Category: string = null;
   public OldName: string = null;
   public EndOfLifeDate: Date = null;
-  public AttestationRequired: string = null;
-  public AttestationLink: string = null;
-  public Fedramp: string = null;
-  public OpenSource: string = null;
 }
