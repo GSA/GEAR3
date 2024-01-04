@@ -240,9 +240,11 @@ export class ItStandardManagerComponent implements OnInit {
       // Adjust Gold Image for rendering
       var goldImg = this.itStandard.Gold_Image === 'T'
 
-      var goldImg = this.itStandard.Attestation_Required === 'T'
-      var goldImg = this.itStandard.Fedramp === 'T'
-      var goldImg = this.itStandard.Open_Source === 'T'
+      var attestationRequired = this.itStandard.attestation_required === 'T'
+      var fedramp = this.itStandard.fedramp === 'T'
+      var openSource = this.itStandard.open_source === 'T'
+
+console.log("attestationRequired", attestationRequired, fedramp, openSource, this.itStandard.attestation_link);
 
       // Parse and find IDs for list of Categories
       var categoryIDs = [];
@@ -267,10 +269,10 @@ export class ItStandardManagerComponent implements OnInit {
         itStandCategory: categoryIDs,
         itStand508: this.sharedService.findInArray(this.compliance, 'Name', this.itStandard.ComplianceStatus),
         itStandMyView: myView,
-        itStandReqAtte: this.itStandard.AttestationRequired,
-        itStandAtteLink: this.itStandard.AttestationLink,
-        itStandFedramp: this.itStandard.Fedramp,
-        itStandOpenSource: this.itStandard.OpenSource,
+        itStandReqAtte: attestationRequired,
+        itStandAtteLink: this.itStandard.attestation_link,
+        itStandFedramp: fedramp,
+        itStandOpenSource: openSource,
         itStandVendorOrg: this.itStandard.Vendor_Standard_Organization,
         itStandDeployment: this.sharedService.findInArray(this.deploymentTypes, 'Name', this.itStandard.DeploymentType),
         itStandGoldImg: goldImg,

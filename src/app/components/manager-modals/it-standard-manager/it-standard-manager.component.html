@@ -315,7 +315,7 @@
                       <label for="itStandReqAtte">Attestation Required</label>
                       <div id="itStandReqAtte" class="custom-control custom-switch">
                         <input type="checkbox" class="custom-control-input" id="itStandReqAtteSwitch"
-                          formControlName="itStandReqAtte" [checked]="itStandard.Attestation_Required === 'T'">
+                          formControlName="itStandReqAtte" [checked]="itStandard.attestation_required === 'T'">
                         <label class="custom-control-label" for="itStandReqAtteSwitch">True</label>
                       </div>
                     </div>
@@ -324,7 +324,7 @@
                       <label for="itStandAtteLink">Attestation Link</label>
                       <input type="text" class="form-control" id="itStandGoldLink"
                         formControlName="itStandAtteLink" placeholder="Enter the link for the attestation"
-                        [value]="itStandard.Attestation_Link">
+                        [value]="itStandard.attestation_link">
                     </div>
                   </div>
 
@@ -333,7 +333,7 @@
                       <label for="itStandFedramp">Fedramp</label>
                       <div id="itStandFedramp" class="custom-control custom-switch">
                         <input type="checkbox" class="custom-control-input" id="itStandFedrampSwitch"
-                          formControlName="itStandFedramp" [checked]="itStandard.Fedramp === 'T'">
+                          formControlName="itStandFedramp" [checked]="itStandard.fedramp === 'T'">
                         <label class="custom-control-label" for="itStandFedrampSwitch">True</label>
                       </div>
                     </div>
@@ -342,7 +342,7 @@
                       <label for="itStandOpenSource">Open Source</label>
                       <div id="itStandOpenSource" class="custom-control custom-switch">
                         <input type="checkbox" class="custom-control-input" id="itStandOpenSourceSwitch"
-                          formControlName="itStandOpenSource" [checked]="itStandard.Open_Source === 'T'">
+                          formControlName="itStandOpenSource" [checked]="itStandard.open_source === 'T'">
                         <label class="custom-control-label" for="itStandOpenSourceSwitch">True</label>
                       </div>
                     </div>

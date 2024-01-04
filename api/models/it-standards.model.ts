@@ -6,11 +6,11 @@ export class ITStandards {
   public Vendor_Standard_Organization: string = null;
   public Available_through_Myview: string = null;
   public Gold_Image: string = null;
-  public AttestationRequired: string = null;
-  public Fedramp: string = null;
-  public OpenSource: string = null;
+  public attestation_required: string = null;
+  public fedramp: string = null;
+  public open_source: string = null;
   public Gold_Image_Comment: string = null;
-  public AttestationLink: string = null;
+  public attestation_link: string = null;
   public Comments: string = null;
   public old_Id: string = null;
   public POCorg: string = null;
