@@ -244,8 +244,6 @@ export class ItStandardManagerComponent implements OnInit {
       var fedramp = this.itStandard.fedramp === 'T'
       var openSource = this.itStandard.open_source === 'T'
 
-console.log("attestationRequired", attestationRequired, fedramp, openSource, this.itStandard.attestation_link);
-
       // Parse and find IDs for list of Categories
       var categoryIDs = [];
       if (this.itStandard.Category) {
