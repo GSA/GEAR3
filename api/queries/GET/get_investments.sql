@@ -14,9 +14,9 @@ SELECT DISTINCT invest.Investment_Id                      AS ID,
   REGEXP_REPLACE(invest.primary_service_area, '[0-9]+ - ', '')  AS PSA,  -- Remove Leading Numbers
   invest.Updated_Date,
 
-  invest.`Total IT Spending FY2019 (PY) ($ M)`            AS Total_Spend_PY,
-  invest.`Total IT Spending FY2020 (CY) ($ M)`            AS Total_Spend_CY,
-  invest.`Total IT Spending FY2021 (BY) ($ M)`            AS Total_Spend_BY,
+  invest.`Total IT Spending (PY) ($ M)`            AS Total_Spend_PY,
+  invest.`Total IT Spending (CY) ($ M)`            AS Total_Spend_CY,
+  invest.`Total IT Spending (BY) ($ M)`            AS Total_Spend_BY,
   invest.`DME PY Agency Funding ($ M)`                    AS DME_Agency_Fund_PY,
   invest.`DME PY Contributions ($ M)`                     AS DME_Contributions_PY,
   invest.`DME CY Agency Funding ($ M)`                    AS DME_Agency_Fund_CY,
