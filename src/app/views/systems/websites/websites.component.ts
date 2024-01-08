@@ -68,6 +68,7 @@ export class WebsitesComponent implements OnInit {
       field: 'contact_email',
       title: 'Contact Email',
       sortable: true,
+      visible: false,
     },
     {
       field: 'production_status',
@@ -78,15 +79,22 @@ export class WebsitesComponent implements OnInit {
       field: 'redirects_to',
       title: 'Redirect URL',
       sortable: true,
+      visible: false,
     },
     {
       field: 'required_by_law_or_policy',
       title: 'Required?',
       sortable: true,
+      visible: false,
     },
     {
       field: 'has_dap',
       title: 'Uses DAP?',
+      sortable: true,
+    },
+    {
+      field: 'https',
+      title: 'HTTPS?',
       sortable: true,
     },
     {
@@ -103,6 +111,7 @@ export class WebsitesComponent implements OnInit {
       field: 'repository_url',
       title: 'Repository URL',
       sortable: true,
+      visible: false,
     },
     {
       field: 'hosting_platform',
@@ -113,11 +122,7 @@ export class WebsitesComponent implements OnInit {
       field: 'cms_platform',
       title: 'Content Management Platform',
       sortable: true,
-    },
-    {
-      field: 'https',
-      title: 'HTTPS?',
-      sortable: true,
+      visible: false,
     },
     {
       field: 'sub_office',

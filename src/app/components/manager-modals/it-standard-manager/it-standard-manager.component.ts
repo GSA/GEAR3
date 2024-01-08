@@ -33,6 +33,10 @@ export class ItStandardManagerComponent implements OnInit {
     itStandCategory: new FormControl(null, [Validators.required]),
     itStand508: new FormControl(),
     itStandMyView: new FormControl(),
+    itStandReqAtte: new FormControl(),
+    itStandAtteLink: new FormControl(),
+    itStandFedramp: new FormControl(),
+    itStandOpenSource: new FormControl(),
     itStandVendorOrg: new FormControl(),
     itStandDeployment: new FormControl(null, [Validators.required]),
     itStandGoldImg: new FormControl(),
@@ -90,7 +94,7 @@ export class ItStandardManagerComponent implements OnInit {
   ngOnInit(): void {
 
     //console.log("it-standard-manager.component.ts ngOnInit()"); //DEBUG
-    
+
     // Emit setFormDefaults for when edit button is pressed
     if (this.sharedService.itStandardsFormSub == undefined) {
       this.sharedService.itStandardsFormSub = this.sharedService.itStandardsFormEmitter.subscribe(() => { this.setFormDefaults(); });
@@ -173,7 +177,7 @@ export class ItStandardManagerComponent implements OnInit {
     // Only set status default for creating new record
     const twoYearsLater = new Date();
     twoYearsLater.setFullYear(twoYearsLater.getFullYear() + 2);
-    
+
     if (this.createBool) {
       this.itStandardsForm.reset();  // Clear any erroneous values if any
       // Set Approval Expiration Date on Date Picker to +2 years from current date
@@ -231,10 +235,14 @@ export class ItStandardManagerComponent implements OnInit {
       }
 
       // Adjust MyView for rendering - could turn this into one line:
-      var myView = this.itStandard.Available_through_Myview === 'T' 
+      var myView = this.itStandard.Available_through_Myview === 'T'
 
       // Adjust Gold Image for rendering
       var goldImg = this.itStandard.Gold_Image === 'T'
+
+      var attestationRequired = this.itStandard.attestation_required === 'T'
+      var fedramp = this.itStandard.fedramp === 'T'
+      var openSource = this.itStandard.open_source === 'T'
 
       // Parse and find IDs for list of Categories
       var categoryIDs = [];
@@ -259,6 +267,10 @@ export class ItStandardManagerComponent implements OnInit {
         itStandCategory: categoryIDs,
         itStand508: this.sharedService.findInArray(this.compliance, 'Name', this.itStandard.ComplianceStatus),
         itStandMyView: myView,
+        itStandReqAtte: attestationRequired,
+        itStandAtteLink: this.itStandard.attestation_link,
+        itStandFedramp: fedramp,
+        itStandOpenSource: openSource,
         itStandVendorOrg: this.itStandard.Vendor_Standard_Organization,
         itStandDeployment: this.sharedService.findInArray(this.deploymentTypes, 'Name', this.itStandard.DeploymentType),
         itStandGoldImg: goldImg,
@@ -271,9 +283,9 @@ export class ItStandardManagerComponent implements OnInit {
   };
 
   submitForm() {
-    
+
     //console.log("Submitting form"); //DEBUG
-    
+
     //console.log("Form: ", this.itStandardsForm);  // Debug
 
     if (this.itStandardsForm.valid) {
@@ -283,6 +295,15 @@ export class ItStandardManagerComponent implements OnInit {
 
       if (this.itStandardsForm.value.itStandGoldImg) this.itStandardsForm.value.itStandGoldImg = 'T';
       else this.itStandardsForm.value.itStandGoldImg = 'F';
+
+      if (this.itStandardsForm.value.itStandReqAtte) this.itStandardsForm.value.itStandReqAtte = 'T';
+      else this.itStandardsForm.value.itStandReqAtte = 'F';
+
+      if (this.itStandardsForm.value.itStandFedramp) this.itStandardsForm.value.itStandFedramp = 'T';
+      else this.itStandardsForm.value.itStandFedramp = 'F';
+
+      if (this.itStandardsForm.value.itStandOpenSource) this.itStandardsForm.value.itStandOpenSource = 'T';
+      else this.itStandardsForm.value.itStandOpenSource = 'F';
 
       // Set Date from Date Picker
       if ($('#itStandAprvExp').data('datepicker')) {
@@ -294,6 +315,7 @@ export class ItStandardManagerComponent implements OnInit {
       if (!this.itStandardsForm.value.itStandGoldComment) this.itStandardsForm.value.itStandGoldComment = 'N/A';
       if (!this.itStandardsForm.value.itStandComments) this.itStandardsForm.value.itStandComments = 'N/A';
       if (!this.itStandardsForm.value.itStand508) this.itStandardsForm.value.itStand508 = '3';
+      if (!this.itStandardsForm.value.itStandAtteLink) this.itStandardsForm.value.itStandAtteLink = 'N/A';
 
       // replace ' from all text fields
       if (String(this.itStandardsForm.value.itStandDesc).includes("'")) {
@@ -427,11 +449,11 @@ export class ItStandardManagerComponent implements OnInit {
     setTimeout(() => {
       try {
         //console.log("setting approval expiration date to: ", data.endOfLifeDate); //DEBUG
-        
+
         if (data.endOfLifeDate  !== '' && data.endOfLifeDate !== null && data.endOfLifeDate !== undefined && data.endOfLifeDate !== 'null' && data.endOfLifeDate !== 'undefined') {
 
           let date = new Date(data.endOfLifeDate);
-          
+
           // set the endOfLifeDate to the value from the database
           this.endOfLifeDate = date;
 
@@ -463,7 +485,7 @@ export class ItStandardManagerComponent implements OnInit {
 
   // handles the formatting of the endOfLifeDate
   formatEndOfLifeDate(data: any) {
-    //console.log("Formatting endOfLifeDate:", data); //DEBUG    
+    //console.log("Formatting endOfLifeDate:", data); //DEBUG
     // return the data as a string in the format Month dd, yyyy
     if (data === null || data === undefined || data === 'null' || data === 'undefined' || data === '') {
       return null;
@@ -509,10 +531,10 @@ export class ItStandardManagerComponent implements OnInit {
     // if the endOfLifeDate is not null
     if (data !== null) {
       //console.log("hasEndOfLifeDatePassed data.endOfLifeDate: ", data.endOfLifeDate); //DEBUG
-      
+
       // get the endOfLifeDate as a Date object
       let date = new Date(data);
-      
+
       // get today's date
       let today = new Date();
 
@@ -531,7 +553,7 @@ export class ItStandardManagerComponent implements OnInit {
   }
 
   manufacturerChange(manufacturer: any) {
-    
+
     //console.log("Manufacturer changed to: ", manufacturer); //DEBUG
 
     this.softwareProductsLoading = true;
@@ -579,7 +601,7 @@ export class ItStandardManagerComponent implements OnInit {
   }
 
   softwareProductChange(softwareProduct: any) {
-    
+
     //console.log("Software Product changed to: ", softwareProduct); //DEBUG
 
     this.softwareVersionsLoading = true;
@@ -620,7 +642,7 @@ export class ItStandardManagerComponent implements OnInit {
   }
 
   softwareVersionChange(softwareVersion: any) {
-    
+
     //console.log("Software Version changed to: ", softwareVersion); //DEBUG
 
     this.softwareReleasesLoading = true;
@@ -672,7 +694,7 @@ export class ItStandardManagerComponent implements OnInit {
   }
 
   disableSoftwareVersion(): void {
-    //console.log("Disabling Version"); 
+    //console.log("Disabling Version");
     $("#divVersion").addClass("disabledDivVersion");
   }
 
