@@ -1,4 +1,4 @@
-SELECT 
+SELECT
   tech.Id                                         AS ID,
   -- tech.Keyname                          AS Name,
   IFNULL(tech.softwareReleaseName, tech.Keyname)  AS Name,
@@ -7,7 +7,11 @@ SELECT
   tech.Vendor_Standard_Organization,
   tech.Available_through_Myview,
   tech.Gold_Image,
+  tech.attestation_required,
+  tech.fedramp,
+  tech.open_source,
   tech.Gold_Image_Comment,
+  tech.attestation_link,
   tech.Comments,
   tech.old_Id,
   tech.Reference_Documents                        AS ReferenceDocument,
@@ -31,14 +35,13 @@ SELECT
   GROUP_CONCAT(DISTINCT obj_standard_category.Keyname SEPARATOR ', ')   AS Category,
   tech.Keyname                                    AS OldName,
   DATE(tech.endOfLifeDate)                        AS EndOfLifeDate
-
 FROM obj_technology AS tech
 
 LEFT JOIN obj_technology_status               ON tech.obj_technology_status_Id = obj_technology_status.Id
 LEFT JOIN obj_deployment_type                 ON tech.obj_deployment_type_Id = obj_deployment_type.Id
 LEFT JOIN obj_standard_type                   ON tech.obj_standard_type_Id = obj_standard_type.Id
 LEFT JOIN obj_508_compliance_status           ON tech.obj_508_compliance_status_Id = obj_508_compliance_status.Id
-  
+
 LEFT JOIN zk_technology_poc                   ON tech.Id = zk_technology_poc.obj_technology_Id
 LEFT JOIN obj_ldap_poc           AS poc       ON zk_technology_poc.obj_ldap_SamAccountName = poc.SamAccountName
 LEFT JOIN obj_organization      AS org        ON poc.OrgCode = org.Org_Symbol

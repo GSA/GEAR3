@@ -110,7 +110,7 @@ export class ItStandardsComponent implements OnInit {
     formatter: this.sharedService.dateFormatter
   }, {
     field: 'OldName',
-    title: 'Old IT Standard Name',
+    title: 'Previously Known As',
     sortable: true,
     visible: false
   }, {
@@ -152,6 +152,26 @@ export class ItStandardsComponent implements OnInit {
   }, {
     field: 'Comments',
     title: 'Comments',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'AttestationRequired',
+    title: 'Attestation Required',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'AttestationLink',
+    title: 'Attestation Link',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'Fedramp',
+    title: 'Fedramp',
+    sortable: true,
+    visible: false
+  }, {
+    field: 'OpenSource',
+    title: 'Open Source',
     sortable: true,
     visible: false
   }, {
