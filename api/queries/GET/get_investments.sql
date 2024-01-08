@@ -11,7 +11,7 @@ SELECT DISTINCT invest.Investment_Id                      AS ID,
   invest.Investment_Status_Name                           AS Status,
   invest.Investment_Type                                  AS Type,
   invest.IT_Portfolio,
-  REGEXP_REPLACE(invest.primary_service_area, '[0-9]+ - ', '')  AS PSA,  -- Remove Leading Numbers
+  REGEXP_REPLACE(invest.primary_service_area, '[0-9]+: ', '')  AS PSA,  -- Remove Leading Numbers
   invest.Updated_Date,
 
   invest.`Total IT Spending (PY) ($ M)`            AS Total_Spend_PY,
