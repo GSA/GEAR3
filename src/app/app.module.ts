@@ -72,6 +72,8 @@ import { GearModelComponent } from './views/architecture/gear-model/gear-model.c
 // Global Variables
 import { Globals } from './common/globals';
 
+import { YesNoPipe } from "./pipes/yesno.pipe";
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -122,6 +124,8 @@ import { Globals } from './common/globals';
     //ArtifactsComponent,
     EAViewComponent,
     GearModelComponent,
+
+    YesNoPipe,
   ],
   imports: [
     AppRoutingModule,
