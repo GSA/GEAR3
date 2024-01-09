@@ -158,7 +158,8 @@ export class ItStandardsComponent implements OnInit {
     field: 'attestation_required',
     title: 'Attestation Required',
     sortable: true,
-    visible: false
+    visible: false,
+    formatter: this.YesNo
   }, {
     field: 'attestation_link',
     title: 'Attestation Link',
@@ -168,12 +169,14 @@ export class ItStandardsComponent implements OnInit {
     field: 'fedramp',
     title: 'Fedramp',
     sortable: true,
-    visible: false
+    visible: false,
+    formatter: this.YesNo
   }, {
     field: 'open_source',
     title: 'Open Source',
     sortable: true,
-    visible: false
+    visible: false,
+    formatter: this.YesNo
   }, {
     field: 'ApprovalExpirationDate',
     title: 'Approval Expiration Date',
@@ -181,6 +184,10 @@ export class ItStandardsComponent implements OnInit {
     visible: true,
     formatter: this.sharedService.dateFormatter
   }];
+
+  YesNo(value, row, index, field) {
+    return value === 'T'? "Yes" : "No";
+  }
 
   ngOnInit(): void {
     // Enable popovers
