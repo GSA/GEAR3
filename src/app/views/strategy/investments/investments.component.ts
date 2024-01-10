@@ -22,7 +22,7 @@ export class InvestmentsComponent implements OnInit {
   row: Object = <any>{};
   filteredTable: boolean = false;
   filterTitle: string = '';
-  nonEliminatedTypes: any[] = ['No change in status', 'New'];
+  nonEliminatedTypes: any[] = ['11: No Change in Status', '10: New', '01: Upgraded from non-major to major IT Investment'];
   eliminatedTypes: any[] = ['Eliminated by funding', 'Eliminated by omission'];
 
   vizData: any[] = [];

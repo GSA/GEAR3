@@ -54,36 +54,44 @@ export class SystemsModalComponent implements OnInit {
   }, {
     field: 'Business Score',
     title: 'Business Score',
+    visible: false,
     sortable: true
   }, {
     field: 'Technical Score',
     title: 'Technical Score',
+    visible: false,
     sortable: true
   }, {
     field: 'O&M Cost',
     title: 'O&M Cost',
+    visible: false,
     sortable: true
   }, {
     field: 'DM&E Cost',
     title: 'DM&E Cost',
+    visible: false,
     sortable: true
   }, {
     field: 'Software/Hardware License Costs',
     title: 'License Costs',
+    visible: false,
     sortable: true
   }, {
     field: 'Questionnaire Last Updated',
     title: 'Questionnaire Last Updated',
     sortable: true,
+    visible: false,
     formatter: this.sharedService.dateFormatter
   }, {
     field: 'POC Last Updated',
     title: 'POC of Last Updated',
     sortable: true,
+    visible: false,
     formatter: this.sharedService.emailFormatter
   }, {
     field: 'File Link',
     title: 'File Link',
+    visible: false,
     sortable: true,
     formatter: this.sharedService.linksFormatter
   }];
