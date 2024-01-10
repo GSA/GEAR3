@@ -30,7 +30,7 @@
 
               <!-- Tech Catalog Information row 1 -->
               <div class="row align-items-center">
-                
+
                 <div class="form-group col">
                   <label for="tcManufacturer">Manufacturer Name<span *ngIf="!isOldRecord(itStandard.OldName)" class="text-danger">*</span></label>
                     <ng-select id="tcManufacturer" formControlName="tcManufacturer"
@@ -60,7 +60,7 @@
                       </div>
                     </div>
                   </div>
-  
+
                 <div class="form-group col" id="divProduct">
                   <label for="tcSoftwareProduct">Software Product Name<span *ngIf="!isOldRecord(itStandard.OldName)" class="text-danger">*</span></label>
                     <ng-select id="tcSoftwareProduct" formControlName="tcSoftwareProduct"
@@ -184,7 +184,7 @@
                 </div>
 
                 <div class="form-group col-6" id="divOldName">
-                  <label for="itStandName">Old IT-Standard Name (Legacy)</label>
+                  <label for="itStandName">Previously Known As</label>
                   <input type="text" class="form-control" id="itStandName"
                     formControlName="itStandName" placeholder="Not Applicable" [value]="itStandard.OldName" >
                 </div>
@@ -308,6 +308,46 @@
                         </div>
                       </div>
                     </div>
+                  </div>
+
+                  <div class="row align-items-center">
+                    <div class="form-group col-3 text-center mb-0">
+                      <label for="itStandReqAtte">Attestation Required</label>
+                      <div id="itStandReqAtte" class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="itStandReqAtteSwitch"
+                          formControlName="itStandReqAtte" [checked]="itStandard.attestation_required === 'T'">
+                        <label class="custom-control-label" for="itStandReqAtteSwitch">True</label>
+                      </div>
+                    </div>
+
+                    <div class="form-group col-9">
+                      <label for="itStandAtteLink">Attestation Link</label>
+                      <input type="text" class="form-control" id="itStandGoldLink"
+                        formControlName="itStandAtteLink" placeholder="Enter the link for the attestation"
+                        [value]="itStandard.attestation_link">
+                    </div>
+                  </div>
+
+                  <div class="row align-items-center">
+                    <div class="form-group col-3 text-center mb-0">
+                      <label for="itStandFedramp">Fedramp</label>
+                      <div id="itStandFedramp" class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="itStandFedrampSwitch"
+                          formControlName="itStandFedramp" [checked]="itStandard.fedramp === 'T'">
+                        <label class="custom-control-label" for="itStandFedrampSwitch">True</label>
+                      </div>
+                    </div>
+
+                    <div class="form-group col-5">
+                      <label for="itStandOpenSource">Open Source</label>
+                      <div id="itStandOpenSource" class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="itStandOpenSourceSwitch"
+                          formControlName="itStandOpenSource" [checked]="itStandard.open_source === 'T'">
+                        <label class="custom-control-label" for="itStandOpenSourceSwitch">True</label>
+                      </div>
+                    </div>
+
+                    <div class="form-group col-4"></div>
                   </div>
 
                   <div class="row align-items-center">
