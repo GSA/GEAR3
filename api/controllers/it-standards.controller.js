@@ -122,7 +122,7 @@ exports.update = (req, res) => {
           softwareProductName             = ${data.tcSoftwareProductName},
           softwareVersionName             = ${data.tcSoftwareVersionName},
           softwareReleaseName             = ${data.tcSoftwareReleaseName},
-          endOfLifeDate                   = ${data.tcEndOfLifeDate}
+          endOfLifeDate                   = STR_TO_DATE(${data.tcEndOfLifeDate}, '%M %d, %Y')
         WHERE Id = ${req.params.id};
         SET FOREIGN_KEY_CHECKS=1;
         ${catString}
@@ -224,7 +224,7 @@ exports.create = (req, res) => {
         ${data.tcSoftwareProductName},
         ${data.tcSoftwareVersionName},
         ${data.tcSoftwareReleaseName},
-        ${data.tcEndOfLifeDate});`;
+        STR_TO_DATE(${data.tcEndOfLifeDate}, '%M %d, %Y'));`;
 
       var logStatement = `insert into gear_log.event (Event, User, DTG) values ('create IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
 
