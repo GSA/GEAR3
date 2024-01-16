@@ -3,7 +3,7 @@ const ctrl = require('./base.controller');
 // Need to update this to a view in the database for gear_schema like cowboy_ods once everything is transitioned over to the new schema
 exports.searchAll = (req, res) => {
   var query = `SELECT * FROM
-      (SELECT 
+      (SELECT
         systems.\`ex:GEAR_ID\` AS \`Id\`,
         systems.\`ex:System_Name\` AS \`Name\`,
         systems.\`ex:Description\` AS \`Description\`,
@@ -13,7 +13,7 @@ exports.searchAll = (req, res) => {
         gear_schema.obj_fisma_archer AS systems
       WHERE
         systems.\`ex:SystemLevel\` = 'SubSystem'
-      UNION SELECT 
+      UNION SELECT
         fisma.\`ex:GEAR_ID\` AS \`Id\`,
         fisma.\`ex:System_Name\` AS \`Name\`,
         fisma.\`ex:Description\` AS \`Description\`,
@@ -23,10 +23,10 @@ exports.searchAll = (req, res) => {
       gear_schema.obj_fisma_archer AS fisma
       WHERE
         (fisma.\`ex:SystemLevel\` = 'System') AND
-        (fisma.\`ex:Status\` <> 'Pending') 
-      UNION SELECT 
+        (fisma.\`ex:Status\` <> 'Pending')
+      UNION SELECT
         tech.\`Id\` AS \`Id\`,
-        tech.\`Keyname\` AS \`Name\`,
+        IFNULL(tech.\`softwareReleaseName\`, tech.\`Keyname\`) AS \`Name\`,
         tech.\`Description\` AS \`Description\`,
         'Technology' AS \`GEAR_Type\`,
         JSON_OBJECT('Vendor',
@@ -35,7 +35,7 @@ exports.searchAll = (req, res) => {
             tech.\`Comments\`) AS \`Other\`
       FROM
         obj_technology AS tech
-      UNION SELECT 
+      UNION SELECT
         cap.\`capability_Id\` AS \`Id\`,
         cap.\`Capability_Name\` AS \`Name\`,
         cap.\`Description\` AS \`Description\`,
@@ -43,7 +43,7 @@ exports.searchAll = (req, res) => {
         '{}' AS \`Other\`
       FROM
         gear_schema.obj_capability AS cap
-      UNION SELECT 
+      UNION SELECT
         invest.\`Investment_Id\` AS \`Id\`,
         invest.\`Investment_Name\` AS \`Name\`,
         invest.\`Description\` AS \`Description\`,

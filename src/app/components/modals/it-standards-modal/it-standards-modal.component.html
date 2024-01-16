@@ -133,19 +133,19 @@
                 </tr>
                 <tr>
                   <td><i class="fas fa-info-circle"></i>Attestation Required</td>
-                  <td>{{ itStandard.AttestationRequired }}</td>
+                  <td>{{ itStandard.attestation_required | yesno }}</td>
                 </tr>
                 <tr>
                   <td><i class="fas fa-info-circle"></i>Attestation Link</td>
-                  <td>{{ itStandard.AttestationLink }}</td>
+                  <td>{{ itStandard.attestation_link }}</td>
                 </tr>
                 <tr>
                   <td><i class="fas fa-info-circle"></i>Fedramp</td>
-                  <td>{{ itStandard.Fedramp }}</td>
+                  <td>{{ itStandard.fedramp | yesno }}</td>
                 </tr>
                 <tr>
                   <td><i class="fas fa-info-circle"></i>Open Source</td>
-                  <td>{{ itStandard.OpenSource }}</td>
+                  <td>{{ itStandard.open_source | yesno }}</td>
                 </tr>
                 <tr>
                   <td>
