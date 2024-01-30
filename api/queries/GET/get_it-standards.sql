@@ -43,7 +43,7 @@ LEFT JOIN obj_standard_type                   ON tech.obj_standard_type_Id = obj
 LEFT JOIN obj_508_compliance_status           ON tech.obj_508_compliance_status_Id = obj_508_compliance_status.Id
 
 LEFT JOIN zk_technology_poc                   ON tech.Id = zk_technology_poc.obj_technology_Id
-LEFT JOIN obj_ldap_poc           AS poc       ON zk_technology_poc.obj_ldap_SamAccountName = poc.SamAccountName AND poc.Enabled = 'TRUE'
+LEFT JOIN obj_ldap_poc           AS poc       ON zk_technology_poc.obj_ldap_SamAccountName = poc.SamAccountName
 LEFT JOIN obj_organization      AS org        ON poc.OrgCode = org.Org_Symbol
 
 LEFT JOIN zk_technology_standard_category     ON tech.Id = zk_technology_standard_category.obj_technology_Id
