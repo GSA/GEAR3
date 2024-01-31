@@ -14,7 +14,8 @@ const bodyParser = require('body-parser'),
   mysql = require('mysql2'),
   passport = require('passport'),
   passportJWT = require("passport-jwt"),
-  SAMLStrategy = require('passport-saml').Strategy,
+  SAMLStrategy = require('@node-saml/passport-saml').Strategy,
+  
 
   api = require('./api/index'),
 
@@ -45,6 +46,8 @@ const samlConfig = {
   issuer: process.env.SAML_ISSUER,
   cert: process.env.SAML_CERT,
   acceptedClockSkewMs: -1,
+  wantAuthnResponseSigned: false,
+  audience: false,
 };
 
 // Receives SAML user data
@@ -430,7 +433,7 @@ const fastcsv = require("fast-csv");
 const { consoleTestResultHandler } = require('tslint/lib/test.js');
 
 cron.schedule('0 7 * * WED', () => {
-  let stream = fs.createReadStream("./pocs/GSA_Pocs.csv");
+  let stream = fs.createReadStream("scripts/pocs/GSA_Pocs.csv");
   let pocCsv = [];
   let csvStream = fastcsv
     .parse()
