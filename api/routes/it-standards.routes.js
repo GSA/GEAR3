@@ -6,6 +6,9 @@ const router = express.Router();
 router.route('/')
   .get(itsCtrl.findAll);
 
+router.route('/all')
+  .get(itsCtrl.findAllNoFilter);
+
 router.route('/get/:id')
   .get(itsCtrl.findOne);
 
