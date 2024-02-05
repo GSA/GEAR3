@@ -1,5 +1,6 @@
 <!-- Container for sidebar(s) + page content -->
-<ng-sidebar-container (onBackdropClicked)="_onBackdropClicked()">
+<ng-sidebar-container (onBackdropClicked)="_onBackdropClicked()" role="navigation"
+[attr.aria-hidden]="_opened ? 'false' : 'true'" [attr.aria-expanded]="_opened ? 'true' : 'false'">
   <ng-sidebar
     id="sidebar"
     [(opened)]="_opened"
