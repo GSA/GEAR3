@@ -479,7 +479,7 @@ cron.schedule('0 7 * * WED', () => {
             + "SET Enabled = 'FALSE' "
             + "WHERE poc.SamAccountName NOT IN (SELECT SamAccountName FROM tempcsv)";
           db.query(updateQuery, (error, response) => {
-            console.log(error || 'Update obj_ldap_poc to disabled poc: ' + response);
+            console.log(error || 'Update obj_ldap_poc to disable poc: ' + response);
           });
 
           let deleteQuery =
