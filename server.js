@@ -470,7 +470,6 @@ cron.schedule('0 7 * * WED', () => {
             + "ON DUPLICATE KEY UPDATE FirstName = VALUES(FirstName), LastName = VALUES(LastName),"
             + "Email = VALUES(Email), Phone = VALUES(Phone), OrgCode = VALUES(OrgCode),"
             + "Position = VALUES(Position), EmployeeType = VALUES(EmployeeType)";
-
           db.query(upsertQuery, (error, response) => {
             console.log(error || 'Insert into/update obj_ldap_poc: ' + response);
           });
@@ -480,8 +479,9 @@ cron.schedule('0 7 * * WED', () => {
             + "SET Enabled = 'FALSE' "
             + "WHERE poc.SamAccountName NOT IN (SELECT SamAccountName FROM tempcsv)";
           db.query(updateQuery, (error, response) => {
-            console.log(error || 'Update obj_ldap_poc to disable poc: ' + response);
+            console.log(error || 'Update obj_ldap_poc to disabled poc: ' + response);
           });
+
           let deleteQuery =
             "DELETE FROM obj_ldap_poc "
             + "WHERE Enabled = 'FALSE' "
