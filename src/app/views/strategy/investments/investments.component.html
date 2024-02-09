@@ -45,8 +45,10 @@
     <div id="investViz" class="row justify-content-center collapse show" style="height: 300px;"
       [hidden]="filterTitle == 'Inactive'">
       <ngx-charts-advanced-pie-chart [scheme]="colorScheme" [results]="vizData" [label]="vizLabel"
-        (select)="onSelect($event)" alt="Pie chart representing 105 total IT investments of which 62% are non-major IT investments, 21% are major IT investments, 10% are funding transfer investments, and 8% are standard IT infrastructure investments.">
-      </ngx-charts-advanced-pie-chart>
+        [ariaLabel]="getAriaLabel(vizData)"
+        (select)="onSelect($event)"
+        alt="getAriaLabel(vizData)"       
+      ></ngx-charts-advanced-pie-chart>
     </div>
 
     <div class="row w-100">

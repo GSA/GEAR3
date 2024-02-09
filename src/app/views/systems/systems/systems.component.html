@@ -97,8 +97,9 @@
         [scheme]="colorScheme"
         [results]="vizData"
         [label]="vizLabel"
+        [ariaLabel]="getAriaLabel(vizData)"
         (select)="onSelect($event)"
-        alt="Pie chart representing 295 total active business systems, of which 40% are from FAS, 17% from GSA IT, 14% from PBS, 9% from OCFO, 4% from OGP, etc."
+        alt="getAriaLabel(vizData)"      
       >
       </ngx-charts-advanced-pie-chart>
     </div>
