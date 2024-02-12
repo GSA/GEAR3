@@ -452,21 +452,21 @@ cron.schedule('0 7 * * WED', () => {
           console.error(error);
         } else {
           let clearQuery =
-            "DELETE FROM tempcsv";
+            "DELETE FROM tmp_obj_ldap_poc";
           db.query(clearQuery, (error, response) => {
-            console.log(error || 'Clear tempcsv records: ' + response);
+            console.log(error || 'Clear tmp_obj_ldap_poc records: ' + response);
           });
          
           let insertQuery =
-            "REPLACE INTO tempcsv (SamAccountName, FirstName, LastName, Email, Phone, OrgCode, Position, EmployeeType) VALUES ?";
+            "REPLACE INTO tmp_obj_ldap_poc (SamAccountName, FirstName, LastName, Email, Phone, OrgCode, Position, EmployeeType) VALUES ?";
           db.query(insertQuery, [pocCsv], (error, response) => {
-            console.log(error || 'Insert into tempcsv: ' + response);
+            console.log(error || 'Insert into tmp_obj_ldap_poc: ' + response);
           });
          
           let upsertQuery =
             "INSERT INTO obj_ldap_poc (SamAccountName, FirstName, LastName, Email, Phone, OrgCode, Position, EmployeeType) "
             + "SELECT t.SamAccountName, t.FirstName, t.LastName, t.Email, t.Phone, t.OrgCode, t.Position, t.EmployeeType "
-            + "FROM tempcsv t "
+            + "FROM tmp_obj_ldap_poc t "
             + "ON DUPLICATE KEY UPDATE FirstName = VALUES(FirstName), LastName = VALUES(LastName),"
             + "Email = VALUES(Email), Phone = VALUES(Phone), OrgCode = VALUES(OrgCode),"
             + "Position = VALUES(Position), EmployeeType = VALUES(EmployeeType)";
@@ -477,7 +477,7 @@ cron.schedule('0 7 * * WED', () => {
           let updateQuery =
             "UPDATE obj_ldap_poc poc "
             + "SET Enabled = 'FALSE' "
-            + "WHERE poc.SamAccountName NOT IN (SELECT SamAccountName FROM tempcsv)";
+            + "WHERE poc.SamAccountName NOT IN (SELECT SamAccountName FROM tmp_obj_ldap_poc)";
           db.query(updateQuery, (error, response) => {
             console.log(error || 'Update obj_ldap_poc to disable poc: ' + response);
           });

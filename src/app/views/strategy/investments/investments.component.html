@@ -46,8 +46,7 @@
       [hidden]="filterTitle == 'Inactive'">
       <ngx-charts-advanced-pie-chart [scheme]="colorScheme" [results]="vizData" [label]="vizLabel"
         [ariaLabel]="getAriaLabel(vizData)"
-        (select)="onSelect($event)"
-        alt="getAriaLabel(vizData)"       
+        (select)="onSelect($event)"       
       ></ngx-charts-advanced-pie-chart>
     </div>
 
