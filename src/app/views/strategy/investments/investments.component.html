@@ -41,12 +41,21 @@
       Investment Definition
     </a>
 
+    <a tabindex="0" class="btn btn-sm btn-info text-white position-absolute float-right w-11" role="button"
+      data-toggle="popover" data-trigger="focus" data-placement="auto" data-html="true" title=""
+      data-content="getAriaLabel(vizData)">
+      Assistive Technology Chart Details
+    </a>
+
     <!-- Visualizations -->
-    <span id="investVizText" aria-label="getAriaLabel(vizData)" style="visibility: hidden;">
+    <span id="investVizText" tabindex="0"
+      [attr.aria-label]="getAriaLabel(vizData)" style="visibility: hidden;">
       Pie Chart Details
     </span>
 
-    <div id="investViz" class="row justify-content-center collapse show" style="height: 300px;"
+
+    <div tabindex="0"
+      id="investViz" class="row justify-content-center collapse show" style="height: 300px;"
       [hidden]="filterTitle == 'Inactive'">
       <ngx-charts-advanced-pie-chart [scheme]="colorScheme" [results]="vizData" [label]="vizLabel"
         [ariaLabel]="getAriaLabel(vizData)"
