@@ -347,6 +347,16 @@ export class InvestmentsComponent implements OnInit {
     });
   }
 
+  getAriaLabel(data: { name: string, value: number }[]): string {
+    const total = data.reduce((acc, cur) => acc + cur.value, 0);
+    if (data.length === 1) {
+      return `Pie chart representing ${total} total IT investments, all of which are ${data[0].value} ${data[0].name}`;
+    } else {
+      const labels = data.map(item => `${Math.round((item.value / total) * 100)}% are ${item.name}`).join(', ');
+      return `Pie chart representing ${total} total IT investments, of which ${labels}}`;
+    }
+  }
+
   // Update table from filter buttons
   eliminatedFilter() {
     this.filteredTable = true; // Filters are on, expose main table button

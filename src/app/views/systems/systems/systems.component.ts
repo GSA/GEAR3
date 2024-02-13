@@ -312,6 +312,16 @@ export class SystemsComponent implements OnInit {
     });
   }
 
+  getAriaLabel(data: { name: string, value: number }[]): string {
+    const total = data.reduce((acc, cur) => acc + cur.value, 0);
+    if (data.length === 1) {
+      return `Pie chart representing ${total} total active systems, all of which are ${data[0].value} ${data[0].name}`;
+    } else {
+      const labels = data.map(item => `${Math.round((item.value / total) * 100)}% are ${item.name}`).join(', ');
+      return `Pie chart representing ${total} total active systems, of which ${labels}}`;
+    }
+  }
+
   // Update table from filter buttons if only filtering ONE column. Not currently used in business systems report.
   changeFilter(field: string, term: string) {
     this.filteredTable = true; // Filters are on, expose main table button
