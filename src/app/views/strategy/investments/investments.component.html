@@ -42,6 +42,10 @@
     </a>
 
     <!-- Visualizations -->
+    <span id="investVizText" aria-label="getAriaLabel(vizData)" style="visibility: hidden;">
+      Pie Chart Details
+    </span>
+
     <div id="investViz" class="row justify-content-center collapse show" style="height: 300px;"
       [hidden]="filterTitle == 'Inactive'">
       <ngx-charts-advanced-pie-chart [scheme]="colorScheme" [results]="vizData" [label]="vizLabel"
