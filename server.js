@@ -458,18 +458,18 @@ cron.schedule('0 7 * * WED', () => {
           });
          
           let insertQuery =
-            "REPLACE INTO tmp_obj_ldap_poc (SamAccountName, FirstName, LastName, Email, Phone, OrgCode, Position, EmployeeType) VALUES ?";
+            "REPLACE INTO tmp_obj_ldap_poc (SamAccountName, FirstName, LastName, Email, Phone, OrgCode, Position, EmployeeType, Enabled) VALUES ?";
           db.query(insertQuery, [pocCsv], (error, response) => {
             console.log(error || 'Insert into tmp_obj_ldap_poc: ' + response);
           });
          
           let upsertQuery =
-            "INSERT INTO obj_ldap_poc (SamAccountName, FirstName, LastName, Email, Phone, OrgCode, Position, EmployeeType) "
-            + "SELECT t.SamAccountName, t.FirstName, t.LastName, t.Email, t.Phone, t.OrgCode, t.Position, t.EmployeeType "
+            "INSERT INTO obj_ldap_poc (SamAccountName, FirstName, LastName, Email, Phone, OrgCode, Position, EmployeeType, Enabled) "
+            + "SELECT t.SamAccountName, t.FirstName, t.LastName, t.Email, t.Phone, t.OrgCode, t.Position, t.EmployeeType, t.Enabled "
             + "FROM tmp_obj_ldap_poc t "
             + "ON DUPLICATE KEY UPDATE FirstName = VALUES(FirstName), LastName = VALUES(LastName),"
             + "Email = VALUES(Email), Phone = VALUES(Phone), OrgCode = VALUES(OrgCode),"
-            + "Position = VALUES(Position), EmployeeType = VALUES(EmployeeType)";
+            + "Position = VALUES(Position), EmployeeType = VALUES(EmployeeType), Enabled = VALUES(Enabled) ";
           db.query(upsertQuery, (error, response) => {
             console.log(error || 'Insert into/update obj_ldap_poc: ' + response);
           });
