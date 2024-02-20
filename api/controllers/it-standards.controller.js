@@ -116,6 +116,7 @@ exports.update = (req, res) => {
           attestation_required            = '${data.itStandReqAtte}',
           fedramp                         = '${data.itStandFedramp}',
           open_source                     = '${data.itStandOpenSource}',
+          RITM                            = '${data.itStandRITM}',
           Gold_Image_Comment              = '${data.itStandGoldComment}',
           attestation_link                = '${data.itStandAtteLink}',
           Approved_Status_Expiration_Date = ${data.itStandAprvExp},
@@ -187,6 +188,7 @@ exports.create = (req, res) => {
         attestation_required,
         fedramp,
         open_source,
+        RITM,
         Gold_Image_Comment,
         attestation_link,
         Comments,
@@ -215,6 +217,7 @@ exports.create = (req, res) => {
         '${data.itStandReqAtte}',
         '${data.itStandFedramp}',
         '${data.itStandOpenSource}',
+        '${data.itStandRITM}',
         '${data.itStandGoldComment}',
         '${data.itStandAtteLink}',
         '${data.itStandComments}',
@@ -236,7 +239,7 @@ exports.create = (req, res) => {
         STR_TO_DATE(${data.tcEndOfLifeDate}, '%M %d, %Y'));`;
 
       var logStatement = `insert into gear_log.event (Event, User, DTG) values ('create IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
-
+console.log(logStatement);
       res = ctrl.sendQuery(query + ' ' + logStatement, 'create IT Standard', res); //removed sendQuery_cowboy reference
     } else {
       //console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING

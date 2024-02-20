@@ -9,6 +9,7 @@ export class ITStandards {
   public attestation_required: string = null;
   public fedramp: string = null;
   public open_source: string = null;
+  public RITM: string = null;
   public Gold_Image_Comment: string = null;
   public attestation_link: string = null;
   public Comments: string = null;

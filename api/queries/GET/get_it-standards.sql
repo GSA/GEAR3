@@ -10,6 +10,7 @@ SELECT
   tech.attestation_required,
   tech.fedramp,
   tech.open_source,
+  tech.RITM,
   tech.Gold_Image_Comment,
   tech.attestation_link,
   tech.Comments,

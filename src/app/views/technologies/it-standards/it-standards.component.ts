@@ -177,6 +177,11 @@ export class ItStandardsComponent implements OnInit {
     sortable: true,
     visible: false,
     formatter: this.YesNo
+  },{
+    field: 'RITM',
+    title: 'Required Item',
+    sortable: true,
+    visible: false
   }, {
     field: 'ApprovalExpirationDate',
     title: 'Approval Expiration Date',
