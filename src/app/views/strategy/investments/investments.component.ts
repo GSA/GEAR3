@@ -22,8 +22,8 @@ export class InvestmentsComponent implements OnInit {
   row: Object = <any>{};
   filteredTable: boolean = false;
   filterTitle: string = '';
-  nonEliminatedTypes: any[] = ['11: No Change in Status', '10: New', '01: Upgraded from non-major to major IT Investment'];
-  eliminatedTypes: any[] = ['Eliminated by funding', 'Eliminated by omission'];
+  nonEliminatedTypes: any[] = ['11: No Change in Status', '10: New', '01: Upgraded from non-major to major IT Investment', '04: Consolidation of Investments'];
+  eliminatedTypes: any[] = ['06: Eliminated by funding', 'Eliminated by omission', '09: Eliminated by reorganization'];
 
   vizData: any[] = [];
   vizLabel: string = 'Total Non-Eliminated Investments';
