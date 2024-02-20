@@ -14,7 +14,8 @@ const bodyParser = require('body-parser'),
   mysql = require('mysql2'),
   passport = require('passport'),
   passportJWT = require("passport-jwt"),
-  SAMLStrategy = require('passport-saml').Strategy,
+  SAMLStrategy = require('@node-saml/passport-saml').Strategy,
+  
 
   api = require('./api/index'),
 
@@ -45,6 +46,8 @@ const samlConfig = {
   issuer: process.env.SAML_ISSUER,
   cert: process.env.SAML_CERT,
   acceptedClockSkewMs: -1,
+  wantAuthnResponseSigned: false,
+  audience: false,
 };
 
 // Receives SAML user data
@@ -430,7 +433,7 @@ const fastcsv = require("fast-csv");
 const { consoleTestResultHandler } = require('tslint/lib/test.js');
 
 cron.schedule('0 7 * * WED', () => {
-  let stream = fs.createReadStream("./pocs/GSA_Pocs.csv");
+  let stream = fs.createReadStream("scripts/pocs/GSA_Pocs.csv");
   let pocCsv = [];
   let csvStream = fastcsv
     .parse()
@@ -444,16 +447,48 @@ cron.schedule('0 7 * * WED', () => {
       // create a new connection to the database
       const db = mysql.createConnection(dbCredentials);
 
-      // open the connection
       db.connect(error => {
         if (error) {
           console.error(error);
         } else {
-          let query =
-            "REPLACE INTO obj_ldap_poc (SamAccountName, FirstName, LastName, Email, Phone, OrgCode, Position, EmployeeType) VALUES ?";
-          db.query(query, [pocCsv], (error, response) => {
-            console.log(error || response);
+          let clearQuery =
+            "DELETE FROM tmp_obj_ldap_poc";
+          db.query(clearQuery, (error, response) => {
+            console.log(error || 'Clear tmp_obj_ldap_poc records: ' + response);
           });
+         
+          let insertQuery =
+            "REPLACE INTO tmp_obj_ldap_poc (SamAccountName, FirstName, LastName, Email, Phone, OrgCode, Position, EmployeeType, Enabled) VALUES ?";
+          db.query(insertQuery, [pocCsv], (error, response) => {
+            console.log(error || 'Insert into tmp_obj_ldap_poc: ' + response);
+          });
+         
+          let upsertQuery =
+            "INSERT INTO obj_ldap_poc (SamAccountName, FirstName, LastName, Email, Phone, OrgCode, Position, EmployeeType, Enabled) "
+            + "SELECT t.SamAccountName, t.FirstName, t.LastName, t.Email, t.Phone, t.OrgCode, t.Position, t.EmployeeType, t.Enabled "
+            + "FROM tmp_obj_ldap_poc t "
+            + "ON DUPLICATE KEY UPDATE FirstName = VALUES(FirstName), LastName = VALUES(LastName),"
+            + "Email = VALUES(Email), Phone = VALUES(Phone), OrgCode = VALUES(OrgCode),"
+            + "Position = VALUES(Position), EmployeeType = VALUES(EmployeeType), Enabled = VALUES(Enabled) ";
+          db.query(upsertQuery, (error, response) => {
+            console.log(error || 'Insert into/update obj_ldap_poc: ' + response);
+          });
+
+          let updateQuery =
+            "UPDATE obj_ldap_poc poc "
+            + "SET Enabled = 'FALSE' "
+            + "WHERE poc.SamAccountName NOT IN (SELECT SamAccountName FROM tmp_obj_ldap_poc)";
+          db.query(updateQuery, (error, response) => {
+            console.log(error || 'Update obj_ldap_poc to disable poc: ' + response);
+          });
+
+          let deleteQuery =
+            "DELETE FROM obj_ldap_poc "
+            + "WHERE Enabled = 'FALSE' "
+            + "AND SamAccountName NOT IN (SELECT obj_ldap_SamAccountName FROM zk_technology_poc)";
+          db.query(deleteQuery, (error, response) => {
+            console.log(error || 'Delete obj_ldap_poc disabled records: ' + response);
+          });       
         }
       });
     });

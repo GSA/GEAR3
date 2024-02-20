@@ -87,7 +87,13 @@
     </a>
 
     <!-- Visualizations -->
+    <span id="sysVizText" tabindex="0"
+      [attr.aria-label]="getAriaLabel(vizData)" style="visibility: hidden;">
+      Pie Chart Details
+    </span>
+
     <div
+      tabindex="0"
       id="sysViz"
       class="row justify-content-center collapse show"
       style="height: 300px"
@@ -97,7 +103,8 @@
         [scheme]="colorScheme"
         [results]="vizData"
         [label]="vizLabel"
-        (select)="onSelect($event)"
+        [ariaLabel]="getAriaLabel(vizData)"
+        (select)="onSelect($event)"  
       >
       </ngx-charts-advanced-pie-chart>
     </div>

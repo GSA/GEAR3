@@ -22,8 +22,8 @@ export class InvestmentsComponent implements OnInit {
   row: Object = <any>{};
   filteredTable: boolean = false;
   filterTitle: string = '';
-  nonEliminatedTypes: any[] = ['11: No Change in Status', '10: New', '01: Upgraded from non-major to major IT Investment'];
-  eliminatedTypes: any[] = ['Eliminated by funding', 'Eliminated by omission'];
+  nonEliminatedTypes: any[] = ['11: No Change in Status', '10: New', '01: Upgraded from non-major to major IT Investment', '04: Consolidation of Investments'];
+  eliminatedTypes: any[] = ['06: Eliminated by funding', 'Eliminated by omission', '09: Eliminated by reorganization'];
 
   vizData: any[] = [];
   vizLabel: string = 'Total Non-Eliminated Investments';
@@ -345,6 +345,16 @@ export class InvestmentsComponent implements OnInit {
           });
       }
     });
+  }
+
+  getAriaLabel(data: { name: string, value: number }[]): string {
+    const total = data.reduce((acc, cur) => acc + cur.value, 0);
+    if (data.length === 1) {
+      return `Pie chart representing ${total} total IT investments, all of which are ${data[0].value} ${data[0].name}`;
+    } else {
+      const labels = data.map(item => `${Math.round((item.value / total) * 100)}% are ${item.name}`).join(', ');
+      return `Pie chart representing ${total} total IT investments, of which ${labels}}`;
+    }
   }
 
   // Update table from filter buttons
