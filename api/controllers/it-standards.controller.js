@@ -214,7 +214,7 @@ exports.create = (req, res) => {
         '${data.itStandReqAtte}',
         '${data.itStandFedramp}',
         '${data.itStandOpenSource}',
-        ${data.itStandRITM},
+        '${data.itStandRITM}',
         '${data.itStandGoldComment}',
         '${data.itStandAtteLink}',
         '${data.itStandComments}',
