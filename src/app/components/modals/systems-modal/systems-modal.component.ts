@@ -281,6 +281,10 @@ export class SystemsModalComponent implements OnInit {
     title: 'Open Source',
     sortable: true,
   }, {
+    field: 'RITM',
+    title: 'Required Item',
+    sortable: true,
+  }, {
     field: 'ApprovalExpirationDate',
     title: 'Approved Status Expiration Date',
     sortable: true,

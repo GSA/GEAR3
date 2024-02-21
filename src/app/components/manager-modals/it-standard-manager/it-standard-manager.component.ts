@@ -37,6 +37,7 @@ export class ItStandardManagerComponent implements OnInit {
     itStandAtteLink: new FormControl(),
     itStandFedramp: new FormControl(),
     itStandOpenSource: new FormControl(),
+    itStandRITM: new FormControl(),
     itStandVendorOrg: new FormControl(),
     itStandDeployment: new FormControl(null, [Validators.required]),
     itStandGoldImg: new FormControl(),
