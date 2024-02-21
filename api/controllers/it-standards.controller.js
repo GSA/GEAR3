@@ -131,7 +131,7 @@ exports.update = (req, res) => {
           softwareProductName             = ${data.tcSoftwareProductName},
           softwareVersionName             = ${data.tcSoftwareVersionName},
           softwareReleaseName             = ${data.tcSoftwareReleaseName},
-          endOfLifeDate                   = STR_TO_DATE(${data.tcEndOfLifeDate}, '%M %d, %Y')
+          endOfLifeDate                   = STR_TO_DATE(${data.tcEndOfLifeDate}, '%Y-%m-%d %T')
         WHERE Id = ${req.params.id};
         SET FOREIGN_KEY_CHECKS=1;
         ${catString}
@@ -233,7 +233,7 @@ exports.create = (req, res) => {
         ${data.tcSoftwareProductName},
         ${data.tcSoftwareVersionName},
         ${data.tcSoftwareReleaseName},
-        STR_TO_DATE(${data.tcEndOfLifeDate}, '%M %d, %Y'));`;
+        STR_TO_DATE(${data.tcEndOfLifeDate}, '%Y-%m-%d %T'));`;
 
       var logStatement = `insert into gear_log.event (Event, User, DTG) values ('create IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
       res = ctrl.sendQuery(query + ' ' + logStatement, 'create IT Standard', res); //removed sendQuery_cowboy reference
