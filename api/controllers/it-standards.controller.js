@@ -62,7 +62,6 @@ exports.update = (req, res) => {
       //if (req.headers.authorization)
       //console.log('it-standard update authorized...');
       var data = req.body;
-      console.log('req body :::::', req.body);
       // Create string to update IT Standards Categories
       var catString = '';
       if (data.itStandCategory) {
@@ -139,7 +138,6 @@ exports.update = (req, res) => {
         ${pocString}`;
 
       var logStatement = `insert into gear_log.event (Event, User, DTG) values ('update IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
-console.log( `${data.itStandRITM}, '--UPDATE---',${data.itStandComments}`, logStatement);  
       res = ctrl.sendQuery(query + ' ' + logStatement, 'update IT Standard', res); //removed sendQuery_cowboy reference
     } else {
       //console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
@@ -162,7 +160,6 @@ exports.create = (req, res) => {
       //console.log('*** API Security Testing - API Auth Validation: PASSED'); //DEBUGGING
       //if (req.headers.authorization) {
       var data = req.body;
-console.log('req body :::::', req.body);
       // Null any empty text fields
       data.itStandDesc = ctrl.emptyTextFieldHandler(data.itStandDesc);
       data.itStandAprvExp = ctrl.emptyTextFieldHandler(data.itStandAprvExp);
@@ -239,7 +236,6 @@ console.log('req body :::::', req.body);
         STR_TO_DATE(${data.tcEndOfLifeDate}, '%M %d, %Y'));`;
 
       var logStatement = `insert into gear_log.event (Event, User, DTG) values ('create IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
-console.log( `${data.itStandRITM}, '--------',${data.itStandComments}`, logStatement);   
       res = ctrl.sendQuery(query + ' ' + logStatement, 'create IT Standard', res); //removed sendQuery_cowboy reference
     } else {
       //console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
