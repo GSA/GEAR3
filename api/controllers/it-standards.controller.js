@@ -62,7 +62,6 @@ exports.update = (req, res) => {
       //if (req.headers.authorization)
       //console.log('it-standard update authorized...');
       var data = req.body;
-
       // Create string to update IT Standards Categories
       var catString = '';
       if (data.itStandCategory) {
@@ -116,6 +115,7 @@ exports.update = (req, res) => {
           attestation_required            = '${data.itStandReqAtte}',
           fedramp                         = '${data.itStandFedramp}',
           open_source                     = '${data.itStandOpenSource}',
+          RITM                            = '${data.itStandRITM}',
           Gold_Image_Comment              = '${data.itStandGoldComment}',
           attestation_link                = '${data.itStandAtteLink}',
           Approved_Status_Expiration_Date = ${data.itStandAprvExp},
@@ -131,14 +131,13 @@ exports.update = (req, res) => {
           softwareProductName             = ${data.tcSoftwareProductName},
           softwareVersionName             = ${data.tcSoftwareVersionName},
           softwareReleaseName             = ${data.tcSoftwareReleaseName},
-          endOfLifeDate                   = STR_TO_DATE(${data.tcEndOfLifeDate}, '%M %d, %Y')
+          endOfLifeDate                   = STR_TO_DATE(${data.tcEndOfLifeDate}, '%Y-%m-%d %T')
         WHERE Id = ${req.params.id};
         SET FOREIGN_KEY_CHECKS=1;
         ${catString}
         ${pocString}`;
 
       var logStatement = `insert into gear_log.event (Event, User, DTG) values ('update IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
-
       res = ctrl.sendQuery(query + ' ' + logStatement, 'update IT Standard', res); //removed sendQuery_cowboy reference
     } else {
       //console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
@@ -161,7 +160,6 @@ exports.create = (req, res) => {
       //console.log('*** API Security Testing - API Auth Validation: PASSED'); //DEBUGGING
       //if (req.headers.authorization) {
       var data = req.body;
-
       // Null any empty text fields
       data.itStandDesc = ctrl.emptyTextFieldHandler(data.itStandDesc);
       data.itStandAprvExp = ctrl.emptyTextFieldHandler(data.itStandAprvExp);
@@ -187,6 +185,7 @@ exports.create = (req, res) => {
         attestation_required,
         fedramp,
         open_source,
+        RITM,
         Gold_Image_Comment,
         attestation_link,
         Comments,
@@ -215,6 +214,7 @@ exports.create = (req, res) => {
         '${data.itStandReqAtte}',
         '${data.itStandFedramp}',
         '${data.itStandOpenSource}',
+        '${data.itStandRITM}',
         '${data.itStandGoldComment}',
         '${data.itStandAtteLink}',
         '${data.itStandComments}',
@@ -233,10 +233,9 @@ exports.create = (req, res) => {
         ${data.tcSoftwareProductName},
         ${data.tcSoftwareVersionName},
         ${data.tcSoftwareReleaseName},
-        STR_TO_DATE(${data.tcEndOfLifeDate}, '%M %d, %Y'));`;
+        STR_TO_DATE(${data.tcEndOfLifeDate}, '%Y-%m-%d %T'));`;
 
       var logStatement = `insert into gear_log.event (Event, User, DTG) values ('create IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
-
       res = ctrl.sendQuery(query + ' ' + logStatement, 'create IT Standard', res); //removed sendQuery_cowboy reference
     } else {
       //console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
