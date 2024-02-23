@@ -5,6 +5,9 @@ const path = require('path');
 
 const queryPath = '../queries/';
 
+const mmmm_dd_yyyy_regex = 
+  /^(January|February|March|April|May|June|July|August|September|October|November|December) (0[1-9]|[12][0-9]|3[01]), \d{4}$/;
+
 exports.findAll = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
     ` WHERE obj_standard_type.Keyname LIKE 'Software'
@@ -61,7 +64,7 @@ exports.update = (req, res) => {
 
       //if (req.headers.authorization)
       //console.log('it-standard update authorized...');
-      var data = req.body;
+      var data = req.body;  
       // Create string to update IT Standards Categories
       var catString = '';
       if (data.itStandCategory) {
@@ -101,6 +104,10 @@ exports.update = (req, res) => {
       data.tcSoftwareReleaseName = ctrl.emptyTextFieldHandler(data.tcSoftwareReleaseName);
       data.tcEndOfLifeDate = ctrl.emptyTextFieldHandler(data.tcEndOfLifeDate);
 
+      if (mmmm_dd_yyyy_regex.test(data.tcEndOfLifeDate)) {
+        data.tcEndOfLifeDate = convertDateFormat(data.tcEndOfLifeDate);
+      } 
+      
       var query = `SET FOREIGN_KEY_CHECKS=0;
         UPDATE obj_technology
         SET `+ //Keyname                       = '${data.itStandName}',
@@ -174,6 +181,10 @@ exports.create = (req, res) => {
       data.tcSoftwareVersionName = ctrl.emptyTextFieldHandler(data.tcSoftwareVersionName);
       data.tcSoftwareReleaseName = ctrl.emptyTextFieldHandler(data.tcSoftwareReleaseName);
       data.tcEndOfLifeDate = ctrl.emptyTextFieldHandler(data.tcEndOfLifeDate);
+
+      if (mmmm_dd_yyyy_regex.test(data.tcEndOfLifeDate)) {
+        data.tcEndOfLifeDate = convertDateFormat(data.tcEndOfLifeDate);
+      } 
 
       var query = `INSERT INTO obj_technology(
         Keyname,
@@ -275,4 +286,13 @@ exports.findTypes = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standard_types.sql')).toString();
 
   res = ctrl.sendQuery(query, 'IT Standard Types', res); //removed sendQuery_cowboy reference
+};
+
+convertDateFormat = (inputDate) => {
+  const parsedDate = new Date(inputDate);
+  // Format the parsed date to '%Y-%m-%d'
+  const convertedDate = parsedDate.getFullYear() + '-' +
+                        ('0' + (parsedDate.getMonth() + 1)).slice(-2) + '-' +
+                        ('0' + parsedDate.getDate()).slice(-2);
+  return convertedDate;
 };
