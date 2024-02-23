@@ -6,7 +6,7 @@ const path = require('path');
 const queryPath = '../queries/';
 
 const mmmm_dd_yyyy_regex = 
-  /^(January|February|March|April|May|June|July|August|September|October|November|December) (0[1-9]|[12][0-9]|3[01]), \d{4}$/;
+  /(0[1-9]|[12][0-9]|3[01]), \d{4}$/;
 
 exports.findAll = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
@@ -107,7 +107,7 @@ exports.update = (req, res) => {
       if (mmmm_dd_yyyy_regex.test(data.tcEndOfLifeDate)) {
         data.tcEndOfLifeDate = convertDateFormat(data.tcEndOfLifeDate);
       } 
-      
+
       var query = `SET FOREIGN_KEY_CHECKS=0;
         UPDATE obj_technology
         SET `+ //Keyname                       = '${data.itStandName}',
