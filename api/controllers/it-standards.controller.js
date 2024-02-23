@@ -5,8 +5,7 @@ const path = require('path');
 
 const queryPath = '../queries/';
 
-const mmmm_dd_yyyy_regex = 
-  /(0[1-9]|[12][0-9]|3[01]), \d{4}$/;
+const mmmm_dd_yyyy_regex =  / (\d{2}), (\d{4})/;
 
 exports.findAll = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
