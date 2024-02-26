@@ -179,7 +179,7 @@ export class ItStandardsComponent implements OnInit {
     formatter: this.YesNo
   },{
     field: 'RITM',
-    title: 'Requested Item (RITM))',
+    title: 'Requested Item (RITM)',
     sortable: true,
     visible: false
   }, {
