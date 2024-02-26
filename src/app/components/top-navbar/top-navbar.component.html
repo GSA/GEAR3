@@ -33,124 +33,140 @@
         <a id="aboutBttn" class="nav-link" routerLink="/about">About</a>
       </li>
 
-      <li tabindex=0 class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="gearNavigationDropdown" data-toggle="dropdown" aria-haspopup="true"
-          aria-expanded="false">GEAR Navigation</a>
-        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="NavDropdown">
-          <li class="dropdown-header">IT Strategy</li>
-          <!--
-          <a id="strategyBttn" class="dropdown-item" routerLink="/strategic_framework"
-            aria-label="Strategic Framework"
-            >Strategic Framework</a
-          >
-          -->
-          <li class="dropdown-item">
-            <a id="investmentBttn" class="dropdown-item" routerLink="/investments" aria-label="IT Investments">IT
-              Investments</a>
-          </li>
-          <li class="dropdown-item">
-            <a class="dropdown-item" href="https://insite.gsa.gov/directives-library/#GSAIT" target="_blank"
-              rel="noopener">IT Policies</a>
-          </li>
+      <li class="nav-item">
+        <div class="dropdown show">
+          <a id="gearNavigationDropdown" class="btn btn-secondary dropdown-toggle" href="#" role="button"
+            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">GEAR Navigation
+          </a>
+          <div class="dropdown-menu" aria-labelledby="gearNavigationDropdown">
+            <ul>
+              <li class="dropdown-header">IT Strategy</li>
+              <!--
+              <a id="strategyBttn" class="dropdown-item" routerLink="/strategic_framework"
+                aria-label="Strategic Framework"
+                >Strategic Framework</a
+              >
+              -->
+              <li class="dropdown-item">
+                <a id="investmentBttn" class="dropdown-item" href="/#/investments" aria-label="IT Investments">IT
+                  Investments
+                </a>
+              </li>
+              <li class="dropdown-item">
+                <a class="dropdown-item" href="https://insite.gsa.gov/directives-library/#GSAIT" target="_blank"
+                  rel="noopener">IT Policies
+                </a>
+              </li>
 
-          <li class="dropdown-header">GSA Enterprise</li>
-          <li class="dropdown-item">
-            <a id="capabilityModelBttn" class="dropdown-item" routerLink="/capabilities_model"
-              aria-label="Business Capability Model">Business Capability Model</a>
-          </li>
-          <li class="dropdown-item">
-            <a id="capabilityListBttn" class="dropdown-item" routerLink="/capabilities"
-              aria-label="Business Capability List">Business Capability List</a>
-          </li>
-          <li class="dropdown-item">
-            <a id="orgChartBttn" class="dropdown-item" routerLink="/org_chart"
-              aria-label="Organization Chart">Organization
-              Chart</a>
-          </li>
-          <li class="dropdown-item">
-            <a id="orgListBttn" class="dropdown-item" routerLink="/organizations"
-              aria-label="Organization List">Organization
-              List</a>
-          </li>
-          <li class="dropdown-item">
-            <a id="serviceListBttn" class="dropdown-item" routerLink="/website_service_category"
-              aria-label="Website Service Category List">Website Service Category List</a>
-          </li>
-
-          <li class="dropdown-header">Business Systems</li>
-          <li class="dropdown-item">
-            <a id="systemsBttn" class="dropdown-item" routerLink="/systems" aria-label="Business Systems">Business
-              Systems</a>
-          </li>
-          <li class="dropdown-item">
-            <a id="timeReportBttn" class="dropdown-item" routerLink="/systems_TIME" aria-label=" TIME Report"> TIME
-              Report</a>
-          </li>
-          <li class="dropdown-item">
-            <a id="recordsMgmtBttn" class="dropdown-item" routerLink="/records_mgmt"
-              aria-label="Records Management">Records Management</a>
-          </li>
-          <li class="dropdown-item">
-            <a id="websitesBttn" class="dropdown-item" routerLink="/websites" aria-label="GSA Websites">GSA Websites</a>
-          </li>
-
-          <li class="dropdown-header">Security</li>
-          <li class="dropdown-item">
-            <a id="systemsBttn" class="dropdown-item" routerLink="/FISMA" aria-label="FISMA Systems Inventory">FISMA
-              Systems
-              Inventory</a>
-          </li>
-          <li class="dropdown-item">
-            <a id="systemsPOCBttn" class="dropdown-item" routerLink="/FISMA_POC" aria-label="FISMA System POCs">FISMA
-              System POCs</a>
-          </li>
-
-          <li class="dropdown-header">Technologies</li>
-          <li class="dropdown-item">
-            <a id="itStandardsBttn" class="dropdown-item" routerLink="/it_standards" aria-label="IT Standards List">IT
-              Standards List</a>
-          </li>
-          <li class="dropdown-item">
-            <a class="dropdown-item" href="https://sites.google.com/a/gsa.gov/it_standards/it-standards" target="_blank"
-              rel="noopener">IT
-              Standards Approval Process</a>
-          </li>
-          <!--
-          <li class="dropdown-header">Enterprise Architecture</li>
-          <a id="eaViewBttn" class="dropdown-item" routerLink="/ea_view"
-            aria-label="EA View"
-            >EA View</a
-          >
-          <a id="gearModelBttn" class="dropdown-item" routerLink="/gear_model"
-            aria-label="GEAR Model Diagram"
-            >GEAR Model Diagram</a
-          >
-          -->
-          <li class="dropdown-item">
-            <a id="formsBttn" class="dropdown-item" routerLink="/forms_glossary" aria-label="Access Forms and Glossary">
-              Access Forms & Glossary</a>
-          </li>
-        </ul>
+              <li class="dropdown-header">GSA Enterprise</li>
+              <li class="dropdown-item">
+                <a id="capabilityModelBttn" class="dropdown-item" href="/#/capabilities_model"
+                  aria-label="Business Capability Model">Business Capability Model
+                </a>
+              </li>
+              <li class="dropdown-item">
+                <a id="capabilityListBttn" class="dropdown-item" href="/#/capabilities"
+                  aria-label="Business Capability List">Business Capability List</a>
+              </li>
+              <li class="dropdown-item">
+                <a id="orgChartBttn" class="dropdown-item" href="/#/org_chart"
+                  aria-label="Organization Chart">Organization Chart
+                </a>
+              </li>
+              <li class="dropdown-item">
+                <a id="orgListBttn" class="dropdown-item" href="/#/organizations"
+                  aria-label="Organization List">Organization List
+                </a>
+              </li>
+              <li class="dropdown-item">
+                <a id="serviceListBttn" class="dropdown-item" href="/#/website_service_category"
+                  aria-label="Website Service Category List">Website Service Category List
+                </a>
+              </li>  
+              <li class="dropdown-header">Business Systems</li>
+              <li class="dropdown-item">
+                <a id="systemsBttn" class="dropdown-item" href="/#/systems" aria-label="Business Systems">Busines System
+                </a>
+              </li>
+              <li class="dropdown-item">
+                <a id="timeReportBttn" class="dropdown-item" href="/#/systems_TIME" aria-label=" TIME Report"> TIME Report
+                </a>
+              </li>
+              <li class="dropdown-item">
+                <a id="recordsMgmtBttn" class="dropdown-item" href="/#/records_mgmt"
+                  aria-label="Records Management">Record Management</a>
+              </li>
+              <li class="dropdown-item">
+                <a id="websitesBttn" class="dropdown-item" href="/#/websites" aria-label="GSA Websites">GSA Websites
+                </a>
+              </li>
+              <li class="dropdown-header">Security</li>
+              <li class="dropdown-item">
+                <a id="systemsBttn" class="dropdown-item" href="/#/FISMA" aria-label="FISMA Systems Inventory">FISMA Systems Inventory
+                </a>
+              </li>
+              <li class="dropdown-item">
+                <a id="systemsPOCBttn" class="dropdown-item" href="/#/FISMA_POC" aria-label="FISMA System POCs">FISMA System POCs
+                </a>
+              </li>
+              <li class="dropdown-item">
+                <a id="itStandardsBttn" class="dropdown-item" href="/#/it_standards" aria-label="IT Standards List">IT Standards List
+                </a>
+              </li>
+              <li class="dropdown-item">
+                <a class="dropdown-item" href="https://insite.gsa.gov/portal/content/500499" target="_blank" rel="noopener">IT Standards Approval Process
+                </a>
+              </li>
+        
+              <!--
+              <a id="eaViewBttn" class="dropdown-item" href="/#/ea_view"
+                  aria-label="EA View"
+                  >EA View</a
+              >
+              <a id="gearModelBttn" class="dropdown-item" href="/#/gear_model"
+                    aria-label="GEAR Model Diagram"
+                    >GEAR Model Diagram</a
+              >
+              -->
+              <li class="dropdown-item">
+                <a id="capabilityModelBttn" class="dropdown-item" href="/#/capabilities_model"
+                  aria-label="Business Capability Model">Business Capability Model
+                </a>
+              </li>
+              <li class="dropdown-item">
+                <a id="formsBttn" class="dropdown-item" href="/#/forms_glossary" aria-label="Access Forms and Glossary">
+                  Access Forms & Glossary
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
       </li>
 
       <li class="nav-item">
         <a id="assistTechBttn" class="nav-link" routerLink="/assist_tech">Assistive Technology</a>
       </li>
 
-      <li tabindex=0 class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="contactDropdown" data-toggle="dropdown" aria-haspopup="true"
-          aria-expanded="false">Contact/Feedback</a>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="contactDropdown">
-      <li class="dropdown-header">Regarding IT Standards</li>
-      <a class="dropdown-item" href="https://mail.google.com/mail/?view=cm&fs=1&to=it-standards@gsa.gov" target="_blank"
-        rel="noopener">IT Standards</a>
-
-      <div class="dropdown-divider"></div>
-
-      <li class="dropdown-header">Regarding GEAR/EA</li>
-      <a class="dropdown-item" href="https://mail.google.com/mail/?view=cm&fs=1&to=ea_planning@gsa.gov" target="_blank"
-        rel="noopener">EA Team</a>
-  </div>
-  </ul>
+      <li class="nav-item">
+        <div class="dropdown show">
+          <a id="contactDropdown" class="btn btn-secondary dropdown-toggle" href="#" role="button"
+            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Contact/Feedback</a>
+          <div class="dropdown-menu" aria-labelledby="contactDropdown">
+            <ul>
+              <li class="dropdown-header">Regarding IT Standards</li>
+              <li class="dropdown-item">
+                <a  class="dropdown-item" href="https://mail.google.com/mail/?view=cm&fs=1&to=it-standards@gsa.gov" target="_blank"
+                  rel="noopener">IT Standards</a>
+              </li>
+              <li class="dropdown-header">Regarding GEAR/EA</li>
+              <li class="dropdown-item">
+                <a  class="dropdown-item" href="https://mail.google.com/mail/?view=cm&fs=1&to=ea_planning@gsa.gov" target="_blank"
+                  rel="noopener">EA Team</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </li>
+    </ul>
   </div>
 </nav>
