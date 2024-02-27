@@ -38,7 +38,7 @@
           <a id="gearNavigationDropdown" class="btn btn-secondary btn-sm dropdown-toggle" href="#" role="button"
             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">GEAR Navigation
           </a>
-          <div class="dropdown-menu" aria-labelledby="gearNavigationDropdown">
+          <div #dropdownMenu class="dropdown-menu" aria-labelledby="gearNavigationDropdown">
             <ul>
               <li class="dropdown-header">IT Strategy</li>
               <!--
@@ -47,7 +47,7 @@
                 >Strategic Framework</a
               >
               -->
-              <li class="dropdown-item">
+              <li class="dropdown-item" (click)="closeDropdown()" (keydown.enter)="closeDropdown()">
                 <a id="investmentBttn" class="dropdown-item" href="/#/investments" aria-label="IT Investments">IT
                   Investments
                 </a>
@@ -151,10 +151,10 @@
         <div class="dropdown show">
           <a id="contactDropdown" class="btn btn-secondary btn-sm dropdown-toggle" href="#" role="button"
             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Contact/Feedback</a>
-          <div class="dropdown-menu" aria-labelledby="contactDropdown">
+          <div #dropdownMenu class="dropdown-menu" aria-labelledby="contactDropdown">
             <ul>
               <li class="dropdown-header">Regarding IT Standards</li>
-              <li class="dropdown-item">
+              <li class="dropdown-item" (click)="closeDropdown()" (keydown.enter)="closeDropdown()">
                 <a  class="dropdown-item" href="https://mail.google.com/mail/?view=cm&fs=1&to=it-standards@gsa.gov" target="_blank"
                   rel="noopener">IT Standards</a>
               </li>
