@@ -267,22 +267,27 @@ export class SystemsModalComponent implements OnInit {
   }, {
     field: 'AttestationRequired',
     title: 'Attestation Required',
+    visible: false,
     sortable: true,
   }, {
     field: 'AttestationLink',
     title: 'Attestation Link',
+    visible: false,
     sortable: true,
   }, {
     field: 'Fedramp',
     title: 'Fedramp',
+    visible: false,
     sortable: true,
   }, {
     field: 'OpenSource',
     title: 'Open Source',
+    visible: false,
     sortable: true,
   }, {
     field: 'RITM',
     title: 'Requested Item (RITM)',
+    visible: false,
     sortable: true,
   }, {
     field: 'ApprovalExpirationDate',
