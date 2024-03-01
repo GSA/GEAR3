@@ -44,6 +44,14 @@ exports.searchAll = (req, res) => {
       FROM
         gear_schema.obj_capability AS cap
       UNION SELECT
+        org.\`Organization_Name\` AS \`Id\`,
+        org.\`Organization_Id\` AS \`Name\`,
+        org.\`Org_Symbol_Two_Letter_Name\` AS \`Description\`,
+        org.\`Org_Symbol\` AS \`GEAR_Type\`,
+        '{}' AS \`Other\`
+      FROM
+        gear_schema.obj_organization AS org  
+      UNION SELECT
         invest.\`Investment_Id\` AS \`Id\`,
         invest.\`Investment_Name\` AS \`Name\`,
         invest.\`Description\` AS \`Description\`,
