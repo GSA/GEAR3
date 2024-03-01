@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { environment } from '@environments/environment';
@@ -30,14 +30,6 @@ export class TopNavbarComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  @ViewChild('dropdownMenu') dropdownMenu: ElementRef;
-
-  closeDropdown() {
-    if (this.dropdownMenu.nativeElement.classList.contains('show')) {
-      this.dropdownMenu.nativeElement.classList.remove('show');
-    }
-  }
-  
   globalSearch(event) {
     if (event.key === 'Enter' || event.type === 'click') {
       $('#globalSearchTable').bootstrapTable('refreshOptions', {
