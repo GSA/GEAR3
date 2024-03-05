@@ -135,8 +135,8 @@ exports.findWebsites = (req, res) => {
 
 exports.findTechnologies = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
-    ` LEFT JOIN gear_schema.zk_systems_subsystems_technology   AS tech_mapping  ON tech.Id = tech_mapping.obj_technology_Id
-      LEFT JOIN gear_schema.obj_fisma_archer                   AS systems       ON tech_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
+    ` LEFT JOIN gear_schema.zk_systems_subsystems_technology_xml   AS tech_mapping  ON tech.Id = tech_mapping.\`ex:obj_technology_Id\`
+      LEFT JOIN gear_schema.obj_fisma_archer                   AS systems       ON tech_mapping.\`ex:obj_systems_subsystems_Id\` = systems.\`ex:GEAR_ID\`
       WHERE obj_standard_type.Keyname LIKE '%Software%'
         AND systems.\`ex:GEAR_ID\` = ${req.params.id}
 
@@ -160,11 +160,11 @@ exports.updateTech = (req, res) => {
       var techString = '';
       if (data.relatedTech) {
         // Delete any references first
-        techString += `DELETE FROM zk_systems_subsystems_technology WHERE obj_systems_subsystems_Id=${req.params.id}; `;
+        techString += `DELETE FROM zk_systems_subsystems_technology_xml WHERE \`ex:obj_systems_subsystems_Id\`=${req.params.id}; `;
 
         // Insert new IDs
         data.relatedTech.forEach(techID => {
-          techString += `INSERT INTO zk_systems_subsystems_technology (obj_systems_subsystems_Id, obj_technology_Id) VALUES (${req.params.id}, ${techID}); `;
+          techString += `INSERT INTO zk_systems_subsystems_technology_xml (\`ex:obj_systems_subsystems_Id\`, \`ex:obj_technology_Id\`) VALUES (${req.params.id}, ${techID}); `;
         });
       };
 

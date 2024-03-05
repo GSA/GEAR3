@@ -43,8 +43,8 @@ exports.findLatest = (req, res) => {
 
 exports.findSystems = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
-    ` LEFT JOIN zk_systems_subsystems_technology AS mappings ON systems.\`ex:GEAR_ID\` = mappings.obj_systems_subsystems_Id
-      LEFT JOIN obj_technology AS tech                                ON mappings.obj_technology_Id = tech.Id
+    ` LEFT JOIN zk_systems_subsystems_technology_xml AS mappings ON systems.\`ex:GEAR_ID\` = mappings.\`ex:obj_systems_subsystems_Id\`
+      LEFT JOIN obj_technology AS tech                                ON mappings.\`ex:obj_technology_Id\` = tech.Id
 
       WHERE tech.Id = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`; //removed LEFT JOIN cowboy_ods.obj_technology reference
 
