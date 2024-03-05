@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { environment } from '@environments/environment';
@@ -14,9 +14,14 @@ declare var $: any;
   templateUrl: './top-navbar.component.html',
   styleUrls: ['./top-navbar.component.css'],
 })
-export class TopNavbarComponent implements OnInit {
+export class TopNavbarComponent implements AfterViewInit {
   public envName: string = '';
   public searchKW: string = '';
+
+  showNavContent = true;
+  @ViewChild('moreLinksBtn') moreLinksBtn: ElementRef;
+
+  moreLinksVisibleStatus = false;
 
   constructor(
     private apiService: ApiService,
@@ -28,7 +33,22 @@ export class TopNavbarComponent implements OnInit {
     }
   }
 
-  ngOnInit(): void {}
+  ngAfterViewInit(): void {
+    this.moreLinksVisibleStatus = this.isMoreLinksVisible();
+    this.showNavContent = !this.moreLinksVisibleStatus
+  }
+
+  @HostListener('window:resize')
+  ngDoCheck() {
+    if (!this.isMoreLinksVisible() && !this.showNavContent) {
+      this.showNavContent = true;
+    }
+    if (!this.moreLinksVisibleStatus && this.isMoreLinksVisible()) {
+      this.showNavContent = false;
+      $('#topNavToggle').removeClass('opposite');
+    }
+    this.moreLinksVisibleStatus = this.isMoreLinksVisible();
+  }
 
   globalSearch(event) {
     if (event.key === 'Enter' || event.type === 'click') {
@@ -48,5 +68,18 @@ export class TopNavbarComponent implements OnInit {
   // Toggle arrow rotation when top navbar collapse button is clicked
   toggleTopNavBttn() {
     $('#topNavToggle').toggleClass('opposite');
+    this.showNavContent = !this.showNavContent;
+  }
+
+  isMoreLinksVisible() {
+    return this.moreLinksBtn && this.moreLinksBtn.nativeElement && this.moreLinksBtn.nativeElement.offsetParent;
+  }
+
+  processTopNavLink() {
+    if (!this.isMoreLinksVisible()) {
+      this.showNavContent = true;
+      return;
+    }
+    this.toggleTopNavBttn();
   }
 }
