@@ -1,11 +1,9 @@
-import { AfterViewInit, Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { environment } from '@environments/environment';
-
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
-import { tickStep } from 'd3';
 
 // Declare jQuery symbol
 declare var $: any;
