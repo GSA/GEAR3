@@ -26,7 +26,7 @@
     More Links <i id="topNavToggle" class="fas fa-angle-down ml-2 rotate"></i>
   </button>
 
-  <div *ngIf="showNavContent" class="navbar-collapse" id="navbarSupportedContent">
+  <div *ngIf="showNavContent" #navPanel class="navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav ml-auto align-items-center">
       <li class="nav-item">
         <a id="aboutBttn" class="nav-link" routerLink="/about" (click)="processTopNavLink()">About</a>

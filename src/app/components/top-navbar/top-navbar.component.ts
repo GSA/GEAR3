@@ -1,10 +1,11 @@
-import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { environment } from '@environments/environment';
 
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
+import { tickStep } from 'd3';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -19,33 +20,50 @@ export class TopNavbarComponent implements AfterViewInit {
   public searchKW: string = '';
 
   showNavContent = true;
-  @ViewChild('moreLinksBtn') moreLinksBtn: ElementRef;
-
+  @ViewChild('moreLinksBtn') moreLinksBtnRef: ElementRef;
+  @ViewChild('navPanel') navPanelRef: ElementRef;
   moreLinksVisibleStatus = false;
 
   constructor(
     private apiService: ApiService,
     private router: Router,
-    public sharedService: SharedService
+    public sharedService: SharedService,
+    private renderer: Renderer2
   ) {
     if (environment.name !== 'Production') {
       this.envName = `<span> - ${environment.name.toUpperCase()} ENVIRONMENT</span>`;
     }
+
+    this.renderer.listen('window', 'click', (e: Event) => { // hide top nav for outside mouse click
+      if (this.showNavContent && !this.navPanelRef.nativeElement.contains(e.target) && !this.moreLinksBtnRef.nativeElement.contains(e.target)) {
+        this.collpseTopNav();
+      }
+    });
   }
+
 
   ngAfterViewInit(): void {
     this.moreLinksVisibleStatus = this.isMoreLinksVisible();
     this.showNavContent = !this.moreLinksVisibleStatus
   }
 
+  expandTopNav() {
+    this.showNavContent = true;
+    $('#topNavToggle').addClass('opposite');
+  }
+
+  collpseTopNav() {
+    this.showNavContent = false;
+    $('#topNavToggle').removeClass('opposite');
+  }
+
   @HostListener('window:resize')
   ngDoCheck() {
     if (!this.isMoreLinksVisible() && !this.showNavContent) {
-      this.showNavContent = true;
+      this.expandTopNav();
     }
     if (!this.moreLinksVisibleStatus && this.isMoreLinksVisible()) {
-      this.showNavContent = false;
-      $('#topNavToggle').removeClass('opposite');
+      this.collpseTopNav();
     }
     this.moreLinksVisibleStatus = this.isMoreLinksVisible();
   }
@@ -72,12 +90,12 @@ export class TopNavbarComponent implements AfterViewInit {
   }
 
   isMoreLinksVisible() {
-    return this.moreLinksBtn && this.moreLinksBtn.nativeElement && this.moreLinksBtn.nativeElement.offsetParent;
+    return this.moreLinksBtnRef && this.moreLinksBtnRef.nativeElement && this.moreLinksBtnRef.nativeElement.offsetParent;
   }
 
   processTopNavLink() {
     if (!this.isMoreLinksVisible()) {
-      this.showNavContent = true;
+      this.collpseTopNav();
       return;
     }
     this.toggleTopNavBttn();
