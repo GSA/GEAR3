@@ -17,10 +17,13 @@ export class TopNavbarComponent implements AfterViewInit {
   public envName: string = '';
   public searchKW: string = '';
 
-  showNavContent = true;
+  // is more links button visible
+  moreLinksVisibleStatus = false;
+  //can show nav menu items.
+  showNavContent = false;
+
   @ViewChild('moreLinksBtn') moreLinksBtnRef: ElementRef;
   @ViewChild('navPanel') navPanelRef: ElementRef;
-  moreLinksVisibleStatus = false;
 
   constructor(
     private apiService: ApiService,
