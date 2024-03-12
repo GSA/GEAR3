@@ -307,23 +307,54 @@
       <!-- Menu Break -->
       <li><br /></li>
 
-      <!-- Access Forms & Glossary -->
+      <!-- Additional Information -->
       <li>
         <a
-          id="formsBttn"
-          routerLink="/forms_glossary"
-          aria-label="Access Forms and Glossary"
-          tabindex="0"
-          class="bg-info list-group-item list-group-item-action align-items-start"
+          id="addinfoBttn"
+          data-toggle="collapse"
+          data-target="#addinfoDropdown"
+          aria-controls="#addinfoDropdown"
+          aria-expanded="false"
+          class="bg-info list-group-item list-group-item-action flex-column align-items-start"
         >
           <div class="d-flex w-100 justify-content-start align-items-center">
-            Access Forms & Glossary
+            Additional Information
             <span class="submenu-icon">
               <i class="fab fa-wpforms fa-lg fa-fw fa-fw"></i>
-              <!-- For some reason, this needs a fixed width to properly align-->
             </span>
           </div>
         </a>
+        <div
+          id="addinfoDropdown"
+          aria-labelledby="addinfoDropdown"
+          data-parent="#sideMenu"
+          class="collapse sidebar-submenu"
+        >
+          <a
+            routerLink="/forms_glossary"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+          Access Forms and Glossary</a
+          >
+          <a
+            href="https://docs.google.com/spreadsheets/d/1_L4pG6dnTdMXKfmipV_trsK_dHU20yc9rOp2oDuYCzM/"
+            target="_blank"
+            rel="noopener"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            Data Dictionary
+            <i class="fas fa-external-link-alt"></i
+          ></a>
+          <a
+            href="https://gsa.github.io/GEAR-Documentation/api-docs/"
+            target="_blank"
+            rel="noopener"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            API Documentation
+            <i class="fas fa-external-link-alt"></i
+          ></a>
+        </div>
       </li>
     </ul>
   </ng-sidebar>
