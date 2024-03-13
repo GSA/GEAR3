@@ -55,16 +55,17 @@
             <div class="container-fluid">
               <div class="row">
                 <div class="col">
-                  <h4>Production Status</h4>
+                  <h4>Status</h4>
                   <p>{{ website.production_status }}</p>
                 </div>
-                <div class="col">
+              <!--  <div class="col">
                   <h4>Parent Domain</h4>
                   <div>
                     <p>{{ website.parent_domain }}</p>
                   </div>
                   <div [hidden]="website.parent_domain">None</div>
                 </div>
+              -->
 
                 <div class="col">
                   <h4>Type of Site</h4>
@@ -141,7 +142,7 @@
               </div>
               <div class="row mb-3">
                 <div class="col-12 mb-3">
-                  <h4>Type of Site</h4>
+                  <h4>EDX Composite Indicator</h4>
                 </div>
                 <div class="col-auto">
                   <div>
@@ -249,8 +250,7 @@
                 <div class="col-8">
                   <p>
                     The following charts show the relative strengths and
-                    weaknesses of each website across 6 areas. Click on a domain
-                    name to view additional data and stats.
+                    weaknesses of each website across 6 areas.
                   </p>
                   <p>
                     A gray semi-circle appears when data is unavailable for the
@@ -317,18 +317,17 @@
                       <td>{{ website.contact_email }}</td>
                     </tr>
                     <tr>
-                      <td><i class="fas fa-info-circle"></i>Redirects to</td>
+                      <td><i class="fas fa-info-circle"></i>Redirect URL</td>
                       <td>{{ website.redirects_to }}</td>
                     </tr>
                     <tr>
                       <td>
-                        <i class="far fa-list-alt"></i>Required by Law or
-                        Policy?
+                        <i class="far fa-list-alt"></i>Required by Law/Policy?
                       </td>
                       <td>{{ website.required_by_law_or_policy }}</td>
                     </tr>
                     <tr>
-                      <td><i class="fas fa-hashtag"></i>Has DAP?</td>
+                      <td><i class="fas fa-hashtag"></i>DAP Enabled</td>
                       <td>{{ website.has_dap }}</td>
                     </tr>
                     <tr>
@@ -346,7 +345,7 @@
                       <td>{{ website.has_search }}</td>
                     </tr>
                     <tr>
-                      <td><i class="fas fa-info-circle"></i>HTTPS enabled?</td>
+                      <td><i class="fas fa-info-circle"></i>HTTPS Enabled</td>
                       <td>{{ website.https }}</td>
                     </tr>
                     <tr>
@@ -357,8 +356,7 @@
                     </tr>
                     <tr>
                       <td>
-                        <i class="fas fa-info-circle"></i>Content Management
-                        System
+                        <i class="fas fa-info-circle"></i>Content Management Platform
                       </td>
                       <td>{{ website.cms_platform }}</td>
                     </tr>

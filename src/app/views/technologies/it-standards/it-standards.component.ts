@@ -167,7 +167,7 @@ export class ItStandardsComponent implements OnInit {
     visible: false
   }, {
     field: 'fedramp',
-    title: 'Fedramp',
+    title: 'FedRAMP',
     sortable: true,
     visible: false,
     formatter: this.YesNo

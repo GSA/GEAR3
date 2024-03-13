@@ -61,7 +61,7 @@ export class WebsitesComponent implements OnInit {
     },
     {
       field: 'site_owner_email',
-      title: 'Site Owner',
+      title: 'Website Manager',
       sortable: true,
     },
     {
@@ -83,18 +83,18 @@ export class WebsitesComponent implements OnInit {
     },
     {
       field: 'required_by_law_or_policy',
-      title: 'Required?',
+      title: 'Required by Law/Policy?',
       sortable: true,
       visible: false,
     },
     {
       field: 'has_dap',
-      title: 'Uses DAP?',
+      title: 'DAP Enabled',
       sortable: true,
     },
     {
       field: 'https',
-      title: 'HTTPS?',
+      title: 'HTTPS Enabled',
       sortable: true,
     },
     {

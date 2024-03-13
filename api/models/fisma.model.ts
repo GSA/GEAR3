@@ -33,4 +33,5 @@ export class FISMA {
   public BusPOC: string;
   public TechPOC: string;
   public RelatedArtifacts: string;
+  public CUI: string;
 }

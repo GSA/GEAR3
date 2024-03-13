@@ -23,6 +23,7 @@ SELECT
   archer.`ex:SubSystem_Identifier_Tag`                AS SubSystem_Tag,
   archer.`ex:FISMA_Reportable`                        AS Reportable,
   archer.`ex:Goverment_Wide_Shared_Service`           AS SharedService,
+  archer.`ex:CUI`                                     AS CUI,
 
   CONCAT_WS('*', CONCAT_WS(':', 'Authorizing Official', CONCAT_WS( '; ', CONCAT_WS(', ', `ex:Authorizing_Official_Full_Name`, `ex:Authorizing_Official_Email`, `ex:Authorizing_Official_Phone`))) ,
   CONCAT_WS(':', 'System Owner',  CONCAT_WS( '; ',  CONCAT_WS(', ', `ex:System_Owner_Full_Name`, `ex:System_Owner_eMail`, `ex:System_Owner_Phone`))) ,
