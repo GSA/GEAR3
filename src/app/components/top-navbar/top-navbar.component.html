@@ -22,7 +22,7 @@
   </div>
 
   <button #moreLinksBtn (click)="toggleTopNavBttn()" class="navbar-toggler" type="button"
-    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="More Links">
+    aria-controls="navbarSupportedContent" [attr.aria-expanded]="moreLinksVisibleStatus && showNavContent" aria-label="More Links">
     More Links <i id="topNavToggle" class="fas fa-angle-down ml-2 rotate"></i>
   </button>
 

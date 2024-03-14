@@ -415,7 +415,7 @@ sysWebsitesColumnDefs: any[] = [
   },
   {
     field: 'site_owner_email',
-    title: 'Site Owner',
+    title: 'Website Manager',
     sortable: true,
   },
   {
@@ -435,12 +435,12 @@ sysWebsitesColumnDefs: any[] = [
   },
   {
     field: 'required_by_law_or_policy',
-    title: 'Required?',
+    title: 'Required by Law/Policy?',
     sortable: true,
   },
   {
     field: 'has_dap',
-    title: 'Uses DAP?',
+    title: 'DAP Enabled',
     sortable: true,
   },
   {
@@ -470,7 +470,7 @@ sysWebsitesColumnDefs: any[] = [
   },
   {
     field: 'https',
-    title: 'HTTPS?',
+    title: 'HTTPS Enabled',
     sortable: true,
   },
   {
