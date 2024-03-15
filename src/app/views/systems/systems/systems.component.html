@@ -93,7 +93,6 @@
     </span>
 
     <div
-      tabindex="0"
       id="sysViz"
       class="row justify-content-center collapse show"
       style="height: 300px"
@@ -104,7 +103,9 @@
         [results]="vizData"
         [label]="vizLabel"
         [ariaLabel]="getAriaLabel(vizData)"
-        (select)="onSelect($event)"  
+        (select)="onSelect($event)"
+        appSkipFocusPiechart
+        tabindex="0" 
       >
       </ngx-charts-advanced-pie-chart>
     </div>
@@ -147,6 +148,6 @@
     </div>
 
     <!-- Main Table -->
-    <table id="systemTable"></table>
+    <table id="systemTable" aria-label="The business systems list presents a table of the GSA systems that provide a business-specific capability. This table is useful in understanding which business system fulfills which capability, who to contact in case of a system-specific question, what each system does, etc."></table>
   </div>
 </div>
