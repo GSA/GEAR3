@@ -73,6 +73,7 @@ import { GearModelComponent } from './views/architecture/gear-model/gear-model.c
 import { Globals } from './common/globals';
 
 import { YesNoPipe } from "./pipes/yesno.pipe";
+import { SkipFocusPiechartDirective } from '@common/skip-focus-piechart.directive';
 
 @NgModule({
   declarations: [
@@ -126,6 +127,8 @@ import { YesNoPipe } from "./pipes/yesno.pipe";
     GearModelComponent,
 
     YesNoPipe,
+
+    SkipFocusPiechartDirective,
   ],
   imports: [
     AppRoutingModule,
