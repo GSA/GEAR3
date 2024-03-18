@@ -48,11 +48,12 @@
     </span>
 
 
-    <div tabindex="0"
+    <div
       id="investViz" class="row justify-content-center collapse show" style="height: 300px;"
       [hidden]="filterTitle == 'Inactive'">
-      <ngx-charts-advanced-pie-chart [scheme]="colorScheme" [results]="vizData" [label]="vizLabel"
+      <ngx-charts-advanced-pie-chart appSkipFocusPiechart [scheme]="colorScheme" [results]="vizData" [label]="vizLabel"
         [ariaLabel]="getAriaLabel(vizData)"
+        tabindex="0"
         (select)="onSelect($event)"       
       ></ngx-charts-advanced-pie-chart>
     </div>
@@ -77,6 +78,6 @@
     </div>
 
     <!-- Main Table -->
-    <table id="investTable"></table>
+    <table id="investTable" aria-label="The investments table presents a list of GSA IT Investments by name. This table is useful for understanding information about the investment, the investment manager, the status of the investment, the type of investment, etc."></table>
   </div>
 </div>
