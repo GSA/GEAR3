@@ -5,8 +5,6 @@ const path = require('path');
 
 const queryPath = '../queries/';
 
-const mmmm_dd_yyyy_regex =  / (\d{2}), (\d{4})/;
-
 exports.findAll = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
     ` WHERE obj_standard_type.Keyname LIKE 'Software'
@@ -103,9 +101,7 @@ exports.update = (req, res) => {
       data.tcSoftwareReleaseName = ctrl.emptyTextFieldHandler(data.tcSoftwareReleaseName);
       data.tcEndOfLifeDate = ctrl.emptyTextFieldHandler(data.tcEndOfLifeDate);
 
-      if (mmmm_dd_yyyy_regex.test(data.tcEndOfLifeDate)) {
-        data.tcEndOfLifeDate = convertDateFormat(data.tcEndOfLifeDate);
-      } 
+      const endOfLifeDateFragment = getEolFragment(data.tcEndOfLifeDate);
 
       var query = `SET FOREIGN_KEY_CHECKS=0;
         UPDATE obj_technology
@@ -137,7 +133,7 @@ exports.update = (req, res) => {
           softwareProductName             = ${data.tcSoftwareProductName},
           softwareVersionName             = ${data.tcSoftwareVersionName},
           softwareReleaseName             = ${data.tcSoftwareReleaseName},
-          endOfLifeDate                   = STR_TO_DATE(${data.tcEndOfLifeDate}, '%Y-%m-%d %T')
+          endOfLifeDate                   = ${endOfLifeDateFragment}
         WHERE Id = ${req.params.id};
         SET FOREIGN_KEY_CHECKS=1;
         ${catString}
@@ -181,9 +177,7 @@ exports.create = (req, res) => {
       data.tcSoftwareReleaseName = ctrl.emptyTextFieldHandler(data.tcSoftwareReleaseName);
       data.tcEndOfLifeDate = ctrl.emptyTextFieldHandler(data.tcEndOfLifeDate);
 
-      if (mmmm_dd_yyyy_regex.test(data.tcEndOfLifeDate)) {
-        data.tcEndOfLifeDate = convertDateFormat(data.tcEndOfLifeDate);
-      } 
+      const endOfLifeDateFragment = getEolFragment(data.tcEndOfLifeDate);
 
       var query = `INSERT INTO obj_technology(
         Keyname,
@@ -243,7 +237,7 @@ exports.create = (req, res) => {
         ${data.tcSoftwareProductName},
         ${data.tcSoftwareVersionName},
         ${data.tcSoftwareReleaseName},
-        STR_TO_DATE(${data.tcEndOfLifeDate}, '%Y-%m-%d %T'));`;
+        ${endOfLifeDateFragment});`;
 
       var logStatement = `insert into gear_log.event (Event, User, DTG) values ('create IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
       res = ctrl.sendQuery(query + ' ' + logStatement, 'create IT Standard', res); //removed sendQuery_cowboy reference
@@ -287,11 +281,18 @@ exports.findTypes = (req, res) => {
   res = ctrl.sendQuery(query, 'IT Standard Types', res); //removed sendQuery_cowboy reference
 };
 
-convertDateFormat = (inputDate) => {
+
+getEolFragment = (inputDate) => {
+  if (!inputDate || inputDate.toString().toUpperCase() === 'NULL' ) {
+    return null;
+  }
+  
   const parsedDate = new Date(inputDate);
-  // Format the parsed date to '%Y-%m-%d'
+  
+  // Format the parsed date to '%Y-%m-%d %T'
   const convertedDate = parsedDate.getFullYear() + '-' +
-                        ('0' + (parsedDate.getMonth() + 1)).slice(-2) + '-' +
-                        ('0' + parsedDate.getDate()).slice(-2);
-  return convertedDate;
+  ('0' + (parsedDate.getMonth() + 1)).slice(-2) + '-' +
+  ('0' + parsedDate.getDate()).slice(-2);
+  
+  return `STR_TO_DATE('${convertedDate}', '%Y-%m-%d %T')`;
 };
