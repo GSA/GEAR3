@@ -172,7 +172,7 @@ export class TableService {
   }
 
   public globalSearchTableClick(searchData: any) {
-    // console.log("Global Search Table Clicked Row: ", data);  // Debug
+    //console.log("Global Search Table Clicked Row: ", searchData);  // Debug
 
     switch (searchData.GEAR_Type) {
       case 'Capability':
@@ -211,6 +211,14 @@ export class TableService {
           });
         break;
 
+      case 'Organization':
+          this.apiService
+            .getOneOrg(searchData.Id)
+            .subscribe((apiData: any[]) => {
+              this.orgsTableClick(apiData[0]);
+            });
+          break;
+    
       default:
         break;
     }
