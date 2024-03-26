@@ -52,6 +52,7 @@
       id="investViz" class="row justify-content-center collapse show" style="height: 300px;"
       [hidden]="filterTitle == 'Inactive'">
       <ngx-charts-advanced-pie-chart appSkipFocusPiechart [scheme]="colorScheme" [results]="vizData" [label]="vizLabel"
+        role="navigation"
         [ariaLabel]="getAriaLabel(vizData)"
         tabindex="0"
         (select)="onSelect($event)"       
