@@ -71,11 +71,13 @@ export class FismaComponent implements OnInit {
       field: 'SystemLevel',
       title: 'System Level',
       sortable: true,
+      visible: false,
     },
     {
       field: 'Status',
       title: 'Status',
       sortable: true,
+      visible: false,
     },
     {
       field: 'ATODate',
@@ -98,6 +100,12 @@ export class FismaComponent implements OnInit {
       field: 'FIPS_Impact_Level',
       title: 'FIPS Impact Level',
       sortable: true,
+    },
+    {
+      field: 'RelatedArtifacts',
+      title: 'Related Artifacts',
+      sortable: true,
+      formatter: this.sharedService.relArtifactsFormatter,
     },
     {
       field: 'Description',
