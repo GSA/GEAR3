@@ -120,9 +120,21 @@ export class FismaPocsComponent implements OnInit {
     // Method to handle click events on the FISMA POC table
     $(document).ready(
       $('#fismaPOCTable').on(
-        'dbl-click-row.bs.table',
-        function (e, row) {
-          this.tableService.fismaTableClick(row);
+        'click-row.bs.table',
+        function (e, row, $element, field) {
+          if (!
+            (
+              field === 'Authorizing Official'
+              ||
+              field === 'System Owner'
+              ||
+              field === 'ISSM'
+              ||
+              field === 'ISSO'
+            )
+          ) {
+            this.tableService.fismaTableClick(row);
+          }
         }.bind(this)
       )
     );
