@@ -47,7 +47,7 @@
     <div *ngIf="isLoading" [@loadingAnimation]="isLoading ? 'true' : 'false'">
       <p>Updating...</p>
     </div>
-    <!-- GEAR Manager Google API Call Response -->
+    <!-- GEAR Manager Google API Call Response (hiding for now-- currently not operational)
     <div *ngIf="!isLoading && sharedService.loggedIn && isDone">
       <p>
         <b>Update All Related Records</b><span *ngIf="!isError && isDone" style="color:green"> - Completed Successfully!</span><span *ngIf="isError && isDone" style="color:red"> - Error, please contact the EA Team for assistance. </span><br>
@@ -55,7 +55,7 @@
         <span *ngIf="!isError">By: {{ updateAllInfoData.ran_by }}<br></span>
         <span *ngIf="!isError"><b>{{ updateAllInfoData.tot_inserts }} rows inserted.</b></span>
       </p>
-    </div>
+    </div>-->
 
     <!-- Main Table -->
     <table id="recordsTable" aria-label="The records management table provides a list of records schedules. This table is useful in understanding the implications of each record schedule on specific types of data. It provides information about how long records should be kept and whether data should be archived."></table>
