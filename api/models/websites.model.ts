@@ -7,6 +7,7 @@ export class Website {
   public site_owner_email: string;
   public production_status: string;
   public type_of_site: string;
+  public digital_brand_category: string;
   public redirects_to: string;
   public cms_platform: string;
   public required_by_law_or_policy: string;

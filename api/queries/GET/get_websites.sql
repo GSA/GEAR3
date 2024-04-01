@@ -7,6 +7,7 @@ SELECT
   site_owner_email,
   production_status,
   type_of_site,
+  digital_brand_category,
   redirects_to,
   cms_platform,
   required_by_law_or_policy,
