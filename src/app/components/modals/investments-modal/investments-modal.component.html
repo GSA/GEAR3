@@ -38,6 +38,12 @@
             >
           </li>
           <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#budgetYear">
+              Budget Year</a
+            >
+          </li>
+          
+          <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#investRelatedSys">
               Related Systems</a
             >
@@ -145,6 +151,58 @@
             </table>
           </div>
           <!-- End of Overview Pane -->
+          <div class="tab-pane fade" id="budgetYear">
+            <h4>Budget Year</h4>
+            <br />
+
+            <table
+              id="budgetYearTable"
+              class="table table-borderless table-striped table-dark rounded-lg w-75 mx-auto"
+            >
+              <thead class="bg-success">
+                <tr>
+                  <th class="col-sm-5">
+                    <h5>Attribute</h5>
+                  </th>
+                  <th class="col-sm-5">
+                    <h5>Value</h5>
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td><i class="far fa-calendar"></i>Budget Year</td>
+                  <td>{{ investment.Budget_Year }}</td>
+                </tr>
+                <tr>
+                  <td>Total IT Spending ($ M)r</td>
+                  <td>{{ investment.Total_Spend_BY }}</td>
+                </tr>
+                <tr>
+                  <td>DME Contributions ($ M)</td>
+                  <td>{{ investment.DME_Contributions_BY }}</td>
+                </tr>
+                <tr>
+                  <td>DME Budget Authority Agency Funding ($ M)</td>
+                  <td>{{ investment.DME_Budget_Auth_BY }}</td>
+                </tr>
+                <tr>
+                  <td>O&M Agency Funding ($ M)</td>
+                  <td>{{ investment.OnM_Agency_Fund_BY }}</td>
+                </tr>
+                <tr>
+                  <td>O&M Contributions ($ M)</td>
+                  <td>{{ investment.OnM_Contributions_BY }}</td>
+                </tr>
+                <tr>
+                  <td>O&M Budget Authority Agency Funding ($ M)</td>
+                  <td>{{ investment.OnM_Budget_Auth_BY }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- End of Budget Year Pane -->
 
           <div class="tab-pane fade" id="investRelatedSys">
             <table id="investRelSysTable"></table>
