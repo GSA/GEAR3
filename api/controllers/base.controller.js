@@ -29,8 +29,8 @@ exports.getApiToken = async (req, res) => {
   //return response;
 }
 
-exports.sendQuery = (query, msg, response) => {
-  return buildQuery(sql, query, msg, response);
+exports.sendQuery = (query, msg, response, postProcessFunc=null) => {
+  return buildQuery(sql, query, msg, response, postProcessFunc);
 };
 
 exports.sendLogQuery = (event, user, msg, response) => {
@@ -49,7 +49,7 @@ exports.sendLogQuery = (event, user, msg, response) => {
  * @param {string} msg - A description of the query that will be printed if an error occurs
  * @return {object} - query results as JSON
  */
-function buildQuery(conn, query, msg, response) {
+function buildQuery(conn, query, msg, response, postProcessFunc=null) {
   conn.query(query, (error, data) => {
     if (error) {
       console.log(`DB Query Error while executing ${msg}: `, error);
@@ -58,6 +58,9 @@ function buildQuery(conn, query, msg, response) {
       });
     } else {
       //console.log("Query Response: ", response);  // Debug
+      if (typeof postProcessFunc === 'function') {
+        data = postProcessFunc(data);
+      }
       response.status(200).json(data);
     }
   });

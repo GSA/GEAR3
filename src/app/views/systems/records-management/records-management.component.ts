@@ -73,7 +73,7 @@ export class RecordsManagementComponent implements OnInit {
       sortable: true,
     },
     {
-      field: 'Description',
+      field: 'Short_Description',
       title: 'Description',
       sortable: false,
       class: 'text-wrap',
