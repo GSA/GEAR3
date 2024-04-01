@@ -174,14 +174,16 @@ export class FismaComponent implements OnInit {
     );
 
     // Method to handle click events on the FISMA Systems table
-    $(document).ready(
+    $(document).ready(()=>{
       $('#fismaTable').on(
-        'dbl-click-row.bs.table',
-        function (e, row) {
-          this.tableService.fismaTableClick(row);
+        'click-row.bs.table',
+        function (e, row, $element, field) {        
+          if (field !== 'RelatedArtifacts' ) {
+            this.tableService.fismaTableClick(row);
+          }
         }.bind(this)
-      )
-    );
+      );     
+    });
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {

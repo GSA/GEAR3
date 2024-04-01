@@ -70,7 +70,9 @@
         <button role="button" name="itServerBttn" class="btn btn-primary"
           (click)="changeFilter('DeploymentType', 'Server')">Server</button>
 
-        <button role="button" name="itDeniedBttn" class="btn btn-primary ml-3"
+        <button role="button" name="itApprovedBttn" class="btn btn-primary ml-3"
+          (click)="changeFilter('Status', 'Approved')">Approved</button>
+        <button role="button" name="itDeniedBttn" class="btn btn-primary"
           (click)="changeFilter('Status', 'Denied')">Denied</button>
         <button role="button" name="itSunsetBttn" class="btn btn-primary"
           (click)="changeFilter('Status', 'Sunsetting')">Sunsetting</button>

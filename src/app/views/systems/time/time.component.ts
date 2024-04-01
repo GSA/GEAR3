@@ -157,17 +157,19 @@ export class TimeComponent implements OnInit {
     // Method to handle click events on the Systems table
     $(document).ready(
       $('#timeTable').on(
-        'dbl-click-row.bs.table',
-        function (e, row) {
-          // Grab data for system by name
-          this.apiService
-            .getOneSys(row['System Id'])
-            .subscribe((data: any[]) => {
-              this.tableService.systemsTableClick(data[0]);
-            });
+        'click-row.bs.table',
+        function (e, row, $element, field) {    
+          if (field !== 'File Link' ) {
+            // Grab data for system by name
+            this.apiService
+              .getOneSys(row['System Id'])
+              .subscribe((data: any[]) => {
+                this.tableService.systemsTableClick(data[0]);
+              });
 
-          // Change URL to include ID
-          this.sharedService.addIDtoURL(row, 'Id');
+            // Change URL to include ID
+            this.sharedService.addIDtoURL(row, 'Id');
+          }     
         }.bind(this)
       )
     );
