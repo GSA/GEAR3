@@ -175,7 +175,7 @@ const routes: Routes = [
   },
 
   //{ path: 'artifacts', component: ArtifactsComponent, title: 'Artifacts' },
-  { path: 'ea_view', component: EAViewComponent, title: 'EA View' },
+  //{ path: 'ea_view', component: EAViewComponent, title: 'EA View' }, // We need to update the EA view to be more readable before publishing
   { path: 'gear_model', component: GearModelComponent, title: 'GEAR Model' },
 
   {
