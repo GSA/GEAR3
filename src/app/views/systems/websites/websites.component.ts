@@ -91,16 +91,19 @@ export class WebsitesComponent implements OnInit {
       field: 'has_dap',
       title: 'DAP Enabled',
       sortable: true,
+      visible: false,
     },
     {
       field: 'https',
       title: 'HTTPS Enabled',
       sortable: true,
+      visible: false,
     },
     {
       field: 'mobile_friendly',
       title: 'Mobile Friendly?',
       sortable: true,
+      visible: false,
     },
     {
       field: 'has_search',
@@ -137,6 +140,13 @@ export class WebsitesComponent implements OnInit {
       sortable: true,
       visible: true,
       class: 'text-truncate',
+    },
+    {
+      field: 'digital_brand_category',
+      title: 'Digital Brand Category',
+      sortable: true,
+      visible: false,
+      class: 'text-wrap',
     },
   ];
 
@@ -183,6 +193,15 @@ export class WebsitesComponent implements OnInit {
             this.tableService.websitesTableClick(data[0]);
           });
       }
+    });
+  }
+
+  showProduction() {
+    this.filteredTable = true;
+    $('#websitesTable').bootstrapTable('filterBy', {
+      production_status: ['production'],
+      type_of_site: ['Informational', 'Application', 'Application Login'],
+      digital_brand_category: ['GSA Business', 'Hybrid'],
     });
   }
 
