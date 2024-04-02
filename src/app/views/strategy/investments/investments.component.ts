@@ -26,7 +26,7 @@ export class InvestmentsComponent implements OnInit {
   eliminatedTypes: any[] = ['06: Eliminated by funding', 'Eliminated by omission', '09: Eliminated by reorganization'];
 
   vizData: any[] = [];
-  vizLabel: string = 'Total Non-Eliminated Investments';
+  vizLabel: string = 'Total Current IT Investments';
   colorScheme: {} = {
     domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5'],
   };
