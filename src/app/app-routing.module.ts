@@ -11,7 +11,6 @@ import { HomeComponent } from './views/main/home/home.component';
 import { GlobalSearchComponent } from './views/main/global-search/global-search.component';
 import { AboutComponent } from './views/main/about/about.component';
 import { AssistTechComponent } from './views/main/assist-tech/assist-tech.component';
-import { FormsGlossaryComponent } from './views/main/forms-glossary/forms-glossary.component';
 import { GearManagerComponent } from './views/main/gear-manager/gear-manager.component';
 
 // Strategy
@@ -42,6 +41,8 @@ import { ItStandardsComponent } from './views/technologies/it-standards/it-stand
 import { EAViewComponent } from './views/architecture/ea-view/ea-view.component';
 import { GearModelComponent } from './views/architecture/gear-model/gear-model.component';
 import { Title } from '@angular/platform-browser';
+import { FormsComponent } from './views/main/forms-glossary/forms/forms.component';
+import { GlossaryComponent } from './views/main/forms-glossary/glossary/glossary.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, title: 'Home' },
@@ -179,9 +180,15 @@ const routes: Routes = [
   { path: 'gear_model', component: GearModelComponent, title: 'GEAR Model' },
 
   {
-    path: 'forms_glossary',
-    component: FormsGlossaryComponent,
-    title: 'Forms Glossary',
+    path: 'forms',
+    component: FormsComponent,
+    title: 'Forms',
+  },
+
+  {
+    path: 'glossary',
+    component: GlossaryComponent,
+    title: 'Glossary',
   },
 
   {
