@@ -27,3 +27,6 @@ $gear3-theme: mat.define-light-theme($gear3-primary, $gear3-accent, $gear3-warn)
 // that you are using.
 @include mat.all-component-themes($gear3-theme);
 
+.th-inner {
+    white-space: normal !important;
+}
