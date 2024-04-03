@@ -408,22 +408,34 @@ export class CapabilitiesModelComponent implements OnInit {
           // console.log("Hovered Node: ", d);  // Debug
           this.selectedCap = d; // Save selected node id for links
 
+          function handleClick() {
+            // Grab data for selected node
+            this.apiService
+              .getOneCap(this.selectedCap.data.identity)
+              .subscribe((data: any[]) => {
+                  var capData = data[0];
+                  this.tableService.capsTableClick(capData);
+                }
+              )
+          }
+
           // Detail Pane Controls
           var capDetail = d3.select('#capDetailLink');
 
           // When detail link is clicked
           capDetail.on(
             'click',
-            function () {
-              // Grab data for selected node
-              this.apiService
-                .getOneCap(this.selectedCap.data.identity)
-                .subscribe((data: any[]) => {
-                  var capData = data[0];
-                  this.tableService.capsTableClick(capData);
-                });
-            }.bind(this)
+            handleClick.bind(this)
           );
+
+          var capName = d3.select('#capName');
+
+          // When cap link is clicked
+          capName.on(
+            'click',
+            handleClick.bind(this)
+          );
+
         }.bind(this)
       );
 
