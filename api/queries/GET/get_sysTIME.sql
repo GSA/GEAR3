@@ -14,3 +14,5 @@ SELECT
   `File Link`
     
 FROM obj_TIME AS time
+INNER JOIN obj_fisma_archer AS fisma ON time.`System Id` = fisma.`ex:GEAR_ID`
+WHERE fisma.`ex:BusinessApplication` = "Yes"
