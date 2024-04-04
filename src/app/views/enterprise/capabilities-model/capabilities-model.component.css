@@ -26,3 +26,7 @@
   -webkit-transition: all 0.3s linear;
   transition: all 0.3s linear;
 } */
+
+.custom-hover-cursor {
+  cursor: pointer;
+}

@@ -21,7 +21,8 @@ import { HomeComponent } from './views/main/home/home.component';
 import { GlobalSearchComponent } from './views/main/global-search/global-search.component';
 import { AboutComponent } from './views/main/about/about.component';
 import { AssistTechComponent } from './views/main/assist-tech/assist-tech.component';
-import { FormsGlossaryComponent } from './views/main/forms-glossary/forms-glossary.component';
+import { FormsComponent } from './views/main/forms-glossary/forms/forms.component';
+import { GlossaryComponent } from './views/main/forms-glossary/glossary/glossary.component';
 import { GearManagerComponent } from './views/main/gear-manager/gear-manager.component';
 
 //// Strategy
@@ -86,7 +87,8 @@ import { SkipFocusPiechartDirective } from '@common/skip-focus-piechart.directiv
     GlobalSearchComponent,
     AboutComponent,
     AssistTechComponent,
-    FormsGlossaryComponent,
+    FormsComponent,
+    GlossaryComponent,
     GearManagerComponent,
 
     FrameworkComponent,

@@ -7,11 +7,11 @@ import { TableService } from '@services/tables/table.service';
 declare var $: any;
 
 @Component({
-  selector: 'forms-glossary',
-  templateUrl: './forms-glossary.component.html',
-  styleUrls: ['./forms-glossary.component.css']
+  selector: 'forms',
+  templateUrl: './forms.component.html',
+  styleUrls: ['./forms.component.css']
 })
-export class FormsGlossaryComponent implements OnInit {
+export class FormsComponent implements OnInit {
 
   row: Object = <any>{};
 
@@ -51,38 +51,6 @@ export class FormsGlossaryComponent implements OnInit {
     title: 'POC'
   }];
 
-  // Glossary Table Options
-  glossTableOptions: {} = this.tableService.createTableOptions({
-    advancedSearch: false,
-    idTable: null,
-    classes: "table-hover table-dark",
-    showColumns: false,
-    showExport: true,
-    exportFileName: 'GEAR_Glossary',
-    headerStyle: null,
-    pagination: true,
-    search: true,
-    sortName: 'Term',
-    sortOrder: 'asc',
-    showToggle: true,
-    url: '/assets/statics/glossary.json'
-  });
-
-  // Glossary Table Columns
-  glossColumnDefs: any[] = [{
-    field: 'Term',
-    title: 'Term',
-    sortable: true
-  },
-  {
-    field: 'Definition',
-    title: 'Definition'
-  },
-  {
-    field: 'Reference',
-    title: 'Reference'
-  }]
-
   ngOnInit(): void {
     // Enable popovers
     $(function () {
@@ -91,11 +59,6 @@ export class FormsGlossaryComponent implements OnInit {
 
     $('#formsTable').bootstrapTable($.extend(this.formsTableOptions, {
       columns: this.formsColumnDefs,
-      data: [],
-    }));
-
-    $('#glossaryTable').bootstrapTable($.extend(this.glossTableOptions, {
-      columns: this.glossColumnDefs,
       data: [],
     }));
 
