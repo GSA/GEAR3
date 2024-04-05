@@ -44,6 +44,7 @@ export class ItStandardsComponent implements OnInit {
     showColumns: true,
     showExport: true,
     exportFileName: 'GSA_IT_Standards',
+    exportIgnoreColumn:[2, 9],
     headerStyle: 'bg-teal',
     pagination: true,
     search: true,
@@ -117,8 +118,18 @@ export class ItStandardsComponent implements OnInit {
     field: 'Description',
     title: 'Description',
     sortable: true,
+    visible: true,
     class: 'text-wrap',
-    visible: false
+    formatter: (value: any, row: any): string => {
+      return value && value.length > 200 ? value.substring(0, 200) + "..." : value;
+    }
+  }, {
+    field: 'Description',
+    title: 'Description',
+    sortable: true,
+    visible: false,
+    switchable: false,
+    forceExport: true
   }, {
     field: 'Category',
     title: 'Category',
@@ -149,11 +160,24 @@ export class ItStandardsComponent implements OnInit {
     title: 'POC Org',
     sortable: true,
     visible: false
-  }, {
+  },
+  {
     field: 'Comments',
     title: 'Comments',
     sortable: true,
-    visible: false
+    visible: true,
+    class: 'text-wrap',
+    formatter: (value: any, row: any): string => {
+      return value && value.length > 200 ? value.substring(0, 200) + "..." : value;
+    }
+  },
+  {
+    field: 'Comments',
+    title: 'Comments',
+    sortable: true,
+    visible: false,
+    switchable: false,
+    forceExport: true
   }, {
     field: 'attestation_required',
     title: 'Attestation Required',

@@ -50,6 +50,11 @@ export class SystemsComponent implements OnInit {
     this.modalService.currentSys.subscribe((row) => (this.row = row));
   }
 
+  //active table export ignore column indices
+  activeExportIgnoreColumn = [2];
+  //inactive table export ignore column indices
+  inactiveExportIgnoreColumn = [2];
+  
   // Systems Table Options
   tableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: true,
@@ -58,6 +63,7 @@ export class SystemsComponent implements OnInit {
     showColumns: true,
     showExport: true,
     exportFileName: 'GSA_Systems_SubSystems',
+    exportIgnoreColumn: this.activeExportIgnoreColumn,
     headerStyle: 'bg-danger',
     pagination: true,
     search: true,
@@ -89,8 +95,19 @@ export class SystemsComponent implements OnInit {
       field: 'Description',
       title: 'Description',
       sortable: true,
-      visible: false,
+      visible: true,
       class: 'text-wrap',
+      formatter: (value: any, row: any): string => {
+        return value && value.length > 200 ? value.substring(0, 200) + "..." : value;
+      }
+    },
+    {
+      field: 'Description',
+      title: 'Description',
+      sortable: true,
+      visible: false,
+      switchable: false,
+      forceExport: true
     },
     {
       field: 'SystemLevel',
@@ -176,8 +193,19 @@ export class SystemsComponent implements OnInit {
       field: 'Description',
       title: 'Description',
       sortable: true,
+      visible: true,
+      class: 'text-wrap',
+      formatter: (value: any, row: any): string => {
+        return value && value.length > 200 ? value.substring(0, 200) + "..." : value;
+      }
+    },
+    {
+      field: 'Description',
+      title: 'Description',
+      sortable: true,
       visible: false,
-      class: 'text-truncate',
+      switchable: false,
+      forceExport: true
     },
     {
       field: 'SystemLevel',
@@ -329,6 +357,7 @@ export class SystemsComponent implements OnInit {
     filter[field] = term;
     var title = '';
     var activeColDef = this.columnDefs;
+    var exportIgnoreColumn = this.activeExportIgnoreColumn;
 
     // Hide visualization when on alternative filters
     $('#sysViz').collapse('hide');
@@ -341,6 +370,7 @@ export class SystemsComponent implements OnInit {
       case 'Status':
         title = term + ' GSA';
         activeColDef = this.inactiveColumnDefs;
+        exportIgnoreColumn = this.inactiveExportIgnoreColumn;
         break;
     }
     $('#systemTable').bootstrapTable('refreshOptions', {
@@ -349,6 +379,7 @@ export class SystemsComponent implements OnInit {
         fileName: this.sharedService.fileNameFmt(
           `GSA_${title.replace(' ', '_')}_Systems`
         ),
+        ignoreColumn: exportIgnoreColumn
       },
     });
     this.filterTitle = title;
@@ -368,6 +399,7 @@ export class SystemsComponent implements OnInit {
       columns: this.columnDefs,
       exportOptions: {
         fileName: this.sharedService.fileNameFmt('GSA_Cloud_Business_Systems'),
+        ignoreColumn:this.activeExportIgnoreColumn
       },
     });
 
@@ -394,6 +426,7 @@ export class SystemsComponent implements OnInit {
         fileName: this.sharedService.fileNameFmt(
           'GSA_Inactive_Business_Systems'
         ),
+        ignoreColumn: this.inactiveExportIgnoreColumn
       },
     });
 
@@ -419,6 +452,7 @@ export class SystemsComponent implements OnInit {
         fileName: this.sharedService.fileNameFmt(
           'GSA_Pending_Business_Systems'
         ),
+        ignoreColumn: this.activeExportIgnoreColumn
       },
     });
 
@@ -445,6 +479,7 @@ export class SystemsComponent implements OnInit {
       columns: this.columnDefs,
       exportOptions: {
         fileName: this.sharedService.fileNameFmt('GSA_Systems_SubSystems'),
+        ignoreColumn:this.activeExportIgnoreColumn
       },
     });
   }

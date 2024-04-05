@@ -51,6 +51,7 @@ export class RecordsManagementComponent implements OnInit {
     showColumns: true,
     showExport: true,
     exportFileName: 'GSA_Record_Schedules',
+    exportIgnoreColumn:[2],
     headerStyle: 'bg-danger',
     pagination: true,
     search: true,
@@ -73,10 +74,22 @@ export class RecordsManagementComponent implements OnInit {
       sortable: true,
     },
     {
-      field: 'Short_Description',
+      field: 'Description',
       title: 'Description',
       sortable: false,
+      visible: true,
       class: 'text-wrap',
+      formatter: (value: any, row: any): string => {
+        return value && value.length > 200 ? value.substring(0, 200) + "..." : value;
+      }
+    },
+    {
+      field: 'Description',
+      title: 'Description',
+      sortable: false,
+      visible: false,
+      switchable: false,
+      forceExport: true
     },
     {
       field: 'Record_Status',

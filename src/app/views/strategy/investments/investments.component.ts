@@ -52,6 +52,7 @@ export class InvestmentsComponent implements OnInit {
     showColumns: true,
     showExport: true,
     exportFileName: 'GSA_IT_Investments',
+    exportIgnoreColumn:[1],
     headerStyle: 'bg-success',
     pagination: true,
     search: true,
@@ -72,8 +73,19 @@ export class InvestmentsComponent implements OnInit {
       field: 'Description',
       title: 'Description',
       sortable: true,
+      visible: true,
+      class: 'text-wrap',
+      formatter: (value: any, row: any): string => {
+        return value && value.length > 200 ? value.substring(0, 200) + "..." : value;
+      }
+    },
+    {
+      field: 'Description',
+      title: 'Description',
+      sortable: true,
       visible: false,
-      class: 'text-truncate',
+      switchable: false,
+      forceExport: true
     },
     {
       field: 'Type',
