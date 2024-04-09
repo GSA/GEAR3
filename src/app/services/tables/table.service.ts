@@ -144,11 +144,11 @@ export class TableService {
       classes: 'table table-bordered table-striped ' + definitions.classes,
       showColumns: definitions.showColumns,
       showColumnsSearch: definitions.showColumns,
-
       showExport: definitions.showExport,
       exportDataType: 'all',
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(definitions.exportFileName),
+        ignoreColumn: definitions.exportIgnoreColumn ? definitions.exportIgnoreColumn: [],
       },
       exportTypes: ['xlsx', 'pdf', 'csv', 'json', 'xml', 'txt', 'sql'],
 

@@ -15,21 +15,12 @@ exports.findAll = (req, res) => {
 
   //ctrl.googleMain(res, 'all', SHEET_ID, RANGE);
 
-  // Add Short_description after data retreval from database 
-  const postProcessFunc = function (data) {
-    data.forEach(item => {
-      const description = item.Description;
-      item.Short_Description = description.length > 200 ? description.substring(0, 200) + "..." : description;
-    });
-    return data;
-  }
-
   // Get all records from database and return them to the client (res)
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_records.sql')).toString() +
     ` ORDER BY Record_Item_Title;`;
 
   // Return the results of the query
-  res = ctrl.sendQuery(query, 'records', res, postProcessFunc);
+  res = ctrl.sendQuery(query, 'records', res);
 };
 
 
