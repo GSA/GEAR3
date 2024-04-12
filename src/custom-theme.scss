@@ -29,4 +29,5 @@ $gear3-theme: mat.define-light-theme($gear3-primary, $gear3-accent, $gear3-warn)
 
 .th-inner {
     white-space: normal !important;
+    word-wrap: normal  !important;
 }
