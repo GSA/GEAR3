@@ -121,7 +121,7 @@ export class ItStandardsComponent implements OnInit {
     visible: true,
     class: 'text-wrap',
     formatter: (value: any, row: any): string => {
-      return value && value.length > 200 ? value.substring(0, 200) + "..." : value;
+      return value && value.length > 40 ? value.substring(0, 40) + "..." : value;
     }
   }, {
     field: 'Description',
@@ -141,7 +141,8 @@ export class ItStandardsComponent implements OnInit {
   }, {
     field: 'StandardType',
     title: 'Standard Type',
-    sortable: true
+    sortable: true,
+    visible: false
   }, {
     field: 'DeploymentType',
     title: 'Deployment Type',
@@ -149,7 +150,8 @@ export class ItStandardsComponent implements OnInit {
   }, {
     field: 'ComplianceStatus',
     title: '508 Compliance',
-    sortable: true
+    sortable: true,
+    visible: false
   }, {
     field: 'POC',
     title: 'POC',
@@ -165,10 +167,10 @@ export class ItStandardsComponent implements OnInit {
     field: 'Comments',
     title: 'Comments',
     sortable: true,
-    visible: true,
+    visible: false,
     class: 'text-wrap',
     formatter: (value: any, row: any): string => {
-      return value && value.length > 200 ? value.substring(0, 200) + "..." : value;
+      return value && value.length > 40 ? value.substring(0, 40) + "..." : value;
     }
   },
   {
