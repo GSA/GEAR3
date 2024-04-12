@@ -61,7 +61,7 @@
   },
   {
     "Term": "FISMA",
-    "Definition": "Federal Information Security Modernization Act.",
+    "Definition": "Federal Information Security Modernization Act. The FISMA report is used to track security artifacts on all Agency systems.",
     "Reference": "NIST"
   },
   {
@@ -90,6 +90,11 @@
     "Reference": "NIST"
   },
   {
+    "Term": "Investment",
+    "Definition": "Information technology investment means an expenditure of information technology resources to address mission delivery and management support. This may include a project or projects for the development, modernization, enhancement, or maintenance of a single information technology asset or group of information technology assets with related functionality, and the subsequent operation of those assets in a production environment. These investments shall have a defined life cycle with start and end dates.",
+    "Reference": "OMB Circular A-130"
+  },
+  {
     "Term": "ISSM (Information Systems Security Manager)",
     "Definition": "Individual responsible for the information assurance of a program, organization, system, or enclave.",
     "Reference": "NIST"
@@ -98,6 +103,11 @@
     "Term": "ISSO (Information Systems Security Officer)",
     "Definition": "Individual with assigned responsibility for maintaining the appropriate operational security posture for an information system or program.",
     "Reference": "NIST"
+  },
+  {
+    "Term": "IT Standards",
+    "Definition": "The IT Standards inventory is the official GSA repository of software products/versions. This inventory can be used to determine which software has been reviewed and approved, ensuring that users are only requesting and using software that has been approved by IT Security. The Chief Technology Office (CTO) is responsible for managing the process and ensuring IT Standards are reviewed for use within GSA.",
+    "Reference": "GEAR Report"
   },
   {
     "Term": "Life Cycle Model",
@@ -121,13 +131,18 @@
   },
   {
     "Term": "PII (Personally Identifiable Information)",
-    "Definition": "Information which can be used to distinguish or trace the identity of an individual (e.g., name, social security number, biometric records, etc.) alone, or when combined with other personal or identifying information which is linked or linkable to a specific individual (e.g., date and place of birth, mother’s maiden name, etc.).",
+    "Definition": "Information which can be used to distinguish or trace the identity of an individual (e.g., name, social security number, biometric records, etc.) alone, or when combined with other personal or identifying information which is linked or linkable to a specific individual (e.g., date and place of birth, mother's maiden name, etc.).",
     "Reference": "NIST"
   },
   {
     "Term": "Platform",
     "Definition": "A computer or hardware device and/or associated operating system, or a virtual environment, on which software can be installed or run.",
     "Reference": "NIST"
+  },
+  {
+    "Term": "Records Management",
+    "Definition": "Records Management provides a rational basis for making decisions about recorded information, including what should be saved and what should be discarded. These decisions are necessary to support the legal, fiscal, administrative, and other needs of the Government owned contractor operated facilities, the federal government, the individual State governments, and the general public. ",
+    "Reference": "National Archives"
   },
   {
     "Term": "Requirement",
@@ -168,5 +183,10 @@
     "Term": "Web-enabled",
     "Definition": "Are applications and services that are accessed through a web browser and function through an internal and/or external Internet-protocol based collaboration environment (e.g., Internet, local area network, wide area network, public cloud, private cloud, and hybrid cloud).",
     "Reference": "FEAF"
+  },
+  {
+    "Term": "Website",
+    "Definition": "The websites report represents GSA's inventory of public-facing websites (i.e. accessible to the general public and not behind any authentication or firewall). This report can be used to better understand how the public views and interacts with GSA's business services, offerings, and information. This data is imported from the Touchpoints websites inventory as well as from the Enterprise Digital Experience (EDX) team's ecxcli website scans.",
+    "Reference": "GEAR Report"
   }
 ]
