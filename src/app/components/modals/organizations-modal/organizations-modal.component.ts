@@ -82,7 +82,7 @@ export class OrganizationsModalComponent implements OnInit {
     }));
 
     const self = this;
-    $(document).ready(function () {
+    $(document).ready(() => {
       // Method to handle click events on the Organizational Systems table
       $('#orgCapsTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
@@ -95,8 +95,7 @@ export class OrganizationsModalComponent implements OnInit {
         // Hide First Modal before showing new modal
         $('#organizationDetail').modal('hide');
         this.tableService.systemsTableClick(row);
-      }.bind(this)
-      );
+      }.bind(this));
 
       //Enable table sticky header
       self.sharedService.enableStickyHeader("orgCapsTable");
