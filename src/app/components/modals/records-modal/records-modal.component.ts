@@ -36,15 +36,18 @@ export class RecordsModalComponent implements OnInit {
       data: []
     }));
 
-    // Method to handle click events on the Related Systems table
-    $(document).ready(
+    const self = this;
+    $(document).ready( () => {
+      // Method to handle click events on the Related Systems table
       $('#recordsRelSysTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#recordDetail').modal('hide');
-
         this.tableService.systemsTableClick(row);
-      }.bind(this)
-      ));
+      }.bind(this));
+
+      //Enable table sticky header
+      self.sharedService.enableStickyHeader("recordsRelSysTable");
+    });
 
     // Revert back to overview tab when modal goes away
     $('#recordDetail').on('hidden.bs.modal', function (e) {
@@ -62,5 +65,4 @@ export class RecordsModalComponent implements OnInit {
     this.sharedService.setRecordForm();
     $('#recordManager').modal('show');
   }
-
 }

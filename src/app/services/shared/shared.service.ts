@@ -376,4 +376,13 @@ export class SharedService {
     return cookies;
   }
 
+  public enableStickyHeader(tableComponentId: string) {
+    $('#'+tableComponentId).floatThead({
+      scrollContainer: function($table) {
+        return $table.closest('.ng-sidebar__content');
+      },
+      position: "fixed",
+      autoReflow: true
+    });
+  }
 }

@@ -80,25 +80,26 @@ export class CapabilitiesModalComponent implements OnInit {
       data: [],
     }));
 
-    // Method to handle click events on the Related Orgs table
-    $(document).ready(
+    const self = this;
+    $(document).ready(() => {
+      // Method to handle click events on the Related Orgs table
       $('#capRelOrgsTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#capabilityDetail').modal('hide');
-
         this.tableService.orgsTableClick(row);
-      }.bind(this)
-      ));
+      }.bind(this));
 
-    // Method to handle click events on the Supported Systems table
-    $(document).ready(
+      // Method to handle click events on the Supported Systems table
       $('#capSupportSysTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#capabilityDetail').modal('hide');
-
         this.tableService.systemsTableClick(row);
-      }.bind(this)
-      ));
+      }.bind(this));
+
+      //Enable table sticky header
+      self.sharedService.enableStickyHeader("capRelOrgsTable");
+      self.sharedService.enableStickyHeader("capSupportSysTable");
+    });
 
     // Revert back to overview tab when modal goes away
     $('#capabilityDetail').on('hidden.bs.modal', function (e) {

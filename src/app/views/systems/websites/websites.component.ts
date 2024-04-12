@@ -169,15 +169,16 @@ export class WebsitesComponent implements OnInit {
     // Sets initial filtering of table
     $(document).ready(this.resetTableFilters());
 
-    // Method to handle click events on the Website table
-    $(document).ready(
-      $('#websitesTable').on(
-        'click-row.bs.table',
-        function (e, row) {
-          this.tableService.websitesTableClick(row);
-        }.bind(this)
-      )
-    );
+    const self = this;
+    $(document).ready(() => {
+      // Method to handle click events on the Website table
+      $('#websitesTable').on('click-row.bs.table', function (e, row) {
+        this.tableService.websitesTableClick(row);
+      }.bind(this));
+
+      //Enable table sticky header
+      self.sharedService.enableStickyHeader("websitesTable");
+  });
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {

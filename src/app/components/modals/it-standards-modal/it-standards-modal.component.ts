@@ -33,15 +33,19 @@ export class ItStandardsModalComponent implements OnInit {
       data: [],
     }));
 
+    const self = this;
     // Method to handle click events on the Related Systems table
-    $(document).ready(
+    $(document).ready(() => {
       $('#itRelSysTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#itStandardDetail').modal('hide');
 
         this.tableService.systemsTableClick(row);
-      }.bind(this)
-      ));
+      }.bind(this));
+      //Enable table sticky header
+      self.sharedService.enableStickyHeader("itStandDetailTable");
+      self.sharedService.enableStickyHeader("itRelSysTable");
+    });
 
     // Revert back to overview tab when modal goes away
     $('#itStandardDetail').on('hidden.bs.modal', function (e) {

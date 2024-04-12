@@ -154,25 +154,26 @@ export class TimeComponent implements OnInit {
       })
     );
 
-    // Method to handle click events on the Systems table
-    $(document).ready(
-      $('#timeTable').on(
-        'click-row.bs.table',
-        function (e, row, $element, field) {    
-          if (field !== 'File Link' ) {
-            // Grab data for system by name
-            this.apiService
-              .getOneSys(row['System Id'])
-              .subscribe((data: any[]) => {
-                this.tableService.systemsTableClick(data[0]);
-              });
+    const self = this;
+    $(document).ready(() => {
+      // Method to handle click events on the Systems table
+      $('#timeTable').on('click-row.bs.table', function (e, row, $element, field) {    
+        if (field !== 'File Link' ) {
+          // Grab data for system by name
+          this.apiService
+            .getOneSys(row['System Id'])
+            .subscribe((data: any[]) => {
+              this.tableService.systemsTableClick(data[0]);
+            });
 
-            // Change URL to include ID
-            this.sharedService.addIDtoURL(row, 'Id');
-          }     
-        }.bind(this)
-      )
-    );
+          // Change URL to include ID
+          this.sharedService.addIDtoURL(row, 'Id');
+        }     
+      }.bind(this));
+
+      //Enable table sticky header
+      self.sharedService.enableStickyHeader("timeTable");
+  });
 
     // Visualization data
     this.apiService.getTIME().subscribe((data: any[]) => {

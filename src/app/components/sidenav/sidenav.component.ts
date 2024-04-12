@@ -80,10 +80,12 @@ export class SidenavComponent implements OnInit {
 
   _onClosed(): void {
     console.info('Sidebar closed');
+    $(window).trigger("resize");
   }
 
   _onTransitionEnd(): void {
     console.info('Transition ended');
+    $(window).trigger("resize");
   }
 
   _onBackdropClicked(): void {

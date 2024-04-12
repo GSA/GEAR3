@@ -62,6 +62,10 @@ export class GlossaryComponent implements OnInit {
       data: [],
     }));
 
+    const self = this;
+    $(document).ready(function() {
+      //Enable table sticky header
+      self.sharedService.enableStickyHeader("glossaryTable");
+    });
   }
-
 }

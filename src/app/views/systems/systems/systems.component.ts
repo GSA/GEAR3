@@ -277,24 +277,26 @@ export class SystemsComponent implements OnInit {
       })
     );
 
-    // Filter to only active systems
-    $(document).ready(
+    const self = this;
+    $(document).ready(() => {
+      // Filter to only active systems
       $('#systemTable').bootstrapTable('filterBy', {
         Status: 'Active',
         BusApp: 'Yes',
-      })
-    );
+      });
 
-    // Method to handle click events on the Systems table
-    $(document).ready(
+      // Method to handle click events on the Systems table
       $('#systemTable').on(
         'click-row.bs.table',
         function (e, row) {
           this.tableService.systemsTableClick(row);
           // this.getInterfaceData(row.ID);
         }.bind(this)
-      )
-    );
+      );
+
+      //Enable table sticky header
+      self.sharedService.enableStickyHeader("systemTable");
+    });
 
     // Get System data for visuals
     this.apiService.getSystems().subscribe((data: any[]) => {
