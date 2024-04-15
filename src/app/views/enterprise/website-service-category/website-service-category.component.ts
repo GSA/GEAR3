@@ -97,15 +97,15 @@ export class WebsiteServiceCategoryComponent implements OnInit {
       })
     );
 
-    // Method to handle click events on the serviceCategory table
-    $(document).ready(
-      $('#websiteServiceCategoryTable').on(
-        'click-row.bs.table',
-        function (e, row) {
-          this.tableService.websiteServiceCategoryTableClick(row);
-        }.bind(this)
-      )
-    );
+    const self = this;
+    $(document).ready(() => {
+      // Method to handle click events on the serviceCategory table
+      $('#websiteServiceCategoryTable').on('click-row.bs.table', function (e, row) {
+        this.tableService.websiteServiceCategoryTableClick(row);
+      }.bind(this));
+      //Enable table sticky header
+      self.sharedService.enableStickyHeader("websiteServiceCategoryTable");
+    });
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {

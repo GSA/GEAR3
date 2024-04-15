@@ -137,15 +137,16 @@ export class CapabilitiesComponent implements OnInit {
       })
     );
 
-    // Method to handle click events on the capabilities table
-    $(document).ready(
-      $('#capTable').on(
-        'click-row.bs.table',
-        function (e, row) {
-          this.tableService.capsTableClick(row);
-        }.bind(this)
-      )
-    );
+    const self = this;
+    $(document).ready(() => {
+      // Method to handle click events on the capabilities table
+      $('#capTable').on('click-row.bs.table', function (e, row) {
+        this.tableService.capsTableClick(row);
+      }.bind(this));
+
+      //Enable table sticky header
+      self.sharedService.enableStickyHeader("capTable");
+  });
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {

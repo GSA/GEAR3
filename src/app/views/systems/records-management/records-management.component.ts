@@ -173,15 +173,19 @@ export class RecordsManagementComponent implements OnInit {
       })
     );
 
-    // Method to handle click events on the Records table
-    $(document).ready(
+    const self = this;
+    $(document).ready(() => {
+      // Method to handle click events on the Records table
       $('#recordsTable').on(
         'click-row.bs.table',
         function (e, row) {
           this.tableService.recordsTableClick(row);
         }.bind(this)
-      )
-    );
+      );
+
+      //Enable table sticky header
+      self.sharedService.enableStickyHeader("recordsTable");
+    });
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {

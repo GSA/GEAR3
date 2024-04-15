@@ -65,13 +65,14 @@ export class GlobalSearchComponent implements OnInit {
       data: [],
     }));
 
-    // Method to handle click events on the Global Search table
-    $(document).ready(
+    const self = this;
+    $(document).ready(() => {
+      // Method to handle click events on the Global Search table
       $('#globalSearchTable').on('click-row.bs.table', function (e, row) {
         this.tableService.globalSearchTableClick(row);
-      }.bind(this)
-      ));
-
+      }.bind(this));
+      //Enable table sticky header
+      self.sharedService.enableStickyHeader("globalSearchTable");
+  });
   }
-
 }

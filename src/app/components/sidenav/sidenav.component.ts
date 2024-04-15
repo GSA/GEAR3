@@ -18,7 +18,7 @@ export class SidenavComponent implements OnInit {
       this.sharedService.toggleSub = this.sharedService.toggleEmitter.subscribe(() => { this._toggleOpened(); });
     }
 
-    $(document).ready(function () {
+    $(document).ready(() => {
       // Logged in collapse notification
       $('#loggedIn').on('show.bs.toast', function () {
         $('#loggedInCollapse').collapse('show')
@@ -80,10 +80,12 @@ export class SidenavComponent implements OnInit {
 
   _onClosed(): void {
     console.info('Sidebar closed');
+    $(window).trigger("resize");
   }
 
   _onTransitionEnd(): void {
     console.info('Transition ended');
+    $(window).trigger("resize");
   }
 
   _onBackdropClicked(): void {

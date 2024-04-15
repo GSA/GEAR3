@@ -91,15 +91,16 @@ export class OrganizationsComponent implements OnInit {
       })
     );
 
-    // Method to handle click events on the organization table
-    $(document).ready(
-      $('#orgTable').on(
-        'click-row.bs.table',
-        function (e, row) {
+    const self = this;
+    $(document).ready(() => {
+      // Method to handle click events on the organization table
+      $('#orgTable').on('click-row.bs.table', function (e, row) {
           this.tableService.orgsTableClick(row);
-        }.bind(this)
-      )
-    );
+        }.bind(this));
+
+      //Enable table sticky header
+      self.sharedService.enableStickyHeader("orgTable");
+  });
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {
