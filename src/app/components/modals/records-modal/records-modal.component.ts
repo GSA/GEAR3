@@ -42,7 +42,7 @@ export class RecordsModalComponent implements OnInit {
       $('#recordsRelSysTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#recordDetail').modal('hide');
-        this.tableService.systemsTableClick(row);
+        self.tableService.systemsTableClick(row);
       }.bind(this));
     });
 

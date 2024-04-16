@@ -40,7 +40,7 @@ export class InvestmentsModalComponent implements OnInit {
         // Hide First Modal before showing new modal
         $('#investDetail').modal('hide');
 
-        this.tableService.systemsTableClick(row);
+        self.tableService.systemsTableClick(row);
       }.bind(this));
     });
 

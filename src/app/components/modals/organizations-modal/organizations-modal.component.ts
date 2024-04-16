@@ -87,14 +87,14 @@ export class OrganizationsModalComponent implements OnInit {
       $('#orgCapsTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#organizationDetail').modal('hide');
-        this.tableService.capsTableClick(row);
+        self.tableService.capsTableClick(row);
       }.bind(this));
 
       // Method to handle click events on the Organizational Systems table
       $('#orgSysTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#organizationDetail').modal('hide');
-        this.tableService.systemsTableClick(row);
+        self.tableService.systemsTableClick(row);
       }.bind(this));
     });
 
