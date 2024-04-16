@@ -185,7 +185,7 @@ exports.updateTech = (req, res) => {
 
 exports.findTIME = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_sysTIME.sql')).toString() +
-    ` WHERE \`System Id\` = ${req.params.id};`;
+    ` AND \`System Id\` = ${req.params.id};`;
 
   res = ctrl.sendQuery(query, 'related TIME designations for system', res);
 };

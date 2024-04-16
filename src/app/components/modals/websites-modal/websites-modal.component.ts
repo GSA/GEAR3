@@ -106,9 +106,6 @@ export class WebsitesModalComponent implements OnInit {
         $('#websiteDetail').modal('hide');
         this.tableService.systemsTableClick(row);
       }.bind(this));
-
-      //Enable table sticky header
-      self.sharedService.enableStickyHeader("websitesRelSysTable");
     });
 
     // Revert back to overview tab when modal goes away
