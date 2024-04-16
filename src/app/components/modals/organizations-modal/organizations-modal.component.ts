@@ -96,10 +96,6 @@ export class OrganizationsModalComponent implements OnInit {
         $('#organizationDetail').modal('hide');
         this.tableService.systemsTableClick(row);
       }.bind(this));
-
-      //Enable table sticky header
-      self.sharedService.enableStickyHeader("orgCapsTable");
-      self.sharedService.enableStickyHeader("orgSysTable");
     });
 
     // Revert back to overview tab when modal goes away

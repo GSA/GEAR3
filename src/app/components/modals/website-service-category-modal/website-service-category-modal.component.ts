@@ -96,9 +96,6 @@ export class WebsiteServiceCategoryModalComponent implements OnInit {
         $('#websiteServiceCategoryDetail').modal('hide');
         this.tableService.systemsTableClick(row);
       }.bind(this));
-        
-      //Enable table sticky header
-      self.sharedService.enableStickyHeader("websiteServiceCategoryWebsites");
     });
 
     // Revert back to overview tab when modal goes away

@@ -573,15 +573,6 @@ sysWebsitesColumnDefs: any[] = [
       this.tableService.websitesTableClick(row);
       }.bind(this)
     );
-
-    //Enable table sticky header
-    self.sharedService.enableStickyHeader("sysTimeTable");
-    self.sharedService.enableStickyHeader("systemCapTable");
-    self.sharedService.enableStickyHeader("systemTechTable");
-    self.sharedService.enableStickyHeader("systemInvestTable");
-    self.sharedService.enableStickyHeader("systemRecTable");
-    self.sharedService.enableStickyHeader("systemWebsitesTable");
-    self.sharedService.enableStickyHeader("subSysTable");
   });
 
     $('#subSysTable').bootstrapTable($.extend(this.tableService.relSysTableOptions, {
