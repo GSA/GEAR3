@@ -42,8 +42,6 @@ export class InvestmentsModalComponent implements OnInit {
 
         this.tableService.systemsTableClick(row);
       }.bind(this));
-      //Enable table sticky header
-      self.sharedService.enableStickyHeader("investRelSysTable");
     });
 
     // Revert back to overview tab when modal goes away

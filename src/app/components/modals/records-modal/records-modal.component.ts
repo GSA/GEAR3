@@ -44,9 +44,6 @@ export class RecordsModalComponent implements OnInit {
         $('#recordDetail').modal('hide');
         this.tableService.systemsTableClick(row);
       }.bind(this));
-
-      //Enable table sticky header
-      self.sharedService.enableStickyHeader("recordsRelSysTable");
     });
 
     // Revert back to overview tab when modal goes away
