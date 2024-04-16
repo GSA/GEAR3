@@ -42,9 +42,6 @@ export class ItStandardsModalComponent implements OnInit {
 
         this.tableService.systemsTableClick(row);
       }.bind(this));
-      //Enable table sticky header
-      self.sharedService.enableStickyHeader("itStandDetailTable");
-      self.sharedService.enableStickyHeader("itRelSysTable");
     });
 
     // Revert back to overview tab when modal goes away

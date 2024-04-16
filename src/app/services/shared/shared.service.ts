@@ -376,10 +376,10 @@ export class SharedService {
     return cookies;
   }
 
-  public enableStickyHeader(tableComponentId: string) {
+  public enableStickyHeader(tableComponentId: string, closestScrollableClass: string = '.ng-sidebar__content') {
     $('#'+tableComponentId).floatThead({
       scrollContainer: function($table) {
-        return $table.closest('.ng-sidebar__content');
+        return $table.closest(closestScrollableClass);
       },
       position: "fixed",
       autoReflow: true

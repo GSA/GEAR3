@@ -95,10 +95,6 @@ export class CapabilitiesModalComponent implements OnInit {
         $('#capabilityDetail').modal('hide');
         this.tableService.systemsTableClick(row);
       }.bind(this));
-
-      //Enable table sticky header
-      self.sharedService.enableStickyHeader("capRelOrgsTable");
-      self.sharedService.enableStickyHeader("capSupportSysTable");
     });
 
     // Revert back to overview tab when modal goes away
