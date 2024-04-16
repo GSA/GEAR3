@@ -236,15 +236,16 @@ export class ItStandardsComponent implements OnInit {
       })
     );
 
-    // Method to handle click events on the Investments table
-    $(document).ready(
-      $('#itStandardsTable').on(
-        'click-row.bs.table',
-        function (e, row) {
+    const self = this;
+    $(document).ready(() => {
+      // Method to handle click events on the Investments table
+      $('#itStandardsTable').on('click-row.bs.table', function (e, row) {
           this.tableService.itStandTableClick(row);
         }.bind(this)
-      )
-    );
+      );
+      //Enable table sticky header
+      self.sharedService.enableStickyHeader("itStandardsTable");
+    });
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {

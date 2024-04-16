@@ -33,15 +33,16 @@ export class InvestmentsModalComponent implements OnInit {
       data: [],
     }));
 
-    // Method to handle click events on the Related Systems table
-    $(document).ready(
+    const self = this;
+    $(document).ready(() => {
+      // Method to handle click events on the Related Systems table
       $('#investRelSysTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#investDetail').modal('hide');
 
         this.tableService.systemsTableClick(row);
-      }.bind(this)
-      ));
+      }.bind(this));
+    });
 
     // Revert back to overview tab when modal goes away
     $('#investDetail').on('hidden.bs.modal', function (e) {

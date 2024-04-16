@@ -301,22 +301,24 @@ export class InvestmentsComponent implements OnInit {
       })
     );
 
-    // Filter to only non-eliminated investments
-    $(document).ready(
+    const self = this;
+    $(document).ready(() => {
+      // Filter to only non-eliminated investments
       $('#investTable').bootstrapTable('filterBy', {
         Status: this.nonEliminatedTypes,
-      })
-    );
+      });
 
-    // Method to handle click events on the Investments table
-    $(document).ready(
+      // Method to handle click events on the Investments table
       $('#investTable').on(
         'click-row.bs.table',
         function (e, row) {
           this.tableService.investTableClick(row);
         }.bind(this)
-      )
-    );
+      );
+
+      //Enable table sticky header
+      self.sharedService.enableStickyHeader("investTable");
+    });
 
     // Get Investment data for visuals
     this.apiService.getInvestments().subscribe((data: any[]) => {

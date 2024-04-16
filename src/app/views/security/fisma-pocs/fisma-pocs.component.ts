@@ -109,16 +109,15 @@ export class FismaPocsComponent implements OnInit {
       })
     );
 
-    // Filter out "Pending" Status
-    $(document).ready(
+    const self = this;
+    $(document).ready(() => {
+      // Filter out "Pending" Status
       $('#fismaPOCTable').bootstrapTable('filterBy', {
         Status: 'Active',
         SystemLevel: 'System',
-      })
-    );
+      });
 
-    // Method to handle click events on the FISMA POC table
-    $(document).ready(
+      // Method to handle click events on the FISMA POC table  
       $('#fismaPOCTable').on(
         'click-row.bs.table',
         function (e, row, $element, field) {
@@ -136,8 +135,11 @@ export class FismaPocsComponent implements OnInit {
             this.tableService.fismaTableClick(row);
           }
         }.bind(this)
-      )
-    );
+      );
+
+      //Enable table sticky header
+      self.sharedService.enableStickyHeader("fismaPOCTable");
+  });
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {

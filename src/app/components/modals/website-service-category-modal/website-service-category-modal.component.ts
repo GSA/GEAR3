@@ -88,18 +88,15 @@ export class WebsiteServiceCategoryModalComponent implements OnInit {
       data: [],
     });
 
-    // Method to handle click events on the Related Systems table
-    $(document).ready(
-      $('#serviceCategoryRelSysTable').on(
-        'click-row.bs.table',
-        function (e, row) {
-          // Hide First Modal before showing new modal
-          $('#websiteServiceCategoryDetail').modal('hide');
-
-          this.tableService.systemsTableClick(row);
-        }.bind(this)
-      )
-    );
+    const self = this;
+    $(document).ready(() => {
+      // Method to handle click events on the Related Systems table
+      $('#serviceCategoryRelSysTable').on('click-row.bs.table', function (e, row) {
+        // Hide First Modal before showing new modal
+        $('#websiteServiceCategoryDetail').modal('hide');
+        this.tableService.systemsTableClick(row);
+      }.bind(this));
+    });
 
     // Revert back to overview tab when modal goes away
     $('#websiteServiceCategoryDetail').on(

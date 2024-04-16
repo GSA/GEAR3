@@ -81,33 +81,29 @@ export class OrganizationsModalComponent implements OnInit {
       data: [],
     }));
 
-    // Method to handle click events on the Organizational Systems table
-    $(document).ready(
+    const self = this;
+    $(document).ready(() => {
+      // Method to handle click events on the Organizational Systems table
       $('#orgCapsTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#organizationDetail').modal('hide');
-
         this.tableService.capsTableClick(row);
-      }.bind(this)
-      ));
+      }.bind(this));
 
-    // Method to handle click events on the Organizational Systems table
-    $(document).ready(
+      // Method to handle click events on the Organizational Systems table
       $('#orgSysTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#organizationDetail').modal('hide');
-
         this.tableService.systemsTableClick(row);
-      }.bind(this)
-      ));
+      }.bind(this));
+    });
 
     // Revert back to overview tab when modal goes away
     $('#organizationDetail').on('hidden.bs.modal', function (e) {
       $("#orgTabs li:first-child a").tab('show');
-
       // Change URL back without ID after closing Modal
       this.sharedService.removeIDfromURL();
     }.bind(this));
-  }
 
+  }
 }

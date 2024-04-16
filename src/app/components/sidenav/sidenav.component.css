@@ -2,7 +2,7 @@
 
 ng-sidebar-container {
   /* Position needed to render sidebar properly */
-  position: absolute;
+  position: fixed;
   /* Behind the top navbar */
   z-index: 100;
   /* Scrollable contents if viewport is shorter than content. */

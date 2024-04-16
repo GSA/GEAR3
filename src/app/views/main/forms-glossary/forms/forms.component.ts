@@ -62,8 +62,9 @@ export class FormsComponent implements OnInit {
       data: [],
     }));
 
-    // Method to handle click events on the Investments table
-    $(document).ready(
+    const self = this;
+    $(document).ready(function() {
+      // Method to handle click events on the Investments table
       $('#formsTable').on('click-cell.bs.table', function (e, field, value, row) {
         // console.log("Forms Table Clicked Element: ", e);  // Debug
         // console.log("Forms Table Clicked Field: ", field);  // Debug
@@ -77,9 +78,10 @@ export class FormsComponent implements OnInit {
           // Open new tab to compose email
           window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${row.POC_email}`);
         }
+      }.bind(this));
 
-      }.bind(this)
-      ));
+      //Enable table sticky header
+      self.sharedService.enableStickyHeader("formsTable");
+    });
   }
-
 }

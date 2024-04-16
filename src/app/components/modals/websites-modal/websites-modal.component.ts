@@ -98,18 +98,15 @@ export class WebsitesModalComponent implements OnInit {
       })
     );
 
-    // Method to handle click events on the Related Systems table
-    $(document).ready(
-      $('#websitesRelSysTable').on(
-        'click-row.bs.table',
-        function (e, row) {
-          // Hide First Modal before showing new modal
-          $('#websiteDetail').modal('hide');
-
-          this.tableService.systemsTableClick(row);
-        }.bind(this)
-      )
-    );
+    const self = this;
+    $(document).ready(function() {
+      // Method to handle click events on the Related Systems table
+      $('#websitesRelSysTable').on('click-row.bs.table', function (e, row) {
+        // Hide First Modal before showing new modal
+        $('#websiteDetail').modal('hide');
+        this.tableService.systemsTableClick(row);
+      }.bind(this));
+    });
 
     // Revert back to overview tab when modal goes away
     $('#websiteDetail').on(

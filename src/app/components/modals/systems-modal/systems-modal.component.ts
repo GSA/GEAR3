@@ -556,25 +556,24 @@ sysWebsitesColumnDefs: any[] = [
       }.bind(this)
       ));
 
-    // Method to handle click events on the Related Records table
-    $(document).ready(
+    const self = this;
+    $(document).ready( function() {
+      // Method to handle click events on the Related Records table
       $('#systemRecTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#systemDetail').modal('hide');
-
         this.tableService.recordsTableClick(row);
       }.bind(this)
-      ));
+    );
 
     // Method to handle click events on the Related Websites table
-    $(document).ready(
-      $('#systemWebsitesTable').on('click-row.bs.table', function (e, row) {
-        // Hide First Modal before showing new modal
-        $('#systemDetail').modal('hide');
-
-        this.tableService.websitesTableClick(row);
+    $('#systemWebsitesTable').on('click-row.bs.table', function (e, row) {
+      // Hide First Modal before showing new modal
+      $('#systemDetail').modal('hide');
+      this.tableService.websitesTableClick(row);
       }.bind(this)
-      ));
+    );
+  });
 
     // $('#subSysTable').bootstrapTable($.extend(this.tableService.relSysTableOptions, {
     //   columns: this.tableService.relSysColumnDefs,
