@@ -424,6 +424,13 @@ export class TableService {
       '/api/systems/get/' + String(data.ID) + '/investments'
     );
 
+    // Update subsystems table in detail modal with clicked system
+    this.updateRelatedTable(
+      '#subSysTable',
+      data.Name + '-Related_Subsystems',
+      '/api/systems/get/' + String(data.ID) + '/subsystems'
+    );
+
     // Update related records table in detail modal with clicked system
     var system_related_records = <any>[];
 

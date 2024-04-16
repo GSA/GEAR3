@@ -19,6 +19,16 @@ exports.findOne = (req, res) => {
   res = ctrl.sendQuery(query, 'individual System/Subsystem', res);
 };
 
+exports.findSubsystems = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
+    ` WHERE systems.\`ex:FISMA_System_Identifier\` = 
+        (SELECT systems.\`ex:FISMA_System_Identifier\`
+        FROM obj_fisma_archer AS systems
+        WHERE systems.\`ex:GEAR_ID\` = ${req.params.id} )
+      AND systems.\`ex:SystemLevel\` = 'SubSystem';`;
+      
+  res = ctrl.sendQuery(query, 'Subsystems', res);
+};
 
 exports.findCapabilities = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_capabilities.sql')).toString() +
