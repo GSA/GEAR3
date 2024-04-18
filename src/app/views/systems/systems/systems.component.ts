@@ -354,6 +354,7 @@ export class SystemsComponent implements OnInit {
 
   // Update table from filter buttons if only filtering ONE column. Not currently used in business systems report.
   changeFilter(field: string, term: string) {
+    this.sharedService.disableStickyHeader("systemTable");
     this.filteredTable = true; // Filters are on, expose main table button
     var filter = {};
     filter[field] = term;
@@ -385,11 +386,13 @@ export class SystemsComponent implements OnInit {
       },
     });
     this.filterTitle = title;
+    this.sharedService.enableStickyHeader("systemTable");
   }
 
   //The following is adapted from fisma.component.ts to filter on multiple columns of data rather than one
   // Update table to Cloud Business Systems
   showCloud() {
+    $('#systemTable').floatThead('destroy');
     this.filteredTable = true; // Expose main table button after "Cloud Enabled" button is pressed
     this.filterTitle = 'Cloud GSA';
 
@@ -411,10 +414,12 @@ export class SystemsComponent implements OnInit {
       BusApp: 'Yes',
       CloudYN: 'Yes',
     });
+    this.sharedService.enableStickyHeader("systemTable");
   }
 
   // Update table to Inactive Business Systems
   showInactive() {
+    this.sharedService.disableStickyHeader("systemTable");
     this.filteredTable = true; // Expose main table button after "Inactive" button is pressed
     this.filterTitle = 'Inactive GSA';
 
@@ -437,10 +442,12 @@ export class SystemsComponent implements OnInit {
       Status: ['Inactive'],
       BusApp: 'Yes',
     });
+    this.sharedService.enableStickyHeader("systemTable");
   }
 
   // Update table to Pending Business Systems
   showPending() {
+    this.sharedService.disableStickyHeader("systemTable");
     this.filteredTable = true; // Expose main table button after "Pending" button is pressed
     this.filterTitle = 'Pending GSA';
 
@@ -464,10 +471,12 @@ export class SystemsComponent implements OnInit {
       //Commenting out BusApp: 'Yes' since pending systems need to be reviewed by EA and Security of whether they are a business system.
       //BusApp: 'Yes'
     });
+    this.sharedService.enableStickyHeader("systemTable");
   }
   //The preceding code is adapted from fisma.component.ts to filter on multiple columns of data rather than one
 
   backToMainSys() {
+    this.sharedService.disableStickyHeader("systemTable");
     this.filteredTable = false; // Hide main button
 
     $('#sysViz').collapse('show');
@@ -484,9 +493,11 @@ export class SystemsComponent implements OnInit {
         ignoreColumn:this.activeExportIgnoreColumn
       },
     });
+    this.sharedService.enableStickyHeader("systemTable");
   }
 
   onSelect(chartData): void {
+    this.sharedService.disableStickyHeader("systemTable");
     this.filteredTable = true; // Filters are on, expose main table button
     this.filterTitle = chartData.name;
 
@@ -503,6 +514,7 @@ export class SystemsComponent implements OnInit {
         ),
       },
     });
+    this.sharedService.enableStickyHeader("systemTable");
   }
 
   //   private getInterfaceData(sysID: number) {

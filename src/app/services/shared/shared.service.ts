@@ -385,4 +385,8 @@ export class SharedService {
       autoReflow: true
     });
   }
+
+  public disableStickyHeader(tableComponentId: string) {
+    $('#'+tableComponentId).floatThead('destroy');
+  }
 }

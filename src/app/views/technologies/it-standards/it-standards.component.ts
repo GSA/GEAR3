@@ -282,6 +282,7 @@ export class ItStandardsComponent implements OnInit {
 
   // Update table from filter buttons
   changeFilter(field: string, term: string) {
+    this.sharedService.disableStickyHeader("itStandardsTable");
     this.filteredTable = true; // Filters are on, expose main table button
     var filter = {};
     filter[field] = term;
@@ -297,9 +298,11 @@ export class ItStandardsComponent implements OnInit {
     });
 
     this.filterTitle = `${term} `;
+    this.sharedService.enableStickyHeader("itStandardsTable");
   }
 
   backToMainIT() {
+    this.sharedService.disableStickyHeader("itStandardsTable");
     this.filteredTable = false; // Hide main button
 
     // Remove filters and back to default
@@ -311,5 +314,6 @@ export class ItStandardsComponent implements OnInit {
     });
 
     this.filterTitle = '';
+    this.sharedService.enableStickyHeader("itStandardsTable");
   }
 }
