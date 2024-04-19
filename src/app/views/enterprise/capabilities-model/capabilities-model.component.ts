@@ -34,6 +34,15 @@ export class CapabilitiesModelComponent implements OnInit {
   private capTree: any = {};
   public highlightColor: string = '#ff4136';
 
+  // Variables to store mouse position and dragging status
+  private dragging = false;
+  private initialMouseX = 0;
+  private initialMouseY = 0;
+  private initialElementX = 0;
+  private initialElementY = 0;
+  private positionX = 0;
+  private positionY = 0;
+
   private treemap: any;
   private vis: any;
 
@@ -49,7 +58,8 @@ export class CapabilitiesModelComponent implements OnInit {
     private route: ActivatedRoute,
     private sharedService: SharedService,
     private tableService: TableService,
-    private titleService: Title
+    private titleService: Title,
+    private elementRef: ElementRef
   ) {}
 
   ngOnInit(): void {
@@ -72,6 +82,16 @@ export class CapabilitiesModelComponent implements OnInit {
         });
       }
     });
+  }
+
+  ngAfterViewInit(): void {
+    // Select the capDetail element using D3.js
+    const capDetail = d3.select(this.elementRef.nativeElement).select('#capDetail');
+
+    // Attach mouse event listeners for dragging
+    capDetail.on('mousedown', () => this.dragStart());
+    d3.select(document).on('mousemove', () => this.drag());
+    d3.select(document).on('mouseup', () => this.dragEnd());
   }
 
   // Create Capability Model Graph
@@ -639,4 +659,40 @@ export class CapabilitiesModelComponent implements OnInit {
     this.root.children.forEach(this.collapse);
     this.update(this.root);
   }
+
+    // Method to handle mouse down event
+    dragStart(): void {
+      this.dragging = true;
+      this.initialMouseX = d3.event.clientX;
+      this.initialMouseY = d3.event.clientY;
+
+      const capDetail = d3.select(this.elementRef.nativeElement).select('#capDetail');
+      const bbox = capDetail.node().getBoundingClientRect();
+      this.initialElementX = bbox.left;
+      this.initialElementY = bbox.top;
+      capDetail.classed('grabbing', true);
+    }
+
+    // Method to handle mouse move event
+    drag(): void {
+      if (this.dragging) {
+        const dx = d3.event.clientX - this.initialMouseX;
+        const dy = d3.event.clientY - this.initialMouseY;
+        this.positionX = this.initialElementX + dx;
+        this.positionY = this.initialElementY + dy;
+
+        // Update position of capDetail using D3.js
+        d3.select(this.elementRef.nativeElement).select('#capDetail')
+          .style('visibility', 'visible')
+          .style('opacity', '1')
+          .style('left', this.positionX + 'px')
+          .style('top', this.positionY + 'px');
+      }
+    }
+
+    // Method to handle mouse up event
+    dragEnd(): void {
+      this.dragging = false;
+      d3.select(this.elementRef.nativeElement).select('#capDetail').classed('grabbing', false);
+    }
 }
