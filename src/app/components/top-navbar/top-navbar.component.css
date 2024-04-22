@@ -9,3 +9,9 @@
 #contactDropdown {
   cursor: pointer;
 }
+
+/* CSS for making the dropdown menu scrollable */
+.navbar-nav .dropdown-menu.gearNavDropdown {
+  max-height: 350px; /* Set a fixed height for the dropdown menu */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
