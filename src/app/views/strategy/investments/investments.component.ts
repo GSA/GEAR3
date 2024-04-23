@@ -373,6 +373,7 @@ export class InvestmentsComponent implements OnInit {
 
   // Update table from filter buttons
   eliminatedFilter() {
+    this.sharedService.disableStickyHeader("investTable");
     this.filteredTable = true; // Filters are on, expose main table button
     this.filterTitle = 'Eliminated';
 
@@ -389,9 +390,11 @@ export class InvestmentsComponent implements OnInit {
         ),
       },
     });
+    this.sharedService.enableStickyHeader("investTable");
   }
 
   previousYearFilter() {
+    this.sharedService.disableStickyHeader("investTable");
     this.filteredTable = true; // Filters are on, expose main table button
     this.filterTitle = 'Previous Year';
 
@@ -407,9 +410,11 @@ export class InvestmentsComponent implements OnInit {
         ),
       },
     });
+    this.sharedService.enableStickyHeader("investTable");
   }
 
   currentYearFilter() {
+    this.sharedService.disableStickyHeader("investTable");
     this.filteredTable = true; // Filters are on, expose main table button
     this.filterTitle = 'Current Year';
 
@@ -425,9 +430,11 @@ export class InvestmentsComponent implements OnInit {
         ),
       },
     });
+    this.sharedService.enableStickyHeader("investTable");
   }
 
   budgetYearFilter() {
+    this.sharedService.disableStickyHeader("investTable");
     this.filteredTable = true; // Filters are on, expose main table button
     this.filterTitle = 'Budget Year';
 
@@ -443,9 +450,11 @@ export class InvestmentsComponent implements OnInit {
         ),
       },
     });
+    this.sharedService.enableStickyHeader("investTable");
   }
 
   backToMainInvest() {
+    this.sharedService.disableStickyHeader("investTable");
     this.filteredTable = false; // Hide main button
     this.filterTitle = '';
 
@@ -461,9 +470,11 @@ export class InvestmentsComponent implements OnInit {
         fileName: this.sharedService.fileNameFmt('GSA_IT_Investments'),
       },
     });
+    this.sharedService.enableStickyHeader("investTable");
   }
 
   onSelect(chartData): void {
+    this.sharedService.disableStickyHeader("investTable");
     this.filteredTable = true; // Filters are on, expose main table button
     this.filterTitle = chartData.name;
 
@@ -479,5 +490,6 @@ export class InvestmentsComponent implements OnInit {
         ),
       },
     });
+    this.sharedService.enableStickyHeader("investTable");
   }
 }

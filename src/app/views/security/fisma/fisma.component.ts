@@ -217,6 +217,7 @@ export class FismaComponent implements OnInit {
 
   // Update table to Retire Systems
   showRetired() {
+    this.sharedService.disableStickyHeader("fismaTable");
     this.retiredTable = true; // Expose main table button after "Retired" button is pressed
 
     this.columnDefs.push({
@@ -238,9 +239,11 @@ export class FismaComponent implements OnInit {
     $('#fismaTable').bootstrapTable('filterBy', {
       Status: ['Inactive'],
     });
+    this.sharedService.enableStickyHeader("fismaTable");
   }
 
   backToMainFisma() {
+    this.sharedService.disableStickyHeader("fismaTable");
     this.retiredTable = false; // Hide main button
 
     // Change back to default
@@ -257,5 +260,6 @@ export class FismaComponent implements OnInit {
       Status: 'Active',
       SystemLevel: 'System',
     });
+    this.sharedService.enableStickyHeader("fismaTable");
   }
 }
