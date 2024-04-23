@@ -413,21 +413,9 @@ export class CapabilitiesModelComponent implements OnInit {
       .on(
         'mouseenter',
         function (d) {
-
-          const mouseX = d3.event.pageX;
-          const mouseY = d3.event.pageY;
-
-          // Adjust position of capDetail div relative to the mouse position
-          const offsetX = 50; // Adjust these values as needed
-          const offsetY = -50; // Adjust these values as needed
-          const positionX = mouseX + offsetX;
-          const positionY = mouseY + offsetY;
-
           d3.select('#capDetail')
             .style('visibility', 'visible') // Show detail card
             .style('opacity', '1')
-            .style('left', positionX + 'px')
-            .style('top', positionY + 'px');
 
           d3.select('#capName').text(
             d.data.name + ' (' + d.data.referenceNum + ')'
