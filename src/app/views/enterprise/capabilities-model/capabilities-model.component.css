@@ -28,3 +28,8 @@
 .custom-hover-cursor {
   cursor: pointer;
 }
+
+.grabbing {
+  cursor: grabbing !important; /* Change cursor to grab hand */
+  user-select: none; /* Prevent text selection */
+}
