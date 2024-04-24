@@ -40,7 +40,7 @@ export class ItStandardsModalComponent implements OnInit {
         // Hide First Modal before showing new modal
         $('#itStandardDetail').modal('hide');
 
-        this.tableService.systemsTableClick(row);
+        self.tableService.systemsTableClick(row);
       }.bind(this));
     });
 

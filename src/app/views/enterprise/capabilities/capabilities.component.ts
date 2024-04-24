@@ -141,7 +141,7 @@ export class CapabilitiesComponent implements OnInit {
     $(document).ready(() => {
       // Method to handle click events on the capabilities table
       $('#capTable').on('click-row.bs.table', function (e, row) {
-        this.tableService.capsTableClick(row);
+        self.tableService.capsTableClick(row);
       }.bind(this));
 
       //Enable table sticky header

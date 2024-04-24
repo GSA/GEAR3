@@ -424,6 +424,13 @@ export class TableService {
       '/api/systems/get/' + String(data.ID) + '/investments'
     );
 
+    // Update subsystems table in detail modal with clicked system
+    this.updateRelatedTable(
+      '#subSysTable',
+      data.Name + '-Related_Subsystems',
+      '/api/systems/get/' + String(data.ID) + '/subsystems'
+    );
+
     // Update related records table in detail modal with clicked system
     var system_related_records = <any>[];
 
@@ -626,7 +633,12 @@ export class TableService {
   public previousModalRoute(currentModalID: string) {
     // Close current modal
     $('#' + currentModalID).modal('hide');
+    const self = this;
+    setTimeout(() => self.processPreviousRoute(), 100);
+  }
 
+  private processPreviousRoute() {
+    
     // Get previous modal data
     let previousModal = this.globals.modalRoutes.pop();
     // Need to pop twice to get the previous modal instead of the current one just saved

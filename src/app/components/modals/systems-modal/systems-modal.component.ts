@@ -526,13 +526,15 @@ sysWebsitesColumnDefs: any[] = [
       data: [],
     }));
 
+    const self = this;
+
     // Method to handle click events on the Related Capabilities table
     $(document).ready(
       $('#systemCapTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#systemDetail').modal('hide');
 
-        this.tableService.capsTableClick(row);
+        self.tableService.capsTableClick(row);
       }.bind(this)
     ));
 
@@ -542,7 +544,7 @@ sysWebsitesColumnDefs: any[] = [
         // Hide First Modal before showing new modal
         $('#systemDetail').modal('hide');
 
-        this.tableService.itStandTableClick(row);
+        self.tableService.itStandTableClick(row);
       }.bind(this)
     ));
 
@@ -552,17 +554,16 @@ sysWebsitesColumnDefs: any[] = [
         // Hide First Modal before showing new modal
         $('#systemDetail').modal('hide');
 
-        this.tableService.investTableClick(row);
+        self.tableService.investTableClick(row);
       }.bind(this)
       ));
 
-    const self = this;
     $(document).ready( function() {
       // Method to handle click events on the Related Records table
       $('#systemRecTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#systemDetail').modal('hide');
-        this.tableService.recordsTableClick(row);
+        self.tableService.recordsTableClick(row);
       }.bind(this)
     );
 
@@ -570,32 +571,32 @@ sysWebsitesColumnDefs: any[] = [
     $('#systemWebsitesTable').on('click-row.bs.table', function (e, row) {
       // Hide First Modal before showing new modal
       $('#systemDetail').modal('hide');
-      this.tableService.websitesTableClick(row);
+      self.tableService.websitesTableClick(row);
       }.bind(this)
     );
   });
 
-    // $('#subSysTable').bootstrapTable($.extend(this.tableService.relSysTableOptions, {
-    //   columns: this.tableService.relSysColumnDefs,
-    //   data: [],
-    // }));
+    $('#subSysTable').bootstrapTable($.extend(this.tableService.relSysTableOptions, {
+      columns: this.tableService.relSysColumnDefs,
+      data: [],
+    }));
 
-    // // Method to handle click events on the Sub-Systems table
-    // $(document).ready(
-    //   $('#subSysTable').on('click-row.bs.table', function (e, row) {
-    //     // Hide First Modal before showing new modal
-    //     $('#systemDetail').modal('hide');
-
-    //     this.tableService.systemsTableClick(row);
-    //   }.bind(this)
-    //   ));
+    // Method to handle click events on the Sub-Systems table
+    $(document).ready(
+      $('#subSysTable').on('click-row.bs.table', function (e, row) {
+        // Hide First Modal before showing new modal
+        $('#systemDetail').modal('hide');
+        //Jquery hide and show a model at same time will not work because of asynchronous execution. so showing model after 100 milliseconds.
+        setTimeout(() => self.tableService.systemsTableClick(row), 100);
+      }.bind(this)
+      ));
 
     // Revert back to overview tab when modal goes away
     $('#systemDetail').on('hidden.bs.modal', function (e) {
       $("#systemTabs li:first-child a").tab('show');
 
       // Change URL back without ID after closing Modal
-      this.sharedService.removeIDfromURL();
+      self.sharedService.removeIDfromURL();
     }.bind(this));
   }
 
