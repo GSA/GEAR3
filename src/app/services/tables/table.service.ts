@@ -633,7 +633,12 @@ export class TableService {
   public previousModalRoute(currentModalID: string) {
     // Close current modal
     $('#' + currentModalID).modal('hide');
+    const self = this;
+    setTimeout(() => self.processPreviousRoute(), 100);
+  }
 
+  private processPreviousRoute() {
+    
     // Get previous modal data
     let previousModal = this.globals.modalRoutes.pop();
     // Need to pop twice to get the previous modal instead of the current one just saved

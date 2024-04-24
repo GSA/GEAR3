@@ -586,8 +586,8 @@ sysWebsitesColumnDefs: any[] = [
       $('#subSysTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#systemDetail').modal('hide');
-
-        self.tableService.systemsTableClick(row);
+        //Jquery hide and show a model at same time will not work because of asynchronous execution. so showing model after 100 milliseconds.
+        setTimeout(() => self.tableService.systemsTableClick(row), 100);
       }.bind(this)
       ));
 
