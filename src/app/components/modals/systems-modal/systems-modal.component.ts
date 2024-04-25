@@ -17,6 +17,8 @@ declare var $: any;
 export class SystemsModalComponent implements OnInit {
 
   system = <any>{};
+  canShowSystemTable = false;
+  clickedRow = null;
 
   constructor(
     private location: Location,
@@ -586,14 +588,21 @@ sysWebsitesColumnDefs: any[] = [
       $('#subSysTable').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#systemDetail').modal('hide');
-        //Jquery hide and show a model at same time will not work because of asynchronous execution. so showing model after 100 milliseconds.
-        setTimeout(() => self.tableService.systemsTableClick(row), 100);
+        self.canShowSystemTable =true;
+        self.clickedRow = row;
       }.bind(this)
       ));
 
     // Revert back to overview tab when modal goes away
     $('#systemDetail').on('hidden.bs.modal', function (e) {
       $("#systemTabs li:first-child a").tab('show');
+
+      // this is hanlde hide and show systems modal with diffent params
+      if(self.canShowSystemTable) {
+        self.tableService.systemsTableClick(self.clickedRow);
+        self.canShowSystemTable =false;
+        self.clickedRow = null;
+      }
 
       // Change URL back without ID after closing Modal
       self.sharedService.removeIDfromURL();
