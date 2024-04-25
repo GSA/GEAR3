@@ -633,8 +633,10 @@ export class TableService {
   public previousModalRoute(currentModalID: string) {
     // Close current modal
     $('#' + currentModalID).modal('hide');
-    const self = this;
-    setTimeout(() => self.processPreviousRoute(), 100);
+    // Add event handler on close event
+    $('#' + currentModalID).one('hidden.bs.modal', function (e) {
+      this.processPreviousRoute();
+    }.bind(this));
   }
 
   private processPreviousRoute() {
