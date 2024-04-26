@@ -6,7 +6,8 @@ SELECT
   org.SSO_Name                    AS SSOName,
   org.Org_Symbol_Two_Letter       AS TwoLetterOrgSymbol,
   org.Org_Symbol_Two_Letter_Name  AS TwoLetterOrgName,
-  parent.Organization_Name        AS Parent
+  parent.Organization_Name        AS Parent,
+  org.Parent_Id                   AS Parent_ID
 
 FROM obj_organization             AS org
 
