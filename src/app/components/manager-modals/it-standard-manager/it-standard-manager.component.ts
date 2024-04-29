@@ -26,7 +26,7 @@ export class ItStandardManagerComponent implements OnInit {
     tcSoftwareRelease: new FormControl(),
     tcEndOfLifeDate: new FormControl(),
     itStandStatus: new FormControl(null, [Validators.required]),
-    itStandName: new FormControl(),
+    itStandName: new FormControl(null, [Validators.required]),
     itStandPOC: new FormControl(null, [Validators.required]),
     itStandDesc: new FormControl(),
     itStandType: new FormControl(null, [Validators.required]),
@@ -726,12 +726,15 @@ export class ItStandardManagerComponent implements OnInit {
   enableOldITStandardName(): void {
     //console.log("Enabling Old Name");
     $("#divOldName").removeClass("disabledDivOldName");
+    //enable control
+    this.itStandardsForm.controls['itStandName'].enable();
   }
 
   disableOldITStandardName(): void {
     //console.log("Disabling Old Name");
     $("#divOldName").addClass("disabledDivOldName");
-
+    //disable control
+    this.itStandardsForm.controls['itStandName'].disable();
     // reset the value of itStandName control
     this.itStandardsForm.controls['itStandName'].setValue("");
 

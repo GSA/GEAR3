@@ -210,7 +210,7 @@ exports.create = (req, res) => {
         softwareVersionName,
         softwareReleaseName,
         endOfLifeDate) VALUES (
-        ${(!data.tcSoftwareReleaseName || data.tcSoftwareReleaseName !== 'NULL') ?
+        ${(!data.tcSoftwareReleaseName || data.tcSoftwareReleaseName === 'NULL') ?
           "'" + data.itStandName + "'" : null},
         ${data.itStandDesc},
         ${data.itStandAprvExp},
