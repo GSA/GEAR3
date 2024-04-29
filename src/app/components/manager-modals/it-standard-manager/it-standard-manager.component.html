@@ -32,7 +32,7 @@
               <div class="row align-items-center">
 
                 <div class="form-group col">
-                  <label for="tcManufacturer">Manufacturer Name<span *ngIf="!isOldRecord(itStandard.OldName)" class="text-danger">*</span></label>
+                  <label for="tcManufacturer">Manufacturer Name</label>
                     <ng-select id="tcManufacturer" formControlName="tcManufacturer"
                       [items]="manufacturers"
                       [multiple]="false"
@@ -52,17 +52,10 @@
                         <small class="form-text text-muted">Loaded {{ manufacturersBuffer.length }} of {{ manufacturers.length }}</small>
                       </ng-template>
                     </ng-select>
-                    <div *ngIf="!isOldRecord(itStandard.OldName)">
-                      <div id="divIsValidManufacturer" *ngIf="!hasValue('tcManufacturer')">
-                        <div class="invalid-feedback" *ngIf="!isOldRecord(itStandard.OldName)">
-                          One Manufacturer Required
-                        </div>
-                      </div>
-                    </div>
                   </div>
 
                 <div class="form-group col" id="divProduct">
-                  <label for="tcSoftwareProduct">Software Product Name<span *ngIf="!isOldRecord(itStandard.OldName)" class="text-danger">*</span></label>
+                  <label for="tcSoftwareProduct">Software Product Name</label>
                     <ng-select id="tcSoftwareProduct" formControlName="tcSoftwareProduct"
                       [items]="softwareProducts"
                       [multiple]="false"
@@ -82,20 +75,13 @@
                         <small class="form-text text-muted">Loaded {{ softwareProductsBuffer.length }} of {{ softwareProducts.length }}</small>
                       </ng-template>
                     </ng-select>
-                    <div *ngIf="!isOldRecord(itStandard.OldName)">
-                      <div id="divIsValidSoftwareProduct" *ngIf="!hasValue('tcSoftwareProduct')">
-                        <div class="invalid-feedback" *ngIf="!isOldRecord(itStandard.OldName)">
-                          One Software Product Required
-                        </div>
-                      </div>
-                    </div>
                   </div>
               </div>
 
               <!-- Tech Catalog Information row 2 -->
               <div class="row align-items-center">
                 <div class="form-group col-3" id="divVersion">
-                  <label for="tcSoftwareVersion">Software Version<span *ngIf="!isOldRecord(itStandard.OldName)" class="text-danger">*</span></label>
+                  <label for="tcSoftwareVersion">Software Version</label>
                     <ng-select id="tcSoftwareVersion" formControlName="tcSoftwareVersion"
                       [items]="softwareVersions"
                       [multiple]="false"
@@ -115,17 +101,10 @@
                         <small class="form-text text-muted">Loaded {{ softwareVersionsBuffer.length }} of {{ softwareVersions.length }}</small>
                       </ng-template>
                     </ng-select>
-                    <div *ngIf="!isOldRecord(itStandard.OldName)">
-                      <div id="divIsValidSoftwareVersion" *ngIf="!hasValue('tcSoftwareVersion')">
-                        <div class="invalid-feedback" *ngIf="!isOldRecord(itStandard.OldName)">
-                          One Software Version Required
-                        </div>
-                      </div>
-                    </div>
                   </div>
 
                 <div class="form-group col-6" id="divRelease">
-                  <label for="tcSoftwareRelease">Software Release<span *ngIf="!isOldRecord(itStandard.OldName)" class="text-danger">*</span></label>
+                  <label for="tcSoftwareRelease">Software Release</label>
                     <ng-select id="tcSoftwareRelease" formControlName="tcSoftwareRelease"
                       [items]="softwareReleases"
                       [multiple]="false"
@@ -140,18 +119,11 @@
                       [virtualScroll]="true"
                       (scroll)="modalService.onScroll($event, softwareReleasesBuffer, bufferSize, softwareReleases, softwareReleasesLoading)"
                       (scrollToEnd)="modalService.onScrollToEnd(softwareReleasesBuffer, bufferSize, softwareReleases, softwareReleasesLoading)"
-                      (change)="setApprovalExpirationDate($event)">
+                      (change)="softwareReleaseChange($event)">
                       <ng-template ng-header-tmp>
                         <small class="form-text text-muted">Loaded {{ softwareReleasesBuffer.length }} of {{ softwareReleases.length }}</small>
                       </ng-template>
                     </ng-select>
-                    <div *ngIf="!isOldRecord(itStandard.OldName)">
-                      <div id="divIsValidSoftwareRelease" *ngIf="!hasValue('tcSoftwareRelease')">
-                        <div class="invalid-feedback" *ngIf="!isOldRecord(itStandard.OldName)">
-                          One Software Release Required
-                        </div>
-                      </div>
-                    </div>
                   </div>
 
                   <div class="form-group col-3" id="divEndOfLifeDate">
@@ -187,6 +159,12 @@
                   <label for="itStandName">Previously Known As</label>
                   <input type="text" class="form-control" id="itStandName"
                     formControlName="itStandName" placeholder="Not Applicable" [value]="itStandard.OldName" >
+                    <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'itStandName')">
+                      <div class="invalid-feedback" *ngIf="itStandardsForm.controls['itStandName'].errors.required">
+                        Previously Known As is Required
+                      </div>
+                    </div>
+
                 </div>
 
                 <div class="form-group col-4">

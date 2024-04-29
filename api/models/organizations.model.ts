@@ -1,5 +1,5 @@
 export class Organization {
-  public ID: number;
+  public ID: string;
   public Name: string;
   public DisplayName: string;
   public OrgSymbol: string;
@@ -7,4 +7,5 @@ export class Organization {
   public TwoLetterOrgSymbol: string;
   public TwoLetterOrgName: string;
   public Parent: string;
+  public Parent_ID: string;
 }
