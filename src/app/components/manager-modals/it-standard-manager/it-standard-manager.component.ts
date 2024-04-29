@@ -279,7 +279,7 @@ export class ItStandardManagerComponent implements OnInit {
         itStandGoldComment: this.itStandard.Gold_Image_Comment,
         itStandAprvExp: formatDate(this.aprvExpDate, 'yyyy-MM-dd', 'en-US'),
         itStandComments: this.itStandard.Comments,
-        itStandRefDocs: this.itStandard.ReferenceDocuments
+        itStandRefDocs: this.itStandard.ReferenceDocument
       });
     }
   };
