@@ -25,6 +25,11 @@
     "Reference": "NIST"
   },
   {
+    "Term": "Business System",
+    "Definition": "A business system represents a logical boundary for related assets (e.g., software, devices, and people) to accomplish one or more business capabilities. A business system is accessed by the end user via a graphical user interface (e.g. web application, desktop application, etc.).",
+    "Reference": "NIST"
+  },
+  {
     "Term": "Capability",
     "Definition": "A set of mutually reinforcing security controls implemented by technical, physical, and procedural means. Typically selected to achieve a common information security-related purpose.",
     "Reference": "NIST"
@@ -61,8 +66,13 @@
   },
   {
     "Term": "FISMA",
-    "Definition": "Federal Information Security Modernization Act. The FISMA report is used to track security artifacts on all Agency systems.",
+    "Definition": "Federal Information Security Modernization Act. FISMA requires each federal agency to develop, document, and implement an agency-wide program to provide information security for the information and systems that support the operations and assets of the agency.",
     "Reference": "NIST"
+  },
+  {
+    "Term": "FISMA System",
+    "Definition": "A FISMA system, also known as a FISMA container, information system, and/or system boundary, represents a logical boundary for which common security controls and policies are applied to a grouping of related assets (e.g., networks, devices, and people) to accomplish some mission or business objective. It is informed by security artifacts, such as a system security and privacy plan (SSPP). The FISMA container should also be thought of as the authorization boundary for an information system for which security controls and Federal Information Processing Standards (FIPS) impact ratings apply.",
+    "Reference": "CISA"
   },
   {
     "Term": "Framework",
