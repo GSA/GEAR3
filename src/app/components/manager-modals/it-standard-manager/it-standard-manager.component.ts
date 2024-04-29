@@ -117,7 +117,7 @@ export class ItStandardManagerComponent implements OnInit {
     this.disableSoftwareRelease();
 
     // disable the old IT Standard Name field
-    this.disableOldITStandardName();
+    //this.disableOldITStandardName();
 
     // disable the End of Life Date field
     this.disableEndOfLifeDate();
@@ -431,15 +431,27 @@ export class ItStandardManagerComponent implements OnInit {
         return false;
       } else {
         // set tcManufacturer to be required
-        this.itStandardsForm.controls[data].setValidators([Validators.required]);
+        //this.itStandardsForm.controls[data].setValidators([Validators.required]);
         return true;
       }
 
       // set tcManufacturer to be required
-      this.itStandardsForm.controls[data].setValidators([Validators.required]);
+      //this.itStandardsForm.controls[data].setValidators([Validators.required]);
       return true;
     } else {
       return false;
+    }
+  }
+
+  // handles the software release change event
+  softwareReleaseChange(data: any) {
+    this.setApprovalExpirationDate(data);
+
+    // disable or enable old name
+    if(data) {
+      this.disableOldITStandardName();
+    } else {
+      this.enableOldITStandardName();
     }
   }
 
@@ -711,9 +723,18 @@ export class ItStandardManagerComponent implements OnInit {
     $("#divRelease").addClass("disabledDivRelease");
   }
 
+  enableOldITStandardName(): void {
+    //console.log("Enabling Old Name");
+    $("#divOldName").removeClass("disabledDivOldName");
+  }
+
   disableOldITStandardName(): void {
     //console.log("Disabling Old Name");
     $("#divOldName").addClass("disabledDivOldName");
+
+    // reset the value of itStandName control
+    this.itStandardsForm.controls['itStandName'].setValue("");
+
   }
 
   disableEndOfLifeDate(): void {

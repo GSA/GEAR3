@@ -105,8 +105,9 @@ exports.update = (req, res) => {
 
       var query = `SET FOREIGN_KEY_CHECKS=0;
         UPDATE obj_technology
-        SET `+ //Keyname                       = '${data.itStandName}',
-          `obj_technology_status_Id        = ${data.itStandStatus},
+        SET  ${(!data.tcSoftwareReleaseName || data.tcSoftwareReleaseName === 'NULL') ?
+        "Keyname = '" + data.itStandName + "', " : ""}
+          obj_technology_status_Id        = ${data.itStandStatus},
           Description                     = ${data.itStandDesc},
           obj_standard_type_Id            = ${data.itStandType},
           obj_508_compliance_status_Id    = ${data.itStand508},
@@ -209,8 +210,9 @@ exports.create = (req, res) => {
         softwareVersionName,
         softwareReleaseName,
         endOfLifeDate) VALUES (
-        null,`+//'${data.itStandName}',
-        `${data.itStandDesc},
+        ${(!data.tcSoftwareReleaseName || data.tcSoftwareReleaseName !== 'NULL') ?
+          "'" + data.itStandName + "'" : null},
+        ${data.itStandDesc},
         ${data.itStandAprvExp},
         '${data.itStandVendorOrg}',
         '${data.itStandMyView}',
