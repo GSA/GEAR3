@@ -272,7 +272,7 @@ export class ItStandardManagerComponent implements OnInit {
         itStandAtteLink: this.itStandard.attestation_link,
         itStandFedramp: fedramp,
         itStandOpenSource: openSource,
-        itStandRITM: this.itStandard.RITM,
+        itStandRITM: this.itStandard.RITM === 'null' ? '' : this.itStandard.RITM,
         itStandVendorOrg: this.itStandard.Vendor_Standard_Organization,
         itStandDeployment: this.sharedService.findInArray(this.deploymentTypes, 'Name', this.itStandard.DeploymentType),
         itStandGoldImg: goldImg,

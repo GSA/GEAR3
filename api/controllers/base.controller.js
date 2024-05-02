@@ -98,6 +98,12 @@ exports.emptyTextFieldHandler = (content) => {
   else return `'${content}'`;
 };
 
+exports.setEmptyTextFieldHandler = (content) => {
+  if (!content) return '';
+  else return `'${content}'`;
+};
+
+
 /* **** Google API ****
 All this needs to be refactored as to not be so redundant*/
 exports.googleMain = (response, method, sheetID, dataRange, requester, key = null) => {

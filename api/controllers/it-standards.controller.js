@@ -101,6 +101,8 @@ exports.update = (req, res) => {
       data.tcSoftwareReleaseName = ctrl.emptyTextFieldHandler(data.tcSoftwareReleaseName);
       data.tcEndOfLifeDate = ctrl.emptyTextFieldHandler(data.tcEndOfLifeDate);
 
+      data.itStandRITM = ctrl.setEmptyTextFieldHandler(data.itStandRITM);
+
       const endOfLifeDateFragment = getEolFragment(data.tcEndOfLifeDate);
 
       var query = `SET FOREIGN_KEY_CHECKS=0;
@@ -177,6 +179,8 @@ exports.create = (req, res) => {
       data.tcSoftwareVersionName = ctrl.emptyTextFieldHandler(data.tcSoftwareVersionName);
       data.tcSoftwareReleaseName = ctrl.emptyTextFieldHandler(data.tcSoftwareReleaseName);
       data.tcEndOfLifeDate = ctrl.emptyTextFieldHandler(data.tcEndOfLifeDate);
+
+      data.itStandRITM = ctrl.setEmptyTextFieldHandler(data.itStandRITM);
 
       const endOfLifeDateFragment = getEolFragment(data.tcEndOfLifeDate);
 
