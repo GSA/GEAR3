@@ -43,6 +43,7 @@ import { GearModelComponent } from './views/architecture/gear-model/gear-model.c
 import { Title } from '@angular/platform-browser';
 import { FormsComponent } from './views/main/forms-glossary/forms/forms.component';
 import { GlossaryComponent } from './views/main/forms-glossary/glossary/glossary.component';
+import { FeedbackQualitricsModalComponent } from './components/modals/feedback-qualitrics-modal/feedback-qualitrics-modal.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, title: 'Home' },
@@ -80,6 +81,11 @@ const routes: Routes = [
     path: 'capabilities_model/:capID',
     component: CapabilitiesModelComponent,
     title: 'Capability Model',
+  },
+  {
+    path: 'feedback_modal',
+    component: FeedbackQualitricsModalComponent,
+    title: 'Feedback',
   },
   {
     path: 'capabilities',
