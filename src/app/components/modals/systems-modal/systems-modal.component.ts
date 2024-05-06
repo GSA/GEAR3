@@ -562,21 +562,37 @@ sysWebsitesColumnDefs: any[] = [
 
     $(document).ready( function() {
       // Method to handle click events on the Related Records table
-      $('#systemRecTable').on('click-row.bs.table', function (e, row) {
-        // Hide First Modal before showing new modal
-        $('#systemDetail').modal('hide');
-        self.tableService.recordsTableClick(row);
-      }.bind(this)
-    );
+      $('#systemRecTable')
+      .on('click-row.bs.table', 
+        function (e, row) {
+          // Hide First Modal before showing new modal
+          $('#systemDetail').modal('hide');
+          self.tableService.recordsTableClick(row);
+        }.bind(this)
+      )
+      .on('post-body.bs.table', 
+        function () {
+          const NO_REC_TXT = "Contact Records Management (records@gsa.gov) for a more detailed analysis of records associated with this system.";
+            
+          const recPattern = /(No matching records found)(\s*[\n\r]+\s*Domain Office)/;
 
-    // Method to handle click events on the Related Websites table
-    $('#systemWebsitesTable').on('click-row.bs.table', function (e, row) {
-      // Hide First Modal before showing new modal
-      $('#systemDetail').modal('hide');
-      self.tableService.websitesTableClick(row);
-      }.bind(this)
-    );
-  });
+          const tableText = $(this).text();
+          if (recPattern.test(tableText)) {
+            $('#systemRecTable').text(NO_REC_TXT);          
+          }
+        }.bind(this)
+      );
+
+	    // Method to handle click events on the Related Websites table
+      $('#systemWebsitesTable')
+	    .on('click-row.bs.table', 
+        function (e, row) {
+          // Hide First Modal before showing new modal
+          $('#systemDetail').modal('hide');
+          self.tableService.websitesTableClick(row);
+        }.bind(this)
+      );
+    });
 
     $('#subSysTable').bootstrapTable($.extend(this.tableService.relSysTableOptions, {
       columns: this.tableService.relSysColumnDefs,
