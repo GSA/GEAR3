@@ -100,7 +100,7 @@ exports.emptyTextFieldHandler = (content) => {
 
 exports.setEmptyTextFieldHandler = (content) => {
   if (!content) return '';
-  else return `'${content}'`;
+  else return content;
 };
 
 
