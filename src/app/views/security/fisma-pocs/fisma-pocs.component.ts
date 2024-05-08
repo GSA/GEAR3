@@ -115,6 +115,7 @@ export class FismaPocsComponent implements OnInit {
       $('#fismaPOCTable').bootstrapTable('filterBy', {
         Status: 'Active',
         SystemLevel: 'System',
+        Reportable: 'Yes',
       });
 
       // Method to handle click events on the FISMA POC table  
