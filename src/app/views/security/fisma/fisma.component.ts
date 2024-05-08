@@ -259,6 +259,7 @@ export class FismaComponent implements OnInit {
     $('#fismaTable').bootstrapTable('filterBy', {
       Status: 'Active',
       SystemLevel: 'System',
+      Reportable: 'Yes',
     });
     this.sharedService.enableStickyHeader("fismaTable");
   }
