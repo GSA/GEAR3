@@ -6,7 +6,7 @@ export class ITStandards {
   public Vendor_Standard_Organization: string = null;
   public Available_through_Myview: string = null;
   public Gold_Image: string = null;
-  public attestation_required: string = null;
+  public attestation_required: number = null;
   public fedramp: string = null;
   public open_source: string = null;
   public RITM: string = null;
