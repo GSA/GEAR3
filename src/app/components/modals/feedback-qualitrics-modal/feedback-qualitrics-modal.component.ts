@@ -19,7 +19,7 @@ export class FeedbackQualitricsModalComponent implements OnInit {
     script.type = `text/javascript`;
     script.innerHTML = `
     (function(){var g=function(e,h,f,g){
-  
+
       this.get=function(a){for(var a=a+"=",c=document.cookie.split(";"),b=0,e=c.length;b<e;b++){for(var d=c[b];" "==d.charAt(0);)d=d.substring(1,d.length);if(0==d.indexOf(a))return d.substring(a.length,d.length)}return null};
       
       this.set=function(a,c){var b="",b=new Date;b.setTime(b.getTime()+6048E5);b="; expires="+b.toGMTString();document.cookie=a+"="+c+b+"; path=/; "};
@@ -30,7 +30,7 @@ export class FeedbackQualitricsModalComponent implements OnInit {
       
       this.start=function(){var t=this;"complete"!==document.readyState?window.addEventListener?window.addEventListener("load",function(){t.go()},!1):window.attachEvent&&window.attachEvent("onload",function(){t.go()}):t.go()};};
       
-      try{(new g(100,"r","QSI_S_ZN_cGDIt3lxBdkTjee","https://zncgdit3lxbdktjee-cemgsa.gov1.npm/SIE/?Q_ZID=ZN_cGDIt3lxBdkTjee")).start()}catch(i){}})();
+      try{(new g(100,"r","QSI_S_ZN_cGDIt3lxBdkTjee","https://zncgdit3lxbdktjee-cemgsa.gov1.siteintercept.qualtrics.com/SIE/?Q_ZID=ZN_cGDIt3lxBdkTjee")).start()}catch(i){}})();
     `;
 
     this._renderer2.appendChild(this._document.body, script);
