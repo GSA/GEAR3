@@ -1,0 +1,40 @@
+@import "../../../../src/assets/lib/variables";
+
+.dx-feedback-button {
+    position: fixed;
+    bottom: 186px;
+    right: 0px;
+    width: 32px;
+    margin-right: 0px;
+    padding: 0.75rem 0.6em;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    height: 88px;
+}
+.dx-feedback-button-text {
+    position: relative;
+    font-size: 15px;
+    display: flex;
+    flex-direction: row;
+    writing-mode: vertical-rl;
+    writing-mode: tb-rl;
+    transform: rotateZ(180deg);
+}
+.dx-textarea {
+    max-width: 408px;
+    width: 100%;
+}
+.dx-success-icon {
+    color: $dx-color-green-success;
+    margin-right: 9px;
+}
+.dx-feedback-success-message {
+    text-align: center;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    span {
+        font-weight: 700;
+    }
+}

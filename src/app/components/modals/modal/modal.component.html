@@ -1,0 +1,85 @@
+<div *ngIf="modalData" 
+  class="usa-modal-wrapper is-hidden" 
+  role="dialog" 
+  [attr.id]="modalData.modalID" 
+  [attr.aria-labelledby]="headingID" 
+  [attr.aria-describedby]="descriptionID"
+  #modalFormTemplate
+  >
+  <div class="usa-modal-overlay">
+    <div class="margin-y-3">
+      <div class="dx-modal usa-modal" 
+        [ngClass]="{'usa-modal--lg' : modalData.size === 'large',
+                    'usa-modal--custom' : modalData.size === 'custom' }"
+        [attr.id]="modalData.modalID"
+        [attr.aria-labelledby]="headingID" 
+        [attr.aria-describedby]="descriptionID"
+        tabindex="-1">
+        <div class="usa-modal__content" [ngClass]="{'dx-modal__content--no-button' : modalData.modalType === 'actionForced'}">
+          <button 
+            type="button" 
+            *ngIf="modalData.modalType !== 'actionForced'" 
+            class="usa-modal__close dx-modal__close" 
+            aria-label="Close this window" 
+            data-close-modal
+            (click)="resetModal($event)"
+            tabindex="0"> 
+            <svg class="usa-icon" aria-hidden="true" focusable="false" role="img">
+              <use xlink:href="/assets/uswds/img/sprite.svg#close" fill="#1a4480"></use>
+            </svg>
+          </button>
+          <h2 class="dx-modal__content dx-h2 dx-modal__heading usa-modal__heading" [attr.id]="headingID"  [innerHTML]="modalData.modalHeader">
+          </h2>
+          <div class="dx-modal__main usa-modal__main"  [ngClass]="{'dx-modal__main--lg' : modalData.size === 'large'}" >
+            <div class="usa-prose margin-left-neg-105" *ngIf="modalData.modalText">
+              <p [attr.id]="descriptionID" [innerHTML]="modalData.modalText | formatURL: baseURL | sanitizeHTML"></p>
+            </div>
+            <ng-container *ngTemplateOutlet="modalForm;"></ng-container>
+            <div class="usa-modal__footer" *ngIf="!modalData.hideFooter">
+              <ul class="usa-button-group flex-justify-center" *ngIf="modalData.modalType === 'content'">
+                <li class="usa-button-group__item">
+                  <button 
+                    type="button" 
+                    class="dx-button dx-button--outline padding-105 text-center" 
+                    data-close-modal
+                    (click)="buttonClick('close')">
+                    Close
+                  </button>
+                </li>
+              </ul>
+              <ul class="usa-button-group flex-justify-center padding-top-2" *ngIf="modalData.modalType !== 'content'">
+                <li class="usa-button-group__item" *ngIf="modalData.secondaryButton">
+                  <button 
+                    [attr.aria-disabled]="secondaryButtonDisabled ? true : false"
+                    type="button" 
+                    (click)="buttonClick($event.target.value)" 
+                    type="button" 
+                    [attr.value]="modalData.secondaryButton"
+                    class="dx-button dx-button--outline padding-105 text-center" 
+                    data-close-modal
+                    [disabled]="secondaryButtonDisabled"
+                    tabindex="0">
+                    {{modalData.secondaryButton}}
+                  </button>
+                </li>
+                <li class="usa-button-group__item dx-modal__button" *ngIf="modalData.primaryButton">
+                  <button 
+                    [attr.aria-disabled]="primaryButtonDisabled ? true : false" 
+                    (click)="buttonClick($event.target.value)" 
+                    type="button" 
+                    [attr.value]="modalData.primaryButton"
+                    class="dx-button" 
+                    data-close-modal
+                    [disabled]="primaryButtonDisabled"
+                    tabindex="0">
+                    {{modalData.primaryButton}}
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

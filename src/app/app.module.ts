@@ -76,6 +76,8 @@ import { Globals } from './common/globals';
 import { YesNoPipe } from "./pipes/yesno.pipe";
 import { SkipFocusPiechartDirective } from '@common/skip-focus-piechart.directive';
 import { FeedbackQualitricsModalComponent } from './components/modals/feedback-qualitrics-modal/feedback-qualitrics-modal.component';
+import {FeedbackComponent} from './components/modals/feedback/feedback.component';
+import { ModalComponent } from './components/modals/modal/modal.component';
 
 @NgModule({
   declarations: [
@@ -132,7 +134,9 @@ import { FeedbackQualitricsModalComponent } from './components/modals/feedback-q
     YesNoPipe,
 
     SkipFocusPiechartDirective,
-      FeedbackQualitricsModalComponent,
+    FeedbackQualitricsModalComponent,
+    FeedbackComponent,
+    ModalComponent,
   ],
   imports: [
     AppRoutingModule,

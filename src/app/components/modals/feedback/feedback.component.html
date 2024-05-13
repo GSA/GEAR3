@@ -1,0 +1,49 @@
+<button 
+    type="button"
+    role="button"
+    [attr.aria-controls]="modalData.modalID" 
+    data-open-modal
+    class="dx-button dx-button--secondary-1 dx-feedback-button" 
+    aria-label="Please share your feedback.">
+    <div class="dx-feedback-button-text">Feedback</div>
+</button>
+<ng-template #modalFormTemplate>
+    <form 
+    *ngIf="feedbackVisible"
+    class="dx-feedback-form margin-left-neg-105"
+    name="feedbackForm">
+        <div class="margin-bottom-05">
+        <label for="feedback">Feedback</label>
+        </div>
+        <div class="margin-bottom-2">
+            <textarea 
+                class="dx-textarea" 
+                name="message" 
+                rows="6" 
+                cols="55" 
+                [(ngModel)]="feedbackInput">
+            </textarea>
+        </div>
+        <div class="text-center">
+            <button 
+                [attr.aria-disabled]="!feedbackInput ? true : false" 
+                type="submit" 
+                class="dx-button dx-button--secondary-1" 
+                [disabled]="!feedbackInput"
+                (click)="sendData()">
+                Submit
+            </button>
+        </div>
+    </form>
+  <!-- Success message -->
+  <div *ngIf ="successAlert" class="dx-feedback-succes--success">
+    <div class="dx-feedback-success-message">
+        <i class="fas fa-check-circle dx-success-icon"></i>
+        <span>Success!</span> Thank you for your feedback.
+    </div>
+  </div>
+</ng-template>
+<lib-modal
+  [modalData]="modalData"
+  [modalForm]="modalFormTemplate">
+</lib-modal>
