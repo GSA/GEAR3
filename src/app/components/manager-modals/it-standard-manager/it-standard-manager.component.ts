@@ -33,7 +33,7 @@ export class ItStandardManagerComponent implements OnInit {
     itStandCategory: new FormControl(null, [Validators.required]),
     itStand508: new FormControl(),
     itStandMyView: new FormControl(),
-    itStandReqAtte: new FormControl(),
+    itStandReqAtte: new FormControl(null),
     itStandAtteLink: new FormControl(),
     itStandFedramp: new FormControl(),
     itStandOpenSource: new FormControl(),
@@ -59,6 +59,10 @@ export class ItStandardManagerComponent implements OnInit {
   manufacturers: any = [];
   manufacturersLoading = false;
   manufacturersBuffer = [];
+  
+  itStandReqAtteRefData: any = [];
+  itStandReqAtteLoading = false;
+  itStandReqAtteBuffer = [];
 
   softwareProducts: any = [];
   softwareProductsLoading = false;
@@ -110,6 +114,15 @@ export class ItStandardManagerComponent implements OnInit {
       this.manufacturers = data;
       this.manufacturersBuffer = this.manufacturers.slice(0, this.bufferSize);
       this.manufacturersLoading = false;
+    });
+
+    // Populate Attestation Required Options
+    this.itStandReqAtteLoading = true;
+    this.apiService.getAttestationStatusTypes().subscribe((data: any[]) => {
+      data.forEach(item => item.ID = item.ID.toString())
+      this.itStandReqAtteRefData = data;
+      this.itStandReqAtteBuffer = this.itStandReqAtteRefData.slice(0, this.bufferSize);
+      this.itStandReqAtteLoading = false;
     });
 
     this.disableSoftwareProduct();
@@ -241,7 +254,6 @@ export class ItStandardManagerComponent implements OnInit {
       // Adjust Gold Image for rendering
       var goldImg = this.itStandard.Gold_Image === 'T'
 
-      var attestationRequired = this.itStandard.attestation_required === 'T'
       var fedramp = this.itStandard.fedramp === 'T'
       var openSource = this.itStandard.open_source === 'T'
 
@@ -268,7 +280,7 @@ export class ItStandardManagerComponent implements OnInit {
         itStandCategory: categoryIDs,
         itStand508: this.sharedService.findInArray(this.compliance, 'Name', this.itStandard.ComplianceStatus),
         itStandMyView: myView,
-        itStandReqAtte: attestationRequired,
+        itStandReqAtte: this.sharedService.findInArray(this.itStandReqAtteRefData, 'Name', this.itStandard.attestation_required),
         itStandAtteLink: this.itStandard.attestation_link,
         itStandFedramp: fedramp,
         itStandOpenSource: openSource,
@@ -298,8 +310,6 @@ export class ItStandardManagerComponent implements OnInit {
       if (this.itStandardsForm.value.itStandGoldImg) this.itStandardsForm.value.itStandGoldImg = 'T';
       else this.itStandardsForm.value.itStandGoldImg = 'F';
 
-      if (this.itStandardsForm.value.itStandReqAtte) this.itStandardsForm.value.itStandReqAtte = 'T';
-      else this.itStandardsForm.value.itStandReqAtte = 'F';
 
       if (this.itStandardsForm.value.itStandFedramp) this.itStandardsForm.value.itStandFedramp = 'T';
       else this.itStandardsForm.value.itStandFedramp = 'F';
@@ -367,6 +377,12 @@ export class ItStandardManagerComponent implements OnInit {
       if (this.endOfLifeDate) {
         this.itStandardsForm.value.tcEndOfLifeDate = formatDate(this.endOfLifeDate, 'yyyy-MM-dd', 'en-US');
         //console.log("EndOfLifeDate: ", this.itStandardsForm.value.tcEndOfLifeDate);
+      }
+
+      // add Attestation Status to payload
+      if (this.itStandardsForm.value.itStandReqAtte && isNaN(this.itStandardsForm.value.itStandReqAtte)) {
+        this.itStandardsForm.value.itStandReqAtte = this.sharedService.findInArray(this.itStandReqAtteRefData, 'Name', this.itStandardsForm.value.itStandReqAtte, 'ID');
+        console.log("AttestationStatus: ", this.itStandardsForm.value.itStandReqAtte);
       }
 
       // Send data to database

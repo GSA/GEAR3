@@ -7,7 +7,7 @@ SELECT
   tech.Vendor_Standard_Organization,
   tech.Available_through_Myview,
   tech.Gold_Image,
-  tech.attestation_required,
+  obj_attestation_status_type.Keyname                       AS attestation_required,
   tech.fedramp,
   tech.open_source,
   tech.RITM,
@@ -49,3 +49,4 @@ LEFT JOIN obj_organization      AS org        ON poc.OrgCode = org.Org_Symbol
 
 LEFT JOIN zk_technology_standard_category     ON tech.Id = zk_technology_standard_category.obj_technology_Id
 LEFT JOIN obj_standard_category               ON zk_technology_standard_category.obj_standard_category_Id = obj_standard_category.Id
+LEFT JOIN obj_attestation_status_type         ON tech.attestation_required = obj_attestation_status_type.Id
