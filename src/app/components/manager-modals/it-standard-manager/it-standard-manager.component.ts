@@ -197,7 +197,8 @@ export class ItStandardManagerComponent implements OnInit {
       // Set Approval Expiration Date on Date Picker to +2 years from current date
       $('#itStandAprvExp').datepicker('setDate', twoYearsLater);
       this.itStandardsForm.patchValue({
-        itStandStatus: 2
+        itStandStatus: 2,
+        itStandReqAtte: "1"
       });
     } else {
 
