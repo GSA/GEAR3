@@ -120,15 +120,15 @@
                       <td>{{ fisma.RenewalDate | date : "longDate" }}</td>
                     </tr>
                     <tr>
+                      <td><i class="fas fa-layer-group"></i>Fed or Contractor System</td>
+                      <td>{{ fisma.FedContractorLoc }}</td>
+                    </tr>
+                    <tr>
                       <td><i class="fa fa-door-open"></i>Responsible Org</td>
                       <td>{{ fisma.RespOrg }}</td>
                     </tr>
                     <tr>
-                      <td><i class="fas fa-layer-group"></i>System Level</td>
-                      <td>{{ fisma.SystemLevel }}</td>
-                    </tr>
-                    <tr>
-                      <td><i class="fa fa-certificate"></i>Type of Service</td>
+                      <td><i class="fa fa-certificate"></i>Cloud Service Type</td>
                       <td>{{ fisma.ServiceType }}</td>
                     </tr>
                   </tbody>
