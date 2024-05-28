@@ -153,6 +153,12 @@ export class SystemsComponent implements OnInit {
       visible: false,
     },
     {
+      field: 'ServiceType',
+      title: 'Cloud Service Type',
+      sortable: true,
+      visible: false,
+    },
+    {
       field: 'AO',
       title: 'Authorizing Official',
       sortable: true,

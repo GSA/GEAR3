@@ -69,12 +69,6 @@ export class FismaComponent implements OnInit {
       sortable: true,
     },
     {
-      field: 'SystemLevel',
-      title: 'System Level',
-      sortable: true,
-      visible: false,
-    },
-    {
       field: 'Status',
       title: 'Status',
       sortable: true,
@@ -151,11 +145,23 @@ export class FismaComponent implements OnInit {
       visible: false,
     },
     {
+      field: 'FedContractorLoc',
+      title: 'Fed or Contractor System',
+      sortable: true,
+      visible: false,
+    },
+    {
       field: 'RespOrg',
       title: 'Responsible Org',
       sortable: true,
       visible: false,
-    } /* , {
+    },
+    {
+      field: 'ServiceType',
+      title: 'Cloud Service Type',
+      sortable: true,
+      visible: false,
+    }, /* , {
     field: 'BusOrg',
     title: 'Business Org',
     sortable: true,

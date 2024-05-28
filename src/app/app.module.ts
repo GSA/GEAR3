@@ -75,6 +75,7 @@ import { Globals } from './common/globals';
 
 import { YesNoPipe } from "./pipes/yesno.pipe";
 import { SkipFocusPiechartDirective } from '@common/skip-focus-piechart.directive';
+import { BannerComponent } from './components/banner/banner.component';
 
 @NgModule({
   declarations: [
@@ -131,6 +132,7 @@ import { SkipFocusPiechartDirective } from '@common/skip-focus-piechart.directiv
     YesNoPipe,
 
     SkipFocusPiechartDirective,
+      BannerComponent,
   ],
   imports: [
     AppRoutingModule,

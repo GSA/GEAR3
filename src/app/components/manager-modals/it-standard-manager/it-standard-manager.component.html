@@ -173,7 +173,7 @@
                     [items]="POCs"
                     [multiple]="true"
                     appendTo="#itStandardsManager"
-                    bindLabel="Name"
+                    bindLabel="NameEmail"
                     bindValue="SamAccountName"
                     clearAllText="Clear All"
                     [clearSearchOnAdd]="true"
@@ -291,13 +291,11 @@
                   <div class="row align-items-center">
                     <div class="form-group col-3 text-center mb-0">
                       <label for="itStandReqAtte">Attestation Required</label>
-                      <div id="itStandReqAtte" class="custom-control custom-switch">
-                        <input type="checkbox" class="custom-control-input" id="itStandReqAtteSwitch"
-                          formControlName="itStandReqAtte" [checked]="itStandard.attestation_required === 'T'">
-                        <label class="custom-control-label" for="itStandReqAtteSwitch">True</label>
-                      </div>
+                      <select class="form-control" id="itStandReqAtte" formControlName="itStandReqAtte">
+                        <option *ngFor="let attestationStatus of itStandReqAtteRefData" [value]="attestationStatus.ID"
+                          [selected]="attestationStatus.Name === itStandard.itStandReqAtte">{{ attestationStatus.Name }}</option>
+                      </select>
                     </div>
-
                     <div class="form-group col-9">
                       <label for="itStandAtteLink">Attestation Link</label>
                       <input type="text" class="form-control" id="itStandGoldLink"

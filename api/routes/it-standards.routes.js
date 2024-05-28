@@ -39,4 +39,7 @@ router.route('/statuses')
 router.route('/types')
   .get(itsCtrl.findTypes);
 
+router.route('/attestation_status_types')
+  .get(itsCtrl.findAttestationStatusTypes);
+
 module.exports = router;

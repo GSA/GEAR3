@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { environment } from '@environments/environment';
@@ -29,7 +29,8 @@ export class TopNavbarComponent implements AfterViewInit {
     private apiService: ApiService,
     private router: Router,
     public sharedService: SharedService,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     if (environment.name !== 'Production') {
       this.envName = `<span> - ${environment.name.toUpperCase()} ENVIRONMENT</span>`;
@@ -45,7 +46,8 @@ export class TopNavbarComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.moreLinksVisibleStatus = this.isMoreLinksVisible();
-    this.showNavContent = !this.moreLinksVisibleStatus
+    this.showNavContent = !this.moreLinksVisibleStatus;
+    this.changeDetectorRef.detectChanges();
   }
 
   expandTopNav() {

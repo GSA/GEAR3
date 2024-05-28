@@ -287,6 +287,12 @@ exports.findTypes = (req, res) => {
   res = ctrl.sendQuery(query, 'IT Standard Types', res); //removed sendQuery_cowboy reference
 };
 
+exports.findAttestationStatusTypes = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_attestation-status_types.sql')).toString();
+
+  res = ctrl.sendQuery(query, 'Attestation Status Types', res); //removed sendQuery_cowboy reference
+};
+
 
 getEolFragment = (inputDate) => {
   if (!inputDate || inputDate.toString().toUpperCase() === 'NULL' ) {

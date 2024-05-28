@@ -184,8 +184,7 @@ export class ItStandardsComponent implements OnInit {
     field: 'attestation_required',
     title: 'Attestation Required',
     sortable: true,
-    visible: false,
-    formatter: this.YesNo
+    visible: false
   }, {
     field: 'attestation_link',
     title: 'Attestation Link',

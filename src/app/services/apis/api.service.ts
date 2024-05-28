@@ -40,6 +40,7 @@ import { Manufacturer } from '@api/models/tc-manufacturer.model';
 import { SoftwareProduct } from '@api/models/tc-softwareproduct.model';
 import { SoftwareVersion } from '@api/models/tc-softwareversion.model';
 import { SoftwareRelease } from '@api/models/tc-softwarerelease.model';
+import { AttestationStatus } from '@api/models/attestation-status.model';
 
 @Injectable({
   providedIn: 'root',
@@ -755,6 +756,16 @@ export class ApiService {
       .pipe(
         catchError(
           this.handleError<Manufacturer[]>('GET Tech Catalog Manufacturers', [])
+        )
+      );
+  }
+
+  public getAttestationStatusTypes(): Observable<AttestationStatus[]> {
+    return this.http
+      .get<AttestationStatus[]>(this.techUrl + '/attestation_status_types')
+      .pipe(
+        catchError(
+          this.handleError<AttestationStatus[]>('GET Tech Catalog Attestation Status Types', [])
         )
       );
   }
