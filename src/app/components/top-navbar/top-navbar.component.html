@@ -1,99 +1,104 @@
-<nav class="navbar navbar-expand-xl2 fixed-top navbar-dark bg-primary shadow-lg p-1" id="topNav" role="navigation">
-  <a class="navbar-brand ml-3" routerLink="/">
-    <i class="fas fa-cogs fa-lg"></i>
-    GSA EA Analytics & Reporting (GEAR)
-    <span [innerHTML]="envName" style="color: var(--pink)"></span>
-    <span *ngIf="sharedService.loggedIn" style="color: red">
-      **GEAR Manager Mode**</span>
-  </a>
+<div class="fixed-top">
+  <app-banner></app-banner>
+  <nav class="navbar navbar-expand-xl2  navbar-dark bg-primary shadow-lg p-1" id="topNav" role="navigation">
+    <a class="navbar-brand ml-3" routerLink="/">
+      <i class="fas fa-cogs fa-lg"></i>
+      GSA EA Analytics & Reporting (GEAR)
+      <span [innerHTML]="envName" style="color: var(--pink)"></span>
+      <span *ngIf="sharedService.loggedIn" style="color: red">
+        **GEAR Manager Mode**</span>
+    </a>
 
-  <!-- Global Search -->
-  <div class="d-flex flex-nowrap justify-content-center">
-    <form class="form-inline" role="search">
-      <label for="globalSearch" class="sr-only sr-only-focusable">Global Search</label>
-      <input type="search" id="globalSearch" name="globalSearchField" [(ngModel)]="searchKW" class="form-control mr-2"
-        placeholder="Global Search" (keydown)="globalSearch($event)" />
-      <!-- Weird bug where if button isn't here, hitting enter will not execute and update search table at first. Leaving button here -->
-      <button name="globalSearchBttn" aria-label="Global Search Button" class="btn btn-light form-control"
-        (click)="globalSearch($event)" hidden>
-        <i class="fas fa-search fa-lg"></i>
-      </button>
-    </form>
-  </div>
+    <!-- Global Search -->
+    <div class="d-flex flex-nowrap justify-content-center">
+      <form class="form-inline" role="search">
+        <label for="globalSearch" class="sr-only sr-only-focusable">Global Search</label>
+        <input type="search" id="globalSearch" name="globalSearchField" [(ngModel)]="searchKW" class="form-control mr-2"
+          placeholder="Global Search" (keydown)="globalSearch($event)" />
+        <!-- Weird bug where if button isn't here, hitting enter will not execute and update search table at first. Leaving button here -->
+        <button name="globalSearchBttn" aria-label="Global Search Button" class="btn btn-light form-control"
+          (click)="globalSearch($event)" hidden>
+          <i class="fas fa-search fa-lg"></i>
+        </button>
+      </form>
+    </div>
 
-  <button #moreLinksBtn (click)="toggleTopNavBttn()" class="navbar-toggler" type="button"
-    aria-controls="navbarSupportedContent" [attr.aria-expanded]="moreLinksVisibleStatus && showNavContent" aria-label="More Links">
-    More Links <i id="topNavToggle" class="fas fa-angle-down ml-2 rotate"></i>
-  </button>
+    <button #moreLinksBtn (click)="toggleTopNavBttn()" class="navbar-toggler" type="button"
+      aria-controls="navbarSupportedContent" [attr.aria-expanded]="moreLinksVisibleStatus && showNavContent"
+      aria-label="More Links">
+      More Links <i id="topNavToggle" class="fas fa-angle-down ml-2 rotate"></i>
+    </button>
 
-  <div *ngIf="showNavContent" #navPanel class="navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav ml-auto align-items-center">
-      <li class="nav-item">
-        <a id="aboutBttn" class="nav-link" routerLink="/about" (click)="processTopNavLink()">About</a>
-      </li>
+    <div *ngIf="showNavContent" #navPanel class="navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto align-items-center">
+        <li class="nav-item">
+          <a id="aboutBttn" class="nav-link" routerLink="/about" (click)="processTopNavLink()">About</a>
+        </li>
 
-      <li class="nav-item">
-        <div class="dropdown show">
-          <a id="gearNavigationDropdown" class="btn btn-secondary btn-sm dropdown-toggle" href="#" role="button"
-            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">GEAR Navigation
-          </a>
-          <div #dropdownMenu class="dropdown-menu gearNavDropdown" aria-labelledby="gearNavigationDropdown">
-            <p class="dropdown-header"><b>IT Strategy</b></p>
-            <!--
+        <li class="nav-item">
+          <div class="dropdown show">
+            <a id="gearNavigationDropdown" class="btn btn-secondary btn-sm dropdown-toggle" href="#" role="button"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">GEAR Navigation
+            </a>
+            <div #dropdownMenu class="dropdown-menu gearNavDropdown" aria-labelledby="gearNavigationDropdown">
+              <p class="dropdown-header"><b>IT Strategy</b></p>
+              <!--
               <a id="strategyBttn" class="dropdown-item" routerLink="/strategic_framework"
                 aria-label="Strategic Framework"
                 >Strategic Framework</a
               >
               -->
-            <a id="investmentBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/investments"
-              aria-label="IT Investments">IT
-              Investments
-            </a>
-            <a class="dropdown-item" (click)="processTopNavLink()"
-              href="https://insite.gsa.gov/directives-library/staff-offices?staff_office=I" target="_blank" rel="noopener">IT Policies
-            </a>
-            <p class="dropdown-header"><b>GSA Enterprise</b></p>
-            <a id="capabilityModelBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/capabilities_model"
-              aria-label="Business Capability Model">Business Capability Model
-            </a>
-            <a id="capabilityListBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/capabilities"
-              aria-label="Business Capability List">Business Capability List</a>
-            <a id="orgChartBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/org_chart"
-              aria-label="Organization Chart">Organization Chart
-            </a>
-            <a id="orgListBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/organizations"
-              aria-label="Organization List">Organization List
-            </a>
-            <a id="serviceListBttn" (click)="processTopNavLink()" class="dropdown-item"
-              href="/#/website_service_category" aria-label="Website Service Category List">Website Service Category
-              List
-            </a>
-            <p class="dropdown-header"><b>Business Systems</b></p>
-            <a id="systemsBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/systems"
-              aria-label="Business Systems & Subsystems">Busines System & Subsystems
-            </a>
-            <a id="timeReportBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/systems_TIME"
-              aria-label=" TIME Report"> TIME Report
-            </a>
-            <a id="recordsMgmtBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/records_mgmt"
-              aria-label="Records Management">Record Management</a>
-            <a id="websitesBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/websites"
-              aria-label="GSA Websites">GSA Websites
-            </a>
-            <p class="dropdown-header"><b>Security</b></p>
-            <a id="systemsBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/FISMA"
-              aria-label="FISMA Systems Inventory">FISMA Systems Inventory
-            </a>
-            <a id="systemsPOCBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/FISMA_POC"
-              aria-label="FISMA System POCs">FISMA System POCs
-            </a>
-            <a id="itStandardsBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/it_standards"
-              aria-label="IT Standards List">IT Standards List
-            </a>
-            <a class="dropdown-item" (click)="processTopNavLink()" href="https://sites.google.com/a/gsa.gov/it_standards/software-approvals#h.vioogtbleinq"
-              target="_blank" rel="noopener">IT Standards Approval Process
-            </a>
-            <!--
+              <a id="investmentBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/investments"
+                aria-label="IT Investments">IT
+                Investments
+              </a>
+              <a class="dropdown-item" (click)="processTopNavLink()"
+                href="https://insite.gsa.gov/directives-library/staff-offices?staff_office=I" target="_blank"
+                rel="noopener">IT Policies
+              </a>
+              <p class="dropdown-header"><b>GSA Enterprise</b></p>
+              <a id="capabilityModelBttn" (click)="processTopNavLink()" class="dropdown-item"
+                href="/#/capabilities_model" aria-label="Business Capability Model">Business Capability Model
+              </a>
+              <a id="capabilityListBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/capabilities"
+                aria-label="Business Capability List">Business Capability List</a>
+              <a id="orgChartBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/org_chart"
+                aria-label="Organization Chart">Organization Chart
+              </a>
+              <a id="orgListBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/organizations"
+                aria-label="Organization List">Organization List
+              </a>
+              <a id="serviceListBttn" (click)="processTopNavLink()" class="dropdown-item"
+                href="/#/website_service_category" aria-label="Website Service Category List">Website Service Category
+                List
+              </a>
+              <p class="dropdown-header"><b>Business Systems</b></p>
+              <a id="systemsBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/systems"
+                aria-label="Business Systems & Subsystems">Busines System & Subsystems
+              </a>
+              <a id="timeReportBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/systems_TIME"
+                aria-label=" TIME Report"> TIME Report
+              </a>
+              <a id="recordsMgmtBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/records_mgmt"
+                aria-label="Records Management">Record Management</a>
+              <a id="websitesBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/websites"
+                aria-label="GSA Websites">GSA Websites
+              </a>
+              <p class="dropdown-header"><b>Security</b></p>
+              <a id="systemsBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/FISMA"
+                aria-label="FISMA Systems Inventory">FISMA Systems Inventory
+              </a>
+              <a id="systemsPOCBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/FISMA_POC"
+                aria-label="FISMA System POCs">FISMA System POCs
+              </a>
+              <a id="itStandardsBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/it_standards"
+                aria-label="IT Standards List">IT Standards List
+              </a>
+              <a class="dropdown-item" (click)="processTopNavLink()"
+                href="https://sites.google.com/a/gsa.gov/it_standards/software-approvals#h.vioogtbleinq" target="_blank"
+                rel="noopener">IT Standards Approval Process
+              </a>
+              <!--
               <a id="eaViewBttn" class="dropdown-item" href="/#/ea_view"
                   aria-label="EA View"
                   >EA View</a
@@ -103,40 +108,41 @@
                     >GEAR Model Diagram</a
               >
               -->
-            <a id="capabilityModelBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/capabilities_model"
-              aria-label="Business Capability Model">Business Capability Model
-            </a>
-            <a id="formsBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/forms"
-              aria-label="Access Forms">
-              Access Forms
-            </a>
-            <a id="glossaryBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/glossary"
-              aria-label="Glossary">
-              Glossary
-            </a>
+              <a id="capabilityModelBttn" (click)="processTopNavLink()" class="dropdown-item"
+                href="/#/capabilities_model" aria-label="Business Capability Model">Business Capability Model
+              </a>
+              <a id="formsBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/forms"
+                aria-label="Access Forms">
+                Access Forms
+              </a>
+              <a id="glossaryBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/glossary"
+                aria-label="Glossary">
+                Glossary
+              </a>
+            </div>
           </div>
-        </div>
-      </li>
+        </li>
 
-      <li class="nav-item">
-        <a id="assistTechBttn" (click)="processTopNavLink()" class="nav-link" routerLink="/assist_tech">Assistive
-          Technology</a>
-      </li>
+        <li class="nav-item">
+          <a id="assistTechBttn" (click)="processTopNavLink()" class="nav-link" routerLink="/assist_tech">Assistive
+            Technology</a>
+        </li>
 
-      <li class="nav-item">
-        <div class="dropdown show">
-          <a id="contactDropdown" class="btn btn-secondary btn-sm dropdown-toggle" href="#" role="button"
-            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Contact/Feedback</a>
-          <div #dropdownMenu class="dropdown-menu" aria-labelledby="contactDropdown">
-            <p class="dropdown-header"><b>Regarding IT Standards</b></p>
-            <a class="dropdown-item" href="https://mail.google.com/mail/?view=cm&fs=1&to=it-standards@gsa.gov"
-              target="_blank" rel="noopener">IT Standards</a>
-            <p class="dropdown-header"><b>Regarding GEAR/EA</b></p>
-            <a class="dropdown-item" href="https://mail.google.com/mail/?view=cm&fs=1&to=ea_planning@gsa.gov"
-              target="_blank" rel="noopener">EA Team</a>
+        <li class="nav-item">
+          <div class="dropdown show">
+            <a id="contactDropdown" class="btn btn-secondary btn-sm dropdown-toggle" href="#" role="button"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Contact/Feedback</a>
+            <div #dropdownMenu class="dropdown-menu" aria-labelledby="contactDropdown">
+              <p class="dropdown-header"><b>Regarding IT Standards</b></p>
+              <a class="dropdown-item" href="https://mail.google.com/mail/?view=cm&fs=1&to=it-standards@gsa.gov"
+                target="_blank" rel="noopener">IT Standards</a>
+              <p class="dropdown-header"><b>Regarding GEAR/EA</b></p>
+              <a class="dropdown-item" href="https://mail.google.com/mail/?view=cm&fs=1&to=ea_planning@gsa.gov"
+                target="_blank" rel="noopener">EA Team</a>
+            </div>
           </div>
-        </div>
-      </li>
-    </ul>
-  </div>
-</nav>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</div>
