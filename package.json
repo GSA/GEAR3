@@ -4,7 +4,7 @@
   "description": "Next Iteration of the GEAR portal to latest tech stack of 2020",
   "main": "server.js",
   "engines": {
-    "node": "18.14.2"
+    "node": ">=18.14.2"
   },
   "scripts": {
     "ng": "ng",
@@ -70,7 +70,6 @@
     "ldapjs": "^2.3.1",
     "make-fetch-happen": "^10.1.2",
     "mysql2": "^3.9.7",
-    "ng-sidebar-v2": "^16.0.4",
     "ng2-pdf-viewer": "^10.2.2",
     "ngx-cookie-service": "^17.1.0",
     "node-cron": "^2.0.3",
@@ -89,7 +88,8 @@
     "webpack-dev-server": "^5.0.4",
     "xmlhttprequest": "^1.8.0",
     "xmlhttprequest-ssl": "^1.6.3",
-    "zone.js": "^0.14.6"
+    "zone.js": "^0.14.6",
+    "ng-sidebar-v2": "file:../ng-sidebar/dist/ng-sidebar/ng-sidebar-V2-17.0.1.tgz"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^17.3.8",
