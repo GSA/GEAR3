@@ -89,7 +89,7 @@
     "xmlhttprequest": "^1.8.0",
     "xmlhttprequest-ssl": "^1.6.3",
     "zone.js": "^0.14.6",
-    "ng-sidebar-v2": "file:../ng-sidebar/dist/ng-sidebar/ng-sidebar-V2-17.0.1.tgz"
+    "ng-sidebar-v3": "3.0.1"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^17.3.8",
