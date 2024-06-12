@@ -75,7 +75,7 @@
     "node-cron": "^2.0.3",
     "node-fetch": "^2.6.7",
     "nodemailer": "^6.7.0",
-    "npm": "^8.19.2",
+    "npm": "^10.5.2",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "path": "^0.12.7",
