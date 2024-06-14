@@ -294,6 +294,10 @@ export class ItStandardManagerComponent implements OnInit {
         itStandComments: this.itStandard.Comments,
         itStandRefDocs: this.itStandard.ReferenceDocument
       });
+      if (this.itStandard.SoftwareRelease) {
+        // disable the old IT Standard Name field
+        this.disableOldITStandardName();
+      }
     }
   };
 
