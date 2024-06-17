@@ -7,6 +7,5 @@ SELECT
   poc.OrgCode                                                     AS Organization
 
 FROM obj_ldap_poc                                                 AS poc
-WHERE poc.Enabled = 'TRUE' 
-  AND poc.EmployeeType IS NOT null
+WHERE poc.EmployeeType IS NOT null
   AND poc.EmployeeType <> ''

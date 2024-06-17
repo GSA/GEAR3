@@ -488,7 +488,14 @@ cron.schedule('0 7 * * WED', () => {
             + "AND SamAccountName NOT IN (SELECT obj_ldap_SamAccountName FROM zk_technology_poc)";
           db.query(deleteQuery, (error, response) => {
             console.log(error || 'Delete obj_ldap_poc disabled records: ' + response);
-          });       
+          });
+
+          let updateEndOfLifeQuery = "UPDATE obj_ldap_poc poc "
+            + "SET EmployeeType = 'Separated' "
+            + "WHERE poc.SamAccountName NOT IN (SELECT SamAccountName FROM tmp_obj_ldap_poc) AND Enabled = 'FALSE' AND poc.EmployeeType = ''";
+          db.query(updateEndOfLifeQuery, (error, response) => {
+            console.log(error || 'Update obj_ldap_poc to separate poc: ' + JSON.stringify(response));
+          });
         }
       });
     });
