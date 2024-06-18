@@ -492,7 +492,10 @@ cron.schedule('0 7 * * WED', () => {
 
           let updateEndOfLifeQuery = "UPDATE obj_ldap_poc poc "
             + "SET EmployeeType = 'Separated' "
-            + "WHERE poc.SamAccountName NOT IN (SELECT SamAccountName FROM tmp_obj_ldap_poc) AND Enabled = 'FALSE' AND poc.EmployeeType = ''";
+            + "WHERE poc.SamAccountName NOT IN (SELECT SamAccountName FROM tmp_obj_ldap_poc) AND Enabled = 'FALSE' AND poc.EmployeeType = '';"
+            + "INSERT INTO `gear_schema`.`obj_ldap_poc` "
+            + "(`SamAccountName`, `FirstName`, `LastName`, `Email`, `EmployeeType`, `Enabled`, `RISSO`) "
+            + "VALUES ('AssistTechTeam', 'Assist', 'Tech Team', 'assisttechteam@gsa.gov', 'Group', 'True', '24');"; //Adding group account as part of CTO team request
           db.query(updateEndOfLifeQuery, (error, response) => {
             console.log(error || 'Update obj_ldap_poc to separate poc: ' + JSON.stringify(response));
           });
