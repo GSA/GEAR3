@@ -89,6 +89,8 @@ export class ItStandardManagerComponent implements OnInit {
 
   itStandCertify: boolean = false;
 
+  anyServerError = false;
+
   constructor(
     private apiService: ApiService,
     private globals: Globals,
@@ -182,6 +184,9 @@ export class ItStandardManagerComponent implements OnInit {
       this.itStandCertify = false;
       $("#itStandMngrTabs li:first-child a").tab('show');
     }.bind(this));
+
+    // Reset Form Errors on any value update
+    this.itStandardsForm.valueChanges.subscribe(change=>{  this.anyServerError = false; })
   }
 
   setFormDefaults(): void {
@@ -389,7 +394,6 @@ export class ItStandardManagerComponent implements OnInit {
         this.itStandardsForm.value.itStandReqAtte = this.sharedService.findInArray(this.itStandReqAtteRefData, 'Name', this.itStandardsForm.value.itStandReqAtte, 'ID');
         console.log("AttestationStatus: ", this.itStandardsForm.value.itStandReqAtte);
       }
-
       // Send data to database
       if (this.createBool) {
         this.apiService.createITStandard(this.itStandardsForm.value).toPromise()
@@ -405,15 +409,21 @@ export class ItStandardManagerComponent implements OnInit {
                       .then(data => {
                         // Then update the details modal
                         this.itStandDetailRefresh(data[0])
-                      })
-                  }),
+                      },
+                      (error) => {
+                        this.handleError("GET Latest IT Standard", error);
+                      });
+                  },
                   (error) => {
-                    console.log("Update after creating IT Standard rejected with ", JSON.stringify(error));
-                  };
-              }),
+                    this.handleError("UPDATE IT Standard", error);
+                  });
+              },
               (error) => {
-                console.log("GET Latest IT Standard rejected with ", JSON.stringify(error));
-              };
+                this.handleError("GET Latest IT Standard", error);
+              });
+          },
+          (error) => {
+            this.handleError("CREATE IT Standard", error);
           });
       } else {
         this.apiService.updateITStandard(this.itStandard.ID, this.itStandardsForm.value).toPromise()
@@ -424,11 +434,19 @@ export class ItStandardManagerComponent implements OnInit {
               (error) => {
                 console.log("GET One IT Standard rejected with ", JSON.stringify(error));
               };
+          },
+          (error) => {
+            this.handleError("UPDATE IT Standard", error);
           });
       }
 
       this.modalService.updateRecordCreation(false);  // Reset Creation flag
     }
+  }
+
+  private handleError(operation: string = 'operation', error: any) {
+    console.log(`Failed ${operation} Call: ${JSON.stringify(error)}`);
+    this.anyServerError = true;
   }
 
   itStandDetailRefresh(data: any) {
