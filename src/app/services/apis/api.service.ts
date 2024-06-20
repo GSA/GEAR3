@@ -564,12 +564,7 @@ export class ApiService {
   }
   public getLatestITStand(): Observable<ITStandards[]> {
     return this.http
-      .get<ITStandards[]>(this.techUrl + '/latest')
-      .pipe(
-        catchError(
-          this.handleError<ITStandards[]>('GET Latest IT Standard', [])
-        )
-      );
+      .get<ITStandards[]>(this.techUrl + '/latest');
   }
   // public getITStandApps(id: number): Observable<Application[]> {
   //   return this.http.get<Application[]>(this.investUrl + '/get/' + String(id) + '/applications').pipe(
@@ -647,9 +642,6 @@ export class ApiService {
         this.techUrl + '/update/' + String(id),
         data,
         httpOptions
-      )
-      .pipe(
-        catchError(this.handleError<ITStandards[]>('UPDATE IT Standard', []))
       );
   }
   public createITStandard(data: {}): Observable<ITStandards[]> {
@@ -665,10 +657,7 @@ export class ApiService {
     }
 
     return this.http
-      .post<ITStandards[]>(this.techUrl + '/create', data, httpOptions)
-      .pipe(
-        catchError(this.handleError<ITStandards[]>('CREATE IT Standard', []))
-      );
+      .post<ITStandards[]>(this.techUrl + '/create', data, httpOptions);
   }
 
   //// Websites

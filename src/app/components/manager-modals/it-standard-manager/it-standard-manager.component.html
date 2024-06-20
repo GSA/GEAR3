@@ -22,6 +22,11 @@
             <a class="nav-link active" data-toggle="tab" href="#itStandMngrOverview">
               Overview</a></li>
         </ul>
+        <div *ngIf="anyServerError" class="usa-alert usa-alert--error" role="alert">
+          <div class="usa-alert__body">
+            <p class="usa-alert__text">There was a problem completing your request. Please contact <a class="usa-link" href="mailto:ea_planning&#64;gsa.gov">ea_planning&#64;gsa.gov</a>.</p>
+          </div>
+        </div>
 
         <!-- Tab Panes -->
         <form [formGroup]="itStandardsForm" class="container">
@@ -390,7 +395,7 @@
           </label>
         </div>
         <button type="submit" form="itStandardsForm" class="btn btn-info text-white" (click)="submitForm()"
-          [disabled]="!(itStandCertify && itStandardsForm.valid)">Save</button>
+          [disabled]="!(itStandCertify && itStandardsForm.valid) || anyServerError">Save</button>
       </div>
 
     </div>
