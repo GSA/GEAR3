@@ -69,9 +69,7 @@ export class WebsiteServiceCategoryComponent implements OnInit {
       title: 'Description',
       sortable: true,
       visible: true,
-      formatter: (value: any, row: any): string => {
-        return '<p class="description-wrap">' + value + "</p>";
-      }
+      formatter: this.sharedService.formatDescription
     },
     {
       field: 'description',

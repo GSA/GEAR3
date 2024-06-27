@@ -78,9 +78,7 @@ export class RecordsManagementComponent implements OnInit {
       title: 'Description',
       sortable: false,
       visible: true,
-      formatter: (value: any, row: any): string => {
-        return '<p class="description-wrap">' + value + "</p>";
-      }
+      formatter: this.sharedService.formatDescription
     },
     {
       field: 'Description',
