@@ -69,9 +69,8 @@ export class WebsiteServiceCategoryComponent implements OnInit {
       title: 'Description',
       sortable: true,
       visible: true,
-      class: 'text-wrap',
       formatter: (value: any, row: any): string => {
-        return value && value.length > 200 ? value.substring(0, 200) + "..." : value;
+        return '<p class="description-wrap">' + value + "</p>";
       }
     },
     {

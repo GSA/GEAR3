@@ -146,7 +146,9 @@ export class WebsitesComponent implements OnInit {
       title: 'Digital Brand Category',
       sortable: true,
       visible: false,
-      class: 'text-wrap',
+      formatter: (value: any, row: any): string => {
+        return '<p class="description-wrap">' + value + "</p>";
+      }
     },
   ];
 

@@ -119,9 +119,8 @@ export class ItStandardsComponent implements OnInit {
     title: 'Description',
     sortable: true,
     visible: true,
-    class: 'text-wrap',
     formatter: (value: any, row: any): string => {
-      return value && value.length > 40 ? value.substring(0, 40) + "..." : value;
+      return '<p class="description-wrap">' + value + "</p>";
     }
   }, {
     field: 'Description',
@@ -168,9 +167,8 @@ export class ItStandardsComponent implements OnInit {
     title: 'Comments',
     sortable: true,
     visible: false,
-    class: 'text-wrap',
     formatter: (value: any, row: any): string => {
-      return value && value.length > 40 ? value.substring(0, 40) + "..." : value;
+      return '<p class="description-wrap">' + value + "</p>";
     }
   },
   {
