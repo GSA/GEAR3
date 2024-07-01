@@ -330,7 +330,7 @@ export class SystemsModalComponent implements OnInit {
     title: 'Description',
     sortable: false,
     visible: false,
-    class: 'text-wrap'
+    formatter: this.sharedService.formatDescription
   }, {
     field: 'Record_Status',
     title: 'Status',
@@ -345,7 +345,7 @@ export class SystemsModalComponent implements OnInit {
     field: 'Retention_Instructions',
     title: 'Retention Instructions',
     sortable: false,
-    class: 'text-wrap'
+    formatter: this.sharedService.formatDescription
   }, {
     field: 'Legal_Disposition_Authority',
     title: 'Disposition Authority (DA)',
@@ -364,7 +364,7 @@ export class SystemsModalComponent implements OnInit {
     title: 'Disposition Notes',
     sortable: false,
     visible: false,
-    class: 'text-wrap'
+    formatter: this.sharedService.formatDescription
   }, {
     field: 'FP_Category',
     title: 'FP Category',

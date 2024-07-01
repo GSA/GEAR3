@@ -44,7 +44,7 @@ export class ItStandardsComponent implements OnInit {
     showColumns: true,
     showExport: true,
     exportFileName: 'GSA_IT_Standards',
-    exportIgnoreColumn:[2, 9],
+    exportIgnoreColumn:[],
     headerStyle: 'bg-teal',
     pagination: true,
     search: true,
@@ -119,17 +119,7 @@ export class ItStandardsComponent implements OnInit {
     title: 'Description',
     sortable: true,
     visible: true,
-    class: 'text-wrap',
-    formatter: (value: any, row: any): string => {
-      return value && value.length > 40 ? value.substring(0, 40) + "..." : value;
-    }
-  }, {
-    field: 'Description',
-    title: 'Description',
-    sortable: true,
-    visible: false,
-    switchable: false,
-    forceExport: true
+    formatter: this.sharedService.formatDescription
   }, {
     field: 'Category',
     title: 'Category',
@@ -168,18 +158,7 @@ export class ItStandardsComponent implements OnInit {
     title: 'Comments',
     sortable: true,
     visible: false,
-    class: 'text-wrap',
-    formatter: (value: any, row: any): string => {
-      return value && value.length > 40 ? value.substring(0, 40) + "..." : value;
-    }
-  },
-  {
-    field: 'Comments',
-    title: 'Comments',
-    sortable: true,
-    visible: false,
-    switchable: false,
-    forceExport: true
+    formatter: this.sharedService.formatDescription
   }, {
     field: 'attestation_required',
     title: 'Attestation Required',
