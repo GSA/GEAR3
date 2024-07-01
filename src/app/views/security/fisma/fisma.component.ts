@@ -41,7 +41,7 @@ export class FismaComponent implements OnInit {
     showColumns: true,
     showExport: true,
     exportFileName: 'GSA_FISMA_Systems_Inventory',
-    exportIgnoreColumn:[6],
+    exportIgnoreColumn:[],
     headerStyle: 'bg-warning',
     pagination: true,
     search: true,
@@ -108,14 +108,6 @@ export class FismaComponent implements OnInit {
       sortable: true,
       visible: true,
       formatter: this.sharedService.formatDescription
-    },
-    {
-      field: 'Description',
-      title: 'Description',
-      sortable: true,
-      visible: false,
-      switchable: false,
-      forceExport: true
     },
     {
       field: 'ParentName',

@@ -51,7 +51,7 @@ export class RecordsManagementComponent implements OnInit {
     showColumns: true,
     showExport: true,
     exportFileName: 'GSA_Record_Schedules',
-    exportIgnoreColumn:[2],
+    exportIgnoreColumn:[],
     headerStyle: 'bg-danger',
     pagination: true,
     search: true,
@@ -79,14 +79,6 @@ export class RecordsManagementComponent implements OnInit {
       sortable: false,
       visible: true,
       formatter: this.sharedService.formatDescription
-    },
-    {
-      field: 'Description',
-      title: 'Description',
-      sortable: false,
-      visible: false,
-      switchable: false,
-      forceExport: true
     },
     {
       field: 'Record_Status',

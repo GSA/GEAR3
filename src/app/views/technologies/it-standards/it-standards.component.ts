@@ -44,7 +44,7 @@ export class ItStandardsComponent implements OnInit {
     showColumns: true,
     showExport: true,
     exportFileName: 'GSA_IT_Standards',
-    exportIgnoreColumn:[2, 9],
+    exportIgnoreColumn:[],
     headerStyle: 'bg-teal',
     pagination: true,
     search: true,
@@ -121,13 +121,6 @@ export class ItStandardsComponent implements OnInit {
     visible: true,
     formatter: this.sharedService.formatDescription
   }, {
-    field: 'Description',
-    title: 'Description',
-    sortable: true,
-    visible: false,
-    switchable: false,
-    forceExport: true
-  }, {
     field: 'Category',
     title: 'Category',
     sortable: true
@@ -166,14 +159,6 @@ export class ItStandardsComponent implements OnInit {
     sortable: true,
     visible: false,
     formatter: this.sharedService.formatDescription
-  },
-  {
-    field: 'Comments',
-    title: 'Comments',
-    sortable: true,
-    visible: false,
-    switchable: false,
-    forceExport: true
   }, {
     field: 'attestation_required',
     title: 'Attestation Required',
