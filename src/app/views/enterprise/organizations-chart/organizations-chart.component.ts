@@ -215,7 +215,7 @@ export class OrganizationsChartComponent implements OnInit {
 
     // Only show first level children and render
     this.root.children.forEach(this.collapse);
-    this.update(this.root);
+    this.update(null, this.root);
   } // End of createGraph
 
   // Toggle children
@@ -238,9 +238,9 @@ export class OrganizationsChartComponent implements OnInit {
     }
   };
 
-  private update = (source) => {
+  private update = (event, source) => {
     // Transition timing in milliseconds
-    var duration = d3.event && d3.event.altKey ? 5000 : 300;
+    var duration = event && event.altKey ? 5000 : 300;
 
     // Assigns the x and y position for the nodes
     var treeData = this.treemap(this.root);
@@ -274,10 +274,10 @@ export class OrganizationsChartComponent implements OnInit {
       // Toggle children on click and re-render
       .on(
         'click',
-        function (d) {
+        function (event, d) {
           // console.log("Clicked Node: ", d);  // Debug
           this.toggle(d);
-          this.update(d);
+          this.update(event, d);
         }.bind(this)
       );
 
@@ -535,7 +535,7 @@ export class OrganizationsChartComponent implements OnInit {
         this.finalSearchPath = openPaths(paths);
 
         // console.log("Final Search Paths: ", this.finalSearchPath);  // Debug
-        this.update(this.root);
+        this.update(null, this.root);
       } else {
         alert(this.searchKey + ' not found!');
       }
@@ -599,6 +599,6 @@ export class OrganizationsChartComponent implements OnInit {
 
     // Only show first level children and render
     this.root.children.forEach(this.collapse);
-    this.update(this.root);
+    this.update(null, this.root);
   }
 }
