@@ -1,3 +1,5 @@
+import * as d3 from 'd3';
+
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
@@ -6,9 +8,6 @@ import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
-
-// Declare D3 library
-declare var d3: any;
 
 // Declare jQuery symbol
 declare var $: any;
@@ -655,7 +654,7 @@ export class CapabilitiesModelComponent implements OnInit {
       this.initialMouseY = d3.event.clientY;
 
       const capDetail = d3.select(this.elementRef.nativeElement).select('#capDetail');
-      const bbox = capDetail.node().getBoundingClientRect();
+      const bbox = (capDetail.node() as HTMLElement).getBoundingClientRect();
       this.initialElementX = bbox.left;
       this.initialElementY = bbox.top;
       capDetail.classed('grabbing', true);
