@@ -1,3 +1,5 @@
+import * as d3 from 'd3';
+
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
@@ -6,9 +8,6 @@ import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
-
-// Declare D3 library
-declare var d3: any;
 
 // Declare jQuery symbol
 declare var $: any;
@@ -29,7 +28,7 @@ export class OrganizationsChartComponent implements OnInit {
   @ViewChild('orgChart') public graphContainer: ElementRef;
   private orgs: any[] = [];
   private root: any = {};
-  private rootOrg: string = 'Office of the Administrator';
+  private rootOrgId: string = 'A'; // Office of the Administrator
   private orgTree: any = {};
   public highlightColor: string = '#ff4136';
 
@@ -78,7 +77,7 @@ export class OrganizationsChartComponent implements OnInit {
 
       // Set Root Node
       this.orgs.forEach((org) => {
-        if (org.Name == this.rootOrg) {
+          if (org.ID == this.rootOrgId) {
           this.orgTree = {
             identity: org.ID,
             name: org.Name,
@@ -87,10 +86,10 @@ export class OrganizationsChartComponent implements OnInit {
           };
         }
       });
-
+      
       // Set First-Level Children
       this.orgs.forEach((org) => {
-        if (org.Parent == this.orgTree.name) {
+        if (org.Parent_ID == this.orgTree.identity) {
           this.orgTree.children.push({
             identity: org.ID,
             name: org.Name,
@@ -103,7 +102,7 @@ export class OrganizationsChartComponent implements OnInit {
       // Set Second-Level Children
       this.orgTree.children.forEach((firstLevelOrg) => {
         this.orgs.forEach((org) => {
-          if (org.Parent == firstLevelOrg.name) {
+          if (org.Parent_ID == firstLevelOrg.identity) {
             firstLevelOrg.children.push({
               identity: org.ID,
               name: org.Name,
@@ -118,7 +117,7 @@ export class OrganizationsChartComponent implements OnInit {
       this.orgTree.children.forEach((firstLevelOrg) => {
         firstLevelOrg.children.forEach((secondLevelOrg) => {
           this.orgs.forEach((org) => {
-            if (org.Parent == secondLevelOrg.name) {
+            if (org.Parent_ID == secondLevelOrg.identity) {
               secondLevelOrg.children.push({
                 identity: org.ID,
                 name: org.Name,
@@ -135,7 +134,7 @@ export class OrganizationsChartComponent implements OnInit {
         firstLevelOrg.children.forEach((secondLevelOrg) => {
           secondLevelOrg.children.forEach((thirdLevelOrg) => {
             this.orgs.forEach((org) => {
-              if (org.Parent == thirdLevelOrg.name) {
+              if (org.Parent_ID == thirdLevelOrg.identity) {
                 thirdLevelOrg.children.push({
                   identity: org.ID,
                   name: org.Name,
@@ -154,7 +153,7 @@ export class OrganizationsChartComponent implements OnInit {
           secondLevelOrg.children.forEach((thirdLevelOrg) => {
             thirdLevelOrg.children.forEach((fourthLevelOrg) => {
               this.orgs.forEach((org) => {
-                if (org.Parent == fourthLevelOrg.name) {
+                if (org.Parent_ID == fourthLevelOrg.identity) {
                   fourthLevelOrg.children.push({
                     identity: org.ID,
                     name: org.Name,
