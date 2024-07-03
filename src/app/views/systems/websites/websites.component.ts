@@ -146,7 +146,7 @@ export class WebsitesComponent implements OnInit {
       title: 'Digital Brand Category',
       sortable: true,
       visible: false,
-      class: 'text-wrap',
+      formatter: this.sharedService.formatDescription
     },
   ];
 

@@ -1,3 +1,5 @@
+import * as d3 from 'd3';
+
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
@@ -6,9 +8,6 @@ import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
-
-// Declare D3 library
-declare var d3: any;
 
 // Declare jQuery symbol
 declare var $: any;
@@ -29,7 +28,7 @@ export class OrganizationsChartComponent implements OnInit {
   @ViewChild('orgChart') public graphContainer: ElementRef;
   private orgs: any[] = [];
   private root: any = {};
-  private rootOrg: string = 'Office of the Administrator';
+  private rootOrgId: string = 'A'; // Office of the Administrator
   private orgTree: any = {};
   public highlightColor: string = '#ff4136';
 
@@ -78,7 +77,7 @@ export class OrganizationsChartComponent implements OnInit {
 
       // Set Root Node
       this.orgs.forEach((org) => {
-        if (org.Name == this.rootOrg) {
+          if (org.ID == this.rootOrgId) {
           this.orgTree = {
             identity: org.ID,
             name: org.Name,
@@ -87,10 +86,10 @@ export class OrganizationsChartComponent implements OnInit {
           };
         }
       });
-
+      
       // Set First-Level Children
       this.orgs.forEach((org) => {
-        if (org.Parent == this.orgTree.name) {
+        if (org.Parent_ID == this.orgTree.identity) {
           this.orgTree.children.push({
             identity: org.ID,
             name: org.Name,
@@ -103,7 +102,7 @@ export class OrganizationsChartComponent implements OnInit {
       // Set Second-Level Children
       this.orgTree.children.forEach((firstLevelOrg) => {
         this.orgs.forEach((org) => {
-          if (org.Parent == firstLevelOrg.name) {
+          if (org.Parent_ID == firstLevelOrg.identity) {
             firstLevelOrg.children.push({
               identity: org.ID,
               name: org.Name,
@@ -118,7 +117,7 @@ export class OrganizationsChartComponent implements OnInit {
       this.orgTree.children.forEach((firstLevelOrg) => {
         firstLevelOrg.children.forEach((secondLevelOrg) => {
           this.orgs.forEach((org) => {
-            if (org.Parent == secondLevelOrg.name) {
+            if (org.Parent_ID == secondLevelOrg.identity) {
               secondLevelOrg.children.push({
                 identity: org.ID,
                 name: org.Name,
@@ -135,7 +134,7 @@ export class OrganizationsChartComponent implements OnInit {
         firstLevelOrg.children.forEach((secondLevelOrg) => {
           secondLevelOrg.children.forEach((thirdLevelOrg) => {
             this.orgs.forEach((org) => {
-              if (org.Parent == thirdLevelOrg.name) {
+              if (org.Parent_ID == thirdLevelOrg.identity) {
                 thirdLevelOrg.children.push({
                   identity: org.ID,
                   name: org.Name,
@@ -154,7 +153,7 @@ export class OrganizationsChartComponent implements OnInit {
           secondLevelOrg.children.forEach((thirdLevelOrg) => {
             thirdLevelOrg.children.forEach((fourthLevelOrg) => {
               this.orgs.forEach((org) => {
-                if (org.Parent == fourthLevelOrg.name) {
+                if (org.Parent_ID == fourthLevelOrg.identity) {
                   fourthLevelOrg.children.push({
                     identity: org.ID,
                     name: org.Name,
@@ -216,7 +215,7 @@ export class OrganizationsChartComponent implements OnInit {
 
     // Only show first level children and render
     this.root.children.forEach(this.collapse);
-    this.update(this.root);
+    this.update(null, this.root);
   } // End of createGraph
 
   // Toggle children
@@ -239,9 +238,9 @@ export class OrganizationsChartComponent implements OnInit {
     }
   };
 
-  private update = (source) => {
+  private update = (event, source) => {
     // Transition timing in milliseconds
-    var duration = d3.event && d3.event.altKey ? 5000 : 300;
+    var duration = event && event.altKey ? 5000 : 300;
 
     // Assigns the x and y position for the nodes
     var treeData = this.treemap(this.root);
@@ -275,10 +274,10 @@ export class OrganizationsChartComponent implements OnInit {
       // Toggle children on click and re-render
       .on(
         'click',
-        function (d) {
+        function (event, d) {
           // console.log("Clicked Node: ", d);  // Debug
           this.toggle(d);
-          this.update(d);
+          this.update(event, d);
         }.bind(this)
       );
 
@@ -536,7 +535,7 @@ export class OrganizationsChartComponent implements OnInit {
         this.finalSearchPath = openPaths(paths);
 
         // console.log("Final Search Paths: ", this.finalSearchPath);  // Debug
-        this.update(this.root);
+        this.update(null, this.root);
       } else {
         alert(this.searchKey + ' not found!');
       }
@@ -600,6 +599,6 @@ export class OrganizationsChartComponent implements OnInit {
 
     // Only show first level children and render
     this.root.children.forEach(this.collapse);
-    this.update(this.root);
+    this.update(null, this.root);
   }
 }

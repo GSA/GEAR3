@@ -301,3 +301,20 @@ a.position-absolute.float-right {
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.description-wrap {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.fixed-table-toolbar .search input {
+  border: 1px solid;
+  height: 100%;
+}
+
+.fixed-table-toolbar .search {
+  padding-right: 3%;
+  min-width: 30%;
+}

@@ -292,6 +292,12 @@ export class SharedService {
     else return value;
   };
 
+  //// Description formattter
+  public formatDescription(value: any, row: any) {
+    if (!value) return '';
+    else return '<p class="description-wrap">' + value + "</p>";;
+  };
+
 
   // Set Forms Default
   public setCapabilityForm() {
