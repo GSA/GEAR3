@@ -88,9 +88,9 @@ export class CapabilitiesModelComponent implements OnInit {
     const capDetail = d3.select(this.elementRef.nativeElement).select('#capDetail');
 
     // Attach mouse event listeners for dragging
-    capDetail.on('mousedown', () => this.dragStart());
-    d3.select(document).on('mousemove', () => this.drag());
-    d3.select(document).on('mouseup', () => this.dragEnd());
+    capDetail.on('mousedown', (event) => this.dragStart(event));
+    d3.select(document).on('mousemove', (event) => this.drag(event));
+    d3.select(document).on('mouseup', (event) => this.dragEnd(event));
   }
 
   // Create Capability Model Graph
@@ -249,7 +249,7 @@ export class CapabilitiesModelComponent implements OnInit {
 
     // Only show first level children and render
     this.root.children.forEach(this.collapse);
-    this.update(this.root);
+    this.update(null, this.root);
   } // End of createGraph
 
   // Toggle children
@@ -272,9 +272,9 @@ export class CapabilitiesModelComponent implements OnInit {
     }
   };
 
-  private update = (source) => {
+  private update = (event, source) => {
     // Transition timing in milliseconds
-    var duration = d3.event && d3.event.altKey ? 5000 : 300;
+    var duration = event && event.altKey ? 5000 : 300;
 
     // Assigns the x and y position for the nodes
     var treeData = this.treemap(this.root);
@@ -308,10 +308,10 @@ export class CapabilitiesModelComponent implements OnInit {
       // Toggle children on click and re-render
       .on(
         'click',
-        function (d) {
+        function (event, d) {
           // console.log("Clicked Node: ", d);  // Debug
           this.toggle(d);
-          this.update(d);
+          this.update(event, d);
         }.bind(this)
       );
 
@@ -583,7 +583,7 @@ export class CapabilitiesModelComponent implements OnInit {
         this.finalSearchPath = openPaths(paths);
 
         // console.log("Final Search Paths: ", this.finalSearchPath);  // Debug
-        this.update(this.root);
+        this.update(event, this.root);
       } else {
         alert(this.searchKey + ' not found!');
       }
@@ -644,14 +644,14 @@ export class CapabilitiesModelComponent implements OnInit {
 
     // Only show first level children and render
     this.root.children.forEach(this.collapse);
-    this.update(this.root);
+    this.update(null, this.root);
   }
 
     // Method to handle mouse down event
-    dragStart(): void {
+    dragStart(event): void {
       this.dragging = true;
-      this.initialMouseX = d3.event.clientX;
-      this.initialMouseY = d3.event.clientY;
+      this.initialMouseX = event.clientX;
+      this.initialMouseY = event.clientY;
 
       const capDetail = d3.select(this.elementRef.nativeElement).select('#capDetail');
       const bbox = (capDetail.node() as HTMLElement).getBoundingClientRect();
@@ -661,10 +661,10 @@ export class CapabilitiesModelComponent implements OnInit {
     }
 
     // Method to handle mouse move event
-    drag(): void {
+    drag(event): void {
       if (this.dragging) {
-        const dx = d3.event.clientX - this.initialMouseX;
-        const dy = d3.event.clientY - this.initialMouseY;
+        const dx = event.clientX - this.initialMouseX;
+        const dy = event.clientY - this.initialMouseY;
         this.positionX = this.initialElementX + dx;
         this.positionY = this.initialElementY + dy;
 
@@ -678,7 +678,7 @@ export class CapabilitiesModelComponent implements OnInit {
     }
 
     // Method to handle mouse up event
-    dragEnd(): void {
+    dragEnd(event): void {
       this.dragging = false;
       d3.select(this.elementRef.nativeElement).select('#capDetail').classed('grabbing', false);
     }
