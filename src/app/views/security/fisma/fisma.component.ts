@@ -155,7 +155,7 @@ export class FismaComponent implements OnInit {
     title: 'Business Org',
     sortable: true,
     visible: false
-  } */,
+  } ,*/
   ];
 
   ngOnInit(): void {
