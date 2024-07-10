@@ -41,6 +41,7 @@ import { SoftwareProduct } from '@api/models/tc-softwareproduct.model';
 import { SoftwareVersion } from '@api/models/tc-softwareversion.model';
 import { SoftwareRelease } from '@api/models/tc-softwarerelease.model';
 import { AttestationStatus } from '@api/models/attestation-status.model';
+import { TechAttributeDefinitions } from '@api/models/tech-attribute-definitions';
 
 @Injectable({
   providedIn: 'root',
@@ -90,6 +91,9 @@ export class ApiService {
 
   // Websites
   websitesUrl: string = this.sharedService.internalURLFmt('/api/websites');
+
+  // Tech Att Defs
+  techAttDefsUrl: string = this.sharedService.internalURLFmt('/api/attribute_definitions');
 
   constructor(
     private globals: Globals,
@@ -796,6 +800,13 @@ export class ApiService {
           )
         )
       );
+  }
+
+  // Get Tech Attribute Definitions
+  public getTechAttributeDefinitions(): Observable<TechAttributeDefinitions[]> {
+    return this.http
+      .get<TechAttributeDefinitions[]>(this.techAttDefsUrl + '/get/attribute_definitions')
+      .pipe(catchError(this.handleError<TechAttributeDefinitions[]>('GET Tech Attribute Definitions', [])));
   }
 
   //// Error Handler for calls

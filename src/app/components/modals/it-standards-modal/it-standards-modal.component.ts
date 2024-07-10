@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from "@services/shared/shared.service";
 import { TableService } from '@services/tables/table.service';
+import { ApiService } from '@services/apis/api.service';
+import { TechAttributeDefinitions } from '@api/models/tech-attribute-definitions';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -17,13 +19,15 @@ declare var $: any;
 export class ItStandardsModalComponent implements OnInit {
 
   itStandard = <any>{};
+  techAttDefs = <TechAttributeDefinitions[]>[];
 
   constructor(
     private location: Location,
     public modalService: ModalsService,
     private router: Router,
     public sharedService: SharedService,
-    public tableService: TableService) { }
+    public tableService: TableService,
+    public apiService: ApiService) { }
 
   ngOnInit(): void {
     this.modalService.currentITStand.subscribe(itStandard => this.itStandard = itStandard);
@@ -51,6 +55,13 @@ export class ItStandardsModalComponent implements OnInit {
       // Change URL back without ID after closing Modal
       this.sharedService.removeIDfromURL();
     }.bind(this));
+
+    // Get attribute definition list
+    this.apiService.getTechAttributeDefinitions()
+      .subscribe((data: TechAttributeDefinitions[]) => {
+        this.techAttDefs = data;
+        
+    });
   }
 
   itStandEdit () {
@@ -64,6 +75,14 @@ export class ItStandardsModalComponent implements OnInit {
   
   getTitle (title1: string, title2: string): string {
     return (title1) ? title1 : title2;
+  }
+
+  getTooltip (name: string): string {
+    const def = this.techAttDefs.find(def => def.AttributeName === name);
+    if(def){
+      return def.AttributeDefinition;
+    }
+    return '';
   }
 
 }
