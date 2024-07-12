@@ -9,6 +9,7 @@ import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
 
 import { ITStandards } from '@api/models/it-standards.model';
+import { TechAttributeDefinitions } from '@api/models/tech-attribute-definitions';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -22,6 +23,8 @@ export class ItStandardsComponent implements OnInit {
   row: Object = <any>{};
   filteredTable: boolean = false;
   filterTitle: string = '';
+  tableHeadingDefs: TechAttributeDefinitions[] = [];
+  columnDefs: any[] = [];
 
   constructor(
     private apiService: ApiService,
@@ -54,151 +57,173 @@ export class ItStandardsComponent implements OnInit {
     url: this.apiService.techUrl,
   });
 
-  // IT Standard Table Columns
-  columnDefs: any[] = [{
-    field: 'ID',
-    title: 'ID',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'Name',
-    title: 'IT Standard Name',
-    sortable: true
-  }, {
-    field: 'Manufacturer',
-    title: 'Manufacturer ID',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'ManufacturerName',
-    title: 'Manufacturer Name',
-    sortable: true
-  }, {
-    field: 'SoftwareProduct',
-    title: 'Software Product ID',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'SoftwareProductName',
-    title: 'Software Product Name',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'SoftwareVersion',
-    title: 'Software Version ID',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'SoftwareVersionName',
-    title: 'Software Version Name',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'SoftwareRelease',
-    title: 'Software Release ID',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'SoftwareReleaseName',
-    title: 'Software Release Name',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'EndOfLifeDate',
-    title: 'Software End of Life Date',
-    sortable: true,
-    visible: false,
-    formatter: this.sharedService.dateFormatter
-  }, {
-    field: 'OldName',
-    title: 'Previously Known As',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'Description',
-    title: 'Description',
-    sortable: true,
-    visible: true,
-    formatter: this.sharedService.formatDescription
-  }, {
-    field: 'Category',
-    title: 'Category',
-    sortable: true
-  }, {
-    field: 'Status',
-    title: 'Status',
-    sortable: true
-  }, {
-    field: 'StandardType',
-    title: 'Standard Type',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'DeploymentType',
-    title: 'Deployment Type',
-    sortable: true
-  }, {
-    field: 'ComplianceStatus',
-    title: '508 Compliance',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'POC',
-    title: 'POC',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'POCorg',
-    title: 'POC Org',
-    sortable: true,
-    visible: false
-  },
-  {
-    field: 'Comments',
-    title: 'Comments',
-    sortable: true,
-    visible: false,
-    formatter: this.sharedService.formatDescription
-  }, {
-    field: 'attestation_required',
-    title: 'Attestation Required',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'attestation_link',
-    title: 'Attestation Link',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'fedramp',
-    title: 'FedRAMP',
-    sortable: true,
-    visible: false,
-    formatter: this.YesNo
-  }, {
-    field: 'open_source',
-    title: 'Open Source',
-    sortable: true,
-    visible: false,
-    formatter: this.YesNo
-  },{
-    field: 'RITM',
-    title: 'Requested Item (RITM)',
-    sortable: true,
-    visible: false
-  }, {
-    field: 'ApprovalExpirationDate',
-    title: 'Approval Expiration Date',
-    sortable: true,
-    visible: true,
-    formatter: this.sharedService.dateFormatter
-  }];
-
   YesNo(value, row, index, field) {
     return value === 'T'? "Yes" : "No";
   }
 
   ngOnInit(): void {
+    /*
+    * Get definitions for the table header tooltips
+    * Then set the column defintions and initialize the table
+    */
+    this.apiService.getTechAttributeDefinitions().subscribe(defs => {
+      this.tableHeadingDefs = defs
+
+      // IT Standard Table Columns
+      this.columnDefs = [{
+        field: 'ID',
+        title: 'ID',
+        sortable: true,
+        visible: false
+      }, {
+        field: 'Name',
+        title: 'IT Standard Name',
+        sortable: true,
+        titleTooltip: this.getTooltip('IT Standard Name')
+      }, {
+        field: 'Manufacturer',
+        title: 'Manufacturer ID',
+        sortable: true,
+        visible: false
+      }, {
+        field: 'ManufacturerName',
+        title: 'Manufacturer Name',
+        sortable: true,
+        titleTooltip: this.getTooltip('Manufacturer Name')
+      }, {
+        field: 'SoftwareProduct',
+        title: 'Software Product ID',
+        sortable: true,
+        visible: false
+      }, {
+        field: 'SoftwareProductName',
+        title: 'Software Product Name',
+        sortable: true,
+        visible: false
+      }, {
+        field: 'SoftwareVersion',
+        title: 'Software Version ID',
+        sortable: true,
+        visible: false
+      }, {
+        field: 'SoftwareVersionName',
+        title: 'Software Version Name',
+        sortable: true,
+        visible: false
+      }, {
+        field: 'SoftwareRelease',
+        title: 'Software Release ID',
+        sortable: true,
+        visible: false
+      }, {
+        field: 'SoftwareReleaseName',
+        title: 'Software Release Name',
+        sortable: true,
+        visible: false
+      }, {
+        field: 'EndOfLifeDate',
+        title: 'Software End of Life Date',
+        sortable: true,
+        visible: false,
+        formatter: this.sharedService.dateFormatter
+      }, {
+        field: 'OldName',
+        title: 'Previously Known As',
+        sortable: true,
+        visible: false
+      }, {
+        field: 'Description',
+        title: 'Description',
+        sortable: true,
+        visible: true,
+        formatter: this.sharedService.formatDescription,
+        titleTooltip: this.getTooltip('Description')
+      }, {
+        field: 'Category',
+        title: 'Category',
+        sortable: true,
+        titleTooltip: this.getTooltip('Category')
+      }, {
+        field: 'Status',
+        title: 'Status',
+        sortable: true,
+        titleTooltip: this.getTooltip('Status')
+      }, {
+        field: 'StandardType',
+        title: 'Standard Type',
+        sortable: true,
+        visible: false
+      }, {
+        field: 'DeploymentType',
+        title: 'Deployment Type',
+        sortable: true,
+        titleTooltip: this.getTooltip('Deployment Type')
+      }, {
+        field: 'ComplianceStatus',
+        title: '508 Compliance',
+        sortable: true,
+        visible: false
+      }, {
+        field: 'POC',
+        title: 'POC',
+        sortable: true,
+        visible: false
+      }, {
+        field: 'POCorg',
+        title: 'POC Org',
+        sortable: true,
+        visible: false
+      },
+      {
+        field: 'Comments',
+        title: 'Comments',
+        sortable: true,
+        visible: false,
+        formatter: this.sharedService.formatDescription
+      }, {
+        field: 'attestation_required',
+        title: 'Attestation Required',
+        sortable: true,
+        visible: false
+      }, {
+        field: 'attestation_link',
+        title: 'Attestation Link',
+        sortable: true,
+        visible: false
+      }, {
+        field: 'fedramp',
+        title: 'FedRAMP',
+        sortable: true,
+        visible: false,
+        formatter: this.YesNo
+      }, {
+        field: 'open_source',
+        title: 'Open Source',
+        sortable: true,
+        visible: false,
+        formatter: this.YesNo
+      },{
+        field: 'RITM',
+        title: 'Requested Item (RITM)',
+        sortable: true,
+        visible: false
+      }, {
+        field: 'ApprovalExpirationDate',
+        title: 'Approval Expiration Date',
+        sortable: true,
+        visible: true,
+        formatter: this.sharedService.dateFormatter,
+        titleTooltip: this.getTooltip('Approval Expiration Date')
+      }];
+
+      $('#itStandardsTable').bootstrapTable(
+        $.extend(this.tableOptions, {
+          columns: this.columnDefs,
+          data: [],
+        })
+      );
+    });
+
     // Enable popovers
     $(function () {
       $('[data-toggle="popover"]').popover();
@@ -206,13 +231,6 @@ export class ItStandardsComponent implements OnInit {
 
     // Set JWT when logged into GEAR Manager when returning from secureAuth
     this.sharedService.setJWTonLogIn();
-
-    $('#itStandardsTable').bootstrapTable(
-      $.extend(this.tableOptions, {
-        columns: this.columnDefs,
-        data: [],
-      })
-    );
 
     const self = this;
     $(document).ready(() => {
@@ -293,5 +311,13 @@ export class ItStandardsComponent implements OnInit {
 
     this.filterTitle = '';
     this.sharedService.enableStickyHeader("itStandardsTable");
+  }
+
+  getTooltip (name: string): string {
+    const def = this.tableHeadingDefs.find(def => def.AttributeName === name);
+    if(def){
+      return def.AttributeDefinition;
+    }
+    return '';
   }
 }

@@ -54,72 +54,72 @@
               <tbody>
                 <tr>
                   <td>
-                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Manufacturer Name')">Manufacturer Name</span>
+                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Manufacturer Name')" role="tooltip">Manufacturer Name</span>
                   </td>
                   <td>{{ itStandard.ManufacturerName }}</td>
                 </tr>
                 <tr>
                   <td>
-                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software Product Name')">Software Product Name</span>
+                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software Product Name')" role="tooltip">Software Product Name</span>
                   </td>
                   <td>{{ itStandard.SoftwareProductName }}</td>
                 </tr>
                 <tr>
                   <td>
-                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software Version Name')">Software Version Name</span>
+                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software Version Name')" role="tooltip">Software Version Name</span>
                   </td>
                   <td>{{ itStandard.SoftwareVersionName }}</td>
                 </tr>
                 <tr>
                   <td>
-                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software Release Name')">Software Release Name</span>
+                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software Release Name')" role="tooltip">Software Release Name</span>
                   </td>
                   <td>{{ itStandard.SoftwareReleaseName }}</td>
                 </tr>
                 <tr>
                   <td>
-                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software End of Life Date')">Software End of Life Date</span>
+                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software End of Life Date')" role="tooltip">Software End of Life Date</span>
                   </td>
                   <td>{{ itStandard.EndOfLifeDate | date : "MMMM d, y" }}</td>
                 </tr>
                 <tr>
                   <td>
-                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Previously Known As')">Previously Known As</span>
+                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Previously Known As')" role="tooltip">Previously Known As</span>
                   </td>
                   <td>{{ itStandard.OldName }}</td>
                 </tr>
                 <tr>
                   <td>
-                    <i class="fas fa-universal-access"></i><span [title]="getTooltip('508 Compliance')">508 Compliance</span>
+                    <i class="fas fa-universal-access"></i><span [title]="getTooltip('508 Compliance')" role="tooltip">508 Compliance</span>
                   </td>
                   <td>{{ itStandard.ComplianceStatus }}</td>
                 </tr>
 
                 <tr>
                   <td>
-                    <i class="fa fa-calendar-alt"></i><span [title]="getTooltip('Approval Expiration Date')">Approval Expiration Date</span>
+                    <i class="fa fa-calendar-alt"></i><span [title]="getTooltip('Approval Expiration Date')" role="tooltip">Approval Expiration Date</span>
                   </td>
                   <td>
                     {{ itStandard.ApprovalExpirationDate | date : "MMMM d, y" }}
                   </td>
                 </tr>
                 <tr>
-                  <td><i class="far fa-list-alt"></i><span [title]="getTooltip('Category')">Category</span>
+                  <td><i class="far fa-list-alt"></i><span [title]="getTooltip('Category')" role="tooltip">Category</span>
                   </td>
                   <td>{{ itStandard.Category }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fa fa-tag"></i><span [title]="getTooltip('Comments')">Comments</span>
+                  <td><i class="fa fa-tag"></i><span [title]="getTooltip('Comments')" role="tooltip">Comments</span>
                   </td>
                   <td>{{ itStandard.Comments }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fas fa-shipping-fast"></i><span [title]="getTooltip('Deployment Type')">Deployment Type</span>
+                  <td><i class="fas fa-shipping-fast"></i><span [title]="getTooltip('Deployment Type')" role="tooltip">Deployment Type</span>
                   </td>
                   <td>{{ itStandard.DeploymentType }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fa fa-user"></i><span [title]="getTooltip('POC')">POC</span>
+                  <td><i class="fa fa-user"></i><span [title]="getTooltip('POC')" role="tooltip">POC</span>
                   </td>
                   <td>
                     <ul [innerHTML]="
@@ -128,36 +128,36 @@
                   </td>
                 </tr>
                 <tr>
-                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Standard Type')">Standard Type</span>
+                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Standard Type')" role="tooltip">Standard Type</span>
                   </td>
                   <td>{{ itStandard.StandardType }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Status')">Status</span></td>
+                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Status')" role="tooltip">Status</span></td>
                   <td>{{ itStandard.Status }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Attestation Required')">Attestation Required</span></td>
+                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Attestation Required')" role="tooltip">Attestation Required</span></td>
                   <td>{{ itStandard.attestation_required }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Attestation Link')">Attestation Link</span></td>
+                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Attestation Link')" role="tooltip">Attestation Link</span></td>
                   <td>{{ itStandard.attestation_link }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('FedRAMP')">FedRAMP</span></td>
+                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('FedRAMP')" role="tooltip">FedRAMP</span></td>
                   <td>{{ itStandard.fedramp | yesno }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Open Source')">Open Source</span></td>
+                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Open Source')" role="tooltip">Open Source</span></td>
                   <td>{{ itStandard.open_source | yesno }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Requested Item (RITM)')">Requested Item (RITM)</span></td>
+                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Requested Item (RITM)')" role="tooltip">Requested Item (RITM)</span></td>
                   <td>{{ itStandard.RITM }}</td>
                 </tr>
                 <tr>
-                  <td><i class="far fa-comment"></i><span [title]="getTooltip('Reference Document')">Reference Document</span></td>
+                  <td><i class="far fa-comment"></i><span [title]="getTooltip('Reference Document')" role="tooltip">Reference Document</span></td>
                   <td>
                     <a [hidden]="!itStandard.ReferenceDocument" href="{{ itStandard.ReferenceDocument }}"
                       target="_blank" rel="noopener">
