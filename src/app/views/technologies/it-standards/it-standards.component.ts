@@ -74,7 +74,8 @@ export class ItStandardsComponent implements OnInit {
         field: 'ID',
         title: 'ID',
         sortable: true,
-        visible: false
+        visible: false,
+        titleTooltip: this.getTooltip('ID')
       }, {
         field: 'Name',
         title: 'IT Standard Name',
@@ -84,7 +85,8 @@ export class ItStandardsComponent implements OnInit {
         field: 'Manufacturer',
         title: 'Manufacturer ID',
         sortable: true,
-        visible: false
+        visible: false,
+        titleTooltip: this.getTooltip('Manufacturer ID')
       }, {
         field: 'ManufacturerName',
         title: 'Manufacturer Name',
@@ -94,43 +96,51 @@ export class ItStandardsComponent implements OnInit {
         field: 'SoftwareProduct',
         title: 'Software Product ID',
         sortable: true,
-        visible: false
+        visible: false,
+        titleTooltip: this.getTooltip('Software Product ID')
       }, {
         field: 'SoftwareProductName',
         title: 'Software Product Name',
         sortable: true,
-        visible: false
+        visible: false,
+        titleTooltip: this.getTooltip('Software Product Name')
       }, {
         field: 'SoftwareVersion',
         title: 'Software Version ID',
         sortable: true,
-        visible: false
+        visible: false,
+        titleTooltip: this.getTooltip('Software Version ID')
       }, {
         field: 'SoftwareVersionName',
         title: 'Software Version Name',
         sortable: true,
-        visible: false
+        visible: false,
+        titleTooltip: this.getTooltip('Software Version Name')
       }, {
         field: 'SoftwareRelease',
         title: 'Software Release ID',
         sortable: true,
-        visible: false
+        visible: false,
+        titleTooltip: this.getTooltip('Software Release ID')
       }, {
         field: 'SoftwareReleaseName',
         title: 'Software Release Name',
         sortable: true,
-        visible: false
+        visible: false,
+        titleTooltip: this.getTooltip('Software Release Name')
       }, {
         field: 'EndOfLifeDate',
         title: 'Software End of Life Date',
         sortable: true,
         visible: false,
-        formatter: this.sharedService.dateFormatter
+        formatter: this.sharedService.dateFormatter,
+        titleTooltip: this.getTooltip('Software End of Life Date')
       }, {
         field: 'OldName',
         title: 'Previously Known As',
         sortable: true,
-        visible: false
+        visible: false,
+        titleTooltip: this.getTooltip('Previously Known As')
       }, {
         field: 'Description',
         title: 'Description',
@@ -152,7 +162,8 @@ export class ItStandardsComponent implements OnInit {
         field: 'StandardType',
         title: 'Standard Type',
         sortable: true,
-        visible: false
+        visible: false,
+        titleTooltip: this.getTooltip('Standard Type')
       }, {
         field: 'DeploymentType',
         title: 'Deployment Type',
@@ -162,51 +173,60 @@ export class ItStandardsComponent implements OnInit {
         field: 'ComplianceStatus',
         title: '508 Compliance',
         sortable: true,
-        visible: false
+        visible: false,
+        titleTooltip: this.getTooltip('508 Compliance')
       }, {
         field: 'POC',
         title: 'POC',
         sortable: true,
-        visible: false
+        visible: false,
+        titleTooltip: this.getTooltip('POC')
       }, {
         field: 'POCorg',
         title: 'POC Org',
         sortable: true,
-        visible: false
+        visible: false,
+        titleTooltip: this.getTooltip('POC Org')
       },
       {
         field: 'Comments',
         title: 'Comments',
         sortable: true,
         visible: false,
-        formatter: this.sharedService.formatDescription
+        formatter: this.sharedService.formatDescription,
+        titleTooltip: this.getTooltip('Comments')
       }, {
         field: 'attestation_required',
         title: 'Attestation Required',
         sortable: true,
-        visible: false
+        visible: false,
+        titleTooltip: this.getTooltip('Attestation Required')
       }, {
         field: 'attestation_link',
         title: 'Attestation Link',
         sortable: true,
-        visible: false
+        visible: false,
+        titleTooltip: this.getTooltip('Attestation Link')
       }, {
         field: 'fedramp',
         title: 'FedRAMP',
         sortable: true,
         visible: false,
-        formatter: this.YesNo
+        formatter: this.YesNo,
+        titleTooltip: this.getTooltip('FedRAMP')
       }, {
         field: 'open_source',
         title: 'Open Source',
         sortable: true,
         visible: false,
-        formatter: this.YesNo
+        formatter: this.YesNo,
+        titleTooltip: this.getTooltip('Open Source')
       },{
         field: 'RITM',
         title: 'Requested Item (RITM)',
         sortable: true,
-        visible: false
+        visible: false,
+        titleTooltip: this.getTooltip('Requested Item (RITM)')
       }, {
         field: 'ApprovalExpirationDate',
         title: 'Approval Expiration Date',
