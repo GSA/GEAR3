@@ -103,4 +103,11 @@ export class TopNavbarComponent implements AfterViewInit {
     }
     this.toggleTopNavBttn();
   }
+
+  /* Stop the dropdown from closing when a header is clicked
+  *  which can lead to confusion on what is clickable or not
+  */
+  onDropdownHeaderClick(e: Event): void {
+    e.stopPropagation();
+  }
 }

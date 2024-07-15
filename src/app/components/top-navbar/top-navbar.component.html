@@ -41,7 +41,7 @@
               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">GEAR Navigation
             </a>
             <div #dropdownMenu class="dropdown-menu gearNavDropdown" aria-labelledby="gearNavigationDropdown">
-              <p class="dropdown-header"><b>IT Strategy</b></p>
+              <p class="dropdown-header" (click)="onDropdownHeaderClick($event)"><b>IT Strategy</b></p>
               <!--
               <a id="strategyBttn" class="dropdown-item" routerLink="/strategic_framework"
                 aria-label="Strategic Framework"
@@ -49,54 +49,56 @@
               >
               -->
               <a id="investmentBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/investments"
-                aria-label="IT Investments">IT
-                Investments
+                aria-label="IT Investments">
+                <span class="dropdown-item-text">IT Investments</span>
               </a>
               <a class="dropdown-item" (click)="processTopNavLink()"
                 href="https://insite.gsa.gov/directives-library/staff-offices?staff_office=I" target="_blank"
-                rel="noopener">IT Policies
+                rel="noopener"><span class="dropdown-item-text">IT Policies</span>
               </a>
-              <p class="dropdown-header"><b>GSA Enterprise</b></p>
+              <p class="dropdown-header" (click)="onDropdownHeaderClick($event)"><b>GSA Enterprise</b></p>
               <a id="capabilityModelBttn" (click)="processTopNavLink()" class="dropdown-item"
-                href="/#/capabilities_model" aria-label="Business Capability Model">Business Capability Model
+                href="/#/capabilities_model" aria-label="Business Capability Model">
+                <span class="dropdown-item-text">Business Capability Model</span>
               </a>
               <a id="capabilityListBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/capabilities"
-                aria-label="Business Capability List">Business Capability List</a>
+                aria-label="Business Capability List">
+                <span class="dropdown-item-text">Business Capability List</span></a>
               <a id="orgChartBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/org_chart"
-                aria-label="Organization Chart">Organization Chart
+                aria-label="Organization Chart"><span class="dropdown-item-text">Organization Chart</span>
               </a>
               <a id="orgListBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/organizations"
-                aria-label="Organization List">Organization List
+                aria-label="Organization List"><span class="dropdown-item-text">Organization List</span>
               </a>
               <a id="serviceListBttn" (click)="processTopNavLink()" class="dropdown-item"
-                href="/#/website_service_category" aria-label="Website Service Category List">Website Service Category
-                List
+                href="/#/website_service_category" aria-label="Website Service Category List">
+                <span class="dropdown-item-text">Website Service Category List</span>
               </a>
-              <p class="dropdown-header"><b>Business Systems</b></p>
+              <p class="dropdown-header" (click)="onDropdownHeaderClick($event)"><b>Business Systems</b></p>
               <a id="systemsBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/systems"
-                aria-label="Business Systems & Subsystems">Busines System & Subsystems
+                aria-label="Business Systems & Subsystems"><span class="dropdown-item-text">Busines System & Subsystems</span>
               </a>
               <a id="timeReportBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/systems_TIME"
-                aria-label=" TIME Report"> TIME Report
+                aria-label=" TIME Report"><span class="dropdown-item-text">TIME Report</span>
               </a>
               <a id="recordsMgmtBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/records_mgmt"
-                aria-label="Records Management">Record Management</a>
+                aria-label="Records Management"><span class="dropdown-item-text">Record Management</span></a>
               <a id="websitesBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/websites"
-                aria-label="GSA Websites">GSA Websites
+                aria-label="GSA Websites"><span class="dropdown-item-text">GSA Websites</span>
               </a>
-              <p class="dropdown-header"><b>Security</b></p>
+              <p class="dropdown-header" (click)="onDropdownHeaderClick($event)"><b>Security</b></p>
               <a id="systemsBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/FISMA"
-                aria-label="FISMA Systems Inventory">FISMA Systems Inventory
+                aria-label="FISMA Systems Inventory"><span class="dropdown-item-text">FISMA Systems Inventory</span>
               </a>
               <a id="systemsPOCBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/FISMA_POC"
-                aria-label="FISMA System POCs">FISMA System POCs
+                aria-label="FISMA System POCs"><span class="dropdown-item-text">FISMA System POCs</span>
               </a>
               <a id="itStandardsBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/it_standards"
-                aria-label="IT Standards List">IT Standards List
+                aria-label="IT Standards List"><span class="dropdown-item-text">IT Standards List</span>
               </a>
               <a class="dropdown-item" (click)="processTopNavLink()"
                 href="https://sites.google.com/a/gsa.gov/it_standards/software-approvals#h.vioogtbleinq" target="_blank"
-                rel="noopener">IT Standards Approval Process
+                rel="noopener"><span class="dropdown-item-text">IT Standards Approval Process</span>
               </a>
               <!--
               <a id="eaViewBttn" class="dropdown-item" href="/#/ea_view"
@@ -109,15 +111,15 @@
               >
               -->
               <a id="capabilityModelBttn" (click)="processTopNavLink()" class="dropdown-item"
-                href="/#/capabilities_model" aria-label="Business Capability Model">Business Capability Model
+                href="/#/capabilities_model" aria-label="Business Capability Model"><span class="dropdown-item-text">Business Capability Model</span>
               </a>
               <a id="formsBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/forms"
                 aria-label="Access Forms">
-                Access Forms
+                <span class="dropdown-item-text">Access Forms</span>
               </a>
               <a id="glossaryBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/glossary"
                 aria-label="Glossary">
-                Glossary
+                <span class="dropdown-item-text">Glossary</span>
               </a>
             </div>
           </div>
@@ -133,12 +135,12 @@
             <a id="contactDropdown" class="btn btn-secondary btn-sm dropdown-toggle" href="#" role="button"
               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Contact/Feedback</a>
             <div #dropdownMenu class="dropdown-menu" aria-labelledby="contactDropdown">
-              <p class="dropdown-header"><b>Regarding IT Standards</b></p>
+              <p class="dropdown-header" (click)="onDropdownHeaderClick($event)"><b>Regarding IT Standards</b></p>
               <a class="dropdown-item" href="https://mail.google.com/mail/?view=cm&fs=1&to=it-standards@gsa.gov"
-                target="_blank" rel="noopener">IT Standards</a>
-              <p class="dropdown-header"><b>Regarding GEAR/EA</b></p>
+                target="_blank" rel="noopener"><span class="dropdown-item-text">IT Standards</span></a>
+              <p class="dropdown-header" (click)="onDropdownHeaderClick($event)"><b>Regarding GEAR/EA</b></p>
               <a class="dropdown-item" href="https://mail.google.com/mail/?view=cm&fs=1&to=ea_planning@gsa.gov"
-                target="_blank" rel="noopener">EA Team</a>
+                target="_blank" rel="noopener"><span class="dropdown-item-text">EA Team</span></a>
             </div>
           </div>
         </li>
