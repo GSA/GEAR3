@@ -15,3 +15,15 @@
   max-height: 350px; /* Set a fixed height for the dropdown menu */
   overflow-y: auto; /* Enable vertical scrolling */
 }
+
+.nav-item .dropdown-item-text {
+  padding: .25rem 1rem;
+}
+
+.nav-item .dropdown-item:active .dropdown-item-text {
+  color: #ffffff;
+}
+
+.nav-item .dropdown-item:hover {
+  background-color: #cccccc;
+}
