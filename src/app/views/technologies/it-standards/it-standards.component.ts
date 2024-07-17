@@ -89,55 +89,55 @@ export class ItStandardsComponent implements OnInit {
         titleTooltip: this.getTooltip('Manufacturer ID')
       }, {
         field: 'ManufacturerName',
-        title: 'Manufacturer Name',
+        title: 'Manufacturer',
         sortable: true,
         titleTooltip: this.getTooltip('Manufacturer Name')
       }, {
         field: 'SoftwareProduct',
-        title: 'Software Product ID',
+        title: 'Product ID',
         sortable: true,
         visible: false,
         titleTooltip: this.getTooltip('Software Product ID')
       }, {
         field: 'SoftwareProductName',
-        title: 'Software Product Name',
+        title: 'Product',
         sortable: true,
         visible: false,
         titleTooltip: this.getTooltip('Software Product Name')
       }, {
         field: 'SoftwareVersion',
-        title: 'Software Version ID',
+        title: 'Version ID',
         sortable: true,
         visible: false,
         titleTooltip: this.getTooltip('Software Version ID')
       }, {
         field: 'SoftwareVersionName',
-        title: 'Software Version Name',
+        title: 'Version',
         sortable: true,
         visible: false,
         titleTooltip: this.getTooltip('Software Version Name')
       }, {
         field: 'SoftwareRelease',
-        title: 'Software Release ID',
+        title: 'Release ID',
         sortable: true,
         visible: false,
         titleTooltip: this.getTooltip('Software Release ID')
       }, {
         field: 'SoftwareReleaseName',
-        title: 'Software Release Name',
+        title: 'Release',
         sortable: true,
         visible: false,
         titleTooltip: this.getTooltip('Software Release Name')
       }, {
         field: 'EndOfLifeDate',
-        title: 'Software End of Life Date',
+        title: 'End of Life Date',
         sortable: true,
         visible: false,
         formatter: this.sharedService.dateFormatter,
         titleTooltip: this.getTooltip('Software End of Life Date')
       }, {
         field: 'OldName',
-        title: 'Previously Known As',
+        title: 'Also Known As',
         sortable: true,
         visible: false,
         titleTooltip: this.getTooltip('Previously Known As')

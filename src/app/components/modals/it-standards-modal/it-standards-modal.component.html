@@ -54,47 +54,34 @@
               <tbody>
                 <tr>
                   <td>
-                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Manufacturer Name')" role="tooltip">Manufacturer Name</span>
+                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Manufacturer Name')" role="tooltip">Manufacturer</span>
                   </td>
                   <td>{{ itStandard.ManufacturerName }}</td>
                 </tr>
                 <tr>
                   <td>
-                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software Product Name')" role="tooltip">Software Product Name</span>
+                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software Product Name')" role="tooltip">Product</span>
                   </td>
                   <td>{{ itStandard.SoftwareProductName }}</td>
                 </tr>
                 <tr>
                   <td>
-                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software Version Name')" role="tooltip">Software Version Name</span>
+                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software Version Name')" role="tooltip">Version</span>
                   </td>
                   <td>{{ itStandard.SoftwareVersionName }}</td>
                 </tr>
                 <tr>
                   <td>
-                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software Release Name')" role="tooltip">Software Release Name</span>
+                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software Release Name')" role="tooltip">Release</span>
                   </td>
                   <td>{{ itStandard.SoftwareReleaseName }}</td>
                 </tr>
                 <tr>
                   <td>
-                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software End of Life Date')" role="tooltip">Software End of Life Date</span>
-                  </td>
-                  <td>{{ itStandard.EndOfLifeDate | date : "MMMM d, y" }}</td>
-                </tr>
-                <tr>
-                  <td>
-                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Previously Known As')" role="tooltip">Previously Known As</span>
+                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Previously Known As')" role="tooltip">Also Known As</span>
                   </td>
                   <td>{{ itStandard.OldName }}</td>
                 </tr>
-                <tr>
-                  <td>
-                    <i class="fas fa-universal-access"></i><span [title]="getTooltip('508 Compliance')" role="tooltip">508 Compliance</span>
-                  </td>
-                  <td>{{ itStandard.ComplianceStatus }}</td>
-                </tr>
-
                 <tr>
                   <td>
                     <i class="fa fa-calendar-alt"></i><span [title]="getTooltip('Approval Expiration Date')" role="tooltip">Approval Expiration Date</span>
@@ -103,6 +90,19 @@
                     {{ itStandard.ApprovalExpirationDate | date : "MMMM d, y" }}
                   </td>
                 </tr>
+                <tr>
+                  <td>
+                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software End of Life Date')" role="tooltip">End of Life Date</span>
+                  </td>
+                  <td>{{ itStandard.EndOfLifeDate | date : "MMMM d, y" }}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <i class="fas fa-universal-access"></i><span [title]="getTooltip('508 Compliance')" role="tooltip">508 Compliance</span>
+                  </td>
+                  <td>{{ itStandard.ComplianceStatus }}</td>
+                </tr>
+
                 <tr>
                   <td><i class="far fa-list-alt"></i><span [title]="getTooltip('Category')" role="tooltip">Category</span>
                   </td>
