@@ -1,4 +1,5 @@
 const { equal } = require('assert');
+var dotenv = require('dotenv').config();  // .env Credentials
 
 const https = require('https'),
   fs = require("fs"),
@@ -11,9 +12,9 @@ const https = require('https'),
 
 const sql_promise = require("../db.js").connection_promise;
 
-
+const apiKey = process.env.TOUCHPOINT_API_KEY;
 const touchpointHost = "api.gsa.gov";
-const touchpointUrlPath = "/analytics/touchpoints/v1/websites.json?API_KEY=xU5k4HVu4GejwIhrhwb62WdeTo86tZR7gZkV1ah5";
+const touchpointUrlPath = `/analytics/touchpoints/v1/websites.json?all=1&API_KEY=${apiKey}`;
 
 const insert_params = ["cms_platform", "contact_email", "dap_gtm_code", "digital_brand_category", "domain", "feedback_tool", "has_authenticated_experience", "has_dap", "has_search", "hosting_platform", "https", "id", "mobile_friendly", "notes", "office", "production_status", "redirects_to", "repository_url", "required_by_law_or_policy", "site_owner_email", "sitemap_url", "status_code", "sub_office", "type_of_site", "uses_feedback", "uses_tracking_cookies", "uswds_version"];
 
@@ -71,20 +72,20 @@ const insertDbData = async (rowData) => {
   const query = fs.readFileSync(path.join(__dirname, queryPath, "CREATE/insert_websites_from_touchpoint.sql")).toString();
   const values = insert_params.map(paramName => rowData[paramName]);
   const result = await runQuery(query, values);
-  console.log(`Insert::: id: ${rowData.id}, row: ${result}`);
+  //console.log(`Insert::: id: ${rowData.id}, row: ${JSON.stringify(result)}`);
 };
 
 const updateDbData = async (rowData) => {
   const query = fs.readFileSync(path.join(__dirname, queryPath, "UPDATE/update_websites_from_touchpoint.sql")).toString();
   const values = update_params.map(paramName => rowData[paramName]);
   const result = await runQuery(query, values);
-  console.log(`Update::: id: ${rowData.id}, result: ${JSON.stringify(result)}`);
+  //console.log(`Update::: id: ${rowData.id}, result: ${JSON.stringify(result)}`);
 };
 
 const removeDbData = async (rowIds) => {
   const query = fs.readFileSync(path.join(__dirname, queryPath, "REMOVE/remove_websites_by_ids.sql")).toString();
   const result = await runQuery(query, [rowIds]);
-  console.log(`Remove rows::: result: ${JSON.stringify(result)}`);
+  //console.log(`Remove rows::: result: ${JSON.stringify(result)}`);
 };
 
 const analyzeData = async (dataItems) => {
@@ -132,34 +133,34 @@ const transformTouchpointData = async (tpDataItems, mappingFileName, filterIds=[
 
 const createData = async (tpDataItems, rowIds) => {
   if (!rowIds || rowIds.length === 0) {
-    console.log("no new items.")
+    console.log(`${new Date()}: no new items.`)
     return;
   }
   const tpDataRows = await transformTouchpointData(tpDataItems, "touchpoint-to-website-complete.json", rowIds);
   console.log(`new row count ${tpDataRows.length}`);
   await Promise.all(tpDataRows.map(async (rowData) => await insertDbData(rowData)));
-  console.log(`Insertion is complete ${Date.now()}`);
+  console.log(`${new Date()}: Insertion is complete.`);
 };
 
 const updateData = async (tpDataItems, rowIds) => {
   if (!rowIds || rowIds.length === 0) {
-    console.log("no update items.")
+    console.log(`${new Date()}: no update items.`)
     return;
   }
   const tpDataRows = await transformTouchpointData(tpDataItems, "touchpoint-to-website-complete.json", rowIds);
-  console.log(`update row count ${tpDataRows.length}`);
+  console.log(`${new Date()}: update row count ${tpDataRows.length}`);
   await Promise.all(tpDataRows.map(async (rowData) => await updateDbData(rowData)));
-  console.log(`Update is complete ${Date.now()}`);
+  console.log(`${new Date()}: Update is complete.`);
 };
 
 const removeData = async (rowIds) => {
   if (!rowIds || rowIds.length === 0) {
-    console.log("no remove items.")
+    console.log(`${new Date()}: no remove items.`)
     return;
   }
-  console.log(`delete row count ${rowIds.length}`);
+  console.log(`${new Date()}: delete row count ${rowIds.length}`);
   await removeDbData(rowIds);
-  console.log(`Delete is complete ${Date.now()}`);
+  console.log(`${new Date()}: Delete is complete.`);
 };
 
 exports.importWebsiteData = async () => {
