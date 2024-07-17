@@ -1,6 +1,7 @@
 const ctrl = require('./base.controller'),
   records = require('./records.controller'),
   techCatImport = require('./tech-catalog-import.controller'),
+  touchpointImport= require('./touchpoint-import.controller'),
   fs = require('fs'),
   path = require('path'),
   queryPath = '../queries/'
@@ -63,6 +64,31 @@ exports.runTechCatalogImportJob = async () => {
       console.log(jobName + ' - ' + status);
     });
 
+  } catch (error) {
+    status = `error occurred starting:  \n` + error;
+    console.log(jobName + ' - ' + status);
+  }
+
+};
+
+// -------------------------------------------------------------------------------------------------
+// CRON JOB: Touch point Daily Import (runs daily at 5:00 AM)
+exports.runTouchpointImportJob = async () => {
+
+  const jobName = 'CRON JOB: Touchpoint Daily Import';
+  let status = 'executed';
+
+  console.log(jobName + ' - ' + status);
+
+  try {
+
+    let res = {};
+
+    // log execution of job
+    ctrl.sendLogQuery(jobName + ' - ' + status, jobUser, jobName, res);
+
+    // run daily import
+    touchpointImport.importWebsiteData();
   } catch (error) {
     status = `error occurred starting:  \n` + error;
     console.log(jobName + ' - ' + status);
