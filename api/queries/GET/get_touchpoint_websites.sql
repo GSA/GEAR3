@@ -1,4 +1,5 @@
 SELECT analytics_url,
+authentication_tool,
 cms_platform,
 contact_email,
 dap_gtm_code,

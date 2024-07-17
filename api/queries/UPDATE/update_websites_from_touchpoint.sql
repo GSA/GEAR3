@@ -1,4 +1,6 @@
 UPDATE obj_websites SET
+analytics_url = ?,
+authentication_tool= ?,
 cms_platform = ?,
 contact_email = ?,
 dap_gtm_code = ?,
@@ -25,5 +27,7 @@ sub_office = ?,
 type_of_site = ?,
 uses_feedback = ?,
 uses_tracking_cookies = ?,
-uswds_version = ?
+uswds_version = ?,
+created_at = ?,
+updated_at = ?
 WHERE id = ?

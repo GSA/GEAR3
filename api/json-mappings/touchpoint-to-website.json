@@ -1,5 +1,6 @@
 {
-    "analytics_url": "attributes.analytics_url",
+    "analytics_url": "attributes.analytics_url|emptyToNull",
+    "authentication_tool": "attributes.authentication_tool|emptyToNull",
     "cms_platform": "attributes.cms_platform|nullToEmpty",
     "contact_email": "attributes.contact_email|nullToEmpty",
     "dap_gtm_code": "attributes.dap_gtm_code|nullToEmpty",

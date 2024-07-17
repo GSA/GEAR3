@@ -1,4 +1,5 @@
 const { equal } = require('assert');
+const { json } = require('body-parser');
 var dotenv = require('dotenv').config();  // .env Credentials
 
 const https = require('https'),
@@ -16,9 +17,9 @@ const apiKey = process.env.TOUCHPOINT_API_KEY;
 const touchpointHost = "api.gsa.gov";
 const touchpointUrlPath = `/analytics/touchpoints/v1/websites.json?all=1&API_KEY=${apiKey}`;
 
-const insert_params = ["cms_platform", "contact_email", "dap_gtm_code", "digital_brand_category", "domain", "feedback_tool", "has_authenticated_experience", "has_dap", "has_search", "hosting_platform", "https", "id", "mobile_friendly", "notes", "office", "production_status", "redirects_to", "repository_url", "required_by_law_or_policy", "site_owner_email", "sitemap_url", "status_code", "sub_office", "type_of_site", "uses_feedback", "uses_tracking_cookies", "uswds_version"];
+const insert_params = ["analytics_url", "authentication_tool", "cms_platform", "contact_email", "dap_gtm_code", "digital_brand_category", "domain", "feedback_tool", "has_authenticated_experience", "has_dap", "has_search", "hosting_platform", "https", "id", "mobile_friendly", "notes", "office", "production_status", "redirects_to", "repository_url", "required_by_law_or_policy", "site_owner_email", "sitemap_url", "status_code", "sub_office", "type_of_site", "uses_feedback", "uses_tracking_cookies", "uswds_version", "created_at", "updated_at"];
 
-const update_params = ["cms_platform", "contact_email", "dap_gtm_code", "digital_brand_category", "domain", "feedback_tool", "has_authenticated_experience", "has_dap", "has_search", "hosting_platform", "https", "id", "mobile_friendly", "notes", "office", "production_status", "redirects_to", "repository_url", "required_by_law_or_policy", "site_owner_email", "sitemap_url", "status_code", "sub_office", "type_of_site", "uses_feedback", "uses_tracking_cookies", "uswds_version", "id"];
+const update_params = ["analytics_url", "authentication_tool", "cms_platform", "contact_email", "dap_gtm_code", "digital_brand_category", "domain", "feedback_tool", "has_authenticated_experience", "has_dap", "has_search", "hosting_platform", "https", "id", "mobile_friendly", "notes", "office", "production_status", "redirects_to", "repository_url", "required_by_law_or_policy", "site_owner_email", "sitemap_url", "status_code", "sub_office", "type_of_site", "uses_feedback", "uses_tracking_cookies", "uswds_version", "created_at", "updated_at", "id"];
 
 
 const doRequest = (options) => {
@@ -91,13 +92,13 @@ const removeDbData = async (rowIds) => {
 const analyzeData = async (dataItems) => {
   // get touch point data for comparison
   const mappingsJson = JSON.parse(fs.readFileSync(path.join(__dirname, mappingsPath, "touchpoint-to-website.json")));
-  const touchpointDbRows = await Promise.all(dataItems
+  const touchpointDbRows = (await Promise.all(dataItems
     .filter(dataItem => dataItem["attributes"]["organization_id"] === 1)
-    .map(async (dataItem) => await jsonTransformEngine.transform(dataItem, mappingsJson)));
+    .map(async (dataItem) => await jsonTransformEngine.transform(dataItem, mappingsJson))))
+    .sort((a, b) => a.id - b.id);
   const touchpointRowMap = Object.assign({}, ...touchpointDbRows.map(row => { return { [row.id]: row } }));
-  touchpointDbRows.sort((a, b) => a.id - b.id);
 
-  const dbRows = await getDbData();
+  const dbRows = (await getDbData()).sort((a, b) => a.id - b.id);
   const dbRowMap = Object.assign({}, ...dbRows.map(row => { return { [row.id]: row } }));
 
   console.log(`Total touchpoint count: ${touchpointDbRows.length}`);
@@ -122,7 +123,7 @@ const analyzeData = async (dataItems) => {
   return [newIds, updateIds, removeIds]
 };
 
-const transformTouchpointData = async (tpDataItems, mappingFileName, filterIds=[]) => {
+const transformTouchpointData = async (tpDataItems, mappingFileName, filterIds = []) => {
   // get complete touch point data json for import
   const mappingsCompleteJson = JSON.parse(fs.readFileSync(path.join(__dirname, mappingsPath, mappingFileName)));
   return await Promise.all(tpDataItems
