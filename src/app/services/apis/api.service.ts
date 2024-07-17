@@ -42,6 +42,7 @@ import { SoftwareVersion } from '@api/models/tc-softwareversion.model';
 import { SoftwareRelease } from '@api/models/tc-softwarerelease.model';
 import { AttestationStatus } from '@api/models/attestation-status.model';
 import { TechAttributeDefinitions } from '@api/models/tech-attribute-definitions';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 
 @Injectable({
   providedIn: 'root',
@@ -94,6 +95,9 @@ export class ApiService {
 
   // Tech Att Defs
   techAttDefsUrl: string = this.sharedService.internalURLFmt('/api/attribute_definitions');
+
+  // Data Dictionary
+  dataDictionaryUrl: string = this.sharedService.internalURLFmt('/api/data_dictionary');
 
   constructor(
     private globals: Globals,
@@ -807,6 +811,20 @@ export class ApiService {
     return this.http
       .get<TechAttributeDefinitions[]>(this.techAttDefsUrl + '/get/attribute_definitions')
       .pipe(catchError(this.handleError<TechAttributeDefinitions[]>('GET Tech Attribute Definitions', [])));
+  }
+
+  // Get Entire Data Dictionary
+  public getEntireDataDictionary(): Observable<DataDictionary[]> {
+    return this.http
+      .get<DataDictionary[]>(this.dataDictionaryUrl)
+      .pipe(catchError(this.handleError<DataDictionary[]>('GET Entire Data Dictionary', [])));
+  }
+
+  // Get Data Dictionary By Report Name
+  public getDataDictionaryByReportName(reportName: string): Observable<DataDictionary[]> {
+    return this.http
+      .get<DataDictionary[]>(this.dataDictionaryUrl + '/get/' + encodeURIComponent(reportName))
+      .pipe(catchError(this.handleError<DataDictionary[]>('GET Data Dictionary By Report Name', [])));
   }
 
   //// Error Handler for calls
