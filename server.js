@@ -536,6 +536,13 @@ cron.schedule('1 0 * * 1-5', () => { //PRODUCTION
 cron.schedule('1 14 * * 0', () => { //PRODUCTION
   cronCtrl.runTechCatalogImportJob();
 });
+
+// (runs Touch point import at 6:03 AM)
+cron.schedule('3 6 * * *', () => { //PRODUCTION
+  cronCtrl.runTouchpointImportJob();
+});
+
+
 /*
 // (runs SATURDAY + SUNDAY AFTERNOON at 2:01 PM)
 cron.schedule('1 14 * * 6-0', () => { //PRODUCTION
