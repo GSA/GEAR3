@@ -40,7 +40,7 @@ export class ItStandardsComponent implements OnInit {
   tableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: true,
     idTable: 'ITStandardTable',
-    classes: 'table-hover table-dark clickable-table fixed-table',
+    classes: 'table-hover table-dark clickable-table',
     showColumns: true,
     showExport: true,
     exportFileName: 'GSA_IT_Standards',
