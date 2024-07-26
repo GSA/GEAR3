@@ -62,7 +62,9 @@
     "fast-csv": "^4.3.6",
     "follow-redirects": "^1.14.7",
     "googleapis": "^114.0.0",
+    "jexl": "^2.3.0",
     "jquery": "^3.6.0",
+    "json-diff": "^1.0.6",
     "json-schema": "^0.4.0",
     "jsonwebtoken": "^8.5.1",
     "jspdf-autotable": "^3.5.20",
@@ -70,6 +72,7 @@
     "ldapjs": "^2.3.1",
     "make-fetch-happen": "^10.1.2",
     "mysql2": "^3.9.7",
+    "ng-sidebar-v3": "^18.0.0",
     "ng2-pdf-viewer": "^10.2.2",
     "ngx-cookie-service": "^18.0.0",
     "node-cron": "^2.0.3",
@@ -88,8 +91,7 @@
     "webpack-dev-server": "^5.0.4",
     "xmlhttprequest": "^1.8.0",
     "xmlhttprequest-ssl": "^1.6.3",
-    "zone.js": "^0.14.6",
-    "ng-sidebar-v3": "^18.0.0"
+    "zone.js": "^0.14.6"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^18.0.7",

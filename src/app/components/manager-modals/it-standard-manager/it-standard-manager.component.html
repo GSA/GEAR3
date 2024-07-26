@@ -37,7 +37,7 @@
               <div class="row align-items-center">
 
                 <div class="form-group col">
-                  <label for="tcManufacturer">Manufacturer Name</label>
+                  <label for="tcManufacturer">Manufacturer</label>
                     <ng-select id="tcManufacturer" formControlName="tcManufacturer"
                       [items]="manufacturers"
                       [multiple]="false"
@@ -60,7 +60,7 @@
                   </div>
 
                 <div class="form-group col" id="divProduct">
-                  <label for="tcSoftwareProduct">Software Product Name</label>
+                  <label for="tcSoftwareProduct">Product</label>
                     <ng-select id="tcSoftwareProduct" formControlName="tcSoftwareProduct"
                       [items]="softwareProducts"
                       [multiple]="false"
@@ -132,7 +132,7 @@
                   </div>
 
                   <div class="form-group col-3" id="divEndOfLifeDate">
-                    <label for="tcEndOfLifeDate">Software End of Life Date</label>
+                    <label for="tcEndOfLifeDate">End of Life Date</label>
                     <input type="text" class="form-control" id="tcEndOfLifeDate"
                       formControlName="tcEndOfLifeDate" placeholder="Not Available">
                       <!--<div class="success-feedback" *ngIf="isAssignedToitStandAprvExp(endOfLifeDate, aprvExpDate)">
@@ -161,12 +161,12 @@
                 </div>
 
                 <div class="form-group col-6" id="divOldName">
-                  <label for="itStandName">Previously Known As</label>
+                  <label for="itStandName">Also Known As</label>
                   <input type="text" class="form-control" id="itStandName"
                     formControlName="itStandName" placeholder="Not Applicable" [value]="itStandard.OldName" >
                     <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'itStandName')">
                       <div class="invalid-feedback" *ngIf="itStandardsForm.controls['itStandName'].errors.required">
-                        Previously Known As is Required
+                        Also Known As is Required
                       </div>
                     </div>
 
