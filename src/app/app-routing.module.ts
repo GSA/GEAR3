@@ -43,6 +43,7 @@ import { GearModelComponent } from './views/architecture/gear-model/gear-model.c
 import { Title } from '@angular/platform-browser';
 import { FormsComponent } from './views/main/forms-glossary/forms/forms.component';
 import { GlossaryComponent } from './views/main/forms-glossary/glossary/glossary.component';
+import { DataDictionaryComponent } from './views/main/data-dictionary/data-dictionary.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, title: 'Home' },
@@ -195,6 +196,12 @@ const routes: Routes = [
     path: 'gear_manager',
     component: GearManagerComponent,
     title: 'GEAR Manager',
+  },
+
+  {
+    path: 'data_dictionary',
+    component: DataDictionaryComponent,
+    title: 'Data Dictionary',
   },
 
   {
