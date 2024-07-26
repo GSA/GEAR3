@@ -51,9 +51,9 @@ export class SystemsComponent implements OnInit {
   }
 
   //active table export ignore column indices
-  activeExportIgnoreColumn = [2];
+  activeExportIgnoreColumn = [];
   //inactive table export ignore column indices
-  inactiveExportIgnoreColumn = [2];
+  inactiveExportIgnoreColumn = [];
   
   // Systems Table Options
   tableOptions: {} = this.tableService.createTableOptions({
@@ -97,14 +97,6 @@ export class SystemsComponent implements OnInit {
       sortable: true,
       visible: true,
       formatter: this.sharedService.formatDescription
-    },
-    {
-      field: 'Description',
-      title: 'Description',
-      sortable: true,
-      visible: false,
-      switchable: false,
-      forceExport: true
     },
     {
       field: 'SystemLevel',
@@ -198,14 +190,6 @@ export class SystemsComponent implements OnInit {
       sortable: true,
       visible: true,
       formatter: this.sharedService.formatDescription
-    },
-    {
-      field: 'Description',
-      title: 'Description',
-      sortable: true,
-      visible: false,
-      switchable: false,
-      forceExport: true
     },
     {
       field: 'SystemLevel',

@@ -20,6 +20,7 @@ const sysTIME = require(routesPath + "systime.routes");
 const techCatalogImport = require(routesPath + "tech-catalog-import.routes");
 const techCatalog = require(routesPath + "tech-catalog.routes");
 const websites = require(routesPath + "websites.routes");
+const techAttributeDefinitions = require(routesPath + "tech-attribute-definitions.routes");
 
 const router = express.Router();
 let limiter = rateLimit({
@@ -44,5 +45,6 @@ router.use("/system_time", sysTIME);
 router.use("/tech_catalog_import", techCatalogImport);
 router.use("/tech_catalog", techCatalog);
 router.use("/websites", websites);
+router.use("/attribute_definitions", techAttributeDefinitions);
 
 module.exports = router;

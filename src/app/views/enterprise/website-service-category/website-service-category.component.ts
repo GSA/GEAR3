@@ -42,7 +42,7 @@ export class WebsiteServiceCategoryComponent implements OnInit {
     showColumns: false,
     showExport: true,
     exportFileName: 'GSA_websiteServiceCategory',
-    exportIgnoreColumn:[2],
+    exportIgnoreColumn:[],
     headerStyle: 'bg-royal-blue',
     pagination: true,
     search: true,
@@ -70,14 +70,6 @@ export class WebsiteServiceCategoryComponent implements OnInit {
       sortable: true,
       visible: true,
       formatter: this.sharedService.formatDescription
-    },
-    {
-      field: 'description',
-      title: 'Description',
-      sortable: true,
-      visible: false,
-      switchable: false,
-      forceExport: true
     }
   ];
 

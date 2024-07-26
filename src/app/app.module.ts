@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -77,78 +77,61 @@ import { YesNoPipe } from "./pipes/yesno.pipe";
 import { SkipFocusPiechartDirective } from '@common/skip-focus-piechart.directive';
 import { BannerComponent } from './components/banner/banner.component';
 
-@NgModule({
-  declarations: [
-    AppComponent,
-
-    TopNavbarComponent,
-    SidenavComponent,
-
-    HomeComponent,
-    GlobalSearchComponent,
-    AboutComponent,
-    AssistTechComponent,
-    FormsComponent,
-    GlossaryComponent,
-    GearManagerComponent,
-
-    FrameworkComponent,
-    InvestmentsComponent,
-    InvestmentsModalComponent,
-
-    CapabilitiesModelComponent,
-    CapabilitiesComponent,
-    CapabilitiesModalComponent,
-    CapabilityManagerComponent,
-    OrganizationsChartComponent,
-    OrganizationsComponent,
-    OrganizationsModalComponent,
-    WebsiteServiceCategoryComponent,
-    WebsiteServiceCategoryModalComponent,
-
-    SystemsComponent,
-    SystemsModalComponent,
-    SystemManagerComponent,
-    TimeComponent,
-    RecordsManagementComponent,
-    RecordsModalComponent,
-    RecordManagerComponent,
-    WebsitesComponent,
-    WebsitesModalComponent,
-    WebsiteManagerComponent,
-
-    FismaComponent,
-    FismaModalComponent,
-    FismaPocsComponent,
-
-    ItStandardsComponent,
-    ItStandardsModalComponent,
-    ItStandardManagerComponent,
-
-    //ArtifactsComponent,
-    EAViewComponent,
-    GearModelComponent,
-
-    YesNoPipe,
-
-    SkipFocusPiechartDirective,
-      BannerComponent,
-  ],
-  imports: [
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    BrowserModule,
-    FormsModule,
-    HttpClientModule,
-    NgSelectModule,
-    NgxChartsModule,
-    PdfViewerModule,
-    ReactiveFormsModule,
-    SidebarModule.forRoot(),
-  ],
-  providers: [Globals],
-  bootstrap: [AppComponent],
-})
+@NgModule({ declarations: [
+        AppComponent,
+        TopNavbarComponent,
+        SidenavComponent,
+        HomeComponent,
+        GlobalSearchComponent,
+        AboutComponent,
+        AssistTechComponent,
+        FormsComponent,
+        GlossaryComponent,
+        GearManagerComponent,
+        FrameworkComponent,
+        InvestmentsComponent,
+        InvestmentsModalComponent,
+        CapabilitiesModelComponent,
+        CapabilitiesComponent,
+        CapabilitiesModalComponent,
+        CapabilityManagerComponent,
+        OrganizationsChartComponent,
+        OrganizationsComponent,
+        OrganizationsModalComponent,
+        WebsiteServiceCategoryComponent,
+        WebsiteServiceCategoryModalComponent,
+        SystemsComponent,
+        SystemsModalComponent,
+        SystemManagerComponent,
+        TimeComponent,
+        RecordsManagementComponent,
+        RecordsModalComponent,
+        RecordManagerComponent,
+        WebsitesComponent,
+        WebsitesModalComponent,
+        WebsiteManagerComponent,
+        FismaComponent,
+        FismaModalComponent,
+        FismaPocsComponent,
+        ItStandardsComponent,
+        ItStandardsModalComponent,
+        ItStandardManagerComponent,
+        //ArtifactsComponent,
+        EAViewComponent,
+        GearModelComponent,
+        YesNoPipe,
+        SkipFocusPiechartDirective,
+        BannerComponent,
+    ],
+    bootstrap: [AppComponent], imports: [AppRoutingModule,
+        BrowserAnimationsModule,
+        BrowserModule,
+        FormsModule,
+        NgSelectModule,
+        NgxChartsModule,
+        PdfViewerModule,
+        ReactiveFormsModule,
+        SidebarModule.forRoot()], providers: [Globals, provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule {
   constructor() {}
 }

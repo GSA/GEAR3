@@ -1,0 +1,1 @@
+DELETE FROM obj_websites WHERE id IN (?)
