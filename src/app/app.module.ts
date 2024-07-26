@@ -76,6 +76,12 @@ import { Globals } from './common/globals';
 import { YesNoPipe } from "./pipes/yesno.pipe";
 import { SkipFocusPiechartDirective } from '@common/skip-focus-piechart.directive';
 import { BannerComponent } from './components/banner/banner.component';
+import { DataDictionaryPrimeNGComponent } from './views/main/data-dictionary-primeng/data-dictionary-primeng.component';
+
+// PrimeNG Modules
+import { TableModule } from 'primeng/table';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { ButtonModule } from 'primeng/button';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -122,6 +128,7 @@ import { BannerComponent } from './components/banner/banner.component';
         YesNoPipe,
         SkipFocusPiechartDirective,
         BannerComponent,
+        DataDictionaryPrimeNGComponent
     ],
     bootstrap: [AppComponent], imports: [AppRoutingModule,
         BrowserAnimationsModule,
@@ -131,7 +138,11 @@ import { BannerComponent } from './components/banner/banner.component';
         NgxChartsModule,
         PdfViewerModule,
         ReactiveFormsModule,
-        SidebarModule.forRoot()], providers: [Globals, provideHttpClient(withInterceptorsFromDi())] })
+        SidebarModule.forRoot(),
+        TableModule,
+        MultiSelectModule,
+        ButtonModule
+      ], providers: [Globals, provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule {
   constructor() {}
 }

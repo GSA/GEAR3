@@ -1,0 +1,70 @@
+<div class="card">
+  <div class="card-header text-white bg-dark text-center">
+    <h3 class="card-title col-12 mb-0">
+      <span>
+        <i class="fab fa-wpforms"></i>
+        Data Dictionary
+      </span>
+    </h3>
+    <!-- Help Button -->
+    <a tabindex="0"
+      class="btn btn-sm btn-info text-white shadow help-btn d-flex align-items-center justify-content-center"
+      role="button" data-toggle="popover" data-trigger="focus" data-placement="auto" data-html="true"
+      title="Help Using this Page" data-content="
+        <b>Export:</b> Export data by clicking on the <i class='fas fa-download'></i> icon and selecting the format
+        that meets your needs.
+        <br><br>
+        <b>Search:</b> Perform a filtered search across all fields in the displayed
+        data. Hit the 'Enter' button on your keyboard to execute.
+        <br><br>
+        Click on the <i class='fas fa-caret-square-down'></i> icon to display everything on one page.">
+      <span class="mr-2">More Help</span><i class="far fa-question-circle fa-2x"></i>
+    </a>
+  </div>
+
+  <div class="card-body card-text">
+    <div>
+      <h3>Data Dictionary</h3>
+      <div>
+        <p-multiSelect 
+          [options]="testCols" 
+          [(ngModel)]="visibleColumns"
+          (onChange)="toggleVisible($event)"
+          optionLabel="field"
+          tooltip="Add/Remove Columns">
+            <ng-template pTemplate="selectedItems">
+              <i class="fa fa-th-list"></i>
+            </ng-template>
+          </p-multiSelect>
+          <p-button icon="fa fa-caret-square-down" (click)="togglePagination()" />
+      </div>
+      <p-table [columns]="testCols"
+               [value]="testData"
+               [rowsPerPageOptions]="[10, 25, 50]"
+               [rows]="10"
+               [paginator]="isPaginated">
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th *ngFor="let col of columns" [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.isSortable ? true : false">
+                  <div *ngIf="col.showColumn">
+                    {{ col.header }}
+                    <ng-container *ngIf="col.isSortable">
+                      <p-sortIcon [field]="col.field"></p-sortIcon>
+                    </ng-container>
+                  </div>
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+            <tr>
+                <td *ngFor="let col of columns">
+                  <div *ngIf="col.showColumn">
+                    {{ rowData[col.field] }}
+                  </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    </div>
+  </div>
+</div>
