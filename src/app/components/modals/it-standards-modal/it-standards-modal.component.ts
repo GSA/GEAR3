@@ -7,6 +7,7 @@ import { SharedService } from "@services/shared/shared.service";
 import { TableService } from '@services/tables/table.service';
 import { ApiService } from '@services/apis/api.service';
 import { TechAttributeDefinitions } from '@api/models/tech-attribute-definitions';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -19,7 +20,7 @@ declare var $: any;
 export class ItStandardsModalComponent implements OnInit {
 
   itStandard = <any>{};
-  techAttDefs = <TechAttributeDefinitions[]>[];
+  attrDefinitions = <DataDictionary[]>[];
 
   constructor(
     private location: Location,
@@ -57,9 +58,9 @@ export class ItStandardsModalComponent implements OnInit {
     }.bind(this));
 
     // Get attribute definition list
-    this.apiService.getTechAttributeDefinitions()
-      .subscribe((data: TechAttributeDefinitions[]) => {
-        this.techAttDefs = data;
+    this.apiService.getDataDictionaryByReportName('IT Standards List')
+      .subscribe((data: DataDictionary[]) => {
+        this.attrDefinitions = data;
         
     });
   }
@@ -78,9 +79,9 @@ export class ItStandardsModalComponent implements OnInit {
   }
 
   getTooltip (name: string): string {
-    const def = this.techAttDefs.find(def => def.AttributeName === name);
+    const def = this.attrDefinitions.find(def => def.Term === name);
     if(def){
-      return def.AttributeDefinition;
+      return def.TermDefinition;
     }
     return '';
   }

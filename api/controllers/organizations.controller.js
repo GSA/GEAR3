@@ -31,7 +31,7 @@ exports.findCapabilites = (req, res) => {
 
 exports.findSystems = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
-    ` WHERE systems.\`ex:Responsible_Org\` LIKE '%${req.params.name}%' GROUP BY systems.\`ex:GEAR_ID\`;`;
+    ` WHERE systems.\`ex:Responsible_Org\` LIKE "%${ req.params.name}%" GROUP BY systems.\`ex:GEAR_ID\`;`;
 
   res = ctrl.sendQuery(query, 'systems for organization', res);
 };

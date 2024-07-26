@@ -382,7 +382,8 @@ export class OrganizationsChartComponent implements OnInit {
             .style('visibility', 'visible') // Show detail card
             .style('opacity', '1');
 
-          d3.select('#orgName').text(d.data.name); // Set Name
+          // d3.select('#orgName').text(d.data.name); // Set Name
+          d3.select('#orgName').text(d.currentTarget.__data__.data.name); // Set Name
 
           // d3.select("#orgChart")
           //   .style("transform", "translateY(13%)");   // Keeping this here in case the detail pane gets larger and needs to move
@@ -401,7 +402,7 @@ export class OrganizationsChartComponent implements OnInit {
 
               // Grab data for selected node
               this.apiService
-                .getOneOrg(this.selectedOrg.data.identity)
+                .getOneOrg(this.selectedOrg.srcElement.__data__.data.identity)
                 .subscribe((data: any[]) => {
                   var orgData = data[0];
                   this.tableService.orgsTableClick(orgData);
