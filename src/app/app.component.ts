@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { distinctUntilChanged } from 'rxjs/operators';
 
 // Declare jQuery symbol
 declare var $: any;
+declare var gtag: Function;
 
 @Component({
   selector: 'app-root',
@@ -9,6 +12,8 @@ declare var $: any;
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
+  constructor(private router: Router) { }
+
   title = 'gear3';
 
   ngOnInit() {
@@ -16,6 +21,19 @@ export class AppComponent implements OnInit {
     $(document).ready(this.setNavOffsets);
     $(window).resize(this.setNavOffsets);
 
+    /*
+    ** Send analytics if page changes and the route isn't the same
+    ** distinctUntilChanged so the observer only emits when type NavigationEnd and
+    ** doesn't have the same route as previously emitted
+    */
+    this.router.events.pipe(distinctUntilChanged((previous: any, current: any) => {
+      if(current instanceof NavigationEnd) {
+        return previous.url === current.url;
+      }
+      return true;
+    })).subscribe((x: any) => {
+      gtag('config', 'G-PDPL5T61V1', {'page_path': x.url});
+    });
   }
 
   setNavOffsets() {
