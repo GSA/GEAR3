@@ -21,6 +21,7 @@ const techCatalogImport = require(routesPath + "tech-catalog-import.routes");
 const techCatalog = require(routesPath + "tech-catalog.routes");
 const websites = require(routesPath + "websites.routes");
 const techAttributeDefinitions = require(routesPath + "tech-attribute-definitions.routes");
+const dataDictionary = require(routesPath + "data-dictionary.routes");
 
 const router = express.Router();
 let limiter = rateLimit({
@@ -46,5 +47,6 @@ router.use("/tech_catalog_import", techCatalogImport);
 router.use("/tech_catalog", techCatalog);
 router.use("/websites", websites);
 router.use("/attribute_definitions", techAttributeDefinitions);
+router.use("/data_dictionary", dataDictionary);
 
 module.exports = router;

@@ -9,7 +9,7 @@ import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
 
 import { ITStandards } from '@api/models/it-standards.model';
-import { TechAttributeDefinitions } from '@api/models/tech-attribute-definitions';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -23,7 +23,7 @@ export class ItStandardsComponent implements OnInit {
   row: Object = <any>{};
   filteredTable: boolean = false;
   filterTitle: string = '';
-  tableHeadingDefs: TechAttributeDefinitions[] = [];
+  attrDefinitions: DataDictionary[] = [];
   columnDefs: any[] = [];
 
   constructor(
@@ -66,8 +66,8 @@ export class ItStandardsComponent implements OnInit {
     * Get definitions for the table header tooltips
     * Then set the column defintions and initialize the table
     */
-    this.apiService.getTechAttributeDefinitions().subscribe(defs => {
-      this.tableHeadingDefs = defs
+    this.apiService.getDataDictionaryByReportName('IT Standards List').subscribe(defs => {
+      this.attrDefinitions = defs
 
       // IT Standard Table Columns
       this.columnDefs = [{
@@ -334,9 +334,9 @@ export class ItStandardsComponent implements OnInit {
   }
 
   getTooltip (name: string): string {
-    const def = this.tableHeadingDefs.find(def => def.AttributeName === name);
+    const def = this.attrDefinitions.find(def => def.Term === name);
     if(def){
-      return def.AttributeDefinition;
+      return def.TermDefinition;
     }
     return '';
   }
