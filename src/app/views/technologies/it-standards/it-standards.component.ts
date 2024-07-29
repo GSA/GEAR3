@@ -43,7 +43,7 @@ export class ItStandardsComponent implements OnInit {
   tableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: true,
     idTable: 'ITStandardTable',
-    classes: 'table-hover table-dark clickable-table fixed-table',
+    classes: 'table-hover table-dark clickable-table',
     showColumns: true,
     showExport: true,
     exportFileName: 'GSA_IT_Standards',
@@ -259,8 +259,12 @@ export class ItStandardsComponent implements OnInit {
           this.tableService.itStandTableClick(row);
         }.bind(this)
       );
-      //Enable table sticky header
-      self.sharedService.enableStickyHeader("itStandardsTable");
+
+      //Method to Enable table sticky header after table commponent initialized.
+      $('#itStandardsTable').on('load-success.bs.table', function () {
+        this.sharedService.enableStickyHeader("itStandardsTable");
+      }.bind(this)
+    );
     });
 
     // Method to open details modal when referenced directly via URL
