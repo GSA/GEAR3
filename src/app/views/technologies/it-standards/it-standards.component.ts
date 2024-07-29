@@ -259,8 +259,12 @@ export class ItStandardsComponent implements OnInit {
           this.tableService.itStandTableClick(row);
         }.bind(this)
       );
-      //Enable table sticky header
-      self.sharedService.enableStickyHeader("itStandardsTable");
+
+      //Method to Enable table sticky header after table commponent initialized.
+      $('#itStandardsTable').on('load-success.bs.table', function () {
+        this.sharedService.enableStickyHeader("itStandardsTable");
+      }.bind(this)
+    );
     });
 
     // Method to open details modal when referenced directly via URL
