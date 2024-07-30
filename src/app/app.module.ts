@@ -82,6 +82,10 @@ import { DataDictionaryPrimeNGComponent } from './views/main/data-dictionary-pri
 import { TableModule } from 'primeng/table';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ButtonModule } from 'primeng/button';
+import { TableComponent } from './components/table/table.component';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { InputTextModule } from 'primeng/inputtext';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -128,7 +132,8 @@ import { ButtonModule } from 'primeng/button';
         YesNoPipe,
         SkipFocusPiechartDirective,
         BannerComponent,
-        DataDictionaryPrimeNGComponent
+        DataDictionaryPrimeNGComponent,
+        TableComponent
     ],
     bootstrap: [AppComponent], imports: [AppRoutingModule,
         BrowserAnimationsModule,
@@ -141,7 +146,10 @@ import { ButtonModule } from 'primeng/button';
         SidebarModule.forRoot(),
         TableModule,
         MultiSelectModule,
-        ButtonModule
+        ButtonModule,
+        IconFieldModule,
+        InputIconModule,
+        InputTextModule
       ], providers: [Globals, provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule {
   constructor() {}

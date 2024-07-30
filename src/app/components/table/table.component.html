@@ -1,0 +1,66 @@
+<p-table #dt
+[columns]="tableCols"
+[value]="tableData"
+[rowsPerPageOptions]="[10, 25, 50]"
+[rows]="10"
+[paginator]="isPaginated"
+[globalFilterFields]="filterFields"
+[exportHeader]="'customExportHeader'"
+[exportFilename]="getExportFilename('Data_Dictionary')" >
+<ng-template pTemplate="caption">
+
+
+ <div style="text-align: right">
+  <p-iconField iconPosition="left">
+    <p-inputIcon styleClass="fa fa-search" />
+    <input 
+    pInputText 
+    type="text" 
+    (input)="dt.filterGlobal($event.target.value, 'contains')" 
+    placeholder="Search keyword" />
+  </p-iconField>
+         <p-multiSelect 
+         [options]="tableCols" 
+         [(ngModel)]="visibleColumns"
+         (onChange)="toggleVisible($event)"
+         optionLabel="field"
+         tooltip="Add/Remove Columns">
+           <ng-template pTemplate="selectedItems">
+             <i class="fa fa-th-list"></i>
+           </ng-template>
+         </p-multiSelect>
+         <p-button icon="fa fa-caret-square-down" (click)="togglePagination()" />
+         <p-button 
+         icon="fa fa-download"
+         (onClick)="dt.exportCSV()" />
+ </div>
+</ng-template>
+<ng-template pTemplate="header" let-columns>
+<tr>
+ <th *ngFor="let col of columns" [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.isSortable ? true : false">
+   <div *ngIf="col.showColumn">
+     {{ col.header }}
+     <ng-container *ngIf="col.isSortable">
+       <p-sortIcon [field]="col.field"></p-sortIcon>
+     </ng-container>
+   </div>
+ </th>
+ 
+</tr>
+<tr>
+  <th *ngFor="let f of filterFields">
+    <p-columnFilter type="text" [field]="f" [placeholder]="'Filter by ' + f" [ariaLabel]="'Filter ' + f"></p-columnFilter>
+  </th>
+</tr>
+</ng-template>
+<ng-template pTemplate="body" let-rowData let-columns="columns">
+<tr>
+ <td *ngFor="let col of columns">
+   <div *ngIf="col.showColumn">
+      <a [href]="rowData[col.field]" *ngIf="col.isLink">{{ rowData[col.field] }}</a>
+     <span *ngIf="!col.isLink">{{ rowData[col.field] }}</span>
+   </div>
+ </td>
+</tr>
+</ng-template>
+</p-table>
