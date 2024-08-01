@@ -26,7 +26,7 @@ export class DataDictionaryComponent implements OnInit {
     advancedSearch: false,
     idTable: null,
     classes: "table-hover table-dark",
-    showColumns: false,
+    showColumns: true,
     showExport: true,
     exportFileName: 'GEAR_Data_Dictionary',
     headerStyle: null,
@@ -41,8 +41,7 @@ export class DataDictionaryComponent implements OnInit {
   ddColumnDefs: any[] = [{
     field: 'ReportName',
     title: 'ReportName',
-    sortable: true,
-    visible: false
+    sortable: true
   },
   {
     field: 'Term',
@@ -61,7 +60,8 @@ export class DataDictionaryComponent implements OnInit {
   {
     field: 'DefinitionSourceLink',
     title: 'Definition Source Link',
-    formatter: this.sharedService.linksFormatter
+    formatter: this.sharedService.linksFormatter,
+    visible: false
   },
   {
     field: 'DataSource',
@@ -71,7 +71,8 @@ export class DataDictionaryComponent implements OnInit {
   {
     field: 'DataSourceLink',
     title: 'Data Source Link',
-    formatter: this.sharedService.linksFormatter
+    formatter: this.sharedService.linksFormatter,
+    visible: false
   }
 ];
 
