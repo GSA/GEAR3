@@ -13,28 +13,13 @@ declare var gtag: Function;
 })
 export class AppComponent implements OnInit {
   constructor(private router: Router) {
-    // const navEndEvent$ = this.router.events.pipe(
-    //   filter(e => e instanceof NavigationEnd)
-    // );
-    // navEndEvent$.subscribe((e: NavigationEnd) => {
-    //   console.log(e)
-    //   gtag('config', 'G-DRCLWZLXKB', { 'page_path':e.urlAfterRedirects, 'debug_mode': true });
-    //   gtag('event', 'page_view', { 'page_path': e.urlAfterRedirects });
-    // });
-
     this.router.events.subscribe(event => {
-
+      // Send page_view event to GA
       if (event instanceof NavigationEnd) {
-          gtag('config', 'G-DRCLWZLXKB',
-              {
-                  'page_path': event.urlAfterRedirects,
-                  'debug_mode': true
-              }
-          );
+          gtag('event', 'page_view', { 'page_path': event.urlAfterRedirects });
       }
-
-  });
-   }
+    });
+  }
 
   title = 'gear3';
 
@@ -42,21 +27,6 @@ export class AppComponent implements OnInit {
     // Pad main Module by how big the top navbar is
     $(document).ready(this.setNavOffsets);
     $(window).resize(this.setNavOffsets);
-
-    /*
-    ** Send analytics if page changes and the route isn't the same
-    ** distinctUntilChanged so the observer only emits when type NavigationEnd and
-    ** doesn't have the same route as previously emitted
-    */
-    // this.router.events.pipe(distinctUntilChanged((previous: any, current: any) => {
-    //   if(current instanceof NavigationEnd) {
-    //     return previous.url === current.url;
-    //   }
-    //   return true;
-    // })).subscribe((x: any) => {
-    //   gtag('config', 'G-DRCLWZLXKB', {'page_path': x.url});
-    // });
-
   }
 
   setNavOffsets() {
