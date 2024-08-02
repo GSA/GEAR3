@@ -3,14 +3,17 @@
 
 <head>
   <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PDPL5T61V1"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DRCLWZLXKB"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
 
-    // moving this to app.component.ts so GA doesn't track initial load twice
-    // gtag('config', 'G-PDPL5T61V1');
+    /* Set send_page_view to false since we now need to
+    * manually send page views via a page_view event
+    * on route change and modal opens
+    */
+    gtag('config', 'G-DRCLWZLXKB', { 'send_page_view': false });
   </script>
 
   <meta charset="utf-8">
