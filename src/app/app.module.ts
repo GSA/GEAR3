@@ -1,4 +1,4 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -131,7 +131,7 @@ import { BannerComponent } from './components/banner/banner.component';
         NgxChartsModule,
         PdfViewerModule,
         ReactiveFormsModule,
-        SidebarModule.forRoot()], providers: [Globals, provideHttpClient(withInterceptorsFromDi())] })
+        SidebarModule.forRoot()], providers: [Globals, provideHttpClient(withInterceptorsFromDi()), provideClientHydration()] })
 export class AppModule {
   constructor() {}
 }
