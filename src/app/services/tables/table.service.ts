@@ -222,7 +222,13 @@ export class TableService {
               this.orgsTableClick(apiData[0]);
             });
           break;
-    
+      case 'Website':
+          this.apiService
+            .getOneWebsite(searchData.Id)
+            .subscribe((apiData: any[]) => {
+              this.websitesTableClick(apiData[0]);
+            });
+          break;
       default:
         break;
     }
