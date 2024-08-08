@@ -1,4 +1,5 @@
 import { Injectable, Component, ViewEncapsulation } from '@angular/core';
+import { Location } from '@angular/common';
 
 import { Globals } from '@common/globals';
 
@@ -132,7 +133,8 @@ export class TableService {
     private apiService: ApiService,
     private globals: Globals,
     private modalService: ModalsService,
-    private sharedService: SharedService
+    private sharedService: SharedService,
+    private location: Location
   ) {}
 
   public createTableOptions(definitions: any): {} {
@@ -182,6 +184,7 @@ export class TableService {
       case 'Capability':
         this.apiService.getOneCap(searchData.Id).subscribe((apiData: any[]) => {
           this.capsTableClick(apiData[0]);
+          this.setGlobalSearchModalUrl(searchData.GEAR_Type, searchData.Id);
         });
         break;
 
@@ -190,6 +193,7 @@ export class TableService {
           .getOneFISMASys(searchData.Id)
           .subscribe((apiData: any[]) => {
             this.fismaTableClick(apiData[0]);
+            this.setGlobalSearchModalUrl(searchData.GEAR_Type, searchData.Id);
           });
         break;
 
@@ -198,12 +202,14 @@ export class TableService {
           .getOneInvest(searchData.Id)
           .subscribe((apiData: any[]) => {
             this.investTableClick(apiData[0]);
+            this.setGlobalSearchModalUrl(searchData.GEAR_Type, searchData.Id);
           });
         break;
 
       case 'System': // TODO: need to change when gear_schema is fully transitioned
         this.apiService.getOneSys(searchData.Id).subscribe((apiData: any[]) => {
           this.systemsTableClick(apiData[0]);
+          this.setGlobalSearchModalUrl(searchData.GEAR_Type, searchData.Id);
         });
         break;
 
@@ -212,7 +218,9 @@ export class TableService {
           .getOneITStandard(searchData.Id)
           .subscribe((apiData: any[]) => {
             this.itStandTableClick(apiData[0]);
+            this.setGlobalSearchModalUrl(searchData.GEAR_Type, searchData.Id);
           });
+
         break;
 
       case 'Organization':
@@ -220,6 +228,7 @@ export class TableService {
             .getOneOrg(searchData.Id)
             .subscribe((apiData: any[]) => {
               this.orgsTableClick(apiData[0]);
+              this.setGlobalSearchModalUrl(searchData.GEAR_Type, searchData.Id);
             });
           break;
       case 'Website':
@@ -227,6 +236,7 @@ export class TableService {
             .getOneWebsite(searchData.Id)
             .subscribe((apiData: any[]) => {
               this.websitesTableClick(apiData[0]);
+              this.setGlobalSearchModalUrl(searchData.GEAR_Type, searchData.Id);
             });
           break;
       default:
@@ -723,5 +733,10 @@ export class TableService {
         this.fismaTableClick(apiData[0]);
       });
     }
+  }
+
+  // Set the gear_type and id in the url for global search
+  private setGlobalSearchModalUrl(gear_type: string, id: string) {
+    this.location.replaceState(`search/${gear_type}/${id}`);
   }
 }
