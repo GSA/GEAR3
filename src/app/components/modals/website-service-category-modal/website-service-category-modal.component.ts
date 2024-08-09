@@ -74,6 +74,11 @@ export class WebsiteServiceCategoryModalComponent implements OnInit {
       title: 'Sub-Office',
       sortable: true,
     },
+    {
+      field: 'production_status',
+      title: 'Production Status',
+      sortable: true,
+    },
   ];
 
   ngOnInit(): void {
