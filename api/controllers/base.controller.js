@@ -189,12 +189,14 @@ function authorize(
   requester,
   key = null
 ) {
-  const { client_secret, client_id, redirect_uris } = credentials.installed;
+  var client_secret = credentials.client_secret;
+  var client_id = credentials.client_id;
+  var redirect_uris = credentials.redirect_uris;
+  
   const oAuth2Client = new google.auth.OAuth2(
-    client_id,
-    client_secret,
-    redirect_uris[0]
-  );
+    client_id, client_secret, redirect_uris
+);
+  
     try {
       // Check if we have previously stored a token.
       fs.readFile(TOKEN_PATH, (err, token) => {
