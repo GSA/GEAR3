@@ -58,7 +58,15 @@ exports.searchAll = (req, res) => {
         'Investment' AS \`GEAR_Type\`,
         '{}' AS \`Other\`
       FROM
-        gear_schema.obj_investments as invest) AS global_search
+        gear_schema.obj_investments as invest
+      UNION SELECT
+        web.\`id\` AS \`Id\`,
+        web.\`domain\` AS \`Name\`,
+        web.\`notes\` AS \`Description\`,
+        'Website' AS \`GEAR_Type\`,
+        '{}' AS \`Other\`
+      FROM
+          gear_schema.obj_websites as web) AS global_search
     WHERE Name LIKE '%${req.params.kw}%' or Description like '%${req.params.kw}%';`; // Removed cowboy_ods.obj_technology AS tech reference
 
   res = ctrl.sendQuery(query, `global search of ${req.params.kw}`, res);
