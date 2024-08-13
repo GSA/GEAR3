@@ -7,6 +7,7 @@ SELECT
   w.office,
   w.sub_office,
   w.type_of_site,
-  w.digital_brand_category
+  w.digital_brand_category,
+  w.production_status
   FROM obj_websites as w
   INNER JOIN zk_websites_service_categories AS zk ON zk.obj_websites_id = w.id

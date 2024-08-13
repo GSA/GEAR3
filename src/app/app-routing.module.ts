@@ -48,6 +48,7 @@ import { DataDictionaryComponent } from './views/main/data-dictionary/data-dicti
 const routes: Routes = [
   { path: '', component: HomeComponent, title: 'Home' },
   { path: 'search', component: GlobalSearchComponent, title: 'Search' },
+  { path: 'search/:reportType/:id', component: GlobalSearchComponent, title: 'Search' },
   { path: 'about', component: AboutComponent, title: 'About' },
   { path: 'about/:tab', component: AboutComponent, title: 'About' },
   {
