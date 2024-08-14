@@ -110,11 +110,11 @@ export class DataDictionaryPrimeNGComponent implements OnInit {
   * */
   createButtonFilters(data: any, propName: string) {
     const uniqueReportNames = [...new Set(data.map(item => item.ReportName))];
-    let uniqueDefinitionSource = [...new Set(data.map(item => item.DefinitionSource))] as DataDictionary[];
-    uniqueDefinitionSource = uniqueDefinitionSource.filter(u => u);
+    // let uniqueDefinitionSource = [...new Set(data.map(item => item.DefinitionSource))] as DataDictionary[];
+    // uniqueDefinitionSource = uniqueDefinitionSource.filter(u => u);
 
     this.buttonFilters.push(uniqueReportNames);
-    this.buttonFilters.push(uniqueDefinitionSource);
+    // this.buttonFilters.push(uniqueDefinitionSource);
     console.log(this.buttonFilters)
   }
 }

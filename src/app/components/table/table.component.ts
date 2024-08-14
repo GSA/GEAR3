@@ -25,8 +25,14 @@ export class TableComponent implements OnInit {
   isPaginated: boolean = true;
   exportColumns!: ExportColumn[];
   currentButtonFilter: string = '';
+  screenHeight: string = '';
 
-  constructor() { }
+  constructor() {
+    this.screenHeight = `${(window.screen.height - 600).toString()}px`;
+    const element = document.getElementById('HTML element');
+    const rect = element.getBoundingClientRect();
+    console.log(rect.height);
+   }
 
   ngOnInit(): void {
     this.exportColumns = this.tableCols.map((col) => ({ title: col.header, dataKey: col.field }));
