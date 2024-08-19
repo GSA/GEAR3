@@ -15,12 +15,30 @@ declare var $: any;
 @Component({
   selector: 'it-standards-modal',
   templateUrl: './it-standards-modal.component.html',
-  styleUrls: ['./it-standards-modal.component.css']
+  styleUrls: ['./it-standards-modal.component.scss']
 })
 export class ItStandardsModalComponent implements OnInit {
 
   itStandard = <any>{};
   attrDefinitions = <DataDictionary[]>[];
+
+  STATUS_STATES = {
+    approved: 'Approved',
+    pilot: 'Pilot',
+    propsed: 'Proposed',
+    retired: 'Retired',
+    denied: 'Denied'
+  };
+
+  COMPLIANCE_STATES = {
+    fullyCompliant: 'Fully Compliant',
+    complianceUnknown: 'Compliance Unknown',
+    partiallyCompliant: 'Partially Compliant',
+    notCompliant: 'Not Compliant'
+  };
+
+  showAllFields = false;
+  showTableView = false;
 
   constructor(
     private location: Location,
@@ -30,8 +48,14 @@ export class ItStandardsModalComponent implements OnInit {
     public tableService: TableService,
     public apiService: ApiService) { }
 
+
+
   ngOnInit(): void {
-    this.modalService.currentITStand.subscribe(itStandard => this.itStandard = itStandard);
+    this.modalService.currentITStand.subscribe(itStandard => {
+      this.itStandard = itStandard;
+      console.log(this.itStandard);
+    });
+    
 
     $('#itRelSysTable').bootstrapTable($.extend(this.tableService.relSysTableOptions, {
       columns: this.tableService.relSysColumnDefs,
@@ -84,6 +108,88 @@ export class ItStandardsModalComponent implements OnInit {
       return def.TermDefinition;
     }
     return '';
+  }
+
+  getStatusIconColor(status: string) {
+    if(status === this.STATUS_STATES.approved) {
+      return 'green';
+    }
+
+    if(status === this.STATUS_STATES.pilot || status === this.STATUS_STATES.propsed) {
+      return 'yellow';
+    }
+
+    if(status === this.STATUS_STATES.retired || status === this.STATUS_STATES.denied) {
+      return 'red';
+    }
+  }
+
+  getComplianceIconColor(compliance: string) {
+    if(compliance === this.COMPLIANCE_STATES.fullyCompliant) {
+      return 'green';
+    }
+
+    if(compliance === this.COMPLIANCE_STATES.complianceUnknown || compliance === this.COMPLIANCE_STATES.partiallyCompliant) {
+      return 'yellow';
+    }
+
+    if(compliance === this.COMPLIANCE_STATES.notCompliant) {
+      return 'red';
+    }
+  }
+
+  getApprovalExpDateIconColor(approvalExpDate: string) {
+    const today = new Date();
+    const currentYear = new Date().getFullYear();
+    let expDate = new Date(approvalExpDate);
+
+    if(expDate > today && expDate.getFullYear() !== currentYear) {
+      return 'green';
+    } else if(expDate < today) {
+      return 'red';
+    } else {
+      return 'yellow';
+    }
+  }
+
+  isFieldPopulated(field: any) {
+    return (field !== '' && field !== 'N/A' && field !== null) || this.showAllFields;
+  }
+
+  isApproved() {
+    return this.itStandard.Status === this.STATUS_STATES.approved;
+  }
+
+  getStatusIconTooltip() {
+    return `
+    Green indicates an approved status.
+    Yellow indicates a pilot or propsed status.
+    Red indicates a denied or retired status.
+    `;
+  }
+
+  getComplianceIconTooltip() {
+    return `
+      Green indicates the software is fully compliant.
+      Yellow indicates the software is partially compliant or the compliance is unknown.
+      Red indicates the software has no compliance.
+    `;
+  }
+
+  getApprovalExpDateIconTooltip() {
+    return `
+      Green indicates the approval expires in the future.
+      Yellow indicates the approval expires this year but is still currently approved.
+      Red indicates the approval has already expired.
+    `;
+  }
+
+  toggleShowAllFields() {
+    this.showAllFields = !this.showAllFields;
+  }
+
+  toggleShowTableView() {
+    this.showTableView = !this.showTableView;
   }
 
 }
