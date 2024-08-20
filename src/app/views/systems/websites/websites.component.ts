@@ -202,7 +202,7 @@ export class WebsitesComponent implements OnInit {
     $('#websitesTable').bootstrapTable('filterBy', {
       production_status: ['production'],
       type_of_site: ['Informational', 'Application', 'Application Login'],
-      digital_brand_category: ['GSA Business', 'Hybrid'],
+      digital_brand_category: ['GSA Business', 'Hybrid', ''],
     });
   }
 
