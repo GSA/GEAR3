@@ -40,7 +40,7 @@ export class DataDictionaryComponent implements OnInit {
   // Data Dictionary Table Columns
   ddColumnDefs: any[] = [{
     field: 'ReportName',
-    title: 'ReportName',
+    title: 'Report Name',
     sortable: true
   },
   {
