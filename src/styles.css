@@ -318,3 +318,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   padding-right: 3%;
   min-width: 30%;
 }
+
+.wid-25 {
+  width: 25% !important;
+}
