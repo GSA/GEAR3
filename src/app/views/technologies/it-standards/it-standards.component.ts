@@ -130,7 +130,7 @@ export class ItStandardsComponent implements OnInit {
         titleTooltip: this.getTooltip('Software Release Name')
       }, {
         field: 'EndOfLifeDate',
-        title: 'End of Life Date',
+        title: 'Vendor End of Life Date',
         sortable: true,
         visible: false,
         formatter: this.sharedService.dateFormatter,
@@ -229,11 +229,18 @@ export class ItStandardsComponent implements OnInit {
         titleTooltip: this.getTooltip('Requested Item (RITM)')
       }, {
         field: 'ApprovalExpirationDate',
-        title: 'Approval Expiration Date',
+        title: 'Approval Expires',
         sortable: true,
         visible: true,
         formatter: this.sharedService.dateFormatter,
         titleTooltip: this.getTooltip('Approval Expiration Date')
+      },
+      {
+        field: 'ApprovedVersions',
+        title: 'Approved Versions',
+        sortable: false,
+        visible: true,
+        titleTooltip: this.getTooltip('ApprovedVersions')
       }];
 
       $('#itStandardsTable').bootstrapTable(

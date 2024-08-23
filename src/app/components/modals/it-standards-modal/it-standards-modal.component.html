@@ -53,7 +53,7 @@
                   <span class="heading">Approved Versions</span>
                 </div>
                 <div class="overview-item-content" *ngIf="isApproved()">
-                  4.x.x (mocked data)
+                  {{itStandard.ApprovedVersions}}
                 </div>
                 <div class="overview-item-content" *ngIf="!isApproved()">
                   <span class="status-icon" [ngClass]="getStatusIconColor(itStandard.Status)" [title]="getStatusIconTooltip()" role="tooltip"></span>
@@ -188,7 +188,7 @@
                 </tr>
                 <tr *ngIf="isFieldPopulated(itStandard.EndOfLifeDate)">
                   <td>
-                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software End of Life Date')" role="tooltip">End of Life Date</span>
+                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software End of Life Date')" role="tooltip">Vendor End of Life Date</span>
                   </td>
                   <td>{{ itStandard.EndOfLifeDate | date : "MMMM d, y" }}</td>
                 </tr>

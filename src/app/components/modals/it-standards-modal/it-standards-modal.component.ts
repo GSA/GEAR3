@@ -162,7 +162,7 @@ export class ItStandardsModalComponent implements OnInit {
   }
 
   isFieldPopulated(field: any) {
-    return (field !== '' && field !== 'N/A' && field !== null) || this.showAllFields;
+    return (field !== '' && field !== 'N/A' && field !== null && field !== 'null') || this.showAllFields;
   }
 
   isApproved() {
