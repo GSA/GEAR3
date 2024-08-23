@@ -240,7 +240,7 @@ export class ItStandardsComponent implements OnInit {
         title: 'Approved Versions',
         sortable: false,
         visible: true,
-        titleTooltip: this.getTooltip('ApprovedVersions')
+        titleTooltip: this.getTooltip('Approved Versions')
       }];
 
       $('#itStandardsTable').bootstrapTable(

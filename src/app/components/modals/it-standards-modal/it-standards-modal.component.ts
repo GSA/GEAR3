@@ -102,21 +102,11 @@ export class ItStandardsModalComponent implements OnInit {
   }
 
   getTooltip (name: string): string {
-    // TODO: Remove this and add it to the db whenever the ApprovedVersions field becomes available
-    if(name === 'ApprovedVersions') {
-      return `Unless otherwise stated, all minor versions share the same approval 
-      status as the version listed. For example, if version “1.0” is listed and has
-       a status of “Approved”, then version 1.1, 1.2, 1.3, etc. are also approved. 
-       Unless otherwise stated, all minor versions share the same approval status as 
-       the version listed. For example, if version “1.0” is listed and has a status 
-       of “Approved”, then version 1.1, 1.2, 1.3, etc. are also approved.`;
-    } else {
-      const def = this.attrDefinitions.find(def => def.Term === name);
-      if(def){
-        return def.TermDefinition;
-      }
-      return '';
+    const def = this.attrDefinitions.find(def => def.Term === name);
+    if(def){
+      return def.TermDefinition;
     }
+    return '';
   }
 
   getStatusIconColor(status: string) {
