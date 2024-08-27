@@ -10,6 +10,8 @@ import { Title } from '@angular/platform-browser';
 
 import { ITStandards } from '@api/models/it-standards.model';
 import { DataDictionary } from '@api/models/data-dictionary.model';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ProgressModalComponent } from 'src/app/components/modals/progress-modal/progress-modal.component';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -26,6 +28,8 @@ export class ItStandardsComponent implements OnInit {
   attrDefinitions: DataDictionary[] = [];
   columnDefs: any[] = [];
 
+  progressDialogRef?: MatDialogRef<ProgressModalComponent>;
+
   constructor(
     private apiService: ApiService,
     private location: Location,
@@ -34,7 +38,8 @@ export class ItStandardsComponent implements OnInit {
     private router: Router,
     public sharedService: SharedService,
     private tableService: TableService,
-    private titleService: Title
+    private titleService: Title,
+    private dialog: MatDialog
   ) {
     this.modalService.currentITStand.subscribe((row) => (this.row = row));
   }
@@ -59,6 +64,21 @@ export class ItStandardsComponent implements OnInit {
 
   YesNo(value, row, index, field) {
     return value === 'T'? "Yes" : "No";
+  }
+
+  openExportProgressModal() {
+    this.progressDialogRef = this.dialog.open(ProgressModalComponent, {
+      width: '300px',
+      disableClose: true,
+      data: {message: "Initializing Data Export..."}
+    });
+  }
+
+  closeExportProgressModal() {
+    if (this.progressDialogRef) {
+      this.progressDialogRef.close();
+      this.progressDialogRef = null;
+    }
   }
 
   ngOnInit(): void {
@@ -244,7 +264,6 @@ export class ItStandardsComponent implements OnInit {
         })
       );
     });
-
     // Enable popovers
     $(function () {
       $('[data-toggle="popover"]').popover();
@@ -263,7 +282,15 @@ export class ItStandardsComponent implements OnInit {
 
       //Method to Enable table sticky header after table commponent initialized.
       $('#itStandardsTable').on('load-success.bs.table', function () {
-        this.sharedService.enableStickyHeader("itStandardsTable");
+          this.sharedService.enableStickyHeader("itStandardsTable");
+        }.bind(this)
+      );
+      $('#itStandardsTable').on('export-started.bs.table', function () {
+          this.closeExportProgressModal();
+        }.bind(this)
+      );
+      $('#itStandardsTable').on('export-saved.bs.table', function () {
+        this.openExportProgressModal();
       }.bind(this)
     );
     });

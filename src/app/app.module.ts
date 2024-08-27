@@ -3,6 +3,8 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -76,6 +78,7 @@ import { Globals } from './common/globals';
 import { YesNoPipe } from "./pipes/yesno.pipe";
 import { SkipFocusPiechartDirective } from '@common/skip-focus-piechart.directive';
 import { BannerComponent } from './components/banner/banner.component';
+import { ProgressModalComponent } from './components/modals/progress-modal/progress-modal.component';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -122,6 +125,7 @@ import { BannerComponent } from './components/banner/banner.component';
         YesNoPipe,
         SkipFocusPiechartDirective,
         BannerComponent,
+        ProgressModalComponent,
     ],
     bootstrap: [AppComponent], imports: [AppRoutingModule,
         BrowserAnimationsModule,
@@ -131,6 +135,8 @@ import { BannerComponent } from './components/banner/banner.component';
         NgxChartsModule,
         PdfViewerModule,
         ReactiveFormsModule,
+        MatDialogModule,
+        MatProgressSpinnerModule,
         SidebarModule.forRoot()], providers: [Globals, provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule {
   constructor() {}
