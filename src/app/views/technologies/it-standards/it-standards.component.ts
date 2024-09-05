@@ -50,9 +50,7 @@ export class ItStandardsComponent implements OnInit {
     idTable: 'ITStandardTable',
     classes: 'table-hover table-dark clickable-table fixed-table',
     showColumns: true,
-    showExport: true,
     exportFileName: 'GSA_IT_Standards',
-    exportIgnoreColumn:[],
     headerStyle: 'bg-teal',
     pagination: true,
     search: true,
@@ -385,7 +383,7 @@ export class ItStandardsComponent implements OnInit {
     const tableOptions = $('#itStandardsTable').bootstrapTable('getOptions');
     const fileName = tableOptions.exportOptions.fileName+".csv";
     const columns = $('#itStandardsTable').bootstrapTable('getVisibleColumns');
-    const fields = columns.map(col => col.field);
+    const fields = columns.map(col => {return {field: col.field, title: col.title}});
     return {fileName, fields, data};
   }
 }

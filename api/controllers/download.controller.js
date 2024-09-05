@@ -17,7 +17,7 @@ const preprocessData = (data, fields = []) => {
 const covertCsv = async (jsonData, fields) => {
   const preprocessedData = preprocessData(jsonData, fields);
   console.log(preprocessedData);
-  const csv = await converter.json2csv(preprocessedData, { keys: fields, delimiter: { wrap: '"' } })
+  const csv = await converter.json2csv(preprocessedData, { keys: fields, delimiter: { wrap: '"' }, emptyFieldValue: "" })
   return csv;
 }
 
