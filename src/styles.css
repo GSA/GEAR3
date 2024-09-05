@@ -31,12 +31,12 @@ b, strong, .font-weight-bold {
   width: 20% !important;
 }
 
-.w-35 {
-  width: 35% !important;
+.w-25 {
+  width: 25% !important;
 }
 
-.w-60 {
-  width: 60% !important;
+.w-70 {
+  width: 70% !important;
 }
 .w-80 {
   width: 80% !important;
@@ -67,7 +67,7 @@ b, strong, .font-weight-bold {
 
 .max-height {
   height: 48px;
-  padding-top: 12px !important;
+  padding-top: 14px !important;
 }
 
 @media (max-width: 1856px) {
