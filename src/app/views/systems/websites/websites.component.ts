@@ -148,6 +148,13 @@ export class WebsitesComponent implements OnInit {
       visible: false,
       formatter: this.sharedService.formatDescription
     },
+    {
+      field: 'target_decommission_date',
+      title: 'Target Decommission Date',
+      sortable: true,
+      visible: false,
+      formatter: this.sharedService.dateFormatter
+    },
   ];
 
   ngOnInit(): void {
