@@ -64,6 +64,7 @@
     "googleapis": "^114.0.0",
     "jexl": "^2.3.0",
     "jquery": "^3.6.0",
+    "json-2-csv": "^5.5.5",
     "json-diff": "^1.0.6",
     "json-schema": "^0.4.0",
     "jsonwebtoken": "^8.5.1",

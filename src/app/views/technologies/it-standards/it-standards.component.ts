@@ -372,4 +372,13 @@ export class ItStandardsComponent implements OnInit {
     }
     return '';
   }
+
+  getDownloadInputs() {
+    const data = $('#itStandardsTable').bootstrapTable('getData');
+    const tableOptions = $('#itStandardsTable').bootstrapTable('getOptions');
+    const fileName = tableOptions.exportOptions.fileName+".csv";
+    const columns = $('#itStandardsTable').bootstrapTable('getVisibleColumns');
+    const fields = columns.map(col => col.field);
+    return {fileName, fields, data};
+  }
 }

@@ -23,6 +23,15 @@ b, strong, .font-weight-bold {
   width: 15% !important;
 }
 
+.w-20 {
+  width: 20% !important;
+}
+.w-30 {
+  width: 40% !important;
+}
+.w-70 {
+  width: 60% !important;
+}
 .w-80 {
   width: 80% !important;
 }
@@ -250,6 +259,10 @@ a.bg-purple:hover, a.bg-purple:focus, button.bg-purple:hover, button.bg-purple:f
 /* For buttons with these classes, correctly place them */
 
 a.position-absolute.float-right {
+  position: absolute;
+  right: 2%;
+}
+div.position-absolute.float-right {
   position: absolute;
   right: 2%;
 }

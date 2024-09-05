@@ -99,11 +99,15 @@ export class ApiService {
   // Data Dictionary
   dataDictionaryUrl: string = this.sharedService.internalURLFmt('/api/data_dictionary');
 
+  // Data Downloads
+  downloadUrl: string = this.sharedService.internalURLFmt('/api/download');
+
+
   constructor(
     private globals: Globals,
     private http: HttpClient,
     private sharedService: SharedService
-  ) {}
+  ) { }
 
   // Calls
   //// Capabilities
@@ -766,7 +770,7 @@ export class ApiService {
         )
       );
   }
-  
+
   public getSoftwareProducts(id: string): Observable<SoftwareProduct[]> {
     return this.http
       .get<SoftwareProduct[]>(this.techCatalogUrl + '/get/software_products/' + id)
@@ -825,6 +829,17 @@ export class ApiService {
     return this.http
       .get<DataDictionary[]>(this.dataDictionaryUrl + '/get/' + encodeURIComponent(reportName))
       .pipe(catchError(this.handleError<DataDictionary[]>('GET Data Dictionary By Report Name', [])));
+  }
+
+  //  Download csv
+  public downloadCsv(name: string, fields: string[], data: any): Observable<Blob> {
+    const reqBody = { name, fields, data };
+    return this.http
+      .put(
+        this.downloadUrl + '/download-csv',
+        reqBody,
+        { responseType: 'blob' }
+      );
   }
 
   //// Error Handler for calls

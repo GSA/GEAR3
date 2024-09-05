@@ -17,6 +17,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // Components
 import { TopNavbarComponent } from './components/top-navbar/top-navbar.component';
 import { SidenavComponent } from './components/sidenav/sidenav.component';
+import {CsvDownloadComponent} from "./components/csv-download/csv-download.component";
 
 //// Main
 import { HomeComponent } from './views/main/home/home.component';
@@ -126,6 +127,7 @@ import { ProgressModalComponent } from './components/modals/progress-modal/progr
         SkipFocusPiechartDirective,
         BannerComponent,
         ProgressModalComponent,
+        CsvDownloadComponent,
     ],
     bootstrap: [AppComponent], imports: [AppRoutingModule,
         BrowserAnimationsModule,
