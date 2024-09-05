@@ -335,3 +335,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .wid-25 {
   width: 25% !important;
 }
+
+.table-column-break-word {
+  word-break: break-word;
+}
