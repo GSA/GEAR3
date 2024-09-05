@@ -22,6 +22,6 @@ SELECT
   google_analytics, 
   accessibility, 
   uswds, 
-  required_links
-    
+  required_links,
+  target_decommission_date    
 FROM obj_websites AS websites
