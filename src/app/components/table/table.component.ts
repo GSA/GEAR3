@@ -28,10 +28,7 @@ export class TableComponent implements OnInit {
   screenHeight: string = '';
 
   constructor() {
-    this.screenHeight = `${(window.screen.height - 600).toString()}px`;
-    const element = document.getElementById('HTML element');
-    const rect = element.getBoundingClientRect();
-    console.log(rect.height);
+    this.screenHeight = `${(window.screen.height - 700).toString()}px`;
    }
 
   ngOnInit(): void {
