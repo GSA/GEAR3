@@ -56,7 +56,7 @@
     "d3-transition": "^3.0.1",
     "dotenv": "^8.6.0",
     "es6-promise": "^4.2.8",
-    "express": "^4.17.1",
+    "express": "^4.20.0",
     "express-jwt": "^6.1.0",
     "express-rate-limit": "^6.7.0",
     "fast-csv": "^4.3.6",
