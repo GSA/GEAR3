@@ -425,14 +425,13 @@ const putData = async data => {
   };
 }; */
 
-/*
- * Function to load POC data
- * every Monday at 07:00 Eastern Time
-*/
+
+// -------------------------------------------------------------------------------------------------
+// Function to load POC data every Wednesday at 5:00 AM ET from the csv file in scripts/pocs
 const fastcsv = require("fast-csv");
 const { consoleTestResultHandler } = require('tslint/lib/test.js');
 
-cron.schedule('0 7 * * WED', () => {
+cron.schedule(process.env.POC_CRON, () => { //PRODUCTION
   let stream = fs.createReadStream("scripts/pocs/GSA_Pocs.csv");
   let pocCsv = [];
   let csvStream = fastcsv
@@ -507,45 +506,26 @@ cron.schedule('0 7 * * WED', () => {
 });
 
 // -------------------------------------------------------------------------------------------------
-// CRON JOB: Google Sheets API - Update All Related Records (runs every weekday at 6:00 AM & 6:00 PM)
-cron.schedule('0 6,18 * * 1-5', () => { //PRODUCTION
+// CRON JOB: Google Sheets API - Update All Related Records (runs every weekday at 11:00 PM)
+cron.schedule(process.env.RECORDS_CRON, () => { 
 //cron.schedule('50 14 * * 1-5', () => { //DEBUGGING
-
   cronCtrl.runUpdateAllRelatedRecordsJob();
-  
 });
 
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Tech Catalog Daily Import
-/*
-// -------------------------------------------------
-// OPTION #1: Original, 1 job (runs EVERYDAY at 12:01 AM)
-cron.schedule('1 0 * * *', () => { //PRODUCTION
-  cronCtrl.runTechCatalogImportJob();
-});
-*/
-
-// -------------------------------------------------
-// OPTION #2: Weekday Mornings + Sunday Afternoon
-// (runs WEEKDAYS at 12:01 AM)
-cron.schedule('1 0 * * 1-5', () => { //PRODUCTION
+// (runs DAILY at 12:01 AM)
+cron.schedule(process.env.TECH_CATALOG_CRON1, () => { 
   cronCtrl.runTechCatalogImportJob();
 });
 
 // (runs SUNDAY AFTERNOON at 2:01 PM)
-cron.schedule('1 14 * * 0', () => { //PRODUCTION
+cron.schedule(process.env.TECH_CATALOG_CRON2, () => { 
   cronCtrl.runTechCatalogImportJob();
 });
+// -------------------------------------------------------------------------------------------------
 
-// (runs Touch point import at 6:03 AM)
-cron.schedule('3 6 * * *', () => { //PRODUCTION
+// CRON JOB: Touchpoints API - Update Websites (runs every day at 11:05 PM)
+cron.schedule(process.env.TOUCHPOINTS_CRON, () => { 
   cronCtrl.runTouchpointImportJob();
 });
-
-
-/*
-// (runs SATURDAY + SUNDAY AFTERNOON at 2:01 PM)
-cron.schedule('1 14 * * 6-0', () => { //PRODUCTION
-  cronCtrl.runTechCatalogImportJob();
-});
-*/

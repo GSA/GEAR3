@@ -23,4 +23,5 @@ export class Website {
   public accessibility: string;
   public uswds: string;
   public required_links: string;
+  public target_decommission_date: string;
 }

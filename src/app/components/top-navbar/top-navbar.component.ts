@@ -7,6 +7,7 @@ import { SharedService } from '@services/shared/shared.service';
 
 // Declare jQuery symbol
 declare var $: any;
+declare var gtag: Function;
 
 @Component({
   selector: 'top-navbar',
@@ -82,7 +83,13 @@ export class TopNavbarComponent implements AfterViewInit {
         url: this.apiService.globalSearchUrl + this.searchKW,
       });
 
-      this.router.navigate([`/search`]);
+      // Log GA4 event
+      gtag('event', 'search', { 
+        'search_term': this.searchKW,
+         'event_callback': () => {
+            this.router.navigate([`/search`]);
+          }
+        });
     }
   }
 

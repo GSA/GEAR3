@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { distinctUntilChanged } from 'rxjs/operators';
+import { distinctUntilChanged, filter } from 'rxjs/operators';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -12,7 +12,14 @@ declare var gtag: Function;
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  constructor(private router: Router) { }
+  constructor(private router: Router) {
+    this.router.events.subscribe(event => {
+      // Send page_view event to GA
+      if (event instanceof NavigationEnd) {
+          gtag('event', 'page_view', { 'page_path': event.urlAfterRedirects });
+      }
+    });
+  }
 
   title = 'gear3';
 
@@ -20,20 +27,6 @@ export class AppComponent implements OnInit {
     // Pad main Module by how big the top navbar is
     $(document).ready(this.setNavOffsets);
     $(window).resize(this.setNavOffsets);
-
-    /*
-    ** Send analytics if page changes and the route isn't the same
-    ** distinctUntilChanged so the observer only emits when type NavigationEnd and
-    ** doesn't have the same route as previously emitted
-    */
-    this.router.events.pipe(distinctUntilChanged((previous: any, current: any) => {
-      if(current instanceof NavigationEnd) {
-        return previous.url === current.url;
-      }
-      return true;
-    })).subscribe((x: any) => {
-      gtag('config', 'G-PDPL5T61V1', {'page_path': x.url});
-    });
   }
 
   setNavOffsets() {

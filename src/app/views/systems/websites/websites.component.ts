@@ -148,6 +148,13 @@ export class WebsitesComponent implements OnInit {
       visible: false,
       formatter: this.sharedService.formatDescription
     },
+    {
+      field: 'target_decommission_date',
+      title: 'Target Decommission Date',
+      sortable: true,
+      visible: false,
+      formatter: this.sharedService.dateFormatter
+    },
   ];
 
   ngOnInit(): void {
@@ -202,7 +209,7 @@ export class WebsitesComponent implements OnInit {
     $('#websitesTable').bootstrapTable('filterBy', {
       production_status: ['production'],
       type_of_site: ['Informational', 'Application', 'Application Login'],
-      digital_brand_category: ['GSA Business', 'Hybrid'],
+      digital_brand_category: ['GSA Business', 'Hybrid', ''],
     });
   }
 

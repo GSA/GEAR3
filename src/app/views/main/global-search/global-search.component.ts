@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
@@ -17,7 +18,8 @@ export class GlobalSearchComponent implements OnInit {
 
   constructor(
     private sharedService: SharedService,
-    private tableService: TableService) { }
+    private tableService: TableService,
+    private route: ActivatedRoute) { }
 
   // Global Search Table Options
   tableOptions: {} = this.tableService.createTableOptions({
@@ -64,6 +66,17 @@ export class GlobalSearchComponent implements OnInit {
       columns: this.columnDefs,
       data: [],
     }));
+
+    // If the user pastes in a global search url
+    this.route.params.subscribe((params) => {
+      if(params && (params['reportType'] && params['id'])) {  
+        let searchData = {
+          Id: params['id'],
+          GEAR_Type: params['reportType']
+        };
+        this.tableService.globalSearchTableClick(searchData);
+      }
+    });
 
     const self = this;
     $(document).ready(() => {

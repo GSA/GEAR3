@@ -27,5 +27,6 @@
     "type_of_site": "attributes.type_of_site",
     "uses_feedback": "attributes.uses_feedback|convertToText",
     "uses_tracking_cookies": "attributes.uses_tracking_cookies|convertToText",
-    "uswds_version": "attributes.uswds_version|nullToEmpty"
+    "uswds_version": "attributes.uswds_version|nullToEmpty",
+    "target_decommission_date": "attributes.target_decommission_date|nullToEmpty"
 }

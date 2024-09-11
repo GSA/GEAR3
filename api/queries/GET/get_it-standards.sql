@@ -35,7 +35,8 @@ SELECT
   GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', CONCAT(poc.FirstName, ' ', poc.LastName), poc.Email, org.Display_Name) SEPARATOR '; ')     AS POC,
   GROUP_CONCAT(DISTINCT obj_standard_category.Keyname SEPARATOR ', ')   AS Category,
   tech.Keyname                                    AS OldName,
-  DATE(tech.endOfLifeDate)                        AS EndOfLifeDate
+  DATE(tech.endOfLifeDate)                        AS EndOfLifeDate,
+  tech.approvedVersions                           AS ApprovedVersions
 FROM obj_technology AS tech
 
 LEFT JOIN obj_technology_status               ON tech.obj_technology_status_Id = obj_technology_status.Id
