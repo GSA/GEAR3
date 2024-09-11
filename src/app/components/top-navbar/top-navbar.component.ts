@@ -2,12 +2,10 @@ import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, 
 import { Router } from '@angular/router';
 
 import { environment } from '@environments/environment';
-import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
 
 // Declare jQuery symbol
 declare var $: any;
-declare var gtag: Function;
 
 @Component({
   selector: 'top-navbar',
@@ -27,7 +25,6 @@ export class TopNavbarComponent implements AfterViewInit {
   @ViewChild('navPanel') navPanelRef: ElementRef;
 
   constructor(
-    private apiService: ApiService,
     private router: Router,
     public sharedService: SharedService,
     private renderer: Renderer2,
@@ -74,22 +71,7 @@ export class TopNavbarComponent implements AfterViewInit {
 
   globalSearch(event) {
     if (event.key === 'Enter' || event.type === 'click') {
-      $('#globalSearchTable').bootstrapTable('refreshOptions', {
-        exportOptions: {
-          fileName: this.sharedService.fileNameFmt(
-            'GEAR_Global_Search-' + this.searchKW
-          ),
-        },
-        url: this.apiService.globalSearchUrl + this.searchKW,
-      });
-
-      // Log GA4 event
-      gtag('event', 'search', { 
-        'search_term': this.searchKW,
-         'event_callback': () => {
-            this.router.navigate([`/search`]);
-          }
-        });
+      this.router.navigate([`/search/${this.searchKW}`]);
     }
   }
 
