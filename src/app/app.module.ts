@@ -8,7 +8,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { SidebarModule } from 'ng-sidebar-v3'; // Sidebar Module
-import { PdfViewerModule } from 'ng2-pdf-viewer'; // PDF Viewer
+//import { PdfViewerModule } from 'ng2-pdf-viewer'; // PDF Viewer
 import { NgxChartsModule } from '@swimlane/ngx-charts'; // Visualizations
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -129,7 +129,7 @@ import { BannerComponent } from './components/banner/banner.component';
         FormsModule,
         NgSelectModule,
         NgxChartsModule,
-        PdfViewerModule,
+        //PdfViewerModule,
         ReactiveFormsModule,
         SidebarModule.forRoot()], providers: [Globals, provideHttpClient(withInterceptorsFromDi()), provideClientHydration()] })
 export class AppModule {

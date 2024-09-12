@@ -1,9 +1,10 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, Inject, PLATFORM_ID, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { environment } from '@environments/environment';
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
+import { isPlatformBrowser } from '@angular/common';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -22,6 +23,8 @@ export class TopNavbarComponent implements AfterViewInit {
   moreLinksVisibleStatus = false;
   //can show nav menu items.
   showNavContent = false;
+  isBrowser: boolean = false;
+
 
   @ViewChild('moreLinksBtn') moreLinksBtnRef: ElementRef;
   @ViewChild('navPanel') navPanelRef: ElementRef;
@@ -31,8 +34,11 @@ export class TopNavbarComponent implements AfterViewInit {
     private router: Router,
     public sharedService: SharedService,
     private renderer: Renderer2,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+
     if (environment.name !== 'Production') {
       this.envName = `<span> - ${environment.name.toUpperCase()} ENVIRONMENT</span>`;
     }
