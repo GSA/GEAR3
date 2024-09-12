@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { ApiService } from '@services/apis/api.service';
 
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 
 // Declare jQuery symbol
 declare var $: any;
+declare var gtag: Function;
 
 @Component({
   selector: 'global-search',
@@ -17,10 +20,12 @@ export class GlobalSearchComponent implements OnInit {
 
   constructor(
     private sharedService: SharedService,
-    private tableService: TableService) { }
+    private tableService: TableService,
+    private route: ActivatedRoute,
+    private apiService: ApiService) { }
 
   // Global Search Table Options
-  tableOptions: {} = this.tableService.createTableOptions({
+  tableOptions: any = this.tableService.createTableOptions({
     advancedSearch: true,
     idTable: 'GlobalTable',
     classes: "table-hover table-dark clickable-table fixed-table",
@@ -60,10 +65,36 @@ export class GlobalSearchComponent implements OnInit {
       $('[data-toggle="popover"]').popover()
     })
 
-    $('#globalSearchTable').bootstrapTable($.extend(this.tableOptions, {
-      columns: this.columnDefs,
-      data: [],
-    }));
+    this.route.params.subscribe((params) => {
+      // If the user pastes in an open global search modal url
+      if(params && (params['reportType'] && params['id'])) {  
+        let searchData = {
+          Id: params['id'],
+          GEAR_Type: params['reportType']
+        };
+        this.tableService.globalSearchTableClick(searchData);
+      }
+
+      /* On global search destroy the original table
+      *  so it doesn't cause an infinite loop when searching
+      *  while already on the search page since the bootstrap
+      *  table refresh method doesn't seem to work as expected.
+      *  Set the filename and url using the keyword and recreate the table.
+      */
+      if(params && params['keyword']) {
+        $('#globalSearchTable').bootstrapTable('destroy');
+        let kw = params['keyword'];
+        this.tableOptions.url = this.apiService.globalSearchUrl + kw;
+        this.tableOptions.exportOptions.fileName = this.sharedService.fileNameFmt('GEAR_Global_Search-' + kw);
+        $('#globalSearchTable').bootstrapTable($.extend(this.tableOptions, {
+          columns: this.columnDefs,
+          data: [],
+        }));
+        // Log GA4 event
+        gtag('event', 'search', { 'search_term': kw });
+      }
+
+    });
 
     const self = this;
     $(document).ready(() => {
@@ -74,5 +105,6 @@ export class GlobalSearchComponent implements OnInit {
       //Enable table sticky header
       self.sharedService.enableStickyHeader("globalSearchTable");
   });
+
   }
 }

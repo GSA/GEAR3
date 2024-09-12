@@ -25,8 +25,8 @@ export class DataDictionaryComponent implements OnInit {
   ddTableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: false,
     idTable: null,
-    classes: "table-hover table-dark",
-    showColumns: false,
+    classes: "table-hover table-dark table-responsive",
+    showColumns: true,
     showExport: true,
     exportFileName: 'GEAR_Data_Dictionary',
     headerStyle: null,
@@ -40,9 +40,8 @@ export class DataDictionaryComponent implements OnInit {
   // Data Dictionary Table Columns
   ddColumnDefs: any[] = [{
     field: 'ReportName',
-    title: 'ReportName',
-    sortable: true,
-    visible: false
+    title: 'Report Name',
+    sortable: true
   },
   {
     field: 'Term',
@@ -56,12 +55,14 @@ export class DataDictionaryComponent implements OnInit {
   {
     field: 'DefinitionSource',
     title: 'Definition Source',
-    sortable: true
+    sortable: true,
+    class: 'table-column-break-word'
   },
   {
     field: 'DefinitionSourceLink',
     title: 'Definition Source Link',
-    formatter: this.sharedService.linksFormatter
+    formatter: this.sharedService.linksFormatter,
+    visible: false
   },
   {
     field: 'DataSource',
@@ -71,7 +72,8 @@ export class DataDictionaryComponent implements OnInit {
   {
     field: 'DataSourceLink',
     title: 'Data Source Link',
-    formatter: this.sharedService.linksFormatter
+    formatter: this.sharedService.linksFormatter,
+    visible: false
   }
 ];
 

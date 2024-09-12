@@ -48,7 +48,8 @@ import { DataDictionaryPrimeNGComponent } from './views/main/data-dictionary-pri
 
 const routes: Routes = [
   { path: '', component: HomeComponent, title: 'Home' },
-  { path: 'search', component: GlobalSearchComponent, title: 'Search' },
+  { path: 'search/:keyword', component: GlobalSearchComponent, title: 'Search' },
+  { path: 'search/:reportType/:id', component: GlobalSearchComponent, title: 'Search' },
   { path: 'about', component: AboutComponent, title: 'About' },
   { path: 'about/:tab', component: AboutComponent, title: 'About' },
   {

@@ -31,4 +31,5 @@ export class ITStandards {
   public Category: string = null;
   public OldName: string = null;
   public EndOfLifeDate: Date = null;
+  public ApprovedVersions: string = null;
 }

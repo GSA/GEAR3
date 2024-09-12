@@ -44,7 +44,8 @@ export class ItStandardManagerComponent implements OnInit {
     itStandGoldComment: new FormControl(),
     itStandAprvExp: new FormControl(),
     itStandComments: new FormControl(),
-    itStandRefDocs: new FormControl()
+    itStandRefDocs: new FormControl(),
+    itStandApprovedVersions: new FormControl()
   });
 
   itStandard = <any>{};
@@ -297,7 +298,8 @@ export class ItStandardManagerComponent implements OnInit {
         itStandGoldComment: this.itStandard.Gold_Image_Comment,
         itStandAprvExp: formatDate(this.aprvExpDate, 'yyyy-MM-dd', 'en-US'),
         itStandComments: this.itStandard.Comments,
-        itStandRefDocs: this.itStandard.ReferenceDocument
+        itStandRefDocs: this.itStandard.ReferenceDocument,
+        itStandApprovedVersions: this.itStandard.ApprovedVersions
       });
       if (this.itStandard.SoftwareRelease) {
         // disable the old IT Standard Name field

@@ -90,6 +90,7 @@ exports.update = (req, res) => {
       data.itStandDesc = ctrl.emptyTextFieldHandler(data.itStandDesc);
       data.itStandAprvExp = ctrl.emptyTextFieldHandler(data.itStandAprvExp);
       data.itStandRefDocs = ctrl.emptyTextFieldHandler(data.itStandRefDocs);
+      data.itStandApprovedVersions = ctrl.emptyTextFieldHandler(data.itStandApprovedVersions);
 
       data.tcManufacturer = ctrl.emptyTextFieldHandler(data.tcManufacturer);
       data.tcSoftwareProduct = ctrl.emptyTextFieldHandler(data.tcSoftwareProduct);
@@ -136,7 +137,8 @@ exports.update = (req, res) => {
           softwareProductName             = ${data.tcSoftwareProductName},
           softwareVersionName             = ${data.tcSoftwareVersionName},
           softwareReleaseName             = ${data.tcSoftwareReleaseName},
-          endOfLifeDate                   = ${endOfLifeDateFragment}
+          endOfLifeDate                   = ${endOfLifeDateFragment},
+          approvedVersions                = ${data.itStandApprovedVersions}
         WHERE Id = ${req.params.id};
         SET FOREIGN_KEY_CHECKS=1;
         ${catString}
@@ -169,6 +171,7 @@ exports.create = (req, res) => {
       data.itStandDesc = ctrl.emptyTextFieldHandler(data.itStandDesc);
       data.itStandAprvExp = ctrl.emptyTextFieldHandler(data.itStandAprvExp);
       data.itStandRefDocs = ctrl.emptyTextFieldHandler(data.itStandRefDocs);
+      data.itStandApprovedVersions = ctrl.emptyTextFieldHandler(data.itStandApprovedVersions);
 
       data.tcManufacturer = ctrl.emptyTextFieldHandler(data.tcManufacturer);
       data.tcSoftwareProduct = ctrl.emptyTextFieldHandler(data.tcSoftwareProduct);
@@ -213,7 +216,8 @@ exports.create = (req, res) => {
         softwareProductName,
         softwareVersionName,
         softwareReleaseName,
-        endOfLifeDate) VALUES (
+        endOfLifeDate,
+        approvedVersions) VALUES (
         ${(!data.tcSoftwareReleaseName || data.tcSoftwareReleaseName === 'NULL') ?
           "'" + data.itStandName + "'" : null},
         ${data.itStandDesc},
@@ -243,7 +247,8 @@ exports.create = (req, res) => {
         ${data.tcSoftwareProductName},
         ${data.tcSoftwareVersionName},
         ${data.tcSoftwareReleaseName},
-        ${endOfLifeDateFragment});`;
+        ${endOfLifeDateFragment},
+        ${data.itStandApprovedVersions});`;
 
       var logStatement = `insert into gear_log.event (Event, User, DTG) values ('create IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
       res = ctrl.sendQuery(query + ' ' + logStatement, 'create IT Standard', res); //removed sendQuery_cowboy reference
