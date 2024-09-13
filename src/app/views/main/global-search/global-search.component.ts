@@ -66,7 +66,6 @@ export class GlobalSearchComponent implements OnInit {
     })
 
     this.route.params.subscribe((params) => {
-      console.log("disable sticky header..");
       //Disable table sticky header
       this.sharedService.disableStickyHeader("globalSearchTable");
 
@@ -98,7 +97,6 @@ export class GlobalSearchComponent implements OnInit {
         gtag('event', 'search', { 'search_term': kw });
       }
 
-      console.log("enable sticky header..");
       //Enable table sticky header
       this.sharedService.enableStickyHeader("globalSearchTable");
     });
