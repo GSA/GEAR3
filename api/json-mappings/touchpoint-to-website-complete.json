@@ -29,5 +29,6 @@
     "uses_tracking_cookies": "attributes.uses_tracking_cookies|convertToText",
     "uswds_version": "attributes.uswds_version|nullToEmpty",
     "created_at": "attributes.created_at",
-    "updated_at": "attributes.updated_at"
+    "updated_at": "attributes.updated_at",
+    "target_decommission_date": "attributes.target_decommission_date|nullToEmpty"
 }

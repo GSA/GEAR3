@@ -132,7 +132,7 @@
                   </div>
 
                   <div class="form-group col-3" id="divEndOfLifeDate">
-                    <label for="tcEndOfLifeDate">End of Life Date</label>
+                    <label for="tcEndOfLifeDate">Vendor End of Life Date</label>
                     <input type="text" class="form-control" id="tcEndOfLifeDate"
                       formControlName="tcEndOfLifeDate" placeholder="Not Available">
                       <!--<div class="success-feedback" *ngIf="isAssignedToitStandAprvExp(endOfLifeDate, aprvExpDate)">
@@ -199,6 +199,13 @@
                     </div>
                   </div>
                 </div>
+              </div>
+
+              <!-- Approved Versions -->
+              <div class="form-group col-6" id="approvedVersions">
+                <label for="itStandApprovedVersions">Approved Versions</label>
+                <input type="text" class="form-control" id="itStandApprovedVersions"
+                  formControlName="itStandApprovedVersions" placeholder="Enter approved versions" [value]="itStandard.ApprovedVersions" maxlength="45">
               </div>
 
               <!-- Description -->
@@ -351,7 +358,7 @@
                 </div>
 
                 <div class="form-group col-3 text-center">
-                  <label for="itStandAprvExp">Approval Expiration Date</label>
+                  <label for="itStandAprvExp">Approval Expires</label>
                   <div id="itStandAprvExp"></div>
                 </div>
 

@@ -26,6 +26,7 @@ sub_office,
 type_of_site,
 uses_feedback,
 uses_tracking_cookies,
-uswds_version
+uswds_version,
+target_decommission_date
 FROM obj_websites
 ORDER BY id;
