@@ -66,6 +66,10 @@ export class GlobalSearchComponent implements OnInit {
     })
 
     this.route.params.subscribe((params) => {
+      console.log("disable sticky header..");
+      //Disable table sticky header
+      this.sharedService.disableStickyHeader("globalSearchTable");
+
       // If the user pastes in an open global search modal url
       if(params && (params['reportType'] && params['id'])) {  
         let searchData = {
@@ -94,6 +98,9 @@ export class GlobalSearchComponent implements OnInit {
         gtag('event', 'search', { 'search_term': kw });
       }
 
+      console.log("enable sticky header..");
+      //Enable table sticky header
+      this.sharedService.enableStickyHeader("globalSearchTable");
     });
 
     const self = this;
@@ -102,8 +109,6 @@ export class GlobalSearchComponent implements OnInit {
       $('#globalSearchTable').on('click-row.bs.table', function (e, row) {
         this.tableService.globalSearchTableClick(row);
       }.bind(this));
-      //Enable table sticky header
-      self.sharedService.enableStickyHeader("globalSearchTable");
   });
 
   }
