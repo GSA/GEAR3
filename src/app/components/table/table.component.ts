@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, Input, OnInit, ViewChild } from '@angular/core';
 import { Table } from 'primeng/table';
 
 interface ExportColumn {
@@ -21,6 +21,12 @@ export class TableComponent implements OnInit {
 
   @ViewChild(Table) private dt: Table;
 
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    console.log(event.srcElement.innerHeight);
+    this.screenHeight = `${(event.srcElement.innerHeight - 500)}px`;
+  }
+
   visibleColumns: any[] = [];
   isPaginated: boolean = true;
   exportColumns!: ExportColumn[];
@@ -28,7 +34,7 @@ export class TableComponent implements OnInit {
   screenHeight: string = '';
 
   constructor() {
-    this.screenHeight = `${(window.screen.height - 700).toString()}px`;
+    this.screenHeight = `${(window.innerHeight - 500)}px`;
    }
 
   ngOnInit(): void {
