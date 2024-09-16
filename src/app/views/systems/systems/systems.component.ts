@@ -175,6 +175,13 @@ export class SystemsComponent implements OnInit {
       visible: false,
       formatter: this.sharedService.pocStringNameFormatter,
     },
+    {
+      field: 'DataSteward',
+      title: 'Data Steward',
+      sortable: true,
+      visible: false,
+      formatter: this.sharedService.pocStringNameFormatter,
+    },
   ];
 
   // Inactive Column Defs

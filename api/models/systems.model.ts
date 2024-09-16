@@ -34,6 +34,7 @@ export class System {
   public COR: string;
   public BusPOC: string;
   public TechPOC: string;
+  public DataSteward: string;
   public RelatedArtifacts: string;
   public CUI: string;
 }
