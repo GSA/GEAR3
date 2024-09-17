@@ -268,6 +268,18 @@ export class SharedService {
   };
 
 
+  //// Non ISO Dates
+  public utcDateFormatter(value) {
+    if(value) {
+      let d = new Date(value);
+      let day = d.getUTCDate();
+      let month = d.getUTCMonth() + 1; // month range is 0-11
+      let year = d.getUTCFullYear();
+
+      return `${month}/${day}/${year}`;
+    }
+  }
+
   //// Email
   public emailFormatter(value, row, index, field) {
     return `<a href="https://mail.google.com/mail/?view=cm&fs=1&to=${value}" target="_blank" rel="noopener">${value}</a>`
