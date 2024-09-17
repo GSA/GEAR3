@@ -152,7 +152,8 @@ export class WebsitesComponent implements OnInit {
       field: 'target_decommission_date',
       title: 'Target Decommission Date',
       sortable: true,
-      visible: false
+      visible: false,
+      formatter: this.sharedService.utcDateFormatter
     },
   ];
 
