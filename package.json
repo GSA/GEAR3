@@ -78,7 +78,7 @@
     "ng-sidebar-v3": "^18.0.0",
     "ng2-pdf-viewer": "^10.2.2",
     "ngx-cookie-service": "^18.0.0",
-    "node-cron": "^2.0.3",
+    "node-cron": "^3.0.3",
     "node-fetch": "^2.6.7",
     "nodemailer": "^6.7.0",
     "npm": "^10.5.2",
