@@ -1,5 +1,5 @@
 <!-- Container for sidebar(s) + page content -->
-<ng-sidebar-container (onBackdropClicked)="_onBackdropClicked()" role="navigation"
+<!-- <ng-sidebar-container (onBackdropClicked)="_onBackdropClicked()" role="navigation"
 [attr.aria-expanded]="_opened ? 'true' : 'false'">
   <ng-sidebar
     id="sidebar"
@@ -27,9 +27,9 @@
     (mouseenter)="_opened = true"
     (mouseleave)="_opened = false"
   >
-    <ul id="sideMenu" class="list-group">
+    <ul id="sideMenu" class="list-group"> -->
       <!-- Strategy -->
-      <li>
+      <!-- <li>
         <a
           id="strategyBttn"
           data-toggle="collapse"
@@ -73,10 +73,10 @@
             <i class="fas fa-external-link-alt"></i
           ></a>
         </div>
-      </li>
+      </li> -->
 
       <!-- Enterprise  -->
-      <li>
+      <!-- <li>
         <a
           id="enterpriseBttn"
           data-toggle="collapse"
@@ -129,10 +129,10 @@
             Website Service Category List</a
           >
         </div>
-      </li>
+      </li> -->
 
       <!-- Systems -->
-      <li>
+      <!-- <li>
         <a
           id="systemBttn"
           data-toggle="collapse"
@@ -179,10 +179,10 @@
             GSA Websites</a
           >
         </div>
-      </li>
+      </li> -->
 
       <!-- Security -->
-      <li>
+      <!-- <li>
         <a
           id="securityBttn"
           data-toggle="collapse"
@@ -217,10 +217,10 @@
             FISMA System POCs</a
           >
         </div>
-      </li>
+      </li> -->
 
       <!-- Technologies -->
-      <li>
+      <!-- <li>
         <a
           id="technologyBttn"
           data-toggle="collapse"
@@ -258,10 +258,10 @@
             <i class="fas fa-external-link-alt"></i
           ></a>
         </div>
-      </li>
+      </li> -->
 
       <!-- Enterprise Architecture -->
-      <li>
+      <!-- <li>
         <a
           id="eaBttn"
           data-toggle="collapse"
@@ -282,7 +282,7 @@
           aria-labelledby="eaDropdown"
           data-parent="#sideMenu"
           class="collapse sidebar-submenu"
-        >
+        > -->
           <!--<a
             routerLink="/artifacts"
             class="bg-dark list-group-item list-group-item-action"
@@ -296,20 +296,20 @@
             EA View</a
           >
           We need to update the EA view to be more readable before publishing--> 
-          <a
+          <!-- <a
             routerLink="/gear_model"
             class="bg-dark list-group-item list-group-item-action"
           >
             GEAR Model Diagram</a
           >
         </div>
-      </li>
+      </li> -->
 
       <!-- Menu Break -->
-      <li><br /></li>
+      <!-- <li><br /></li> -->
 
       <!-- Additional Information -->
-      <li>
+      <!-- <li>
         <a
           id="addinfoBttn"
           data-toggle="collapse"
@@ -360,15 +360,15 @@
         </div>
       </li>
     </ul>
-  </ng-sidebar>
+  </ng-sidebar> -->
 
   <!-- Page content -->
-  <div ng-sidebar-content>
+  <!-- <div ng-sidebar-content>
     <main role="main">
       <div class="container-fluid my-3">
-        <div class="col-md-12">
+        <div class="col-md-12"> -->
           <!-- Logged In Notification -->
-          <div
+          <!-- <div
             id="loggedIn"
             class="container toast hide rounded-lg w-25"
             role="alert"
@@ -384,10 +384,10 @@
                 >
               </div>
             </div>
-          </div>
+          </div> -->
 
           <!-- Logged Out Notification -->
-          <div
+          <!-- <div
             id="loggedOut"
             class="container toast hide rounded-lg w-25"
             role="alert"
@@ -403,14 +403,14 @@
                 >
               </div>
             </div>
-          </div>
+          </div> -->
 
           <!-- Components Content -->
-          <router-outlet></router-outlet>
+          <!-- <router-outlet></router-outlet>
         </div>
       </div>
     </main>
-  </div>
+  </div> -->
   <!-- End Page Content -->
-</ng-sidebar-container>
+<!-- </ng-sidebar-container> -->
 <!-- End Side Navbar -->

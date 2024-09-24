@@ -38,12 +38,19 @@ export class SharedService {
   websiteFormEmitter = new EventEmitter();
   websiteFormSub: Subscription;
 
+  public sidebarVisible: boolean = false;
+
   constructor(
     private globals: Globals,
     private location: Location,
     private router: Router,
     private http: HttpClient
     ) {
+  }
+
+  // new sidebar
+  public toggleSidebar() {
+    this.sidebarVisible = !this.sidebarVisible;
   }
 
   // Sidebar Toggle

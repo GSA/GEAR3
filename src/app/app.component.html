@@ -1,24 +1,105 @@
 <!-- Top Navbar -->
 <top-navbar></top-navbar>
 
-<!-- Main Module -->
-<div class="container-fluid" id="mainModule">
+<!-- <button class="btn btn-info" (click)="toggleSidebar()"><i class="fas fa-bars"></i></button><br><br> -->
+
+<!-- <button class="btn btn-info" (mouseenter)="toggleSidebar()"><i class="fas fa-mouse-pointer"></i></button> -->
+
+<app-sidebar></app-sidebar>
+
+<div class="site-wrapper">
+
+  <div class="sidebar-icon-container" (mouseenter)="toggleSidebar()">
+    <div class="test-wrap">
+    <div class="sidebar-icon it-strategy"><i class="fas fa-puzzle-piece fa-lg fa-fw"></i></div>
+    <div class="sidebar-icon gsa-enterprise"><i class="fas fa-sitemap fa-lg fa-fw"></i></div>
+    <div class="sidebar-icon business-systems"><i class="fas fa-laptop fa-lg fa-fw"></i></div>
+    <div class="sidebar-icon security"><i class="fas fa-shield-alt fa-lg fa-fw"></i></div>
+    <div class="sidebar-icon technologies"><i class="fas fa-microchip fa-lg fa-fw"></i></div>
+    <div class="sidebar-icon enterprise-architecture"><i class="fas fa-network-wired fa-lg fa-fw"></i></div><br>
+    <div class="sidebar-icon additional-info"><i class="fab fa-wpforms fa-lg fa-fw"></i></div>
+  </div>
+  </div>
+  
+
+  <!-- Main Module -->
+<div class="content-body" id="mainModule">
   <div class="row">
     <!-- Side Navbar -->
-    <sidenav>
+    <!-- <sidenav> -->
       <!-- Page content is within sidenav component -->
-    </sidenav>
+    <!-- </sidenav> -->
+    <main role="main">
+      <div class="container-fluid my-3">
+        <div class="col-md-12">
+          <!-- Logged In Notification -->
+          <div
+            id="loggedIn"
+            class="container toast hide rounded-lg w-25"
+            role="alert"
+            aria-live="assertive"
+            aria-atomic="true"
+            data-delay="3000"
+          >
+            <div id="loggedInCollapse" class="collapse">
+              <div class="toast-header">
+                <i class="fa fa-sign-in-alt mr-2 fa-fw"></i>
+                <strong class="mr-auto text-success"
+                  >You have successfully logged into GEAR Manager!</strong
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Logged Out Notification -->
+          <div
+            id="loggedOut"
+            class="container toast hide rounded-lg w-25"
+            role="alert"
+            aria-live="assertive"
+            aria-atomic="true"
+            data-delay="3000"
+          >
+            <div id="loggedOutCollapse" class="collapse">
+              <div class="toast-header">
+                <i class="fas fa-sign-out-alt mr-2 fa-fw"></i>
+                <strong class="mr-auto text-warning"
+                  >You have been logged out of GEAR Manager!</strong
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Components Content -->
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+    </main>
   </div>
 </div>
 <!-- End Main Module -->
+</div>
+
+
+
+
+<!-- USWDS Identifier -->
+<!-- <div class="identifier mt-auto" id="identifier">
+  <app-identifier></app-identifier>
+</div> -->
+<!-- End USWDS Identifier -->
 
 <!-- Footer -->
 <footer class="footer mt-auto" id="footer">
   <div class="container">
     <small>GSA Enterprise Architecture 2024, v3.0</small>
   </div>
+  <app-identifier></app-identifier>
 </footer>
 <!-- End Footer -->
+<!-- 
+<div class="footer"></div> -->
+
 
 <!-- Details Modals -->
 <investments-modal></investments-modal>
