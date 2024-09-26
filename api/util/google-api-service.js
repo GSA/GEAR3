@@ -15,10 +15,10 @@ const getClient = async () => {
   });
 
   const projectId = await auth.getProjectId();
-  console.log('Project ID:', projectId);
+  //console.log('Project ID:', projectId);
 
   const client = await auth.getClient();
-  console.log('Authenticated client:', client);
+  //console.log('Authenticated client:', client);
   return client;
 }
 
@@ -54,7 +54,7 @@ exports.getSheetInfo = async (spreadsheetId, dataRange) => {
 
   try {
     const response = await sheets.spreadsheets.get(request);
-    console.log('Spreadsheet Info:', response.data);
+    //console.log('Spreadsheet Info:', response.data);
     return response.data;
   } catch (err) {
     console.error('Error retrieving spreadsheet info:', err);
