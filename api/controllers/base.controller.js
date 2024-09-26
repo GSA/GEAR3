@@ -119,9 +119,9 @@ exports.googleMain = (response, method, sheetID, dataRange, requester, key = nul
     formattedDate = `${date.getFullYear()}${String((date.getMonth()+1)).padStart(2, "0")}${String(date.getDate()).padStart(2, "0")}${String(date.getHours()).padStart(2, "0")}${String(date.getMinutes()).padStart(2, "0")}`;
   }
 
-  //sql.query(`insert into gear_schema.google_api_run_log (id) values ('${formattedDate}');`, (error, data) => {
+  /*sql.query(`insert into gear_schema.google_api_run_log (id) values ('${formattedDate}');`, (error, data) => {
 
-    /*if (error) {
+    if (error) {
       console.log(`Duplicate Google Sheets API Request: `, error);
 
       if (requester === "GearCronJ") {
@@ -170,8 +170,8 @@ exports.googleMain = (response, method, sheetID, dataRange, requester, key = nul
         );
       });
 
-    //}
-  //});
+    /*}
+  });*/
 };
 
 /**
