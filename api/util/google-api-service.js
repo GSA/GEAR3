@@ -44,18 +44,18 @@ exports.saveToken = async () => {
   });
 }
 
-exports.getSheetInfo = async (spreadsheetId) => {
+exports.getSheetInfo = async (spreadsheetId, dataRange) => {
   const authClient = await getClient();
   const request = {
     spreadsheetId: spreadsheetId,
-    ranges: ["Master Junction with Business Systems!A2:B"],
+    ranges: [dataRange],
     auth: authClient,
   };
 
   try {
     const response = await sheets.spreadsheets.get(request);
     console.log('Spreadsheet Info:', response.data);
-    return data;
+    return response.data;
   } catch (err) {
     console.error('Error retrieving spreadsheet info:', err);
   }

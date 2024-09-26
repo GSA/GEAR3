@@ -201,7 +201,6 @@ function authorize(
     try {
       // Check if we have previously stored a token.
       fs.readFile(TOKEN_PATH, (err, token) => {
-        console.log(err);
         if (err) {
           let errMessage = "Reading the Token returned an error: " + err;
           errMessage = errMessage.replace(/'/g, "");
@@ -284,11 +283,11 @@ function refresh(auth, response, sheetID, dataRange, requester) {
 
       // If there is an error with the API call to the spreadsheet return the error
       if (err) {
-        console.log("google api error .....")
+        console.log("Google api error::: Start")
         console.log(sheetID)
         console.log(dataRange)
         console.log(err)
-        console.log("google api error end...")
+        console.log("Google api error::: End")
         buildLogQuery(sql, `Update All Related Records - ERROR: Google Sheets API returned...\n${err.message}`, requester, "log_update_zk_systems_subsystems_records", response);
 
         if (requester === "GearCronJ") {
