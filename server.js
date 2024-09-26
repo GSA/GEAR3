@@ -19,6 +19,7 @@ const bodyParser = require('body-parser'),
 
   api = require('./api/index'),
 
+  googleApiService = require('./api/util/google-api-service.js')
   port = process.env.PORT || 3000,
 
   ExtractJWT = passportJWT.ExtractJwt,
@@ -507,9 +508,13 @@ cron.schedule(process.env.POC_CRON, () => { //PRODUCTION
 
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Google Sheets API - Update All Related Records (runs every weekday at 11:00 PM)
-cron.schedule(process.env.RECORDS_CRON, () => { 
+cron.schedule("* * * * *", async () => { 
+  const sheetId = '1eSoyn7-2EZMqbohzTMNDcFmNBbkl-CzXtpwNXHNHD1A';
+  console.log(googleServiceClient.getSheetInfo(sheetId));
+
+  //await googleAuth.saveToken().catch(console.error);
 //cron.schedule('50 14 * * 1-5', () => { //DEBUGGING
-  cronCtrl.runUpdateAllRelatedRecordsJob();
+  //cronCtrl.runUpdateAllRelatedRecordsJob();
 });
 
 // -------------------------------------------------------------------------------------------------
