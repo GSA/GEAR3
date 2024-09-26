@@ -508,13 +508,9 @@ cron.schedule(process.env.POC_CRON, () => { //PRODUCTION
 
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Google Sheets API - Update All Related Records (runs every weekday at 11:00 PM)
-cron.schedule("* * * * *", async () => { 
-  const sheetId = '1eSoyn7-2EZMqbohzTMNDcFmNBbkl-CzXtpwNXHNHD1A';
-  console.log(googleServiceClient.getSheetInfo(sheetId));
-
-  //await googleAuth.saveToken().catch(console.error);
-//cron.schedule('50 14 * * 1-5', () => { //DEBUGGING
-  //cronCtrl.runUpdateAllRelatedRecordsJob();
+cron.schedule(process.env.RECORDS_CRON, async () => { 
+  await googleApiService.saveToken().catch(console.error);
+  cronCtrl.runUpdateAllRelatedRecordsJob();
 });
 
 // -------------------------------------------------------------------------------------------------
