@@ -1,9 +1,13 @@
 .sidebar-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: end;
     align-items: center;
     align-content: baseline;
-    padding: .5rem .75rem;
+    padding: .25rem .5rem;
+}
+
+.sidebar-content-wrapper {
+    margin-bottom: 200px;
 }
 
 .sidebar-link {
@@ -32,7 +36,7 @@
             background-color: #214599;
         }
     }
-    
+
     &.business-systems {
         background-color: #ce4844;
         &:hover {
@@ -81,9 +85,19 @@
 }
 
 ::ng-deep .p-sidebar { 
-    // background: transparent;
     border: none;
     box-shadow: none;
+    overflow-y: auto;
+    top: 67px;
+    // background: transparent;
+
+    @media (max-width: 1121px) {
+        top: 95px;
+    }
+
+    @media (max-width: 1004px) {
+        top: 98px;
+    }
 }
 
 ::ng-deep {

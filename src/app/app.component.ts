@@ -39,7 +39,7 @@ export class AppComponent implements OnInit {
 
     // SideNavbar Offset
     let footerElem: HTMLElement = document.getElementById('footer');
-    let sideNavElem: any = document.getElementsByTagName('ng-sidebar-container')[0];
+    let sideNavElem: any = document.getElementsByTagName('p-sidebar')[0];
     sideNavElem.style['height'] = `${window.innerHeight - topNavElem.offsetHeight - footerElem.offsetHeight + 10}px`;
   }
 
@@ -70,6 +70,12 @@ export class AppComponent implements OnInit {
 
   toggleSidebar() {
     this.sharedService.toggleSidebar();
+  }
+
+  onSidebarIconsKeyDown(e: KeyboardEvent) {
+    if(e.code === 'Space' || e.code === 'Enter') {
+      this.toggleSidebar();
+    }
   }
 
 }

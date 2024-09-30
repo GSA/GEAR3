@@ -7,7 +7,6 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-// import { SidebarModule } from 'ng-sidebar-v3'; // Sidebar Module
 import { PdfViewerModule } from 'ng2-pdf-viewer'; // PDF Viewer
 import { NgxChartsModule } from '@swimlane/ngx-charts'; // Visualizations
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -16,7 +15,6 @@ import { SidebarModule } from 'primeng/sidebar';
 
 // Components
 import { TopNavbarComponent } from './components/top-navbar/top-navbar.component';
-import { SidenavComponent } from './components/sidenav/sidenav.component';
 
 //// Main
 import { HomeComponent } from './views/main/home/home.component';
@@ -85,7 +83,6 @@ import { AccordionModule } from 'primeng/accordion';
 @NgModule({ declarations: [
         AppComponent,
         TopNavbarComponent,
-        SidenavComponent,
         HomeComponent,
         GlobalSearchComponent,
         AboutComponent,
@@ -140,7 +137,6 @@ import { AccordionModule } from 'primeng/accordion';
         ReactiveFormsModule,
         SidebarModule,
         AccordionModule,
-        // SidebarModule.forRoot()
     ],
     providers: [Globals, provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule {

@@ -72,7 +72,6 @@
     "ldapjs": "^2.3.1",
     "make-fetch-happen": "^10.1.2",
     "mysql2": "^3.9.7",
-    "ng-sidebar-v3": "^18.0.0",
     "ng2-pdf-viewer": "^10.2.2",
     "ngx-cookie-service": "^18.0.0",
     "node-cron": "^2.0.3",

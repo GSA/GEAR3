@@ -48,15 +48,10 @@ export class SharedService {
     ) {
   }
 
-  // new sidebar
+  // Toggle sidebar open/closed
   public toggleSidebar() {
-    this.sidebarVisible = !this.sidebarVisible;
+    this.sidebarVisible = !this.sidebarVisible; 
   }
-
-  // Sidebar Toggle
-  public toggleClick() {
-    this.toggleEmitter.emit();
-  };
 
   // File Name Formatting
   public fileNameFmt(name: string): string {

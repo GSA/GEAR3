@@ -1,17 +1,11 @@
-<p-sidebar #sidebarRef [(visible)]="sharedService.sidebarVisible" transitionOptions="150ms cubic-bezier(0, 0, 0, 1)" (mouseleave)="test()">
+<p-sidebar [(visible)]="sharedService.sidebarVisible" transitionOptions="150ms cubic-bezier(0, 0, 0, 1)" (mouseleave)="closeSidebar()">
   <ng-template pTemplate="headless">
-    <div class="sidebar-header">
-      <span>GSA EA Analytics & Reporting</span>
-      <button class="btn btn-light" (click)="close()"><i class="fas fa-times"></i></button>
-      <!-- <span class="close-icon" (click)="close()">
-          <i class="fas fa-times"></i>
-      </span> -->
-    </div>
+    <div class="sidebar-content-wrapper">
     <p-accordion>
       <div class="sidebar-link it-strategy">
         <p-accordionTab>
           <ng-template pTemplate="icon"></ng-template>
-          <ng-template pTemplate="header">
+          <ng-template pTemplate="header" id="firstLink">
               <span>IT Strategy</span>
               <i class="fas fa-puzzle-piece fa-lg fa-fw"></i>
           </ng-template>
@@ -120,5 +114,6 @@
       </p-accordionTab>
     </div>
   </p-accordion>
+</div>
   </ng-template>
 </p-sidebar>

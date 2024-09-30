@@ -11,11 +11,7 @@ export class SidebarComponent {
   constructor(public sharedService: SharedService) {
   }
 
-  public close() {
-    this.sharedService.toggleSidebar();
-  }
-
-  public test() {
+  public closeSidebar() {
     this.sharedService.toggleSidebar();
   }
 }
