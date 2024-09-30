@@ -329,11 +329,12 @@ function refresh(auth, response, sheetID, dataRange, requester) {
           m.set(r[1], []);
         }
         // Push the value into the array
-        m.get(r[1]).push(r[0]);
-
+        if (m.get(r[1]).indexOf(r[0]) === -1) {
+          m.get(r[1]).push(r[0]);
           // increment the rowCounter
           rowCounter++
-        })
+        } 
+      })
 
       // Build DML statements from the map ================================================================================
       console.log("Building DML Statements...")
