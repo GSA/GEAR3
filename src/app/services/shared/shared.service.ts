@@ -38,6 +38,8 @@ export class SharedService {
   websiteFormEmitter = new EventEmitter();
   websiteFormSub: Subscription;
 
+  public sidebarVisible: boolean = false;
+
   constructor(
     private globals: Globals,
     private location: Location,
@@ -46,10 +48,10 @@ export class SharedService {
     ) {
   }
 
-  // Sidebar Toggle
-  public toggleClick() {
-    this.toggleEmitter.emit();
-  };
+  // Toggle sidebar open/closed
+  public toggleSidebar() {
+    this.sidebarVisible = !this.sidebarVisible; 
+  }
 
   // File Name Formatting
   public fileNameFmt(name: string): string {
