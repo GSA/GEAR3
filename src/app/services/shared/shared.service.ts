@@ -400,13 +400,12 @@ export class SharedService {
     return cookies;
   }
 
-  public enableStickyHeader(tableComponentId: string, closestScrollableClass: string = '.ng-sidebar__content') {
+  public enableStickyHeader(tableComponentId: string, closestScrollableClass: string = '.content-body') {
     $('#'+tableComponentId).floatThead({
-      scrollContainer: function($table) {
+      responsiveContainer: function($table) {
         return $table.closest(closestScrollableClass);
       },
-      position: "fixed",
-      autoReflow: true
+      top: 67 // top navbar offset
     });
   }
 
