@@ -42,6 +42,7 @@
          <p-button 
          icon="fa fa-download"
          (onClick)="dt.exportCSV()" />
+         <p-button icon="fa fa-filter" (click)="toggleFilter()"></p-button>
  </div>
 </ng-template>
 <ng-template pTemplate="header" let-columns>
@@ -56,7 +57,7 @@
  </th>
  
 </tr>
-<tr>
+<tr *ngIf="showFilters">
   <th *ngFor="let f of filterFields">
     <p-columnFilter type="text" [field]="f" [placeholder]="'Filter by ' + f" [ariaLabel]="'Filter ' + f"></p-columnFilter>
   </th>

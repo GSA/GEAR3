@@ -32,6 +32,7 @@ export class TableComponent implements OnInit {
   exportColumns!: ExportColumn[];
   currentButtonFilter: string = '';
   screenHeight: string = '';
+  showFilters: boolean = false;
 
   constructor() {
     this.screenHeight = `${(window.innerHeight - 500)}px`;
@@ -57,6 +58,10 @@ export class TableComponent implements OnInit {
 
   togglePagination() {
     this.isPaginated = !this.isPaginated;
+  }
+
+  toggleFilter() {
+    this.showFilters = !this.showFilters;
   }
 
   getExportFilename(reportName: string) {
