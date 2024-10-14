@@ -1,0 +1,9 @@
+::ng-deep .default.p-datatable .p-datatable-thead > tr > th {
+    color: #fff;
+    background-color: #343a40;
+    border-color: #454d55;
+
+    & .p-icon {
+        color: #fff;
+    }
+}

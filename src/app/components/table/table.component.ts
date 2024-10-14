@@ -18,6 +18,7 @@ export class TableComponent implements OnInit {
   @Input() tableData: any[] = [];
   @Input() filterFields: any[] = [];
   @Input() buttonFilters: any[] = [];
+  @Input() reportStyle: string = 'default';
 
   @ViewChild(Table) private dt: Table;
 
