@@ -38,7 +38,8 @@ SELECT
   CONCAT_WS(':', 'CO',  CONCAT_WS( '; ', CONCAT_WS(', ', `ex:Contracting_Officer_1_Full_Name`, `ex:Contracting_Officer_1_eMail`, `ex:Contracting_Officer_1_Phone`), CONCAT_WS(', ', `ex:Contracting_Officer_2_Full_Name`, `ex:Contracting_Officer_2_eMail`, `ex:Contracting_Officer_2_Phone`))),
   CONCAT_WS(':', 'COR',  CONCAT_WS( '; ', CONCAT_WS(', ', `ex:ContractingOfficer_Representative1_Name`, `ex:ContractingOfficer_Representative1_eMail`, `ex:ContractingOfficer_Representative1_Phone`), CONCAT_WS(', ', `ex:ContractingOfficer_Representative2_Name`, `ex:ContractingOfficer_Representative2_eMail`, `ex:ContractingOfficer_Representative2_Phone`))),
   CONCAT_WS(':', 'Business POC',  CONCAT_WS( '; ', CONCAT_WS(', ', `ex:BPOC_1__Full_Name`, `ex:BPOC_1__Email`, `ex:BPOC_1_Phone`), CONCAT_WS(', ', `ex:BPOC_2__Full_Name`, `ex:BPOC_2__Email`, `ex:BPOC_2_Phone`))),
-  CONCAT_WS(':', 'Technical POC',  CONCAT_WS( '; ', CONCAT_WS(', ', `ex:TPOC_1__Full_Name`, `ex:TPOC_1__Email`, `ex:TPOC_1_Phone`), CONCAT_WS(', ', `ex:TPOC_2__Full_Name`, `ex:TPOC_2__Email`, `ex:TPOC_2_Phone`))) ) AS POC ,
+  CONCAT_WS(':', 'Technical POC',  CONCAT_WS( '; ', CONCAT_WS(', ', `ex:TPOC_1__Full_Name`, `ex:TPOC_1__Email`, `ex:TPOC_1_Phone`), CONCAT_WS(', ', `ex:TPOC_2__Full_Name`, `ex:TPOC_2__Email`, `ex:TPOC_2_Phone`))),
+  CONCAT_WS(':', 'Data Steward',  CONCAT_WS( '; ', CONCAT_WS(', ', `ex:Data_Steward_Full_Name`, `ex:Data_Steward_Email`))) ) AS POC ,
 
   CONCAT_WS(':', 'AO', CONCAT_WS(', ', `ex:Authorizing_Official_Full_Name`, `ex:Authorizing_Official_Email`, `ex:Authorizing_Official_Phone`)) AS AO,
   CONCAT_WS(':', 'SO', CONCAT_WS(', ', `ex:System_Owner_Full_Name`, `ex:System_Owner_eMail`, `ex:System_Owner_Phone`) ) AS SO,
@@ -50,6 +51,7 @@ SELECT
 
   CONCAT_WS(':', 'BusPOC',  CONCAT_WS( '; ', CONCAT_WS(', ', `ex:BPOC_1__Full_Name`, `ex:BPOC_1__Email`, `ex:BPOC_1_Phone`), CONCAT_WS(', ', `ex:BPOC_2__Full_Name`, `ex:BPOC_2__Email`, `ex:BPOC_2_Phone`) ))  AS BusPOC,
   CONCAT_WS(':', 'TechPOC',  CONCAT_WS( '; ', CONCAT_WS(', ', `ex:TPOC_1__Full_Name`, `ex:TPOC_1__Email`, `ex:TPOC_1_Phone`), CONCAT_WS(', ', `ex:TPOC_2__Full_Name`, `ex:TPOC_2__Email`, `ex:TPOC_2_Phone`) ))  AS TechPOC,
+  CONCAT_WS(':', 'DataSteward', CONCAT_WS(', ', `ex:Data_Steward_Full_Name`, `ex:Data_Steward_Email`) ) AS DataSteward,
 
   CONCAT_WS(',', `ex:Primary_Artifact_Name`,  `ex:Primary_Artifact_URL`) AS RelatedArtifacts
 

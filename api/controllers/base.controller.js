@@ -119,7 +119,7 @@ exports.googleMain = (response, method, sheetID, dataRange, requester, key = nul
     formattedDate = `${date.getFullYear()}${String((date.getMonth()+1)).padStart(2, "0")}${String(date.getDate()).padStart(2, "0")}${String(date.getHours()).padStart(2, "0")}${String(date.getMinutes()).padStart(2, "0")}`;
   }
 
-  sql.query(`insert into gear_schema.google_api_run_log (id) values ('${formattedDate}');`, (error, data) => {
+  /*sql.query(`insert into gear_schema.google_api_run_log (id) values ('${formattedDate}');`, (error, data) => {
 
     if (error) {
       console.log(`Duplicate Google Sheets API Request: `, error);
@@ -134,7 +134,7 @@ exports.googleMain = (response, method, sheetID, dataRange, requester, key = nul
     } else {
       // log the start of the refresh to the database
       buildLogQuery(sql, `Update All Related Records - Starting`, requester, "log_update_zk_systems_subsystems_records", response);
-
+*/
       // Load client secrets from a local file.
       fs.readFile("certs/gear_google_credentials.json", (err, content) => {
         if (err) {
@@ -169,8 +169,9 @@ exports.googleMain = (response, method, sheetID, dataRange, requester, key = nul
           key
         );
       });
-    }
-  });
+
+    /*}
+  });*/
 };
 
 /**
@@ -282,6 +283,11 @@ function refresh(auth, response, sheetID, dataRange, requester) {
 
       // If there is an error with the API call to the spreadsheet return the error
       if (err) {
+        console.log("Google api error::: Start")
+        console.log(sheetID)
+        console.log(dataRange)
+        console.log(err)
+        console.log("Google api error::: End")
         buildLogQuery(sql, `Update All Related Records - ERROR: Google Sheets API returned...\n${err.message}`, requester, "log_update_zk_systems_subsystems_records", response);
 
         if (requester === "GearCronJ") {

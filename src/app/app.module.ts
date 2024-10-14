@@ -7,14 +7,14 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { SidebarModule } from 'ng-sidebar-v3'; // Sidebar Module
 import { PdfViewerModule } from 'ng2-pdf-viewer'; // PDF Viewer
 import { NgxChartsModule } from '@swimlane/ngx-charts'; // Visualizations
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { SidebarModule } from 'primeng/sidebar';
+
 // Components
 import { TopNavbarComponent } from './components/top-navbar/top-navbar.component';
-import { SidenavComponent } from './components/sidenav/sidenav.component';
 
 //// Main
 import { HomeComponent } from './views/main/home/home.component';
@@ -76,6 +76,9 @@ import { Globals } from './common/globals';
 import { YesNoPipe } from "./pipes/yesno.pipe";
 import { SkipFocusPiechartDirective } from '@common/skip-focus-piechart.directive';
 import { BannerComponent } from './components/banner/banner.component';
+import { IdentifierComponent } from './components/identifier/identifier.component';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { AccordionModule } from 'primeng/accordion';
 import { DataDictionaryPrimeNGComponent } from './views/main/data-dictionary-primeng/data-dictionary-primeng.component';
 
 // PrimeNG Modules
@@ -90,7 +93,6 @@ import { InputTextModule } from 'primeng/inputtext';
 @NgModule({ declarations: [
         AppComponent,
         TopNavbarComponent,
-        SidenavComponent,
         HomeComponent,
         GlobalSearchComponent,
         AboutComponent,
@@ -132,6 +134,8 @@ import { InputTextModule } from 'primeng/inputtext';
         YesNoPipe,
         SkipFocusPiechartDirective,
         BannerComponent,
+        IdentifierComponent,
+        SidebarComponent,
         DataDictionaryPrimeNGComponent,
         TableComponent
     ],
@@ -143,14 +147,16 @@ import { InputTextModule } from 'primeng/inputtext';
         NgxChartsModule,
         PdfViewerModule,
         ReactiveFormsModule,
-        SidebarModule.forRoot(),
         TableModule,
         MultiSelectModule,
         ButtonModule,
         IconFieldModule,
         InputIconModule,
-        InputTextModule
-      ], providers: [Globals, provideHttpClient(withInterceptorsFromDi())] })
+        InputTextModule,
+        SidebarModule,
+        AccordionModule
+    ],
+    providers: [Globals, provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule {
   constructor() {}
 }
