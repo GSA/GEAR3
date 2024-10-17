@@ -1,0 +1,1 @@
+INSERT INTO cron_job (job_type, start_time, job_logs, job_status) values(?, ?, ?, ?)
