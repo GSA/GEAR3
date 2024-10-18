@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
+import { PLATFORM_ID, Component, OnInit, Inject } from '@angular/core';
+import { isPlatformBrowser, Location } from '@angular/common';
 import { Router } from '@angular/router';
 
 import { ModalsService } from '@services/modals/modals.service';
@@ -25,7 +25,8 @@ export class SystemsModalComponent implements OnInit {
     public modalService: ModalsService,
     private router: Router,
     public sharedService: SharedService,
-    public tableService: TableService) { }
+    public tableService: TableService,
+    @Inject(PLATFORM_ID) private platformId: Object) { }
 
   // System TIME Table Options
   sysTimeTableOptions: {} = this.tableService.createTableOptions({
@@ -497,7 +498,9 @@ sysWebsitesColumnDefs: any[] = [
 
   ngOnInit(): void {
     this.modalService.currentSys.subscribe(system => this.system = system);
-
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     $('#sysTimeTable').bootstrapTable($.extend(this.sysTimeTableOptions, {
       columns: this.sysTimecolumnDefs,
       data: [],
@@ -626,6 +629,9 @@ sysWebsitesColumnDefs: any[] = [
   }
 
   systemEdit () {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     // Hide Detail Modal before showing Manager Modal
     $('#systemDetail').modal('hide');
     this.modalService.updateDetails(this.system, 'system', false);

@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
+import { PLATFORM_ID, Component, OnInit, Inject } from '@angular/core';
+import { isPlatformBrowser, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
@@ -26,11 +26,14 @@ export class RecordsModalComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     public sharedService: SharedService,
-    public tableService: TableService) { }
+    public tableService: TableService,
+    @Inject(PLATFORM_ID) private platformId: Object) { }
 
   ngOnInit(): void {
     this.modalService.currentRecord.subscribe(record => this.record = record);
-
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     $('#recordsRelSysTable').bootstrapTable($.extend(this.tableService.relSysTableOptions, {
       columns: this.tableService.relSysColumnDefs,
       data: []
@@ -56,6 +59,9 @@ export class RecordsModalComponent implements OnInit {
   }
 
   recordEdit () {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     // Hide Detail Modal before showing Manager Modal
     $('#recordDetail').modal('hide');
     this.modalService.updateDetails(this.record, 'record', false);

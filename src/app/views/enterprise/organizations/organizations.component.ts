@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
+import { PLATFORM_ID, Component, OnInit, Inject } from '@angular/core';
+import { isPlatformBrowser, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
@@ -27,7 +27,8 @@ export class OrganizationsComponent implements OnInit {
     private router: Router,
     private sharedService: SharedService,
     private tableService: TableService,
-    private titleService: Title
+    private titleService: Title,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.modalService.currentInvest.subscribe((row) => (this.row = row));
   }
@@ -80,6 +81,9 @@ export class OrganizationsComponent implements OnInit {
 
   ngOnInit(): void {
     // Enable popovers
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     $(function () {
       $('[data-toggle="popover"]').popover();
     });

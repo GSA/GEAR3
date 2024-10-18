@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { PLATFORM_ID, Component, OnInit, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
@@ -24,7 +25,8 @@ export class FismaPocsComponent implements OnInit {
     private route: ActivatedRoute,
     private sharedService: SharedService,
     private tableService: TableService,
-    private titleService: Title
+    private titleService: Title,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.modalService.currentFismaSys.subscribe((row) => (this.row = row));
   }
@@ -97,6 +99,9 @@ export class FismaPocsComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     // Enable popovers
     $(function () {
       $('[data-toggle="popover"]').popover();

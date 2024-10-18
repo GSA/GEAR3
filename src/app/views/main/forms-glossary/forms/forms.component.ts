@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { PLATFORM_ID, Component, OnInit, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
@@ -17,7 +18,8 @@ export class FormsComponent implements OnInit {
 
   constructor(
     private sharedService: SharedService,
-    private tableService: TableService) { }
+    private tableService: TableService,
+    @Inject(PLATFORM_ID) private platformId: Object) { }
 
   // Forms Table Options
   formsTableOptions: {} = this.tableService.createTableOptions({
@@ -52,6 +54,9 @@ export class FormsComponent implements OnInit {
   }];
 
   ngOnInit(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     // Enable popovers
     $(function () {
       $('[data-toggle="popover"]').popover()

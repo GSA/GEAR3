@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
+import { PLATFORM_ID, Component, OnInit, Inject } from '@angular/core';
+import { isPlatformBrowser, Location } from '@angular/common';
 import { Router } from '@angular/router';
 
 import { ModalsService } from '@services/modals/modals.service';
@@ -23,11 +23,14 @@ export class InvestmentsModalComponent implements OnInit {
     public modalService: ModalsService,
     private router: Router,
     public sharedService: SharedService,
-    public tableService: TableService) { }
+    public tableService: TableService,
+    @Inject(PLATFORM_ID) private platformId: Object) { }
 
   ngOnInit(): void {
     this.modalService.currentInvest.subscribe(investment => this.investment = investment);
-
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     $('#investRelSysTable').bootstrapTable($.extend(this.tableService.relSysTableOptions, {
       columns: this.tableService.relSysColumnDefs,
       data: [],

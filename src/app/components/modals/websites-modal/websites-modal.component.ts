@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
+import { PLATFORM_ID, Component, OnInit, Inject } from '@angular/core';
+import { isPlatformBrowser, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
@@ -31,7 +31,8 @@ export class WebsitesModalComponent implements OnInit {
     private router: Router,
     public sharedService: SharedService,
     public tableService: TableService,
-    private titleService: Title
+    private titleService: Title,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   // Website scan Table Options
@@ -91,6 +92,9 @@ export class WebsitesModalComponent implements OnInit {
         );
     });
 
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     $('#websitesRelSysTable').bootstrapTable(
       $.extend(this.tableService.relSysTableOptions, {
         columns: this.tableService.relSysColumnDefs,
@@ -121,6 +125,9 @@ export class WebsitesModalComponent implements OnInit {
   }
 
   websiteEdit() {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     // Hide Detail Modal before showing Manager Modal
     $('#websiteDetail').modal('hide');
     this.modalService.updateDetails(this.website, 'website', false);

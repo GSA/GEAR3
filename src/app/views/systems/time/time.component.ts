@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
+import { PLATFORM_ID, Component, OnInit, Inject } from '@angular/core';
+import { isPlatformBrowser, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { colorSets } from '@swimlane/ngx-charts';
@@ -45,7 +45,8 @@ export class TimeComponent implements OnInit {
     private router: Router,
     private sharedService: SharedService,
     private tableService: TableService,
-    private titleService: Title
+    private titleService: Title,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.modalService.currentSys.subscribe((row) => (this.row = row));
 
@@ -142,6 +143,9 @@ export class TimeComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     // Enable popovers
     $(function () {
       $('[data-toggle="popover"]').popover();

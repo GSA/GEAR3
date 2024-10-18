@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
+import { PLATFORM_ID, Component, OnInit, Inject } from '@angular/core';
+import { isPlatformBrowser, Location } from '@angular/common';
 import { Router } from '@angular/router';
 
 import { ModalsService } from '@services/modals/modals.service';
@@ -23,7 +23,8 @@ export class OrganizationsModalComponent implements OnInit {
     public modalService: ModalsService,
     private router: Router,
     private sharedService: SharedService,
-    public tableService: TableService) { }
+    public tableService: TableService,
+    @Inject(PLATFORM_ID) private platformId: Object) { }
 
 
   // Related Capabilities Table Options
@@ -70,7 +71,9 @@ export class OrganizationsModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.modalService.currentOrg.subscribe(organization => this.org = organization);
-
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     $('#orgCapsTable').bootstrapTable($.extend(this.relCapsTableOptions, {
       columns: this.relCapsColumnDefs,
       data: [],

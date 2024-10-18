@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
 import { ApiService } from '@services/apis/api.service';
-
+import { PLATFORM_ID, Component, OnInit, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 
@@ -19,7 +19,8 @@ export class DataDictionaryComponent implements OnInit {
   constructor(
     private sharedService: SharedService,
     private tableService: TableService,
-    private apiService: ApiService) {}
+    private apiService: ApiService,
+    @Inject(PLATFORM_ID) private platformId: Object) {}
 
   // Data Dictionary Table Options
   ddTableOptions: {} = this.tableService.createTableOptions({
@@ -78,6 +79,9 @@ export class DataDictionaryComponent implements OnInit {
 ];
 
   ngOnInit(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     this.apiService.getEntireDataDictionary().subscribe(defs => {
       $('#dataDictionaryTable').bootstrapTable($.extend(this.ddTableOptions, {
         columns: this.ddColumnDefs,

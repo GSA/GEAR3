@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { PLATFORM_ID, Component, OnInit, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '@services/apis/api.service';
 
@@ -22,7 +23,8 @@ export class GlobalSearchComponent implements OnInit {
     private sharedService: SharedService,
     private tableService: TableService,
     private route: ActivatedRoute,
-    private apiService: ApiService) { }
+    private apiService: ApiService,
+    @Inject(PLATFORM_ID) private platformId: Object) { }
 
   // Global Search Table Options
   tableOptions: any = this.tableService.createTableOptions({
@@ -60,6 +62,9 @@ export class GlobalSearchComponent implements OnInit {
   }];
 
   ngOnInit(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     // Enable popovers
     $(function () {
       $('[data-toggle="popover"]').popover()

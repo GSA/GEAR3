@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
+import { PLATFORM_ID, Component, OnInit, Inject } from '@angular/core';
+import { isPlatformBrowser, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
@@ -34,7 +34,8 @@ export class ItStandardsComponent implements OnInit {
     private router: Router,
     public sharedService: SharedService,
     private tableService: TableService,
-    private titleService: Title
+    private titleService: Title,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.modalService.currentITStand.subscribe((row) => (this.row = row));
   }
@@ -62,6 +63,9 @@ export class ItStandardsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     /*
     * Get definitions for the table header tooltips
     * Then set the column defintions and initialize the table

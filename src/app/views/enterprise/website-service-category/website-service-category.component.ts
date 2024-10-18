@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
+import { PLATFORM_ID, Component, OnInit, Inject } from '@angular/core';
+import { isPlatformBrowser, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
@@ -27,7 +27,8 @@ export class WebsiteServiceCategoryComponent implements OnInit {
     private router: Router,
     private sharedService: SharedService,
     private tableService: TableService,
-    private titleService: Title
+    private titleService: Title,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.modalService.currentWebsiteServiceCategory.subscribe(
       (row) => (this.row = row)
@@ -75,6 +76,8 @@ export class WebsiteServiceCategoryComponent implements OnInit {
 
   ngOnInit(): void {
     // Enable popovers
+    if (isPlatformBrowser(this.platformId)) {
+     
     $(function () {
       $('[data-toggle="popover"]').popover();
     });
@@ -95,7 +98,7 @@ export class WebsiteServiceCategoryComponent implements OnInit {
       //Enable table sticky header
       self.sharedService.enableStickyHeader("websiteServiceCategoryTable");
     });
-
+  }
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {
       var detailWebsiteServiceCategoryID = params['websiteServiceCategoryID'];

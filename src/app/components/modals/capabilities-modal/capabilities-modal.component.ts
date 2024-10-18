@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
+import { PLATFORM_ID, Component, OnInit, Inject } from '@angular/core';
+import { isPlatformBrowser, Location } from '@angular/common';
 import { Router } from '@angular/router';
 
 import { ModalsService } from '@services/modals/modals.service';
@@ -23,7 +23,8 @@ export class CapabilitiesModalComponent implements OnInit {
     public modalService: ModalsService,
     private router: Router,
     public sharedService: SharedService,
-    public tableService: TableService) { }
+    public tableService: TableService,
+    @Inject(PLATFORM_ID) private platformId: Object) { }
 
 
   // Related Orgs Table Options
@@ -69,7 +70,9 @@ export class CapabilitiesModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.modalService.currentCap.subscribe(capability => this.capability = capability);
-
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     $('#capRelOrgsTable').bootstrapTable($.extend(this.relOrgsTableOptions, {
       columns: this.relOrgsColumnDefs,
       data: [],
@@ -107,6 +110,9 @@ export class CapabilitiesModalComponent implements OnInit {
   }
 
   capabilityEdit () {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     // Hide Detail Modal before showing Manager Modal
     $('#capabilityDetail').modal('hide');
     this.modalService.updateDetails(this.capability, 'capability', false);

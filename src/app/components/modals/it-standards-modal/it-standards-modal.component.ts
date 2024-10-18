@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 import { Router } from '@angular/router';
+import { PLATFORM_ID, Component, OnInit, Inject } from '@angular/core';
+import { isPlatformBrowser, Location } from '@angular/common';
 
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from "@services/shared/shared.service";
@@ -45,7 +45,8 @@ export class ItStandardsModalComponent implements OnInit {
     private router: Router,
     public sharedService: SharedService,
     public tableService: TableService,
-    public apiService: ApiService) { }
+    public apiService: ApiService,
+    @Inject(PLATFORM_ID) private platformId: Object) { }
 
 
 
@@ -55,7 +56,8 @@ export class ItStandardsModalComponent implements OnInit {
       console.log(this.itStandard);
     });
     
-
+    if (isPlatformBrowser(this.platformId)) {
+      
     $('#itRelSysTable').bootstrapTable($.extend(this.tableService.relSysTableOptions, {
       columns: this.tableService.relSysColumnDefs,
       data: [],
@@ -79,7 +81,7 @@ export class ItStandardsModalComponent implements OnInit {
       // Change URL back without ID after closing Modal
       this.sharedService.removeIDfromURL();
     }.bind(this));
-
+  }
     // Get attribute definition list
     this.apiService.getDataDictionaryByReportName('IT Standards List')
       .subscribe((data: DataDictionary[]) => {
@@ -89,6 +91,9 @@ export class ItStandardsModalComponent implements OnInit {
   }
 
   itStandEdit () {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     // Hide Detail Modal before showing Manager Modal
     $('#itStandardDetail').modal('hide');
     this.modalService.updateDetails(this.itStandard, 'it-standard', false);

@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
+import { PLATFORM_ID, Component, OnInit, Inject } from '@angular/core';
+import { isPlatformBrowser, Location } from '@angular/common';
 import { Router } from '@angular/router';
 
 import { ModalsService } from '@services/modals/modals.service';
@@ -23,11 +23,14 @@ export class FismaModalComponent implements OnInit {
     public modalService: ModalsService,
     private router: Router,
     private sharedService: SharedService,
-    public tableService: TableService) { }
+    public tableService: TableService,
+    @Inject(PLATFORM_ID) private platformId: Object) { }
 
   ngOnInit(): void {
     this.modalService.currentFismaSys.subscribe(fisma => this.fisma = fisma);
-
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
     // $('#fismaSubSysTable').bootstrapTable($.extend(this.tableService.relSysTableOptions, {
     //   columns: this.tableService.relSysColumnDefs,
     //   data: [],

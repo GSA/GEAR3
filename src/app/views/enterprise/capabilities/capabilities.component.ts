@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
+import { PLATFORM_ID, Component, OnInit, Inject } from '@angular/core';
+import { isPlatformBrowser, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
@@ -29,7 +29,8 @@ export class CapabilitiesComponent implements OnInit {
     private router: Router,
     public sharedService: SharedService,
     private tableService: TableService,
-    private titleService: Title
+    private titleService: Title,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.modalService.currentCap.subscribe((row) => (this.row = row));
   }
@@ -122,6 +123,8 @@ export class CapabilitiesComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+     
     // Enable popovers
     $(function () {
       $('[data-toggle="popover"]').popover();
@@ -147,7 +150,7 @@ export class CapabilitiesComponent implements OnInit {
       //Enable table sticky header
       self.sharedService.enableStickyHeader("capTable");
   });
-
+    }
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {
       var detailCapID = params['capID'];
