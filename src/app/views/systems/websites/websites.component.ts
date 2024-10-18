@@ -8,6 +8,9 @@ import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
 
+import { ButtonFilter, Column, TwoDimArray } from '../../../common/table-classes';
+import { Website } from '@api/models/websites.model';
+
 // Declare jQuery symbol
 declare var $: any;
 
@@ -30,132 +33,125 @@ export class WebsitesComponent implements OnInit {
     private titleService: Title
   ) {}
 
-  // Websites Table Options
-  tableOptions: {} = this.tableService.createTableOptions({
-    advancedSearch: true,
-    idTable: 'WebsitesTable',
-    classes: 'table-hover table-dark clickable-table',
-    showColumns: true,
-    showExport: true,
-    exportFileName: 'GSA_Websites',
-    headerStyle: 'bg-danger',
-    pagination: true,
-    search: true,
-    sortName: 'domain',
-    sortOrder: 'asc',
-    showToggle: true,
-    url: this.apiService.websitesUrl,
-  });
+  tableData: Website[] = [];
 
-  // Apps Table Columns
-  columnDefs: any[] = [
+  buttonFilters: TwoDimArray<ButtonFilter> = [
+    [
+      { field: 'production_status', filterBtnText: 'Production', filterOn: 'production' },
+      { field: 'production_status', filterBtnText: 'Decommissioned', filterOn: 'decommissioned' },
+      { field: 'production_status', filterBtnText: 'Redirects', filterOn: 'redirect' },
+      { field: 'production_status', filterBtnText: 'Staging', filterOn: 'staging' }
+    ]
+  ];
+
+  tableCols: Column[] = [
     {
       field: 'domain',
-      title: 'Domain',
-      sortable: true,
+      header: 'Domain',
+      isSortable: true,
     },
     {
       field: 'office',
-      title: 'Office',
-      sortable: true,
+      header: 'Office',
+      isSortable: true,
     },
     {
       field: 'site_owner_email',
-      title: 'Website Manager',
-      sortable: true,
+      header: 'Website Manager',
+      isSortable: true,
     },
     {
       field: 'contact_email',
-      title: 'Contact Email',
-      sortable: true,
-      visible: false,
+      header: 'Contact Email',
+      isSortable: true,
+      showColumn: false,
     },
     {
       field: 'production_status',
-      title: 'Status',
-      sortable: true,
+      header: 'Status',
+      isSortable: true,
     },
     {
       field: 'redirects_to',
-      title: 'Redirect URL',
-      sortable: true,
-      visible: false,
+      header: 'Redirect URL',
+      isSortable: true,
+      showColumn: false,
     },
     {
       field: 'required_by_law_or_policy',
-      title: 'Required by Law/Policy?',
-      sortable: true,
-      visible: false,
+      header: 'Required by Law/Policy?',
+      isSortable: true,
+      showColumn: false,
     },
     {
       field: 'has_dap',
-      title: 'DAP Enabled',
-      sortable: true,
-      visible: false,
+      header: 'DAP Enabled',
+      isSortable: true,
+      showColumn: false,
     },
     {
       field: 'https',
-      title: 'HTTPS Enabled',
-      sortable: true,
-      visible: false,
+      header: 'HTTPS Enabled',
+      isSortable: true,
+      showColumn: false,
     },
     {
       field: 'mobile_friendly',
-      title: 'Mobile Friendly?',
-      sortable: true,
-      visible: false,
+      header: 'Mobile Friendly?',
+      isSortable: true,
+      showColumn: false,
     },
     {
       field: 'has_search',
-      title: 'Has Search?',
-      sortable: true,
+      header: 'Has Search?',
+      isSortable: true,
     },
     {
       field: 'repository_url',
-      title: 'Repository URL',
-      sortable: true,
-      visible: false,
+      header: 'Repository URL',
+      isSortable: true,
+      showColumn: false,
     },
     {
       field: 'hosting_platform',
-      title: 'Hosting Platform',
-      sortable: true,
+      header: 'Hosting Platform',
+      isSortable: true,
     },
     {
       field: 'cms_platform',
-      title: 'Content Management Platform',
-      sortable: true,
-      visible: false,
+      header: 'Content Management Platform',
+      isSortable: true,
+      showColumn: false,
     },
     {
       field: 'sub_office',
-      title: 'Sub-office',
-      sortable: false,
-      visible: false,
+      header: 'Sub-office',
+      isSortable: false,
+      showColumn: false,
       class: 'text-truncate',
     },
     {
       field: 'type_of_site',
-      title: 'Type of Site',
-      sortable: true,
-      visible: true,
+      header: 'Type of Site',
+      isSortable: true,
+      showColumn: true,
       class: 'text-truncate',
     },
     {
       field: 'digital_brand_category',
-      title: 'Digital Brand Category',
-      sortable: true,
-      visible: false,
+      header: 'Digital Brand Category',
+      isSortable: true,
+      showColumn: false,
       formatter: this.sharedService.formatDescription
     },
     {
       field: 'target_decommission_date',
-      title: 'Target Decommission Date',
-      sortable: true,
-      visible: false,
+      header: 'Target Decommission Date',
+      isSortable: true,
+      showColumn: false,
       formatter: this.sharedService.utcDateFormatter
     },
-  ];
+];
 
   ngOnInit(): void {
     // Enable popovers
@@ -166,26 +162,7 @@ export class WebsitesComponent implements OnInit {
     // Set JWT when logged into GEAR Manager when returning from secureAuth
     this.sharedService.setJWTonLogIn();
 
-    $('#websitesTable').bootstrapTable(
-      $.extend(this.tableOptions, {
-        columns: this.columnDefs,
-        data: [],
-      })
-    );
-
-    // Sets initial filtering of table
-    $(document).ready(this.resetTableFilters());
-
-    const self = this;
-    $(document).ready(() => {
-      // Method to handle click events on the Website table
-      $('#websitesTable').on('click-row.bs.table', function (e, row) {
-        this.tableService.websitesTableClick(row);
-      }.bind(this));
-
-      //Enable table sticky header
-      self.sharedService.enableStickyHeader("websitesTable");
-  });
+    this.apiService.getWebsites().subscribe(w => this.tableData = w);
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {

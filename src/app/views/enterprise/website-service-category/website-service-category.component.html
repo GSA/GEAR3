@@ -35,7 +35,7 @@
     </a>
   </div>
 
-  <div class="card-body card-text justify-content-center">
+  <div class="card-body card-text">
     <!-- Service Category Definition Popover -->
     <div class="row justify-content-end">
       <div class="col-auto">
@@ -57,7 +57,7 @@
     <!-- Main Table -->
     <div class="row">
       <div class="col-12">
-        <table id="websiteServiceCategoryTable" aria-label="The website category table presents a list of topics that public-facing GSA websites fulfill. This table is useful in understanding which public GSA websites fulfill certain topics, which is helpful in understanding potential areas of duplication or cross-functional collaboration."></table>
+        <app-table [tableCols]="tableCols" [tableData]="tableData" exportName="Website Service Category" reportStyle="gsa-enterprise" tableType="websiteServiceCategory"></app-table>
       </div>
     </div>
   </div>

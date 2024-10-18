@@ -44,7 +44,6 @@ import { Title } from '@angular/platform-browser';
 import { FormsComponent } from './views/main/forms-glossary/forms/forms.component';
 import { GlossaryComponent } from './views/main/forms-glossary/glossary/glossary.component';
 import { DataDictionaryComponent } from './views/main/data-dictionary/data-dictionary.component';
-import { DataDictionaryPrimeNGComponent } from './views/main/data-dictionary-primeng/data-dictionary-primeng.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, title: 'Home' },
@@ -205,14 +204,7 @@ const routes: Routes = [
     component: DataDictionaryComponent,
     title: 'Data Dictionary',
   },
-
-  {
-    path: 'data_dictionary_primeng',
-    component: DataDictionaryPrimeNGComponent,
-    title: 'Data Dictionary - PrimeNG POC',
-  },
-
-
+  
   {
     // Catch-all Redirect to Home
     path: '**',

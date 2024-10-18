@@ -1,77 +1,99 @@
-<span *ngFor="let filters of buttonFilters" class="mr-2">
-  <p-button *ngFor="let filter of filters" (click)="onButtonFilter(filter)" [severity]="currentButtonFilter !== filter ? 'primary' : 'secondary'">{{filter}}</p-button>
-  
-</span>
-<span *ngIf="currentButtonFilter"><p-button (click)="onButtonFilterClear()">Reset</p-button></span>
+<div class="d-flex justify-content-center">
+  <!-- Filter buttons -->
+  <div class="d-flex align-items-center justify-content-center flex-1" *ngIf="buttonFilters && buttonFilters.length > 0">
+    <span class="mr-2">Filter Buttons:</span>
+    <span *ngFor="let filters of buttonFilters" class="mr-2">
+      <p-button *ngFor="let filter of filters" (click)="onButtonFilter(filter)" [severity]="currentButtonFilter !== filter.filterBtnText ? 'contrast' : 'secondary'">{{filter.filterBtnText}}</p-button>
+    </span>
+    <span *ngIf="currentButtonFilter"><p-button (click)="onButtonFilterClear()" severity="primary">Reset</p-button></span>
+  </div>
+  <!-- Definition tooltip -->
+  <ng-content select="[definitionBtn]"></ng-content>
+</div>
 
-
+<!-- Table -->
 <p-table #dt
-[columns]="tableCols"
-[value]="tableData"
-[rowsPerPageOptions]="[10, 25, 50]"
-[rows]="10"
-[paginator]="isPaginated"
-[globalFilterFields]="filterFields"
-[scrollable]="true"
-[scrollHeight]="screenHeight" 
-[exportHeader]="'customExportHeader'"
-[exportFilename]="getExportFilename('Data_Dictionary')"
-[styleClass]="reportStyle" >
-<ng-template pTemplate="caption">
+  [columns]="tableCols"
+  [value]="tableData"
+  [rowsPerPageOptions]="[10, 25, 50]"
+  [rows]="10"
+  [paginator]="isPaginated"
+  [scrollable]="true"
+  [scrollHeight]="screenHeight" 
+  [exportHeader]="'customExportHeader'"
+  [exportFilename]="getExportFilename()"
+  [styleClass]="reportStyle"
+  selectionMode="single" 
+  (onRowSelect)="onRowSelect($event)">
+
+  <!-- Table actions -->
+  <ng-template pTemplate="caption">
+    <div style="text-align: right">
+      <!-- Search bar -->
+      <p-iconField iconPosition="left">
+        <p-inputIcon styleClass="fa fa-search" />
+        <input 
+          pInputText 
+          type="text" 
+          (input)="dt.filterGlobal($event.target.value, 'contains')" 
+          placeholder="Search keyword" />
+      </p-iconField>
+      <!-- Show/hide columns -->
+        <p-multiSelect 
+          [options]="tableCols" 
+          [(ngModel)]="visibleColumns"
+          (onChange)="toggleVisible($event)"
+          optionLabel="field"
+          tooltip="Add/Remove Columns"
+          [showToggleAll]="false">
+          <ng-template pTemplate="selectedItems">
+            <i class="fa fa-th-list"></i>
+          </ng-template>
+        </p-multiSelect>
+        <!-- Pagination toggle button -->
+        <p-button icon="fa fa-caret-square-down" severity="primary" (click)="togglePagination()" />
+        <!-- Export button -->
+        <p-button icon="fa fa-download" severity="primary" (click)="dt.exportCSV()" />
+        <!-- Filter toggle button -->
+        <p-button icon="fa fa-filter" severity="primary" (click)="toggleFilter()" />
+    </div>
+  </ng-template>
 
 
- <div style="text-align: right">
-  <p-iconField iconPosition="left">
-    <p-inputIcon styleClass="fa fa-search" />
-    <input 
-    pInputText 
-    type="text" 
-    (input)="dt.filterGlobal($event.target.value, 'contains')" 
-    placeholder="Search keyword" />
-  </p-iconField>
-         <p-multiSelect 
-         [options]="tableCols" 
-         [(ngModel)]="visibleColumns"
-         (onChange)="toggleVisible($event)"
-         optionLabel="field"
-         tooltip="Add/Remove Columns">
-           <ng-template pTemplate="selectedItems">
-             <i class="fa fa-th-list"></i>
-           </ng-template>
-         </p-multiSelect>
-         <p-button icon="fa fa-caret-square-down" (click)="togglePagination()" />
-         <p-button 
-         icon="fa fa-download"
-         (onClick)="dt.exportCSV()" />
-         <p-button icon="fa fa-filter" (click)="toggleFilter()"></p-button>
- </div>
-</ng-template>
-<ng-template pTemplate="header" let-columns>
-<tr>
- <th *ngFor="let col of columns" [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.isSortable ? true : false">
-   <div *ngIf="col.showColumn">
-     {{ col.header }}
-     <ng-container *ngIf="col.isSortable">
-       <p-sortIcon [field]="col.field"></p-sortIcon>
-     </ng-container>
-   </div>
- </th>
- 
-</tr>
-<tr *ngIf="showFilters">
-  <th *ngFor="let f of filterFields">
-    <p-columnFilter type="text" [field]="f" [placeholder]="'Filter by ' + f" [ariaLabel]="'Filter ' + f"></p-columnFilter>
-  </th>
-</tr>
-</ng-template>
-<ng-template pTemplate="body" let-rowData let-columns="columns">
-<tr>
- <td *ngFor="let col of columns">
-   <div *ngIf="col.showColumn">
-      <a [href]="rowData[col.field]" *ngIf="col.isLink">{{ rowData[col.field] }}</a>
-     <span *ngIf="!col.isLink">{{ rowData[col.field] }}</span>
-   </div>
- </td>
-</tr>
-</ng-template>
+  <!-- Table header -->
+  <ng-template pTemplate="header" let-columns>
+    <!-- Headings -->
+    <tr>
+      <ng-container *ngFor="let col of columns">
+        <th *ngIf="showColumn(col)" [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.isSortable ? true : false">
+          <div class="d-flex align-items-center">
+            <span *ngIf="!col.titleTooltip" >{{ col.header }}</span>
+            <span *ngIf="col.titleTooltip" [title]="col.titleTooltip">{{ col.header }}</span>
+            <ng-container *ngIf="col.isSortable">
+              <p-sortIcon [field]="col.field"></p-sortIcon>
+            </ng-container>
+          </div>
+        </th>
+      </ng-container>
+    </tr>
+    <!-- Filters -->
+    <tr *ngIf="showFilters">
+      <ng-container *ngFor="let col of columns">
+        <th *ngIf="showColumn(col)">
+          <p-columnFilter type="text" [field]="col.field" [placeholder]="'Filter by ' + col.header" [ariaLabel]="'Filter ' + col.header"></p-columnFilter>
+        </th>
+      </ng-container>
+    </tr>
+  </ng-template>
+  <!-- Table body -->
+  <ng-template pTemplate="body" let-rowData let-columns="columns">
+    <tr [pSelectableRow]="rowData">
+      <ng-container *ngFor="let col of columns">
+        <td *ngIf="showColumn(col)">
+          <span *ngIf="!col.formatter" [ngClass]="col.class">{{ rowData[col.field] }}</span>
+          <span *ngIf="col.formatter" [ngClass]="col.class" [innerHTML]="col.formatter(rowData[col.field])"></span>
+        </td>
+      </ng-container>
+    </tr>
+  </ng-template>
 </p-table>

@@ -70,6 +70,8 @@ import { ItStandardManagerComponent } from './components/manager-modals/it-stand
 import { EAViewComponent } from './views/architecture/ea-view/ea-view.component';
 import { GearModelComponent } from './views/architecture/gear-model/gear-model.component';
 
+import { DataDictionaryComponent } from './views/main/data-dictionary/data-dictionary.component';
+
 // Global Variables
 import { Globals } from './common/globals';
 
@@ -79,7 +81,6 @@ import { BannerComponent } from './components/banner/banner.component';
 import { IdentifierComponent } from './components/identifier/identifier.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { AccordionModule } from 'primeng/accordion';
-import { DataDictionaryPrimeNGComponent } from './views/main/data-dictionary-primeng/data-dictionary-primeng.component';
 
 // PrimeNG Modules
 import { TableModule } from 'primeng/table';
@@ -136,7 +137,7 @@ import { InputTextModule } from 'primeng/inputtext';
         BannerComponent,
         IdentifierComponent,
         SidebarComponent,
-        DataDictionaryPrimeNGComponent,
+        DataDictionaryComponent,
         TableComponent
     ],
     bootstrap: [AppComponent], imports: [AppRoutingModule,
