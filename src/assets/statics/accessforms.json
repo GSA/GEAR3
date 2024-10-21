@@ -1,7 +1,7 @@
 [
   {
     "Title": "New IT Standard Request Form",
-    "Link": "https://gsa--c.na21.visual.force.com/apex/TechnologyRequestForm",
+    "Link": "https://gsa.servicenowservices.com/sp?id=sc_cat_item&sys_id=e32824291bd234d47adac808624bcb44",
     "POC": "Cindy Smith",
     "POC_email": "it-standards@gsa.gov",
     "Description": "To request unapproved software:\n\nComplete the New Software Request form by clicking this cell.\nFor additional details on the process, review the How to Request New Software document.\nAfter you submit the New Software Request form, you will receive an email with a Request Tracker (RT) ticket number. Track your request with the ticket number.\n\nOur goal in the CTO office is to continuously improve our processes and ensure we are able to meet your technology needs. Please send feedback by clicking the POC cell to the right."
