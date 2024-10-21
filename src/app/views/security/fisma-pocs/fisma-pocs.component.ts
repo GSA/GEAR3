@@ -3,9 +3,10 @@ import { ActivatedRoute } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
-import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
+import { Column } from '../../../common/table-classes';
+import { FISMA } from '@api/models/fisma.model';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -22,77 +23,60 @@ export class FismaPocsComponent implements OnInit {
     private apiService: ApiService,
     private modalService: ModalsService,
     private route: ActivatedRoute,
-    private sharedService: SharedService,
     private tableService: TableService,
     private titleService: Title
   ) {
     this.modalService.currentFismaSys.subscribe((row) => (this.row = row));
   }
 
-  // FISMA POC Table Options
-  pocTableOptions: {} = this.tableService.createTableOptions({
-    advancedSearch: true,
-    idTable: 'FismaPOCTable',
-    classes: 'table-hover table-dark clickable-table',
-    showColumns: true,
-    showExport: true,
-    exportFileName: 'GSA_FISMA_POCs',
-    headerStyle: 'bg-warning',
-    pagination: true,
-    search: true,
-    sortName: 'Name',
-    sortOrder: 'asc',
-    showToggle: true,
-    url: this.apiService.fismaUrl,
-  });
+  tableData: FISMA[] = [];
 
-  // FISMA POC Table Columns
-  pocColumnDefs: any[] = [
+  tableCols: Column[] = [
     {
       field: 'Name',
-      title: 'System Name',
-      sortable: true,
+      header: 'System Name',
+      isSortable: true,
     },
     {
       field: 'FIPS_Impact_Level',
-      title: 'FIPS Impact Level',
-      sortable: true,
+      header: 'FIPS Impact Level',
+      isSortable: true,
     },
     {
-      field: 'Authorizing Official',
-      title: 'Authorizing Official',
-      sortable: true,
+      field: 'AO',
+      header: 'Authorizing Official',
+      isSortable: true,
       formatter: this.pocFormatter,
     },
     {
-      field: 'System Owner',
-      title: 'System Owner',
-      sortable: true,
+      field: 'SO',
+      header: 'System Owner',
+      isSortable: true,
       formatter: this.pocFormatter,
     },
     {
       field: 'ISSM',
-      title: 'ISSM',
-      sortable: true,
+      header: 'ISSM',
+      isSortable: true,
       formatter: this.pocFormatter,
     },
     {
       field: 'ISSO',
-      title: 'ISSO',
-      sortable: true,
+      header: 'ISSO',
+      isSortable: true,
       formatter: this.pocFormatter,
     },
     {
       field: 'RespOrg',
-      title: 'Responsible Org',
-      sortable: true,
-      visible: false,
+      header: 'Responsible Org',
+      isSortable: true,
+      showColumn: false,
     },
     {
       field: 'BusOrg',
-      title: 'Business Org',
-      sortable: true,
-      visible: false,
+      header: 'Business Org',
+      isSortable: true,
+      showColumn: false,
     },
   ];
 
@@ -102,45 +86,7 @@ export class FismaPocsComponent implements OnInit {
       $('[data-toggle="popover"]').popover();
     });
 
-    $('#fismaPOCTable').bootstrapTable(
-      $.extend(this.pocTableOptions, {
-        columns: this.pocColumnDefs,
-        data: [],
-      })
-    );
-
-    const self = this;
-    $(document).ready(() => {
-      // Filter out "Pending" Status
-      $('#fismaPOCTable').bootstrapTable('filterBy', {
-        Status: 'Active',
-        SystemLevel: 'System',
-        Reportable: 'Yes',
-      });
-
-      // Method to handle click events on the FISMA POC table  
-      $('#fismaPOCTable').on(
-        'click-row.bs.table',
-        function (e, row, $element, field) {
-          if (!
-            (
-              field === 'Authorizing Official'
-              ||
-              field === 'System Owner'
-              ||
-              field === 'ISSM'
-              ||
-              field === 'ISSO'
-            )
-          ) {
-            this.tableService.fismaTableClick(row);
-          }
-        }.bind(this)
-      );
-
-      //Enable table sticky header
-      self.sharedService.enableStickyHeader("fismaPOCTable");
-  });
+    this.apiService.getFISMA().subscribe(f => this.tableData = f);
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {
@@ -158,74 +104,49 @@ export class FismaPocsComponent implements OnInit {
     });
   }
 
-  pocFormatter(value, row, index, field) {
-    const p = row.POC;
-    let poc = null;
-    let poc1 = null;
-    let pocs = [];
+  pocFormatter(value) {
+    // remove beginning field type from poc info
+    let pocsCleanedUp = value.split(':');
+    // split poc groupings into array
+    let pocs: string[] = pocsCleanedUp[1].split(';');
+    // the final string that gets displayed
+    let finalDisplayStr = '';
 
-    // Split by POC Type
-    if (p) {
-      poc1 = p.split('*');
-
-      // For every POC Type
-      for (let index = 0; index < poc1.length; index++) {
-        var poctype = poc1[index];
-        // Split if multiple POCs in same type
-        poctype = poctype.split(':');
-
-        // Only continue for POC type matching the desired field
-        if (poctype[0] === field) {
-          poc = poctype[1].split('; ');
-
-          // Return if there are no POCs in this field
-          if (poc[0] === '') {
-            return 'None Provided';
-          } else {
-            // For every POC
-            for (var i = 0; i < poc.length; i++) {
-              // Split the different components
-              let pieces = poc[i].split(',');
-
-              let tmpObj = {
-                name: pieces[0],
-                phone: pieces[2],
-                email: pieces[1],
-              };
-
-              let linkStr = null;
-
-              // Only continue if name exists
-              if (tmpObj.name) {
-                linkStr = tmpObj.name + '<br>';
-
-                // Format email into a HTML link
-                if (tmpObj.email) {
-                  linkStr += `<a href="https://mail.google.com/mail/?view=cm&fs=1&to=${tmpObj.email}"
-                    target="_blank" rel="noopener">${tmpObj.email}</a><br>`;
-                }
-
-                // Format number into phone format
-                if (tmpObj.phone) {
-                  linkStr +=
-                    tmpObj.phone.substring(0, 4) +
-                    '-' +
-                    tmpObj.phone.substring(4, 7) +
-                    '-' +
-                    tmpObj.phone.substring(7, 11) +
-                    '<br>';
-                }
-
-                pocs.push(linkStr);
-              }
-            }
-          }
-        }
-      }
-      // Block each POC's info with breaks
-      return pocs.join('<br><br>');
-    } else {
+    // if there's no pocs display a default
+    if(pocs.length === 0 || pocs[0] === "") {
       return 'None Provided';
     }
+
+    // iterate over all poc groupings
+    pocs.map(p => {
+      if(p !== " ") {
+        // split the poc group into specific contact types
+        let contactTypes = p.split(',');
+        let name = contactTypes[0];
+        let email = contactTypes[1];
+        let phone = contactTypes[2];
+
+        // temp display string
+        let displayStr = '';
+
+        if(name) {
+          displayStr += `${name}<br/>`;
+        }
+
+        if(email) {
+          displayStr += `<a href="https://mail.google.com/mail/?view=cm&fs=1&to=${email}"
+          target="_blank" rel="noopener">${email}</a><br/>`;
+        }
+
+        if(phone) {
+          displayStr += `${phone.substring(0, 4)}-${phone.substring(4, 7)}-${phone.substring(7, 11)}<br/>`;
+        }
+
+        // append the temp display string to the final display string
+        finalDisplayStr += `${displayStr}<br/>`;
+      }
+    });
+
+    return finalDisplayStr;
   }
 }

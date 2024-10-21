@@ -70,6 +70,8 @@ import { ItStandardManagerComponent } from './components/manager-modals/it-stand
 import { EAViewComponent } from './views/architecture/ea-view/ea-view.component';
 import { GearModelComponent } from './views/architecture/gear-model/gear-model.component';
 
+import { DataDictionaryComponent } from './views/main/data-dictionary/data-dictionary.component';
+
 // Global Variables
 import { Globals } from './common/globals';
 
@@ -79,6 +81,15 @@ import { BannerComponent } from './components/banner/banner.component';
 import { IdentifierComponent } from './components/identifier/identifier.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { AccordionModule } from 'primeng/accordion';
+
+// PrimeNG Modules
+import { TableModule } from 'primeng/table';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { ButtonModule } from 'primeng/button';
+import { TableComponent } from './components/table/table.component';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { InputTextModule } from 'primeng/inputtext';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -126,6 +137,8 @@ import { AccordionModule } from 'primeng/accordion';
         BannerComponent,
         IdentifierComponent,
         SidebarComponent,
+        DataDictionaryComponent,
+        TableComponent
     ],
     bootstrap: [AppComponent], imports: [AppRoutingModule,
         BrowserAnimationsModule,
@@ -135,8 +148,14 @@ import { AccordionModule } from 'primeng/accordion';
         NgxChartsModule,
         PdfViewerModule,
         ReactiveFormsModule,
+        TableModule,
+        MultiSelectModule,
+        ButtonModule,
+        IconFieldModule,
+        InputIconModule,
+        InputTextModule,
         SidebarModule,
-        AccordionModule,
+        AccordionModule
     ],
     providers: [Globals, provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule {

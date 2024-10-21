@@ -61,6 +61,6 @@
     </div>
   
     <!-- Main Table -->
-    <table id="timeTable" aria-label="The TIME report table indicates where systems are in their lifecycle by using the tolerate, invest, migrate, and eliminate (TIME) designation."></table>
-  </div>
+    <app-table [tableCols]="tableCols" [tableData]="tableData" exportName="TIME" reportStyle="business-systems" tableType="time"></app-table>
+   </div>
 </div>

@@ -262,6 +262,10 @@ export class SharedService {
     if (value) return `<a target="_blank" rel="noopener" href="${value}">Link</a>`;
   };
 
+  public linkFormatter(value) {
+    if (value) return `<a target="_blank" rel="noopener" href="${value}">${value}</a>`;
+  }
+
   //// Date
   public dateFormatter(value, row, index, field) {
     const date = new Date(value);

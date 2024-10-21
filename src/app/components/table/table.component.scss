@@ -1,0 +1,140 @@
+::ng-deep {
+    .p-datatable {
+        font-family: Nunito Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", Segoe UI Symbol;
+        font-size: .875rem;
+        font-weight: 400;
+        line-height: 1.5;
+    }
+
+    .p-datatable .p-datatable-header {
+        border: none;
+    }
+
+    .default.p-datatable .p-datatable-thead > tr > th {
+        color: #fff;
+        background-color: #343a40;
+        border-color: #454d55;
+    
+        & .p-icon {
+            color: #fff;
+        }
+    }
+
+    .it-strategy.p-datatable .p-datatable-thead > tr > th {
+        color: #fff;
+        background-color: #14883c ;
+        border-color: #454d55;
+    
+        & .p-icon {
+            color: #fff;
+        }
+    }
+
+    .business-systems.p-datatable .p-datatable-thead > tr > th {
+        color: #fff;
+        background-color: #ce4844;
+        border-color: #454d55;
+    
+        & .p-icon {
+            color: #fff;
+        }
+    }
+
+    .gsa-enterprise.p-datatable .p-datatable-thead > tr > th {
+        color: #fff;
+        background-color: #2b60de;
+        border-color: #454d55;
+    
+        & .p-icon {
+            color: #fff;
+        }
+    }
+
+    .security.p-datatable .p-datatable-thead > tr > th {
+        color: #fff;
+        background-color: #aa6708;
+        border-color: #454d55;
+    
+        & .p-icon {
+            color: #fff;
+        }
+    }
+
+    .technologies.p-datatable .p-datatable-thead > tr > th {
+        color: #fff;
+        background-color: #008080;
+        border-color: #454d55;
+    
+        & .p-icon {
+            color: #fff;
+        }
+    }
+
+
+    .p-datatable .p-datatable-tbody > tr {
+        color: #fff;
+        background-color: #343a40;
+
+        & td {
+            color: #fff;
+            border-color: #343a40;
+            padding: 1.75rem 1rem;
+        }
+
+        &:nth-of-type(odd) {
+            background-color: #41484e;
+
+            & td {
+                border-color: #41484e;
+                padding: 1.75rem 1rem;
+            }
+        }
+
+        & a {
+            color: #fff;
+        }
+    }
+
+
+    .p-button-contrast {
+        color: #fff;
+        background-color: #1a1a1a;
+        border-color: #1a1a1a;
+
+        &:hover, &:active {
+            background-color: #070707;
+            border-color: #010000;
+        }
+    }
+
+    .p-button-primary {
+        color: #fff;
+        background-color: #027eb2;
+        border-color: #027eb2;
+
+        &:hover, &:active {
+            background-color: #1a82ae;
+            border-color: #1a82ae;
+        }
+    }
+
+    .p-multiselect {
+        color: #fff;
+        background-color: #027eb2;
+        border-color: #027eb2;
+        border-radius: 0;
+        height: 42px;
+        top: 5px;
+
+        &:hover {
+            background-color: #1a82ae;
+            border-color: #187aa3;
+        }
+
+        & .p-multiselect-trigger {
+            color: #fff;
+            background-color: #027eb2;
+            border-color: #027eb2;
+        }
+    }
+}
