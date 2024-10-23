@@ -20,7 +20,7 @@
     "e2e": "ng e2e",
     "build-dev:postbuild": "cp -r ./api/* ./public/server",
     "ssr:postbuild": "cp -r ./api/* ./dist/gear3/server",
-    " serve:ssr:gear3": "node dist/gear3/server/server.mjs"
+    "serve:ssr:gear3": "node dist/gear3/server/server.mjs"
   },
   "author": "IDRA - Enterprise Architecture Group",
   "dependencies": {
