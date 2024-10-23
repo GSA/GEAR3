@@ -149,6 +149,7 @@ const runTouchpointImportJob = async () => {
     jobLogger.log(`Cron job id: ${jobId} - start`);
 
     await importWebsiteData(jobLogger);
+    await postprocesJobExecution(jobId, jobLogger, JobStatus.SUCCESS);
   } catch (error) {
     // Log any errors
     const status = `Error occurred while running: \n${error}`;
@@ -161,7 +162,7 @@ const runTouchpointImportJob = async () => {
       jobLogger.log(jobLogger.getLogs());
     }
   } finally {
-    jobLogger.log(`Cron job id: ${jobId} - end`);
+    console.log(`Cron job id: ${jobId} - end`);
   }
 };
 
@@ -174,6 +175,7 @@ const runTouchpointImportJob = async () => {
  * @returns {Promise<void>} A promise that resolves when the job update is complete.
  */
 const postprocesJobExecution = async (jobId, jobLogger, jobStatus) => {
+  jobLogger.log(`Cron job id: ${jobId} - end`);
   await cronJobDbUtilService.updateDbData({
     jobStatus: jobStatus,
     endTime: formatDateTime(new Date()),

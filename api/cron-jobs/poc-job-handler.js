@@ -88,6 +88,7 @@ const runPocJob = async () => {
     await runQuery(updateEndOfLifeQuery);
     jobLogger.log('Update obj_ldap_poc to separate records and add group account.');
 
+    await postprocesJobExecution(jobId, jobLogger, JobStatus.SUCCESS);
   } catch (error) {
     // Log any errors
     const status = `Error occurred while running: \n${error}`;
@@ -113,14 +114,15 @@ const runPocJob = async () => {
  * @returns {Promise<void>} A promise that resolves when the job update is complete.
  */
 const postprocesJobExecution = async (jobId, jobLogger, jobStatus) => {
-    await cronJobDbUtilService.updateDbData({
-      jobStatus: jobStatus,
-      endTime: formatDateTime(new Date()),
-      jobLogs: jobLogger.getLogs(),
-      jobId: jobId
-    });
-  };
+  jobLogger.log(`Cron job id: ${jobId} - end`);
+  await cronJobDbUtilService.updateDbData({
+    jobStatus: jobStatus,
+    endTime: formatDateTime(new Date()),
+    jobLogs: jobLogger.getLogs(),
+    jobId: jobId
+  });
+};
 
 module.exports = {
-    runPocJob,
+  runPocJob,
 };
