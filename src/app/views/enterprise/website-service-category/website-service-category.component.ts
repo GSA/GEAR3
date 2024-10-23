@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
+import { Column } from '../../../common/table-classes';
+import { Service_Category } from '@api/models/service-category.model';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -21,10 +22,8 @@ export class WebsiteServiceCategoryComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    private location: Location,
     private modalService: ModalsService,
     private route: ActivatedRoute,
-    private router: Router,
     private sharedService: SharedService,
     private tableService: TableService,
     private titleService: Title
@@ -34,41 +33,23 @@ export class WebsiteServiceCategoryComponent implements OnInit {
     );
   }
 
-  // websiteServiceCategory Table Options
-  tableOptions: {} = this.tableService.createTableOptions({
-    advancedSearch: true,
-    idTable: 'websiteServiceCategoryTable',
-    classes: 'table-hover table-dark clickable-table',
-    showColumns: false,
-    showExport: true,
-    exportFileName: 'GSA_websiteServiceCategory',
-    exportIgnoreColumn:[],
-    headerStyle: 'bg-royal-blue',
-    pagination: true,
-    search: true,
-    sortName: 'name',
-    sortOrder: 'asc',
-    showToggle: true,
-    url: this.apiService.websiteServiceCategoryUrl,
-  });
+  tableData: Service_Category[] = [];
 
-  // websiteServiceCategory Table Columns
-  columnDefs: any[] = [
+  tableCols: Column[] = [
     {
       field: 'website_service_category_id',
-      title: 'Id',
-      sortable: true,
+      header: 'Id',
+      isSortable: true,
     },
     {
       field: 'name',
-      title: 'Name',
-      sortable: true,
+      header: 'Name',
+      isSortable: true,
     },
     {
       field: 'description',
-      title: 'Description',
-      sortable: true,
-      visible: true,
+      header: 'Description',
+      isSortable: true,
       formatter: this.sharedService.formatDescription
     }
   ];
@@ -79,22 +60,7 @@ export class WebsiteServiceCategoryComponent implements OnInit {
       $('[data-toggle="popover"]').popover();
     });
 
-    $('#websiteServiceCategoryTable').bootstrapTable(
-      $.extend(this.tableOptions, {
-        columns: this.columnDefs,
-        data: [],
-      })
-    );
-
-    const self = this;
-    $(document).ready(() => {
-      // Method to handle click events on the serviceCategory table
-      $('#websiteServiceCategoryTable').on('click-row.bs.table', function (e, row) {
-        this.tableService.websiteServiceCategoryTableClick(row);
-      }.bind(this));
-      //Enable table sticky header
-      self.sharedService.enableStickyHeader("websiteServiceCategoryTable");
-    });
+    this.apiService.getWebsiteServiceCategory().subscribe(w => this.tableData = w);
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {

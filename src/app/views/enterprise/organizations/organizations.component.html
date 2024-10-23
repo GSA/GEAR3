@@ -27,8 +27,8 @@
     </a>
   </div>
 
-  <div class="card-body card-text justify-content-center">
+  <div class="card-body card-text">
     <!-- Main Table -->
-    <table id="orgTable" aria-label="The organization table provides a list of all of the organizations at GSA. This table is useful in understanding the organization structure of GSA."></table>
+    <app-table [tableCols]="tableCols" [tableData]="tableData" exportName="Organizations" reportStyle="gsa-enterprise" tableType="organizations"></app-table>
   </div>
 </div>

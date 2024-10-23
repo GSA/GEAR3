@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
+import { SharedService } from '@services/shared/shared.service';
 import { distinctUntilChanged, filter } from 'rxjs/operators';
 
 // Declare jQuery symbol
@@ -9,10 +10,10 @@ declare var gtag: Function;
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  constructor(private router: Router) {
+  constructor(private router: Router, private sharedService: SharedService) {
     this.router.events.subscribe(event => {
       // Send page_view event to GA
       if (event instanceof NavigationEnd) {
@@ -38,8 +39,8 @@ export class AppComponent implements OnInit {
 
     // SideNavbar Offset
     let footerElem: HTMLElement = document.getElementById('footer');
-    let sideNavElem: any = document.getElementsByTagName('ng-sidebar-container')[0];
-    sideNavElem.style['height'] = `${window.innerHeight - topNavElem.offsetHeight - footerElem.offsetHeight}px`;
+    let sideNavElem: any = document.getElementsByTagName('p-sidebar')[0];
+    sideNavElem.style['height'] = `${window.innerHeight - topNavElem.offsetHeight - footerElem.offsetHeight + 10}px`;
   }
 
   showPopup(url, title, w, h) {
@@ -65,6 +66,16 @@ export class AppComponent implements OnInit {
      if (window.focus) {
       popupWindow.focus();
      } 
+  }
+
+  toggleSidebar() {
+    this.sharedService.toggleSidebar();
+  }
+
+  onSidebarIconsKeyDown(e: KeyboardEvent) {
+    if(e.code === 'Space' || e.code === 'Enter') {
+      this.toggleSidebar();
+    }
   }
 
 }

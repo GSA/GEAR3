@@ -23,6 +23,7 @@
     "experimentalDecorators": true,
     "module": "esnext",
     "moduleResolution": "node",
+    "resolveJsonModule": true,
     "importHelpers": true,
     "target": "ES2022",
     "lib": [

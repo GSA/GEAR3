@@ -10,6 +10,9 @@ import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
 
+import { Column } from '../../../common/table-classes';
+import { TIME } from '@api/models/systime.model';
+
 // Declare jQuery symbol
 declare var $: any;
 
@@ -54,89 +57,73 @@ export class TimeComponent implements OnInit {
     });
   }
 
-  // TIME Table Options
-  tableOptions: {} = this.tableService.createTableOptions({
-    advancedSearch: true,
-    idTable: 'TimeTable',
-    classes: 'table-hover table-dark clickable-table',
-    showColumns: true,
-    showExport: true,
-    exportFileName: 'Systems_TIME_Report',
-    headerStyle: 'bg-danger',
-    pagination: true,
-    search: true,
-    sortName: 'Name',
-    sortOrder: 'asc',
-    showToggle: true,
-    url: this.apiService.timeUrl,
-  });
+  tableData: TIME[] = [];
 
-  // TIME Table Columns
-  columnDefs: any[] = [
+  tableCols: Column[] = [
     {
       field: 'System Name',
-      title: 'System Name',
-      sortable: true,
+      header: 'System Name',
+      isSortable: true,
     },
     {
       field: 'FY',
-      title: 'FY',
-      sortable: true,
+      header: 'FY',
+      isSortable: true,
     },
     {
       field: 'TIME Designation',
-      title: 'TIME Designation',
-      sortable: true,
+      header: 'TIME Designation',
+      isSortable: true,
     },
     {
       field: 'Business Score',
-      title: 'Business Score',
-      visible: false,
-      sortable: true,
+      header: 'Business Score',
+      showColumn: false,
+      isSortable: true,
     },
     {
       field: 'Technical Score',
-      title: 'Technical Score',
-      visible: false,
-      sortable: true,
+      header: 'Technical Score',
+      showColumn: false,
+      isSortable: true,
     },
     {
       field: 'O&M Cost',
-      title: 'O&M Cost',
-      visible: false,
-      sortable: true,
+      header: 'O&M Cost',
+      showColumn: false,
+      isSortable: true,
     },
     {
       field: 'DM&E Cost',
-      title: 'DM&E Cost',
-      visible: false,
-      sortable: true,
+      header: 'DM&E Cost',
+      showColumn: false,
+      isSortable: true,
     },
     {
       field: 'Software/Hardware License Costs',
-      title: 'License Costs',
-      visible: false,
-      sortable: true,
+      header: 'License Costs',
+      showColumn: false,
+      isSortable: true,
     },
     {
       field: 'Questionnaire Last Updated',
-      title: 'Questionnaire Last Updated',
-      sortable: true,
-      visible: false,
+      header: 'Questionnaire Last Updated',
+      isSortable: true,
+      showColumn: false,
       formatter: this.sharedService.dateFormatter,
     },
     {
       field: 'POC Last Updated',
-      title: 'POC of Last Updated',
-      sortable: true,
-      visible: false,
+      header: 'POC of Last Updated',
+      isSortable: true,
+      showColumn: false,
       formatter: this.sharedService.emailFormatter,
     },
     {
       field: 'File Link',
-      title: 'File Link',
-      sortable: true,
-      visible: false,
+      header: 'File Link',
+      isSortable: true,
+      showColumn: false,
       formatter: this.sharedService.linksFormatter,
     },
   ];
@@ -147,33 +134,7 @@ export class TimeComponent implements OnInit {
       $('[data-toggle="popover"]').popover();
     });
 
-    $('#timeTable').bootstrapTable(
-      $.extend(this.tableOptions, {
-        columns: this.columnDefs,
-        data: [],
-      })
-    );
-
-    const self = this;
-    $(document).ready(() => {
-      // Method to handle click events on the Systems table
-      $('#timeTable').on('click-row.bs.table', function (e, row, $element, field) {    
-        if (field !== 'File Link' ) {
-          // Grab data for system by name
-          this.apiService
-            .getOneSys(row['System Id'])
-            .subscribe((data: any[]) => {
-              this.tableService.systemsTableClick(data[0]);
-            });
-
-          // Change URL to include ID
-          this.sharedService.addIDtoURL(row, 'Id');
-        }     
-      }.bind(this));
-
-      //Enable table sticky header
-      self.sharedService.enableStickyHeader("timeTable");
-  });
+    this.apiService.getTIME().subscribe(t => this.tableData = t);
 
     // Visualization data
     this.apiService.getTIME().subscribe((data: any[]) => {

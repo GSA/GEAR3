@@ -41,7 +41,6 @@
   </div>
 
   <div class="card-body card-text">
-    <div class="row w-100">
       <!-- Business Capability Definition Popover -->
       <a tabindex="0" class="btn btn-sm btn-info text-white" role="button"
         data-toggle="popover" data-trigger="focus" data-placement="auto" data-html="true" title=""
@@ -53,25 +52,8 @@
         it is effectively used in business analysis, design, and decision support that help to improve the performance of GSA. 
         (<a href='https://obamawhitehouse.archives.gov/sites/default/files/omb/assets/egov_docs/fea_v2.pdf' target='_blank' rel='noopener'>FEAF pg 30</a>)">
         Business Capability Definition
-      </a>
-      <!-- <div class="text-center"> -->
-        <!-- Filters -->
-        <!-- <span class="my-auto mr-3">Filter Buttons:</span>
-          <button role="button" name="capFASbttn" class="btn btn-primary" (click)="changeCapSSO('FAS')">
-        FAS (Q)</button>
-        <button role="button" name="capITbttn" class="btn btn-primary" (click)="changeCapSSO('GSA IT')">
-          GSA IT (I)</button>
-        <button role="button" name="capOCFObttn" class="btn btn-primary" (click)="changeCapSSO('OCFO')">
-          OCFO (B)</button>
-          <button role="button" name="capPBSbttn" class="btn btn-primary" (click)="changeCapSSO('PBS')">
-          PBS (P)</button>
-
-        <button role="button" name="capBttn" class="btn btn-primary mx-3" (click)="backToMainCap()" [hidden]="!ssoTable">
-          Back to All Capabilities</button>
-      </div> -->
-    
+      </a>    
       <!-- Main Table -->
-      <table id="capTable" aria-label="The business capabilities table provides a list of GSA capabilities as presented in the Federal Enterprise Architecture Framework. This table is useful for understanding the capabilities that are fulfilled by GSA based on the system fulfilling that capability."></table>
-    </div>
+      <app-table [tableCols]="tableCols" [tableData]="tableData" exportName="Capabilities" reportStyle="gsa-enterprise" tableType="capabilities"></app-table>
   </div>
 </div>

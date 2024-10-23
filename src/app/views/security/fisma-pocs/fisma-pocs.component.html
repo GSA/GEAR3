@@ -30,12 +30,8 @@
     </a>
   </div>
 
-  <div class="card-body card-text justify-content-center">
-    <div class="w-100">
-    </div>
-
+  <div class="card-body card-text">
     <!-- Main Table -->
-    <table id="fismaPOCTable" aria-label="The FISMA System POCs table provides a list of people and their roles for each FISMA system."></table>
-
+    <app-table [tableCols]="tableCols" [tableData]="tableData" exportName="FISMA POCS" reportStyle="security" tableType="fismaPoc"></app-table>
   </div>
 </div>
