@@ -25,7 +25,8 @@ const bodyParser = require('body-parser'),
   ExtractJWT = passportJWT.ExtractJwt,
   JWTStrategy = passportJWT.Strategy;
 
-  const pocJob = require('./api/cron-jobs/poc-job-handler.js');
+  const pocJobHandler = require('./api/cron-jobs/poc-job-handler.js');
+  const tpiJobHandler = require('./api/cron-jobs/tpi-job-handler.js');
 
   const CryptoJS = require("crypto-js")
 
@@ -434,7 +435,7 @@ const putData = async data => {
 const { consoleTestResultHandler } = require('tslint/lib/test.js');
 
 cron.schedule(process.env.POC_CRON, async () => { //PRODUCTION
-  await pocJob.runPocJob();
+  await pocJobHandler.runPocJob();
 });
 
 // -------------------------------------------------------------------------------------------------
@@ -458,6 +459,6 @@ cron.schedule(process.env.TECH_CATALOG_CRON2, () => {
 // -------------------------------------------------------------------------------------------------
 
 // CRON JOB: Touchpoints API - Update Websites (runs every day at 11:05 PM)
-cron.schedule(process.env.TOUCHPOINTS_CRON, () => { 
-  cronCtrl.runTouchpointImportJob();
+cron.schedule(process.env.TOUCHPOINTS_CRON, async () => { 
+  await tpiJobHandler.runTouchpointImportJob();
 });
