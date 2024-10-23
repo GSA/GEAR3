@@ -1,18 +1,13 @@
 const ctrl = require('./base.controller'),
   techCatImport = require('./tech-catalog-import.controller'),
   touchpointImport = require('./touchpoint-import.controller'),
-  fs = require('fs'),
-  path = require('path'),
-  queryPath = '../queries/'
-  SHEET_ID = '1eSoyn7-2EZMqbohzTMNDcFmNBbkl-CzXtpwNXHNHD1A', // FOR PRODUCTION
-  RANGE = 'Master Junction with Business Systems!A2:B',
-  jobUser = 'GearCronJ';
-  
-const JobStatus = require('../enums/job-status.js');
-const sql_promise = require("../db.js").connection_promise;
+  cronJobDbUtilService = require('../cron-jobs/cron-job-db-util.service.js'),
+  JobLogger = require('../cron-jobs/job-logger.js'),
+  JobStatus = require('../enums/job-status.js');
 
-const insert_params = ["jobType", "startTime", "jobLogs", "jobStatus"];
-const update_params = ["jobStatus", "endTime", "jobLogs", "jobId"];
+const SHEET_ID = '1eSoyn7-2EZMqbohzTMNDcFmNBbkl-CzXtpwNXHNHD1A', // FOR PRODUCTION
+RANGE = 'Master Junction with Business Systems!A2:B',
+jobUser = 'GearCronJ';
 
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Google Sheets API - Update All Related Records
@@ -23,16 +18,16 @@ exports.runUpdateAllRelatedRecordsJob = async () => {
   const jobLogger = new JobLogger();
   let jobId;
   try {
-    const pendingJobId = await getAnyPendingJob(jobType);
+    const pendingJobId = await cronJobDbUtilService.getAnyPendingJob(jobType);
     if (pendingJobId) {
       jobLogger.log(`Active Job '${pendingJobId}' is Running. Aborting the job now.`);
-      await insertDbData({ jobType, startTime: ctrl.formatDateTime(new Date()), jobLogs: jobLogger.getLogs(), jobStatus: JobStatus.CANCELLED })
+      await cronJobDbUtilService.insertDbData({ jobType, startTime: ctrl.formatDateTime(new Date()), jobLogs: jobLogger.getLogs(), jobStatus: JobStatus.CANCELLED })
       return;
     }
 
     let res = {};
 
-    jobId = await insertDbData({ jobType, startTime: ctrl.formatDateTime(new Date()), jobLogs: '', jobStatus: JobStatus.PENDING });
+    jobId = await cronJobDbUtilService.insertDbData({ jobType, startTime: ctrl.formatDateTime(new Date()), jobLogs: '', jobStatus: JobStatus.PENDING });
     console.log(jobId);
 
     // log start of job
@@ -54,7 +49,7 @@ exports.runUpdateAllRelatedRecordsJob = async () => {
 };
 
 async function postprocesJobExecution(jobId, jobLogger, jobStatus) {
-  await updateDbData({ jobStatus: jobStatus, endTime: ctrl.formatDateTime(new Date()), jobLogs: jobLogger.getLogs(), jobId: jobId })
+  await cronJobDbUtilService.updateDbData({ jobStatus: jobStatus, endTime: ctrl.formatDateTime(new Date()), jobLogs: jobLogger.getLogs(), jobId: jobId })
 }
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Tech Catalog Daily Import (runs daily at 5:00 AM)
@@ -200,44 +195,4 @@ const putData = async data => {
   }
 
 });*/
-const runQuery = async (query, values) => {
-  [rows, fields] = await sql_promise.query(query, values);
-  return rows;
-};
 
-const getAnyPendingJob = async (jobType) => {
-  const query = fs.readFileSync(path.join(__dirname, queryPath, "GET/get_any_pending_job_by_type.sql")).toString();
-  const result = await runQuery(query, [jobType]);
-  return result && result.length > 0 ? result[0].jobId: null;
-};
-
-const insertDbData = async (rowData) => {
-  const query = fs.readFileSync(path.join(__dirname, queryPath, "CREATE/insert_cron_job.sql")).toString();
-  const values = insert_params.map(paramName => rowData[paramName]);
-  const result = await runQuery(query, values);
-  //console.log(`Insert::: id: ${rowData}, row: ${JSON.stringify(result)}`);
-  return result.insertId;
-};
-
-const updateDbData = async (rowData) => {
-  console.log(JSON.stringify(rowData));
-  const query = fs.readFileSync(path.join(__dirname, queryPath, "UPDATE/update_cron_job_status.sql")).toString();
-  const values = update_params.map(paramName => rowData[paramName]);
-  const result = await runQuery(query, values);
-  //console.log(`Update::: id: ${rowData.id}, result: ${JSON.stringify(result)}`);
-  return result;
-};
-
-class JobLogger {
-  constructor() {
-    this.logs = '';
-  }
-
-  log(message) {
-    this.logs += message + '\n'; // Append log to the string with a newline
-  }
-
-  getLogs() {
-    return this.logs;
-  }
-}
