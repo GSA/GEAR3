@@ -96,10 +96,10 @@ export class WebsiteServiceCategoryModalComponent implements OnInit {
     const self = this;
     $(document).ready(() => {
       // Method to handle click events on the Related Systems table
-      $('#serviceCategoryRelSysTable').on('click-row.bs.table', function (e, row) {
+      $('#websiteServiceCategoryWebsites').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#websiteServiceCategoryDetail').modal('hide');
-        self.tableService.systemsTableClick(row);
+        self.tableService.websitesTableClick(row);
       }.bind(this));
     });
 
