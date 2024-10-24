@@ -33,7 +33,7 @@ const runPocJob = async () => {
     // TODO: Add code to get data using Active Directory using activedirectory2 lib
 
     // Parse the CSV file & skip the first row
-    const pocCsv = await parseCSV("../scripts/pocs/GSA_Pocs.csv", false, 1);
+    const pocCsv = await parseCSV("scripts/pocs/GSA_Pocs.csv", false, 1);
 
     // Clear tmp_obj_ldap_poc table
     const clearQuery = "DELETE FROM tmp_obj_ldap_poc";
@@ -81,10 +81,9 @@ const runPocJob = async () => {
       UPDATE obj_ldap_poc poc
       SET EmployeeType = 'Separated'
       WHERE poc.SamAccountName NOT IN (SELECT SamAccountName FROM tmp_obj_ldap_poc) AND Enabled = 'FALSE' AND poc.EmployeeType = '';
-      
-      INSERT INTO gear_schema.obj_ldap_poc (SamAccountName, FirstName, LastName, Email, EmployeeType, Enabled, RISSO)
-      VALUES ('AssistTechTeam', 'Assist', 'Tech Team', 'assisttechteam@gsa.gov', 'Group', 'True', '24');
     `;
+    //INSERT INTO gear_schema.obj_ldap_poc (SamAccountName, FirstName, LastName, Email, EmployeeType, Enabled, RISSO)
+    // VALUES ('AssistTechTeam', 'Assist', 'Tech Team', 'assisttechteam@gsa.gov', 'Group', 'True', '24');
     await runQuery(updateEndOfLifeQuery);
     jobLogger.log('Update obj_ldap_poc to separate records and add group account.');
 
