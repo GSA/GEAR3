@@ -33,6 +33,19 @@ export class TableComponent implements OnInit {
   // The name of report for the export csv
   @Input() exportName: string = '';
 
+  // An optional function to use for exporting the data
+  // instead of the built in export function
+  @Input() exportFunction: Function = null;
+
+  // Inputs for showing/hiding specific toolbar items
+  // as well as the entire toolbar itself
+  @Input() showToolbar: boolean = true;
+  @Input() showSearchbar: boolean = true;
+  @Input() showShowHideColumnButton: boolean = true;
+  @Input() showPaginationToggleButton: boolean = true;
+  @Input() showExportButton: boolean = true;
+  @Input() showFilterButton: boolean = true;
+
   // Filter event (some reports change available columns when filtered)
   @Output() filterEvent = new EventEmitter<string>();
 
@@ -40,7 +53,7 @@ export class TableComponent implements OnInit {
 
   @HostListener('window:resize', ['$event'])
   onResize(event) {
-    this.screenHeight = `${(event.srcElement.innerHeight - 400)}px`;
+    this.screenHeight = `${(event.srcElement.innerHeight - 315)}px`;
   }
 
   visibleColumns: Column[] = [];
@@ -51,7 +64,7 @@ export class TableComponent implements OnInit {
   showFilters: boolean = false;
 
   constructor(public sharedService: SharedService, public tableService: TableService, public apiService: ApiService) {
-    this.screenHeight = `${(window.innerHeight - 400)}px`;
+    this.screenHeight = `${(window.innerHeight - 315)}px`;
    }
 
   ngOnInit(): void {
@@ -111,6 +124,14 @@ export class TableComponent implements OnInit {
     this.dt.reset();
     this.currentButtonFilter = '';
     this.filterEvent.emit('');
+  }
+
+  onExportData() {
+    if(this.exportFunction) {
+      this.dt.exportFunction();
+    } else {
+      this.dt.exportCSV();
+    }
   }
 
   applyFilteredStyle(filter: string) {
