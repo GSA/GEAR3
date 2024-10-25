@@ -4,6 +4,14 @@
         font-size: .875rem;
         font-weight: 400;
         line-height: 1.5;
+
+        & .p-datatable-thead > tr > th {
+            padding: .75rem;
+
+            & .table-heading {
+                justify-content: space-between;
+            }
+        }
     }
 
     .p-datatable .p-datatable-header {
@@ -78,7 +86,7 @@
         & td {
             color: #fff;
             border-color: #343a40;
-            padding: 1.75rem 1rem;
+            padding: .75rem;
         }
 
         &:nth-of-type(odd) {
@@ -86,7 +94,7 @@
 
             & td {
                 border-color: #41484e;
-                padding: 1.75rem 1rem;
+                padding: .75rem;
             }
         }
 
@@ -117,6 +125,7 @@
             border-color: #1a82ae;
         }
     }
+    
 
     .p-multiselect {
         color: #fff;
@@ -124,7 +133,7 @@
         border-color: #027eb2;
         border-radius: 0;
         height: 42px;
-        top: 5px;
+        top: 1px;
 
         &:hover {
             background-color: #1a82ae;
@@ -136,5 +145,14 @@
             background-color: #027eb2;
             border-color: #027eb2;
         }
+
+        & .p-multiselect-label {
+            padding: .5rem .75rem;
+        }
+    }
+
+    .p-inputtext {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
     }
 }

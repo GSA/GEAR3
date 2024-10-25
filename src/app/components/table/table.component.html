@@ -1,4 +1,4 @@
-<div class="d-flex justify-content-center">
+<div class="d-flex justify-content-center" [ngClass]="{'mb-3': !showToolbar}">
   <!-- Filter buttons -->
   <div class="d-flex align-items-center justify-content-center flex-1" *ngIf="buttonFilters && buttonFilters.length > 0">
     <span class="mr-2">Filter Buttons:</span>
@@ -23,14 +23,15 @@
   [exportHeader]="'customExportHeader'"
   [exportFilename]="getExportFilename()"
   [styleClass]="reportStyle"
+  [exportFunction]="exportFunction"
   selectionMode="single" 
   (onRowSelect)="onRowSelect($event)">
 
   <!-- Table actions -->
-  <ng-template pTemplate="caption">
+  <ng-template pTemplate="caption" *ngIf="showToolbar">
     <div style="text-align: right">
       <!-- Search bar -->
-      <p-iconField iconPosition="left">
+      <p-iconField iconPosition="left" *ngIf="showSearchbar">
         <p-inputIcon styleClass="fa fa-search" />
         <input 
           pInputText 
@@ -40,6 +41,7 @@
       </p-iconField>
       <!-- Show/hide columns -->
         <p-multiSelect 
+          *ngIf="showShowHideColumnButton"
           [options]="tableCols" 
           [(ngModel)]="visibleColumns"
           (onChange)="toggleVisible($event)"
@@ -51,11 +53,11 @@
           </ng-template>
         </p-multiSelect>
         <!-- Pagination toggle button -->
-        <p-button icon="fa fa-caret-square-down" severity="primary" (click)="togglePagination()" />
+        <p-button icon="fa fa-caret-square-down" severity="primary" (click)="togglePagination()" *ngIf="showPaginationToggleButton" />
         <!-- Export button -->
-        <p-button icon="fa fa-download" severity="primary" (click)="dt.exportCSV()" />
+        <p-button icon="fa fa-download" severity="primary" (click)="onExportData()" *ngIf="showExportButton" />
         <!-- Filter toggle button -->
-        <p-button icon="fa fa-filter" severity="primary" (click)="toggleFilter()" />
+        <p-button icon="fa fa-filter" severity="primary" (click)="toggleFilter()" *ngIf="showFilterButton" />
     </div>
   </ng-template>
 
@@ -66,7 +68,7 @@
     <tr>
       <ng-container *ngFor="let col of columns">
         <th *ngIf="showColumn(col)" [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.isSortable ? true : false">
-          <div class="d-flex align-items-center">
+          <div class="d-flex align-items-center table-heading">
             <span *ngIf="!col.titleTooltip" >{{ col.header }}</span>
             <span *ngIf="col.titleTooltip" [title]="col.titleTooltip">{{ col.header }}</span>
             <ng-container *ngIf="col.isSortable">
