@@ -1,6 +1,7 @@
 var dotenv = require('dotenv').config();  // .env Credentials
 const fs = require('fs');
 const mysql = require('mysql2');
+const asyncMysql = require('mysql2/promise');
 
 // Connection Credentials
 dbCredentials = {
@@ -31,13 +32,13 @@ dbCredentials = {
 // Create DB Connection
 const pool = mysql.createPool(dbCredentials)
 
-const promisePool = pool.promise();
+const promisePool = asyncMysql.createPool(dbCredentials);
 
 // const pool_cowboy = mysql.createPool(dbCredentials_cowboy)
 
 module.exports = {
   dbCredentials: dbCredentials,
   connection: pool,
-  connection_promise: promisePool
+  promisePool: promisePool
   // connection_cowboy: pool_cowboy
 };
