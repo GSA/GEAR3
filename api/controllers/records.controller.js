@@ -87,27 +87,29 @@ exports.updateSystems = (req, res) => {
 };
 
 // This function is called by the api to update all the records using a Google Sheet
-exports.refreshAllSystems = (req, res) => {
-  ctrl.getApiToken (req, res)
-  .then((response) => {
+exports.refreshAllSystems = async (req, res) => {
+  try {
+    const response = await ctrl.getApiToken(req, res);
     console.log('*** API Security Testing - getApiToken response: ', response); //DEBUGGING
-
     if (response === 1) {
       console.log('*** API Security Testing - API Auth Validation: PASSED'); //DEBUGGING
-    var data = req.body;
-  
-    console.log("refreshAllSystems")
-  
-  // if (req.headers.authorization) {
-    // 'refresh' is used to set the callback_method = "refresh"
-    ctrl.googleMain(res, 'refresh', SHEET_ID, RANGE, req.headers.requester);
-  } else {
-    console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
-    res.status(502).json({
-      message: "No authorization token present."
+
+      console.log("refreshAllSystems")
+      // 'refresh' is used to set the callback_method = "refresh"
+      await ctrl.googleMain(res, 'refresh', SHEET_ID, RANGE, req.headers.requester);
+    } else {
+      console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
+      res.status(502).json({
+        message: "No authorization token present."
       });
     }
-  });
+  } catch (error) {
+    msgLog('*** API Security Testing - API Auth Validation: FAILED', null); //DEBUGGING
+    msgLog(error.stack, null); //DEBUGGING
+    res.status(502).json({
+      message: "No authorization token present."
+    });
+  }
 };
 
 // this function is called by the api to log an event to the database
