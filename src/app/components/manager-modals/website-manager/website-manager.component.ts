@@ -55,12 +55,12 @@ export class WebsiteManagerComponent implements OnInit {
 
   setFormDefaults(): void {
     // Populate Related Systems
-    this.apiService.getWebsiteSys(this.website.Website_ID).subscribe((data: any[]) => {
+    this.apiService.getWebsiteSys(this.website.website_id).subscribe((data: any[]) => {
       this.systemRelations = [];
       // Only take ID and name
       data.forEach(element => {
         this.systemRelations.push({
-          ID: element.Website_ID,
+          ID: element.website_id,
           Name: element.Name,
           DisplayName: element.DisplayName
         })
@@ -136,10 +136,10 @@ export class WebsiteManagerComponent implements OnInit {
       // console.log("Form values before committing to database: ", this.websiteForm.value); // Debug
 
       // Send data to database
-      this.apiService.updateWebsiteSys(this.website.Website_ID, this.websiteForm.value).toPromise()
+      this.apiService.updateWebsiteSys(this.website.website_id, this.websiteForm.value).toPromise()
         .then(res => {
           // Grab new data from database
-          this.apiService.getOneWebsite(this.website.Website_ID).toPromise()
+          this.apiService.getOneWebsite(this.website.website_id).toPromise()
             .then(data => { this.websiteDetailRefresh(data[0]) }),
             (error) => {
               console.log("GET Updated Website rejected with " + JSON.stringify(error));

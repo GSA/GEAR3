@@ -1,5 +1,5 @@
 export class Website {
-  public Website_ID: string;
+  public website_id: string;
   public domain: string;
   public office: string;
   public sub_office: string;
