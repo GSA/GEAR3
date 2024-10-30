@@ -58,7 +58,7 @@ export class TableComponent implements OnInit {
 
   @HostListener('window:resize', ['$event'])
   onResize(event) {
-    this.screenHeight = `${(event.srcElement.innerHeight - this.TABLE_HEIGHT_OFFSET)}px`;
+    this.setScreenHeight();
   }
 
   visibleColumns: Column[] = [];
@@ -68,10 +68,8 @@ export class TableComponent implements OnInit {
   screenHeight: string = '';
   showFilters: boolean = false;
 
-  TABLE_HEIGHT_OFFSET: number = 315;
-
   constructor(public sharedService: SharedService, public tableService: TableService, public apiService: ApiService) {
-    this.screenHeight = `${(window.innerHeight - this.TABLE_HEIGHT_OFFSET)}px`;
+    this.setScreenHeight();
    }
 
   ngOnInit(): void {
@@ -147,6 +145,15 @@ export class TableComponent implements OnInit {
 
   showColumn(c: Column) {
     return c.showColumn || !('showColumn' in c);
+  }
+
+  setScreenHeight() {
+    const TABLE_HEIGHT_OFFSET: number = 315;
+    if(window.innerHeight < 800) {
+      this.screenHeight = `${window.innerHeight}px`;
+    } else {
+      this.screenHeight = `${(window.innerHeight - TABLE_HEIGHT_OFFSET)}px`;
+    }
   }
 
   onRowSelect(e: TableRowSelectEvent) {
