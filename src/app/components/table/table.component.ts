@@ -46,6 +46,11 @@ export class TableComponent implements OnInit {
   @Input() showExportButton: boolean = true;
   @Input() showFilterButton: boolean = true;
 
+  // Default sort inputs order is either 1 or -1
+  // for ascending and descending respectively
+  @Input() defaultSortField: string = '';
+  @Input() defaultSortOrder: number = 1;
+
   // Filter event (some reports change available columns when filtered)
   @Output() filterEvent = new EventEmitter<string>();
 
@@ -53,7 +58,7 @@ export class TableComponent implements OnInit {
 
   @HostListener('window:resize', ['$event'])
   onResize(event) {
-    this.screenHeight = `${(event.srcElement.innerHeight - 315)}px`;
+    this.screenHeight = `${(event.srcElement.innerHeight - this.TABLE_HEIGHT_OFFSET)}px`;
   }
 
   visibleColumns: Column[] = [];
@@ -63,8 +68,10 @@ export class TableComponent implements OnInit {
   screenHeight: string = '';
   showFilters: boolean = false;
 
+  TABLE_HEIGHT_OFFSET: number = 315;
+
   constructor(public sharedService: SharedService, public tableService: TableService, public apiService: ApiService) {
-    this.screenHeight = `${(window.innerHeight - 315)}px`;
+    this.screenHeight = `${(window.innerHeight - this.TABLE_HEIGHT_OFFSET)}px`;
    }
 
   ngOnInit(): void {
@@ -74,11 +81,7 @@ export class TableComponent implements OnInit {
       if(this.showColumn(c)) {
         this.visibleColumns.push(c);
       }
-    })
-
-    this.tableData.map(d => {
-
-    })
+    });
   }
 
   toggleVisible(e: any) {
