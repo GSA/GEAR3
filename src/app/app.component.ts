@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { distinctUntilChanged, filter } from 'rxjs/operators';
 
@@ -12,7 +13,11 @@ declare var gtag: Function;
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  constructor(private router: Router) {
+  title = 'gear3';
+  isBrowser: boolean;
+
+  constructor(private router: Router, @Inject(PLATFORM_ID) private platformId: any) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
     this.router.events.subscribe(event => {
       // Send page_view event to GA
       if (event instanceof NavigationEnd) {
@@ -21,10 +26,11 @@ export class AppComponent implements OnInit {
     });
   }
 
-  title = 'gear3';
-
   ngOnInit() {
     // Pad main Module by how big the top navbar is
+    if (!this.isBrowser) {
+      return;
+    }
     $(document).ready(this.setNavOffsets);
     $(window).resize(this.setNavOffsets);
   }
