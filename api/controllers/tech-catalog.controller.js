@@ -1,37 +1,38 @@
-const ctrl = require('./base.controller');
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
-const fs = require('fs');
-const path = require('path');
+import { sendQuery } from './base.controller';
+import { __dirname } from '../util/path-util';
 
 const queryPath = '../queries/';
 
-exports.getManufacturers = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_tc_manufacturers.sql')).toString() +
+export function getManufacturers(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_tc_manufacturers.sql')).toString() +
   ` order by name asc;`;
 
-  res = ctrl.sendQuery(query, 'Manufacturers', res);
-};
+  res = sendQuery(query, 'Manufacturers', res);
+}
 
-exports.getSoftwareProducts = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_tc_softwareproducts.sql')).toString() + 
+export function getSoftwareProducts(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_tc_softwareproducts.sql')).toString() + 
   ` where manufacturer = '${req.params.id}'
    order by 2 asc;`;
 
-  res = ctrl.sendQuery(query, 'SoftwareProducts', res);
-};
+  res = sendQuery(query, 'SoftwareProducts', res);
+}
 
-exports.getSoftwareVersions = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_tc_softwareversions.sql')).toString() + 
+export function getSoftwareVersions(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_tc_softwareversions.sql')).toString() + 
   ` where softwareProduct = '${req.params.id}'
    order by order_ desc;`;
 
-  res = ctrl.sendQuery(query, 'SoftwareVersions', res);
-};
+  res = sendQuery(query, 'SoftwareVersions', res);
+}
 
-exports.getSoftwareReleases = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_tc_softwarereleases.sql')).toString() + 
+export function getSoftwareReleases(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_tc_softwarereleases.sql')).toString() + 
   ` where softwareVersion = '${req.params.id}'
    order by 2 desc;`;
 
-  res = ctrl.sendQuery(query, 'SoftwareReleases', res);
-};
+  res = sendQuery(query, 'SoftwareReleases', res);
+}

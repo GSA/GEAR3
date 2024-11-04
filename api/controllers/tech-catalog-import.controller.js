@@ -1,15 +1,11 @@
-const ctrl = require('./base.controller'),
-  fs = require('fs'),
-  path = require('path'),
-
-  queryPath = '../queries/';
+import { importTechCatlogData, sendLogQuery } from './base.controller';
 
 
-exports.runTechCatalogImport = (req, res) => {
+export function runTechCatalogImport(req, res) {
   var data = req.body;
 
   // insert new records
-  ctrl.importTechCatlogData(data, res)
+  importTechCatlogData(data, res)
     .then((response) => {
       //let json = response;
 
@@ -23,9 +19,9 @@ exports.runTechCatalogImport = (req, res) => {
       }
 
     });
-};
+}
 
-exports.runDailyTechCatalogImport = async (req, res) => {
+export async function runDailyTechCatalogImport(req, res) {
 
   const maxJobsDefault = 9;
   const defaultImportType = 'update';
@@ -39,7 +35,6 @@ exports.runDailyTechCatalogImport = async (req, res) => {
   let importSummaries = [];
   let groupNumber = 0;
   let returnType = 'response';
-  let endTime = null;
   let endDailyImport = false;
   let endMessage = null;
   let endError = null;
@@ -122,7 +117,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
     }
 
     // log START of daily import
-    ctrl.sendLogQuery(`Tech Catalog Daily Import - Starting import groups ${groupNumber+1} - ${maxJobs}`, req.body.requester, "tech catalog daily import", null);
+    sendLogQuery(`Tech Catalog Daily Import - Starting import groups ${groupNumber+1} - ${maxJobs}`, req.body.requester, "tech catalog daily import", null);
 
     // LIST OF IMPORT GROUPS
     const importGroups = {
@@ -290,7 +285,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
         console.log(`... Starting import for group ${groupNumber}\n`);
 
         // get the current group dataset(s)
-        const promisesGroup = importGroups[`group${groupNumber}`].map(data => ctrl.importTechCatlogData(data, res));
+        const promisesGroup = importGroups[`group${groupNumber}`].map(data => importTechCatlogData(data, res));
         // run the import for each dataset in the group and wait until all are complete
         const groupSummary = await Promise.all(promisesGroup);
 
@@ -362,7 +357,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
     console.log(responseObject);
 
     // log END of daily import
-    ctrl.sendLogQuery(`Tech Catalog Daily Import - ${endMessage}`, req.body.requester, "tech catalog daily import", null);
+    sendLogQuery(`Tech Catalog Daily Import - ${endMessage}`, req.body.requester, "tech catalog daily import", null);
 
     // return the response once all groups have been imported
     if (returnType === 'object') {
@@ -384,7 +379,7 @@ exports.runDailyTechCatalogImport = async (req, res) => {
     };
 
     // log ERROR of daily import
-    ctrl.sendLogQuery(`Tech Catalog Daily Import - error importing group ${groupNumber}`, req.body.requester, "tech catalog daily import", null);
+    sendLogQuery(`Tech Catalog Daily Import - error importing group ${groupNumber}`, req.body.requester, "tech catalog daily import", null);
     
     if (returnType === 'object') {
       return responseObject;
@@ -393,4 +388,4 @@ exports.runDailyTechCatalogImport = async (req, res) => {
     }
   }
 
-};
+}

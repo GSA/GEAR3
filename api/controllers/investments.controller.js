@@ -1,33 +1,34 @@
-const ctrl = require('./base.controller');
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
-const fs = require('fs');
-const path = require('path');
+import { sendQuery } from './base.controller';
+import { __dirname } from '../util/path-util';
 
 const queryPath = '../queries/';
 
-exports.findAll = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_investments.sql')).toString() +
+export function findAll(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_investments.sql')).toString() +
     ";";
 
-  res = ctrl.sendQuery(query, 'investments', res);
-};
+  res = sendQuery(query, 'investments', res);
+}
 
-exports.findOne = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_investments.sql')).toString() +
+export function findOne(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_investments.sql')).toString() +
     ` WHERE invest.Investment_Id = ${req.params.id};`;
 
-  res = ctrl.sendQuery(query, 'individual investment', res);
-};
+  res = sendQuery(query, 'individual investment', res);
+}
 
-exports.findSystems = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
+export function findSystems(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
     ` LEFT JOIN gear_schema.zk_systems_subsystems_investments  AS invest_mappings  ON systems.\`ex:GEAR_ID\` = invest_mappings.obj_systems_subsystems_Id
       LEFT JOIN gear_schema.obj_investments                    AS invest           ON invest_mappings.obj_investment_Id = invest.Investment_Id
     
       WHERE invest.Investment_Id = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`;
 
-  res = ctrl.sendQuery(query, 'system relations for investment', res);
-};
+  res = sendQuery(query, 'system relations for investment', res);
+}
 
 // exports.findLatest = (req, res) => {
 //   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_investments.sql')).toString() +

@@ -4,20 +4,16 @@ import express from 'express';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
 import AppServerModule from './src/main.server';
-
-var dotenv = require('dotenv').config();  // .env Credentials
-
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import fs from 'fs';
 import http from 'http';
-import path from 'path';
 import jsonwebtoken from 'jsonwebtoken';
 import jwt from 'express-jwt';
 import mysql from 'mysql2';
 import passport from 'passport';
 import passportJWT from "passport-jwt";
-import dbjs from "./api/db.js";
+import * as dbjs from "./api/db.js";
 import passportsaml, { SamlConfig } from '@node-saml/passport-saml';
 import api from './api/index';
 import CryptoJS from "crypto-js";
@@ -63,6 +59,7 @@ passport.use(new SAMLStrategy(samlConfig as SamlConfig, (req, secureAuthProfile,
 }));
 
 // PASSPORT JWT STRATEGY
+/*
 passport.use(new JWTStrategy({
   jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
   secretOrKey: process.env.SECRET
@@ -71,7 +68,7 @@ passport.use(new JWTStrategy({
     return cb(null, jwtPayload);
   }
 ));
-
+*/
 
 export function app(): express.Express {
   const server = express()
@@ -393,25 +390,15 @@ const port = process.env['PORT'] || 4000;
     console.log('Listening on ' + bind);
   }
 }
-// Webpack will replace 'require' with '__webpack_require__'
-// '__non_webpack_require__' is a proxy to Node 'require'
-// The below code is to ensure that the server is run only when not requiring the bundle.
-declare const __non_webpack_require__: NodeRequire;
-const mainModule = __non_webpack_require__.main;
-const moduleFilename = mainModule && mainModule.filename || '';
-if (moduleFilename === __filename || moduleFilename.includes('iisnode')) {
-  run();
-}
+
+run();
 
 /*
  * Function to get FISMA info from ServiceNow API
  * everyday at 20:00 Eastern Time
 */
-import request from 'request';
 import cron from 'node-cron';
-import fetch from "node-fetch";
-import base64 from 'base-64';
-import cronCtrl from "./api/controllers/cron.controller.js";
+import * as cronCtrl from "./api/controllers/cron.controller.js";
 
 // -------------------------------------------------------------------------------------------------
 // Function to load POC data every Wednesday at 5:00 AM ET from the csv file in scripts/pocs

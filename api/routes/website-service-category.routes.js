@@ -1,12 +1,12 @@
-const express = require("express");
-const websiteServiceCategoryCtrl = require("../controllers/website-service-category.controller");
+import { Router } from "express";
+import { findAll, findOne, findRelatedWebsites } from "../controllers/website-service-category.controller";
 
-const router = express.Router();
+const router = Router();
 
-router.route("/").get(websiteServiceCategoryCtrl.findAll);
-router.route("/get/:id").get(websiteServiceCategoryCtrl.findOne);
+router.route("/").get(findAll);
+router.route("/get/:id").get(findOne);
 router
   .route("/get/:id/websites")
-  .get(websiteServiceCategoryCtrl.findRelatedWebsites);
+  .get(findRelatedWebsites);
 
-module.exports = router;
+export default router;

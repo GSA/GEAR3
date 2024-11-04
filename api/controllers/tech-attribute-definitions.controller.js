@@ -1,12 +1,13 @@
-const ctrl = require('./base.controller');
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
-const fs = require('fs');
-const path = require('path');
+import { sendQuery } from './base.controller';
+import { __dirname } from '../util/path-util';
 
 const queryPath = '../queries/';
 
-exports.getAttributeDefinitions = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_technology_attribute_definitions.sql')).toString();
+export function getAttributeDefinitions(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_technology_attribute_definitions.sql')).toString();
 
-  res = ctrl.sendQuery(query, 'Attribute Definitions', res);
-};
+  res = sendQuery(query, 'Attribute Definitions', res);
+}

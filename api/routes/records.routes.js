@@ -1,25 +1,25 @@
-const express = require('express');
-const recordsCtrl = require('../controllers/records.controller');
+import { Router } from 'express';
+import { findAll, findOne, findSystems, updateSystems, refreshAllSystems, logEvent } from '../controllers/records.controller';
 
-const router = express.Router();
+const router = Router();
 
 router.route('/')
-  .get(recordsCtrl.findAll);
+  .get(findAll);
 
 router.route('/get/:id')
-  .get(recordsCtrl.findOne);
+  .get(findOne);
 
 router.route('/get/:id/systems')
-  .get(recordsCtrl.findSystems);
+  .get(findSystems);
 
 router.route('/updateSystems/:id')
-  .put(recordsCtrl.updateSystems);
+  .put(updateSystems);
 
   // Refresh all systems from Google Sheet
 router.route('/updateAllSystems')
-  .put(recordsCtrl.refreshAllSystems);
+  .put(refreshAllSystems);
 
 router.route('/logEvent')
-  .post(recordsCtrl.logEvent);
+  .post(logEvent);
 
-module.exports = router;
+export default router;

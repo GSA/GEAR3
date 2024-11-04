@@ -1,7 +1,7 @@
-const ctrl = require('./base.controller');
+import { sendQuery } from './base.controller';
 
 // Need to update this to a view in the database for gear_schema like cowboy_ods once everything is transitioned over to the new schema
-exports.searchAll = (req, res) => {
+export function searchAll(req, res) {
   var query = `SELECT * FROM
       (SELECT
         systems.\`ex:GEAR_ID\` AS \`Id\`,
@@ -69,5 +69,5 @@ exports.searchAll = (req, res) => {
           gear_schema.obj_websites as web) AS global_search
     WHERE Name LIKE '%${req.params.kw}%' or Description like '%${req.params.kw}%';`; // Removed cowboy_ods.obj_technology AS tech reference
 
-  res = ctrl.sendQuery(query, `global search of ${req.params.kw}`, res);
-};
+  res = sendQuery(query, `global search of ${req.params.kw}`, res);
+}

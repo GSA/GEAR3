@@ -1,21 +1,21 @@
-const express = require('express');
-const fismaCtrl = require('../controllers/fisma.controller');
+import { Router } from 'express';
+import { findAll, findOne, findRetired } from '../controllers/fisma.controller';
 
-const router = express.Router();
+const router = Router();
 
 router.route('/')
-  .get(fismaCtrl.findAll);
+  .get(findAll);
 
 router.route('/get/:id')
-  .get(fismaCtrl.findOne);
+  .get(findOne);
 
 // router.route('/get/:id/applications')
 //   .get(fismaCtrl.findApplications);
 
 router.route('/retired')
-  .get(fismaCtrl.findRetired);
+  .get(findRetired);
 
 /* router.route('/update')
   .put(fismaCtrl.updateAll); */
 
-module.exports = router;
+export default router;

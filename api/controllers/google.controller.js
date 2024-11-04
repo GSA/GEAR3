@@ -1,6 +1,6 @@
-const dotenv      = require('dotenv').config(),  // .env Credentials
-      {google}    = require('googleapis'),
-      fs          = require('fs');
+import { google } from 'googleapis';
+import { readFile, writeFile } from 'fs';
+
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
@@ -14,10 +14,10 @@ google.options({
   timeout: 30_000
 });
 
-exports.auth = (req, res, next) => {
+export function auth(req, res, next) {
   var credentials = {}
   // Load client secrets from a local file.
-  fs.readFile('certs/gear_google_credentials.json', (err, content) => {
+  readFile('certs/gear_google_credentials.json', (err, content) => {
     if (err) {
       res = res.status(504).json({ error: 'Error loading client secret file: ' + err });
       return
@@ -40,13 +40,13 @@ exports.auth = (req, res, next) => {
   });
 }
 
-exports.saveToken = (req, res, next) => {
+export function saveToken(req, res, next) {
   console.log("saveToken called!!")
   let code = req.query.code;
   var credentials = {};
 
   // Load client secrets from a local file.
-  fs.readFile('certs/gear_google_credentials.json', (err, content) => {
+  readFile('certs/gear_google_credentials.json', (err, content) => {
     if (err) {
       res = res.status(504).json({ error: 'Error loading client secret file: ' + err });
       return
@@ -65,7 +65,7 @@ exports.saveToken = (req, res, next) => {
       };
       oAuth2Client.setCredentials(token);
       // Store the token to disk for later program executions
-      fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
+      writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
         if (err) return res = res.status(505).json({ error: 'Error while saving access token: ' + err });
         console.log('Token stored to', TOKEN_PATH);
         res = res.status(200).json({ msg: "Token successfully retrieved and stored to " + TOKEN_PATH});

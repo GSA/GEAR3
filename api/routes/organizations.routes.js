@@ -1,18 +1,18 @@
-const express = require('express');
-const orgCtrl = require('../controllers/organizations.controller');
+import { Router } from 'express';
+import { findAll, findOne, findCapabilites, findSystems } from '../controllers/organizations.controller';
 
-const router = express.Router();
+const router = Router();
 
 router.route('/')
-  .get(orgCtrl.findAll);
+  .get(findAll);
 
 router.route('/get/:id')
-  .get(orgCtrl.findOne);
+  .get(findOne);
 
 router.route('/get/:id/capabilities/')
-  .get(orgCtrl.findCapabilites);
+  .get(findCapabilites);
 
 router.route('/get/:name/systems/')
-  .get(orgCtrl.findSystems);
+  .get(findSystems);
 
-module.exports = router;
+export default router;

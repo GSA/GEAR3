@@ -1,18 +1,16 @@
-const ctrl = require('./base.controller'),
-  records = require('./records.controller'),
-  techCatImport = require('./tech-catalog-import.controller'),
-  touchpointImport= require('./touchpoint-import.controller'),
-  fs = require('fs'),
-  path = require('path'),
-  queryPath = '../queries/',
-  SHEET_ID = '1eSoyn7-2EZMqbohzTMNDcFmNBbkl-CzXtpwNXHNHD1A', // FOR PRODUCTION
-  RANGE = 'Master Junction with Business Systems!A2:B',
-  jobUser = 'GearCronJ';
+import { googleMain, sendLogQuery } from './base.controller';
+import { logEvent } from './records.controller';
+import { runDailyTechCatalogImport } from './tech-catalog-import.controller';
+import { importWebsiteData } from './touchpoint-import.controller';
+
+const SHEET_ID = '1eSoyn7-2EZMqbohzTMNDcFmNBbkl-CzXtpwNXHNHD1A';
+const RANGE = 'Master Junction with Business Systems!A2:B'; // FOR PRODUCTION
+const jobUser = 'GearCronJ';
 
 
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Google Sheets API - Update All Related Records
-exports.runUpdateAllRelatedRecordsJob = async () => {
+export async function runUpdateAllRelatedRecordsJob() {
 
   const jobName = `CRON JOB: Update All Related Records`;
   let status = 'executed';
@@ -25,21 +23,21 @@ exports.runUpdateAllRelatedRecordsJob = async () => {
     console.log(jobName + ' - ' + status);
 
     // log start of job to db
-    records.logEvent({ body : { message: jobName + ' - ' + status, user: jobUser, } }, res);
+    logEvent({ body : { message: jobName + ' - ' + status, user: jobUser, } }, res);
     
     // run refreshAllSystems
-    ctrl.googleMain(res, 'refresh', SHEET_ID, RANGE, jobUser);
+    googleMain(res, 'refresh', SHEET_ID, RANGE, jobUser);
 
   } catch (error) {
     // log any errors
     status = `error occurred while running:  \n` + error;
     console.log(jobName + ' - ' + status);
   }
-};
+}
 
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Tech Catalog Daily Import (runs daily at 5:00 AM)
-exports.runTechCatalogImportJob = async () => {
+export async function runTechCatalogImportJob() {
 
   const jobName = 'CRON JOB: Tech Catalog Daily Import';
   let status = 'executed';
@@ -51,10 +49,10 @@ exports.runTechCatalogImportJob = async () => {
     let res = {};
 
     // log execution of job
-    ctrl.sendLogQuery(jobName + ' - ' + status, jobUser, jobName, res);
+    sendLogQuery(jobName + ' - ' + status, jobUser, jobName, res);
 
     // run daily import
-    techCatImport.runDailyTechCatalogImport({ body : { refreshtoken : process.env.FLEXERA_REFRESH_TOKEN, requester : jobUser } }, res)
+    runDailyTechCatalogImport({ body : { refreshtoken : process.env.FLEXERA_REFRESH_TOKEN, requester : jobUser } }, res)
     .then((response) => {
       status = `finished successfully:  \n` + response;
       console.log(jobName + ' - ' + status);
@@ -69,11 +67,11 @@ exports.runTechCatalogImportJob = async () => {
     console.log(jobName + ' - ' + status);
   }
 
-};
+}
 
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Touch point Daily Import (runs daily at 5:00 AM)
-exports.runTouchpointImportJob = async () => {
+export async function runTouchpointImportJob() {
 
   const jobName = 'CRON JOB: Touchpoint Daily Import';
   let status = 'executed';
@@ -85,16 +83,16 @@ exports.runTouchpointImportJob = async () => {
     let res = {};
 
     // log execution of job
-    ctrl.sendLogQuery(jobName + ' - ' + status, jobUser, jobName, res);
+    sendLogQuery(jobName + ' - ' + status, jobUser, jobName, res);
 
     // run daily import
-    touchpointImport.importWebsiteData();
+    importWebsiteData();
   } catch (error) {
     status = `error occurred starting:  \n` + error;
     console.log(jobName + ' - ' + status);
   }
 
-};
+}
 
 /*
  * Function to get FISMA info from ServiceNow API

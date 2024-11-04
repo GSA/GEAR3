@@ -1,12 +1,12 @@
-const express = require('express');
-const googleCtrl = require('../controllers/google.controller');
+import { Router } from 'express';
+import { auth, saveToken } from '../controllers/google.controller';
 
-const router = express.Router();
+const router = Router();
 
 router.route('/auth')
-  .get(googleCtrl.auth);
+  .get(auth);
 
 router.route('/saveToken')
-  .get(googleCtrl.saveToken);
+  .get(saveToken);
 
-module.exports = router;
+export default router;

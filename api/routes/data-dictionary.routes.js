@@ -1,12 +1,12 @@
-const express = require('express');
-const dataDictionaryCtrl = require('../controllers/data-dictionary.controller');
+import { Router } from 'express';
+import { getDataDictionary, getDataDictionaryByReportName } from '../controllers/data-dictionary.controller';
 
-const router = express.Router();
+const router = Router();
 
 router.route('/')
-  .get(dataDictionaryCtrl.getDataDictionary);
+  .get(getDataDictionary);
 
   router.route('/get/:reportName')
-  .get(dataDictionaryCtrl.getDataDictionaryByReportName);
+  .get(getDataDictionaryByReportName);
 
-module.exports = router;
+export default router;

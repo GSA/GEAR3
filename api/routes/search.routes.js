@@ -1,9 +1,9 @@
-const express = require('express');
-const searchCtrl = require('../controllers/search.controller');
+import { Router } from 'express';
+import { searchAll } from '../controllers/search.controller';
 
-const router = express.Router();
+const router = Router();
 
 router.route('/:kw')
-  .get(searchCtrl.searchAll);
+  .get(searchAll);
 
-module.exports = router;
+export default router;

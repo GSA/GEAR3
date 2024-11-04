@@ -1,30 +1,39 @@
-const { equal } = require('assert');
-const { json } = require('body-parser');
-var dotenv = require('dotenv').config();  // .env Credentials
 
-const https = require('https'),
-  fs = require("fs"),
-  path = require("path"),
-  queryPath = "../queries/",
-  mappingsPath = "../json-mappings/",
-  jsonTransformEngine = require("../util/json-transform-engine.js"),
-  isEqual = require('lodash.isequal'),
-  jsonDiff = require('json-diff');
+import { request } from 'https';
+import { readFileSync } from "fs";
+import { join } from "path";
+import isEqual from 'lodash.isequal';
+import { diffString } from 'json-diff';
 
-const sql_promise = require("../db.js").connection_promise;
+import { transform } from "../util/json-transform-engine.js";
+import { connection_promise as sql_promise } from "../db.js";
+import { __dirname } from '../util/path-util';
+
+const queryPath = "../queries/";
+const mappingsPath = "../json-mappings/";
 
 const apiKey = process.env.TOUCHPOINT_API_KEY;
 const touchpointHost = "api.gsa.gov";
 const touchpointUrlPath = `/analytics/touchpoints/v1/websites.json?all=1&API_KEY=${apiKey}`;
 
-const insert_params = ["analytics_url", "authentication_tool", "cms_platform", "contact_email", "dap_gtm_code", "digital_brand_category", "domain", "feedback_tool", "has_authenticated_experience", "has_dap", "has_search", "hosting_platform", "https", "id", "mobile_friendly", "notes", "office", "production_status", "redirects_to", "repository_url", "required_by_law_or_policy", "site_owner_email", "sitemap_url", "status_code", "sub_office", "type_of_site", "uses_feedback", "uses_tracking_cookies", "uswds_version", "created_at", "updated_at", "target_decommission_date"];
+const insert_params = ["analytics_url", "authentication_tool", "cms_platform", "contact_email", "dap_gtm_code",
+  "digital_brand_category", "domain", "feedback_tool", "has_authenticated_experience", "has_dap", "has_search",
+  "hosting_platform", "https", "id", "mobile_friendly", "notes", "office", "production_status", "redirects_to",
+  "repository_url", "required_by_law_or_policy", "site_owner_email", "sitemap_url", "status_code", "sub_office",
+  "type_of_site", "uses_feedback", "uses_tracking_cookies", "uswds_version", "created_at", "updated_at",
+  "target_decommission_date"];
 
-const update_params = ["analytics_url", "authentication_tool", "cms_platform", "contact_email", "dap_gtm_code", "digital_brand_category", "domain", "feedback_tool", "has_authenticated_experience", "has_dap", "has_search", "hosting_platform", "https", "id", "mobile_friendly", "notes", "office", "production_status", "redirects_to", "repository_url", "required_by_law_or_policy", "site_owner_email", "sitemap_url", "status_code", "sub_office", "type_of_site", "uses_feedback", "uses_tracking_cookies", "uswds_version", "created_at", "updated_at", "target_decommission_date", "id"];
+const update_params = ["analytics_url", "authentication_tool", "cms_platform", "contact_email", "dap_gtm_code",
+  "digital_brand_category", "domain", "feedback_tool", "has_authenticated_experience", "has_dap", "has_search",
+  "hosting_platform", "https", "id", "mobile_friendly", "notes", "office", "production_status", "redirects_to",
+  "repository_url", "required_by_law_or_policy", "site_owner_email", "sitemap_url", "status_code", "sub_office",
+  "type_of_site", "uses_feedback", "uses_tracking_cookies", "uswds_version", "created_at", "updated_at",
+  "target_decommission_date", "id"];
 
 
 const doRequest = (options) => {
   return new Promise((resolve, reject) => {
-    let req = https.request(options);
+    let req = request(options);
 
     req.on('response', res => {
       let data = '';
@@ -65,36 +74,33 @@ const runQuery = async (query, values) => {
 };
 
 const getDbData = async () => {
-  const query = fs.readFileSync(path.join(__dirname, queryPath, "GET/get_touchpoint_websites.sql")).toString();
+  const query = readFileSync(join(__dirname, queryPath, "GET/get_touchpoint_websites.sql")).toString();
   return await runQuery(query);
 };
 
 const insertDbData = async (rowData) => {
-  const query = fs.readFileSync(path.join(__dirname, queryPath, "CREATE/insert_websites_from_touchpoint.sql")).toString();
+  const query = readFileSync(join(__dirname, queryPath, "CREATE/insert_websites_from_touchpoint.sql")).toString();
   const values = insert_params.map(paramName => rowData[paramName]);
-  const result = await runQuery(query, values);
   //console.log(`Insert::: id: ${rowData.id}, row: ${JSON.stringify(result)}`);
 };
 
 const updateDbData = async (rowData) => {
-  const query = fs.readFileSync(path.join(__dirname, queryPath, "UPDATE/update_websites_from_touchpoint.sql")).toString();
+  const query = readFileSync(join(__dirname, queryPath, "UPDATE/update_websites_from_touchpoint.sql")).toString();
   const values = update_params.map(paramName => rowData[paramName]);
-  const result = await runQuery(query, values);
   //console.log(`Update::: id: ${rowData.id}, result: ${JSON.stringify(result)}`);
 };
 
 const removeDbData = async (rowIds) => {
-  const query = fs.readFileSync(path.join(__dirname, queryPath, "REMOVE/remove_websites_by_ids.sql")).toString();
-  const result = await runQuery(query, [rowIds]);
+  const query = readFileSync(join(__dirname, queryPath, "REMOVE/remove_websites_by_ids.sql")).toString();
   //console.log(`Remove rows::: result: ${JSON.stringify(result)}`);
 };
 
 const analyzeData = async (dataItems) => {
   // get touch point data for comparison
-  const mappingsJson = JSON.parse(fs.readFileSync(path.join(__dirname, mappingsPath, "touchpoint-to-website.json")));
+  const mappingsJson = JSON.parse(readFileSync(join(__dirname, mappingsPath, "touchpoint-to-website.json")));
   const touchpointDbRows = (await Promise.all(dataItems
     .filter(dataItem => dataItem["attributes"]["organization_id"] === 1)
-    .map(async (dataItem) => await jsonTransformEngine.transform(dataItem, mappingsJson))))
+    .map(async (dataItem) => await transform(dataItem, mappingsJson))))
     .sort((a, b) => a.id - b.id);
   const touchpointRowMap = Object.assign({}, ...touchpointDbRows.map(row => { return { [row.id]: row } }));
 
@@ -107,7 +113,7 @@ const analyzeData = async (dataItems) => {
   updateIds = Object.keys(dbRowMap).filter(dbId => (dbId in touchpointRowMap) && !isEqual(dbRowMap[dbId], touchpointRowMap[dbId]));
   console.log("Update count: " + updateIds.length);
   //print data differences
-  updateIds.forEach(id => console.log(`Update::: id: ${id}, diff: ${jsonDiff.diffString(dbRowMap[id], touchpointRowMap[id])}`));
+  updateIds.forEach(id => console.log(`Update::: id: ${id}, diff: ${diffString(dbRowMap[id], touchpointRowMap[id])}`));
   console.log(`Update Count: ${updateIds.length}`);
   //console.log(`Update Ids: ${JSON.stringify(updateIds)}`);
 
@@ -125,11 +131,11 @@ const analyzeData = async (dataItems) => {
 
 const transformTouchpointData = async (tpDataItems, mappingFileName, filterIds = []) => {
   // get complete touch point data json for import
-  const mappingsCompleteJson = JSON.parse(fs.readFileSync(path.join(__dirname, mappingsPath, mappingFileName)));
+  const mappingsCompleteJson = JSON.parse(readFileSync(join(__dirname, mappingsPath, mappingFileName)));
   return await Promise.all(tpDataItems
     .filter(dataItem => dataItem["attributes"]["organization_id"] === 1 &&
       (filterIds.length === 0 || filterIds.indexOf(dataItem.id) !== -1))
-    .map(async (dataItem) => await jsonTransformEngine.transform(dataItem, mappingsCompleteJson)));
+    .map(async (dataItem) => await transform(dataItem, mappingsCompleteJson)));
 }
 
 const createData = async (tpDataItems, rowIds) => {
@@ -164,7 +170,7 @@ const removeData = async (rowIds) => {
   console.log(`${new Date()}: Delete is complete.`);
 };
 
-exports.importWebsiteData = async () => {
+export async function importWebsiteData() {
   const tpDataObj = await getData();
   const tpDataItems = tpDataObj["data"];
 

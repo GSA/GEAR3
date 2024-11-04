@@ -1,9 +1,9 @@
-const express = require('express');
-const sysTimeCtrl = require('../controllers/systime.controller');
+import { Router } from 'express';
+import { findAll } from '../controllers/systime.controller';
 
-const router = express.Router();
+const router = Router();
 
 router.route('/')
-  .get(sysTimeCtrl.findAll);
+  .get(findAll);
 
-module.exports = router;
+export default router;

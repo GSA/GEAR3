@@ -6,6 +6,7 @@
   "engines": {
     "node": ">=18.14.2"
   },
+  "type": "module",
   "scripts": {
     "ng": "ng",
     "clean": "npx rimraf node_modules",
@@ -20,7 +21,8 @@
     "e2e": "ng e2e",
     "build-dev:postbuild": "cp -r ./api/* ./public/server",
     "ssr:postbuild": "cp -r ./api/* ./dist/gear3/server",
-    "serve:ssr:gear3": "node dist/gear3/server/server.mjs"
+    "ssr:postbuild1": "cat preserver.mjs dist/gear3/server/server.mjs > dist/gear3/server/all.mjs",
+    "serve:ssr:gear3": "node dist/gear3/server/all.mjs"
   },
   "author": "IDRA - Enterprise Architecture Group",
   "dependencies": {
@@ -51,7 +53,6 @@
     "bootstrap-datepicker": "^1.9.0",
     "bootstrap-table": "^1.18.3",
     "concurrently": "^5.3.0",
-    "copy-webpack-plugin": "^10.2.4",
     "cors": "^2.8.5",
     "d3": "^7.9.0",
     "d3-color": "^3.1.0",
@@ -93,8 +94,6 @@
     "sqlstring": "^2.3.3",
     "tableexport.jquery.plugin": "1.20.1",
     "tslib": "^2.0.0",
-    "webpack": "^5.91.0",
-    "webpack-dev-server": "^5.0.4",
     "xmlhttprequest": "^1.8.0",
     "xmlhttprequest-ssl": "^1.6.3",
     "zone.js": "^0.14.10"
@@ -130,7 +129,6 @@
     "protractor": "~7.0.0",
     "ts-node": "~10.9.2",
     "tslint": "~6.1.0",
-    "typescript": "^5.5.4",
-    "webpack-bundle-analyzer": "^4.6.1"
+    "typescript": "^5.5.4"
   }
 }

@@ -1,58 +1,59 @@
-const ctrl = require('./base.controller');
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
-const fs = require('fs');
-const path = require('path');
+import { sendQuery, getApiToken, emptyTextFieldHandler, setEmptyTextFieldHandler } from './base.controller';
+import { __dirname } from '../util/path-util';
 
 const queryPath = '../queries/';
 
-exports.findAll = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
+export function findAll(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
     ` WHERE obj_standard_type.Keyname LIKE 'Software'
       AND obj_technology_status.Keyname NOT LIKE 'Not yet submitted'
       GROUP BY tech.Id
       ORDER BY IFNULL(tech.softwareReleaseName, tech.Keyname);`;
 
-  res = ctrl.sendQuery(query, 'IT Standards', res); //removed sendQuery_cowboy reference
-};
+  res = sendQuery(query, 'IT Standards', res); //removed sendQuery_cowboy reference
+}
 
-exports.findAllNoFilter = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
+export function findAllNoFilter(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
     ` WHERE obj_standard_type.Keyname LIKE 'Software'
       GROUP BY tech.Id
       ORDER BY IFNULL(tech.softwareReleaseName, tech.Keyname);`;
 
-  res = ctrl.sendQuery(query, 'IT Standards', res); //removed sendQuery_cowboy reference
-};
+  res = sendQuery(query, 'IT Standards', res); //removed sendQuery_cowboy reference
+}
 
-exports.findOne = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
+export function findOne(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
     ` WHERE tech.Id = ${req.params.id};`;
 
-  res = ctrl.sendQuery(query, 'individual IT Standard', res); //removed sendQuery_cowboy reference
-};
+  res = sendQuery(query, 'individual IT Standard', res); //removed sendQuery_cowboy reference
+}
 
-exports.findLatest = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
+export function findLatest(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
     ` GROUP BY tech.Id
       ORDER BY tech.CreateDTG DESC LIMIT 1;`;
 
-  res = ctrl.sendQuery(query, 'latest individual IT Standard', res); //removed sendQuery_cowboy reference
-};
+  res = sendQuery(query, 'latest individual IT Standard', res); //removed sendQuery_cowboy reference
+}
 
-exports.findSystems = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
+export function findSystems(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
     ` LEFT JOIN zk_systems_subsystems_technology_xml AS mappings ON systems.\`ex:GEAR_ID\` = mappings.\`ex:obj_systems_subsystems_Id\`
       LEFT JOIN obj_technology AS tech                                ON mappings.\`ex:obj_technology_Id\` = tech.Id
 
       WHERE tech.Id = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`; //removed LEFT JOIN cowboy_ods.obj_technology reference
 
-  res = ctrl.sendQuery(query, 'systems using IT Standard', res);
-};
+  res = sendQuery(query, 'systems using IT Standard', res);
+}
 
-exports.update = (req, res) => {
+export function update(req, res) {
   //console.log('it-standard update starting...');
 
-  ctrl.getApiToken (req, res)
+  getApiToken (req, res)
   .then((response) => {
     //console.log('*** API Security Testing - getApiToken response: ', response); //DEBUGGING
 
@@ -87,22 +88,22 @@ exports.update = (req, res) => {
       };
 
       // Null any empty text fields
-      data.itStandDesc = ctrl.emptyTextFieldHandler(data.itStandDesc);
-      data.itStandAprvExp = ctrl.emptyTextFieldHandler(data.itStandAprvExp);
-      data.itStandRefDocs = ctrl.emptyTextFieldHandler(data.itStandRefDocs);
-      data.itStandApprovedVersions = ctrl.emptyTextFieldHandler(data.itStandApprovedVersions);
+      data.itStandDesc = emptyTextFieldHandler(data.itStandDesc);
+      data.itStandAprvExp = emptyTextFieldHandler(data.itStandAprvExp);
+      data.itStandRefDocs = emptyTextFieldHandler(data.itStandRefDocs);
+      data.itStandApprovedVersions = emptyTextFieldHandler(data.itStandApprovedVersions);
 
-      data.tcManufacturer = ctrl.emptyTextFieldHandler(data.tcManufacturer);
-      data.tcSoftwareProduct = ctrl.emptyTextFieldHandler(data.tcSoftwareProduct);
-      data.tcSoftwareVersion = ctrl.emptyTextFieldHandler(data.tcSoftwareVersion);
-      data.tcSoftwareRelease = ctrl.emptyTextFieldHandler(data.tcSoftwareRelease);
-      data.tcManufacturerName = ctrl.emptyTextFieldHandler(data.tcManufacturerName);
-      data.tcSoftwareProductName = ctrl.emptyTextFieldHandler(data.tcSoftwareProductName);
-      data.tcSoftwareVersionName = ctrl.emptyTextFieldHandler(data.tcSoftwareVersionName);
-      data.tcSoftwareReleaseName = ctrl.emptyTextFieldHandler(data.tcSoftwareReleaseName);
-      data.tcEndOfLifeDate = ctrl.emptyTextFieldHandler(data.tcEndOfLifeDate);
+      data.tcManufacturer = emptyTextFieldHandler(data.tcManufacturer);
+      data.tcSoftwareProduct = emptyTextFieldHandler(data.tcSoftwareProduct);
+      data.tcSoftwareVersion = emptyTextFieldHandler(data.tcSoftwareVersion);
+      data.tcSoftwareRelease = emptyTextFieldHandler(data.tcSoftwareRelease);
+      data.tcManufacturerName = emptyTextFieldHandler(data.tcManufacturerName);
+      data.tcSoftwareProductName = emptyTextFieldHandler(data.tcSoftwareProductName);
+      data.tcSoftwareVersionName = emptyTextFieldHandler(data.tcSoftwareVersionName);
+      data.tcSoftwareReleaseName = emptyTextFieldHandler(data.tcSoftwareReleaseName);
+      data.tcEndOfLifeDate = emptyTextFieldHandler(data.tcEndOfLifeDate);
 
-      data.itStandRITM = ctrl.setEmptyTextFieldHandler(data.itStandRITM);
+      data.itStandRITM = setEmptyTextFieldHandler(data.itStandRITM);
 
       const endOfLifeDateFragment = getEolFragment(data.tcEndOfLifeDate);
 
@@ -145,7 +146,7 @@ exports.update = (req, res) => {
         ${pocString}`;
 
       var logStatement = `insert into gear_log.event (Event, User, DTG) values ('update IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
-      res = ctrl.sendQuery(query + ' ' + logStatement, 'update IT Standard', res); //removed sendQuery_cowboy reference
+      res = sendQuery(query + ' ' + logStatement, 'update IT Standard', res); //removed sendQuery_cowboy reference
     } else {
       //console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
 
@@ -155,11 +156,11 @@ exports.update = (req, res) => {
       });
     }
   }); //end getApiToken
-};
+}
 
-exports.create = (req, res) => {
+export function create(req, res) {
   // api GEAR Manager authorization
-  ctrl.getApiToken (req, res)
+  getApiToken (req, res)
   .then((response) => {
     //console.log('*** API Security Testing - getApiToken response: ', response); //DEBUGGING
 
@@ -168,22 +169,22 @@ exports.create = (req, res) => {
       //if (req.headers.authorization) {
       var data = req.body;
       // Null any empty text fields
-      data.itStandDesc = ctrl.emptyTextFieldHandler(data.itStandDesc);
-      data.itStandAprvExp = ctrl.emptyTextFieldHandler(data.itStandAprvExp);
-      data.itStandRefDocs = ctrl.emptyTextFieldHandler(data.itStandRefDocs);
-      data.itStandApprovedVersions = ctrl.emptyTextFieldHandler(data.itStandApprovedVersions);
+      data.itStandDesc = emptyTextFieldHandler(data.itStandDesc);
+      data.itStandAprvExp = emptyTextFieldHandler(data.itStandAprvExp);
+      data.itStandRefDocs = emptyTextFieldHandler(data.itStandRefDocs);
+      data.itStandApprovedVersions = emptyTextFieldHandler(data.itStandApprovedVersions);
 
-      data.tcManufacturer = ctrl.emptyTextFieldHandler(data.tcManufacturer);
-      data.tcSoftwareProduct = ctrl.emptyTextFieldHandler(data.tcSoftwareProduct);
-      data.tcSoftwareVersion = ctrl.emptyTextFieldHandler(data.tcSoftwareVersion);
-      data.tcSoftwareRelease = ctrl.emptyTextFieldHandler(data.tcSoftwareRelease);
-      data.tcManufacturerName = ctrl.emptyTextFieldHandler(data.tcManufacturerName);
-      data.tcSoftwareProductName = ctrl.emptyTextFieldHandler(data.tcSoftwareProductName);
-      data.tcSoftwareVersionName = ctrl.emptyTextFieldHandler(data.tcSoftwareVersionName);
-      data.tcSoftwareReleaseName = ctrl.emptyTextFieldHandler(data.tcSoftwareReleaseName);
-      data.tcEndOfLifeDate = ctrl.emptyTextFieldHandler(data.tcEndOfLifeDate);
+      data.tcManufacturer = emptyTextFieldHandler(data.tcManufacturer);
+      data.tcSoftwareProduct = emptyTextFieldHandler(data.tcSoftwareProduct);
+      data.tcSoftwareVersion = emptyTextFieldHandler(data.tcSoftwareVersion);
+      data.tcSoftwareRelease = emptyTextFieldHandler(data.tcSoftwareRelease);
+      data.tcManufacturerName = emptyTextFieldHandler(data.tcManufacturerName);
+      data.tcSoftwareProductName = emptyTextFieldHandler(data.tcSoftwareProductName);
+      data.tcSoftwareVersionName = emptyTextFieldHandler(data.tcSoftwareVersionName);
+      data.tcSoftwareReleaseName = emptyTextFieldHandler(data.tcSoftwareReleaseName);
+      data.tcEndOfLifeDate = emptyTextFieldHandler(data.tcEndOfLifeDate);
 
-      data.itStandRITM = ctrl.setEmptyTextFieldHandler(data.itStandRITM);
+      data.itStandRITM = setEmptyTextFieldHandler(data.itStandRITM);
 
       const endOfLifeDateFragment = getEolFragment(data.tcEndOfLifeDate);
 
@@ -251,7 +252,7 @@ exports.create = (req, res) => {
         ${data.itStandApprovedVersions});`;
 
       var logStatement = `insert into gear_log.event (Event, User, DTG) values ('create IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
-      res = ctrl.sendQuery(query + ' ' + logStatement, 'create IT Standard', res); //removed sendQuery_cowboy reference
+      res = sendQuery(query + ' ' + logStatement, 'create IT Standard', res); //removed sendQuery_cowboy reference
     } else {
       //console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
 
@@ -260,46 +261,46 @@ exports.create = (req, res) => {
       });
     };
   }); //end getApiToken
-};
+}
 
-exports.find508Compliance = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standard_508_status.sql')).toString();
+export function find508Compliance(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_it-standard_508_status.sql')).toString();
 
-  res = ctrl.sendQuery(query, '508 Compliance Statuses', res); //removed sendQuery_cowboy reference
-};
+  res = sendQuery(query, '508 Compliance Statuses', res); //removed sendQuery_cowboy reference
+}
 
-exports.findCategories = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standard_categories.sql')).toString();
+export function findCategories(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_it-standard_categories.sql')).toString();
 
-  res = ctrl.sendQuery(query, 'IT Standard Categories', res); //removed sendQuery_cowboy reference
-};
+  res = sendQuery(query, 'IT Standard Categories', res); //removed sendQuery_cowboy reference
+}
 
-exports.findDeployTypes = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standard_deploy_types.sql')).toString();
+export function findDeployTypes(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_it-standard_deploy_types.sql')).toString();
 
-  res = ctrl.sendQuery(query, 'IT Standard Deployment Types', res); //removed sendQuery_cowboy reference
-};
+  res = sendQuery(query, 'IT Standard Deployment Types', res); //removed sendQuery_cowboy reference
+}
 
-exports.findStatuses = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standard_statuses.sql')).toString();
+export function findStatuses(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_it-standard_statuses.sql')).toString();
 
-  res = ctrl.sendQuery(query, 'IT Standard Statuses', res); //removed sendQuery_cowboy reference
-};
+  res = sendQuery(query, 'IT Standard Statuses', res); //removed sendQuery_cowboy reference
+}
 
-exports.findTypes = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standard_types.sql')).toString();
+export function findTypes(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_it-standard_types.sql')).toString();
 
-  res = ctrl.sendQuery(query, 'IT Standard Types', res); //removed sendQuery_cowboy reference
-};
+  res = sendQuery(query, 'IT Standard Types', res); //removed sendQuery_cowboy reference
+}
 
-exports.findAttestationStatusTypes = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_attestation-status_types.sql')).toString();
+export function findAttestationStatusTypes(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_attestation-status_types.sql')).toString();
 
-  res = ctrl.sendQuery(query, 'Attestation Status Types', res); //removed sendQuery_cowboy reference
-};
+  res = sendQuery(query, 'Attestation Status Types', res); //removed sendQuery_cowboy reference
+}
 
 
-getEolFragment = (inputDate) => {
+const getEolFragment = (inputDate) => {
   if (!inputDate || inputDate.toString().toUpperCase() === 'NULL' ) {
     return null;
   }

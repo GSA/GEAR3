@@ -1,12 +1,12 @@
-const express = require('express');
-const pocCtrl = require('../controllers/pocs.controller');
+import { Router } from 'express';
+import { findAll, findOne } from '../controllers/pocs.controller';
 
-const router = express.Router();
+const router = Router();
 
 router.route('/')
-  .get(pocCtrl.findAll);
+  .get(findAll);
 
 router.route('/get/:id')
-  .get(pocCtrl.findOne);
+  .get(findOne);
 
-module.exports = router;
+export default router;

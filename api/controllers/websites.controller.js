@@ -1,55 +1,53 @@
-const ctrl = require("./base.controller"),
-  fs = require("fs"),
-  path = require("path"),
-  queryPath = "../queries/";
+import { readFileSync } from "fs";
+import { join } from "path";
 
-exports.findAll = (req, res) => {
+import { sendQuery, getApiToken } from "./base.controller";
+import { __dirname } from '../util/path-util';
+
+const queryPath = "../queries/";
+
+export function findAll(req, res) {
   var query =
-    fs
-      .readFileSync(path.join(__dirname, queryPath, "GET/get_websites.sql"))
+    readFileSync(join(__dirname, queryPath, "GET/get_websites.sql"))
       .toString() + ` ORDER BY domain;`;
 
-  res = ctrl.sendQuery(query, "websites", res);
-};
+  res = sendQuery(query, "websites", res);
+}
 
-exports.findOne = (req, res) => {
+export function findOne(req, res) {
   var query =
-    fs
-      .readFileSync(path.join(__dirname, queryPath, "GET/get_websites.sql"))
+    readFileSync(join(__dirname, queryPath, "GET/get_websites.sql"))
       .toString() + ` WHERE id = ${req.params.id} ORDER BY domain;`;
 
-  res = ctrl.sendQuery(query, "individual website", res);
-};
+  res = sendQuery(query, "individual website", res);
+}
 
-exports.findScans = (req, res) => {
+export function findScans(req, res) {
   var query =
-    fs
-      .readFileSync(
-        path.join(__dirname, queryPath, "GET/get_website_scans.sql")
+    readFileSync(
+        join(__dirname, queryPath, "GET/get_website_scans.sql")
       )
       .toString() +
     ` WHERE obj_website_id = ${req.params.id} ORDER BY scan_date DESC;`;
 
-  res = ctrl.sendQuery(query, "individual website scans", res);
-};
+  res = sendQuery(query, "individual website scans", res);
+}
 
-exports.findOneScan = (req, res) => {
+export function findOneScan(req, res) {
   var query =
-    fs
-      .readFileSync(
-        path.join(__dirname, queryPath, "GET/get_website_scans.sql")
+    readFileSync(
+        join(__dirname, queryPath, "GET/get_website_scans.sql")
       )
       .toString() +
     ` WHERE obj_website_id = ${req.params.id} AND id = ${req.params.scanId} ORDER BY scan_date DESC;`;
 
-  res = ctrl.sendQuery(query, "individual website one scan", res);
-};
+  res = sendQuery(query, "individual website one scan", res);
+}
 
-exports.findServiceCategories = (req, res) => {
+export function findServiceCategories(req, res) {
   var query =
-    fs
-      .readFileSync(
-        path.join(
+    readFileSync(
+        join(
           __dirname,
           queryPath,
           "GET/get_website_service_categories.sql"
@@ -58,22 +56,21 @@ exports.findServiceCategories = (req, res) => {
       .toString() +
     ` WHERE obj_websites_id = ${req.params.id} ORDER BY name ASC`;
 
-  res = ctrl.sendQuery(query, "service categories for a website", res);
-};
+  res = sendQuery(query, "service categories for a website", res);
+}
 
-exports.findSystems = (req, res) => {
+export function findSystems(req, res) {
   var query =
-    fs
-      .readFileSync(path.join(__dirname, queryPath, "GET/get_systems.sql"))
+    readFileSync(join(__dirname, queryPath, "GET/get_systems.sql"))
       .toString() +
     ` LEFT JOIN gear_schema.zk_systems_subsystems_websites AS websites_mapping ON systems.\`ex:GEAR_ID\` = websites_mapping.obj_systems_subsystems_Id
     WHERE websites_mapping.obj_websites_Id = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`;
 
-  res = ctrl.sendQuery(query, "related systems for website", res);
-};
+  res = sendQuery(query, "related systems for website", res);
+}
 
-exports.updateSystems = (req, res) => {
-  ctrl.getApiToken (req, res)
+export function updateSystems(req, res) {
+  getApiToken (req, res)
   .then((response) => {
     console.log('*** API Security Testing - getApiToken response: ', response); //DEBUGGING
 
@@ -95,7 +92,7 @@ exports.updateSystems = (req, res) => {
 
     var query = `${systemString}`;
 
-    res = ctrl.sendQuery(query, "updating systems for website", res);
+    res = sendQuery(query, "updating systems for website", res);
   } else {
     console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
 
@@ -105,4 +102,4 @@ exports.updateSystems = (req, res) => {
       });
     }
   });
-};
+}

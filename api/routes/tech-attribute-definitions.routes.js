@@ -1,9 +1,9 @@
-const express = require('express');
-const attDefCtrl = require('../controllers/tech-attribute-definitions.controller');
+import { Router } from 'express';
+import { getAttributeDefinitions } from '../controllers/tech-attribute-definitions.controller';
 
-const router = express.Router();
+const router = Router();
 
 router.route('/get/attribute_definitions')
-  .get(attDefCtrl.getAttributeDefinitions);
+  .get(getAttributeDefinitions);
 
-module.exports = router;
+export default router;

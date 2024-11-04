@@ -1,42 +1,42 @@
-const express = require('express');
-const sysCtrl = require('../controllers/systems.controller');
+import { Router } from 'express';
+import { findAll, findOne, findSubsystems, findCapabilities, updateCaps, findInvestments, updateInvest, findRecords, findWebsites, findTechnologies, updateTech, findTIME } from '../controllers/systems.controller';
 
-const router = express.Router();
+const router = Router();
 
 router.route('/')
-  .get(sysCtrl.findAll);
+  .get(findAll);
 
 router.route('/get/:id')
-  .get(sysCtrl.findOne);
+  .get(findOne);
 
 router.route('/get/:id/subsystems')
-  .get(sysCtrl.findSubsystems);
+  .get(findSubsystems);
 
 router.route('/get/:id/capabilities')
-  .get(sysCtrl.findCapabilities);
+  .get(findCapabilities);
 
 router.route('/updateCaps/:id')
-  .put(sysCtrl.updateCaps);
+  .put(updateCaps);
 
 router.route('/get/:id/investments')
-  .get(sysCtrl.findInvestments);
+  .get(findInvestments);
 
 router.route('/updateInvest/:id')
-  .put(sysCtrl.updateInvest);
+  .put(updateInvest);
 
 router.route('/get/:id/records')
-  .get(sysCtrl.findRecords);
+  .get(findRecords);
 
 router.route('/get/:id/websites')
-  .get(sysCtrl.findWebsites);
+  .get(findWebsites);
 
 router.route('/get/:id/technologies')
-  .get(sysCtrl.findTechnologies);
+  .get(findTechnologies);
 
 router.route('/updateTech/:id')
-  .put(sysCtrl.updateTech);
+  .put(updateTech);
 
 router.route('/get/:id/time')
-  .get(sysCtrl.findTIME);
+  .get(findTIME);
 
-module.exports = router;
+export default router;

@@ -1,45 +1,45 @@
-const express = require('express');
-const itsCtrl = require('../controllers/it-standards.controller');
+import { Router } from 'express';
+import { findAll, findAllNoFilter, findOne, findSystems, findLatest, update, create, find508Compliance, findCategories, findDeployTypes, findStatuses, findTypes, findAttestationStatusTypes } from '../controllers/it-standards.controller';
 
-const router = express.Router();
+const router = Router();
 
 router.route('/')
-  .get(itsCtrl.findAll);
+  .get(findAll);
 
 router.route('/all')
-  .get(itsCtrl.findAllNoFilter);
+  .get(findAllNoFilter);
 
 router.route('/get/:id')
-  .get(itsCtrl.findOne);
+  .get(findOne);
 
 router.route('/get/:id/systems/')
-  .get(itsCtrl.findSystems);
+  .get(findSystems);
 
 router.route('/latest')
-  .get(itsCtrl.findLatest);
+  .get(findLatest);
 
 router.route('/update/:id')
-  .put(itsCtrl.update);
+  .put(update);
 
 router.route('/create')
-  .post(itsCtrl.create);
+  .post(create);
 
 router.route('/508_compliance')
-  .get(itsCtrl.find508Compliance);
+  .get(find508Compliance);
 
 router.route('/categories')
-  .get(itsCtrl.findCategories);
+  .get(findCategories);
 
 router.route('/deployment_types')
-  .get(itsCtrl.findDeployTypes);
+  .get(findDeployTypes);
 
 router.route('/statuses')
-  .get(itsCtrl.findStatuses);
+  .get(findStatuses);
 
 router.route('/types')
-  .get(itsCtrl.findTypes);
+  .get(findTypes);
 
 router.route('/attestation_status_types')
-  .get(itsCtrl.findAttestationStatusTypes);
+  .get(findAttestationStatusTypes);
 
-module.exports = router;
+export default router;

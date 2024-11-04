@@ -1,6 +1,5 @@
-const ctrl = require('./base.controller');
-var ldapjs = require('ldapjs');
-const assert = require('assert');
+import { createClient } from 'ldapjs';
+import { ifError } from 'assert';
 
 var creds = {
   url: process.env.LDAP_ADDR,
@@ -12,12 +11,12 @@ var opts = {
   attributes: ['SamAccountName', 'GivenName', 'sn', 'mail', 'OfficePhone', 'Division', 'Title', 'employeeType', 'Enabled']
 };
 
-exports.check = (req, res) => {
-  var ldapClient = ldapjs.createClient(creds);
+export function check(req, res) {
+  var ldapClient = createClient(creds);
   opts.filter = `&(ObjectCategory=user)(ObjectClass=Person)(givenName=${req.params.first_name})(sn=${req.params.last_name})`
 
   res = authDN(ldapClient, searchUser, res);
-};
+}
 
 //binding
 function authDN(client, cb, res) {
@@ -28,7 +27,7 @@ function authDN(client, cb, res) {
 
 function searchUser(res, err, client) {
   client.search(creds.bindDN, opts, function (err, response) {
-    assert.ifError(err);
+    ifError(err);
     var body = [];
 
     response.on('searchEntry', function (entry) {

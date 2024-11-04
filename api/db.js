@@ -1,18 +1,17 @@
-var dotenv = require('dotenv').config();  // .env Credentials
-const fs = require('fs');
-const mysql = require('mysql2');
+import { readFileSync } from 'fs';
+import { createPool } from 'mysql2';
 
 // Connection Credentials
-const dbCredentials = {
+export const dbCredentials = {
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB,
   port: 3306,
   ssl: {
-    ca: fs.readFileSync('./certs/ca.pem'),
-    key: fs.readFileSync('./certs/client-key.pem'),
-    cert: fs.readFileSync('./certs/client-cert.pem')
+    ca: readFileSync('./certs/ca.pem'),
+    key: readFileSync('./certs/client-key.pem'),
+    cert: readFileSync('./certs/client-cert.pem')
   },
   multipleStatements: true
 };
@@ -29,15 +28,11 @@ const dbCredentials = {
 // };
 
 // Create DB Connection
-const pool = mysql.createPool(dbCredentials)
+const pool = createPool(dbCredentials)
 
 const promisePool = pool.promise();
 
 // const pool_cowboy = mysql.createPool(dbCredentials_cowboy)
 
-module.exports = {
-  dbCredentials: dbCredentials,
-  connection: pool,
-  connection_promise: promisePool
-  // connection_cowboy: pool_cowboy
-};
+export const connection = pool;
+export const connection_promise = promisePool;

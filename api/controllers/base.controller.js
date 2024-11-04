@@ -1,11 +1,9 @@
-const sql = require("../db.js").connection,
-  // sql_cowboy  = require("../db.js").connection_cowboy,
-  sql_promise = require("../db.js").connection_promise,
-  path = require("path"),
-  fs = require("fs"),
-  readline = require("readline"),
-  { google } = require("googleapis")
-  fastcsv = require("fast-csv");
+import { connection as sql } from "../db.js";
+import { connection_promise as sql_promise } from "../db.js";
+import { readFile, createReadStream, appendFileSync } from "fs";
+import { google } from "googleapis";
+  
+import fastcsv from "fast-csv";
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
@@ -14,7 +12,7 @@ const SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
 // time.
 const TOKEN_PATH = "token.json";
 
-exports.getApiToken = async (req, res) => {
+export async function getApiToken(req, res) {
   //console.log('req.headers: ', req.headers); //debugging
   //console.log(`requester: ${req.headers.requester}, apitoken: ${req.headers.apitoken}`); //debugging
 
@@ -29,14 +27,14 @@ exports.getApiToken = async (req, res) => {
   //return response;
 }
 
-exports.sendQuery = (query, msg, response, postProcessFunc=null) => {
+export function sendQuery(query, msg, response, postProcessFunc=null) {
   return buildQuery(sql, query, msg, response, postProcessFunc);
-};
+}
 
-exports.sendLogQuery = (event, user, msg, response) => {
+export function sendLogQuery(event, user, msg, response) {
   var data = buildLogQuery(sql, event, user, msg, response);
   return data;
-};
+}
 
 // exports.sendQuery_cowboy = (query, msg, response) => {
 //   return buildQuery(sql_cowboy, query, msg, response);
@@ -93,20 +91,20 @@ function buildLogQuery(conn, event, user, msg, response) {
   });
 }
 
-exports.emptyTextFieldHandler = (content) => {
+export function emptyTextFieldHandler(content) {
   if (!content) return "NULL";
   else return `'${content}'`;
-};
+}
 
-exports.setEmptyTextFieldHandler = (content) => {
+export function setEmptyTextFieldHandler(content) {
   if (!content) return '';
   else return content;
-};
+}
 
 
 /* **** Google API ****
 All this needs to be refactored as to not be so redundant*/
-exports.googleMain = (response, method, sheetID, dataRange, requester, key = null) => {
+export function googleMain(response, method, sheetID, dataRange, requester, key = null) {
   console.log("googleMain()");
 
   // get the current date and format it as yyyymmddhh
@@ -136,7 +134,7 @@ exports.googleMain = (response, method, sheetID, dataRange, requester, key = nul
       buildLogQuery(sql, `Update All Related Records - Starting`, requester, "log_update_zk_systems_subsystems_records", response);
 
       // Load client secrets from a local file.
-      fs.readFile("certs/gear_google_credentials.json", (err, content) => {
+      readFile("certs/gear_google_credentials.json", (err, content) => {
         if (err) {
           buildLogQuery(sql, `Update All Related Records - ERROR: loading client secret file`, requester, "log_update_zk_systems_subsystems_records", response);
 
@@ -171,7 +169,7 @@ exports.googleMain = (response, method, sheetID, dataRange, requester, key = nul
       });
     }
   });
-};
+}
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -199,7 +197,7 @@ function authorize(
   
     try {
       // Check if we have previously stored a token.
-      fs.readFile(TOKEN_PATH, (err, token) => {
+      readFile(TOKEN_PATH, (err, token) => {
         if (err) {
           let errMessage = "Reading the Token returned an error: " + err;
           errMessage = errMessage.replace(/'/g, "");
@@ -469,8 +467,8 @@ function sendResponse(response, data) {
       .json({ error: "The API returned an error: " + err });
 }
 
-exports.updatePocs = (req, res) => {
-  let stream = fs.createReadStream("./pocs/GSA_Pocs.csv");
+export function updatePocs(req, res) {
+  let stream = createReadStream("./pocs/GSA_Pocs.csv");
   let pocCsv = [];
   let csvStream = fastcsv
     .parse()
@@ -1777,7 +1775,7 @@ function logger(heading, msg, error = null, logFileName = null) {
 
   // log to file
   if (logFileName !== null && logFileName !== '' && logFileName !== undefined) {
-    fs.appendFileSync(logFileName, logMsg + '\n');
+    appendFileSync(logFileName, logMsg + '\n');
   }
 
   // log to db
@@ -1792,7 +1790,7 @@ function writeToLogFile(msg, logFileName = null) {
   // - parameters: msg (string), logFileName (string)
   // - returns: none
 
-  fs.appendFileSync(logFileName, msg);
+  appendFileSync(logFileName, msg);
 
 }
 
@@ -2038,7 +2036,7 @@ function getImportId(data = null) {
 // ===================================
 // import process functions
 
-exports.importTechCatlogData = async (data, response) => {
+export async function importTechCatlogData(data, response) {
 
   // IMPORT PARAMETER VARIABLES
   const importType = data.importtype;                                     // import type identifies the type of import to be used for logging
@@ -2824,7 +2822,7 @@ exports.importTechCatlogData = async (data, response) => {
                         };
 
                         // ... write record to sync list log
-                        fs.appendFileSync(toSyncListLogFileName, JSON.stringify(insertTxt) + ',\n');
+                        appendFileSync(toSyncListLogFileName, JSON.stringify(insertTxt) + ',\n');
 
                       } catch (error) {
                         logger(`${getLogHeader()}`, `failed writing record to sync list log`, error, errorLogFileName);
@@ -2875,7 +2873,7 @@ exports.importTechCatlogData = async (data, response) => {
                         };
 
                         // ... write record to sync list log
-                        fs.appendFileSync(deleteListLogFileName, JSON.stringify(deleteTxt) + ',\n');
+                        appendFileSync(deleteListLogFileName, JSON.stringify(deleteTxt) + ',\n');
 
                         recordsToBeDeletedArray.push(deleteTxt);
                         
@@ -3494,7 +3492,7 @@ exports.importTechCatlogData = async (data, response) => {
                           let insertTxt = { id : idValue };
 
                           // ... write record to sync list log
-                          fs.appendFileSync(syncedListLogFileName, JSON.stringify(insertTxt) + ',\n');
+                          appendFileSync(syncedListLogFileName, JSON.stringify(insertTxt) + ',\n');
 
                         } catch (error) {
                           logger(`${getLogHeader()}`, `failed writing record to sync list log`, error, errorLogFileName);

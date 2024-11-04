@@ -1,18 +1,18 @@
-const express = require('express');
-const techCatalogCtrl = require('../controllers/tech-catalog.controller');
+import { Router } from 'express';
+import { getManufacturers, getSoftwareProducts, getSoftwareVersions, getSoftwareReleases } from '../controllers/tech-catalog.controller';
 
-const router = express.Router();
+const router = Router();
 
 router.route('/get/manufacturers')
-  .get(techCatalogCtrl.getManufacturers);
+  .get(getManufacturers);
 
 router.route('/get/software_products/:id')
-  .get(techCatalogCtrl.getSoftwareProducts);
+  .get(getSoftwareProducts);
 
 router.route('/get/software_versions/:id')
-  .get(techCatalogCtrl.getSoftwareVersions);
+  .get(getSoftwareVersions);
 
 router.route('/get/software_releases/:id')
-  .get(techCatalogCtrl.getSoftwareReleases);
+  .get(getSoftwareReleases);
 
-module.exports = router;
+export default router;

@@ -1,53 +1,55 @@
-const ctrl = require('./base.controller');
 
-const fs = require('fs');
-const path = require('path');
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
+import { sendQuery, getApiToken } from './base.controller';
+import { __dirname } from '../util/path-util';
 
 const queryPath = '../queries/';
 
-exports.findAll = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_capabilities.sql')).toString() +
+export function findAll(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_capabilities.sql')).toString() +
     ";";
 
-  res = ctrl.sendQuery(query, 'business capabilities', res);
-};
+  res = sendQuery(query, 'business capabilities', res);
+}
 
-exports.findOne = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_capabilities.sql')).toString() +
+export function findOne(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_capabilities.sql')).toString() +
     ` WHERE cap.capability_Id = ${req.params.id};`;
 
-  res = ctrl.sendQuery(query, 'individual business capability by ID', res);
-};
+  res = sendQuery(query, 'individual business capability by ID', res);
+}
 
-exports.findOneName = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_capabilities.sql')).toString() +
+export function findOneName(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_capabilities.sql')).toString() +
     ` WHERE cap.Capability_Name = '${req.params.name}';`;
 
-  res = ctrl.sendQuery(query, 'individual business capability by name', res);
-};
+  res = sendQuery(query, 'individual business capability by name', res);
+}
 
-exports.findSystems = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
+export function findSystems(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
     ` LEFT JOIN gear_schema.zk_systems_subsystems_capabilities AS cap_mappings ON systems.\`ex:GEAR_ID\` = cap_mappings.obj_systems_subsystems_Id
       LEFT JOIN gear_schema.obj_capability AS cap ON cap_mappings.obj_capability_Id = cap.capability_Id
     
       WHERE cap.capability_Id = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`;
 
-  res = ctrl.sendQuery(query, 'supporting systems for capability', res);
-};
+  res = sendQuery(query, 'supporting systems for capability', res);
+}
 
-exports.findOrgs = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_organizations.sql')).toString() +
+export function findOrgs(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_organizations.sql')).toString() +
     ` LEFT JOIN zk_capabilities_org	  AS caps_mapping ON org.Organization_Id = caps_mapping.obj_organization_Id
       LEFT JOIN obj_capability	  	  AS cap          ON caps_mapping.obj_capability_Id = cap.capability_Id
     
       WHERE cap.capability_Id = ${req.params.id};`;
 
-  res = ctrl.sendQuery(query, 'related orgs for capability', res);
-};
+  res = sendQuery(query, 'related orgs for capability', res);
+}
 
-exports.updateOrgs = (req, res) => {
-  ctrl.getApiToken (req, res)
+export function updateOrgs(req, res) {
+  getApiToken (req, res)
   .then((response) => {
     console.log('*** API Security Testing - getApiToken response: ', response); //DEBUGGING
 
@@ -69,7 +71,7 @@ exports.updateOrgs = (req, res) => {
 
     var query = `${orgString}`;
     
-    res = ctrl.sendQuery(query, 'updating organizations for capability', res);
+    res = sendQuery(query, 'updating organizations for capability', res);
 
   } else {
     console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
@@ -79,4 +81,4 @@ exports.updateOrgs = (req, res) => {
       });
     }
   });
-};
+}

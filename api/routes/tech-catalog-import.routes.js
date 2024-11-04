@@ -1,12 +1,12 @@
-const express = require('express');
-const techCatImpCtrl = require('../controllers/tech-catalog-import.controller');
+import { Router } from 'express';
+import { runDailyTechCatalogImport, runTechCatalogImport } from '../controllers/tech-catalog-import.controller';
 
-const router = express.Router();
+const router = Router();
 
 router.route('/runDailyImport')
-  .post(techCatImpCtrl.runDailyTechCatalogImport);
+  .post(runDailyTechCatalogImport);
 
 router.route('/runTechCatalogImport')
-  .post(techCatImpCtrl.runTechCatalogImport);
+  .post(runTechCatalogImport);
 
-module.exports = router;
+export default router;

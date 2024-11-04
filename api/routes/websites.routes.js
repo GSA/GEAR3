@@ -1,22 +1,22 @@
-const express = require("express");
-const websitesCtrl = require("../controllers/websites.controller");
+import { Router } from "express";
+import { findAll, findOne, findScans, findOneScan, findServiceCategories, findSystems, updateSystems } from "../controllers/websites.controller";
 
-const router = express.Router();
+const router = Router();
 
-router.route("/").get(websitesCtrl.findAll);
+router.route("/").get(findAll);
 
-router.route("/get/:id").get(websitesCtrl.findOne);
+router.route("/get/:id").get(findOne);
 
-router.route("/get/:id/scans").get(websitesCtrl.findScans);
+router.route("/get/:id/scans").get(findScans);
 
-router.route("/get/:id/scans/:scanId").get(websitesCtrl.findOneScan);
+router.route("/get/:id/scans/:scanId").get(findOneScan);
 
 router
   .route("/get/:id/service_categories")
-  .get(websitesCtrl.findServiceCategories);
+  .get(findServiceCategories);
 
-router.route("/get/:id/systems").get(websitesCtrl.findSystems);
+router.route("/get/:id/systems").get(findSystems);
 
-router.route("/updateSystems/:id").put(websitesCtrl.updateSystems);
+router.route("/updateSystems/:id").put(updateSystems);
 
-module.exports = router;
+export default router;

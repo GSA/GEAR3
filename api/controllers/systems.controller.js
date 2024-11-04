@@ -1,46 +1,47 @@
-const ctrl = require('./base.controller');
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
-const fs = require('fs');
-const path = require('path');
+import { sendQuery, getApiToken } from './base.controller';
+import { __dirname } from '../util/path-util';
 
 const queryPath = '../queries/';
 
-exports.findAll = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
+export function findAll(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
     " GROUP BY systems.\`ex:System_Name\`;";
 
-  res = ctrl.sendQuery(query, 'Systems and subsystems', res);
-};
+  res = sendQuery(query, 'Systems and subsystems', res);
+}
 
-exports.findOne = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
+export function findOne(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
     ` WHERE systems.\`ex:GEAR_ID\` = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`;
 
-  res = ctrl.sendQuery(query, 'individual System/Subsystem', res);
-};
+  res = sendQuery(query, 'individual System/Subsystem', res);
+}
 
-exports.findSubsystems = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
+export function findSubsystems(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
     ` WHERE systems.\`ex:FISMA_System_Identifier\` = 
         (SELECT systems.\`ex:FISMA_System_Identifier\`
         FROM obj_fisma_archer AS systems
         WHERE systems.\`ex:GEAR_ID\` = ${req.params.id} )
       AND systems.\`ex:SystemLevel\` = 'SubSystem';`;
       
-  res = ctrl.sendQuery(query, 'Subsystems', res);
-};
+  res = sendQuery(query, 'Subsystems', res);
+}
 
-exports.findCapabilities = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_capabilities.sql')).toString() +
+export function findCapabilities(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_capabilities.sql')).toString() +
     ` LEFT JOIN zk_systems_subsystems_capabilities AS cap_mapping    ON cap.capability_Id = cap_mapping.obj_capability_Id
       LEFT JOIN obj_fisma_archer                   AS systems        ON cap_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
       WHERE systems.\`ex:GEAR_ID\` = ${req.params.id};`;
 
-  res = ctrl.sendQuery(query, 'related capabilities for system', res);
-};
+  res = sendQuery(query, 'related capabilities for system', res);
+}
 
-exports.updateCaps = (req, res) => {
-  ctrl.getApiToken (req, res)
+export function updateCaps(req, res) {
+  getApiToken (req, res)
   .then((response) => {
     console.log('*** API Security Testing - getApiToken response: ', response); //DEBUGGING
 
@@ -63,7 +64,7 @@ exports.updateCaps = (req, res) => {
 
       var query = `${capString}`;
       
-      res = ctrl.sendQuery(query, 'updating capabilities for system', res);
+      res = sendQuery(query, 'updating capabilities for system', res);
 
     } else {
       console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
@@ -73,20 +74,20 @@ exports.updateCaps = (req, res) => {
         });
     }
   });
-};
+}
 
 
-exports.findInvestments = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_investments.sql')).toString() +
+export function findInvestments(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_investments.sql')).toString() +
     ` LEFT JOIN zk_systems_subsystems_investments AS invest_mapping   ON invest.Investment_Id = invest_mapping.obj_investment_Id
       LEFT JOIN obj_fisma_archer                  AS systems          ON invest_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
       WHERE systems.\`ex:GEAR_ID\` = ${req.params.id};`;
 
-  res = ctrl.sendQuery(query, 'related investments for system', res);
-};
+  res = sendQuery(query, 'related investments for system', res);
+}
 
-exports.updateInvest = (req, res) => {
-  ctrl.getApiToken (req, res)
+export function updateInvest(req, res) {
+  getApiToken (req, res)
   .then((response) => {
     console.log('*** API Security Testing - getApiToken response: ', response); //DEBUGGING
 
@@ -109,7 +110,7 @@ exports.updateInvest = (req, res) => {
 
     var query = `${investString}`;
     
-    res = ctrl.sendQuery(query, 'updating investments for system', res);
+    res = sendQuery(query, 'updating investments for system', res);
 
   } else {
     console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
@@ -119,32 +120,32 @@ exports.updateInvest = (req, res) => {
       });
     }
   });
-};
+}
 
 
-exports.findRecords = (req, res) => {
+export function findRecords(req, res) {
   var query = `SELECT * FROM gear_schema.zk_systems_subsystems_records   AS records_mapping
       LEFT JOIN obj_fisma_archer                                      AS systems       ON records_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
       WHERE systems.\`ex:GEAR_ID\` = ${req.params.id}
 
     GROUP BY records_mapping.obj_records_Id;`;
 
-  res = ctrl.sendQuery(query, 'related records for system', res);
-};
+  res = sendQuery(query, 'related records for system', res);
+}
 
-exports.findWebsites = (req, res) => {
+export function findWebsites(req, res) {
   var query = `SELECT * FROM gear_schema.zk_systems_subsystems_websites   AS websites_mapping
       LEFT JOIN obj_fisma_archer                                      AS systems       ON websites_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
       WHERE systems.\`ex:GEAR_ID\` = ${req.params.id}
 
     GROUP BY websites_mapping.obj_websites_Id;`;
 
-  res = ctrl.sendQuery(query, 'related websites for system', res);
-};
+  res = sendQuery(query, 'related websites for system', res);
+}
 
 
-exports.findTechnologies = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
+export function findTechnologies(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
     ` LEFT JOIN gear_schema.zk_systems_subsystems_technology_xml   AS tech_mapping  ON tech.Id = tech_mapping.\`ex:obj_technology_Id\`
       LEFT JOIN gear_schema.obj_fisma_archer                   AS systems       ON tech_mapping.\`ex:obj_systems_subsystems_Id\` = systems.\`ex:GEAR_ID\`
       WHERE obj_standard_type.Keyname LIKE '%Software%'
@@ -153,11 +154,11 @@ exports.findTechnologies = (req, res) => {
     GROUP BY tech.Id
     ORDER BY tech.Keyname;`;
 
-  res = ctrl.sendQuery(query, 'related technologies for system', res); //Removed sendQuery_cowboy reference
-};
+  res = sendQuery(query, 'related technologies for system', res); //Removed sendQuery_cowboy reference
+}
 
-exports.updateTech = (req, res) => {
-  ctrl.getApiToken (req, res)
+export function updateTech(req, res) {
+  getApiToken (req, res)
   .then((response) => {
     console.log('*** API Security Testing - getApiToken response: ', response); //DEBUGGING
 
@@ -180,7 +181,7 @@ exports.updateTech = (req, res) => {
 
       var query = `${techString}`;
       
-      res = ctrl.sendQuery(query, 'updating IT Standards for system', res);
+      res = sendQuery(query, 'updating IT Standards for system', res);
 
     } else {
       console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
@@ -190,12 +191,12 @@ exports.updateTech = (req, res) => {
         });
     }
   });
-};
+}
 
 
-exports.findTIME = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_sysTIME.sql')).toString() +
+export function findTIME(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_sysTIME.sql')).toString() +
     ` AND \`System Id\` = ${req.params.id};`;
 
-  res = ctrl.sendQuery(query, 'related TIME designations for system', res);
-};
+  res = sendQuery(query, 'related TIME designations for system', res);
+}

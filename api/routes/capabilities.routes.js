@@ -1,24 +1,24 @@
-const express = require('express');
-const capabilitiesCtrl = require('../controllers/capabilities.controller');
+import { Router } from 'express';
+import { findAll, findOne, findOneName, findSystems, findOrgs, updateOrgs } from '../controllers/capabilities.controller';
 
-const router = express.Router();
+const router = Router();
 
 router.route('/')
-  .get(capabilitiesCtrl.findAll);
+  .get(findAll);
 
 router.route('/get/:id')
-  .get(capabilitiesCtrl.findOne);
+  .get(findOne);
 
 router.route('/getByName/:name')
-  .get(capabilitiesCtrl.findOneName);
+  .get(findOneName);
 
 router.route('/get/:id/systems')
-  .get(capabilitiesCtrl.findSystems);
+  .get(findSystems);
 
 router.route('/get/:id/orgs')
-  .get(capabilitiesCtrl.findOrgs);
+  .get(findOrgs);
 
 router.route('/updateOrgs/:id')
-  .put(capabilitiesCtrl.updateOrgs);
+  .put(updateOrgs);
 
-module.exports = router;
+export default router;

@@ -1,20 +1,20 @@
-const ctrl = require('./base.controller');
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
-const fs = require('fs');
-const path = require('path');
+import { sendQuery } from './base.controller';
 
 const queryPath = '../queries/';
 
-exports.findAll = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_pocs.sql')).toString() +
+export function findAll(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_pocs.sql')).toString() +
     " ORDER BY poc.LastName;";
 
-  res = ctrl.sendQuery(query, 'Points of Contact', res); //removed sendQuery_cowboy reference
-};
+  res = sendQuery(query, 'Points of Contact', res); //removed sendQuery_cowboy reference
+}
 
-exports.findOne = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_pocs.sql')).toString() +
+export function findOne(req, res) {
+  var query = readFileSync(join(__dirname, queryPath, 'GET/get_pocs.sql')).toString() +
     ` WHERE poc.SamAccountName = '${req.params.samName}';`;
 
-  res = ctrl.sendQuery(query, 'individual POC', res); //removed sendQuery_cowboy reference
-};
+  res = sendQuery(query, 'individual POC', res); //removed sendQuery_cowboy reference
+}

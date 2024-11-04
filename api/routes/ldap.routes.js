@@ -1,9 +1,9 @@
-const express = require('express');
-const ldap = require('../controllers/ldap.controller');
+import { Router } from 'express';
+import { check } from '../controllers/ldap.controller';
 
-const router = express.Router();
+const router = Router();
 
 router.route('/:first_name&:last_name')
-  .get(ldap.check);
+  .get(check);
 
-module.exports = router;
+export default router;

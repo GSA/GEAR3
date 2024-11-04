@@ -1,37 +1,37 @@
-const ctrl = require("./base.controller"),
-  fs = require("fs"),
-  path = require("path"),
-  queryPath = "../queries/";
+import { readFileSync } from "fs";
+import { join } from "path";
 
-exports.findAll = (req, res) => {
+import { sendQuery } from "./base.controller";
+import { __dirname } from '../util/path-util';
+
+const queryPath = "../queries/";
+
+export function findAll(req, res) {
   var query =
-    fs
-      .readFileSync(
-        path.join(__dirname, queryPath, "GET/get_website_service_category.sql")
+    readFileSync(
+        join(__dirname, queryPath, "GET/get_website_service_category.sql")
       )
       .toString() + ` ORDER BY name ASC;`;
 
-  res = ctrl.sendQuery(query, "all service categories", res);
-};
+  res = sendQuery(query, "all service categories", res);
+}
 
-exports.findOne = (req, res) => {
+export function findOne(req, res) {
   var query =
-    fs
-      .readFileSync(
-        path.join(__dirname, queryPath, "GET/get_website_service_category.sql")
+    readFileSync(
+        join(__dirname, queryPath, "GET/get_website_service_category.sql")
       )
       .toString() +
     ` WHERE id = ${req.params.id} 
   ORDER BY name ASC;`;
 
-  res = ctrl.sendQuery(query, "individual service category", res);
-};
+  res = sendQuery(query, "individual service category", res);
+}
 
-exports.findRelatedWebsites = (req, res) => {
+export function findRelatedWebsites(req, res) {
   var query =
-    fs
-      .readFileSync(
-        path.join(
+    readFileSync(
+        join(
           __dirname,
           queryPath,
           "GET/get_website_service_category_related_websites.sql"
@@ -41,9 +41,9 @@ exports.findRelatedWebsites = (req, res) => {
     ` WHERE zk.obj_service_category_id = ${req.params.id} 
   ORDER BY w.domain ASC;`;
 
-  res = ctrl.sendQuery(
+  res = sendQuery(
     query,
     "individual service category and related websites",
     res
   );
-};
+}
