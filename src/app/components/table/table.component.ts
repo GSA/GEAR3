@@ -46,6 +46,11 @@ export class TableComponent implements OnInit {
   @Input() showExportButton: boolean = true;
   @Input() showFilterButton: boolean = true;
 
+  // Default sort inputs order is either 1 or -1
+  // for ascending and descending respectively
+  @Input() defaultSortField: string = '';
+  @Input() defaultSortOrder: number = 1;
+
   // Filter event (some reports change available columns when filtered)
   @Output() filterEvent = new EventEmitter<string>();
 
@@ -53,7 +58,7 @@ export class TableComponent implements OnInit {
 
   @HostListener('window:resize', ['$event'])
   onResize(event) {
-    this.screenHeight = `${(event.srcElement.innerHeight - 315)}px`;
+    this.setScreenHeight();
   }
 
   visibleColumns: Column[] = [];
@@ -64,7 +69,7 @@ export class TableComponent implements OnInit {
   showFilters: boolean = false;
 
   constructor(public sharedService: SharedService, public tableService: TableService, public apiService: ApiService) {
-    this.screenHeight = `${(window.innerHeight - 315)}px`;
+    this.setScreenHeight();
    }
 
   ngOnInit(): void {
@@ -74,11 +79,7 @@ export class TableComponent implements OnInit {
       if(this.showColumn(c)) {
         this.visibleColumns.push(c);
       }
-    })
-
-    this.tableData.map(d => {
-
-    })
+    });
   }
 
   toggleVisible(e: any) {
@@ -144,6 +145,15 @@ export class TableComponent implements OnInit {
 
   showColumn(c: Column) {
     return c.showColumn || !('showColumn' in c);
+  }
+
+  setScreenHeight() {
+    const TABLE_HEIGHT_OFFSET: number = 315;
+    if(window.innerHeight < 800) {
+      this.screenHeight = `${window.innerHeight}px`;
+    } else {
+      this.screenHeight = `${(window.innerHeight - TABLE_HEIGHT_OFFSET)}px`;
+    }
   }
 
   onRowSelect(e: TableRowSelectEvent) {
