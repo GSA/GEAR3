@@ -3,9 +3,9 @@
   <div class="d-flex align-items-center justify-content-center flex-1" *ngIf="buttonFilters && buttonFilters.length > 0">
     <span class="mr-2">Filter Buttons:</span>
     <span *ngFor="let filters of buttonFilters" class="mr-2">
-      <p-button *ngFor="let filter of filters" (click)="onButtonFilter(filter)" [severity]="currentButtonFilter !== filter.filterBtnText ? 'contrast' : 'secondary'">{{filter.filterBtnText}}</p-button>
+      <p-button *ngFor="let filter of filters" (click)="onButtonFilter(filter)" [severity]="currentButtonFilter !== filter.filterBtnText ? 'contrast' : 'secondary'" [ariaLabel]="'Filter by ' + filter.filterBtnText">{{filter.filterBtnText}}</p-button>
     </span>
-    <span *ngIf="currentButtonFilter"><p-button (click)="onButtonFilterClear()" severity="primary">Reset</p-button></span>
+    <span *ngIf="currentButtonFilter"><p-button (click)="onButtonFilterClear()" severity="primary" ariaLabel="Reset Filter Buttons">Reset</p-button></span>
   </div>
   <!-- Definition tooltip -->
   <ng-content select="[definitionBtn]"></ng-content>
@@ -39,7 +39,8 @@
           pInputText 
           type="text" 
           (input)="dt.filterGlobal($event.target.value, 'contains')" 
-          placeholder="Search keyword" />
+          placeholder="Search keyword"
+          aria-label="Table Search" />
       </p-iconField>
       <!-- Show/hide columns -->
         <p-multiSelect 
@@ -49,17 +50,18 @@
           (onChange)="toggleVisible($event)"
           optionLabel="field"
           tooltip="Add/Remove Columns"
-          [showToggleAll]="false">
+          [showToggleAll]="false"
+          ariaLabel="Toggle Columns">
           <ng-template pTemplate="selectedItems">
             <i class="fa fa-th-list"></i>
           </ng-template>
         </p-multiSelect>
         <!-- Pagination toggle button -->
-        <p-button icon="fa fa-caret-square-down" severity="primary" (click)="togglePagination()" *ngIf="showPaginationToggleButton" />
+        <p-button icon="fa fa-caret-square-down" severity="primary" (click)="togglePagination()" *ngIf="showPaginationToggleButton" ariaLabel="Toggle Pagination" />
         <!-- Export button -->
-        <p-button icon="fa fa-download" severity="primary" (click)="onExportData()" *ngIf="showExportButton" />
+        <p-button icon="fa fa-download" severity="primary" (click)="onExportData()" *ngIf="showExportButton" ariaLabel="Export Data" />
         <!-- Filter toggle button -->
-        <p-button icon="fa fa-filter" severity="primary" (click)="toggleFilter()" *ngIf="showFilterButton" />
+        <p-button icon="fa fa-filter" severity="primary" (click)="toggleFilter()" *ngIf="showFilterButton" ariaLabel="Toggle Filters" />
     </div>
   </ng-template>
 

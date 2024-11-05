@@ -7,7 +7,7 @@ import { SharedService } from '@services/shared/shared.service';
   styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent {
-
+  
   constructor(public sharedService: SharedService) {
   }
 
