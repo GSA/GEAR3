@@ -1,11 +1,11 @@
 <div class="d-flex justify-content-center" [ngClass]="{'mb-3': !showToolbar}">
   <!-- Filter buttons -->
-  <div class="d-flex align-items-center justify-content-center flex-1" *ngIf="buttonFilters && buttonFilters.length > 0">
+  <div class="d-flex align-items-center justify-content-center flex-1" *ngIf="filterButtons && filterButtons.length > 0">
     <span class="mr-2">Filter Buttons:</span>
-    <span *ngFor="let filters of buttonFilters" class="mr-2">
-      <p-button *ngFor="let filter of filters" (click)="onButtonFilter(filter)" [severity]="currentButtonFilter !== filter.filterBtnText ? 'contrast' : 'secondary'" [ariaLabel]="'Filter by ' + filter.filterBtnText">{{filter.filterBtnText}}</p-button>
+    <span *ngFor="let buttons of filterButtons" class="mr-2">
+      <p-button *ngFor="let button of buttons" (click)="onFilterButtonClick(button)" [severity]="currentFilterButton !== button.buttonText ? 'contrast' : 'secondary'" [ariaLabel]="'Filter by ' + button.buttonText">{{button.buttonText}}</p-button>
     </span>
-    <span *ngIf="currentButtonFilter"><p-button (click)="onButtonFilterClear()" severity="primary" ariaLabel="Reset Filter Buttons">Reset</p-button></span>
+    <span *ngIf="currentFilterButton"><p-button (click)="onFilterButtonClear()" severity="primary" ariaLabel="Reset Filter Buttons">Reset</p-button></span>
   </div>
   <!-- Definition tooltip -->
   <ng-content select="[definitionBtn]"></ng-content>
@@ -14,9 +14,10 @@
 <!-- Table -->
 <p-table #dt
   [columns]="tableCols"
-  [value]="tableData"
+  [value]="activeTableData"
   [rowsPerPageOptions]="[10, 25, 50]"
   [rows]="10"
+  [first]="first"
   [paginator]="isPaginated"
   [scrollable]="true"
   [scrollHeight]="screenHeight" 
@@ -26,7 +27,10 @@
   [exportFunction]="exportFunction"
   [sortOrder]="defaultSortOrder"
   [sortField]="defaultSortField"
-  selectionMode="single" 
+  selectionMode="single"
+  [showCurrentPageReport]="true"
+  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+  (onPage)="pageChange($event)"
   (onRowSelect)="onRowSelect($event)">
 
   <!-- Table actions -->

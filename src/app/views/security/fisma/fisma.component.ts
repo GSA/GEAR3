@@ -6,7 +6,7 @@ import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
-import { ButtonFilter, Column, TwoDimArray } from '../../../common/table-classes';
+import { FilterButton, Column, TwoDimArray } from '../../../common/table-classes';
 import { FISMA } from '@api/models/fisma.model';
 
 // Declare jQuery symbol
@@ -33,10 +33,16 @@ export class FismaComponent implements OnInit {
   }
 
   tableData: FISMA[] = [];
+  filteredTableData: FISMA[] = [];
 
-  buttonFilters: TwoDimArray<ButtonFilter> = [
+  filterButtons: TwoDimArray<FilterButton> = [
     [
-      { field: 'Status', filterBtnText: 'Retired Fisma Systems', filterOn: 'Inactive' }
+      {
+        buttonText: 'Retired Fisma Systems',
+        filters: [
+          { field: 'Status', value: 'Inactive' }
+        ]
+      }
     ]
   ];
 
@@ -143,7 +149,14 @@ export class FismaComponent implements OnInit {
       $('[data-toggle="popover"]').popover();
     });
 
-    this.apiService.getFISMA().subscribe(f => this.tableData = f);
+    this.apiService.getFISMA().subscribe(fisma => {
+      this.tableData = fisma;
+      fisma.forEach(f => {
+        if(f.Status === 'Active' && f.SystemLevel === 'System' && f.Reportable === 'Yes') {
+          this.filteredTableData.push(f);
+        }
+      });
+    });
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {
