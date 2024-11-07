@@ -10,7 +10,7 @@ import { Title } from '@angular/platform-browser';
 
 import { ITStandards } from '@api/models/it-standards.model';
 import { DataDictionary } from '@api/models/data-dictionary.model';
-import { ButtonFilter, Column, TwoDimArray } from '@common/table-classes';
+import { FilterButton, Column, TwoDimArray } from '@common/table-classes';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -43,15 +43,40 @@ export class ItStandardsComponent implements OnInit {
   
   tableData: ITStandards[] = [];
 
-  buttonFilters: TwoDimArray<ButtonFilter> = [
+  filterButtons: TwoDimArray<FilterButton> = [
     [
-      { field: 'DeploymentType', filterBtnText: 'Desktop', filterOn: 'desktop' },
-      { field: 'DeploymentType', filterBtnText: 'Server', filterOn: 'server' }
+      {
+        buttonText: 'Desktop',
+        filters: [
+          { field: 'DeploymentType', value: 'desktop' }
+        ]
+      },
+      {
+        buttonText: 'Server',
+        filters: [
+          { field: 'DeploymentType', value: 'server' }
+        ]
+      }
     ],
     [
-      { field: 'Status', filterBtnText: 'Approved', filterOn: 'approved' },
-      { field: 'Status', filterBtnText: 'Denied', filterOn: 'denied' },
-      { field: 'Status', filterBtnText: 'Retired', filterOn: 'retired' }
+      {
+        buttonText: 'Approved',
+        filters: [
+          { field: 'Status', value: 'approved' }
+        ]
+      },
+      {
+        buttonText: 'Denied',
+        filters: [
+          { field: 'Status', value: 'denied' }
+        ]
+      },
+      {
+        buttonText: 'Retired',
+        filters: [
+          { field: 'Status', value: 'retired' }
+        ]
+      }
     ]
   ];
 

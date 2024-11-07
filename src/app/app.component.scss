@@ -2,6 +2,11 @@
   min-height: 100%;
   display: flex;
   justify-content: center;
+  padding-right: 3rem;
+
+  @media (max-width: 1920px) {
+    padding-right: 5rem;
+  }
 }
 
 .footer {
