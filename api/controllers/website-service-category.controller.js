@@ -39,6 +39,7 @@ export function findRelatedWebsites(req, res) {
       )
       .toString() +
     ` WHERE zk.obj_service_category_id = ${req.params.id} 
+    AND w.production_status = "production"
   ORDER BY w.domain ASC;`;
 
   res = sendQuery(

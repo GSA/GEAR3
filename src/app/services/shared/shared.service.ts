@@ -38,6 +38,8 @@ export class SharedService {
   websiteFormEmitter = new EventEmitter();
   websiteFormSub: Subscription;
 
+  public sidebarVisible: boolean = false;
+
   constructor(
     private globals: Globals,
     private location: Location,
@@ -46,10 +48,10 @@ export class SharedService {
     ) {
   }
 
-  // Sidebar Toggle
-  public toggleClick() {
-    this.toggleEmitter.emit();
-  };
+  // Toggle sidebar open/closed
+  public toggleSidebar() {
+    this.sidebarVisible = !this.sidebarVisible; 
+  }
 
   // File Name Formatting
   public fileNameFmt(name: string): string {
@@ -260,6 +262,10 @@ export class SharedService {
     if (value) return `<a target="_blank" rel="noopener" href="${value}">Link</a>`;
   };
 
+  public linkFormatter(value) {
+    if (value) return `<a target="_blank" rel="noopener" href="${value}">${value}</a>`;
+  }
+
   //// Date
   public dateFormatter(value, row, index, field) {
     const date = new Date(value);
@@ -267,6 +273,18 @@ export class SharedService {
     else return null;
   };
 
+
+  //// Non ISO Dates
+  public utcDateFormatter(value) {
+    if(value) {
+      let d = new Date(value);
+      let day = d.getUTCDate();
+      let month = d.getUTCMonth() + 1; // month range is 0-11
+      let year = d.getUTCFullYear();
+
+      return `${month}/${day}/${year}`;
+    }
+  }
 
   //// Email
   public emailFormatter(value, row, index, field) {
@@ -386,13 +404,12 @@ export class SharedService {
     return cookies;
   }
 
-  public enableStickyHeader(tableComponentId: string, closestScrollableClass: string = '.ng-sidebar__content') {
+  public enableStickyHeader(tableComponentId: string, closestScrollableClass: string = '.content-body') {
     $('#'+tableComponentId).floatThead({
-      scrollContainer: function($table) {
+      responsiveContainer: function($table) {
         return $table.closest(closestScrollableClass);
       },
-      position: "fixed",
-      autoReflow: true
+      top: 67 // top navbar offset
     });
   }
 

@@ -1,12 +1,14 @@
 import { PLATFORM_ID, Component, OnInit, Inject } from '@angular/core';
-import { isPlatformBrowser, Location } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
+import { ButtonFilter, Column, TwoDimArray } from '../../../common/table-classes';
+import { FISMA } from '@api/models/fisma.model';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -22,10 +24,8 @@ export class FismaComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    private location: Location,
     private modalService: ModalsService,
     private route: ActivatedRoute,
-    private router: Router,
     private sharedService: SharedService,
     private tableService: TableService,
     private titleService: Title,
@@ -34,232 +34,134 @@ export class FismaComponent implements OnInit {
     this.modalService.currentFismaSys.subscribe((row) => (this.row = row));
   }
 
-  // FISMA System Table Options
-  tableOptions: {} = this.tableService.createTableOptions({
-    advancedSearch: true,
-    idTable: 'FismaTable',
-    classes: 'table-hover table-dark clickable-table',
-    showColumns: true,
-    showExport: true,
-    exportFileName: 'GSA_FISMA_Systems_Inventory',
-    exportIgnoreColumn:[],
-    headerStyle: 'bg-warning',
-    pagination: true,
-    search: true,
-    sortName: 'Name',
-    sortOrder: 'asc',
-    showToggle: true,
-    url: this.apiService.fismaUrl,
-  });
+  tableData: FISMA[] = [];
 
-  // FISMA System Table Columns
-  columnDefs: any[] = [
-    /* {
-    field: 'DisplayName',
-    title: 'Alias/Acronym',
-    sortable: true
-  }, */ {
+  buttonFilters: TwoDimArray<ButtonFilter> = [
+    [
+      { field: 'Status', filterBtnText: 'Retired Fisma Systems', filterOn: 'Inactive' }
+    ]
+  ];
+
+  tableCols: Column[] = [
+    {
       field: 'ID',
-      title: 'ID',
-      sortable: true,
-      visible: false,
+      header: 'ID',
+      isSortable: true,
+      showColumn: false,
     },
     {
       field: 'Name',
-      title: 'System Name',
-      sortable: true,
+      header: 'System Name',
+      isSortable: true,
     },
     {
       field: 'Status',
-      title: 'Status',
-      sortable: true,
-      visible: false,
+      header: 'Status',
+      isSortable: true,
+      showColumn: false,
     },
     {
       field: 'ATODate',
-      title: 'ATO Date',
-      sortable: true,
+      header: 'ATO Date',
+      isSortable: true,
       formatter: this.sharedService.dateFormatter,
     },
     {
       field: 'RenewalDate',
-      title: 'Renewal Date',
-      sortable: true,
+      header: 'Renewal Date',
+      isSortable: true,
       formatter: this.sharedService.dateFormatter,
     },
     {
       field: 'ATOType',
-      title: 'ATO Type',
-      sortable: true,
+      header: 'ATO Type',
+      isSortable: true,
     },
     {
       field: 'FIPS_Impact_Level',
-      title: 'FIPS Impact Level',
-      sortable: true,
+      header: 'FIPS Impact Level',
+      isSortable: true,
     },
     {
       field: 'RelatedArtifacts',
-      title: 'Related Artifacts',
-      sortable: true,
+      header: 'Related Artifacts',
+      isSortable: true,
       formatter: this.sharedService.relArtifactsFormatter,
     },
     {
       field: 'Description',
-      title: 'Description',
-      sortable: true,
-      visible: true,
+      header: 'Description',
+      isSortable: true,
+      showColumn: true,
       formatter: this.sharedService.formatDescription
     },
     {
       field: 'ParentName',
-      title: 'Parent System',
-      sortable: true,
-      visible: false,
+      header: 'Parent System',
+      isSortable: true,
+      showColumn: false,
     },
     {
       field: 'Reportable',
-      title: 'FISMA Reportable',
-      sortable: true,
-      visible: false,
+      header: 'FISMA Reportable',
+      isSortable: true,
+      showColumn: false,
     },
     {
       field: 'PII',
-      title: 'PII',
-      sortable: true,
-      visible: false,
+      header: 'PII',
+      isSortable: true,
+      showColumn: false,
     },
     {
       field: 'CUI',
-      title: 'CUI',
-      sortable: true,
-      visible: false,
+      header: 'CUI',
+      isSortable: true,
+      showColumn: false,
     },
     {
       field: 'FedContractorLoc',
-      title: 'Fed or Contractor System',
-      sortable: true,
-      visible: false,
+      header: 'Fed or Contractor System',
+      isSortable: true,
+      showColumn: false,
     },
     {
       field: 'RespOrg',
-      title: 'Responsible Org',
-      sortable: true,
-      visible: false,
+      header: 'Responsible Org',
+      isSortable: true,
+      showColumn: false,
     },
     {
       field: 'ServiceType',
-      title: 'Cloud Service Type',
-      sortable: true,
-      visible: false,
-    }, /* , {
-    field: 'BusOrg',
-    title: 'Business Org',
-    sortable: true,
-    visible: false
-  } ,*/
+      header: 'Cloud Service Type',
+      isSortable: true,
+      showColumn: false,
+    }
   ];
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-    // Enable popovers
-    $(function () {
-      $('[data-toggle="popover"]').popover();
-    });
-
-    $('#fismaTable').bootstrapTable(
-      $.extend(this.tableOptions, {
-        columns: this.columnDefs,
-        data: [],
-      })
-    );
-
-    const self = this;
-    $(document).ready(() => {
-      // Filter out "Pending" Status
-      $('#fismaTable').bootstrapTable('filterBy', {
-        Status: 'Active',
-        SystemLevel: 'System',
-        Reportable: 'Yes',
+      // Enable popovers
+      $(function () {
+        $('[data-toggle="popover"]').popover();
       });
 
-      // Method to handle click events on the FISMA Systems table
-      $('#fismaTable').on(
-        'click-row.bs.table',
-        function (e, row, $element, field) {        
-          if (field !== 'RelatedArtifacts' ) {
-            this.tableService.fismaTableClick(row);
-          }
-        }.bind(this)
-      );
+      this.apiService.getFISMA().subscribe(f => this.tableData = f);
 
-      //Enable table sticky header
-      self.sharedService.enableStickyHeader("fismaTable");
-  });
+      // Method to open details modal when referenced directly via URL
+      this.route.params.subscribe((params) => {
+        var detailFismaID = params['fismaID'];
+        if (detailFismaID) {
+          this.titleService.setTitle(
+            `${this.titleService.getTitle()} - ${detailFismaID}`
+          );
+          this.apiService
+            .getOneFISMASys(detailFismaID)
+            .subscribe((data: any[]) => {
+              this.tableService.fismaTableClick(data[0]);
+            });
+        }
+      });
     }
-    // Method to open details modal when referenced directly via URL
-    this.route.params.subscribe((params) => {
-      var detailFismaID = params['fismaID'];
-      if (detailFismaID) {
-        this.titleService.setTitle(
-          `${this.titleService.getTitle()} - ${detailFismaID}`
-        );
-        this.apiService
-          .getOneFISMASys(detailFismaID)
-          .subscribe((data: any[]) => {
-            this.tableService.fismaTableClick(data[0]);
-          });
-      }
-    });
-  }
-
-  // Update table to Retire Systems
-  showRetired() {
-    this.sharedService.disableStickyHeader("fismaTable");
-    this.retiredTable = true; // Expose main table button after "Retired" button is pressed
-
-    this.columnDefs.push({
-      field: 'InactiveDate',
-      title: 'Inactive Date',
-      sortable: true,
-      formatter: this.sharedService.dateFormatter,
-    });
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-    // Change columns, filename, and url
-    $('#fismaTable').bootstrapTable('refreshOptions', {
-      columns: this.columnDefs,
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt('GSA_Retired_FISMA_Systems'),
-      },
-    });
-
-    // Filter to only "Inactive" Status
-    $('#fismaTable').bootstrapTable('filterBy', {
-      Status: ['Inactive'],
-    });
-    this.sharedService.enableStickyHeader("fismaTable");
-  }
-
-  backToMainFisma() {
-    this.sharedService.disableStickyHeader("fismaTable");
-    this.retiredTable = false; // Hide main button
-
-    // Change back to default
-    this.columnDefs.pop();
-    $('#fismaTable').bootstrapTable('refreshOptions', {
-      columns: this.columnDefs,
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt('GSA_FISMA_Systems_Inventory'),
-      },
-    });
-
-    // Filter back to "Active" Status
-    $('#fismaTable').bootstrapTable('filterBy', {
-      Status: 'Active',
-      SystemLevel: 'System',
-      Reportable: 'Yes',
-    });
-    this.sharedService.enableStickyHeader("fismaTable");
   }
 }

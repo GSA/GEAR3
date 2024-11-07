@@ -1,7 +1,7 @@
 import { googleMain, sendLogQuery } from './base.controller';
-import { logEvent } from './records.controller';
 import { runDailyTechCatalogImport } from './tech-catalog-import.controller';
-import { importWebsiteData } from './touchpoint-import.controller';
+import { JobLogger } from "../cron-jobs/job-logger";
+import { JobStatus } from "../enums/job-status";
 
 const SHEET_ID = '1eSoyn7-2EZMqbohzTMNDcFmNBbkl-CzXtpwNXHNHD1A';
 const RANGE = 'Master Junction with Business Systems!A2:B'; // FOR PRODUCTION
@@ -11,30 +11,45 @@ const jobUser = 'GearCronJ';
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Google Sheets API - Update All Related Records
 export async function runUpdateAllRelatedRecordsJob() {
-
+  const jobType = "RELATED-RECORDS-JOB";
   const jobName = `CRON JOB: Update All Related Records`;
   let status = 'executed';
-
+  const jobLogger = new JobLogger();
+  let jobId;
   try {
+    const pendingJobId = await cronJobDbUtilService.getAnyPendingJob(jobType);
+    if (pendingJobId) {
+      jobLogger.log(`Active Job '${pendingJobId}' is Running. Aborting the job now.`);
+      await cronJobDbUtilService.insertDbData({ jobType, startTime: ctrl.formatDateTime(new Date()), jobLogs: jobLogger.getLogs(), jobStatus: JobStatus.CANCELLED })
+      return;
+    }
 
     let res = {};
-    
+
+    jobId = await cronJobDbUtilService.insertDbData({ jobType, startTime: ctrl.formatDateTime(new Date()), jobLogs: '', jobStatus: JobStatus.PENDING });
+    console.log(jobId);
+
     // log start of job
-    console.log(jobName + ' - ' + status);
+    jobLogger.log(jobName + ' - Execution start');
 
-    // log start of job to db
-    logEvent({ body : { message: jobName + ' - ' + status, user: jobUser, } }, res);
-    
     // run refreshAllSystems
-    googleMain(res, 'refresh', SHEET_ID, RANGE, jobUser);
-
+    await googleMain(res, 'refresh', SHEET_ID, RANGE, jobUser, null, jobLogger, jobId, postprocesJobExecution);
   } catch (error) {
     // log any errors
     status = `error occurred while running:  \n` + error;
-    console.log(jobName + ' - ' + status);
+    if (jobId) {
+      jobLogger.log(jobName + ' - ' + status);
+      jobLogger.log(error.stack);
+      await postprocesJobExecution(jobId, jobLogger, JobStatus.FAILURE);
+    } else {
+      jobLogger.log(error);
+    }
   }
 }
 
+async function postprocesJobExecution(jobId, jobLogger, jobStatus) {
+  await cronJobDbUtilService.updateDbData({ jobStatus: jobStatus, endTime: ctrl.formatDateTime(new Date()), jobLogs: jobLogger.getLogs(), jobId: jobId })
+}
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Tech Catalog Daily Import (runs daily at 5:00 AM)
 export async function runTechCatalogImportJob() {
@@ -52,15 +67,15 @@ export async function runTechCatalogImportJob() {
     sendLogQuery(jobName + ' - ' + status, jobUser, jobName, res);
 
     // run daily import
-    runDailyTechCatalogImport({ body : { refreshtoken : process.env.FLEXERA_REFRESH_TOKEN, requester : jobUser } }, res)
-    .then((response) => {
-      status = `finished successfully:  \n` + response;
-      console.log(jobName + ' - ' + status);
-    })
-    .catch((error) => {
-      status = `error occurred while running:  \n` + error;
-      console.log(jobName + ' - ' + status);
-    });
+    runDailyTechCatalogImport({ body: { refreshtoken: process.env.FLEXERA_REFRESH_TOKEN, requester: jobUser } }, res)
+      .then((response) => {
+        status = `finished successfully:  \n` + response;
+        console.log(jobName + ' - ' + status);
+      })
+      .catch((error) => {
+        status = `error occurred while running:  \n` + error;
+        console.log(jobName + ' - ' + status);
+      });
 
   } catch (error) {
     status = `error occurred starting:  \n` + error;
@@ -70,30 +85,6 @@ export async function runTechCatalogImportJob() {
 }
 
 // -------------------------------------------------------------------------------------------------
-// CRON JOB: Touch point Daily Import (runs daily at 5:00 AM)
-export async function runTouchpointImportJob() {
-
-  const jobName = 'CRON JOB: Touchpoint Daily Import';
-  let status = 'executed';
-
-  console.log(jobName + ' - ' + status);
-
-  try {
-
-    let res = {};
-
-    // log execution of job
-    sendLogQuery(jobName + ' - ' + status, jobUser, jobName, res);
-
-    // run daily import
-    importWebsiteData();
-  } catch (error) {
-    status = `error occurred starting:  \n` + error;
-    console.log(jobName + ' - ' + status);
-  }
-
-}
-
 /*
  * Function to get FISMA info from ServiceNow API
  * everyday at 20:00 Eastern Time
@@ -103,7 +94,7 @@ const request = require('request');
 const fetch = require("node-fetch");
 let base64 = require('base-64');
 */
-/* 
+/*
 cron.schedule('0 20 * * *', () => {
   getData(fismaOptions.url);
 });
@@ -179,3 +170,4 @@ const putData = async data => {
   }
 
 });*/
+

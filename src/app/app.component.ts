@@ -1,7 +1,7 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { distinctUntilChanged, filter } from 'rxjs/operators';
+import { SharedService } from '@services/shared/shared.service';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -10,13 +10,13 @@ declare var gtag: Function;
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
   title = 'gear3';
   isBrowser: boolean;
 
-  constructor(private router: Router, @Inject(PLATFORM_ID) private platformId: any) {
+  constructor(private router: Router, private sharedService: SharedService, @Inject(PLATFORM_ID) private platformId: any) {
     this.isBrowser = isPlatformBrowser(this.platformId);
     this.router.events.subscribe(event => {
       // Send page_view event to GA
@@ -44,8 +44,8 @@ export class AppComponent implements OnInit {
 
     // SideNavbar Offset
     let footerElem: HTMLElement = document.getElementById('footer');
-    let sideNavElem: any = document.getElementsByTagName('ng-sidebar-container')[0];
-    sideNavElem.style['height'] = `${window.innerHeight - topNavElem.offsetHeight - footerElem.offsetHeight}px`;
+    let sideNavElem: any = document.getElementsByTagName('p-sidebar')[0];
+    sideNavElem.style['height'] = `${window.innerHeight - topNavElem.offsetHeight - footerElem.offsetHeight + 10}px`;
   }
 
   showPopup(url, title, w, h) {
@@ -71,6 +71,16 @@ export class AppComponent implements OnInit {
      if (window.focus) {
       popupWindow.focus();
      } 
+  }
+
+  toggleSidebar() {
+    this.sharedService.toggleSidebar();
+  }
+
+  onSidebarIconsKeyDown(e: KeyboardEvent) {
+    if(e.code === 'Space' || e.code === 'Enter') {
+      this.toggleSidebar();
+    }
   }
 
 }

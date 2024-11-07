@@ -76,7 +76,7 @@ export class WebsitesModalComponent implements OnInit {
     this.modalService.currentWebsite.subscribe((website) => {
       this.website = website;
       this.apiService
-        .getWebsiteScans(this.website.Website_ID)
+        .getWebsiteScans(this.website.website_id)
         .subscribe(
           (websiteScanData) =>
             (this.websiteScans =
@@ -85,7 +85,7 @@ export class WebsitesModalComponent implements OnInit {
                 : this.getBlankWebsiteScan())
         );
       this.apiService
-        .getWebsiteServiceCategories(this.website.Website_ID)
+        .getWebsiteServiceCategories(this.website.website_id)
         .subscribe(
           (websiteServiceCategories) =>
             (this.websiteServiceCategories = websiteServiceCategories)
@@ -139,7 +139,7 @@ export class WebsitesModalComponent implements OnInit {
     return [
       {
         Scan_ID: 0,
-        Website_ID: this.website.Website_ID,
+        website_id: this.website.website_id,
         desktop_img_file_name: 'desktop.png',
         mobile_img_file_name: 'mobile.png',
         scan_date: '',

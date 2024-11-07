@@ -19,10 +19,14 @@ const bodyParser = require('body-parser'),
 
   api = require('./api/index'),
 
+  googleApiService = require('./api/util/google-api-service.js')
   port = process.env.PORT || 3000,
 
   ExtractJWT = passportJWT.ExtractJwt,
   JWTStrategy = passportJWT.Strategy;
+
+  const pocJobHandler = require('./api/cron-jobs/poc-job-handler.js');
+  const tpiJobHandler = require('./api/cron-jobs/tpi-job-handler.js');
 
   const CryptoJS = require("crypto-js")
 
@@ -428,88 +432,17 @@ const putData = async data => {
 
 // -------------------------------------------------------------------------------------------------
 // Function to load POC data every Wednesday at 5:00 AM ET from the csv file in scripts/pocs
-const fastcsv = require("fast-csv");
 const { consoleTestResultHandler } = require('tslint/lib/test.js');
 
-cron.schedule(process.env.POC_CRON, () => { //PRODUCTION
-  let stream = fs.createReadStream("scripts/pocs/GSA_Pocs.csv");
-  let pocCsv = [];
-  let csvStream = fastcsv
-    .parse()
-    .on("data", function (data) {
-      pocCsv.push(data);
-    })
-    .on("end", function () {
-      // remove the first line: header
-      pocCsv.shift();
-
-      // create a new connection to the database
-      const db = mysql.createConnection(dbCredentials);
-
-      db.connect(error => {
-        if (error) {
-          console.error(error);
-        } else {
-          let clearQuery =
-            "DELETE FROM tmp_obj_ldap_poc";
-          db.query(clearQuery, (error, response) => {
-            console.log(error || 'Clear tmp_obj_ldap_poc records: ' + response);
-          });
-         
-          let insertQuery =
-            "REPLACE INTO tmp_obj_ldap_poc (SamAccountName, FirstName, LastName, Email, Phone, OrgCode, Position, EmployeeType, Enabled) VALUES ?";
-          db.query(insertQuery, [pocCsv], (error, response) => {
-            console.log(error || 'Insert into tmp_obj_ldap_poc: ' + response);
-          });
-         
-          let upsertQuery =
-            "INSERT INTO obj_ldap_poc (SamAccountName, FirstName, LastName, Email, Phone, OrgCode, Position, EmployeeType, Enabled) "
-            + "SELECT t.SamAccountName, t.FirstName, t.LastName, t.Email, t.Phone, t.OrgCode, t.Position, t.EmployeeType, t.Enabled "
-            + "FROM tmp_obj_ldap_poc t "
-            + "ON DUPLICATE KEY UPDATE FirstName = VALUES(FirstName), LastName = VALUES(LastName),"
-            + "Email = VALUES(Email), Phone = VALUES(Phone), OrgCode = VALUES(OrgCode),"
-            + "Position = VALUES(Position), EmployeeType = VALUES(EmployeeType), Enabled = VALUES(Enabled) ";
-          db.query(upsertQuery, (error, response) => {
-            console.log(error || 'Insert into/update obj_ldap_poc: ' + response);
-          });
-
-          let updateQuery =
-            "UPDATE obj_ldap_poc poc "
-            + "SET Enabled = 'FALSE' "
-            + "WHERE poc.SamAccountName NOT IN (SELECT SamAccountName FROM tmp_obj_ldap_poc)";
-          db.query(updateQuery, (error, response) => {
-            console.log(error || 'Update obj_ldap_poc to disable poc: ' + response);
-          });
-
-          let deleteQuery =
-            "DELETE FROM obj_ldap_poc "
-            + "WHERE Enabled = 'FALSE' "
-            + "AND SamAccountName NOT IN (SELECT obj_ldap_SamAccountName FROM zk_technology_poc)";
-          db.query(deleteQuery, (error, response) => {
-            console.log(error || 'Delete obj_ldap_poc disabled records: ' + response);
-          });
-
-          let updateEndOfLifeQuery = "UPDATE obj_ldap_poc poc "
-            + "SET EmployeeType = 'Separated' "
-            + "WHERE poc.SamAccountName NOT IN (SELECT SamAccountName FROM tmp_obj_ldap_poc) AND Enabled = 'FALSE' AND poc.EmployeeType = '';"
-            + "INSERT INTO `gear_schema`.`obj_ldap_poc` "
-            + "(`SamAccountName`, `FirstName`, `LastName`, `Email`, `EmployeeType`, `Enabled`, `RISSO`) "
-            + "VALUES ('AssistTechTeam', 'Assist', 'Tech Team', 'assisttechteam@gsa.gov', 'Group', 'True', '24');"; //Adding group account as part of CTO team request
-          db.query(updateEndOfLifeQuery, (error, response) => {
-            console.log(error || 'Update obj_ldap_poc to separate poc: ' + JSON.stringify(response));
-          });
-        }
-      });
-    });
-
-  stream.pipe(csvStream);
+cron.schedule(process.env.POC_CRON, async () => { //PRODUCTION
+  await pocJobHandler.runPocJob();
 });
 
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Google Sheets API - Update All Related Records (runs every weekday at 11:00 PM)
-cron.schedule(process.env.RECORDS_CRON, () => { 
-//cron.schedule('50 14 * * 1-5', () => { //DEBUGGING
-  cronCtrl.runUpdateAllRelatedRecordsJob();
+cron.schedule(process.env.RECORDS_CRON, async () => { 
+  await googleApiService.saveToken().catch(console.error);
+  await cronCtrl.runUpdateAllRelatedRecordsJob();
 });
 
 // -------------------------------------------------------------------------------------------------
@@ -526,6 +459,6 @@ cron.schedule(process.env.TECH_CATALOG_CRON2, () => {
 // -------------------------------------------------------------------------------------------------
 
 // CRON JOB: Touchpoints API - Update Websites (runs every day at 11:05 PM)
-cron.schedule(process.env.TOUCHPOINTS_CRON, () => { 
-  cronCtrl.runTouchpointImportJob();
+cron.schedule(process.env.TOUCHPOINTS_CRON, async () => { 
+  await tpiJobHandler.runTouchpointImportJob();
 });

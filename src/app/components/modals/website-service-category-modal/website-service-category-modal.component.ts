@@ -37,7 +37,7 @@ export class WebsiteServiceCategoryModalComponent implements OnInit {
       showColumns: false,
       showExport: true,
       exportFileName: null,
-      headerStyle: 'bg-royal-blue',
+      headerStyle: 'bg-royal-blue text-white',
       pagination: false,
       search: true,
       sortName: 'domain',
@@ -88,18 +88,19 @@ export class WebsiteServiceCategoryModalComponent implements OnInit {
       }
     );
 
-    $('#websiteServiceCategoryWebsites').bootstrapTable({
-      columns: this.serviceCategoryWebsitesColumnDefs,
-      data: [],
-    });
+    $('#websiteServiceCategoryWebsites').bootstrapTable(
+      $.extend(this.serviceCategoryWebsitesTableOptions, {
+        columns: this.serviceCategoryWebsitesColumnDefs,
+        data: [],
+    }));
 
     const self = this;
     $(document).ready(() => {
       // Method to handle click events on the Related Systems table
-      $('#serviceCategoryRelSysTable').on('click-row.bs.table', function (e, row) {
+      $('#websiteServiceCategoryWebsites').on('click-row.bs.table', function (e, row) {
         // Hide First Modal before showing new modal
         $('#websiteServiceCategoryDetail').modal('hide');
-        self.tableService.systemsTableClick(row);
+        self.tableService.websitesTableClick(row);
       }.bind(this));
     });
 

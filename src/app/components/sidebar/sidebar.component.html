@@ -1,0 +1,119 @@
+<p-sidebar [(visible)]="sharedService.sidebarVisible" transitionOptions="150ms cubic-bezier(0, 0, 0, 1)" (mouseleave)="closeSidebar()">
+  <ng-template pTemplate="headless">
+    <div class="sidebar-content-wrapper">
+    <p-accordion>
+      <div class="sidebar-link it-strategy">
+        <p-accordionTab>
+          <ng-template pTemplate="icon"></ng-template>
+          <ng-template pTemplate="header" id="firstLink">
+              <span>IT Strategy</span>
+              <i class="fas fa-puzzle-piece fa-lg fa-fw"></i>
+          </ng-template>
+          <ng-template pTemplate="content">
+            <a class="sidebar-sublink" routerLink="/strategic_framework">IT Strategic Framework</a>
+            <a class="sidebar-sublink" routerLink="/investments">IT Investments</a>
+            <a 
+              class="sidebar-sublink"
+              href="https://insite.gsa.gov/directives-library/staff-offices?staff_office=I"
+              target="_blank"
+              rel="noopener">IT Policies <i class="fas fa-external-link-alt"></i></a>
+          </ng-template>
+        </p-accordionTab>
+    </div>
+    <div class="sidebar-link gsa-enterprise">
+      <p-accordionTab>
+        <ng-template pTemplate="icon"></ng-template>
+        <ng-template pTemplate="header">
+          <span>GSA Enterprise</span>
+          <i class="fas fa-sitemap fa-lg fa-fw"></i>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <a class="sidebar-sublink" routerLink="/capabilities_model">Business Capability Model</a>
+          <a class="sidebar-sublink" routerLink="/capabilities">Business Capability List</a>
+          <a class="sidebar-sublink" routerLink="/org_chart">Organization Chart</a>
+          <a class="sidebar-sublink" routerLink="/organizations">Organization List</a>
+          <a class="sidebar-sublink" routerLink="/website_service_category">Website Service Category List</a>
+        </ng-template>
+      </p-accordionTab>
+    </div>
+    <div class="sidebar-link business-systems">
+      <p-accordionTab>
+        <ng-template pTemplate="icon"></ng-template>
+        <ng-template pTemplate="header">
+          <span>Business Systems</span>
+          <i class="fas fa-laptop fa-lg fa-fw"></i>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <a class="sidebar-sublink" routerLink="/systems">Business Systems & Subsystems</a>
+          <a class="sidebar-sublink" routerLink="/systems_TIME">TIME Report</a>
+          <a class="sidebar-sublink" routerLink="/records_mgmt">Records Management</a>
+          <a class="sidebar-sublink" routerLink="/websites">GSA Websites</a>
+        </ng-template>
+      </p-accordionTab>
+    </div>
+    <div class="sidebar-link security">
+      <p-accordionTab>
+        <ng-template pTemplate="icon"></ng-template>
+        <ng-template pTemplate="header">
+          <span>Security</span>
+          <i class="fas fa-shield-alt fa-lg fa-fw"></i>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <a class="sidebar-sublink" routerLink="/FISMA">FISMA Systems Inventory</a>
+          <a class="sidebar-sublink" routerLink="/FISMA_POC">FISMA System POCs</a>
+        </ng-template>
+      </p-accordionTab>
+    </div>
+    <div class="sidebar-link technologies">
+      <p-accordionTab>
+        <ng-template pTemplate="icon"></ng-template>
+        <ng-template pTemplate="header">
+          <span>Technologies</span>
+          <i class="fas fa-microchip fa-lg fa-fw"></i>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <a class="sidebar-sublink" routerLink="/it_standards">IT Standards List</a>
+          <a 
+            class="sidebar-sublink"
+            href="https://sites.google.com/a/gsa.gov/it_standards/software-approvals#h.vioogtbleinq"
+            target="_blank"
+            rel="noopener">IT Standards Approval Process <i class="fas fa-external-link-alt"></i></a>
+        </ng-template>
+      </p-accordionTab>
+    </div>
+    <div class="sidebar-link enterprise-architecture">
+      <p-accordionTab>
+        <ng-template pTemplate="icon"></ng-template>
+        <ng-template pTemplate="header">
+          <span>Enterprise Architecture</span>
+          <i class="fas fa-network-wired fa-lg fa-fw"></i>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <a class="sidebar-sublink" routerLink="/gear_model">GEAR Model Diagram</a>
+        </ng-template>
+      </p-accordionTab>
+    </div>
+    <br>
+    <div class="sidebar-link additional-info">
+      <p-accordionTab>
+        <ng-template pTemplate="icon"></ng-template>
+        <ng-template pTemplate="header">
+          <span>Additional Information</span>
+          <i class="fab fa-wpforms fa-lg fa-fw fa-fw"></i>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <a class="sidebar-sublink" routerLink="/forms">Access Forms</a>
+          <a class="sidebar-sublink" routerLink="/glossary">Glossary</a>
+          <a class="sidebar-sublink" routerLink="/data_dictionary">Data Dictionary</a>
+          <a 
+            class="sidebar-sublink"
+            href="https://gsa.github.io/GEAR-Documentation/api-docs/"
+            target="_blank"
+            rel="noopener">API Documentation <i class="fas fa-external-link-alt"></i></a>
+        </ng-template>
+      </p-accordionTab>
+    </div>
+  </p-accordion>
+</div>
+  </ng-template>
+</p-sidebar>

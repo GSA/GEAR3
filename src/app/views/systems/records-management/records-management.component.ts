@@ -1,14 +1,16 @@
 import { PLATFORM_ID, Component, OnInit, Inject } from '@angular/core';
-import { isPlatformBrowser, Location } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
-import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
 
 import { trigger, state, style, animate, transition } from '@angular/animations';
+
+import { Column } from '../../../common/table-classes';
+import { Record } from '@api/models/records.model';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -34,116 +36,96 @@ export class RecordsManagementComponent implements OnInit {
   
   constructor(
     private apiService: ApiService,
-    private location: Location,
-    private modalService: ModalsService,
     private route: ActivatedRoute,
-    private router: Router,
     public sharedService: SharedService,
     private tableService: TableService,
     private titleService: Title,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
-  // Records Table Options
-  tableOptions: {} = this.tableService.createTableOptions({
-    advancedSearch: true,
-    idTable: 'RecordsTable',
-    classes: 'table-hover table-dark clickable-table',
-    showColumns: true,
-    showExport: true,
-    exportFileName: 'GSA_Record_Schedules',
-    exportIgnoreColumn:[],
-    headerStyle: 'bg-danger',
-    pagination: true,
-    search: true,
-    sortName: 'GSA_Number',
-    sortOrder: 'asc',
-    showToggle: true,
-    url: this.apiService.recordsUrl,
-  });
+  tableData: Record[] = [];
 
-  // Apps Table Columns
-  columnDefs: any[] = [
+  tableCols: Column[] = [
     {
       field: 'GSA_Number',
-      title: 'GSA Number',
-      sortable: true,
+      header: 'GSA Number',
+      isSortable: true,
     },
     {
       field: 'Record_Item_Title',
-      title: 'Record Title',
-      sortable: true,
+      header: 'Record Title',
+      isSortable: true,
     },
     {
       field: 'Description',
-      title: 'Description',
-      sortable: false,
-      visible: true,
+      header: 'Description',
+      isSortable: false,
+      showColumn: true,
       formatter: this.sharedService.formatDescription
     },
     {
       field: 'Record_Status',
-      title: 'Status',
-      visible: false,
-      sortable: true,
+      header: 'Status',
+      showColumn: false,
+      isSortable: true,
     },
     {
       field: 'RG',
-      title: 'Record Group',
-      visible: false,
-      sortable: true,
+      header: 'Record Group',
+      showColumn: false,
+      isSortable: true,
     },
     {
       field: 'Retention_Instructions',
-      title: 'Retention Instructions',
-      sortable: false,
-      visible: false,
+      header: 'Retention Instructions',
+      isSortable: false,
+      showColumn: false,
       class: 'text-truncate',
     },
     {
       field: 'Legal_Disposition_Authority',
-      title: 'Disposition Authority (DA)',
-      sortable: true,
+      header: 'Disposition Authority (DA)',
+      isSortable: true,
     },
     {
       field: 'Type_Disposition',
-      title: 'Disposition Type',
-      visible: false,
-      sortable: true,
+      header: 'Disposition Type',
+      showColumn: false,
+      isSortable: true,
     },
     {
       field: 'Date_DA_Approved',
-      title: 'DA Approval Date',
-      visible: false,
-      sortable: true,
+      header: 'DA Approval Date',
+      showColumn: false,
+      isSortable: true,
     },
     {
       field: 'Disposition_Notes',
-      title: 'Disposition Notes',
-      sortable: false,
-      visible: false,
+      header: 'Disposition Notes',
+      isSortable: false,
+      showColumn: false,
       class: 'text-truncate',
     },
     {
       field: 'FP_Category',
-      title: 'FP Category',
-      visible: false,
-      sortable: true,
+      header: 'FP Category',
+      showColumn: false,
+      isSortable: true,
     },
     {
       field: 'PII',
-      title: 'PII',
-      sortable: true,
+      header: 'PII',
+      isSortable: true,
     },
     {
       field: 'CUI',
-      title: 'CUI',
-      sortable: true,
+      header: 'CUI',
+      isSortable: true,
     },
     {
       field: 'FY_Retention_Years',
-      title: 'Retention Years',
-      sortable: true,
+      header: 'Retention Years',
+      isSortable: true,
     },
   ];
 
@@ -159,26 +141,7 @@ export class RecordsManagementComponent implements OnInit {
     // Set JWT when logged into GEAR Manager when returning from secureAuth
     this.sharedService.setJWTonLogIn();
 
-    $('#recordsTable').bootstrapTable(
-      $.extend(this.tableOptions, {
-        columns: this.columnDefs,
-        data: [],
-      })
-    );
-
-    const self = this;
-    $(document).ready(() => {
-      // Method to handle click events on the Records table
-      $('#recordsTable').on(
-        'click-row.bs.table',
-        function (e, row) {
-          this.tableService.recordsTableClick(row);
-        }.bind(this)
-      );
-
-      //Enable table sticky header
-      self.sharedService.enableStickyHeader("recordsTable");
-    });
+    this.apiService.getRecords().subscribe(r => this.tableData = r);
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {

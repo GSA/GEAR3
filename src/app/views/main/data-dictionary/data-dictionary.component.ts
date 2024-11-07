@@ -2,7 +2,9 @@ import { ApiService } from '@services/apis/api.service';
 import { PLATFORM_ID, Component, OnInit, Inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { SharedService } from '@services/shared/shared.service';
-import { TableService } from '@services/tables/table.service';
+
+import { Column } from '../../../common/table-classes';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -18,63 +20,48 @@ export class DataDictionaryComponent implements OnInit {
 
   constructor(
     private sharedService: SharedService,
-    private tableService: TableService,
-    private apiService: ApiService,
+    private apiService: ApiService, 
     @Inject(PLATFORM_ID) private platformId: Object) {}
 
-  // Data Dictionary Table Options
-  ddTableOptions: {} = this.tableService.createTableOptions({
-    advancedSearch: false,
-    idTable: null,
-    classes: "table-hover table-dark table-responsive",
-    showColumns: true,
-    showExport: true,
-    exportFileName: 'GEAR_Data_Dictionary',
-    headerStyle: null,
-    pagination: true,
-    search: true,
-    sortName: 'Term',
-    sortOrder: 'asc',
-    showToggle: true
-  });
+  tableData: DataDictionary[] = [];
 
-  // Data Dictionary Table Columns
-  ddColumnDefs: any[] = [{
+  tableCols: Column[] = [
+  {
     field: 'ReportName',
-    title: 'Report Name',
-    sortable: true
+    header: 'Report Name',
+    isSortable: true
   },
   {
     field: 'Term',
-    title: 'Term',
-    sortable: true
+    header: 'Term',
+    isSortable: true
   },
   {
     field: 'TermDefinition',
-    title: 'Definition'
+    header: 'Definition'
   },
   {
     field: 'DefinitionSource',
-    title: 'Definition Source',
-    sortable: true,
+    header: 'Definition Source',
+    isSortable: true,
     class: 'table-column-break-word'
   },
   {
     field: 'DefinitionSourceLink',
-    title: 'Definition Source Link',
+    header: 'Definition Source Link',
     formatter: this.sharedService.linksFormatter,
-    visible: false
+    showColumn: false
   },
   {
     field: 'DataSource',
-    title: 'Data Source',
-    sortable: true
+    header: 'Data Source',
+    isSortable: true
   },
   {
     field: 'DataSourceLink',
-    title: 'Data Source Link',
+    header: 'Data Source Link',
     formatter: this.sharedService.linksFormatter,
-    visible: false
+    isSortable: false
   }
 ];
 
@@ -83,21 +70,12 @@ export class DataDictionaryComponent implements OnInit {
       return;
     }
     this.apiService.getEntireDataDictionary().subscribe(defs => {
-      $('#dataDictionaryTable').bootstrapTable($.extend(this.ddTableOptions, {
-        columns: this.ddColumnDefs,
-        data: defs,
-      }));
+      this.tableData = defs;
     });
 
     // Enable popovers
     $(function () {
       $('[data-toggle="popover"]').popover()
     })
-
-    const self = this;
-    $(document).ready(function() {
-      //Enable table sticky header
-      self.sharedService.enableStickyHeader("dataDictionaryTable");
-    });
   }
 }
