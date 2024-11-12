@@ -68,13 +68,14 @@ export class AppComponent implements OnInit {
      } 
   }
 
-  toggleSidebar() {
-    this.sharedService.toggleSidebar();
+
+  onSidebarIconsMouseEnter() {
+    this.sharedService.openSidebar();
   }
 
   onSidebarIconsKeyDown(e: KeyboardEvent) {
     if(e.code === 'Space' || e.code === 'Enter') {
-      this.toggleSidebar();
+      this.sharedService.openSidebar();
     }
   }
 
