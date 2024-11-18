@@ -1,0 +1,131 @@
+.content-body {
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+  padding-right: 3rem;
+
+  @media (max-width: 1920px) {
+    padding-right: 5rem;
+  }
+}
+
+.footer {
+  color: #9d9d9d;
+  text-align: center;
+  background-color: #222;
+  display: flex;
+  flex-direction: column;
+}
+
+.vertical-center {
+  z-index: 100;
+  padding: 10px;
+  margin: 0;
+  position: fixed;
+  top: 50%;
+  right: -3%;
+  border: none;
+  transform: rotate(270deg) translateY(-50%);
+  cursor: pointer;
+  background: rgb(35, 120, 195);
+  font-size: 15px;
+  font-weight: bold;
+  color: rgb(255, 255, 255);
+  border-top-right-radius: 4px;
+  border-top-left-radius: 4px;
+}
+
+.identifier {
+  position: fixed;
+  right: 0;
+  left: 0;
+  bottom: 0;
+}
+
+.sidebar-icon-container {
+  min-height: 100%;
+  padding-right: 4.1rem;
+
+  & .icon-break {
+    padding: .78rem;
+  }
+}
+
+.sidebar-content-wrapper {
+  display: flex;
+}
+
+.sidebar-icon-wrap {
+  position: fixed;
+  top: 67px;
+
+  @media (max-width: 1121px) {
+    top: 95px;
+  }
+}
+
+.sidebar-icon {
+  padding: 1.32rem;
+  font-size: .875rem;
+    font-weight: 200;
+    letter-spacing: 1px;
+    line-height: 1.5;
+  color: white;
+  display: flex;
+  flex-direction: column;
+
+  &.it-strategy {
+    background-color: #14883c;
+    &:hover {
+        background-color: #389f5c;
+    }
+  }
+  &.gsa-enterprise {
+    background-color: #2b60de;
+    &:hover {
+        background-color: #214599;
+    }
+  }
+  
+  &.business-systems {
+      background-color: #ce4844;
+      &:hover {
+          background-color: #c9302c;
+      }
+  }
+  
+  &.security {
+      background-color: #aa6708;
+      &:hover {
+          background-color: #ffbe2e;
+      }
+  }
+  
+  &.technologies {
+      background-color: #008080;
+      &:hover {
+          background-color: #076464;
+      }
+  }
+  
+  &.enterprise-architecture {
+      background-color: #800080;
+      &:hover {
+          background-color: #4d024d;
+      }
+  }
+  
+  &.additional-info {
+      background-color: #027eb2;
+      &:hover {
+          background-color: #00bde3;
+      }
+  }
+}
+
+.page-wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}

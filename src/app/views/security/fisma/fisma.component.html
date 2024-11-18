@@ -30,27 +30,14 @@
     </a>
   </div>
 
-  <div class="card-body card-text justify-content-center">
-    <div class="w-100">
+  <div class="card-body card-text">
+    <!-- Main Table -->
+    <app-table [tableCols]="tableCols" [tableData]="tableData" [preFilteredTableData]="filteredTableData" exportName="FISMA" reportStyle="security" [filterButtons]="filterButtons" tableType="fisma">
       <!-- FISMA Definition Popover -->
       <a tabindex="0" class="btn btn-sm btn-info text-white position-absolute float-right w-11" role="button" data-toggle="popover"
-        data-trigger="focus" data-placement="auto" data-html="true" title="" data-content="A FISMA system represents a logical boundary for which common security controls and policies are applied to a grouping of related assets (e.g., networks, devices, and people) to accomplish some mission or business objective. It is informed by security artifacts, such as a system security and privacy plan (SSPP). (<a href='https://csrc.nist.gov/projects/risk-management/fisma-background' target='_blank' 
-        rel='noopener'>Link</a>)">
-        FISMA Definition
-      </a>
-
-      <!-- Filters -->
-      <div class="text-center">
-        <span class="my-auto mr-3">Filter Buttons:</span>
-        <button role="button" name="fismaRetiredBttn" class="btn btn-primary" (click)="showRetired()"
-          [hidden]="retiredTable">Retired FISMA Systems</button>
-
-        <button role="button" name="fismaBttn" class="btn btn-primary" (click)="backToMainFisma()"
-          [hidden]="!retiredTable">Back to Active FISMA Systems</button>
-      </div>
-    </div>
-
-    <!-- Main Table -->
-    <table id="fismaTable" aria-label="The FISMA System Inventory table provides a list of security system boundaries and information and contact information about each FISMA system."></table>
-  </div>
+      data-trigger="focus" data-placement="auto" data-html="true" title="" data-content="A FISMA system represents a logical boundary for which common security controls and policies are applied to a grouping of related assets (e.g., networks, devices, and people) to accomplish some mission or business objective. It is informed by security artifacts, such as a system security and privacy plan (SSPP). (<a href='https://csrc.nist.gov/projects/risk-management/fisma-background' target='_blank' 
+      rel='noopener'>Link</a>)">
+      FISMA Definition
+    </a>
+    </app-table>
 </div>

@@ -364,7 +364,7 @@ export class TableService {
   public websitesTableClick(data: any, addRoute: boolean = true) {
     var options: ClickOptions = {
       data: data,
-      dataID: 'Website_ID',
+      dataID: 'website_id',
       update: 'website',
       detailModalID: '#websiteDetail',
       sysTableID: '#websitesRelSysTable',
@@ -497,8 +497,8 @@ export class TableService {
             websites_mappings.map(({ obj_websites_Id }) => obj_websites_Id)
           );
           // Filter Websites to the IDs related to the one website
-          system_related_websites = websites.filter(({ Website_ID }) =>
-            websiteID_from_mappings.has(parseInt(Website_ID))
+          system_related_websites = websites.filter(({ website_id }) =>
+            websiteID_from_mappings.has(parseInt(website_id))
           ); // Parse into int as GoogleAPI makes everything strings
           // Update related websites table with filtered systems
           $('#systemWebsitesTable').bootstrapTable('refreshOptions', {
@@ -711,6 +711,10 @@ export class TableService {
 
       case 'website':
         this.websitesTableClick(previousModal.data);
+        break;
+
+      case 'websiteServiceCategory':
+        this.websiteServiceCategoryTableClick(previousModal.data);
         break;
 
       default:

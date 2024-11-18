@@ -9,6 +9,7 @@ import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
 
 import { System } from '@api/models/systems.model';
+import { Column, FilterButton, TwoDimArray } from '../../../common/table-classes';
 
 // Declare D3 & Sankey library
 declare var d3: any;
@@ -73,181 +74,205 @@ export class SystemsComponent implements OnInit {
     url: this.apiService.sysUrl,
   });
 
-  // Systems Table Columns
-  columnDefs: any[] = [
+  tableData: System[] = [];
+  filteredTableData: System[] = [];
+
+  filterButtons: TwoDimArray<FilterButton> = [
+    [
+      {
+        buttonText: 'Cloud Enabled',
+        filters: [
+          { field: 'Status', value: 'Active' },
+          { field: 'BusApp', value: 'Yes' },
+          { field: 'CloudYN', value: 'Yes' }
+        ]
+      },
+      {
+        buttonText: 'Inactive',
+        filters: [
+          {field: 'Status', value: 'Inactive'},
+          {field: 'BusApp', value: 'Yes'}
+        ]
+      }
+    ]
+  ];
+
+  tableCols: Column[] = [];
+
+  defaultTableCols: Column[] = [
     {
       field: 'ID',
-      title: 'ID',
-      sortable: true,
-      visible: false,
+      header: 'ID',
+      isSortable: true,
+      showColumn: false,
     },
     {
       field: 'DisplayName',
-      title: 'Alias/Acronym',
-      sortable: true,
+      header: 'Alias/Acronym',
+      isSortable: true,
     },
     {
       field: 'Name',
-      title: 'System Name',
-      sortable: true,
+      header: 'System Name',
+      isSortable: true,
     },
     {
       field: 'Description',
-      title: 'Description',
-      sortable: true,
-      visible: true,
+      header: 'Description',
+      isSortable: true,
+      showColumn: true,
       formatter: this.sharedService.formatDescription
     },
     {
       field: 'SystemLevel',
-      title: 'System Level',
-      sortable: true,
+      header: 'System Level',
+      isSortable: true,
     },
     {
       field: 'Status',
-      title: 'Status',
-      sortable: true,
+      header: 'Status',
+      isSortable: true,
     },
     {
       field: 'RespOrg',
-      title: 'Responsible Org',
-      sortable: true,
+      header: 'Responsible Org',
+      isSortable: true,
     },
     {
       field: 'BusOrgSymbolAndName',
-      title: 'SSO/CXO',
-      sortable: true,
+      header: 'SSO/CXO',
+      isSortable: true,
     },
     {
       field: 'BusOrg',
-      title: 'Business Org',
-      sortable: true,
+      header: 'Business Org',
+      isSortable: true,
     },
     {
       field: 'ParentName',
-      title: 'Parent System',
-      sortable: true,
-      visible: false,
+      header: 'Parent System',
+      isSortable: true,
+      showColumn: false,
     },
     {
       field: 'CSP',
-      title: 'Hosting Provider',
-      sortable: true,
-      visible: false,
+      header: 'Hosting Provider',
+      isSortable: true,
+      showColumn: false,
     },
     {
       field: 'CloudYN',
-      title: 'Cloud Hosted?',
-      sortable: true,
-      visible: false,
+      header: 'Cloud Hosted?',
+      isSortable: true,
+      showColumn: false,
     },
     {
       field: 'ServiceType',
-      title: 'Cloud Service Type',
-      sortable: true,
-      visible: false,
+      header: 'Cloud Service Type',
+      isSortable: true,
+      showColumn: false,
     },
     {
       field: 'AO',
-      title: 'Authorizing Official',
-      sortable: true,
-      visible: false,
+      header: 'Authorizing Official',
+      isSortable: true,
+      showColumn: false,
       formatter: this.sharedService.pocStringNameFormatter,
     },
     {
       field: 'SO',
-      title: 'System Owner',
-      sortable: true,
-      visible: false,
+      header: 'System Owner',
+      isSortable: true,
+      showColumn: false,
       formatter: this.sharedService.pocStringNameFormatter,
     },
     {
       field: 'BusPOC',
-      title: 'Business POC',
-      sortable: true,
-      visible: false,
+      header: 'Business POC',
+      isSortable: true,
+      showColumn: false,
       formatter: this.sharedService.pocStringNameFormatter,
     },
     {
       field: 'TechPOC',
-      title: 'Technical POC',
-      sortable: true,
-      visible: false,
+      header: 'Technical POC',
+      isSortable: true,
+      showColumn: false,
       formatter: this.sharedService.pocStringNameFormatter,
     },
     {
       field: 'DataSteward',
-      title: 'Data Steward',
-      sortable: true,
-      visible: false,
+      header: 'Data Steward',
+      isSortable: true,
+      showColumn: false,
       formatter: this.sharedService.pocStringNameFormatter,
     },
   ];
 
   // Inactive Column Defs
-  inactiveColumnDefs: any[] = [
+  inactiveColumnDefs: Column[] = [
     {
       field: 'Name',
-      title: 'System Name',
-      sortable: true,
+      header: 'System Name',
+      isSortable: true,
     },
     {
       field: 'Description',
-      title: 'Description',
-      sortable: true,
-      visible: true,
+      header: 'Description',
+      isSortable: true,
+      showColumn: true,
       formatter: this.sharedService.formatDescription
     },
     {
       field: 'SystemLevel',
-      title: 'System Level',
-      sortable: true,
+      header: 'System Level',
+      isSortable: true,
     },
     {
       field: 'Status',
-      title: 'Status',
-      sortable: true,
+      header: 'Status',
+      isSortable: true,
     },
     {
       field: 'RespOrg',
-      title: 'Responsible Org',
-      sortable: true,
+      header: 'Responsible Org',
+      isSortable: true,
     },
     {
       field: 'BusOrg',
-      title: 'Business Org',
-      sortable: true,
+      header: 'Business Org',
+      isSortable: true,
     },
     {
       field: 'CSP',
-      title: 'Cloud Server Provider',
-      sortable: true,
-      visible: false,
+      header: 'Cloud Server Provider',
+      isSortable: true,
+      showColumn: false,
     },
     {
       field: 'CloudYN',
-      title: 'Cloud Hosted?',
-      sortable: true,
-      visible: false,
+      header: 'Cloud Hosted?',
+      isSortable: true,
+      showColumn: false,
     },
     {
       field: 'AO',
-      title: 'Authorizing Official',
-      sortable: true,
-      visible: false,
+      header: 'Authorizing Official',
+      isSortable: true,
+      showColumn: false,
       formatter: this.sharedService.pocStringNameFormatter,
     },
     {
       field: 'SO',
-      title: 'System Owner',
-      sortable: true,
-      visible: false,
+      header: 'System Owner',
+      isSortable: true,
+      showColumn: false,
       formatter: this.sharedService.pocStringNameFormatter,
     },
     {
       field: 'InactiveDate',
-      title: 'Inactive Date',
-      sortable: true,
+      header: 'Inactive Date',
+      isSortable: true,
       formatter: this.sharedService.dateFormatter,
     },
   ];
@@ -261,32 +286,17 @@ export class SystemsComponent implements OnInit {
     // Set JWT when logged into GEAR Manager when returning from secureAuth
     this.sharedService.setJWTonLogIn();
 
-    $('#systemTable').bootstrapTable(
-      $.extend(this.tableOptions, {
-        columns: this.columnDefs,
-        data: [],
-      })
-    );
+    this.tableCols = this.defaultTableCols;
 
-    const self = this;
-    $(document).ready(() => {
-      // Filter to only active systems
-      $('#systemTable').bootstrapTable('filterBy', {
-        Status: 'Active',
-        BusApp: 'Yes',
+    this.apiService.getSystems().subscribe(systems => {
+      this.tableData = systems;
+
+      systems.forEach(s => {
+        if(s.Status === 'Active' && s.BusApp == 'Yes') {
+          this.filteredTableData.push(s);
+        }
       });
-
-      // Method to handle click events on the Systems table
-      $('#systemTable').on(
-        'click-row.bs.table',
-        function (e, row) {
-          this.tableService.systemsTableClick(row);
-          // this.getInterfaceData(row.ID);
-        }.bind(this)
-      );
-
-      //Enable table sticky header
-      self.sharedService.enableStickyHeader("systemTable");
+      
     });
 
     // Get System data for visuals
@@ -318,6 +328,8 @@ export class SystemsComponent implements OnInit {
       // console.log(this.vizData);  // Debug
     });
 
+
+
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {
       var detailSysID = params['sysID'];
@@ -333,6 +345,22 @@ export class SystemsComponent implements OnInit {
     });
   }
 
+  onFilterEvent(filter: string) {
+      if(filter === 'Inactive') {
+        this.tableCols = this.inactiveColumnDefs;
+        // Hide visualization when on alternative filters
+        $('#sysViz').collapse('hide');
+      } else if(filter === 'Cloud Enabled'){
+        this.tableCols = this.defaultTableCols;
+        // Hide visualization when on alternative filters
+        $('#sysViz').collapse('hide');
+      } else {
+        this.tableCols = this.defaultTableCols;
+        // Hide visualization when on alternative filters
+        $('#sysViz').collapse('show');
+      }
+  }
+
   getAriaLabel(data: { name: string, value: number }[]): string {
     const total = data.reduce((acc, cur) => acc + cur.value, 0);
     if (data.length === 1) {
@@ -341,150 +369,6 @@ export class SystemsComponent implements OnInit {
       const labels = data.map(item => `${Math.round((item.value / total) * 100)}% are ${item.name}`).join(', ');
       return `Pie chart representing ${total} total active systems, of which ${labels}}`;
     }
-  }
-
-  // Update table from filter buttons if only filtering ONE column. Not currently used in business systems report.
-  changeFilter(field: string, term: string) {
-    this.sharedService.disableStickyHeader("systemTable");
-    this.filteredTable = true; // Filters are on, expose main table button
-    var filter = {};
-    filter[field] = term;
-    var title = '';
-    var activeColDef = this.columnDefs;
-    var exportIgnoreColumn = this.activeExportIgnoreColumn;
-
-    // Hide visualization when on alternative filters
-    $('#sysViz').collapse('hide');
-
-    $('#systemTable').bootstrapTable('filterBy', filter);
-    switch (field) {
-      case 'CloudYN':
-        title = 'Cloud Enabled GSA';
-        break;
-      case 'Status':
-        title = term + ' GSA';
-        activeColDef = this.inactiveColumnDefs;
-        exportIgnoreColumn = this.inactiveExportIgnoreColumn;
-        break;
-    }
-    $('#systemTable').bootstrapTable('refreshOptions', {
-      columns: activeColDef,
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt(
-          `GSA_${title.replace(' ', '_')}_Systems`
-        ),
-        ignoreColumn: exportIgnoreColumn
-      },
-    });
-    this.filterTitle = title;
-    this.sharedService.enableStickyHeader("systemTable");
-  }
-
-  //The following is adapted from fisma.component.ts to filter on multiple columns of data rather than one
-  // Update table to Cloud Business Systems
-  showCloud() {
-    $('#systemTable').floatThead('destroy');
-    this.filteredTable = true; // Expose main table button after "Cloud Enabled" button is pressed
-    this.filterTitle = 'Cloud GSA';
-
-    // Hide visualization when on alternative filters
-    $('#sysViz').collapse('hide');
-
-    // Change columns, filename, and url
-    $('#systemTable').bootstrapTable('refreshOptions', {
-      columns: this.columnDefs,
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt('GSA_Cloud_Business_Systems'),
-        ignoreColumn:this.activeExportIgnoreColumn
-      },
-    });
-
-    // Filter to only "Cloud" Business Systems/Subsystems
-    $('#systemTable').bootstrapTable('filterBy', {
-      Status: ['Active'],
-      BusApp: 'Yes',
-      CloudYN: 'Yes',
-    });
-    this.sharedService.enableStickyHeader("systemTable");
-  }
-
-  // Update table to Inactive Business Systems
-  showInactive() {
-    this.sharedService.disableStickyHeader("systemTable");
-    this.filteredTable = true; // Expose main table button after "Inactive" button is pressed
-    this.filterTitle = 'Inactive GSA';
-
-    // Hide visualization when on alternative filters
-    $('#sysViz').collapse('hide');
-
-    // Change columns, filename, and url
-    $('#systemTable').bootstrapTable('refreshOptions', {
-      columns: this.columnDefs,
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt(
-          'GSA_Inactive_Business_Systems'
-        ),
-        ignoreColumn: this.inactiveExportIgnoreColumn
-      },
-    });
-
-    // Filter to only "Inactive" Business Systems/Subsystems
-    $('#systemTable').bootstrapTable('filterBy', {
-      Status: ['Inactive'],
-      BusApp: 'Yes',
-    });
-    this.sharedService.enableStickyHeader("systemTable");
-  }
-
-  // Update table to Pending Business Systems
-  showPending() {
-    this.sharedService.disableStickyHeader("systemTable");
-    this.filteredTable = true; // Expose main table button after "Pending" button is pressed
-    this.filterTitle = 'Pending GSA';
-
-    // Hide visualization when on alternative filters
-    $('#sysViz').collapse('hide');
-
-    // Change columns, filename, and url
-    $('#systemTable').bootstrapTable('refreshOptions', {
-      columns: this.columnDefs,
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt(
-          'GSA_Pending_Business_Systems'
-        ),
-        ignoreColumn: this.activeExportIgnoreColumn
-      },
-    });
-
-    // Filter to only "Pending" Business Systems/Subsystems
-    $('#systemTable').bootstrapTable('filterBy', {
-      Status: ['Pending'], //,
-      //Commenting out BusApp: 'Yes' since pending systems need to be reviewed by EA and Security of whether they are a business system.
-      //BusApp: 'Yes'
-    });
-    this.sharedService.enableStickyHeader("systemTable");
-  }
-  //The preceding code is adapted from fisma.component.ts to filter on multiple columns of data rather than one
-
-  backToMainSys() {
-    this.sharedService.disableStickyHeader("systemTable");
-    this.filteredTable = false; // Hide main button
-
-    $('#sysViz').collapse('show');
-
-    // Remove filters and back to default
-    $('#systemTable').bootstrapTable('filterBy', {
-      Status: 'Active',
-      BusApp: 'Yes',
-    });
-    $('#systemTable').bootstrapTable('refreshOptions', {
-      columns: this.columnDefs,
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt('GSA_Systems_SubSystems'),
-        ignoreColumn:this.activeExportIgnoreColumn
-      },
-    });
-    this.sharedService.enableStickyHeader("systemTable");
   }
 
   onSelect(chartData): void {

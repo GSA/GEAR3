@@ -57,55 +57,11 @@
     </a>
 
   </div>
-  <div class="row">
-    <!-- Filters -->
-    <div class="mx-auto pt-3">
-      <span class="my-auto mr-3">Filter Buttons:</span>
-      <button
-        role="button"
-        name="websitesProductionBtn"
-        class="btn btn-primary"
-        (click)="showProduction()"
-      >
-        Production
-      </button>
-      <button
-        role="button"
-        name="websitesDecommissioned"
-        class="btn btn-primary"
-        (click)="showDecommissioned()"
-      >
-        Decommissioned
-      </button>
-      <button
-        role="button"
-        name="websitesRedirectBtn"
-        class="btn btn-primary"
-        (click)="showRedirect()"
-      >
-        Redirects
-      </button>
-      <button
-        role="button"
-        name="websitesStagingBtn"
-        class="btn btn-primary"
-        (click)="showStaging()"
-      >
-        Staging
-      </button>
-
-      <button
-        role="button"
-        name="sysBttn"
-        class="btn btn-outline-primary ml-3"
-        (click)="resetTableFilters()"
-        [hidden]="!filteredTable"
-      >
-        Back to Active Websites
-      </button>
-
+  <div class="card-body card-text">
+    <!-- Main Table -->
+    <app-table [tableCols]="tableCols" [tableData]="tableData" exportName="Websites" [filterButtons]="filterButtons" reportStyle="business-systems" tableType="website">
       <!-- Website Definition Popover -->
-      <a tabindex="0" class="btn btn-sm btn-info text-white position-absolute float-right w-11" role="button"
+      <a definitionBtn tabindex="0" class="btn btn-sm btn-info text-white d-flex flex-wrap align-content-center" role="button"
       data-toggle="popover" data-trigger="focus" data-placement="auto" data-html="true" title=""
       data-content="This report represents GSA's inventory of public-facing websites (i.e. accessible to the general public 
       and not behind any authentication or firewall). This report can be used to better understand how the public views and interacts with GSA's
@@ -115,10 +71,6 @@
       <a href='https://github.com/GSA/EDX/tree/main/Tools/edxcli' target='_blank' rel='noopener'>ecxcli website scans</a>.">
       Website definition
       </a>
-    </div>
-  </div>
-  <div class="card-body card-text">
-    <!-- Main Table -->
-    <table id="websitesTable" aria-label="The GSA websites table provides a list of public-facing GSA websites and information about each site."></table>
+    </app-table>
   </div>
 </div>

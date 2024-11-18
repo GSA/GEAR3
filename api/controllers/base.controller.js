@@ -99,7 +99,8 @@ function buildLogQuery(conn, event, user, msg, response) {
 
 async function buildLogQueryAsync(conn, event, user, msg) {
   // 
-  var query = `insert into gear_log.event (Event, User, DTG) values ('${SqlString.escape(event)}', '${SqlString.escape(user)}', now());`;
+  var query = `insert into gear_log.event (Event, User, DTG) values ('${event}', '${user}', now());`;
+  console.log(query);
   try {
     await conn.promise().query(query);
     return JSON.stringify(data);

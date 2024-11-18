@@ -7,14 +7,14 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { SidebarModule } from 'ng-sidebar-v3'; // Sidebar Module
 import { PdfViewerModule } from 'ng2-pdf-viewer'; // PDF Viewer
 import { NgxChartsModule } from '@swimlane/ngx-charts'; // Visualizations
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { SidebarModule } from 'primeng/sidebar';
+
 // Components
 import { TopNavbarComponent } from './components/top-navbar/top-navbar.component';
-import { SidenavComponent } from './components/sidenav/sidenav.component';
 
 //// Main
 import { HomeComponent } from './views/main/home/home.component';
@@ -70,17 +70,30 @@ import { ItStandardManagerComponent } from './components/manager-modals/it-stand
 import { EAViewComponent } from './views/architecture/ea-view/ea-view.component';
 import { GearModelComponent } from './views/architecture/gear-model/gear-model.component';
 
+import { DataDictionaryComponent } from './views/main/data-dictionary/data-dictionary.component';
+
 // Global Variables
 import { Globals } from './common/globals';
 
 import { YesNoPipe } from "./pipes/yesno.pipe";
 import { SkipFocusPiechartDirective } from '@common/skip-focus-piechart.directive';
 import { BannerComponent } from './components/banner/banner.component';
+import { IdentifierComponent } from './components/identifier/identifier.component';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { AccordionModule } from 'primeng/accordion';
+
+// PrimeNG Modules
+import { TableModule } from 'primeng/table';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { ButtonModule } from 'primeng/button';
+import { TableComponent } from './components/table/table.component';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { InputTextModule } from 'primeng/inputtext';
 
 @NgModule({ declarations: [
         AppComponent,
         TopNavbarComponent,
-        SidenavComponent,
         HomeComponent,
         GlobalSearchComponent,
         AboutComponent,
@@ -122,6 +135,10 @@ import { BannerComponent } from './components/banner/banner.component';
         YesNoPipe,
         SkipFocusPiechartDirective,
         BannerComponent,
+        IdentifierComponent,
+        SidebarComponent,
+        DataDictionaryComponent,
+        TableComponent
     ],
     bootstrap: [AppComponent], imports: [AppRoutingModule,
         BrowserAnimationsModule,
@@ -131,7 +148,16 @@ import { BannerComponent } from './components/banner/banner.component';
         NgxChartsModule,
         PdfViewerModule,
         ReactiveFormsModule,
-        SidebarModule.forRoot()], providers: [Globals, provideHttpClient(withInterceptorsFromDi())] })
+        TableModule,
+        MultiSelectModule,
+        ButtonModule,
+        IconFieldModule,
+        InputIconModule,
+        InputTextModule,
+        SidebarModule,
+        AccordionModule
+    ],
+    providers: [Globals, provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule {
   constructor() {}
 }

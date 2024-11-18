@@ -62,26 +62,7 @@
       ></ngx-charts-advanced-pie-chart>
     </div>
 
-    <div class="row w-100">
-      <!-- Filters -->
-      <div class="mx-auto">
-        <span class="my-auto mr-3">Filter Buttons:</span>
-        <button role="button" name="investEliminatedBttn" class="btn btn-primary" (click)="eliminatedFilter()"
-          [hidden]="filteredTable">Eliminated</button>
-
-        <button role="button" name="investPYBttn" class="btn btn-primary" (click)="previousYearFilter()">Previous Year
-          $</button>
-        <button role="button" name="investCYBttn" class="btn btn-primary" (click)="currentYearFilter()">Current Year
-          $</button>
-        <button role="button" name="investBYBttn" class="btn btn-primary" (click)="budgetYearFilter()">Budget Year
-          $</button>
-
-        <button role="button" name="investBttn" class="btn btn-primary ml-3" (click)="backToMainInvest()"
-          [hidden]="!filteredTable">Back to Current IT Investments</button>
-      </div>
-    </div>
-
     <!-- Main Table -->
-    <table id="investTable" aria-label="The investments table presents a list of GSA IT Investments by name. This table is useful for understanding information about the investment, the investment manager, the status of the investment, the type of investment, etc."></table>
+    <app-table [tableCols]="tableCols" [tableData]="tableData" exportName="Investments" reportStyle="it-strategy" [filterButtons]="filterButtons" tableType="investments" (filterEvent)="onFilterEvent($event)"></app-table>
   </div>
 </div>

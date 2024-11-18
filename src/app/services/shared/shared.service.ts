@@ -8,6 +8,7 @@ import {Globals} from '@common/globals';
 import jwtDecode from 'jwt-decode';
 import { HttpClient } from '@angular/common/http';
 import { set } from 'd3';
+import { BehaviorSubject } from 'rxjs';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -37,6 +38,8 @@ export class SharedService {
   websiteFormEmitter = new EventEmitter();
   websiteFormSub: Subscription;
 
+  public sidebarVisible: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
   constructor(
     private globals: Globals,
     private location: Location,
@@ -45,10 +48,13 @@ export class SharedService {
     ) {
   }
 
-  // Sidebar Toggle
-  public toggleClick() {
-    this.toggleEmitter.emit();
-  };
+  public openSidebar() {
+    this.sidebarVisible.next(true);
+  }
+
+  public closeSidebar() {
+    this.sidebarVisible.next(false);
+  }
 
   // File Name Formatting
   public fileNameFmt(name: string): string {
@@ -259,6 +265,10 @@ export class SharedService {
     if (value) return `<a target="_blank" rel="noopener" href="${value}">Link</a>`;
   };
 
+  public linkFormatter(value) {
+    if (value) return `<a target="_blank" rel="noopener" href="${value}">${value}</a>`;
+  }
+
   //// Date
   public dateFormatter(value, row, index, field) {
     const date = new Date(value);
@@ -394,13 +404,12 @@ export class SharedService {
     return cookies;
   }
 
-  public enableStickyHeader(tableComponentId: string, closestScrollableClass: string = '.ng-sidebar__content') {
+  public enableStickyHeader(tableComponentId: string, closestScrollableClass: string = '.content-body') {
     $('#'+tableComponentId).floatThead({
-      scrollContainer: function($table) {
+      responsiveContainer: function($table) {
         return $table.closest(closestScrollableClass);
       },
-      position: "fixed",
-      autoReflow: true
+      top: 67 // top navbar offset
     });
   }
 

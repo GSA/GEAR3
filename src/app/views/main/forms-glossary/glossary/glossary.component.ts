@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Column } from '@common/table-classes';
 
-import { SharedService } from '@services/shared/shared.service';
-import { TableService } from '@services/tables/table.service';
+import * as glossaryData from '../../../../../assets/statics/glossary.json';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -15,40 +15,23 @@ export class GlossaryComponent implements OnInit {
 
   row: Object = <any>{};
 
-  constructor(
-    private sharedService: SharedService,
-    private tableService: TableService) { }
+  constructor() { }
 
-  // Glossary Table Options
-  glossTableOptions: {} = this.tableService.createTableOptions({
-    advancedSearch: false,
-    idTable: null,
-    classes: "table-hover table-dark",
-    showColumns: false,
-    showExport: true,
-    exportFileName: 'GEAR_Glossary',
-    headerStyle: null,
-    pagination: true,
-    search: true,
-    sortName: 'Term',
-    sortOrder: 'asc',
-    showToggle: true,
-    url: '/assets/statics/glossary.json'
-  });
+  tableData: any[] = [];
 
   // Glossary Table Columns
-  glossColumnDefs: any[] = [{
+  tableCols: Column[] = [{
     field: 'Term',
-    title: 'Term',
-    sortable: true
+    header: 'Term',
+    isSortable: true
   },
   {
     field: 'Definition',
-    title: 'Definition'
+    header: 'Definition'
   },
   {
     field: 'Reference',
-    title: 'Reference'
+    header: 'Reference'
   }]
 
   ngOnInit(): void {
@@ -57,15 +40,7 @@ export class GlossaryComponent implements OnInit {
       $('[data-toggle="popover"]').popover()
     })
 
-    $('#glossaryTable').bootstrapTable($.extend(this.glossTableOptions, {
-      columns: this.glossColumnDefs,
-      data: [],
-    }));
-
-    const self = this;
-    $(document).ready(function() {
-      //Enable table sticky header
-      self.sharedService.enableStickyHeader("glossaryTable");
-    });
+    let rawData = JSON.stringify(glossaryData);
+    this.tableData = JSON.parse(rawData).default;
   }
 }

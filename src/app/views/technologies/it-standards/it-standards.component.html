@@ -62,29 +62,11 @@
         <a href='https://sites.google.com/a/gsa.gov/it_standards/it-standards' target='_blank' rel='noopener'>IT Standards site</a>">
         IT-Standards definition
       </a>
-
-      <!-- Filters -->
-      <div class="mx-auto">
-        <span class="my-auto mr-3">Filter Buttons:</span>
-        <button role="button" name="itDesktopBttn" class="btn btn-primary"
-          (click)="changeFilter('DeploymentType', 'Desktop')">Desktop</button>
-        <button role="button" name="itServerBttn" class="btn btn-primary"
-          (click)="changeFilter('DeploymentType', 'Server')">Server</button>
-
-        <button role="button" name="itApprovedBttn" class="btn btn-primary ml-3"
-          (click)="changeFilter('Status', 'Approved')">Approved</button>
-        <button role="button" name="itDeniedBttn" class="btn btn-primary"
-          (click)="changeFilter('Status', 'Denied')">Denied</button>
-        <button role="button" name="itRetiredBttn" class="btn btn-primary"
-          (click)="changeFilter('Status', 'Retired')">Retired</button>
-
-        <button role="button" name="itBttn" class="btn btn-primary ml-3" (click)="backToMainIT()"
-          [hidden]="!filteredTable">
-          Back to All IT Standards</button>
-      </div>
     </div>
 
     <!-- Main Table -->
-    <table id="itStandardsTable" aria-label="The IT Standards Inventory provides a list of software and additional details about whether that software has been approved for use, when its approval ends, etc. This table is useful in understanding which software is approved for use at the Agency and, if the software is not listed, which software will have to be requested via the Software Review Request process."></table>
+    <ng-container *ngIf="dataReady">
+      <app-table [tableCols]="tableCols" [tableData]="tableData" exportName="IT Standards" [filterButtons]="filterButtons" reportStyle="technologies" tableType="itStandards"></app-table>
+    </ng-container>
   </div>
 </div>

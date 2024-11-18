@@ -60,14 +60,7 @@
     </a>
   </div>
 
-  <div class="card-body card-text">
-    <!-- GEAR Manager Google API Call  -->
-    <!--<a   class="btn btn-primary"
-        href="http://localhost:3000/api/records/updateAllSystems"
-        *ngIf="sharedService.loggedIn">
-        Update All Related Records
-        </a>-->
-    
+  <div class="card-body card-text">    
     <!-- System/Sub-System Definition Popover -->
     <a
       tabindex="0"
@@ -108,44 +101,7 @@
       </ngx-charts-advanced-pie-chart>
     </div>
 
-    <div class="row w-100">
-      <!-- Filters -->
-      <div class="mx-auto">
-        <span class="my-auto mr-3">Add'l Filter Buttons:</span>
-        <button
-          role="button"
-          name="sysCloudBttn"
-          class="btn btn-primary"
-          (click)="showCloud()"
-        >
-          Cloud Enabled
-        </button>
-        <button
-          role="button"
-          name="sysInactiveBttn"
-          class="btn btn-primary"
-          (click)="showInactive()"
-        >
-          Inactive
-        </button>
-        <!-- Remove Pending button based on security feedback. 
-        <button role="button" name="sysPendingBttn" class="btn btn-primary" (click)="showPending()">
-        Pending</button>
-        -->
-
-        <button
-          role="button"
-          name="sysBttn"
-          class="btn btn-primary ml-3"
-          (click)="backToMainSys()"
-          [hidden]="!filteredTable"
-        >
-          Back to All Active Systems
-        </button>
-      </div>
-    </div>
-
     <!-- Main Table -->
-    <table id="systemTable" aria-label="The business systems list presents a table of the GSA systems that provide a business-specific capability. This table is useful in understanding which business system fulfills which capability, who to contact in case of a system-specific question, what each system does, etc."></table>
+    <app-table [tableCols]="tableCols" [tableData]="tableData" [preFilteredTableData]="filteredTableData" defaultSortField="Name" exportName="Systems" reportStyle="business-systems" [filterButtons]="filterButtons" tableType="systems" (filterEvent)="onFilterEvent($event)"></app-table>
   </div>
 </div>
