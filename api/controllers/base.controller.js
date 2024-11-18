@@ -7,6 +7,8 @@ const sql = require("../db.js").connection,
   { google } = require("googleapis")
   fastcsv = require("fast-csv");
 
+const SqlString = require('sqlstring');
+
 // If modifying these scopes, delete token.json.
 const SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
 // The file token.json stores the user's access and refresh tokens, and is

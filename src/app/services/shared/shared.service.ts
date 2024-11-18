@@ -12,7 +12,6 @@ import { BehaviorSubject } from 'rxjs';
 
 // Declare jQuery symbol
 declare var $: any;
-declare var gtag: Function;
 
 @Injectable({
   providedIn: 'root'
@@ -360,9 +359,6 @@ export class SharedService {
   public addIDtoURL(row, IDname) {
     var normalizedURL = this.coreURL(this.router.url);
     this.location.replaceState(`${normalizedURL}/${row[IDname]}`);
-
-    // Send page_view event to GA
-    gtag('event', 'page_view', { 'page_path': `${normalizedURL}/${row[IDname]}` });
   };
 
   // cookies functions ---------------------------------------
