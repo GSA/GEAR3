@@ -18,14 +18,14 @@
           (click)="tableService.previousModalRoute('fismaDetail')"
           [hidden]="!modalService.checkModalRoutes()"
         >
-          <i class="fas fa-arrow-circle-left fa-lg fa-fw"></i>
+        <fa-icon [icon]="['fas', 'arrow-circle-left']" [ngClass]="{'fa-fw': true, 'fa-lg': true}"></fa-icon>
         </a>
         <h5 class="modal-title text-white" id="fismaTitle">
-          <i class="fas fa-shield-alt"></i>
+          <fa-icon [icon]="['fas', 'shield-alt']"></fa-icon>
           {{ fisma.Name }}
         </h5>
         <a role="button" aria-label="Close" data-dismiss="modal" tabindex="0">
-          <i class="fas fa-times fa-lg text-white align-self-center"></i>
+          <fa-icon [icon]="['fas', 'times']" [ngClass]="{'fa-lg': true}" class="text-white align-self-center"></fa-icon>
         </a>
       </div>
 
@@ -70,40 +70,40 @@
 
                   <tbody>
                     <tr>
-                      <td><i class="fa fa-calendar-alt"></i>ATO Date</td>
+                      <td><fa-icon [icon]="['fas', 'calendar-alt']"></fa-icon>ATO Date</td>
                       <td>{{ fisma.ATODate | date : "longDate" }}</td>
                     </tr>
                     <tr>
-                      <td><i class="far fa-file"></i>ATO Type</td>
+                      <td><fa-icon [icon]="['fas', 'file']"></fa-icon>ATO Type</td>
                       <td>{{ fisma.ATOType }}</td>
                     </tr>
                     <!-- <tr>
-                      <td><i class="fa fa-door-open"></i>Business Org</td>
+                      <td><fa-icon [icon]="['fas', 'door-open']"></fa-icon>Business Org</td>
                       <td>{{ fisma.BusOrg }}</td>
                     </tr> -->
                     <tr>
-                      <td><i class="fa fa-cloud"></i>Cloud Hosted?</td>
+                      <td><fa-icon [icon]="['fas', 'cloud']"></fa-icon>Cloud Hosted?</td>
                       <td>{{ fisma.CloudYN }}</td>
                     </tr>
                     <tr>
-                      <td><i class="fa fa-building"></i>Hosting Provider</td>
+                      <td><fa-icon [icon]="['fas', 'building']"></fa-icon>Hosting Provider</td>
                       <td>{{ fisma.CSP }}</td>
                     </tr>
                     <tr>
-                      <td><i class="fa fa-tag"></i>FISMA System Identifier</td>
+                      <td><fa-icon [icon]="['fas', 'tag']"></fa-icon>FISMA System Identifier</td>
                       <td>{{ fisma.FISMASystemIdentifier }}</td>
                     </tr>
                     <tr>
-                      <td><i class="fa fa-user-shield"></i>PII</td>
+                      <td><fa-icon [icon]="['fas', 'user-shield']"></fa-icon>PII</td>
                       <td>{{ fisma.PII }}</td>
                     </tr>
                     <tr>
-                      <td><i class="fa fa-lock"></i>CUI</td>
+                      <td><fa-icon [icon]="['fas', 'lock']"></fa-icon>CUI</td>
                       <td>{{ fisma.CUI }}</td>
                     </tr>
                     <tr>
                       <td class="align-middle">
-                        <i class="fa fa-file-alt"></i>Related Artifacts
+                        <fa-icon [icon]="['fas', 'file-alt']"></fa-icon>Related Artifacts
                       </td>
                       <td>
                         <ul
@@ -116,19 +116,19 @@
                       </td>
                     </tr>
                     <tr>
-                      <td><i class="fa fa-calendar-alt"></i>Renewal Date</td>
+                      <td><fa-icon [icon]="['fas', 'calendar-alt']"></fa-icon>Renewal Date</td>
                       <td>{{ fisma.RenewalDate | date : "longDate" }}</td>
                     </tr>
                     <tr>
-                      <td><i class="fas fa-layer-group"></i>Fed or Contractor System</td>
+                      <td><fa-icon [icon]="['fas', 'layer-group']"></fa-icon>Fed or Contractor System</td>
                       <td>{{ fisma.FedContractorLoc }}</td>
                     </tr>
                     <tr>
-                      <td><i class="fa fa-door-open"></i>Responsible Org</td>
+                      <td><fa-icon [icon]="['fas', 'door-open']"></fa-icon>Responsible Org</td>
                       <td>{{ fisma.RespOrg }}</td>
                     </tr>
                     <tr>
-                      <td><i class="fa fa-certificate"></i>Cloud Service Type</td>
+                      <td><fa-icon [icon]="['fas', 'certificate']"></fa-icon>Cloud Service Type</td>
                       <td>{{ fisma.ServiceType }}</td>
                     </tr>
                   </tbody>

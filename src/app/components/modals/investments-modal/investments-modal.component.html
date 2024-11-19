@@ -18,14 +18,14 @@
           (click)="tableService.previousModalRoute('investDetail')"
           [hidden]="!modalService.checkModalRoutes()"
         >
-          <i class="fas fa-arrow-circle-left fa-lg fa-fw"></i>
+        <fa-icon [icon]="['fas', 'arrow-circle-left']" [ngClass]="{'fa-fw': true, 'fa-lg': true}"></fa-icon>
         </a>
         <h5 class="modal-title text-white" id="investTitle">
-          <i class="fas fa-money-bill-wave"></i>
+          <fa-icon [icon]="['fas', 'money-bill-wave']"></fa-icon>
           {{ investment.Name }}
         </h5>
         <a role="button" aria-label="Close" data-dismiss="modal" tabindex="0">
-          <i class="fas fa-times fa-lg text-white align-self-center"></i>
+          <fa-icon [icon]="['fas', 'times']" [ngClass]="{'fa-lg': true}" class="text-white align-self-center"></fa-icon>
         </a>
       </div>
 
@@ -74,29 +74,29 @@
 
               <tbody>
                 <tr>
-                  <td><i class="far fa-calendar"></i>Budget Year</td>
+                  <td><fa-icon [icon]="['fas', 'calendar']"></fa-icon>Budget Year</td>
                   <td>{{ investment.Budget_Year }}</td>
                 </tr>
                 <tr>
-                  <td><i class="far fa-calendar-plus"></i>Start Year</td>
+                  <td><fa-icon [icon]="['fas', 'calendar-plus']"></fa-icon>Start Year</td>
                   <td>{{ investment.Start_Year }}</td>
                 </tr>
                 <tr>
-                  <td><i class="far fa-calendar-minus"></i>End Year</td>
+                  <td><fa-icon [icon]="['fas', 'calendar-minus']"></fa-icon>End Year</td>
                   <td>{{ investment.End_Year }}</td>
                 </tr>
                 <tr>
                   <td>
-                    <i class="fas fa-cloud"></i>Cloud Alternatives Evaluation
+                    <fa-icon [icon]="['fas', 'cloud']"></fa-icon>Cloud Alternatives Evaluation
                   </td>
                   <td>{{ investment.Cloud_Alt }}</td>
                 </tr>
                 <tr>
-                  <td><i class="far fa-comments"></i>Comments</td>
+                  <td><fa-icon [icon]="['fas', 'comments']"></fa-icon>Comments</td>
                   <td>{{ investment.Comments }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fa fa-user"></i>Investment Manager</td>
+                  <td><fa-icon [icon]="['fas', 'user']"></fa-icon>Investment Manager</td>
                   <td>
                     <a
                       class="email text-white"
@@ -111,21 +111,21 @@
                   </td>
                 </tr>
                 <tr>
-                  <td><i class="fa fa-folder"></i>Investment Type</td>
+                  <td><fa-icon [icon]="['fas', 'folder']"></fa-icon>Investment Type</td>
                   <td>{{ investment.Type }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fa fa-tag"></i>Investment UII</td>
+                  <td><fa-icon [icon]="['fas', 'tag']"></fa-icon>Investment UII</td>
                   <td>{{ investment.UII }}</td>
                 </tr>
                 <tr>
                   <td>
-                    <i class="far fa-folder-open"></i>Part of IT Portfolio
+                    <fa-icon [icon]="['fas', 'folder-open']"></fa-icon>Part of IT Portfolio
                   </td>
                   <td>{{ investment.IT_Portfolio }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fa fa-th"></i>Primary Service Area</td>
+                  <td><fa-icon [icon]="['fas', 'th']"></fa-icon>Primary Service Area</td>
                   <td
                     *ngIf="investment.PSA; else psaElse"
                     class="btn-outline-info pointer"
@@ -144,7 +144,7 @@
                   </ng-template>
                 </tr>
                 <tr>
-                  <td><i class="fas fa-info-circle"></i>Status</td>
+                  <td><fa-icon [icon]="['fas', 'info-circle']"></fa-icon>Status</td>
                   <td>{{ investment.Status }}</td>
                 </tr>
               </tbody>
@@ -172,7 +172,7 @@
 
               <tbody>
                 <tr>
-                  <td><i class="far fa-calendar"></i>Budget Year</td>
+                  <td><fa-icon [icon]="['fas', 'calendar']"></fa-icon>Budget Year</td>
                   <td>{{ investment.Budget_Year }}</td>
                 </tr>
                 <tr>

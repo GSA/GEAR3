@@ -1,6 +1,9 @@
-import { AfterViewInit, Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { AfterViewInit, Component, ElementRef, Inject, PLATFORM_ID, Renderer2, ViewChild } from '@angular/core';
 
-//import * as banner from 'node_modules/@uswds/uswds/packages/usa-banner/src/index.js';
+const EXPANDED = "aria-expanded";
+const CONTROLS = "aria-controls";
+const HIDDEN = "hidden";
 
 @Component({
   selector: 'app-banner',
@@ -8,37 +11,59 @@ import { AfterViewInit, Component, ElementRef, Renderer2, ViewChild } from '@ang
   styleUrls: ['./banner.component.css']
 })
 export class BannerComponent implements AfterViewInit {
+  isBrowser: boolean;
 
   @ViewChild('bannerPanel') bannerPanelRef: ElementRef;
   @ViewChild('bannerExpandButton') bannerButtonRef: ElementRef;
 
-  constructor(private renderer: Renderer2) {
-
+  constructor(private renderer: Renderer2, @Inject(PLATFORM_ID) private platformId: any) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+    if (!this.isBrowser) {
+      return;
+    }
     this.renderer.listen('window', 'click', (e: Event) => {
-      // hide banner for outside mouse click
       if (!this.bannerPanelRef.nativeElement.contains(e.target)) {
         this.collpseBanner();
       }
     });
   }
 
-  isBannerExpanded() {
-    return this.bannerButtonRef.nativeElement.getAttribute("aria-expanded") == 'true';
+  toggle(button, expanded) {
+    let safeExpanded = expanded;
+
+    if (typeof safeExpanded !== "boolean") {
+      safeExpanded = button.getAttribute(EXPANDED) === "false";
+    }
+
+    const id = button.getAttribute(CONTROLS);
+    const controls = document.getElementById(id);
+    if (!controls) {
+      throw new Error(`No toggle target found with id: "${id}"`);
+    }
+
+    if (safeExpanded) {
+      controls.removeAttribute(HIDDEN);
+    } else {
+      controls.setAttribute(HIDDEN, "");
+    }
+
+    return safeExpanded;
   }
 
-  initBanner() {
-    //banner.init(this.bannerPanelRef);
+  isBannerExpanded() {
+    return this.bannerButtonRef.nativeElement.getAttribute(EXPANDED) == 'true';
   }
 
   collpseBanner() {
-
     if (this.isBannerExpanded()) {
-      // Reinitialize banner
-      this.initBanner();
+      this.bannerButtonRef.nativeElement.setAttribute(EXPANDED, false);
+      const id = this.bannerButtonRef.nativeElement.getAttribute(CONTROLS);
+      const controls = document.getElementById(id);
+      controls.setAttribute(HIDDEN, "");
     }
   }
 
   ngAfterViewInit(): void {
-    this.initBanner();
+    this.collpseBanner();
   }
 }

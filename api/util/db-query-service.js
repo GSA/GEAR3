@@ -1,5 +1,5 @@
-const { getFilePath, parseFile } = require("./io-service.js");
-const { promisePool: connPromisePool } = require("../db.js");
+import { getFilePath, parseFile } from "./io-service.js";
+import { connection_promise as connPromisePool } from "../db.js";
 const queryPath = '../queries/';
 
 /**
@@ -8,7 +8,7 @@ const queryPath = '../queries/';
  * @param {string} queryFilePath - The path to the query file.
  * @returns {Promise<string>} A promise that resolves to the query string.
  */
-const prepareQuery = async (queryFilePath) => {
+export const prepareQuery = async (queryFilePath) => {
   return await parseFile(getFilePath(queryPath, queryFilePath));
 };
 
@@ -42,12 +42,7 @@ const retry = async (func, count = 0, limit = 5, wait = 3000) => {
  * @param {Array} values - The values to be used in the query.
  * @returns {Promise<Array>} A promise that resolves to the rows returned by the query.
  */
-const runQuery = async (query, values) => {
+export const runQuery = async (query, values) => {
   const [rows] = await retry(async() => await connPromisePool.query(query, values));
   return rows;
-};
-
-module.exports = {
-  prepareQuery,
-  runQuery,
 };

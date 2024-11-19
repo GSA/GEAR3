@@ -1,10 +1,11 @@
 <div class="fixed-top">
-<!--<div *ngIf="isBrowser">
+  <div *ngIf="isBrowser">
     <app-banner></app-banner>
-  </div> -->
+  </div>
   <nav class="navbar navbar-expand-xl2  navbar-dark bg-primary shadow-lg p-1" id="topNav" role="navigation">
     <a class="navbar-brand ml-3" routerLink="/">
-      <i class="fas fa-cogs fa-lg"></i>
+      <fa-icon [icon]="['fas', 'cogs']" [ngClass]="{'fa-lg': true}"></fa-icon>
+
       GSA EA Analytics & Reporting (GEAR)
       <span [innerHTML]="envName" style="color: var(--pink)"></span>
       <span *ngIf="sharedService.loggedIn" style="color: red">
@@ -23,7 +24,7 @@
     <button #moreLinksBtn (click)="toggleTopNavBttn()" class="navbar-toggler" type="button"
       aria-controls="navbarSupportedContent" [attr.aria-expanded]="moreLinksVisibleStatus && showNavContent"
       aria-label="More Links">
-      More Links <i id="topNavToggle" class="fas fa-angle-down ml-2 rotate"></i>
+      More Links <fa-icon [icon]="['fas', 'angle-down']" [ngClass]="{'ml-2': true}" class="rotate"></fa-icon>
     </button>
 
     <div *ngIf="showNavContent" #navPanel class="navbar-collapse" id="navbarSupportedContent">

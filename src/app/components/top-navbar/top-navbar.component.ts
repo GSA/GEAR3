@@ -66,6 +66,9 @@ export class TopNavbarComponent implements AfterViewInit {
 
   @HostListener('window:resize')
   ngDoCheck() {
+    if(!this.isBrowser) {
+      return;
+    }
     if (!this.isMoreLinksVisible() && !this.showNavContent) {
       this.expandTopNav();
     }

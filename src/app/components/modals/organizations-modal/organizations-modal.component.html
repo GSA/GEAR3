@@ -18,14 +18,14 @@
           (click)="tableService.previousModalRoute('organizationDetail')"
           [hidden]="!modalService.checkModalRoutes()"
         >
-          <i class="fas fa-arrow-circle-left fa-lg fa-fw"></i>
+        <fa-icon [icon]="['fas', 'arrow-circle-left']" [ngClass]="{'fa-fw': true, 'fa-lg': true}"></fa-icon>
         </a>
         <h5 class="modal-title text-white" id="orgTitle">
-          <i class="fas fa-sitemap"></i>
+          <fa-icon [icon]="['fas', 'sitemap']"></fa-icon>
           {{ org.Name }} ({{ org.OrgSymbol }})
         </h5>
         <a role="button" aria-label="Close" data-dismiss="modal" tabindex="0">
-          <i class="fas fa-times fa-lg text-white align-self-center"></i>
+          <fa-icon [icon]="['fas', 'times']" [ngClass]="{'fa-lg': true}" class="text-white align-self-center"></fa-icon>
         </a>
       </div>
 

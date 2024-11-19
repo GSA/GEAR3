@@ -18,14 +18,14 @@
           (click)="tableService.previousModalRoute('recordDetail')"
           [hidden]="!modalService.checkModalRoutes()"
         >
-          <i class="fas fa-arrow-circle-left fa-lg fa-fw"></i>
+        <fa-icon [icon]="['fas', 'arrow-circle-left']" [ngClass]="{'fa-fw': true, 'fa-lg': true}"></fa-icon>
         </a>
         <h5 class="modal-title text-white" id="recordTitle">
-          <i class="far fa-folder-open"></i>
+          <fa-icon [icon]="['fas', 'folder-open']"></fa-icon>
           {{ record.Record_Item_Title }}
         </h5>
         <a role="button" aria-label="Close" data-dismiss="modal" tabindex="0">
-          <i class="fas fa-times fa-lg text-white align-self-center"></i>
+          <fa-icon [icon]="['fas', 'times']" [ngClass]="{'fa-lg': true}" class="text-white align-self-center"></fa-icon>
         </a>
       </div>
 
@@ -86,47 +86,47 @@
 
               <tbody>
                 <tr>
-                  <td><i class="fa fa-bookmark"></i>CUI</td>
+                  <td><fa-icon [icon]="['fas', 'bookmark']"></fa-icon>CUI</td>
                   <td>{{ record.CUI }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fa fa-bookmark"></i>Retention Years</td>
+                  <td><fa-icon [icon]="['fas', 'bookmark']"></fa-icon>Retention Years</td>
                   <td>{{ record.FY_Retention_Years }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fas fa-user-lock"></i>Disposition Authority</td>
+                  <td><fa-icon [icon]="['fas', 'user-lock']"></fa-icon>Disposition Authority</td>
                   <td>{{ record.Legal_Disposition_Authority }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fas fa-calendar-day"></i>DA Approval Date</td>
+                  <td><fa-icon [icon]="['fas', 'calendar-day']"></fa-icon>DA Approval Date</td>
                   <td>{{ record.Date_DA_Approved }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fa fa-certificate"></i>Disposition Type</td>
+                  <td><fa-icon [icon]="['fas', 'certificate']"></fa-icon>Disposition Type</td>
                   <td>{{ record.Type_Disposition }}</td>
                 </tr>
                 <tr>
-                  <td><i class="far fa-list-alt"></i>FP Category</td>
+                  <td><fa-icon [icon]="['fas', 'list-alt']"></fa-icon>FP Category</td>
                   <td>{{ record.FP_Category }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fas fa-hashtag"></i>GSA Number</td>
+                  <td><fa-icon [icon]="['fas', 'hashtag']"></fa-icon>GSA Number</td>
                   <td>{{ record.GSA_Number }}</td>
                 </tr>
                 <tr>
-                  <td><i class="far fa-address-card"></i>PII</td>
+                  <td><fa-icon [icon]="['fas', 'address-card']"></fa-icon>PII</td>
                   <td>{{ record.PII }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fas fa-users"></i>Record Group</td>
+                  <td><fa-icon [icon]="['fas', 'users']"></fa-icon>Record Group</td>
                   <td>{{ record.RG }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fas fa-fingerprint"></i>Record ID</td>
+                  <td><fa-icon [icon]="['fas', 'fingerprint']"></fa-icon>Record ID</td>
                   <td>{{ record.Rec_ID }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fas fa-info-circle"></i>Status</td>
+                  <td><fa-icon [icon]="['fas', 'info-circle']"></fa-icon>Status</td>
                   <td>{{ record.Record_Status }}</td>
                 </tr>
               </tbody>

@@ -1,5 +1,5 @@
-const { promises: fs } = require('fs');
-const path = require('path');
+import { promises as fs } from 'fs';
+import { join } from 'path';
 
 /**
  * Gets the full file path by combining base path, file type path, and file path.
@@ -8,7 +8,7 @@ const path = require('path');
  * @param {string} filePath - The path to the file.
  * @returns {string} The combined file path.
  */
-const getFilePath = (fileTypePath, filePath) => path.join(__dirname, fileTypePath, filePath);
+export const getFilePath = (fileTypePath, filePath) => join(__dirname, fileTypePath, filePath);
 
 /**
  * Reads and returns the content of a file as a string.
@@ -16,9 +16,4 @@ const getFilePath = (fileTypePath, filePath) => path.join(__dirname, fileTypePat
  * @param {string} filePath - The path to the file.
  * @returns {Promise<string>} A promise that resolves to the file content as a string.
  */
-const parseFile = async (filePath) => await fs.readFile(filePath, 'utf8');
-
-module.exports = {
-  getFilePath,
-  parseFile,
-};
+export const parseFile = async (filePath) => await fs.readFile(filePath, 'utf8');

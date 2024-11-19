@@ -18,15 +18,15 @@
           (click)="tableService.previousModalRoute('websiteDetail')"
           [hidden]="!modalService.checkModalRoutes()"
         >
-          <i class="fas fa-arrow-circle-left fa-lg fa-fw"></i>
+        <fa-icon [icon]="['fas', 'arrow-circle-left']" [ngClass]="{'fa-fw': true, 'fa-lg': true}"></fa-icon>
         </a>
         <h5 class="modal-title text-white" id="websiteTitle">
-          <i class="far fa-folder-open"></i>
+          <fa-icon [icon]="['fas', 'folder-open']"></fa-icon>
           {{ website.domain }}
           <!-- This refers to api/queries/GET name of object in database -->
         </h5>
         <a role="button" aria-label="Close" data-dismiss="modal" tabindex="0">
-          <i class="fas fa-times fa-lg text-white align-self-center"></i>
+          <fa-icon [icon]="['fas', 'times']" [ngClass]="{'fa-lg': true}" class="text-white align-self-center"></fa-icon>
         </a>
       </div>
 
@@ -299,73 +299,73 @@
 
                   <tbody>
                     <tr>
-                      <td><i class="fa fa-bookmark"></i>Office</td>
+                      <td><fa-icon [icon]="['fas', 'bookmark']"></fa-icon>Office</td>
                       <td>{{ website.office }}</td>
                     </tr>
                     <tr>
-                      <td><i class="fas fa-user-lock"></i>Sub Office</td>
+                      <td><fa-icon [icon]="['fas', 'user-lock']"></fa-icon>Sub Office</td>
                       <td>{{ website.sub_office }}</td>
                     </tr>
                     <tr>
                       <td>
-                        <i class="fas fa-calendar-day"></i>Website Manager
+                        <fa-icon [icon]="['fas', 'calendar-day']"></fa-icon>Website Manager
                       </td>
                       <td>{{ website.site_owner_email }}</td>
                     </tr>
                     <tr>
-                      <td><i class="fa fa-certificate"></i>Contact Email</td>
+                      <td><fa-icon [icon]="['fas', 'certificate']"></fa-icon>Contact Email</td>
                       <td>{{ website.contact_email }}</td>
                     </tr>
                     <tr>
-                      <td><i class="fas fa-info-circle"></i>Redirect URL</td>
+                      <td><fa-icon [icon]="['fas', 'info-circle']"></fa-icon>Redirect URL</td>
                       <td>{{ website.redirects_to }}</td>
                     </tr>
                     <tr>
                       <td>
-                        <i class="far fa-list-alt"></i>Required by Law/Policy?
+                        <fa-icon [icon]="['fas', 'list-alt']"></fa-icon>Required by Law/Policy?
                       </td>
                       <td>{{ website.required_by_law_or_policy }}</td>
                     </tr>
                     <tr>
-                      <td><i class="fas fa-hashtag"></i>DAP Enabled</td>
+                      <td><fa-icon [icon]="['fas', 'hashtag']"></fa-icon>DAP Enabled</td>
                       <td>{{ website.has_dap }}</td>
                     </tr>
                     <tr>
                       <td>
-                        <i class="far fa-address-card"></i>Current USWDS Score
+                        <fa-icon [icon]="['fas', 'address-card']"></fa-icon>Current USWDS Score
                       </td>
                       <td>{{ website.current_uswds_score }}</td>
                     </tr>
                     <tr>
-                      <td><i class="fas fa-users"></i>Mobile Friendly?</td>
+                      <td><fa-icon [icon]="['fas', 'users']"></fa-icon>Mobile Friendly?</td>
                       <td>{{ website.mobile_friendly }}</td>
                     </tr>
                     <tr>
-                      <td><i class="fas fa-fingerprint"></i>Has Search?</td>
+                      <td><fa-icon [icon]="['fas', 'fingerprint']"></fa-icon>Has Search?</td>
                       <td>{{ website.has_search }}</td>
                     </tr>
                     <tr>
-                      <td><i class="fas fa-info-circle"></i>HTTPS Enabled</td>
+                      <td><fa-icon [icon]="['fas', 'info-circle']"></fa-icon>HTTPS Enabled</td>
                       <td>{{ website.https }}</td>
                     </tr>
                     <tr>
                       <td>
-                        <i class="fas fa-info-circle"></i>Hosting Platform
+                        <fa-icon [icon]="['fas', 'info-circle']"></fa-icon>Hosting Platform
                       </td>
                       <td>{{ website.hosting_platform }}</td>
                     </tr>
                     <tr>
                       <td>
-                        <i class="fas fa-info-circle"></i>Content Management Platform
+                        <fa-icon [icon]="['fas', 'info-circle']"></fa-icon>Content Management Platform
                       </td>
                       <td>{{ website.cms_platform }}</td>
                     </tr>
                     <tr>
-                      <td><i class="fas fa-info-circle"></i>Repository URL</td>
+                      <td><fa-icon [icon]="['fas', 'info-circle']"></fa-icon>Repository URL</td>
                       <td>{{ website.repository_url }}</td>
                     </tr>
                     <tr>
-                      <td><i class="fas fa-info-circle"></i>Target Decommission Date</td>
+                      <td><fa-icon [icon]="['fas', 'info-circle']"></fa-icon>Target Decommission Date</td>
                       <td>{{ website.target_decommission_date | date:'shortDate' }}</td>
                     </tr>
                   </tbody>

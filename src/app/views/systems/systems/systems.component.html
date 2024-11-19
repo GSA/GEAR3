@@ -2,7 +2,7 @@
   <div class="card-header text-white bg-danger text-center">
     <h3 class="card-title col-12 mb-0">
       <span>
-        <i class="fas fa-server mr-2"></i>
+        <fa-icon [icon]="['fas', 'server' ]" class="mr-2"></fa-icon>
         <span [hidden]="filteredTable">Active GSA </span>
         <span [hidden]="!filteredTable">{{ filterTitle }} </span>
         Business Systems & Subsystems
@@ -28,7 +28,7 @@
       aria-label="GEAR Manager Logout"
       (click)="sharedService.logoutManager()"
     >
-      <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
+      <span class="mr-2">Logout</span><fa-icon [icon]="['fas', 'sign-out-alt']" [ngClass]="{'fa-2x': true}"></fa-icon>
     </a>
 
     <!-- Help Button -->
@@ -56,7 +56,7 @@
         <i class='fas fa-caret-square-down'></i> icon to display everything on one page."
     >
       <span class="mr-2">More Help</span
-      ><i class="far fa-question-circle fa-2x"></i>
+      ><fa-icon [icon]="['far', 'question-circle']" [ngClass]="{'fa-2x': true}"></fa-icon>
     </a>
   </div>
 

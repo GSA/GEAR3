@@ -15,6 +15,7 @@ declare var $: any;
   styleUrls: ['./capabilities-modal.component.css']
 })
 export class CapabilitiesModalComponent implements OnInit {
+  isBrowser: boolean;
 
   capability = <any>{};
 
@@ -23,8 +24,9 @@ export class CapabilitiesModalComponent implements OnInit {
     public modalService: ModalsService,
     private router: Router,
     public sharedService: SharedService,
-    public tableService: TableService,
-    @Inject(PLATFORM_ID) private platformId: Object) { }
+    public tableService: TableService, @Inject(PLATFORM_ID) private platformId: any) { 
+      this.isBrowser = isPlatformBrowser(this.platformId);
+    }
 
 
   // Related Orgs Table Options
@@ -70,7 +72,7 @@ export class CapabilitiesModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.modalService.currentCap.subscribe(capability => this.capability = capability);
-    if (!isPlatformBrowser(this.platformId)) {
+    if (!this.isBrowser) {
       return;
     }
     $('#capRelOrgsTable').bootstrapTable($.extend(this.relOrgsTableOptions, {

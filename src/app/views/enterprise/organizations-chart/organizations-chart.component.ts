@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
@@ -8,6 +8,7 @@ import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
+import { isPlatformBrowser } from '@angular/common';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -25,6 +26,7 @@ interface OrgTree {
   styleUrls: ['./organizations-chart.component.css'],
 })
 export class OrganizationsChartComponent implements OnInit {
+  isBrowser: boolean;
   @ViewChild('orgChart') public graphContainer: ElementRef;
   private orgs: any[] = [];
   private root: any = {};
@@ -47,10 +49,13 @@ export class OrganizationsChartComponent implements OnInit {
     private route: ActivatedRoute,
     private sharedService: SharedService,
     private tableService: TableService,
-    private titleService: Title
-  ) {}
-
+    private titleService: Title, @Inject(PLATFORM_ID) private platformId: any) { 
+      this.isBrowser = isPlatformBrowser(this.platformId);
+    }
   ngOnInit(): void {
+    if (!this.isBrowser) {
+      return;
+    }
     // Enable popovers
     $(function () {
       $('[data-toggle="popover"]').popover();

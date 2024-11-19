@@ -5,7 +5,7 @@
  * @param {Date|string} dateObj - The date object or date string to be formatted.
  * @returns {string|null} The formatted date string in 'yyyy-mm-dd hh:mm:ss.mmm' format or null if invalid.
  */
-const formatDateTime = (dateObj) => {
+export const formatDateTime = (dateObj) => {
     if (dateObj === null || dateObj === '') {
       return null;
     }
@@ -30,7 +30,3 @@ const formatDateTime = (dateObj) => {
     formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
     return formattedDate;
   };
-
-module.exports = {
-    formatDateTime,
-};

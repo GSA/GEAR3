@@ -1,14 +1,14 @@
-const isEqual = require('lodash.isequal');
-const jsonDiff = require('json-diff');
+import isEqual from 'lodash.isequal';
+import { diffString } from 'json-diff';
 
-const { getFilePath, parseFile, } = require("../util/io-service.js");
-const { JobLogger } = require('../cron-jobs/job-logger.js');
-const JobStatus = require('../enums/job-status.js');
-const cronJobDbUtilService = require("../cron-jobs/cron-job-db-util.service.js");
-const { formatDateTime } = require('../util/date-time-format-service.js');
-const jsonTransformEngine = require("../util/json-transform-engine.js");
-const { getJsonData } = require("../util/https-client-service.js");
-const { prepareQuery, runQuery } = require("../util/db-query-service.js");
+import { getFilePath, parseFile } from "../util/io-service.js";
+import { JobLogger } from '../cron-jobs/job-logger.js';
+import { JobStatus } from '../enums/job-status.js';
+import { getAnyPendingJob, insertDbData as _insertDbData, updateDbData as _updateDbData } from "../cron-jobs/cron-job-db-util.service.js";
+import { formatDateTime } from '../util/date-time-format-service.js';
+import { transform } from "../util/json-transform-engine.js";
+import { getJsonData } from "../util/https-client-service.js";
+import { prepareQuery, runQuery } from "../util/db-query-service.js";
 
 const jobType = "TPI-JOB";
 const jobName = `CRON JOB: Touchpoint Daily Import`;
@@ -48,7 +48,7 @@ const analyzeData = async (dataItems, jobLogger) => {
   const mappingsJson = JSON.parse(await parseFile(getFilePath(mappingsPath, "touchpoint-to-website.json")));
   const touchpointDbRows = (await Promise.all(dataItems
     .filter(dataItem => dataItem["attributes"]["organization_id"] === 1)
-    .map(async (dataItem) => await jsonTransformEngine.transform(dataItem, mappingsJson))))
+    .map(async (dataItem) => await transform(dataItem, mappingsJson))))
     .sort((a, b) => a.id - b.id);
 
   const touchpointRowMap = Object.assign({}, ...touchpointDbRows.map(row => { return { [row.id]: row } }));
@@ -61,7 +61,7 @@ const analyzeData = async (dataItems, jobLogger) => {
   updateIds = Object.keys(dbRowMap).filter(dbId => (dbId in touchpointRowMap) && !isEqual(dbRowMap[dbId], touchpointRowMap[dbId]));
   jobLogger.log("Update count: " + updateIds.length);
   //print data differences
-  updateIds.forEach(id => jobLogger.log(`Update::: id: ${id}, diff: ${jsonDiff.diffString(dbRowMap[id], touchpointRowMap[id])}`));
+  updateIds.forEach(id => jobLogger.log(`Update::: id: ${id}, diff: ${diffString(dbRowMap[id], touchpointRowMap[id])}`));
   jobLogger.log(`Update Count: ${updateIds.length}`);
 
 
@@ -80,7 +80,7 @@ const transformTouchpointData = async (tpDataItems, mappingFileName, filterIds =
   return await Promise.all(tpDataItems
     .filter(dataItem => dataItem["attributes"]["organization_id"] === 1 &&
       (filterIds.length === 0 || filterIds.indexOf(dataItem.id) !== -1))
-    .map(async (dataItem) => await jsonTransformEngine.transform(dataItem, mappingsCompleteJson)));
+    .map(async (dataItem) => await transform(dataItem, mappingsCompleteJson)));
 }
 
 const createData = async (tpDataItems, rowIds, jobLogger) => {
@@ -137,15 +137,15 @@ const runTouchpointImportJob = async () => {
     jobLogger.log(`${jobName} - Execution start`);
 
     // Check for any pending job
-    const pendingJobId = await cronJobDbUtilService.getAnyPendingJob(jobType);
+    const pendingJobId = await getAnyPendingJob(jobType);
     if (pendingJobId) {
       jobLogger.log(`Active Job '${pendingJobId}' is Running. Aborting the job now.`);
-      await cronJobDbUtilService.insertDbData({ jobType, startTime: formatDateTime(new Date()), jobLogs: jobLogger.getLogs(), jobStatus: JobStatus.CANCELLED });
+      await _insertDbData({ jobType, startTime: formatDateTime(new Date()), jobLogs: jobLogger.getLogs(), jobStatus: JobStatus.CANCELLED });
       return;
     }
 
     // Insert new job record
-    jobId = await cronJobDbUtilService.insertDbData({ jobType, startTime: formatDateTime(new Date()), jobLogs: '', jobStatus: JobStatus.PENDING });
+    jobId = await _insertDbData({ jobType, startTime: formatDateTime(new Date()), jobLogs: '', jobStatus: JobStatus.PENDING });
     jobLogger.log(`Cron job id: ${jobId} - start`);
 
     await importWebsiteData(jobLogger);
@@ -176,7 +176,7 @@ const runTouchpointImportJob = async () => {
  */
 const postprocesJobExecution = async (jobId, jobLogger, jobStatus) => {
   jobLogger.log(`Cron job id: ${jobId} - end`);
-  await cronJobDbUtilService.updateDbData({
+  await _updateDbData({
     jobStatus: jobStatus,
     endTime: formatDateTime(new Date()),
     jobLogs: jobLogger.getLogs(),
@@ -184,6 +184,6 @@ const postprocesJobExecution = async (jobId, jobLogger, jobStatus) => {
   });
 };
 
-module.exports = {
+export default {
   runTouchpointImportJob,
 };

@@ -20,6 +20,9 @@ export class AppComponent implements OnInit {
     this.isBrowser = isPlatformBrowser(this.platformId);
     this.router.events.subscribe(event => {
       // Send page_view event to GA
+      if (!this.isBrowser) {
+        return;
+      }
       if (event instanceof NavigationEnd) {
           gtag('event', 'page_view', { 'page_path': event.urlAfterRedirects });
       }

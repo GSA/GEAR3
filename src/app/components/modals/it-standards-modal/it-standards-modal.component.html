@@ -6,14 +6,14 @@
       <div class="modal-header bg-teal">
         <a class="mr-3 text-white" role="button" tabindex="0" aria-label="Previous"
           (click)="tableService.previousModalRoute('itStandardDetail')" [hidden]="!modalService.checkModalRoutes()">
-          <i class="fas fa-arrow-circle-left fa-lg fa-fw"></i>
+          <fa-icon [icon]="['fas', 'arrow-circle-left']" [ngClass]="{'fa-fw': true, 'fa-lg': true}"></fa-icon>
         </a>
         <h5 class="modal-title text-white" id="itStandTitle">
-          <i class="fas fa-microchip"></i>
+          <fa-icon [icon]="['fas', 'microchip']"></fa-icon>
           {{ getTitle(itStandard.SoftwareReleaseName, itStandard.Name) }}
         </h5>
         <a role="button" aria-label="Close" data-dismiss="modal" tabindex="0">
-          <i class="fas fa-times fa-lg text-white align-self-center"></i>
+          <fa-icon [icon]="['fas', 'times']" [ngClass]="{'fa-lg': true}" class="text-white align-self-center"></fa-icon>
         </a>
       </div>
 
@@ -39,7 +39,7 @@
             <div class="overview-container">
               <div class="overview-item">
                 <div class="overview-item-title" [title]="getTooltip('Status')" role="tooltip">
-                  <i class="fa fa-info-circle"></i>
+                  <fa-icon [icon]="['fas', 'info-circle']"></fa-icon>
                   <span class="heading">Status</span>
                 </div>
                 <div class="overview-item-content">
@@ -49,7 +49,7 @@
               </div>
               <div class="overview-item">
                 <div class="overview-item-title" [title]="getTooltip('Approved Versions')">
-                  <i class="fa fa-question-circle"></i>
+                  <fa-icon [icon]="['fas', 'question-circle']"></fa-icon>
                   <span class="heading">Approved Versions</span>
                 </div>
                 <div class="overview-item-content" *ngIf="isApproved()">
@@ -62,7 +62,7 @@
               </div>
               <div class="overview-item">
                 <div class="overview-item-title" [title]="getTooltip('Approval Expiration Date')" role="tooltip">
-                  <i class="fa fa-calendar-alt"></i>
+                  <fa-icon [icon]="['fas', 'calendar-alt']"></fa-icon>
                   <span class="heading">Approval Expires</span>
                 </div>
                 <div class="overview-item-content">
@@ -72,7 +72,7 @@
               </div>
               <div class="overview-item">
                 <div class="overview-item-title" [title]="getTooltip('Software Release Name')" >
-                  <i class="fa fa-info-circle"></i>
+                  <fa-icon [icon]="['fas', 'info-circle']"></fa-icon>
                   <span class="heading">Software Release Name</span>
                 </div>
                 <div class="overview-item-content">
@@ -81,7 +81,7 @@
               </div>
               <div class="overview-item">
                 <div class="overview-item-title" [title]="getTooltip('Also Known As')" role="tooltip">
-                  <i class="fa fa-info-circle"></i>
+                  <fa-icon [icon]="['fas', 'info-circle']"></fa-icon>
                   <span class="heading">Also Known As</span>
                 </div>
                 <div class="overview-item-content">
@@ -90,7 +90,7 @@
               </div>
               <div class="overview-item">
                 <div class="overview-item-title" [title]="getTooltip('508 Compliance')" role="tooltip">
-                  <i class="fa fa-universal-access"></i>
+                  <fa-icon [icon]="['fas', 'universal-access']"></fa-icon>
                   <span class="heading">508 Compliance</span>
                 </div>
                 <div class="overview-item-content">
@@ -100,7 +100,7 @@
               </div>
               <div class="overview-item">
                 <div class="overview-item-title" [title]="getTooltip('POC')" role="tooltip">
-                  <i class="fa fa-user"></i>
+                  <fa-icon [icon]="['fas', 'user']"></fa-icon>
                   <span class="heading">POC</span>
                 </div>
                 <div class="overview-item-content">
@@ -115,7 +115,7 @@
             <div class="overview-container m2">
               <div class="overview-item">
                 <div class="overview-item-title" [title]="getTooltip('Description')" role="tooltip">
-                  <i class="fa fa-info-circle"></i>
+                  <fa-icon [icon]="['fas', 'info-circle']"></fa-icon>
                   <span class="heading">Description</span>
                 </div>
                 <div class="overview-item-content" *ngIf="isFieldPopulated(itStandard.Description)">
@@ -131,7 +131,7 @@
             <div class="overview-container">
               <div class="overview-item">
                 <div class="overview-item-title" [title]="getTooltip('Comments')" role="tooltip">
-                  <i class="fa fa-tag"></i>
+                  <fa-icon [icon]="['fas', 'tag']"></fa-icon>
                   <span class="heading">Comments</span>
                 </div>
                 <div class="overview-item-content" *ngIf="isFieldPopulated(itStandard.Comments)">
@@ -170,65 +170,65 @@
               <tbody>
                 <tr *ngIf="isFieldPopulated(itStandard.ManufacturerName)">
                   <td>
-                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Manufacturer Name')" role="tooltip">Manufacturer</span>
+                    <fa-icon [icon]="['fas', 'toolbox']"></fa-icon><span [title]="getTooltip('Manufacturer Name')" role="tooltip">Manufacturer</span>
                   </td>
                   <td>{{ itStandard.ManufacturerName }}</td>
                 </tr>
                 <tr *ngIf="isFieldPopulated(itStandard.SoftwareProductName)">
                   <td>
-                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software Product Name')" role="tooltip">Product</span>
+                    <fa-icon [icon]="['fas', 'toolbox']"></fa-icon><span [title]="getTooltip('Software Product Name')" role="tooltip">Product</span>
                   </td>
                   <td>{{ itStandard.SoftwareProductName }}</td>
                 </tr>
                 <tr *ngIf="isFieldPopulated(itStandard.SoftwareVersionName)">
                   <td>
-                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software Version Name')" role="tooltip">Version</span>
+                    <fa-icon [icon]="['fas', 'toolbox']"></fa-icon><span [title]="getTooltip('Software Version Name')" role="tooltip">Version</span>
                   </td>
                   <td>{{ itStandard.SoftwareVersionName }}</td>
                 </tr>
                 <tr *ngIf="isFieldPopulated(itStandard.EndOfLifeDate)">
                   <td>
-                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software End of Life Date')" role="tooltip">Vendor End of Life Date</span>
+                    <fa-icon [icon]="['fas', 'toolbox']"></fa-icon><span [title]="getTooltip('Software End of Life Date')" role="tooltip">Vendor End of Life Date</span>
                   </td>
                   <td>{{ itStandard.EndOfLifeDate | date : "MMMM d, y" }}</td>
                 </tr>
                 <tr *ngIf="isFieldPopulated(itStandard.Category)">
-                  <td><i class="far fa-list-alt"></i><span [title]="getTooltip('Category')" role="tooltip">Category</span>
+                  <td><fa-icon [icon]="['fas', 'list-alt']"></fa-icon><span [title]="getTooltip('Category')" role="tooltip">Category</span>
                   </td>
                   <td>{{ itStandard.Category }}</td>
                 </tr>
                 <tr *ngIf="isFieldPopulated(itStandard.DeploymentType)">
-                  <td><i class="fas fa-shipping-fast"></i><span [title]="getTooltip('Deployment Type')" role="tooltip">Deployment Type</span>
+                  <td><fa-icon [icon]="['fas', 'shipping-fast']"></fa-icon><span [title]="getTooltip('Deployment Type')" role="tooltip">Deployment Type</span>
                   </td>
                   <td>{{ itStandard.DeploymentType }}</td>
                 </tr>
                 <tr *ngIf="isFieldPopulated(itStandard.StandardType)">
-                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Standard Type')" role="tooltip">Standard Type</span>
+                  <td><fa-icon [icon]="['fas', 'info-circle']"></fa-icon><span [title]="getTooltip('Standard Type')" role="tooltip">Standard Type</span>
                   </td>
                   <td>{{ itStandard.StandardType }}</td>
                 </tr>
                 <tr *ngIf="isFieldPopulated(itStandard.attestation_required)">
-                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Attestation Required')" role="tooltip">Attestation Required</span></td>
+                  <td><fa-icon [icon]="['fas', 'info-circle']"></fa-icon><span [title]="getTooltip('Attestation Required')" role="tooltip">Attestation Required</span></td>
                   <td>{{ itStandard.attestation_required }}</td>
                 </tr>
                 <tr *ngIf="isFieldPopulated(itStandard.attestation_link)">
-                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Attestation Link')" role="tooltip">Attestation Link</span></td>
+                  <td><fa-icon [icon]="['fas', 'info-circle']"></fa-icon><span [title]="getTooltip('Attestation Link')" role="tooltip">Attestation Link</span></td>
                   <td>{{ itStandard.attestation_link }}</td>
                 </tr>
                 <tr *ngIf="isFieldPopulated(itStandard.fedramp)">
-                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('FedRAMP')" role="tooltip">FedRAMP</span></td>
+                  <td><fa-icon [icon]="['fas', 'info-circle']"></fa-icon><span [title]="getTooltip('FedRAMP')" role="tooltip">FedRAMP</span></td>
                   <td>{{ itStandard.fedramp | yesno }}</td>
                 </tr>
                 <tr *ngIf="isFieldPopulated(itStandard.open_source)">
-                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Open Source')" role="tooltip">Open Source</span></td>
+                  <td><fa-icon [icon]="['fas', 'info-circle']"></fa-icon><span [title]="getTooltip('Open Source')" role="tooltip">Open Source</span></td>
                   <td>{{ itStandard.open_source | yesno }}</td>
                 </tr>
                 <tr *ngIf="isFieldPopulated(itStandard.RITM)">
-                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Requested Item (RITM)')" role="tooltip">Requested Item (RITM)</span></td>
+                  <td><fa-icon [icon]="['fas', 'info-circle']"></fa-icon><span [title]="getTooltip('Requested Item (RITM)')" role="tooltip">Requested Item (RITM)</span></td>
                   <td>{{ itStandard.RITM }}</td>
                 </tr>
                 <tr *ngIf="isFieldPopulated(itStandard.ReferenceDocument)">
-                  <td><i class="far fa-comment"></i><span [title]="getTooltip('Reference Document')" role="tooltip">Reference Document</span></td>
+                  <td><fa-icon [icon]="['far', 'comment']"></fa-icon><span [title]="getTooltip('Reference Document')" role="tooltip">Reference Document</span></td>
                   <td>
                     <a [hidden]="!itStandard.ReferenceDocument" href="{{ itStandard.ReferenceDocument }}"
                       target="_blank" rel="noopener">

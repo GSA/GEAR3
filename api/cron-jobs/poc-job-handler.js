@@ -1,9 +1,9 @@
-const { JobLogger } = require('../cron-jobs/job-logger.js');
-const JobStatus = require('../enums/job-status.js');
-const cronJobDbUtilService = require("../cron-jobs/cron-job-db-util.service.js");
-const { formatDateTime } = require('../util/date-time-format-service.js');
-const { parseCSV } = require("../util/csv-parse-service.js");
-const { runQuery, getConnection, relaseConnection } = require("../util/db-query-service.js");
+import { JobLogger } from '../cron-jobs/job-logger.js';
+import { CANCELLED, PENDING, SUCCESS, FAILURE } from '../enums/job-status.js';
+import { getAnyPendingJob, insertDbData, updateDbData } from "../cron-jobs/cron-job-db-util.service.js";
+import { formatDateTime } from '../util/date-time-format-service.js';
+import { parseCSV } from "../util/csv-parse-service.js";
+import { runQuery, getConnection, relaseConnection } from "../util/db-query-service.js";
 
 const jobType = "POC-JOB";
 const jobName = `CRON JOB: POC Update Job`;
@@ -20,15 +20,15 @@ const runPocJob = async () => {
     jobLogger.log(`${jobName} - Execution start`);
 
     // Check for any pending job
-    const pendingJobId = await cronJobDbUtilService.getAnyPendingJob(jobType);
+    const pendingJobId = await getAnyPendingJob(jobType);
     if (pendingJobId) {
       jobLogger.log(`Active Job '${pendingJobId}' is Running. Aborting the job now.`);
-      jobId = await cronJobDbUtilService.insertDbData({ jobType, startTime: formatDateTime(new Date()), jobLogs: jobLogger.getLogs(), jobStatus: JobStatus.CANCELLED });
+      jobId = await insertDbData({ jobType, startTime: formatDateTime(new Date()), jobLogs: jobLogger.getLogs(), jobStatus: CANCELLED });
       return;
     }
 
     // Insert new job record
-    jobId = await cronJobDbUtilService.insertDbData({ jobType, startTime: formatDateTime(new Date()), jobLogs: '', jobStatus: JobStatus.PENDING });
+    jobId = await insertDbData({ jobType, startTime: formatDateTime(new Date()), jobLogs: '', jobStatus: PENDING });
     console.log(`Cron job id: ${jobId} - start`);
 
     // TODO: Add code to get data using Active Directory using activedirectory2 lib
@@ -90,14 +90,14 @@ const runPocJob = async () => {
     await runQuery(updateEndOfLifeQuery, []);
     jobLogger.log('Update obj_ldap_poc to separate records and add group account.');
 
-    await postprocesJobExecution(jobId, jobLogger, JobStatus.SUCCESS);
+    await postprocesJobExecution(jobId, jobLogger, SUCCESS);
   } catch (error) {
     // Log any errors
     const status = `Error occurred while running: \n${error}`;
     if (jobId) {
       jobLogger.log(`${jobName} - ${status}`);
       jobLogger.log(error.stack);
-      await postprocesJobExecution(jobId, jobLogger, JobStatus.FAILURE);
+      await postprocesJobExecution(jobId, jobLogger, FAILURE);
     } else {
       jobLogger.log(error);
       jobLogger.log(error.stack);
@@ -118,7 +118,7 @@ const runPocJob = async () => {
  */
 const postprocesJobExecution = async (jobId, jobLogger, jobStatus) => {
   jobLogger.log(`Cron job id: ${jobId} - end`);
-  await cronJobDbUtilService.updateDbData({
+  await updateDbData({
     jobStatus: jobStatus,
     endTime: formatDateTime(new Date()),
     jobLogs: jobLogger.getLogs(),
@@ -126,6 +126,6 @@ const postprocesJobExecution = async (jobId, jobLogger, jobStatus) => {
   });
 };
 
-module.exports = {
+export default {
   runPocJob,
 };

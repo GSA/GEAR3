@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { formatDate } from '@angular/common';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { formatDate, isPlatformBrowser } from '@angular/common';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 import { Globals } from '@common/globals';
@@ -91,14 +91,16 @@ export class ItStandardManagerComponent implements OnInit {
   itStandCertify: boolean = false;
 
   anyServerError = false;
+  isBrowser: boolean;
 
   constructor(
     private apiService: ApiService,
     private globals: Globals,
     public modalService: ModalsService,
     private sharedService: SharedService,
-    private tableService: TableService) { }
-
+    private tableService: TableService, @Inject(PLATFORM_ID) private platformId: any) { 
+      this.isBrowser = isPlatformBrowser(this.platformId);
+    }
   ngOnInit(): void {
 
     //console.log("it-standard-manager.component.ts ngOnInit()"); //DEBUG
@@ -128,6 +130,9 @@ export class ItStandardManagerComponent implements OnInit {
       this.itStandReqAtteLoading = false;
     });
 
+    if (!this.isBrowser) {
+      return;
+    }
     this.disableSoftwareProduct();
     this.disableSoftwareVersion();
     this.disableSoftwareRelease();
@@ -174,8 +179,8 @@ export class ItStandardManagerComponent implements OnInit {
       todayHighlight: true,
       toggleActive: true,
       templates: {
-        leftArrow: '<i class="fas fa-long-arrow-alt-left"></i>',
-        rightArrow: '<i class="fas fa-long-arrow-alt-right"></i>'
+        leftArrow: '<fa-icon [icon]="[\'fas\', \'long-arrow-alt-left\']"></fa-icon>',
+        rightArrow: '<fa-icon [icon]="[\'fas\', \'long-arrow-alt-right\']"></fa-icon>'
       }
     });
 

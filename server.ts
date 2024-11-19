@@ -18,6 +18,7 @@ import passportsaml, { SamlConfig } from '@node-saml/passport-saml';
 import api from './api/index';
 import CryptoJS from "crypto-js";
 import { AddressInfo } from 'net';
+import runTouchpointImportJob from './api/cron-jobs/tpi-job-handler';
 
 const dbCredentials = dbjs.dbCredentials;
 const SAMLStrategy = passportsaml.Strategy;
@@ -402,8 +403,8 @@ import * as cronCtrl from "./api/controllers/cron.controller.js";
 
 // -------------------------------------------------------------------------------------------------
 // Function to load POC data every Wednesday at 5:00 AM ET from the csv file in scripts/pocs
-const fastcsv = require("fast-csv");
-const { consoleTestResultHandler } = require('tslint/lib/test.js');
+import fastcsv from "fast-csv";
+import { consoleTestResultHandler } from 'tslint/lib/test.js';
 
 cron.schedule(process.env.POC_CRON, () => { //PRODUCTION
   let stream = fs.createReadStream("scripts/pocs/GSA_Pocs.csv");
@@ -500,6 +501,6 @@ cron.schedule(process.env.TECH_CATALOG_CRON2, () => {
 // -------------------------------------------------------------------------------------------------
 
 // CRON JOB: Touchpoints API - Update Websites (runs every day at 11:05 PM)
-cron.schedule(process.env.TOUCHPOINTS_CRON, () => { 
-  cronCtrl.runTouchpointImportJob();
+cron.schedule(process.env.TOUCHPOINTS_CRON, async () => { 
+  await runTouchpointImportJob();
 });

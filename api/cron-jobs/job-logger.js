@@ -1,7 +1,7 @@
 /**
  * JobLogger class for managing log messages.
  */
-class JobLogger {
+export class JobLogger {
     /**
      * Creates a new JobLogger instance.
      */
@@ -27,8 +27,4 @@ class JobLogger {
       return this.logs; // Return the concatenated log messages
     }
   }
-  
-  module.exports = {
-    JobLogger,
-  };
   

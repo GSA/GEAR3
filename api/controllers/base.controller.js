@@ -5,7 +5,7 @@ import { google } from "googleapis";
   
 import fastcsv from "fast-csv";
 
-const SqlString = require('sqlstring');
+import SqlString from 'sqlstring';
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
@@ -13,8 +13,8 @@ const SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
 // created automatically when the authorization flow completes for the first
 // time.
 const TOKEN_PATH = "token.json";
-const JobStatus = require('../enums/job-status.js');
-const { formatDateTime } = require('../util/date-time-format-service.js');
+import {JobStatus} from '../enums/job-status.js';
+import {formatDateTime }  from '../util/date-time-format-service.js';
 
 export async function getApiToken(req, res) {
   //console.log('req.headers: ', req.headers); //debugging
@@ -1864,7 +1864,6 @@ function writeToLogFile(msg, logFileName = null) {
   appendFileSync(logFileName, msg);
 
 }
-exports.formatDateTime = (dateObj) => formatDateTime(dateObj);
 
 function formatFileDateTime(dateObj) {
 

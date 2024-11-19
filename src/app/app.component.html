@@ -3,8 +3,7 @@
 
 <!-- Sidebar -->
 <app-sidebar></app-sidebar>
-
-<div class="page-wrap">
+<div class="page-wrap" *ngIf="isBrowser">
   <div class="sidebar-content-wrapper">
     <div class="sidebar-icon-container" (mouseenter)="toggleSidebar()" tabindex="0" (keydown)="onSidebarIconsKeyDown($event)">
       <div class="sidebar-icon-wrap">
@@ -17,7 +16,7 @@
         <div class="icon-break"></div>
         <div class="sidebar-icon additional-info"><i class="fab fa-wpforms fa-lg fa-fw"></i></div>
       </div>
-    </div>
+    </div>  
     
     <!-- Main Module -->
     <div class="container-fluid content-body" id="mainModule">
@@ -36,7 +35,7 @@
               >
                 <div id="loggedInCollapse" class="collapse">
                   <div class="toast-header">
-                    <i class="fa fa-sign-in-alt mr-2 fa-fw"></i>
+                    <fa-icon [icon]="['fas', 'sign-in-alt']" [ngClass]="{'fa-fw': true}" class="mr-2"></fa-icon>
                     <strong class="mr-auto text-success"
                       >You have successfully logged into GEAR Manager!</strong
                     >
@@ -55,7 +54,7 @@
               >
                 <div id="loggedOutCollapse" class="collapse">
                   <div class="toast-header">
-                    <i class="fas fa-sign-out-alt mr-2 fa-fw"></i>
+                    <fa-icon [icon]="['fas', 'sign-in-alt']" [ngClass]="{'fa-fw': true}" class="mr-2"></fa-icon>
                     <strong class="mr-auto text-warning"
                       >You have been logged out of GEAR Manager!</strong
                     >

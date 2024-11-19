@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 import { Globals } from '@common/globals';
@@ -30,13 +31,16 @@ export class CapabilityManagerComponent implements OnInit {
   selectedOrgsIDs: Set<any> = new Set();
 
   capabilityCertify: boolean = false;
+  isBrowser: boolean;
 
   constructor(
     private apiService: ApiService,
     private globals: Globals,
     public modalService: ModalsService,
     private sharedService: SharedService,
-    private tableService: TableService) { }
+    private tableService: TableService, @Inject(PLATFORM_ID) private platformId: any) { 
+      this.isBrowser = isPlatformBrowser(this.platformId);
+    }
 
   ngOnInit(): void {
     // Emit setFormDefaults for when edit button is pressed
@@ -46,6 +50,9 @@ export class CapabilityManagerComponent implements OnInit {
 
     this.modalService.currentCap.subscribe(capability => this.capability = capability);
 
+    if (!this.isBrowser) {
+      return;
+    }
     // If the manager modal is exited, clear the certify flag
     $('#capabilityManager').on('hidden.bs.modal', function (e) {
       this.capabilityCertify = false;

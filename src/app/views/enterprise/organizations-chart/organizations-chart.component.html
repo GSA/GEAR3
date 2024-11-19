@@ -2,7 +2,7 @@
   <div class="row card-header text-white bg-royal-blue text-center">
     <h3 class="card-title col-12 mb-0">
       <span>
-        <i class="fas fa-sitemap"></i>
+        <fa-icon [icon]="['fas', 'sitemap']"></fa-icon>
         GSA Organizations Chart
       </span>
     </h3>
@@ -20,7 +20,7 @@
         <b>Search:</b> The search box below can search for any of the organization display names and expand the chart to the nodes that match. 
         Enter your desired term into the search bar and press <i>Enter</i>. You will get an alert if no matching term is found.
         Click the <i class='far fa-trash-alt fa-lg'></i> icon to clear the search box and reset the chart.">
-      <span class="mr-2">More Help</span><i class="far fa-question-circle fa-2x"></i>
+      <span class="mr-2">More Help</span><fa-icon [icon]="['far', 'question-circle']" [ngClass]="{'fa-2x': true}"></fa-icon>
     </a>
   </div>
 
@@ -44,7 +44,7 @@
         (keydown)="search($event)" />
       <div class="input-group-btn">
         <button aria-label="ClearSearch" class="btn btn-primary" (click)="clearSearch(); searchKey = '';">
-          <i class="far fa-trash-alt fa-lg"></i>
+          <fa-icon [icon]="['far', 'trash-alt']" [ngClass]="{'fa-lg': true}"></fa-icon>
         </button>
       </div>
     </div>

@@ -1,5 +1,5 @@
-import {Injectable, EventEmitter} from '@angular/core';
-import {formatDate, Location} from '@angular/common';
+import {Injectable, EventEmitter, PLATFORM_ID, Inject} from '@angular/core';
+import {formatDate, isPlatformBrowser, Location} from '@angular/common';
 import {Subscription} from 'rxjs/internal/Subscription';
 import {Router} from '@angular/router';
 
@@ -17,6 +17,7 @@ declare var gtag: Function;
   providedIn: 'root'
 })
 export class SharedService {
+  isBrowser = false;
 
   // Sidebar Toggle Service
   toggleEmitter = new EventEmitter();
@@ -44,8 +45,8 @@ export class SharedService {
     private globals: Globals,
     private location: Location,
     private router: Router,
-    private http: HttpClient
-    ) {
+    private http: HttpClient, @Inject(PLATFORM_ID) private platformId: any) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
   // Toggle sidebar open/closed
@@ -356,7 +357,9 @@ export class SharedService {
   public addIDtoURL(row, IDname) {
     var normalizedURL = this.coreURL(this.router.url);
     this.location.replaceState(`${normalizedURL}/${row[IDname]}`);
-
+    if (!this.isBrowser) {
+      return;
+    }
     // Send page_view event to GA
     gtag('event', 'page_view', { 'page_path': `${normalizedURL}/${row[IDname]}` });
   };

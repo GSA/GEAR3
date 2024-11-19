@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 import { Globals } from '@common/globals';
@@ -17,6 +18,7 @@ declare var $: any;
   styleUrls: ['./system-manager.component.css']
 })
 export class SystemManagerComponent implements OnInit {
+  isBrowser: boolean;
 
   systemForm: FormGroup = new FormGroup({
     relatedCaps: new FormControl(),
@@ -48,7 +50,9 @@ export class SystemManagerComponent implements OnInit {
     private globals: Globals,
     public modalService: ModalsService,
     private sharedService: SharedService,
-    private tableService: TableService) { }
+    private tableService: TableService, @Inject(PLATFORM_ID) private platformId: any) { 
+      this.isBrowser = isPlatformBrowser(this.platformId);
+    }
 
   ngOnInit(): void {
     // Emit setFormDefaults for when edit button is pressed
@@ -58,6 +62,9 @@ export class SystemManagerComponent implements OnInit {
 
     this.modalService.currentSys.subscribe(system => this.system = system);
 
+    if (!this.isBrowser) {
+      return;
+    }
     // If the manager modal is exited, clear the certify flag
     $('#systemManager').on('hidden.bs.modal', function (e) {
       this.systemCertify = false;

@@ -2,7 +2,7 @@
   <div class="card-header text-white bg-success text-center">
     <h3 class="card-title col-12 mb-0">
       <span>
-        <i class="fas fa-money-bill-wave mr-2"></i>
+        <fa-icon [icon]="['fas', 'money-bill-wave' ]" class="mr-2"></fa-icon>
         <span [hidden]="!filteredTable">{{ filterTitle }} </span>
         <span [hidden]="filteredTable">Current IT </span>
         Investments
@@ -25,7 +25,7 @@
         <br><br>
         <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
         <i class='fas fa-caret-square-down'></i> icon to display everything on one page.">
-      <span class="mr-2">More Help</span><i class="far fa-question-circle fa-2x"></i>
+      <span class="mr-2">More Help</span><fa-icon [icon]="['fas', 'question-circle']" [ngClass]="{'fa-2x': true}"></fa-icon>
     </a>
   </div>
 

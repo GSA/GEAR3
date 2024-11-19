@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 import { Globals } from '@common/globals';
@@ -17,6 +18,7 @@ declare var $: any;
   styleUrls: ['./record-manager.component.css']
 })
 export class RecordManagerComponent implements OnInit {
+  isBrowser: boolean;
 
   recordForm: FormGroup = new FormGroup({
     relatedSystems: new FormControl()
@@ -36,7 +38,9 @@ export class RecordManagerComponent implements OnInit {
     private globals: Globals,
     public modalService: ModalsService,
     private sharedService: SharedService,
-    private tableService: TableService) { }
+    private tableService: TableService, @Inject(PLATFORM_ID) private platformId: any) { 
+      this.isBrowser = isPlatformBrowser(this.platformId);
+    }
 
   ngOnInit(): void {
     // Emit setFormDefaults for when edit button is pressed
@@ -46,6 +50,9 @@ export class RecordManagerComponent implements OnInit {
 
     this.modalService.currentRecord.subscribe(record => this.record = record);
 
+    if (!this.isBrowser) {
+      return;
+    }
     // If the manager modal is exited, clear the certify flag
     $('#recordManager').on('hidden.bs.modal', function (e) {
       this.recordCertify = false;

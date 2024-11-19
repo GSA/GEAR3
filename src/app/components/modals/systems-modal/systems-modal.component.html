@@ -18,14 +18,14 @@
           (click)="tableService.previousModalRoute('systemDetail')"
           [hidden]="!modalService.checkModalRoutes()"
         >
-          <i class="fas fa-arrow-circle-left fa-lg fa-fw"></i>
+        <fa-icon [icon]="['fas', 'arrow-circle-left']" [ngClass]="{'fa-fw': true, 'fa-lg': true}"></fa-icon>
         </a>
         <h5 class="modal-title text-white" id="systemTitle">
-          <i class="fas fa-desktop"></i>
+          <fa-icon [icon]="['fas', 'desktop']"></fa-icon>
           {{ system.Name }}
         </h5>
         <a role="button" aria-label="Close" data-dismiss="modal" tabindex="0">
-          <i class="fas fa-times fa-lg text-white align-self-center"></i>
+          <fa-icon [icon]="['fas', 'times']" [ngClass]="{'fa-lg': true}" class="text-white align-self-center"></fa-icon>
         </a>
       </div>
 
@@ -129,30 +129,30 @@
 
                   <tbody>
                     <tr>
-                      <td><i class="far fa-calendar-check"></i>ATO Date</td>
+                      <td><fa-icon [icon]="['far', 'calendar-check']"></fa-icon>ATO Date</td>
                       <td>{{ system.ATODate | date : "longDate" }}</td>
                     </tr>
                     <tr>
-                      <td><i class="far fa-folder-open"></i>ATO Type</td>
+                      <td><fa-icon [icon]="['fas', 'folder-open']"></fa-icon>ATO Type</td>
                       <td>{{ system.ATOType }}</td>
                     </tr>
                     <tr>
-                      <td><i class="fa fa-sitemap"></i>Business Org</td>
+                      <td><fa-icon [icon]="['fas', 'sitemap']"></fa-icon>Business Org</td>
                       <td>
                         {{ system.BusOrg }}
                         <div [hidden]="system.BusOrg">None Designated</div>
                       </td>
                     </tr>
                     <tr>
-                      <td><i class="fa fa-bookmark"></i>CUI</td>
+                      <td><fa-icon [icon]="['fas', 'bookmark']"></fa-icon>CUI</td>
                       <td>{{ system.CUI }}</td>
                     </tr>
                     <tr *ngIf="system.InactiveDate">
-                      <td><i class="fa fa-calendar-alt"></i>Inactive Date</td>
+                      <td><fa-icon [icon]="['fas', 'calendar-alt']"></fa-icon>Inactive Date</td>
                       <td>{{ system.InactiveDate | date : "longDate" }}</td>
                     </tr>
                     <!-- <tr>
-                      <td><i class="fas fa-money-bill-wave"></i>Investment</td>
+                      <td><fa-icon [icon]="['fas', 'money-bill-wave']"></fa-icon>Investment</td>
                       <td *ngIf="system.Investment; else investElse" class="btn-outline-success pointer"
                       (click)="tableService.openRelated(system.InvestmentID, 'investment')">{{ system.Investment }}</td>
                       <ng-template #investElse>
@@ -160,18 +160,18 @@
                       </ng-template>
                     </tr> -->
                     <tr *ngIf="system.RenewalDate">
-                      <td><i class="fas fa-calendar-day"></i>Renewal Date</td>
+                      <td><fa-icon [icon]="['fas', 'calendar-day']"></fa-icon>Renewal Date</td>
                       <td>{{ system.RenewalDate | date : "longDate" }}</td>
                     </tr>
                     <tr>
-                      <td><i class="fa fa-sitemap"></i>Responsible IT Org</td>
+                      <td><fa-icon [icon]="['fas', 'sitemap']"></fa-icon>Responsible IT Org</td>
                       <td>
                         {{ system.RespOrg }}
                         <div [hidden]="system.RespOrg">None Designated</div>
                       </td>
                     </tr>
                     <tr>
-                      <td><i class="fa fa-certificate"></i>Cloud Service Type</td>
+                      <td><fa-icon [icon]="['fas', 'certificate']"></fa-icon>Cloud Service Type</td>
                       <td>{{ system.ServiceType }}</td>
                     </tr>
                   </tbody>
@@ -266,44 +266,44 @@
 
               <tbody>
                 <tr>
-                  <td><i class="fa fa-cloud"></i>Cloud Enabled?</td>
+                  <td><fa-icon [icon]="['fas', 'cloud']"></fa-icon>Cloud Enabled?</td>
                   <td>{{ system.CloudYN }}</td>
                 </tr>
                 <tr [hidden]="!system.CSP">
-                  <td><i class="fa fa-building"></i>Hosting Provider</td>
+                  <td><fa-icon [icon]="['fas', 'building']"></fa-icon>Hosting Provider</td>
                   <td>{{ system.CSP }}</td>
                 </tr>
                 <tr>
                   <td>
-                    <i class="fa fa-bookmark"></i>Complete FISMA Assessment for
+                    <fa-icon [icon]="['fas', 'bookmark']"></fa-icon>Complete FISMA Assessment for
                     Current FY
                   </td>
                   <td>{{ system.ComplFISMA }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fas fa-layer-group"></i>FIPS Impact Level</td>
+                  <td><fa-icon [icon]="['fas', 'layer-group']"></fa-icon>FIPS Impact Level</td>
                   <td>{{ system.FIPS_Impact_Level }}</td>
                 </tr>
                 <tr>
                   <td>
-                    <i class="far fa-handshake"></i>Gov't-Wide Shared Service
+                    <fa-icon [icon]="['fas', 'handshake']"></fa-icon>Gov't-Wide Shared Service
                   </td>
                   <td>{{ system.SharedService }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fa fa-tag"></i>FISMA System Identifier</td>
+                  <td><fa-icon [icon]="['fas', 'tag']"></fa-icon>FISMA System Identifier</td>
                   <td>{{ system.FISMASystemIdentifier }}</td>
                 </tr>
                 <tr>
-                  <td><i class="far fa-address-card"></i>PII Indicator</td>
+                  <td><fa-icon [icon]="['fas', 'address-card']"></fa-icon>PII Indicator</td>
                   <td>{{ system.PII }}</td>
                 </tr>
                 <tr>
-                  <td><i class="fa fa-server"></i>Service Type</td>
+                  <td><fa-icon [icon]="['fas', 'server']"></fa-icon>Service Type</td>
                   <td>{{ system.ServiceType }}</td>
                 </tr>
                 <!-- <tr>
-                  <td><i class="fa fa-server"></i>Parent System</td>
+                  <td><fa-icon [icon]="['fas', 'server']"></fa-icon>Parent System</td>
                   <td *ngIf="system.ParentSystem; else systemElse" class="btn-outline-danger pointer"
                     (click)="openRelated(system.ParentSystemID, 'parent')">{{ system.ParentSystem }}</td>
                   <ng-template #systemElse>

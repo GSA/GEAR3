@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
@@ -18,6 +18,7 @@ declare var $: any;
 export class WebsiteServiceCategoryModalComponent implements OnInit {
   websiteServiceCategory = <any>{};
   serviceCategoryWebsites = <any>{};
+  isBrowser: boolean;
 
   constructor(
     private apiService: ApiService,
@@ -26,8 +27,9 @@ export class WebsiteServiceCategoryModalComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     public sharedService: SharedService,
-    public tableService: TableService
-  ) {}
+    public tableService: TableService, @Inject(PLATFORM_ID) private platformId: any) { 
+      this.isBrowser = isPlatformBrowser(this.platformId);
+    }
 
   serviceCategoryWebsitesTableOptions: {} =
     this.tableService.createTableOptions({
@@ -82,12 +84,16 @@ export class WebsiteServiceCategoryModalComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    
     this.modalService.currentWebsiteServiceCategory.subscribe(
       (websiteServiceCategory) => {
         this.websiteServiceCategory = websiteServiceCategory;
       }
     );
 
+    if (!this.isBrowser) {
+      return;
+    }
     $('#websiteServiceCategoryWebsites').bootstrapTable(
       $.extend(this.serviceCategoryWebsitesTableOptions, {
         columns: this.serviceCategoryWebsitesColumnDefs,

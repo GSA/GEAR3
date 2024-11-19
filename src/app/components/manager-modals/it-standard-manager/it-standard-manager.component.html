@@ -5,7 +5,7 @@
     <div class="modal-content">
       <div class="modal-header bg-success">
         <h5 class="modal-title text-white" id="itStandMngrTitle">
-          <i class="fas fa-microchip"></i>
+          <fa-icon [icon]="['fas', 'microchip']"></fa-icon>
           <span *ngIf="itStandard.Name; else elseITStandName"> {{ itStandard.Name }} - <span
               class="text-primary">**EDITING**</span></span>
           <ng-template #elseITStandName> Create New IT-Standard</ng-template>

@@ -3,7 +3,7 @@
     <!-- Title -->
     <h3 class="card-title col-12 mb-0">
       <span>
-        <i class="fas fa-microchip mr-2"></i>
+        <fa-icon [icon]="['fas', 'microchip' ]" class="mr-2"></fa-icon>
         <span [hidden]="filteredTable">All GSA </span>
         <span [hidden]="!filteredTable" [innerHTML]="filterTitle"></span>
         IT Standards
@@ -14,12 +14,12 @@
     <a class="btn btn-sm btn-info text-white shadow mngr-btn d-flex align-items-center justify-content-center"
       routerLink="/gear_manager" *ngIf="!sharedService.loggedIn" aria-label="GEAR Manager Login"
       (click)="sharedService.setRedirectPath()">
-      <span class="mr-2">GEAR Manager Login</span><i class="fa fa-sign-in-alt fa-2x"></i>
+      <span class="mr-2">GEAR Manager Login</span><fa-icon [icon]="['fas', 'sign-in-alt']" [ngClass]="{'fa-2x': true}"></fa-icon>
     </a>
     <a class="btn btn-sm btn-danger text-white shadow mngr-btn d-flex align-items-center justify-content-center"
       routerLink="/it_standards" *ngIf="sharedService.loggedIn" aria-label="GEAR Manager Logout"
       (click)="sharedService.logoutManager()">
-      <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
+      <span class="mr-2">Logout</span><fa-icon [icon]="['fas', 'sign-out-alt']" [ngClass]="{'fa-2x': true}"></fa-icon>
     </a>
     
     <!-- Help Button -->
@@ -39,7 +39,7 @@
         <br><br>
         <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
         <i class='fas fa-caret-square-down'></i> icon to display everything on one page.">
-      <span class="mr-2">More Help</span><i class="far fa-question-circle fa-2x"></i>
+      <span class="mr-2">More Help</span><fa-icon [icon]="['fas', 'question-circle']" [ngClass]="{'fa-2x': true}"></fa-icon>
     </a>
   </div>
 
@@ -48,7 +48,7 @@
       <!-- Add Button -->
       <button role="button" name="addITStandBttn" aria-label="Add IT Standard" class="btn bg-teal text-white position-absolute ml-3"
         (click)="createITStand()" [hidden]="!sharedService.loggedIn">
-        <i class="fas fa-plus"></i>
+        <fa-icon [icon]="['fas', 'plus']"></fa-icon>
       </button>
 
       <!-- IT-Standard Definition Popover -->

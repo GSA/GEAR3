@@ -17,6 +17,7 @@ declare var gtag: Function;
 })
 export class GlobalSearchComponent implements OnInit {
 
+  isBrowser = false;
   public searchKW;
 
   constructor(
@@ -24,7 +25,9 @@ export class GlobalSearchComponent implements OnInit {
     private tableService: TableService,
     private route: ActivatedRoute,
     private apiService: ApiService,
-    @Inject(PLATFORM_ID) private platformId: Object) { }
+    @Inject(PLATFORM_ID) private platformId: Object) { 
+      this.isBrowser = isPlatformBrowser(this.platformId);
+    }
 
   // Global Search Table Options
   tableOptions: any = this.tableService.createTableOptions({
@@ -62,7 +65,7 @@ export class GlobalSearchComponent implements OnInit {
   }];
 
   ngOnInit(): void {
-    if (!isPlatformBrowser(this.platformId)) {
+    if (!this.isBrowser) {
       return;
     }
     // Enable popovers
@@ -71,6 +74,9 @@ export class GlobalSearchComponent implements OnInit {
     })
 
     this.route.params.subscribe((params) => {
+      if (!this.isBrowser) {
+        return;
+      }
       //Disable table sticky header
       this.sharedService.disableStickyHeader("globalSearchTable");
 

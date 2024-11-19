@@ -1,5 +1,5 @@
-const fs = require('fs');
-const { parse } = require('fast-csv');
+import { createReadStream } from 'fs';
+import { parse } from 'fast-csv';
 
 /**
  * Parses a CSV file and returns the data as an array of data.
@@ -9,11 +9,11 @@ const { parse } = require('fast-csv');
  * @param {number} [skipLines=0] - The number of lines to skip before starting to parse.
  * @returns {Promise<Array<Object>>} A promise that resolves to an array of objects representing the parsed CSV data.
  */
-const parseCSV = async (filePath, headers = false, skipLines = 0) => {
+export const parseCSV = async (filePath, headers = false, skipLines = 0) => {
   const results = [];
 
   return new Promise((resolve, reject) => {
-    const stream = fs.createReadStream(filePath)
+    const stream = createReadStream(filePath)
     .on('error', error => reject(error));
 
   stream.pipe(parse({ headers, skipLines }))
@@ -21,8 +21,4 @@ const parseCSV = async (filePath, headers = false, skipLines = 0) => {
     .on('end', () => resolve(results))
     .on('error', error => reject(error));
   });
-}
-
-module.exports = {
-  parseCSV,
 }

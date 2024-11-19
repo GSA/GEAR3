@@ -2,7 +2,7 @@
   <div class="card-header text-white bg-royal-blue text-center">
     <h3 class="card-title col-12 mb-0">
       <span>
-        <i class="fas fa-sitemap"></i>
+        <fa-icon [icon]="['fas', 'sitemap']"></fa-icon>
         GSA Website Service Categories List
       </span>
     </h3>
@@ -31,7 +31,7 @@
           <i class='fas fa-caret-square-down'></i> icon to display everything on one page."
     >
       <span class="mr-2">More Help</span
-      ><i class="far fa-question-circle fa-2x"></i>
+      ><fa-icon [icon]="['far', 'question-circle']" [ngClass]="{'fa-2x': true}"></fa-icon>
     </a>
   </div>
 
