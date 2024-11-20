@@ -1,5 +1,5 @@
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withFetch } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -162,7 +162,7 @@ import { far } from '@fortawesome/free-regular-svg-icons';
         AccordionModule,
         FontAwesomeModule
     ],
-    providers: [Globals, provideHttpClient(withInterceptorsFromDi()), provideClientHydration()] })
+    providers: [Globals, provideHttpClient(withInterceptorsFromDi(), withFetch()), provideClientHydration()] })
 export class AppModule {
   constructor(library: FaIconLibrary) {
     library.addIconPacks(fas, far);

@@ -80,6 +80,7 @@ export function app(): express.Express {
   //.use(express.static(path.join(__dirname, 'public')))
   .enable('trust proxy');  // For expressJS to know we're behind a proxy when deployed
 
+  server.set('trust proxy', 1);
   const serverDistFolder = dirname(fileURLToPath(import.meta.url));
   const browserDistFolder = resolve(serverDistFolder, '../browser');
   const indexHtml = join(serverDistFolder, 'index.server.html');
