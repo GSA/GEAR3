@@ -15,7 +15,7 @@
     "build-prod": "ng build --output-path=public --configuration=production",
     "build-stage": "ng build --output-path=public --configuration=staging",
     "build-dev": "ng build --output-path=public --configuration=development",
-    "serve-api": "node server.js",
+    "serve-api": "node dist/gear3/server/all.mjs",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
