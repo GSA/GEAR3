@@ -8,7 +8,7 @@ import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
 
-import { ButtonFilter, Column, TwoDimArray } from '../../../common/table-classes';
+import { FilterButton, Column, TwoDimArray } from '../../../common/table-classes';
 import { Website } from '@api/models/websites.model';
 
 // Declare jQuery symbol
@@ -36,12 +36,32 @@ export class WebsitesComponent implements OnInit {
 
   tableData: Website[] = [];
 
-  buttonFilters: TwoDimArray<ButtonFilter> = [
+  filterButtons: TwoDimArray<FilterButton> = [
     [
-      { field: 'production_status', filterBtnText: 'Production', filterOn: 'production' },
-      { field: 'production_status', filterBtnText: 'Decommissioned', filterOn: 'decommissioned' },
-      { field: 'production_status', filterBtnText: 'Redirects', filterOn: 'redirect' },
-      { field: 'production_status', filterBtnText: 'Staging', filterOn: 'staging' }
+      {
+        buttonText: 'Production',
+        filters: [
+          { field: 'production_status', value: 'production' }
+        ]
+      },
+      {
+        buttonText: 'Decommissioned',
+        filters: [
+          { field: 'production_status', value: 'decommissioned' }
+        ]
+      },
+      {
+        buttonText: 'Redirects',
+        filters: [
+          { field: 'production_status', value: 'redirect' }
+        ]
+      },
+      {
+        buttonText: 'Staging',
+        filters: [
+          { field: 'production_status', value: 'staging' }
+        ]
+      }
     ]
   ];
 

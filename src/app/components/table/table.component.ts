@@ -1,9 +1,10 @@
-import { Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { Table, TableRowSelectEvent } from 'primeng/table';
-import { Column, ExportColumn, TwoDimArray, ButtonFilter } from '../../common/table-classes';
+import { Column, ExportColumn, TwoDimArray, FilterButton } from '../../common/table-classes';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { ApiService } from '@services/apis/api.service';
+import { FilterMatchMode } from 'primeng/api';
 
 
 @Component({
@@ -12,7 +13,7 @@ import { ApiService } from '@services/apis/api.service';
   styleUrls: ['./table.component.scss']
 })
 
-export class TableComponent implements OnInit {
+export class TableComponent implements OnInit, OnChanges {
 
   // Table columns and their options
   @Input() tableCols: Column[] = [];
@@ -22,7 +23,7 @@ export class TableComponent implements OnInit {
 
   // Two dimenstional array of button filters
   // Each array of strings is a grouping of buttons
-  @Input() buttonFilters: TwoDimArray<ButtonFilter> = [];
+  @Input() filterButtons: TwoDimArray<FilterButton> = [];
 
   // Report style that drives the overall color of the table
   @Input() reportStyle: string = 'default';
@@ -51,6 +52,8 @@ export class TableComponent implements OnInit {
   @Input() defaultSortField: string = '';
   @Input() defaultSortOrder: number = 1;
 
+  @Input() preFilteredTableData: any[] = [];
+
   // Filter event (some reports change available columns when filtered)
   @Output() filterEvent = new EventEmitter<string>();
 
@@ -64,9 +67,13 @@ export class TableComponent implements OnInit {
   visibleColumns: Column[] = [];
   isPaginated: boolean = true;
   exportColumns!: ExportColumn[];
-  currentButtonFilter: string = '';
+  currentFilterButton: string = '';
   screenHeight: string = '';
   showFilters: boolean = false;
+  first: number = 0;
+  rows: number = 10;
+
+  activeTableData: any[] = [];
 
   constructor(public sharedService: SharedService, public tableService: TableService, public apiService: ApiService) {
     this.setScreenHeight();
@@ -74,12 +81,22 @@ export class TableComponent implements OnInit {
 
   ngOnInit(): void {
     this.exportColumns = this.tableCols.map((col) => ({ title: col.header, dataKey: col.field }));
+    this.activeTableData = this.getTableData();
+    this.generateColumns();
+  }
 
-    this.tableCols.map(c => {
-      if(this.showColumn(c)) {
-        this.visibleColumns.push(c);
-      }
-    });
+  ngOnChanges(changes: SimpleChanges) {
+    if(changes.tableData && (changes.tableData.previousValue && changes.tableData.previousValue.length === 0)
+      || changes.preFilteredTableData && (changes.preFilteredTableData.previousValue && changes.preFilteredTableData.previousValue.length === 0)) {
+      this.activeTableData = this.getTableData();
+    }
+  }
+
+  getTableData() {
+    if(this.preFilteredTableData && this.preFilteredTableData.length > 0) {
+      return this.preFilteredTableData;
+    }
+    return this.tableData;
   }
 
   toggleVisible(e: any) {
@@ -111,20 +128,39 @@ export class TableComponent implements OnInit {
     return `GEAR_${this.exportName}-${formattedDate}`;
   }
 
-  onButtonFilter(filter: ButtonFilter) {
-    if(filter && filter.filterOn) {
-      this.dt.filter(filter.filterOn, filter.field, 'contains')
+  onFilterButtonClick(button: FilterButton) {
+    this.dt.filter('', '', '');
+    this.dt.reset();
+    this.activeTableData = this.tableData;
+
+    if(button && (button.filters && button.filters.length > 0)) {
+      button.filters.forEach(f => {
+        this.dt.filters[f.field] = [{value: f.value, matchMode: f.matchMode ? f.matchMode : FilterMatchMode.EQUALS, operator: 'and'}];
+      });
     }
 
-    this.filterEvent.emit(filter.filterBtnText);
+    this.filterEvent.emit(button.buttonText);
   
-    this.currentButtonFilter = filter.filterBtnText;
+    this.currentFilterButton = button.buttonText;
+
+    this.generateColumns();
   }
 
-  onButtonFilterClear() {
+  onFilterButtonClear() {
     this.dt.reset();
-    this.currentButtonFilter = '';
+    this.currentFilterButton = '';
+
+    if(this.hasPreFilteredTableData()) { 
+      this.activeTableData = this.preFilteredTableData;
+    } else {
+      this.activeTableData = this.tableData;
+    }
+
+    this.dt.sortField = this.defaultSortField;
+    this.dt.sortOrder = this.defaultSortOrder;
+
     this.filterEvent.emit('');
+    this.generateColumns();
   }
 
   onExportData() {
@@ -136,7 +172,7 @@ export class TableComponent implements OnInit {
   }
 
   applyFilteredStyle(filter: string) {
-    if(this.currentButtonFilter === filter) {
+    if(this.currentFilterButton === filter) {
       return 'filtered';
     }
 
@@ -154,6 +190,23 @@ export class TableComponent implements OnInit {
     } else {
       this.screenHeight = `${(window.innerHeight - TABLE_HEIGHT_OFFSET)}px`;
     }
+  }
+
+  pageChange(event) {
+    this.first = event.first;
+    this.rows = event.rows;
+  }
+
+  hasPreFilteredTableData() {
+    return this.preFilteredTableData && this.preFilteredTableData.length > 0;
+  }
+
+  generateColumns() {
+    this.tableCols.map(c => {
+      if(this.showColumn(c)) {
+        this.visibleColumns.push(c);
+      }
+    });
   }
 
   onRowSelect(e: TableRowSelectEvent) {

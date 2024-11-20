@@ -15,8 +15,13 @@ export interface ExportColumn {
   dataKey: string;
 }
 
-export interface ButtonFilter {
+export interface FilterButton {
+  buttonText: string,
+  filters: FilterOption[]
+}
+
+export interface FilterOption {
   field: string,
-  filterBtnText: string,
-  filterOn: string
+  value: any,
+  matchMode?: string
 }

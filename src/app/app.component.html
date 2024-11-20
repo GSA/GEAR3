@@ -5,7 +5,7 @@
 <app-sidebar></app-sidebar>
 <div class="page-wrap" *ngIf="isBrowser">
   <div class="sidebar-content-wrapper">
-    <div class="sidebar-icon-container" (mouseenter)="toggleSidebar()" tabindex="0" (keydown)="onSidebarIconsKeyDown($event)">
+    <div class="sidebar-icon-container" (mouseenter)="onSidebarIconsMouseEnter()" tabindex="0" (keydown)="onSidebarIconsKeyDown($event)">
       <div class="sidebar-icon-wrap">
         <div class="sidebar-icon it-strategy"><i class="fas fa-puzzle-piece fa-lg fa-fw"></i></div>
         <div class="sidebar-icon gsa-enterprise"><i class="fas fa-sitemap fa-lg fa-fw"></i></div>

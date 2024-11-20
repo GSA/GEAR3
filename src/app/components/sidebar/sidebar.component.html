@@ -1,11 +1,11 @@
-<p-sidebar [(visible)]="sharedService.sidebarVisible" transitionOptions="150ms cubic-bezier(0, 0, 0, 1)" (mouseleave)="closeSidebar()">
+<p-sidebar [(visible)]="isSidebarVisible" transitionOptions="150ms cubic-bezier(0, 0, 0, 1)" (mouseleave)="closeSidebar()">
   <ng-template pTemplate="headless">
     <div class="sidebar-content-wrapper">
     <p-accordion>
       <div class="sidebar-link it-strategy">
         <p-accordionTab>
           <ng-template pTemplate="icon"></ng-template>
-          <ng-template pTemplate="header" id="firstLink">
+          <ng-template pTemplate="header">
               <span>IT Strategy</span>
               <fa-icon [icon]="['fas', 'puzzle-piece']" [ngClass]="{'fa-fw': true, 'fa-lg': true}"></fa-icon>
           </ng-template>
