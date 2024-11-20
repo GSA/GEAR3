@@ -19,7 +19,6 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build-dev:postbuild": "cp -r ./api/* ./public/server",
     "ssr:postbuild": "cat preserver.mjs dist/gear3/server/server.mjs > dist/gear3/server/all.mjs && cp -r ./api/queries ./dist/gear3",
     "serve:ssr:gear3": "node dist/gear3/server/all.mjs"
   },
