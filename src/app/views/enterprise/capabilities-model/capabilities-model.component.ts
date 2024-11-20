@@ -417,21 +417,21 @@ export class CapabilitiesModelComponent implements OnInit {
             .style('opacity', '1')
 
           d3.select('#capName').text(
-            d.data.name + ' (' + d.data.referenceNum + ')'
+            d.currentTarget.__data__.data.name + ' (' + d.currentTarget.__data__.data.referenceNum + ')'
           ); // Set Name
-          d3.select('#capLevel').text(d.data.level); // Set Capability Level
-          d3.select('#capDetailbody').text(d.data.description); // Set Body with description
+          d3.select('#capLevel').text(d.currentTarget.__data__.data.level); // Set Capability Level
+          d3.select('#capDetailbody').text(d.currentTarget.__data__.data.description); // Set Body with description
 
           // d3.select("#busCapGraph")
           //   .style("transform", "translateY(13%)");   // Keeping this here in case the detail pane gets larger and needs to move
 
           // console.log("Hovered Node: ", d);  // Debug
-          this.selectedCap = d; // Save selected node id for links
+          this.selectedCap = d.currentTarget.__data__.data; // Save selected node id for links
 
           function handleClick() {
             // Grab data for selected node
             this.apiService
-              .getOneCap(this.selectedCap.data.identity)
+              .getOneCap(this.selectedCap.identity)
               .subscribe((data: any[]) => {
                   var capData = data[0];
                   this.tableService.capsTableClick(capData);

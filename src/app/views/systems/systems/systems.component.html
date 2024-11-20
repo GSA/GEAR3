@@ -102,6 +102,6 @@
     </div>
 
     <!-- Main Table -->
-    <app-table [tableCols]="tableCols" [tableData]="tableData" exportName="Systems" reportStyle="business-systems" [buttonFilters]="buttonFilters" tableType="systems" (filterEvent)="onFilterEvent($event)"></app-table>
+    <app-table [tableCols]="tableCols" [tableData]="tableData" [preFilteredTableData]="filteredTableData" defaultSortField="Name" exportName="Systems" reportStyle="business-systems" [filterButtons]="filterButtons" tableType="systems" (filterEvent)="onFilterEvent($event)"></app-table>
   </div>
 </div>

@@ -8,10 +8,10 @@ import {Globals} from '@common/globals';
 import jwtDecode from 'jwt-decode';
 import { HttpClient } from '@angular/common/http';
 import { set } from 'd3';
+import { BehaviorSubject } from 'rxjs';
 
 // Declare jQuery symbol
 declare var $: any;
-declare var gtag: Function;
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +38,7 @@ export class SharedService {
   websiteFormEmitter = new EventEmitter();
   websiteFormSub: Subscription;
 
-  public sidebarVisible: boolean = false;
+  public sidebarVisible: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   constructor(
     private globals: Globals,
@@ -48,9 +48,12 @@ export class SharedService {
     ) {
   }
 
-  // Toggle sidebar open/closed
-  public toggleSidebar() {
-    this.sidebarVisible = !this.sidebarVisible; 
+  public openSidebar() {
+    this.sidebarVisible.next(true);
+  }
+
+  public closeSidebar() {
+    this.sidebarVisible.next(false);
   }
 
   // File Name Formatting
@@ -356,9 +359,6 @@ export class SharedService {
   public addIDtoURL(row, IDname) {
     var normalizedURL = this.coreURL(this.router.url);
     this.location.replaceState(`${normalizedURL}/${row[IDname]}`);
-
-    // Send page_view event to GA
-    gtag('event', 'page_view', { 'page_path': `${normalizedURL}/${row[IDname]}` });
   };
 
   // cookies functions ---------------------------------------

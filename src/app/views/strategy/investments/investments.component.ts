@@ -8,7 +8,7 @@ import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
 
 import { Investment } from '@api/models/investments.model';
-import { ButtonFilter, Column, TwoDimArray } from '../../../common/table-classes';
+import { FilterButton, Column, TwoDimArray } from '../../../common/table-classes';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -44,12 +44,26 @@ export class InvestmentsComponent implements OnInit {
 
   tableData: Investment[] = [];
 
-  buttonFilters: TwoDimArray<ButtonFilter> = [
+  filterButtons: TwoDimArray<FilterButton> = [
     [
-      { field: 'Status', filterBtnText: 'Eliminated', filterOn: 'eliminated' },
-      { field: '', filterBtnText: 'Previous Year $', filterOn: '' },
-      { field: '', filterBtnText: 'Current Year $', filterOn: '' },
-      { field: '', filterBtnText: 'Budget Year $', filterOn: '' }
+      {
+        buttonText: 'Eliminated',
+        filters: [
+          { field: 'Status', value: 'eliminated', matchMode: 'contains' }
+        ]
+      },
+      {
+        buttonText: 'Previous Year $',
+        filters: []
+      },
+      {
+        buttonText: 'Current Year $',
+        filters: []
+      },
+      {
+        buttonText: 'Budget Year $',
+        filters: []
+      }
     ]
   ];
 

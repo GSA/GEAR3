@@ -9,7 +9,7 @@ import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
 
 import { System } from '@api/models/systems.model';
-import { ButtonFilter, Column, TwoDimArray } from '../../../common/table-classes';
+import { Column, FilterButton, TwoDimArray } from '../../../common/table-classes';
 
 // Declare D3 & Sankey library
 declare var d3: any;
@@ -75,11 +75,25 @@ export class SystemsComponent implements OnInit {
   });
 
   tableData: System[] = [];
+  filteredTableData: System[] = [];
 
-  buttonFilters: TwoDimArray<ButtonFilter> = [
+  filterButtons: TwoDimArray<FilterButton> = [
     [
-      { field: 'CloudYN', filterBtnText: 'Cloud Enabled', filterOn: 'Yes' },
-      { field: 'Status', filterBtnText: 'Inactive', filterOn: 'Inactive' }
+      {
+        buttonText: 'Cloud Enabled',
+        filters: [
+          { field: 'Status', value: 'Active' },
+          { field: 'BusApp', value: 'Yes' },
+          { field: 'CloudYN', value: 'Yes' }
+        ]
+      },
+      {
+        buttonText: 'Inactive',
+        filters: [
+          {field: 'Status', value: 'Inactive'},
+          {field: 'BusApp', value: 'Yes'}
+        ]
+      }
     ]
   ];
 
@@ -274,7 +288,16 @@ export class SystemsComponent implements OnInit {
 
     this.tableCols = this.defaultTableCols;
 
-    this.apiService.getSystems().subscribe(s => this.tableData = s);
+    this.apiService.getSystems().subscribe(systems => {
+      this.tableData = systems;
+
+      systems.forEach(s => {
+        if(s.Status === 'Active' && s.BusApp == 'Yes') {
+          this.filteredTableData.push(s);
+        }
+      });
+      
+    });
 
     // Get System data for visuals
     this.apiService.getSystems().subscribe((data: any[]) => {
@@ -332,6 +355,7 @@ export class SystemsComponent implements OnInit {
         // Hide visualization when on alternative filters
         $('#sysViz').collapse('hide');
       } else {
+        this.tableCols = this.defaultTableCols;
         // Hide visualization when on alternative filters
         $('#sysViz').collapse('show');
       }
