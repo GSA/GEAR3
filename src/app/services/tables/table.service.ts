@@ -7,10 +7,10 @@ import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
 import { Service_Category } from '@api/models/service-category.model';
+import { AnalyticsService } from '@services/analytics/analytics.service';
 
 // Declare jQuery symbol
 declare var $: any;
-declare var gtag: Function;
 
 interface ClickOptions {
   data: any;
@@ -143,7 +143,8 @@ export class TableService {
     private globals: Globals,
     private modalService: ModalsService,
     private sharedService: SharedService,
-    private location: Location
+    private location: Location,
+    private analyticsService: AnalyticsService
   ) {}
 
   public createTableOptions(definitions: any): {} {
@@ -751,8 +752,8 @@ export class TableService {
   // Set the gear_type and id in the url for global search
   private setGlobalSearchModalUrl(gear_type: string, id: string) {
     // Send page_view event to GA for modal view
-    gtag('event', 'page_view', { 'page_path': `search/${gear_type}/${id}` });
-
+    this.analyticsService.logPageViewEvent(`search/${gear_type}/${id}`);
+    
     this.location.replaceState(`search/${gear_type}/${id}`);
   }
 }

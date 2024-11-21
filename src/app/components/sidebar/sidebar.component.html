@@ -1,4 +1,4 @@
-<p-sidebar [(visible)]="isSidebarVisible" transitionOptions="150ms cubic-bezier(0, 0, 0, 1)" (mouseleave)="closeSidebar()">
+(click)<p-sidebar [(visible)]="isSidebarVisible" transitionOptions="150ms cubic-bezier(0, 0, 0, 1)" (mouseleave)="closeSidebar()">
   <ng-template pTemplate="headless">
     <div class="sidebar-content-wrapper">
     <p-accordion>
@@ -10,10 +10,12 @@
               <i class="fas fa-puzzle-piece fa-lg fa-fw"></i>
           </ng-template>
           <ng-template pTemplate="content">
-            <a class="sidebar-sublink" routerLink="/strategic_framework">IT Strategic Framework</a>
-            <a class="sidebar-sublink" routerLink="/investments">IT Investments</a>
+            <a class="sidebar-sublink" routerLink="/strategic_framework" (click)="onClickNavigate($event, '/strategic_framework')" (keydown)="onKeyboardNavigate($event, '/strategic_framework')">IT Strategic Framework</a>
+            <a class="sidebar-sublink" routerLink="/investments" (click)="onClickNavigate($event, '/investments')" (keydown)="onKeyboardNavigate($event, '/investments')">IT Investments</a>
             <a 
               class="sidebar-sublink"
+              (click)="onClickNavigate($event, 'it_policies')"
+              (keydown)="onKeyboardNavigate($event, 'it_policies', false)"
               href="https://insite.gsa.gov/directives-library/staff-offices?staff_office=I"
               target="_blank"
               rel="noopener">IT Policies <i class="fas fa-external-link-alt"></i></a>
@@ -28,11 +30,11 @@
           <i class="fas fa-sitemap fa-lg fa-fw"></i>
         </ng-template>
         <ng-template pTemplate="content">
-          <a class="sidebar-sublink" routerLink="/capabilities_model">Business Capability Model</a>
-          <a class="sidebar-sublink" routerLink="/capabilities">Business Capability List</a>
-          <a class="sidebar-sublink" routerLink="/org_chart">Organization Chart</a>
-          <a class="sidebar-sublink" routerLink="/organizations">Organization List</a>
-          <a class="sidebar-sublink" routerLink="/website_service_category">Website Service Category List</a>
+          <a class="sidebar-sublink" routerLink="/capabilities_model" (click)="onClickNavigate($event, '/capabilities_model')" (keydown)="onKeyboardNavigate($event, '/capabilities_model')">Business Capability Model</a>
+          <a class="sidebar-sublink" routerLink="/capabilities" (click)="onClickNavigate($event, '/capabilities')" (keydown)="onKeyboardNavigate($event, '/capabilities')">Business Capability List</a>
+          <a class="sidebar-sublink" routerLink="/org_chart" (click)="onClickNavigate($event, '/org_chart')" (keydown)="onKeyboardNavigate($event, '/org_chart')">Organization Chart</a>
+          <a class="sidebar-sublink" routerLink="/organizations" (click)="onClickNavigate($event, '/organizations')" (keydown)="onKeyboardNavigate($event, '/organizations')">Organization List</a>
+          <a class="sidebar-sublink" routerLink="/website_service_category" (click)="onClickNavigate($event, '/website_service_category')" (keydown)="onKeyboardNavigate($event, '/website_service_category')">Website Service Category List</a>
         </ng-template>
       </p-accordionTab>
     </div>
@@ -44,10 +46,10 @@
           <i class="fas fa-laptop fa-lg fa-fw"></i>
         </ng-template>
         <ng-template pTemplate="content">
-          <a class="sidebar-sublink" routerLink="/systems">Business Systems & Subsystems</a>
-          <a class="sidebar-sublink" routerLink="/systems_TIME">TIME Report</a>
-          <a class="sidebar-sublink" routerLink="/records_mgmt">Records Management</a>
-          <a class="sidebar-sublink" routerLink="/websites">GSA Websites</a>
+          <a class="sidebar-sublink" routerLink="/systems" (click)="onClickNavigate($event, '/systems')" (keydown)="onKeyboardNavigate($event, '/systems')">Business Systems & Subsystems</a>
+          <a class="sidebar-sublink" routerLink="/systems_TIME" (click)="onClickNavigate($event, '/systems_TIME')" (keydown)="onKeyboardNavigate($event, '/systems_TIME')">TIME Report</a>
+          <a class="sidebar-sublink" routerLink="/records_mgmt" (click)="onClickNavigate($event, '/records_mgmt')" (keydown)="onKeyboardNavigate($event, '/records_mgmt')">Records Management</a>
+          <a class="sidebar-sublink" routerLink="/websites" (click)="onClickNavigate($event, '/websites')" (keydown)="onKeyboardNavigate($event, '/websites')">GSA Websites</a>
         </ng-template>
       </p-accordionTab>
     </div>
@@ -59,8 +61,8 @@
           <i class="fas fa-shield-alt fa-lg fa-fw"></i>
         </ng-template>
         <ng-template pTemplate="content">
-          <a class="sidebar-sublink" routerLink="/FISMA">FISMA Systems Inventory</a>
-          <a class="sidebar-sublink" routerLink="/FISMA_POC">FISMA System POCs</a>
+          <a class="sidebar-sublink" routerLink="/FISMA" (click)="onClickNavigate($event, '/FISMA')" (keydown)="onKeyboardNavigate($event, '/FISMA')">FISMA Systems Inventory</a>
+          <a class="sidebar-sublink" routerLink="/FISMA_POC" (click)="onClickNavigate($event, '/FISMA_POC')" (keydown)="onKeyboardNavigate($event, '/FISMA_POC')">FISMA System POCs</a>
         </ng-template>
       </p-accordionTab>
     </div>
@@ -72,9 +74,11 @@
           <i class="fas fa-microchip fa-lg fa-fw"></i>
         </ng-template>
         <ng-template pTemplate="content">
-          <a class="sidebar-sublink" routerLink="/it_standards">IT Standards List</a>
+          <a class="sidebar-sublink" routerLink="/it_standards" (click)="onClickNavigate($event, '/it_standards')" (keydown)="onKeyboardNavigate($event, '/it_standards')">IT Standards List</a>
           <a 
             class="sidebar-sublink"
+            (click)="onClickNavigate($event, 'it_standards_approval_process')"
+            (keydown)="onKeyboardNavigate($event, 'it_standards_approval_process', false)"
             href="https://sites.google.com/a/gsa.gov/it_standards/software-approvals#h.vioogtbleinq"
             target="_blank"
             rel="noopener">IT Standards Approval Process <i class="fas fa-external-link-alt"></i></a>
@@ -89,7 +93,7 @@
           <i class="fas fa-network-wired fa-lg fa-fw"></i>
         </ng-template>
         <ng-template pTemplate="content">
-          <a class="sidebar-sublink" routerLink="/gear_model">GEAR Model Diagram</a>
+          <a class="sidebar-sublink" routerLink="/gear_model" (click)="onClickNavigate($event, '/gear_model')" (keydown)="onKeyboardNavigate($event, '/gear_model')">GEAR Model Diagram</a>
         </ng-template>
       </p-accordionTab>
     </div>
@@ -102,11 +106,13 @@
           <i class="fab fa-wpforms fa-lg fa-fw fa-fw"></i>
         </ng-template>
         <ng-template pTemplate="content">
-          <a class="sidebar-sublink" routerLink="/forms">Access Forms</a>
-          <a class="sidebar-sublink" routerLink="/glossary">Glossary</a>
-          <a class="sidebar-sublink" routerLink="/data_dictionary">Data Dictionary</a>
+          <a class="sidebar-sublink" routerLink="/forms" (click)="onClickNavigate($event, '/forms')" (keydown)="onKeyboardNavigate($event, '/forms')">Access Forms</a>
+          <a class="sidebar-sublink" routerLink="/glossary" (click)="onClickNavigate($event, '/glossary')" (keydown)="onKeyboardNavigate($event, '/glossary')">Glossary</a>
+          <a class="sidebar-sublink" routerLink="/data_dictionary" (click)="onClickNavigate($event, '/data_dictionary')" (keydown)="onKeyboardNavigate($event, '/data_dictionary')">Data Dictionary</a>
           <a 
             class="sidebar-sublink"
+            (click)="onClickNavigate($event, 'api_documentation')"
+            (keydown)="onKeyboardNavigate($event, 'api_documentation', false)"
             href="https://gsa.github.io/GEAR-Documentation/api-docs/"
             target="_blank"
             rel="noopener">API Documentation <i class="fas fa-external-link-alt"></i></a>

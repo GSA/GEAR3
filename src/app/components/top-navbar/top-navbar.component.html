@@ -35,86 +35,184 @@
             <a id="gearNavigationDropdown" class="btn btn-secondary btn-sm dropdown-toggle" href="#" role="button"
               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">GEAR Navigation
             </a>
-            <div #dropdownMenu class="dropdown-menu gearNavDropdown" aria-labelledby="gearNavigationDropdown">
+            <div role="menu" class="dropdown-menu gearNavDropdown" aria-labelledby="gearNavigationDropdown">
+              <!-- IT Strategy -->
               <p class="dropdown-header" (click)="onDropdownHeaderClick($event)"><b>IT Strategy</b></p>
-              <!--
-              <a id="strategyBttn" class="dropdown-item" routerLink="/strategic_framework"
-                aria-label="Strategic Framework"
-                >Strategic Framework</a
-              >
-              -->
-              <a id="investmentBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/investments"
+              <a 
+                id="investmentBttn"
+                (click)="onLinkClick($event, '/investments')"
+                (keydown)="onLinkKeyboardDown($event, '/investments')"
+                class="dropdown-item"
+                href="/#/investments"
                 aria-label="IT Investments">
                 <span class="dropdown-item-text">IT Investments</span>
               </a>
-              <a class="dropdown-item" (click)="processTopNavLink()"
-                href="https://insite.gsa.gov/directives-library/staff-offices?staff_office=I" target="_blank"
-                rel="noopener"><span class="dropdown-item-text">IT Policies</span>
+              <a class="dropdown-item"
+                (click)="onLinkClick($event, '/it_policies')"
+                (keydown)="onLinkKeyboardDown($event, '/it_policies', false)"
+                href="https://insite.gsa.gov/directives-library/staff-offices?staff_office=I"
+                target="_blank"
+                rel="noopener">
+                <span class="dropdown-item-text">IT Policies</span>
               </a>
+
+              <!-- GSA Enterprise -->
               <p class="dropdown-header" (click)="onDropdownHeaderClick($event)"><b>GSA Enterprise</b></p>
-              <a id="capabilityModelBttn" (click)="processTopNavLink()" class="dropdown-item"
-                href="/#/capabilities_model" aria-label="Business Capability Model">
+              <a 
+                id="capabilityModelBttn"
+                (click)="onLinkClick($event, '/capabilities_model')"
+                (keydown)="onLinkKeyboardDown($event, '/capabilities_model')"
+                class="dropdown-item"
+                href="/#/capabilities_model"
+                aria-label="Business Capability Model">
                 <span class="dropdown-item-text">Business Capability Model</span>
               </a>
-              <a id="capabilityListBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/capabilities"
+              <a
+                id="capabilityListBttn"
+                (click)="onLinkClick($event, '/capabilities')"
+                (keydown)="onLinkKeyboardDown($event, '/capabilities')"
+                class="dropdown-item"
+                href="/#/capabilities"
                 aria-label="Business Capability List">
-                <span class="dropdown-item-text">Business Capability List</span></a>
-              <a id="orgChartBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/org_chart"
-                aria-label="Organization Chart"><span class="dropdown-item-text">Organization Chart</span>
+                <span class="dropdown-item-text">Business Capability List</span>
               </a>
-              <a id="orgListBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/organizations"
-                aria-label="Organization List"><span class="dropdown-item-text">Organization List</span>
+              <a
+                id="orgChartBttn"
+                (click)="onLinkClick($event, '/org_chart')"
+                (keydown)="onLinkKeyboardDown($event, '/org_chart')"
+                class="dropdown-item"
+                href="/#/org_chart"
+                aria-label="Organization Chart">
+                <span class="dropdown-item-text">Organization Chart</span>
               </a>
-              <a id="serviceListBttn" (click)="processTopNavLink()" class="dropdown-item"
-                href="/#/website_service_category" aria-label="Website Service Category List">
+              <a 
+                id="orgListBttn"
+                (click)="onLinkClick($event, '/organizations')"
+                (keydown)="onLinkKeyboardDown($event, '/organizations')"
+                class="dropdown-item"
+                href="/#/organizations"
+                aria-label="Organization List">
+                <span class="dropdown-item-text">Organization List</span>
+              </a>
+              <a
+                id="serviceListBttn"
+                (click)="onLinkClick($event, '/website_service_category')"
+                (keydown)="onLinkKeyboardDown($event, '/website_service_category')"
+                class="dropdown-item"
+                href="/#/website_service_category"
+                 aria-label="Website Service Category List">
                 <span class="dropdown-item-text">Website Service Category List</span>
               </a>
+
+              <!-- Business Systems -->
               <p class="dropdown-header" (click)="onDropdownHeaderClick($event)"><b>Business Systems</b></p>
-              <a id="systemsBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/systems"
-                aria-label="Business Systems & Subsystems"><span class="dropdown-item-text">Busines System & Subsystems</span>
+              <a
+                id="systemsBttn"
+                (click)="onLinkClick($event, '/systems')"
+                (keydown)="onLinkKeyboardDown($event, '/systems')"
+                class="dropdown-item"
+                href="/#/systems"
+                aria-label="Business Systems & Subsystems">
+                <span class="dropdown-item-text">Busines System & Subsystems</span>
               </a>
-              <a id="timeReportBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/systems_TIME"
-                aria-label=" TIME Report"><span class="dropdown-item-text">TIME Report</span>
+              <a
+                id="timeReportBttn"
+                (click)="onLinkClick($event, '/systems_TIME')"
+                (keydown)="onLinkKeyboardDown($event, '/systems_TIME')"
+                class="dropdown-item"
+                href="/#/systems_TIME"
+                aria-label=" TIME Report">
+                <span class="dropdown-item-text">TIME Report</span>
               </a>
-              <a id="recordsMgmtBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/records_mgmt"
-                aria-label="Records Management"><span class="dropdown-item-text">Record Management</span></a>
-              <a id="websitesBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/websites"
-                aria-label="GSA Websites"><span class="dropdown-item-text">GSA Websites</span>
+              <a
+                id="recordsMgmtBttn"
+                (click)="onLinkClick($event, '/records_mgmt')"
+                (keydown)="onLinkKeyboardDown($event, '/records_mgmt')"
+                class="dropdown-item"
+                href="/#/records_mgmt"
+                aria-label="Records Management">
+                <span class="dropdown-item-text">Record Management</span>
               </a>
+              <a 
+                id="websitesBttn"
+                (click)="onLinkClick($event, '/websites')"
+                (keydown)="onLinkKeyboardDown($event, '/websites')"
+                class="dropdown-item"
+                href="/#/websites"
+                aria-label="GSA Websites">
+                <span class="dropdown-item-text">GSA Websites</span>
+              </a>
+
+              <!-- Security -->
               <p class="dropdown-header" (click)="onDropdownHeaderClick($event)"><b>Security</b></p>
-              <a id="systemsBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/FISMA"
-                aria-label="FISMA Systems Inventory"><span class="dropdown-item-text">FISMA Systems Inventory</span>
+              <a
+                id="systemsBttn"
+                (click)="onLinkClick($event, '/FISMA')"
+                (keydown)="onLinkKeyboardDown($event, '/FISMA')"
+                class="dropdown-item"
+                href="/#/FISMA"
+                aria-label="FISMA Systems Inventory">
+                <span class="dropdown-item-text">FISMA Systems Inventory</span>
               </a>
-              <a id="systemsPOCBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/FISMA_POC"
-                aria-label="FISMA System POCs"><span class="dropdown-item-text">FISMA System POCs</span>
+              <a
+                id="systemsPOCBttn"
+                (click)="onLinkClick($event, '/FISMA_POC')"
+                (keydown)="onLinkKeyboardDown($event, '/FISMA_POC')"
+                class="dropdown-item"
+                href="/#/FISMA_POC"
+                aria-label="FISMA System POCs">
+                <span class="dropdown-item-text">FISMA System POCs</span>
               </a>
-              <a id="itStandardsBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/it_standards"
-                aria-label="IT Standards List"><span class="dropdown-item-text">IT Standards List</span>
+
+              <!-- Technologies -->
+              <p class="dropdown-header" (click)="onDropdownHeaderClick($event)"><b>Technologies</b></p>
+              <a
+                id="itStandardsBttn"
+                (click)="onLinkClick($event, '/it_standards')"
+                (keydown)="onLinkKeyboardDown($event, '/it_standards')"
+                class="dropdown-item"
+                href="/#/it_standards"
+                aria-label="IT Standards List">
+                <span class="dropdown-item-text">IT Standards List</span>
               </a>
-              <a class="dropdown-item" (click)="processTopNavLink()"
-                href="https://sites.google.com/a/gsa.gov/it_standards/software-approvals#h.vioogtbleinq" target="_blank"
-                rel="noopener"><span class="dropdown-item-text">IT Standards Approval Process</span>
+              <a 
+                class="dropdown-item"
+                (click)="onLinkClick($event, '/it_standards_approval_process')"
+                (keydown)="onLinkKeyboardDown($event, '/it_standards_approval_process', false)"
+                href="https://sites.google.com/a/gsa.gov/it_standards/software-approvals#h.vioogtbleinq"
+                target="_blank"
+                rel="noopener">
+                <span class="dropdown-item-text">IT Standards Approval Process</span>
               </a>
-              <!--
-              <a id="eaViewBttn" class="dropdown-item" href="/#/ea_view"
-                  aria-label="EA View"
-                  >EA View</a
-              >
-              <a id="gearModelBttn" class="dropdown-item" href="/#/gear_model"
-                    aria-label="GEAR Model Diagram"
-                    >GEAR Model Diagram</a
-              >
-              -->
-              <a id="capabilityModelBttn" (click)="processTopNavLink()" class="dropdown-item"
-                href="/#/capabilities_model" aria-label="Business Capability Model"><span class="dropdown-item-text">Business Capability Model</span>
-              </a>
-              <a id="formsBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/forms"
+
+              <!-- Additional Information -->
+              <p class="dropdown-header" (click)="onDropdownHeaderClick($event)"><b>Additional Information</b></p>
+              <a
+                id="formsBttn"
+                (click)="onLinkClick($event, '/forms')"
+                (keydown)="onLinkKeyboardDown($event, '/forms')"
+                class="dropdown-item"
+                href="/#/forms"
                 aria-label="Access Forms">
                 <span class="dropdown-item-text">Access Forms</span>
               </a>
-              <a id="glossaryBttn" (click)="processTopNavLink()" class="dropdown-item" href="/#/glossary"
+              <a
+                id="glossaryBttn"
+                (click)="onLinkClick($event, '/glossary')"
+                (keydown)="onLinkKeyboardDown($event, '/glossary')"
+                class="dropdown-item"
+                href="/#/glossary"
                 aria-label="Glossary">
                 <span class="dropdown-item-text">Glossary</span>
+              </a>
+              <a
+                id="dataDictionaryBttn"
+                (click)="onLinkClick($event, '/data_dictionary')"
+                (keydown)="onLinkKeyboardDown($event, '/data_dictionary')"
+                class="dropdown-item"
+                href="/#/data_dictionary"
+                aria-label="Data Dictionary">
+                <span class="dropdown-item-text">Data Dictionary</span>
               </a>
             </div>
           </div>
@@ -130,12 +228,29 @@
             <a id="contactDropdown" class="btn btn-secondary btn-sm dropdown-toggle" href="#" role="button"
               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Contact/Feedback</a>
             <div #dropdownMenu class="dropdown-menu" aria-labelledby="contactDropdown">
+              <!-- Regarding IT Standards -->
               <p class="dropdown-header" (click)="onDropdownHeaderClick($event)"><b>Regarding IT Standards</b></p>
-              <a class="dropdown-item" href="https://mail.google.com/mail/?view=cm&fs=1&to=it-standards@gsa.gov"
-                target="_blank" rel="noopener"><span class="dropdown-item-text">IT Standards</span></a>
+              <a
+                class="dropdown-item"
+                (click)="onLinkClick($event, '/it_standards_email')"
+                (keydown)="onLinkKeyboardDown($event, '/it_standards_email', false)"
+                href="https://mail.google.com/mail/?view=cm&fs=1&to=it-standards@gsa.gov"
+                target="_blank"
+                rel="noopener">
+                <span class="dropdown-item-text">IT Standards</span>
+              </a>
+
+              <!-- Regarding GEAR/EA -->
               <p class="dropdown-header" (click)="onDropdownHeaderClick($event)"><b>Regarding GEAR/EA</b></p>
-              <a class="dropdown-item" href="https://mail.google.com/mail/?view=cm&fs=1&to=ea_planning@gsa.gov"
-                target="_blank" rel="noopener"><span class="dropdown-item-text">EA Team</span></a>
+              <a 
+                class="dropdown-item" 
+                (click)="onLinkClick($event, '/ea_team_email')"
+                (keydown)="onLinkKeyboardDown($event, '/ea_team_email', false)"
+                href="https://mail.google.com/mail/?view=cm&fs=1&to=ea_planning@gsa.gov"
+                target="_blank"
+                rel="noopener">
+                <span class="dropdown-item-text">EA Team</span>
+              </a>
             </div>
           </div>
         </li>
