@@ -9,6 +9,7 @@
   "type": "module",
   "scripts": {
     "ng": "ng",
+    "build": "ng build",
     "clean": "npx rimraf node_modules",
     "start": "concurrently --kill-others \"npm run serve-api\" \"npm run serve\"",
     "serve": "ng serve --proxy-config proxy.conf.json",
