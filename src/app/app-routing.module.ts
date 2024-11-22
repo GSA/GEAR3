@@ -204,7 +204,7 @@ const routes: Routes = [
     component: DataDictionaryComponent,
     title: 'Data Dictionary',
   },
-
+  
   {
     // Catch-all Redirect to Home
     path: '**',
