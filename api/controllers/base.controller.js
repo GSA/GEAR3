@@ -7,8 +7,6 @@ const sql = require("../db.js").connection,
   { google } = require("googleapis")
   fastcsv = require("fast-csv");
 
-const SqlString = require('sqlstring');
-
 // If modifying these scopes, delete token.json.
 const SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
 // The file token.json stores the user's access and refresh tokens, and is
@@ -99,7 +97,8 @@ function buildLogQuery(conn, event, user, msg, response) {
 
 async function buildLogQueryAsync(conn, event, user, msg) {
   // 
-  var query = `insert into gear_log.event (Event, User, DTG) values ('${SqlString.escape(event)}', '${SqlString.escape(user)}', now());`;
+  var query = `insert into gear_log.event (Event, User, DTG) values ('${event}', '${user}', now());`;
+  console.log(query);
   try {
     await conn.promise().query(query);
     return JSON.stringify(data);
