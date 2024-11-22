@@ -150,6 +150,12 @@ export class FismaComponent implements OnInit {
       title: 'Cloud Service Type',
       sortable: true,
       visible: false,
+    },
+    {
+      field: 'FISMASystemIdentifier',
+      title: 'FISMA System Identifier',
+      sortablle: true,
+      visible: false
     }, /* , {
     field: 'BusOrg',
     title: 'Business Org',

@@ -182,6 +182,12 @@ export class SystemsComponent implements OnInit {
       visible: false,
       formatter: this.sharedService.pocStringNameFormatter,
     },
+    {
+      field: 'FISMASystemIdentifier',
+      title: 'FISMA System Identifier',
+      sortablle: true,
+      visible: false
+    },
   ];
 
   // Inactive Column Defs
