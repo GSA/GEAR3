@@ -2,6 +2,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, 
 import { Router } from '@angular/router';
 
 import { environment } from '@environments/environment';
+import { AnalyticsService } from '@services/analytics/analytics.service';
 import { SharedService } from '@services/shared/shared.service';
 
 // Declare jQuery symbol
@@ -28,7 +29,8 @@ export class TopNavbarComponent implements AfterViewInit {
     private router: Router,
     public sharedService: SharedService,
     private renderer: Renderer2,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private analyticsService: AnalyticsService
   ) {
     if (environment.name !== 'Production') {
       this.envName = `<span> - ${environment.name.toUpperCase()} ENVIRONMENT</span>`;
@@ -98,5 +100,31 @@ export class TopNavbarComponent implements AfterViewInit {
   */
   onDropdownHeaderClick(e: Event): void {
     e.stopPropagation();
+  }
+
+  public onLinkClick(event: PointerEvent, route: string) {
+    let keyboardEvent: boolean = false;
+
+    // Check if the click event keyboard enter
+    if(event.clientX === 0) {
+      keyboardEvent = true;
+    }
+
+    this.analyticsService.logTopbarNavEvent(route, keyboardEvent);
+
+    this.processTopNavLink();
+  }
+
+  public onLinkKeyboardDown(event: KeyboardEvent, route: string, changeRoute: boolean = true) {
+    if(event.code === 'Space') {
+      this.analyticsService.logTopbarNavEvent(route, true);
+
+      if(changeRoute) {
+        // Also navigate since space doesn't trigger routerLink
+        this.router.navigate([route]);
+      }
+
+      this.processTopNavLink();
+    }
   }
 }

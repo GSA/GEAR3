@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
+import { AnalyticsService } from '@services/analytics/analytics.service';
 import { SharedService } from '@services/shared/shared.service';
-import { distinctUntilChanged, filter } from 'rxjs/operators';
 
 // Declare jQuery symbol
 declare var $: any;
-declare var gtag: Function;
 
 @Component({
   selector: 'app-root',
@@ -13,11 +12,15 @@ declare var gtag: Function;
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  constructor(private router: Router, private sharedService: SharedService) {
+  constructor(
+    private router: Router,
+    private sharedService: SharedService,
+    private analyticsService: AnalyticsService
+  ) {
     this.router.events.subscribe(event => {
       // Send page_view event to GA
       if (event instanceof NavigationEnd) {
-          gtag('event', 'page_view', { 'page_path': event.urlAfterRedirects });
+        this.analyticsService.logPageViewEvent(event.urlAfterRedirects);
       }
     });
   }

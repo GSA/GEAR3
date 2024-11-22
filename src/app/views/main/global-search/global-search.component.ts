@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { AnalyticsService } from '@services/analytics/analytics.service';
 import { ApiService } from '@services/apis/api.service';
 
 import { SharedService } from '@services/shared/shared.service';
@@ -7,7 +8,6 @@ import { TableService } from '@services/tables/table.service';
 
 // Declare jQuery symbol
 declare var $: any;
-declare var gtag: Function;
 
 @Component({
   selector: 'global-search',
@@ -22,7 +22,9 @@ export class GlobalSearchComponent implements OnInit {
     private sharedService: SharedService,
     private tableService: TableService,
     private route: ActivatedRoute,
-    private apiService: ApiService) { }
+    private apiService: ApiService,
+    private analyticsService: AnalyticsService
+  ) { }
 
   // Global Search Table Options
   tableOptions: any = this.tableService.createTableOptions({
@@ -94,7 +96,7 @@ export class GlobalSearchComponent implements OnInit {
           data: [],
         }));
         // Log GA4 event
-        gtag('event', 'search', { 'search_term': kw });
+        this.analyticsService.logSearchEvent(kw);
       }
 
       //Enable table sticky header
