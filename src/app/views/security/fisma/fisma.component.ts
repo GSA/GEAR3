@@ -140,7 +140,13 @@ export class FismaComponent implements OnInit {
       header: 'Cloud Service Type',
       isSortable: true,
       showColumn: false,
-    }
+    },
+    {
+      field: 'FISMASystemIdentifier',
+      header: 'FISMA System Identifier',
+      isSortable: true,
+      showColumn: false
+    },
   ];
 
   ngOnInit(): void {
