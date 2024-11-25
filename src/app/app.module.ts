@@ -162,7 +162,7 @@ import { far } from '@fortawesome/free-regular-svg-icons';
         AccordionModule,
         FontAwesomeModule
     ],
-    providers: [Globals, provideHttpClient(withInterceptorsFromDi(), withFetch()), provideClientHydration()] })
+    providers: [Globals, provideClientHydration(), provideHttpClient(withInterceptorsFromDi(), withFetch())] })
 export class AppModule {
   constructor(library: FaIconLibrary) {
     library.addIconPacks(fas, far);
