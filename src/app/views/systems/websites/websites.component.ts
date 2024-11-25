@@ -204,15 +204,6 @@ export class WebsitesComponent implements OnInit {
     });
   }
 
-  showProduction() {
-    this.filteredTable = true;
-    $('#websitesTable').bootstrapTable('filterBy', {
-      production_status: ['production'],
-      type_of_site: ['Informational', 'Application', 'Application Login'],
-      digital_brand_category: ['GSA Business', 'Hybrid', ''],
-    });
-  }
-
   showDecommissioned() {
     this.filteredTable = true;
     $('#websitesTable').bootstrapTable('filterBy', {
@@ -227,10 +218,10 @@ export class WebsitesComponent implements OnInit {
     });
   }
 
-  showStaging() {
+  showExternal() {
     this.filteredTable = true;
     $('#websitesTable').bootstrapTable('filterBy', {
-      production_status: ['staging'],
+      digital_brand_category: ['External'],
     });
   }
 
@@ -238,6 +229,7 @@ export class WebsitesComponent implements OnInit {
     $('#websitesTable').bootstrapTable('filterBy', {
       production_status: ['production', 'archived'],
       type_of_site: ['Informational', 'Application', 'Application Login'],
+      digital_brand_category: ['GSA Business', 'Hybrid', ''],
     });
     this.filteredTable = false;
   }

@@ -63,14 +63,6 @@
       <span class="my-auto mr-3">Filter Buttons:</span>
       <button
         role="button"
-        name="websitesProductionBtn"
-        class="btn btn-primary"
-        (click)="showProduction()"
-      >
-        Production
-      </button>
-      <button
-        role="button"
         name="websitesDecommissioned"
         class="btn btn-primary"
         (click)="showDecommissioned()"
@@ -87,11 +79,11 @@
       </button>
       <button
         role="button"
-        name="websitesStagingBtn"
+        name="websitesExternalBtn"
         class="btn btn-primary"
-        (click)="showStaging()"
+        (click)="showExternal()"
       >
-        Staging
+        External
       </button>
 
       <button
@@ -101,7 +93,7 @@
         (click)="resetTableFilters()"
         [hidden]="!filteredTable"
       >
-        Back to Active Websites
+        Back to Production Sites
       </button>
 
       <!-- Website Definition Popover -->
