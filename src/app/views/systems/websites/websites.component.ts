@@ -34,15 +34,10 @@ export class WebsitesComponent implements OnInit {
   ) {}
 
   tableData: Website[] = [];
+  filteredTableData: Website[] = [];
 
   filterButtons: TwoDimArray<FilterButton> = [
     [
-      {
-        buttonText: 'Production',
-        filters: [
-          { field: 'production_status', value: 'production' }
-        ]
-      },
       {
         buttonText: 'Decommissioned',
         filters: [
@@ -56,9 +51,9 @@ export class WebsitesComponent implements OnInit {
         ]
       },
       {
-        buttonText: 'Staging',
+        buttonText: 'External',
         filters: [
-          { field: 'production_status', value: 'staging' }
+          { field: 'digital_brand_category', value: 'External' }
         ]
       }
     ]
@@ -182,7 +177,21 @@ export class WebsitesComponent implements OnInit {
     // Set JWT when logged into GEAR Manager when returning from secureAuth
     this.sharedService.setJWTonLogIn();
 
-    this.apiService.getWebsites().subscribe(w => this.tableData = w);
+    this.apiService.getWebsites().subscribe(websites => {
+      this.tableData = websites;
+
+      // Filter websites for inital view data
+      websites.forEach(w => {
+        if(
+          (w.production_status === 'production') &&
+          (w.digital_brand_category !== 'External') &&
+          (w.type_of_site === 'Informational' || w.type_of_site === 'Application' || w.type_of_site === 'Application Login')
+        ) {
+          this.filteredTableData.push(w);
+        }
+      });
+      
+    });
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {
