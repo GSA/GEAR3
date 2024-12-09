@@ -23,5 +23,6 @@ SELECT
   accessibility, 
   uswds, 
   required_links,
-  target_decommission_date    
+  target_decommission_date,
+  sitemap_url
 FROM obj_websites AS websites

@@ -166,6 +166,12 @@ export class WebsitesComponent implements OnInit {
       showColumn: false,
       formatter: this.sharedService.utcDateFormatter
     },
+    {
+      field: 'sitemap_url',
+      header: 'Sitemap URL',
+      isSortable: false,
+      showColumn: false
+    },
 ];
 
   ngOnInit(): void {
