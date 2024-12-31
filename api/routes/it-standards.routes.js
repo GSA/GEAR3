@@ -42,4 +42,7 @@ router.route('/types')
 router.route('/attestation_status_types')
   .get(itsCtrl.findAttestationStatusTypes);
 
+router.route('/operating_systems')
+  .get(itsCtrl.getAllOperatingSystems);
+
 module.exports = router;

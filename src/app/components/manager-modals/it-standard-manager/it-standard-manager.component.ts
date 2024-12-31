@@ -8,6 +8,7 @@ import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from "@services/shared/shared.service";
 import { TableService } from "@services/tables/table.service";
+import { OperatingSystem } from '@api/models/operating-systems.model';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -45,7 +46,8 @@ export class ItStandardManagerComponent implements OnInit {
     itStandAprvExp: new FormControl(),
     itStandComments: new FormControl(),
     itStandRefDocs: new FormControl(),
-    itStandApprovedVersions: new FormControl()
+    itStandApprovedVersions: new FormControl(),
+    itStandMobileAppBundle: new FormControl()
   });
 
   itStandard = <any>{};
@@ -91,6 +93,11 @@ export class ItStandardManagerComponent implements OnInit {
   itStandCertify: boolean = false;
 
   anyServerError = false;
+
+  operatingSystems: OperatingSystem[];
+
+  allAppBundleIds: string[] = [];
+  currentAppBundleId: string = '';
 
   constructor(
     private apiService: ApiService,
@@ -165,6 +172,9 @@ export class ItStandardManagerComponent implements OnInit {
 
     // Populate Deployment Types
     this.apiService.getITStandDeploymentTypes().subscribe((data: any[]) => { this.deploymentTypes = data });
+
+    // Populate operating systems
+    this.apiService.getOperatingSystems().subscribe((data: any[]) => { this.operatingSystems = data });
 
     // Instantiate the date picker
     $('#itStandAprvExp').datepicker({
@@ -784,6 +794,23 @@ export class ItStandardManagerComponent implements OnInit {
   disableEndOfLifeDate(): void {
     //console.log("Disabling End of Life Date");
     $("#divEndOfLifeDate").addClass("disabledDivEndOfLifeDate");
+  }
+
+  isMobileType() {
+    return this.itStandardsForm.controls['itStandDeployment'].value === '6';
+  }
+
+  addAppBundleId() {
+    let appBundle = this.itStandardsForm.controls['itStandMobileAppBundle'].value;
+    this.allAppBundleIds.push(appBundle);
+    this.itStandardsForm.controls['itStandMobileAppBundle'].reset();
+  }
+
+  removeAppBundle(appBundleId: string) {
+    let appBundleIndex = this.allAppBundleIds.findIndex(a => a === appBundleId);
+    if(appBundleIndex >= 0) {
+      this.allAppBundleIds.splice(appBundleIndex, 1);
+    }
   }
 
 }

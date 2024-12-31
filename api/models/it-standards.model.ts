@@ -32,4 +32,6 @@ export class ITStandards {
   public OldName: string = null;
   public EndOfLifeDate: Date = null;
   public ApprovedVersions: string = null;
+  public OperatingSystems: string = null;
+  public ApBundleIds: string = null;
 }

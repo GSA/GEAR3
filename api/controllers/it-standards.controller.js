@@ -313,3 +313,9 @@ getEolFragment = (inputDate) => {
   
   return `STR_TO_DATE('${convertedDate}', '%Y-%m-%d %T')`;
 };
+
+exports.getAllOperatingSystems = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_operating_systems.sql`)).toString();
+
+  res = ctrl.sendQuery(query, 'Operating Systems', res);
+}

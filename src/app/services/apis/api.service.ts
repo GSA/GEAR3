@@ -43,6 +43,7 @@ import { SoftwareRelease } from '@api/models/tc-softwarerelease.model';
 import { AttestationStatus } from '@api/models/attestation-status.model';
 import { TechAttributeDefinitions } from '@api/models/tech-attribute-definitions';
 import { DataDictionary } from '@api/models/data-dictionary.model';
+import { OperatingSystem } from '@api/models/operating-systems.model';
 
 @Injectable({
   providedIn: 'root',
@@ -610,6 +611,18 @@ export class ApiService {
         catchError(
           this.handleError<ITStandardDeployTypes[]>(
             'GET IT Standard Deployment Types',
+            []
+          )
+        )
+      );
+  }
+  public getOperatingSystems(): Observable<OperatingSystem[]> {
+    return this.http
+      .get<OperatingSystem[]>(this.techUrl + '/operating_systems')
+      .pipe(
+        catchError(
+          this.handleError<OperatingSystem[]>(
+            'GET Operating Systems',
             []
           )
         )

@@ -208,6 +208,20 @@
                   formControlName="itStandApprovedVersions" placeholder="Enter approved versions" [value]="itStandard.ApprovedVersions" maxlength="45">
               </div>
 
+              <div class="form-group col-6">
+                <label for="itStandOS">Operating System(s)</label><br/>
+                <p-multiSelect 
+                  id="itStandOS"
+                  [options]="operatingSystems" 
+                  formControlName="itStandOS" 
+                  optionLabel="Name"
+                  optionValue="ID"
+                  placeholder="Select Operating System(s)"
+                  display="chip"
+                  [filter]="false"
+                  [showHeader]="false" />
+              </div>
+
               <!-- Description -->
               <div class="form-group">
                 <label for="itStandDesc">Description</label>
@@ -296,6 +310,20 @@
                         <div class="invalid-feedback" *ngIf="itStandardsForm.controls['itStandDeployment'].errors.required">
                           IT Standard Deployment Type Required
                         </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- only show if mobile type is picked -->
+                  <div class="row align-items-center" *ngIf="isMobileType()">
+                    <div class="form-group col-6">
+                      <label for="itStandMobileAppBundle">Mobile App Bundle Id(s)</label>
+                      <div class="flex flex-row">
+                        <input class="form-control" id="itStandMobileAppBundle" name="itStandMobileAppBundle" formControlName="itStandMobileAppBundle" />
+                        <button type="button" (click)="addAppBundleId()" class="btn btn-info text-white">Add</button>
+                      </div>
+                      <div class="it-standard-manager-app-bundle-container">
+                        <span class="it-standard-manager-app-bundle-item" *ngFor="let appBundle of allAppBundleIds">{{appBundle}} <span class="it-standard-manager-app-bundle-clear-icon" (click)="removeAppBundle(appBundle)">X</span></span>
                       </div>
                     </div>
                   </div>

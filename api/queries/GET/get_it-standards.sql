@@ -36,7 +36,9 @@ SELECT
   GROUP_CONCAT(DISTINCT obj_standard_category.Keyname SEPARATOR ', ')   AS Category,
   tech.Keyname                                    AS OldName,
   DATE(tech.endOfLifeDate)                        AS EndOfLifeDate,
-  tech.approvedVersions                           AS ApprovedVersions
+  tech.approvedVersions                           AS ApprovedVersions,
+  GROUP_CONCAT(DISTINCT OS.Keyname SEPARATOR ', ') 		  AS OperatingSystems,
+  GROUP_CONCAT(DISTINCT BUNDLE.Keyname SEPARATOR ', ') 	  AS AppBundleIds
 FROM obj_technology AS tech
 
 LEFT JOIN obj_technology_status               ON tech.obj_technology_status_Id = obj_technology_status.Id
@@ -51,3 +53,7 @@ LEFT JOIN obj_organization      AS org        ON poc.OrgCode = org.Org_Symbol
 LEFT JOIN zk_technology_standard_category     ON tech.Id = zk_technology_standard_category.obj_technology_Id
 LEFT JOIN obj_standard_category               ON zk_technology_standard_category.obj_standard_category_Id = obj_standard_category.Id
 LEFT JOIN obj_attestation_status_type         ON tech.attestation_required = obj_attestation_status_type.Id
+LEFT JOIN zk_technology_operating_system      ON tech.Id = zk_technology_operating_system.obj_technology_Id
+LEFT JOIN obj_operating_system		AS OS	  ON zk_technology_operating_system.obj_operating_system_Id = OS.Id
+LEFT JOIN zk_technology_app_bundle			  ON tech.Id = zk_technology_app_bundle.obj_technology_Id
+LEFT JOIN obj_technology_app_bundle AS BUNDLE ON zk_technology_app_bundle.obj_technology_app_bundle_Id = BUNDLE.Id
