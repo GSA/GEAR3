@@ -45,4 +45,7 @@ router.route('/attestation_status_types')
 router.route('/operating_systems')
   .get(itsCtrl.getAllOperatingSystems);
 
+router.route('/app_bundles/:id')
+  .get(itsCtrl.getAppBundles);
+
 module.exports = router;

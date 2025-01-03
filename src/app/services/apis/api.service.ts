@@ -44,6 +44,7 @@ import { AttestationStatus } from '@api/models/attestation-status.model';
 import { TechAttributeDefinitions } from '@api/models/tech-attribute-definitions';
 import { DataDictionary } from '@api/models/data-dictionary.model';
 import { OperatingSystem } from '@api/models/operating-systems.model';
+import { AppBundle } from '@api/models/it-standards-app-bundle.model';
 
 @Injectable({
   providedIn: 'root',
@@ -623,6 +624,18 @@ export class ApiService {
         catchError(
           this.handleError<OperatingSystem[]>(
             'GET Operating Systems',
+            []
+          )
+        )
+      );
+  }
+  public getITStandardAppBundles(id: number): Observable<AppBundle[]> {
+    return this.http
+      .get<AppBundle[]>(this.techUrl + '/app_bundles/' + String(id))
+      .pipe(
+        catchError(
+          this.handleError<AppBundle[]>(
+            'GET App Bundles',
             []
           )
         )

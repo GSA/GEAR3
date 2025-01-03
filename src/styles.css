@@ -328,8 +328,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .it-standard-manager-app-bundle-container {
-  border: 2px #333 solid;
+  border: 2px #ced4da solid;
   padding: 1em;
+  margin-top: .25em;
 }
 
 .it-standard-manager-app-bundle-item {
@@ -344,4 +345,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   font-weight: bold;
   color: red;
   cursor: pointer;
+}
+
+.it-standard-manager-app-bundle-duplicate-msg {
+  margin-top: 0.25rem;
+  font-size: 80%;
+  color: #ce4844;
 }

@@ -1,3 +1,5 @@
+import { AppBundle } from "./it-standards-app-bundle.model";
+
 export class ITStandards {
   public ID: number = null;
   public Name: string = null;
@@ -32,6 +34,6 @@ export class ITStandards {
   public OldName: string = null;
   public EndOfLifeDate: Date = null;
   public ApprovedVersions: string = null;
-  public OperatingSystems: string = null;
-  public ApBundleIds: string = null;
+  public OperatingSystems: number[] = null;
+  public ApBundleIds: AppBundle[] = null;
 }

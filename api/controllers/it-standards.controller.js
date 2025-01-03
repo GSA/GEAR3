@@ -86,6 +86,88 @@ exports.update = (req, res) => {
         });
       };
 
+      // Create string to update IT Standards Operating Systems
+      var osString = '';
+      var osToDelete = [];
+      var osToAdd = [];
+      if(data.itStandOperatingSystems && data.itStandOperatingSystems.length > 0) {
+        for(const osId of data.itStandOperatingSystems) {
+          if(!data.initialOS || (data.initialOS && data.initialOS.length === 0)) {
+            osToAdd.push(osId);
+          } else {
+            if(!data.initialOS.includes(osId)) {
+              osToAdd.push(osId);
+            }
+          }
+        }
+      }
+      if(data.initialOS && data.initialOS.length > 0) {
+        for(const osId of data.initialOS) {
+          if(!data.itStandOperatingSystems || (data.itStandOperatingSystems && data.itStandOperatingSystems.length === 0)) {
+            osToDelete.push(osId);
+          } else {
+            if(!data.itStandOperatingSystems.includes(osId)) {
+              osToDelete.push(osId);
+            }
+          }
+        }
+      }
+
+      if(osToDelete.length > 0) {
+        osToDelete.forEach(o => {
+          osString += `DELETE FROM zk_technology_operating_system WHERE obj_technology_Id=${req.params.id} AND obj_operating_system_Id=${o}; `;
+        });
+      }
+
+      if(osToAdd.length > 0) {
+        osToAdd.forEach(o => {
+          osString += `INSERT INTO zk_technology_operating_system (obj_operating_system_Id, obj_technology_Id) VALUES (${o}, ${req.params.id}); `;
+        });
+      }
+
+      // Create string to update IT Standards App Bundles
+      var appBundleString = '';
+      var appBundleToDelete = [];
+      var appBundleToAdd = [];
+      if(data.itStandMobileAppBundles && data.itStandMobileAppBundles.length > 0) {
+        for(const appId of data.itStandMobileAppBundles) {
+          if(!data.initialAppBundles || (data.initialAppBundles && data.initialAppBundles.length === 0)) {
+            appBundleToAdd.push(appId);
+          } else { 
+            if(!data.initialAppBundles.find(({Name}) => Name === appId.Name)) {
+              appBundleToAdd.push(appId);
+            }
+          }
+        }
+      }
+      if(data.initialAppBundles.length > 0) {
+        for(const appId of data.initialAppBundles) {
+          if(!data.itStandMobileAppBundles || (data.itStandMobileAppBundles && data.itStandMobileAppBundles.length === 0)) {
+            appBundleToDelete.push(appId);
+          } else {
+            if(!data.itStandMobileAppBundles.find(({Name}) => Name === appId.Name)) {
+              appBundleToDelete.push(appId);
+            }
+          }
+        }
+      }
+
+      // Delete from app bundle table and match table
+      if(appBundleToDelete.length > 0) {
+        appBundleToDelete.forEach(a => {
+          appBundleString += `DELETE FROM zk_technology_app_bundle WHERE obj_technology_Id=${req.params.id} AND obj_technology_app_bundle_Id=${a.ID}; `;
+          appBundleString += `DELETE FROM obj_technology_app_bundle WHERE Id=${a.ID}; `;
+        });
+      }
+
+      // Add to app bundle table and the match table
+      if(appBundleToAdd.length > 0) {
+        appBundleToAdd.forEach(a => {
+          appBundleString += `INSERT INTO obj_technology_app_bundle (Keyname) VALUES ('${a.Name}'); `;
+          appBundleString += `INSERT INTO zk_technology_app_bundle (obj_technology_app_bundle_Id, obj_technology_Id) VALUES (LAST_INSERT_ID(), ${req.params.id}); `;
+        });
+      }
+
       // Null any empty text fields
       data.itStandDesc = ctrl.emptyTextFieldHandler(data.itStandDesc);
       data.itStandAprvExp = ctrl.emptyTextFieldHandler(data.itStandAprvExp);
@@ -142,7 +224,9 @@ exports.update = (req, res) => {
         WHERE Id = ${req.params.id};
         SET FOREIGN_KEY_CHECKS=1;
         ${catString}
-        ${pocString}`;
+        ${pocString}
+        ${osString}
+        ${appBundleString}`;
 
       var logStatement = `insert into gear_log.event (Event, User, DTG) values ('update IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
       res = ctrl.sendQuery(query + ' ' + logStatement, 'update IT Standard', res); //removed sendQuery_cowboy reference
@@ -318,4 +402,11 @@ exports.getAllOperatingSystems = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_operating_systems.sql`)).toString();
 
   res = ctrl.sendQuery(query, 'Operating Systems', res);
+}
+
+exports.getAppBundles = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_it-standard_app_bundles.sql`)).toString() +
+  ` WHERE matchBundle.obj_technology_Id = ${req.params.id});`;
+
+  res = ctrl.sendQuery(query, 'App Bundles', res);
 }
