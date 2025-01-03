@@ -242,7 +242,21 @@ export class ItStandardsComponent implements OnInit {
         sortable: false,
         visible: true,
         titleTooltip: this.getTooltip('Approved Versions')
-      }];
+      },
+    {
+      field: 'OperatingSystems',
+      title: 'Operating Systems',
+      sortable: false,
+      visible: false,
+      formatter: this.sharedService.csvFormatter,
+    },
+    {
+      field: 'AppBundleIds',
+      title: 'App Bundle Ids',
+      sortable: false,
+      visible: false,
+      formatter: this.sharedService.csvFormatter,
+    }];
 
       $('#itStandardsTable').bootstrapTable(
         $.extend(this.tableOptions, {

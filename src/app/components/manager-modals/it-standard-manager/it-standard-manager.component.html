@@ -10,7 +10,7 @@
               class="text-primary">**EDITING**</span></span>
           <ng-template #elseITStandName> Create New IT-Standard</ng-template>
         </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="cleanup()">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -208,6 +208,20 @@
                   formControlName="itStandApprovedVersions" placeholder="Enter approved versions" [value]="itStandard.ApprovedVersions" maxlength="45">
               </div>
 
+              <div class="form-group col-6">
+                <label for="itStandOperatingSystems">Operating System(s)</label><br/>
+                <p-multiSelect 
+                  id="itStandOperatingSystems"
+                  [options]="operatingSystems" 
+                  formControlName="itStandOperatingSystems" 
+                  optionLabel="Name"
+                  optionValue="ID"
+                  placeholder="Select Operating System(s)"
+                  display="chip"
+                  [filter]="false"
+                  [showHeader]="false" />
+              </div>
+
               <!-- Description -->
               <div class="form-group">
                 <label for="itStandDesc">Description</label>
@@ -288,7 +302,7 @@
                     <div class="form-group col-4">
                       <label for="itStandDeployment">Deployment Type<span class="text-danger">*</span></label>
                       <select class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(itStandardsForm, 'itStandDeployment')}" id="itStandDeployment"
-                        formControlName="itStandDeployment" required>
+                        formControlName="itStandDeployment" required (change)="changeDeploymentType()">
                         <option *ngFor="let type of deploymentTypes" [value]="type.ID"
                           [selected]="type.Name === itStandard.DeploymentType">{{ type.Name }}</option>
                       </select>
@@ -296,6 +310,21 @@
                         <div class="invalid-feedback" *ngIf="itStandardsForm.controls['itStandDeployment'].errors.required">
                           IT Standard Deployment Type Required
                         </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- only show if mobile type is picked -->
+                  <div class="row align-items-center" *ngIf="showAppBundleField">
+                    <div class="form-group col-12">
+                      <label for="itStandMobileAppBundles">Mobile App Bundle Id(s)</label>
+                      <div class="d-flex flex-row">
+                        <input class="form-control" id="itStandMobileAppBundles" name="itStandMobileAppBundles" formControlName="itStandMobileAppBundles" />
+                        <button type="button" (click)="addAppBundleId()" class="btn btn-info text-white">Add</button>
+                      </div>
+                      <span *ngIf="showDuplicateAppBundleMsg" class="it-standard-manager-app-bundle-duplicate-msg">App Bundle Already Added to List</span>
+                      <div class="it-standard-manager-app-bundle-container" *ngIf="allAppBundleIds.length > 0">
+                        <span class="it-standard-manager-app-bundle-item" *ngFor="let appBundle of allAppBundleIds">{{appBundle.Name}} <span class="it-standard-manager-app-bundle-clear-icon" (click)="removeAppBundle(appBundle.Name)">X</span></span>
                       </div>
                     </div>
                   </div>

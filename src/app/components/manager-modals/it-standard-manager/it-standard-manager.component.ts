@@ -8,6 +8,8 @@ import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from "@services/shared/shared.service";
 import { TableService } from "@services/tables/table.service";
+import { OperatingSystem } from '@api/models/operating-systems.model';
+import { AppBundle } from '@api/models/it-standards-app-bundle.model';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -45,7 +47,9 @@ export class ItStandardManagerComponent implements OnInit {
     itStandAprvExp: new FormControl(),
     itStandComments: new FormControl(),
     itStandRefDocs: new FormControl(),
-    itStandApprovedVersions: new FormControl()
+    itStandApprovedVersions: new FormControl(),
+    itStandOperatingSystems: new FormControl(),
+    itStandMobileAppBundles: new FormControl()
   });
 
   itStandard = <any>{};
@@ -91,6 +95,14 @@ export class ItStandardManagerComponent implements OnInit {
   itStandCertify: boolean = false;
 
   anyServerError = false;
+
+  operatingSystems: OperatingSystem[];
+
+  allAppBundleIds: AppBundle[] = [];
+  initalAppBundleIds: AppBundle[] = [];
+  currentAppBundleId: string = '';
+  showDuplicateAppBundleMsg: boolean = false;
+  showAppBundleField: boolean = false;
 
   constructor(
     private apiService: ApiService,
@@ -165,6 +177,9 @@ export class ItStandardManagerComponent implements OnInit {
 
     // Populate Deployment Types
     this.apiService.getITStandDeploymentTypes().subscribe((data: any[]) => { this.deploymentTypes = data });
+
+    // Populate operating systems
+    this.apiService.getOperatingSystems().subscribe((data: any[]) => { this.operatingSystems = data });
 
     // Instantiate the date picker
     $('#itStandAprvExp').datepicker({
@@ -272,6 +287,28 @@ export class ItStandardManagerComponent implements OnInit {
         });
       };
 
+      let selectedOSList: string[] = [];
+      if(this.itStandard.OperatingSystems) {
+        selectedOSList = this.itStandard.OperatingSystems.split(', ');
+      }
+
+      // if(this.itStandard.AppBundleIds) {
+      //   let tempAppBundleIds = this.itStandard.AppBundleIds.split(', ');
+      //   this.allAppBundleIds = tempAppBundleIds.map(a => ({ID: 0, Name: a}));
+      // }
+      // Get IT Standard App Bundles
+      this.apiService.getITStandardAppBundles(this.itStandard.ID).subscribe((data: any) => { 
+        this.allAppBundleIds = data.map(d => {
+          let bundle = new AppBundle();
+          bundle.ID = d.Id;
+          bundle.Name = d.Keyname;
+          return bundle;
+        });
+
+        // retain a copy of the original so we can use it to compare later on save
+        this.initalAppBundleIds = [...this.allAppBundleIds];
+      });
+
       // Set default values for form with current values
       this.itStandardsForm.patchValue({
         tcManufacturer: this.itStandard.Manufacturer,
@@ -299,12 +336,14 @@ export class ItStandardManagerComponent implements OnInit {
         itStandAprvExp: formatDate(this.aprvExpDate, 'yyyy-MM-dd', 'en-US'),
         itStandComments: this.itStandard.Comments,
         itStandRefDocs: this.itStandard.ReferenceDocument,
-        itStandApprovedVersions: this.itStandard.ApprovedVersions
+        itStandApprovedVersions: this.itStandard.ApprovedVersions,
+        itStandOperatingSystems: selectedOSList.map(o => this.sharedService.findInArray(this.operatingSystems, 'Name', o))
       });
       if (this.itStandard.SoftwareRelease) {
         // disable the old IT Standard Name field
         this.disableOldITStandardName();
       }
+      this.changeDeploymentType();
     }
   };
 
@@ -396,6 +435,29 @@ export class ItStandardManagerComponent implements OnInit {
         this.itStandardsForm.value.itStandReqAtte = this.sharedService.findInArray(this.itStandReqAtteRefData, 'Name', this.itStandardsForm.value.itStandReqAtte, 'ID');
         console.log("AttestationStatus: ", this.itStandardsForm.value.itStandReqAtte);
       }
+
+      if(this.allAppBundleIds && this.allAppBundleIds.length > 0) {
+        let allBundles: AppBundle[] = [];
+        this.allAppBundleIds.forEach(a => allBundles.push(a));
+
+        this.itStandardsForm.value.itStandMobileAppBundles = allBundles;
+      }
+
+      if(this.itStandardsForm.controls['itStandOperatingSystems'].value && this.itStandardsForm.controls['itStandOperatingSystems'].value.length > 0) {
+        this.itStandardsForm.value.itStandOperatingSystems = this.itStandardsForm.controls['itStandOperatingSystems'].value;
+      }
+
+      // Get list of initial operating system so we can compare for update
+      let initialOS: number[] = [];
+      if(this.itStandard.OperatingSystems) {
+        let initialOSString = this.itStandard.OperatingSystems.split(', ');
+        initialOSString.forEach(o => initialOS.push(this.sharedService.findInArray(this.operatingSystems, 'Name', o)));
+      }
+      this.itStandardsForm.value.initialOS = initialOS;
+
+      // Get list of initial app bundles so we an compare for update
+      this.itStandardsForm.value.initialAppBundles = this.initalAppBundleIds;
+
       // Send data to database
       if (this.createBool) {
         this.apiService.createITStandard(this.itStandardsForm.value).toPromise()
@@ -452,6 +514,11 @@ export class ItStandardManagerComponent implements OnInit {
   }
 
   itStandDetailRefresh(data: any) {
+    this.showAppBundleField = false;
+    this.showDuplicateAppBundleMsg = false;
+    this.allAppBundleIds = [];
+    this.initalAppBundleIds = [];
+    this.currentAppBundleId = '';
 
     //console.log("Refreshing IT Standard Detail Modal"); //DEBUG
 
@@ -784,6 +851,45 @@ export class ItStandardManagerComponent implements OnInit {
   disableEndOfLifeDate(): void {
     //console.log("Disabling End of Life Date");
     $("#divEndOfLifeDate").addClass("disabledDivEndOfLifeDate");
+  }
+
+  addAppBundleId() {
+    this.showDuplicateAppBundleMsg = false;
+    let appBundle = this.itStandardsForm.controls['itStandMobileAppBundles'].value;
+
+    // only add to list if not already in the list
+    let sameAppBundle = this.allAppBundleIds.findIndex(a => a.Name === appBundle);
+    if(sameAppBundle < 0) {
+      let tempAppBundle: AppBundle = { ID: 0, Name: appBundle};
+      this.allAppBundleIds.push(tempAppBundle);
+    } else {
+      this.showDuplicateAppBundleMsg = true;
+    }
+
+    this.itStandardsForm.controls['itStandMobileAppBundles'].reset();
+  }
+
+  removeAppBundle(appBundle: string) {
+    let appBundleIndex = this.allAppBundleIds.findIndex(a => a.Name === appBundle);
+    if(appBundleIndex >= 0) {
+      this.allAppBundleIds.splice(appBundleIndex, 1);
+    }
+  }
+
+  changeDeploymentType() {
+    if(this.itStandardsForm.value.itStandDeployment === 6 || this.itStandardsForm.value.itStandDeployment === '6') {
+      this.showAppBundleField = true;
+    } else {
+      this.showAppBundleField = false;
+    }
+  }
+
+  cleanup() {
+    this.showAppBundleField = false;
+    this.showDuplicateAppBundleMsg = false;
+    this.allAppBundleIds = [];
+    this.initalAppBundleIds = [];
+    this.currentAppBundleId = '';
   }
 
 }
