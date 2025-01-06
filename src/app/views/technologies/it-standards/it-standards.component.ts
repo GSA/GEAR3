@@ -303,6 +303,13 @@ export class ItStandardsComponent implements OnInit {
           });
       }
     });
+
+    this.route.queryParamMap.subscribe(param => {
+      param.keys.forEach(key => {
+        let capKey = key[0].toUpperCase() + key.slice(1);
+        this.changeFilter(capKey, param.get(key), true);
+      });
+    });
   }
 
   // Create new IT Standard when in GEAR Manager mode
@@ -323,7 +330,10 @@ export class ItStandardsComponent implements OnInit {
   }
 
   // Update table from filter buttons
-  changeFilter(field: string, term: string) {
+  changeFilter(field: string, term: string, paramAlreadySet = false) {
+    if(!paramAlreadySet){
+      this.setQueryParams(field, term);
+    }
     this.sharedService.disableStickyHeader("itStandardsTable");
     this.filteredTable = true; // Filters are on, expose main table button
     var filter = {};
@@ -344,6 +354,7 @@ export class ItStandardsComponent implements OnInit {
   }
 
   backToMainIT() {
+    this.removeQueryParams();
     this.sharedService.disableStickyHeader("itStandardsTable");
     this.filteredTable = false; // Hide main button
 
@@ -365,5 +376,22 @@ export class ItStandardsComponent implements OnInit {
       return def.TermDefinition;
     }
     return '';
+  }
+
+  removeQueryParams() {
+    const queryParms = {
+      queryParams: {}
+    }
+    this.router.navigate([], queryParms);
+  }
+
+  setQueryParams(key: string, value: any): void {
+    this.removeQueryParams();
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { [key]: value },
+        queryParamsHandling: 'merge' // Preserve existing query params
+      });
+    //}
   }
 }

@@ -66,6 +66,8 @@
       <!-- Filters -->
       <div class="mx-auto">
         <span class="my-auto mr-3">Filter Buttons:</span>
+        <button role="button" name="itMobileBttn" class="btn btn-primary"
+        (click)="changeFilter('DeploymentType', 'Mobile')">Mobile</button>
         <button role="button" name="itDesktopBttn" class="btn btn-primary"
           (click)="changeFilter('DeploymentType', 'Desktop')">Desktop</button>
         <button role="button" name="itServerBttn" class="btn btn-primary"
