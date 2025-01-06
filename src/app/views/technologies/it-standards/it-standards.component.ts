@@ -10,6 +10,8 @@ import { Title } from '@angular/platform-browser';
 
 import { ITStandards } from '@api/models/it-standards.model';
 import { DataDictionary } from '@api/models/data-dictionary.model';
+import { take } from 'rxjs/operators';
+import { HttpParams } from '@angular/common/http';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -34,7 +36,7 @@ export class ItStandardsComponent implements OnInit {
     private router: Router,
     public sharedService: SharedService,
     private tableService: TableService,
-    private titleService: Title
+    private titleService: Title,
   ) {
     this.modalService.currentITStand.subscribe((row) => (this.row = row));
   }
@@ -56,6 +58,8 @@ export class ItStandardsComponent implements OnInit {
     showToggle: true,
     url: this.apiService.techUrl,
   });
+
+  activeFilters = {};
 
   YesNo(value, row, index, field) {
     return value === 'T'? "Yes" : "No";
@@ -304,7 +308,7 @@ export class ItStandardsComponent implements OnInit {
       }
     });
 
-    this.route.queryParamMap.subscribe(param => {
+    this.route.queryParamMap.pipe(take(1)).subscribe(param => {
       param.keys.forEach(key => {
         let capKey = key[0].toUpperCase() + key.slice(1);
         this.changeFilter(capKey, param.get(key), true);
@@ -334,13 +338,23 @@ export class ItStandardsComponent implements OnInit {
     if(!paramAlreadySet){
       this.setQueryParams(field, term);
     }
+    if(this.isFilterActive(field, term)) {
+      delete this.activeFilters[field];
+      this.removeSingleQueryParam(field);
+    } else {
+      this.activeFilters[field] = term;
+    }
     this.sharedService.disableStickyHeader("itStandardsTable");
-    this.filteredTable = true; // Filters are on, expose main table button
-    var filter = {};
-    filter[field] = term;
+    if(Object.keys(this.activeFilters).length > 0) {
+      this.filteredTable = true; // Filters are on, expose main table button
+      this.filterTitle = `${term} `;
+    } else {
+      this.filteredTable = false;
+      this.filterTitle = '';
+    }
 
     // Set cloud field to visible if filtering by cloud enabled
-    $('#itStandardsTable').bootstrapTable('filterBy', filter);
+    $('#itStandardsTable').bootstrapTable('filterBy', this.activeFilters);
     $('#itStandardsTable').bootstrapTable('refreshOptions', {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(
@@ -349,7 +363,7 @@ export class ItStandardsComponent implements OnInit {
       },
     });
 
-    this.filterTitle = `${term} `;
+    
     this.sharedService.enableStickyHeader("itStandardsTable");
   }
 
@@ -379,10 +393,28 @@ export class ItStandardsComponent implements OnInit {
   }
 
   removeQueryParams() {
-    const queryParms = {
+    const allParams = {
       queryParams: {}
     }
-    this.router.navigate([], queryParms);
+    this.router.navigate([], allParams);
+  }
+
+  removeSingleQueryParam(paramName: string) {
+    let allParams = { ...this.route.snapshot.queryParams };
+    delete allParams[paramName];
+
+    this.router.navigate([], { 
+      queryParams: allParams, 
+      queryParamsHandling: 'merge' // Preserve existing query params
+    });
+
+    const [path, query] = this.location.path().split('?');
+    const params = new HttpParams({ fromString: query });
+    if(params.keys().length > 1) {
+      this.location.replaceState(path, params.delete(paramName).toString());
+    } else {
+      this.router.navigateByUrl(path)
+    }
   }
 
   setQueryParams(key: string, value: any): void {
@@ -390,12 +422,13 @@ export class ItStandardsComponent implements OnInit {
       this.router.navigate([], {
         relativeTo: this.route,
         queryParams: { [key]: value },
-        queryParamsHandling: 'merge' // Preserve existing query params
+        queryParamsHandling: 'merge'
       });
   }
 
   isFilterActive(key, value) {
-    let param = this.route.snapshot.queryParamMap.get(key);
-    return param && param === value;
+    const [path, query] = this.location.path().split('?');
+    const params = new HttpParams({ fromString: query });
+    return params.get(key) === value;
   }
 }
