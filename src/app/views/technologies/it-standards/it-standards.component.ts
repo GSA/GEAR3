@@ -363,8 +363,11 @@ export class ItStandardsComponent implements OnInit {
       },
     });
 
-    
     this.sharedService.enableStickyHeader("itStandardsTable");
+
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
   }
 
   backToMainIT() {
