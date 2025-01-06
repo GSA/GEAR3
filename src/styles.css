@@ -352,3 +352,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   font-size: 80%;
   color: #ce4844;
 }
+
+.it-standards-filter-button-active {
+  outline: 0.25rem solid #2491ff;
+  position: relative;
+}

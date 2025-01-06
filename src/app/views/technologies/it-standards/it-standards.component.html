@@ -66,18 +66,18 @@
       <!-- Filters -->
       <div class="mx-auto">
         <span class="my-auto mr-3">Filter Buttons:</span>
-        <button role="button" name="itMobileBttn" class="btn btn-primary"
+        <button role="button" name="itMobileBttn" class="btn btn-primary" [ngClass]="{'it-standards-filter-button-active': isFilterActive('DeploymentType', 'Mobile')}"
         (click)="changeFilter('DeploymentType', 'Mobile')">Mobile</button>
-        <button role="button" name="itDesktopBttn" class="btn btn-primary"
+        <button role="button" name="itDesktopBttn" class="btn btn-primary" [ngClass]="{'it-standards-filter-button-active': isFilterActive('DeploymentType', 'Desktop')}"
           (click)="changeFilter('DeploymentType', 'Desktop')">Desktop</button>
-        <button role="button" name="itServerBttn" class="btn btn-primary"
+        <button role="button" name="itServerBttn" class="btn btn-primary" [ngClass]="{'it-standards-filter-button-active': isFilterActive('DeploymentType', 'Server')}"
           (click)="changeFilter('DeploymentType', 'Server')">Server</button>
 
-        <button role="button" name="itApprovedBttn" class="btn btn-primary ml-3"
+        <button role="button" name="itApprovedBttn" class="btn btn-primary ml-3" [ngClass]="{'it-standards-filter-button-active': isFilterActive('Status', 'Approved')}"
           (click)="changeFilter('Status', 'Approved')">Approved</button>
-        <button role="button" name="itDeniedBttn" class="btn btn-primary"
+        <button role="button" name="itDeniedBttn" class="btn btn-primary" [ngClass]="{'it-standards-filter-button-active': isFilterActive('Status', 'Denied')}"
           (click)="changeFilter('Status', 'Denied')">Denied</button>
-        <button role="button" name="itRetiredBttn" class="btn btn-primary"
+        <button role="button" name="itRetiredBttn" class="btn btn-primary" [ngClass]="{'it-standards-filter-button-active': isFilterActive('Status', 'Retired')}"
           (click)="changeFilter('Status', 'Retired')">Retired</button>
 
         <button role="button" name="itBttn" class="btn btn-primary ml-3" (click)="backToMainIT()"

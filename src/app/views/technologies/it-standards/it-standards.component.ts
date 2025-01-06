@@ -392,6 +392,10 @@ export class ItStandardsComponent implements OnInit {
         queryParams: { [key]: value },
         queryParamsHandling: 'merge' // Preserve existing query params
       });
-    //}
+  }
+
+  isFilterActive(key, value) {
+    let param = this.route.snapshot.queryParamMap.get(key);
+    return param && param === value;
   }
 }
