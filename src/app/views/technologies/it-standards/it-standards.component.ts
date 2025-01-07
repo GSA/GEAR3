@@ -59,7 +59,7 @@ export class ItStandardsComponent implements OnInit {
     url: this.apiService.techUrl,
   });
 
-  activeFilters = {};
+  activeFilters: Object = {};
 
   YesNo(value, row, index, field) {
     return value === 'T'? "Yes" : "No";
@@ -268,6 +268,34 @@ export class ItStandardsComponent implements OnInit {
           data: [],
         })
       );
+
+      // Method to open details modal when referenced directly via URL
+      this.route.params.subscribe((params) => {
+        let detailStandID = params['standardID'];
+        let deploymentType = params['deploymentType'];
+        let status = params['status'];
+        if(deploymentType) {
+          this.activeFilters['DeploymentType'] = deploymentType;
+        }
+        if(status) {
+          this.activeFilters['Status'] = status;
+        }
+
+        if(Object.keys(this.activeFilters).length > 0) {
+          this.changeFilterByRoute();
+          return;
+        }
+        if (detailStandID) {
+          this.titleService.setTitle(
+            `${this.titleService.getTitle()} - ${detailStandID}`
+          );
+          this.apiService
+            .getOneITStandard(detailStandID)
+            .subscribe((data: any[]) => {
+              this.tableService.itStandTableClick(data[0]);
+            });
+        }
+      });
     });
 
     // Enable popovers
@@ -292,28 +320,6 @@ export class ItStandardsComponent implements OnInit {
       }.bind(this)
     );
     });
-
-    // Method to open details modal when referenced directly via URL
-    this.route.params.subscribe((params) => {
-      var detailStandID = params['standardID'];
-      if (detailStandID) {
-        this.titleService.setTitle(
-          `${this.titleService.getTitle()} - ${detailStandID}`
-        );
-        this.apiService
-          .getOneITStandard(detailStandID)
-          .subscribe((data: any[]) => {
-            this.tableService.itStandTableClick(data[0]);
-          });
-      }
-    });
-
-    this.route.queryParamMap.pipe(take(1)).subscribe(param => {
-      param.keys.forEach(key => {
-        let capKey = key[0].toUpperCase() + key.slice(1);
-        this.changeFilter(capKey, param.get(key), true);
-      });
-    });
   }
 
   // Create new IT Standard when in GEAR Manager mode
@@ -334,31 +340,43 @@ export class ItStandardsComponent implements OnInit {
   }
 
   // Update table from filter buttons
-  changeFilter(field: string, term: string, paramAlreadySet = false) {
-    if(!paramAlreadySet){
-      this.setQueryParams(field, term);
+  changeFilter(field: string, term: string) {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
     }
     if(this.isFilterActive(field, term)) {
       delete this.activeFilters[field];
-      this.removeSingleQueryParam(field);
+      this.changeFilterByRoute();
+      if(Object.keys(this.activeFilters).length === 0) {
+        this.backToMainIT();
+      } else {
+        this.removeFilterFromRoute();
+      }
     } else {
       this.activeFilters[field] = term;
+      this.changeFilterByRoute();
+      this.removeFilterFromRoute();
     }
-    this.sharedService.disableStickyHeader("itStandardsTable");
-    if(Object.keys(this.activeFilters).length > 0) {
-      this.filteredTable = true; // Filters are on, expose main table button
-      this.filterTitle = `${term} `;
-    } else {
-      this.filteredTable = false;
-      this.filterTitle = '';
-    }
+  }
 
-    // Set cloud field to visible if filtering by cloud enabled
+  changeFilterByRoute() {
+    this.sharedService.disableStickyHeader("itStandardsTable");
+    let filterNames: string = '';
+    Object.keys(this.activeFilters).forEach(f => {
+      if(f === 'DeploymentType') {
+        filterNames += `${this.activeFilters[f]}`;
+      }
+      if(f === 'Status') {
+        filterNames += `_${this.activeFilters[f]}`;
+      }
+    });
+    this.filteredTable = true;
+    this.filterTitle = `${filterNames} `;
     $('#itStandardsTable').bootstrapTable('filterBy', this.activeFilters);
     $('#itStandardsTable').bootstrapTable('refreshOptions', {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(
-          'GSA_' + term + '_IT_Standards'
+          'GSA_' + filterNames + '_IT_Standards'
         ),
       },
     });
@@ -371,9 +389,10 @@ export class ItStandardsComponent implements OnInit {
   }
 
   backToMainIT() {
-    this.removeQueryParams();
+    this.activeFilters = {};
     this.sharedService.disableStickyHeader("itStandardsTable");
     this.filteredTable = false; // Hide main button
+    this.removeFilterFromRoute();
 
     // Remove filters and back to default
     $('#itStandardsTable').bootstrapTable('filterBy', {});
@@ -385,6 +404,10 @@ export class ItStandardsComponent implements OnInit {
 
     this.filterTitle = '';
     this.sharedService.enableStickyHeader("itStandardsTable");
+
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
   }
 
   getTooltip (name: string): string {
@@ -395,43 +418,11 @@ export class ItStandardsComponent implements OnInit {
     return '';
   }
 
-  removeQueryParams() {
-    const allParams = {
-      queryParams: {}
-    }
-    this.router.navigate([], allParams);
-  }
-
-  removeSingleQueryParam(paramName: string) {
-    let allParams = { ...this.route.snapshot.queryParams };
-    delete allParams[paramName];
-
-    this.router.navigate([], { 
-      queryParams: allParams, 
-      queryParamsHandling: 'merge' // Preserve existing query params
-    });
-
-    const [path, query] = this.location.path().split('?');
-    const params = new HttpParams({ fromString: query });
-    if(params.keys().length > 1) {
-      this.location.replaceState(path, params.delete(paramName).toString());
-    } else {
-      this.router.navigateByUrl(path)
-    }
-  }
-
-  setQueryParams(key: string, value: any): void {
-    this.removeQueryParams();
-      this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams: { [key]: value },
-        queryParamsHandling: 'merge'
-      });
-  }
-
   isFilterActive(key, value) {
-    const [path, query] = this.location.path().split('?');
-    const params = new HttpParams({ fromString: query });
-    return params.get(key) === value;
+    return this.activeFilters.hasOwnProperty(key) && this.activeFilters[key] === value;
+  }
+
+  removeFilterFromRoute() {
+    this.location.replaceState('/it_standards');
   }
 }
