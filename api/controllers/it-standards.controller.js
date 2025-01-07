@@ -169,41 +169,41 @@ exports.update = (req, res) => {
       }
 
       // Null any empty text fields
-      data.itStandDesc = ctrl.emptyTextFieldHandler(data.itStandDesc);
-      data.itStandAprvExp = ctrl.emptyTextFieldHandler(data.itStandAprvExp);
-      data.itStandRefDocs = ctrl.emptyTextFieldHandler(data.itStandRefDocs);
-      data.itStandApprovedVersions = ctrl.emptyTextFieldHandler(data.itStandApprovedVersions);
+      data.itStandDesc = ctrl.setNullEmptyTextHandler(data.itStandDesc);
+      data.itStandAprvExp = ctrl.setNullEmptyTextHandler(data.itStandAprvExp);
+      data.itStandRefDocs = ctrl.setNullEmptyTextHandler(data.itStandRefDocs);
+      data.itStandApprovedVersions = ctrl.setNullEmptyTextHandler(data.itStandApprovedVersions);
 
-      data.tcManufacturer = ctrl.emptyTextFieldHandler(data.tcManufacturer);
-      data.tcSoftwareProduct = ctrl.emptyTextFieldHandler(data.tcSoftwareProduct);
-      data.tcSoftwareVersion = ctrl.emptyTextFieldHandler(data.tcSoftwareVersion);
-      data.tcSoftwareRelease = ctrl.emptyTextFieldHandler(data.tcSoftwareRelease);
-      data.tcManufacturerName = ctrl.emptyTextFieldHandler(data.tcManufacturerName);
-      data.tcSoftwareProductName = ctrl.emptyTextFieldHandler(data.tcSoftwareProductName);
-      data.tcSoftwareVersionName = ctrl.emptyTextFieldHandler(data.tcSoftwareVersionName);
-      data.tcSoftwareReleaseName = ctrl.emptyTextFieldHandler(data.tcSoftwareReleaseName);
-      data.tcEndOfLifeDate = ctrl.emptyTextFieldHandler(data.tcEndOfLifeDate);
+      data.tcManufacturer = ctrl.setNullEmptyTextHandler(data.tcManufacturer);
+      data.tcSoftwareProduct = ctrl.setNullEmptyTextHandler(data.tcSoftwareProduct);
+      data.tcSoftwareVersion = ctrl.setNullEmptyTextHandler(data.tcSoftwareVersion);
+      data.tcSoftwareRelease = ctrl.setNullEmptyTextHandler(data.tcSoftwareRelease);
+      data.tcManufacturerName = ctrl.setNullEmptyTextHandler(data.tcManufacturerName);
+      data.tcSoftwareProductName = ctrl.setNullEmptyTextHandler(data.tcSoftwareProductName);
+      data.tcSoftwareVersionName = ctrl.setNullEmptyTextHandler(data.tcSoftwareVersionName);
+      data.tcSoftwareReleaseName = ctrl.setNullEmptyTextHandler(data.tcSoftwareReleaseName);
+      data.tcEndOfLifeDate = ctrl.setNullEmptyTextHandler(data.tcEndOfLifeDate);
 
-      data.itStandRITM = ctrl.setEmptyTextFieldHandler(data.itStandRITM);
+      data.itStandRITM = ctrl.setNullEmptyTextHandler(data.itStandRITM);
 
       const endOfLifeDateFragment = getEolFragment(data.tcEndOfLifeDate);
 
       var query = `SET FOREIGN_KEY_CHECKS=0;
         UPDATE obj_technology
         SET
-          Keyname                         = ${(!data.tcSoftwareReleaseName || data.tcSoftwareReleaseName === 'NULL') ? '"'+data.itStandName+'"' : ""},
+          Keyname                         = ${(!data.tcSoftwareReleaseName || data.tcSoftwareReleaseName === 'NULL') ? '"'+data.itStandName+'"' : null},
           obj_technology_status_Id        = ${data.itStandStatus},
-          Description                     = "${data.itStandDesc}",
+          Description                     = ${data.itStandDesc},
           obj_standard_type_Id            = ${data.itStandType},
           obj_508_compliance_status_Id    = ${data.itStand508},
           Available_through_Myview        = "${data.itStandMyView}",
           Vendor_Standard_Organization    = "${data.itStandVendorOrg}",
           obj_deployment_type_Id          = ${data.itStandDeployment},
           Gold_Image                      = "${data.itStandGoldImg}",
-          attestation_required            = "${data.itStandReqAtte}",
+          attestation_required            = ${data.itStandReqAtte},
           fedramp                         = "${data.itStandFedramp}",
           open_source                     = "${data.itStandOpenSource}",
-          RITM                            = "${data.itStandRITM}",
+          RITM                            = ${data.itStandRITM},
           Gold_Image_Comment              = "${data.itStandGoldComment}",
           attestation_link                = "${data.itStandAtteLink}",
           Approved_Status_Expiration_Date = ${data.itStandAprvExp},
@@ -211,16 +211,16 @@ exports.update = (req, res) => {
           Reference_documents             = ${data.itStandRefDocs},
           ChangeAudit                     = "${data.auditUser}",
           ChangeDTG                       = NOW(),
-          manufacturer                    = "${data.tcManufacturer}",
+          manufacturer                    = ${data.tcManufacturer},
           softwareProduct                 = ${data.tcSoftwareProduct},
           softwareVersion                 = ${data.tcSoftwareVersion},
           softwareRelease                 = ${data.tcSoftwareRelease},
-          manufacturerName                = "${data.tcManufacturerName}",
-          softwareProductName             = "${data.tcSoftwareProductName}",
-          softwareVersionName             = "${data.tcSoftwareVersionName}",
-          softwareReleaseName             = "${data.tcSoftwareReleaseName}",
+          manufacturerName                = ${data.tcManufacturerName},
+          softwareProductName             = ${data.tcSoftwareProductName},
+          softwareVersionName             = ${data.tcSoftwareVersionName},
+          softwareReleaseName             = ${data.tcSoftwareReleaseName},
           endOfLifeDate                   = ${endOfLifeDateFragment},
-          approvedVersions                = "${data.itStandApprovedVersions}"
+          approvedVersions                = ${data.itStandApprovedVersions}
         WHERE Id = ${req.params.id};
         SET FOREIGN_KEY_CHECKS=1;
         ${catString}

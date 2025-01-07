@@ -120,6 +120,11 @@ exports.setEmptyTextFieldHandler = (content) => {
   else return content;
 };
 
+exports.setNullEmptyTextHandler = (content) => {
+  if(!content || content === 'NULL' || content === 'null') return null;
+  else return `"${content}"`;
+}
+
 const msgLog = (message, logger) => {
   if (logger) {
     logger.log(message);
