@@ -10,6 +10,8 @@ import { Title } from '@angular/platform-browser';
 
 import { ITStandards } from '@api/models/it-standards.model';
 import { DataDictionary } from '@api/models/data-dictionary.model';
+import { take } from 'rxjs/operators';
+import { HttpParams } from '@angular/common/http';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -34,7 +36,7 @@ export class ItStandardsComponent implements OnInit {
     private router: Router,
     public sharedService: SharedService,
     private tableService: TableService,
-    private titleService: Title
+    private titleService: Title,
   ) {
     this.modalService.currentITStand.subscribe((row) => (this.row = row));
   }
@@ -56,6 +58,8 @@ export class ItStandardsComponent implements OnInit {
     showToggle: true,
     url: this.apiService.techUrl,
   });
+
+  activeFilters: Object = {};
 
   YesNo(value, row, index, field) {
     return value === 'T'? "Yes" : "No";
@@ -242,7 +246,21 @@ export class ItStandardsComponent implements OnInit {
         sortable: false,
         visible: true,
         titleTooltip: this.getTooltip('Approved Versions')
-      }];
+      },
+    {
+      field: 'OperatingSystems',
+      title: 'Operating Systems',
+      sortable: false,
+      visible: false,
+      formatter: this.sharedService.csvFormatter,
+    },
+    {
+      field: 'AppBundleIds',
+      title: 'App Bundle Ids',
+      sortable: false,
+      visible: false,
+      formatter: this.sharedService.csvFormatter,
+    }];
 
       $('#itStandardsTable').bootstrapTable(
         $.extend(this.tableOptions, {
@@ -250,6 +268,34 @@ export class ItStandardsComponent implements OnInit {
           data: [],
         })
       );
+
+      // Method to open details modal when referenced directly via URL
+      this.route.params.subscribe((params) => {
+        let detailStandID = params['standardID'];
+        let deploymentType = params['deploymentType'];
+        let status = params['status'];
+        if(deploymentType) {
+          this.activeFilters['DeploymentType'] = deploymentType;
+        }
+        if(status) {
+          this.activeFilters['Status'] = status;
+        }
+
+        if(Object.keys(this.activeFilters).length > 0) {
+          this.changeFilterByRoute();
+          return;
+        }
+        if (detailStandID) {
+          this.titleService.setTitle(
+            `${this.titleService.getTitle()} - ${detailStandID}`
+          );
+          this.apiService
+            .getOneITStandard(detailStandID)
+            .subscribe((data: any[]) => {
+              this.tableService.itStandTableClick(data[0]);
+            });
+        }
+      });
     });
 
     // Enable popovers
@@ -274,21 +320,6 @@ export class ItStandardsComponent implements OnInit {
       }.bind(this)
     );
     });
-
-    // Method to open details modal when referenced directly via URL
-    this.route.params.subscribe((params) => {
-      var detailStandID = params['standardID'];
-      if (detailStandID) {
-        this.titleService.setTitle(
-          `${this.titleService.getTitle()} - ${detailStandID}`
-        );
-        this.apiService
-          .getOneITStandard(detailStandID)
-          .subscribe((data: any[]) => {
-            this.tableService.itStandTableClick(data[0]);
-          });
-      }
-    });
   }
 
   // Create new IT Standard when in GEAR Manager mode
@@ -310,28 +341,58 @@ export class ItStandardsComponent implements OnInit {
 
   // Update table from filter buttons
   changeFilter(field: string, term: string) {
-    this.sharedService.disableStickyHeader("itStandardsTable");
-    this.filteredTable = true; // Filters are on, expose main table button
-    var filter = {};
-    filter[field] = term;
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+    if(this.isFilterActive(field, term)) {
+      delete this.activeFilters[field];
+      this.changeFilterByRoute();
+      if(Object.keys(this.activeFilters).length === 0) {
+        this.backToMainIT();
+      } else {
+        this.removeFilterFromRoute();
+      }
+    } else {
+      this.activeFilters[field] = term;
+      this.changeFilterByRoute();
+      this.removeFilterFromRoute();
+    }
+  }
 
-    // Set cloud field to visible if filtering by cloud enabled
-    $('#itStandardsTable').bootstrapTable('filterBy', filter);
+  changeFilterByRoute() {
+    this.sharedService.disableStickyHeader("itStandardsTable");
+    let filterNames: string = '';
+    Object.keys(this.activeFilters).forEach(f => {
+      if(f === 'DeploymentType') {
+        filterNames += `${this.activeFilters[f]}`;
+      }
+      if(f === 'Status') {
+        filterNames += `_${this.activeFilters[f]}`;
+      }
+    });
+    this.filteredTable = true;
+    this.filterTitle = `${filterNames} `;
+    $('#itStandardsTable').bootstrapTable('filterBy', this.activeFilters);
     $('#itStandardsTable').bootstrapTable('refreshOptions', {
       exportOptions: {
         fileName: this.sharedService.fileNameFmt(
-          'GSA_' + term + '_IT_Standards'
+          'GSA_' + filterNames + '_IT_Standards'
         ),
       },
     });
 
-    this.filterTitle = `${term} `;
     this.sharedService.enableStickyHeader("itStandardsTable");
+
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
   }
 
   backToMainIT() {
+    this.activeFilters = {};
     this.sharedService.disableStickyHeader("itStandardsTable");
     this.filteredTable = false; // Hide main button
+    this.removeFilterFromRoute();
 
     // Remove filters and back to default
     $('#itStandardsTable').bootstrapTable('filterBy', {});
@@ -343,6 +404,10 @@ export class ItStandardsComponent implements OnInit {
 
     this.filterTitle = '';
     this.sharedService.enableStickyHeader("itStandardsTable");
+
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
   }
 
   getTooltip (name: string): string {
@@ -351,5 +416,13 @@ export class ItStandardsComponent implements OnInit {
       return def.TermDefinition;
     }
     return '';
+  }
+
+  isFilterActive(key, value) {
+    return this.activeFilters.hasOwnProperty(key) && this.activeFilters[key] === value;
+  }
+
+  removeFilterFromRoute() {
+    this.location.replaceState('/it_standards');
   }
 }

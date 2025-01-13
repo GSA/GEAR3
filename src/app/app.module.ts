@@ -77,6 +77,9 @@ import { YesNoPipe } from "./pipes/yesno.pipe";
 import { SkipFocusPiechartDirective } from '@common/skip-focus-piechart.directive';
 import { BannerComponent } from './components/banner/banner.component';
 
+// PrimeNG Modules
+import { MultiSelectModule } from 'primeng/multiselect';
+
 @NgModule({ declarations: [
         AppComponent,
         TopNavbarComponent,
@@ -131,6 +134,7 @@ import { BannerComponent } from './components/banner/banner.component';
         NgxChartsModule,
         PdfViewerModule,
         ReactiveFormsModule,
+        MultiSelectModule,
         SidebarModule.forRoot()], providers: [Globals, provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule {
   constructor() {}

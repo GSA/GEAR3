@@ -326,3 +326,34 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .table-column-break-word {
   word-break: break-word;
 }
+
+.it-standard-manager-app-bundle-container {
+  border: 2px #ced4da solid;
+  padding: 1em;
+  margin-top: .25em;
+}
+
+.it-standard-manager-app-bundle-item {
+  display: block;
+  margin-bottom: 1em;
+  font-weight: bold;;
+}
+
+.it-standard-manager-app-bundle-clear-icon {
+  margin-left: .5em;
+  font-size: 16px;
+  font-weight: bold;
+  color: red;
+  cursor: pointer;
+}
+
+.it-standard-manager-app-bundle-duplicate-msg {
+  margin-top: 0.25rem;
+  font-size: 80%;
+  color: #ce4844;
+}
+
+.it-standards-filter-button-active {
+  outline: 0.25rem solid #2491ff;
+  position: relative;
+}

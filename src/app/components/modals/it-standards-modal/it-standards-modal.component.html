@@ -66,7 +66,7 @@
                   <span class="heading">Approval Expires</span>
                 </div>
                 <div class="overview-item-content">
-                  <span class="status-icon" [ngClass]="getApprovalExpDateIconColor(itStandard.ApprovalExpirationDate)" [title]="getApprovalExpDateIconTooltip()" role="tooltip"></span>
+                  <span class="status-icon" [ngClass]="getApprovalExpDateIconColor(itStandard.ApprovalExpirationDate)" [title]="getApprovalExpDateIconTooltip()" role="tooltip" *ngIf="itStandard.ApprovalExpirationDate"></span>
                   {{ itStandard.ApprovalExpirationDate | date : "MMMM d, y" }}
                 </div>
               </div>
@@ -94,7 +94,7 @@
                   <span class="heading">508 Compliance</span>
                 </div>
                 <div class="overview-item-content">
-                  <span class="status-icon" [ngClass]="getComplianceIconColor(itStandard.ComplianceStatus)" [title]="getComplianceIconTooltip()" role="tooltip"></span>
+                  <span class="status-icon" [ngClass]="getComplianceIconColor(itStandard.ComplianceStatus)" [title]="getComplianceIconTooltip()" role="tooltip" *ngIf="itStandard.ComplianceStatus"></span>
                   {{itStandard.ComplianceStatus}}
                 </div>
               </div>
@@ -105,6 +105,33 @@
                 </div>
                 <div class="overview-item-content">
                   <ul [innerHTML]="sharedService.renderPOCInfoList(itStandard.POC)"></ul>
+                </div>
+              </div>
+              <div class="overview-item">
+                <div class="overview-item-title" [title]="getTooltip('Operating Systems')" role="tooltip">
+                  <i class="fa fa-info-circle"></i>
+                  <span class="heading">Operating System(s)</span>
+                </div>
+                <div class="overview-item-content">
+                  <ul [innerHTML]="renderListFromCsvString(itStandard.OperatingSystems)"></ul>
+                </div>
+              </div>
+              <div class="overview-item">
+                <div class="overview-item-title" [title]="getTooltip('App Bundle Ids')" role="tooltip">
+                  <i class="fa fa-info-circle"></i>
+                  <span class="heading">App Bundle Id(s)</span>
+                </div>
+                <div class="overview-item-content">
+                  <ul [innerHTML]="renderListFromCsvString(itStandard.AppBundleIds)"></ul>
+                </div>
+              </div>
+              <div class="overview-item">
+                <div class="overview-item-title" [title]="getTooltip('Deployment Type')" role="tooltip">
+                  <i class="fa fa-shipping-fast"></i>
+                  <span class="heading">Deployment Type</span>
+                </div>
+                <div class="overview-item-content">
+                  {{itStandard.DeploymentType}}
                 </div>
               </div>
             </div>
