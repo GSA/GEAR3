@@ -117,15 +117,6 @@
                 </div>
               </div>
               <div class="overview-item">
-                <div class="overview-item-title" [title]="getTooltip('App Bundle Ids')" role="tooltip">
-                  <i class="fa fa-info-circle"></i>
-                  <span class="heading">App Bundle Id(s)</span>
-                </div>
-                <div class="overview-item-content">
-                  <ul [innerHTML]="renderListFromCsvString(itStandard.AppBundleIds)"></ul>
-                </div>
-              </div>
-              <div class="overview-item">
                 <div class="overview-item-title" [title]="getTooltip('Deployment Type')" role="tooltip">
                   <i class="fa fa-shipping-fast"></i>
                   <span class="heading">Deployment Type</span>
@@ -262,6 +253,10 @@
                       {{ itStandard.ReferenceDocument }}</a>
                     <div [hidden]="itStandard.ReferenceDocument">None</div>
                   </td>
+                </tr>
+                <tr *ngIf="isFieldPopulated(itStandard.AppBundleIds)">
+                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('App Bundle Ids')" role="tooltip">App Bundle IDs</span></td>
+                  <td [innerHtml]="renderListFromCsvString(itStandard.AppBundleIds)"></td>
                 </tr>
               </tbody>
             </table>
