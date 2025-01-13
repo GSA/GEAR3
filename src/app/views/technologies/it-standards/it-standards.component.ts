@@ -253,6 +253,7 @@ export class ItStandardsComponent implements OnInit {
       sortable: false,
       visible: false,
       formatter: this.sharedService.csvFormatter,
+      titleTooltip: this.getTooltip('Operating Systems')
     },
     {
       field: 'AppBundleIds',
@@ -260,6 +261,7 @@ export class ItStandardsComponent implements OnInit {
       sortable: false,
       visible: false,
       formatter: this.sharedService.csvFormatter,
+      titleTooltip: this.getTooltip('App Bundle Ids')
     }];
 
       $('#itStandardsTable').bootstrapTable(
