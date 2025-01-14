@@ -26,7 +26,7 @@ const dataDictionary = require(routesPath + "data-dictionary.routes");
 const router = express.Router();
 let limiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 60, // 60 requests
+  max: 3600, // 3600 requests
 });
 router.use(limiter);
 router.use("/capabilities", cap);
