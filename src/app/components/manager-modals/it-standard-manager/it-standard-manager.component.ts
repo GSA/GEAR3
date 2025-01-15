@@ -441,6 +441,8 @@ export class ItStandardManagerComponent implements OnInit {
         this.allAppBundleIds.forEach(a => allBundles.push(a));
 
         this.itStandardsForm.value.itStandMobileAppBundles = allBundles;
+      } else {
+        this.itStandardsForm.value.itStandMobileAppBundles = [];
       }
 
       if(this.itStandardsForm.controls['itStandOperatingSystems'].value && this.itStandardsForm.controls['itStandOperatingSystems'].value.length > 0) {
@@ -457,7 +459,7 @@ export class ItStandardManagerComponent implements OnInit {
 
       // Get list of initial app bundles so we an compare for update
       this.itStandardsForm.value.initialAppBundles = this.initalAppBundleIds;
-
+      
       // Send data to database
       if (this.createBool) {
         this.apiService.createITStandard(this.itStandardsForm.value).toPromise()
