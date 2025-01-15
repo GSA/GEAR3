@@ -252,22 +252,22 @@ exports.create = (req, res) => {
       //if (req.headers.authorization) {
       var data = req.body;
       // Null any empty text fields
-      data.itStandDesc = ctrl.emptyTextFieldHandler(data.itStandDesc);
-      data.itStandAprvExp = ctrl.emptyTextFieldHandler(data.itStandAprvExp);
-      data.itStandRefDocs = ctrl.emptyTextFieldHandler(data.itStandRefDocs);
-      data.itStandApprovedVersions = ctrl.emptyTextFieldHandler(data.itStandApprovedVersions);
+      data.itStandDesc = ctrl.setNullEmptyTextHandler(data.itStandDesc);
+      data.itStandAprvExp = ctrl.setNullEmptyTextHandler(data.itStandAprvExp);
+      data.itStandRefDocs = ctrl.setNullEmptyTextHandler(data.itStandRefDocs);
+      data.itStandApprovedVersions = ctrl.setNullEmptyTextHandler(data.itStandApprovedVersions);
 
-      data.tcManufacturer = ctrl.emptyTextFieldHandler(data.tcManufacturer);
-      data.tcSoftwareProduct = ctrl.emptyTextFieldHandler(data.tcSoftwareProduct);
-      data.tcSoftwareVersion = ctrl.emptyTextFieldHandler(data.tcSoftwareVersion);
-      data.tcSoftwareRelease = ctrl.emptyTextFieldHandler(data.tcSoftwareRelease);
-      data.tcManufacturerName = ctrl.emptyTextFieldHandler(data.tcManufacturerName);
-      data.tcSoftwareProductName = ctrl.emptyTextFieldHandler(data.tcSoftwareProductName);
-      data.tcSoftwareVersionName = ctrl.emptyTextFieldHandler(data.tcSoftwareVersionName);
-      data.tcSoftwareReleaseName = ctrl.emptyTextFieldHandler(data.tcSoftwareReleaseName);
-      data.tcEndOfLifeDate = ctrl.emptyTextFieldHandler(data.tcEndOfLifeDate);
+      data.tcManufacturer = ctrl.setNullEmptyTextHandler(data.tcManufacturer);
+      data.tcSoftwareProduct = ctrl.setNullEmptyTextHandler(data.tcSoftwareProduct);
+      data.tcSoftwareVersion = ctrl.setNullEmptyTextHandler(data.tcSoftwareVersion);
+      data.tcSoftwareRelease = ctrl.setNullEmptyTextHandler(data.tcSoftwareRelease);
+      data.tcManufacturerName = ctrl.setNullEmptyTextHandler(data.tcManufacturerName);
+      data.tcSoftwareProductName = ctrl.setNullEmptyTextHandler(data.tcSoftwareProductName);
+      data.tcSoftwareVersionName = ctrl.setNullEmptyTextHandler(data.tcSoftwareVersionName);
+      data.tcSoftwareReleaseName = ctrl.setNullEmptyTextHandler(data.tcSoftwareReleaseName);
+      data.tcEndOfLifeDate = ctrl.setNullEmptyTextHandler(data.tcEndOfLifeDate);
 
-      data.itStandRITM = ctrl.setEmptyTextFieldHandler(data.itStandRITM);
+      data.itStandRITM = ctrl.setNullEmptyTextHandler(data.itStandRITM);
 
       const endOfLifeDateFragment = getEolFragment(data.tcEndOfLifeDate);
 
@@ -309,10 +309,10 @@ exports.create = (req, res) => {
         "${data.itStandVendorOrg}",
         "${data.itStandMyView}",
         "${data.itStandGoldImg}",
-        "${data.itStandReqAtte}",
+        ${data.itStandReqAtte},
         "${data.itStandFedramp}",
         "${data.itStandOpenSource}",
-        "${data.itStandRITM}",
+        ${data.itStandRITM},
         "${data.itStandGoldComment}",
         "${data.itStandAtteLink}",
         "${data.itStandComments}",
@@ -323,14 +323,14 @@ exports.create = (req, res) => {
         ${data.itStandRefDocs},
         "${data.auditUser}",
         "${data.auditUser}",
-        "${data.tcManufacturer}",
-        "${data.tcSoftwareProduct}",
-        "${data.tcSoftwareVersion}",
-        "${data.tcSoftwareRelease}",
-        "${data.tcManufacturerName}",
-        "${data.tcSoftwareProductName}",
-        "${data.tcSoftwareVersionName}",
-        "${data.tcSoftwareReleaseName}",
+        ${data.tcManufacturer},
+        ${data.tcSoftwareProduct},
+        ${data.tcSoftwareVersion},
+        ${data.tcSoftwareRelease},
+        ${data.tcManufacturerName},
+        ${data.tcSoftwareProductName},
+        ${data.tcSoftwareVersionName},
+        ${data.tcSoftwareReleaseName},
         ${endOfLifeDateFragment},
         ${data.itStandApprovedVersions});`;
 
