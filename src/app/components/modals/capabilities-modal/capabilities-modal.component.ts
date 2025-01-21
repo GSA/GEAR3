@@ -114,4 +114,12 @@ export class CapabilitiesModalComponent implements OnInit {
     $('#capabilityManager').modal('show');
   }
 
+  showRelatedOrgsTab() {
+    return $('#capRelOrgsTable').bootstrapTable('getData').length > 0;
+  }
+
+  showSupportingSystemsTab() {
+    return $('#capSupportSysTable').bootstrapTable('getData').length > 0;
+  }
+
 }

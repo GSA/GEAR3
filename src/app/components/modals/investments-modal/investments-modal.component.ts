@@ -53,4 +53,8 @@ export class InvestmentsModalComponent implements OnInit {
     }.bind(this));
   }
 
+  showRelatedSystemsTab() {
+    return $('#investRelSysTable').bootstrapTable('getData').length > 0;
+  }
+
 }

@@ -624,4 +624,12 @@ sysWebsitesColumnDefs: any[] = [
     $('#systemManager').modal('show');
   }
 
+  showInvestmentsTab() {
+    return $('#systemInvestTable').bootstrapTable('getData').length > 0;
+  }
+
+  showWebsitesTab() {
+    return $('#systemWebsitesTable').bootstrapTable('getData').length > 0;
+  }
+
 }

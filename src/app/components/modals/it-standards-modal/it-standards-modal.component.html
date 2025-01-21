@@ -24,7 +24,7 @@
             <a class="nav-link active" data-toggle="tab" href="#itStandOverview">
               Overview</a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item" *ngIf="showSystemsUsingTab()">
             <a class="nav-link" data-toggle="tab" href="#itStandRelatedSys">
               Systems Using This Standard</a>
           </li>
