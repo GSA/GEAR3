@@ -37,12 +37,12 @@
               Overview</a
             >
           </li>
-          <li class="nav-item">
+          <li class="nav-item" *ngIf="showRelatedOrgsTab()">
             <a class="nav-link" data-toggle="tab" href="#capRelOrgs">
               Related Organizations</a
             >
           </li>
-          <li class="nav-item">
+          <li class="nav-item" *ngIf="showSupportingSystemsTab()">
             <a class="nav-link" data-toggle="tab" href="#capSupportSystems">
               Supporting Systems</a
             >

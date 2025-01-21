@@ -199,4 +199,8 @@ export class ItStandardsModalComponent implements OnInit {
     return html;
   }
 
+  showSystemsUsingTab() {
+    return $('#itRelSysTable').bootstrapTable('getData').length > 0;
+  }
+
 }
