@@ -317,7 +317,7 @@ export class ItStandardManagerComponent implements OnInit {
         tcSoftwareRelease: this.itStandard.SoftwareRelease,
         tcEndOfLifeDate: (this.itStandard.EndOfLifeDate ? formatDate(this.itStandard.EndOfLifeDate, 'MMMM dd, yyyy', 'en-US') : null),
         itStandStatus: this.sharedService.findInArray(this.statuses, 'Name', this.itStandard.Status),
-        itStandName: this.itStandard.OldName,
+        itStandName: (!this.itStandard.OldName ? this.itStandard.SoftwareReleaseName : this.itStandard.OldName),
         itStandPOC: pocIDs,
         itStandDesc: this.itStandard.Description,
         itStandType: this.sharedService.findInArray(this.types, 'Name', this.itStandard.StandardType),
@@ -341,7 +341,7 @@ export class ItStandardManagerComponent implements OnInit {
       });
       if (this.itStandard.SoftwareRelease) {
         // disable the old IT Standard Name field
-        this.disableOldITStandardName();
+        //this.disableOldITStandardName();
       }
       this.changeDeploymentType();
     }
@@ -380,23 +380,23 @@ export class ItStandardManagerComponent implements OnInit {
       if (!this.itStandardsForm.value.itStand508) this.itStandardsForm.value.itStand508 = '3';
       if (!this.itStandardsForm.value.itStandAtteLink) this.itStandardsForm.value.itStandAtteLink = 'N/A';
 
-      // replace ' from all text fields
-      if (String(this.itStandardsForm.value.itStandDesc).includes("'")) {
-        this.itStandardsForm.value.itStandDesc = this.itStandardsForm.value.itStandDesc.replace(/'/g, "''");
+      // Escape strings
+      if(this.itStandardsForm.value.itStandDesc) {
+        this.itStandardsForm.value.itStandDesc = this.escapeString(this.itStandardsForm.value.itStandDesc);
       }
-      if (String(this.itStandardsForm.value.itStandVendorOrg).includes("'")) {
-        this.itStandardsForm.value.itStandVendorOrg = this.itStandardsForm.value.itStandVendorOrg.replace(/'/g, "''");
+      if(this.itStandardsForm.value.itStandVendorOrg) {
+        this.itStandardsForm.value.itStandVendorOrg = this.escapeString(this.itStandardsForm.value.itStandVendorOrg);
       }
-      if (String(this.itStandardsForm.value.itStandGoldComment).includes("'")) {
-        this.itStandardsForm.value.itStandGoldComment = this.itStandardsForm.value.itStandGoldComment.replace(/'/g, "''");
+      if(this.itStandardsForm.value.itStandGoldComment) {
+        this.itStandardsForm.value.itStandGoldComment = this.escapeString(this.itStandardsForm.value.itStandGoldComment);
       }
-      if (String(this.itStandardsForm.value.itStandComments).includes("'")) {
-        this.itStandardsForm.value.itStandComments = this.itStandardsForm.value.itStandComments.replace(/'/g, "''");
+      if(this.itStandardsForm.value.itStandComments) {
+        this.itStandardsForm.value.itStandComments = this.escapeString(this.itStandardsForm.value.itStandComments);
+      }  
+      if(this.itStandardsForm.value.itStandRefDocs) {
+        this.itStandardsForm.value.itStandRefDocs = this.escapeString(this.itStandardsForm.value.itStandRefDocs);
       }
-      if (String(this.itStandardsForm.value.itStandRefDocs).includes("'")) {
-        this.itStandardsForm.value.itStandRefDocs = this.itStandardsForm.value.itStandRefDocs.replace(/'/g, "''");
-      }
-
+      
       // Add username to payload
       this.itStandardsForm.value.auditUser = this.globals.authUser;
 
@@ -460,6 +460,8 @@ export class ItStandardManagerComponent implements OnInit {
       // Get list of initial app bundles so we an compare for update
       this.itStandardsForm.value.initialAppBundles = this.initalAppBundleIds;
       
+      // return;
+
       // Send data to database
       if (this.createBool) {
         this.apiService.createITStandard(this.itStandardsForm.value).toPromise()
@@ -556,13 +558,14 @@ export class ItStandardManagerComponent implements OnInit {
   // handles the software release change event
   softwareReleaseChange(data: any) {
     this.setApprovalExpirationDate(data);
+    this.itStandardsForm.patchValue({itStandName: data.application});
 
     // disable or enable old name
-    if(data) {
-      this.disableOldITStandardName();
-    } else {
-      this.enableOldITStandardName();
-    }
+    // if(data) {
+    //   this.disableOldITStandardName();
+    // } else {
+    //   this.enableOldITStandardName();
+    // }
   }
 
   // handles the endOfLifeDate change event
@@ -833,22 +836,22 @@ export class ItStandardManagerComponent implements OnInit {
     $("#divRelease").addClass("disabledDivRelease");
   }
 
-  enableOldITStandardName(): void {
-    //console.log("Enabling Old Name");
-    $("#divOldName").removeClass("disabledDivOldName");
-    //enable control
-    this.itStandardsForm.controls['itStandName'].enable();
-  }
+  // enableOldITStandardName(): void {
+  //   //console.log("Enabling Old Name");
+  //   $("#divOldName").removeClass("disabledDivOldName");
+  //   //enable control
+  //   this.itStandardsForm.controls['itStandName'].enable();
+  // }
 
-  disableOldITStandardName(): void {
-    //console.log("Disabling Old Name");
-    $("#divOldName").addClass("disabledDivOldName");
-    //disable control
-    this.itStandardsForm.controls['itStandName'].disable();
-    // reset the value of itStandName control
-    this.itStandardsForm.controls['itStandName'].setValue("");
+  // disableOldITStandardName(): void {
+  //   //console.log("Disabling Old Name");
+  //   $("#divOldName").addClass("disabledDivOldName");
+  //   //disable control
+  //   this.itStandardsForm.controls['itStandName'].disable();
+  //   // reset the value of itStandName control
+  //   this.itStandardsForm.controls['itStandName'].setValue("");
 
-  }
+  // }
 
   disableEndOfLifeDate(): void {
     //console.log("Disabling End of Life Date");
@@ -892,6 +895,16 @@ export class ItStandardManagerComponent implements OnInit {
     this.allAppBundleIds = [];
     this.initalAppBundleIds = [];
     this.currentAppBundleId = '';
+  }
+
+  getCurrentSoftwareReleaseName(id: string) {
+    if (this.softwareReleases) {
+      return this.softwareReleases.find(s => s.id === id);
+    }
+  }
+
+  escapeString(str: string) {
+    return str.replace(/\\/g, "\\\\").replace(/[/"']/g, "\\$&");
   }
 
 }
