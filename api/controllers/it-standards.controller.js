@@ -186,12 +186,26 @@ exports.update = (req, res) => {
 
       data.itStandRITM = ctrl.setNullEmptyTextHandler(data.itStandRITM);
 
+      let keyname = '';
+      if (!data.tcSoftwareReleaseName || data.tcSoftwareReleaseName === 'NULL' || data.tcSoftwareReleaseName === 'null') {
+        if(!data.itStandName) {
+          res.status(500).json({
+            message: "IT Standards name missing from API payload."
+          });
+          return;
+        } else {
+          keyname = `"${data.itStandName}"`;
+        }
+      } else {
+        keyname = data.tcSoftwareReleaseName;
+      }
+
       const endOfLifeDateFragment = getEolFragment(data.tcEndOfLifeDate);
 
       var query = `SET FOREIGN_KEY_CHECKS=0;
         UPDATE obj_technology
         SET
-          Keyname                         = ${(!data.tcSoftwareReleaseName || data.tcSoftwareReleaseName === 'NULL') ? '"'+data.itStandName+'"' : null},
+          Keyname                         = ${keyname},
           obj_technology_status_Id        = ${data.itStandStatus},
           Description                     = ${data.itStandDesc},
           obj_standard_type_Id            = ${data.itStandType},
@@ -269,6 +283,20 @@ exports.create = (req, res) => {
 
       data.itStandRITM = ctrl.setNullEmptyTextHandler(data.itStandRITM);
 
+      let keyname = '';
+      if (!data.tcSoftwareReleaseName || data.tcSoftwareReleaseName === 'NULL' || data.tcSoftwareReleaseName === 'null') {
+        if(!data.itStandName) {
+          res.status(500).json({
+            message: "IT Standards name missing from API payload."
+          });
+          return;
+        } else {
+          keyname = `"${data.itStandName}"`;
+        }
+      } else {
+        keyname = data.tcSoftwareReleaseName;
+      }
+
       const endOfLifeDateFragment = getEolFragment(data.tcEndOfLifeDate);
 
       var query = `INSERT INTO obj_technology(
@@ -302,8 +330,7 @@ exports.create = (req, res) => {
         softwareReleaseName,
         endOfLifeDate,
         approvedVersions) VALUES (
-        ${(!data.tcSoftwareReleaseName || data.tcSoftwareReleaseName === 'NULL' || data.tcSoftwareReleaseName === '') ?
-          '"' + data.itStandName + '"' : null},
+        ${keyname},
         ${data.itStandDesc},
         ${data.itStandAprvExp},
         "${data.itStandVendorOrg}",
