@@ -8,6 +8,7 @@ exports.searchAll = (req, res) => {
         systems.\`ex:System_Name\` AS \`Name\`,
         systems.\`ex:Description\` AS \`Description\`,
         'System' AS \`GEAR_Type\`,
+        'Business Systems & Subsystems Report' AS \`GEAR_Type_Display\`,
         '{}' AS \`Other\`
       FROM
         gear_schema.obj_fisma_archer AS systems
@@ -18,6 +19,7 @@ exports.searchAll = (req, res) => {
         fisma.\`ex:System_Name\` AS \`Name\`,
         fisma.\`ex:Description\` AS \`Description\`,
         'FISMA' AS \`GEAR_Type\`,
+        'Security -> FISMA Systems Inventory' AS \`GEAR_Type_Display\`,
         '{}' AS \`Other\`
       FROM
       gear_schema.obj_fisma_archer AS fisma
@@ -29,6 +31,7 @@ exports.searchAll = (req, res) => {
         IFNULL(tech.\`softwareReleaseName\`, tech.\`Keyname\`) AS \`Name\`,
         tech.\`Description\` AS \`Description\`,
         'Technology' AS \`GEAR_Type\`,
+        'Technologies -> IT Standards List' AS \`GEAR_Type_Display\`,
         JSON_OBJECT('Vendor',
             tech.\`Vendor_Standard_Organization\`,
             'Comments',
@@ -40,6 +43,7 @@ exports.searchAll = (req, res) => {
         cap.\`Capability_Name\` AS \`Name\`,
         cap.\`Description\` AS \`Description\`,
         'Capability' AS \`GEAR_Type\`,
+        'GSA Enterprise -> Business Capability List' AS \`GEAR_Type_Display\`,
         '{}' AS \`Other\`
       FROM
         gear_schema.obj_capability AS cap
@@ -48,6 +52,7 @@ exports.searchAll = (req, res) => {
         org.\`Organization_Id\` AS \`Name\`,
         org.\`Organization_Name\` AS \`Description\`,
         'Organization' AS \`GEAR_Type\`,
+        'GSA Enterprise -> Organization List' AS \`GEAR_Type_Display\`,
         '{}' AS \`Other\`
       FROM
         gear_schema.obj_organization AS org  
@@ -56,6 +61,7 @@ exports.searchAll = (req, res) => {
         invest.\`Investment_Name\` AS \`Name\`,
         invest.\`Description\` AS \`Description\`,
         'Investment' AS \`GEAR_Type\`,
+        'IT Strategy -> IT Investments' AS \`GEAR_Type_Display\`,
         '{}' AS \`Other\`
       FROM
         gear_schema.obj_investments as invest
@@ -64,6 +70,7 @@ exports.searchAll = (req, res) => {
         web.\`domain\` AS \`Name\`,
         web.\`notes\` AS \`Description\`,
         'Website' AS \`GEAR_Type\`,
+        'Business Systems -> GSA Websites' AS \`GEAR_Type_Display\`,
         '{}' AS \`Other\`
       FROM
           gear_schema.obj_websites as web) AS global_search
