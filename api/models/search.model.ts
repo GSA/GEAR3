@@ -3,4 +3,5 @@ export class Search {
   private Keyname: string;
   private Description: string;
   private GEAR_Type: string;
+  private GEAR_Type_Display: string;
 }
