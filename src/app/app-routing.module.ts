@@ -176,7 +176,17 @@ const routes: Routes = [
     component: ItStandardsComponent,
     title: 'IT Standard',
   },
-
+  {
+    path: 'it_standards/filtered/:deploymentType/:status',
+    component: ItStandardsComponent,
+    title: 'IT Standard',
+  },
+  {
+    path: 'it_standards/filtered/:deploymentType',
+    component: ItStandardsComponent,
+    title: 'IT Standard',
+  },
+  
   //{ path: 'artifacts', component: ArtifactsComponent, title: 'Artifacts' },
   //{ path: 'ea_view', component: EAViewComponent, title: 'EA View' }, // We need to update the EA view to be more readable before publishing
   { path: 'gear_model', component: GearModelComponent, title: 'GEAR Model' },

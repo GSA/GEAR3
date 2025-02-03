@@ -113,6 +113,13 @@
             background-color: #070707;
             border-color: #010000;
         }
+
+        &:focus, &:focus-visible {
+            outline: .25rem solid #2491ff;
+            outline-offset: 0rem;
+            position: relative;
+            z-index: 10;
+        }
     }
 
     .p-button-primary {
@@ -122,7 +129,16 @@
 
         &:hover, &:active {
             background-color: #1a82ae;
-            border-color: #1a82ae;
+            //border-color: #1a82ae;
+            outline: 0.25rem solid #2491ff;
+            position: relative;
+        }
+
+        &:focus, &:focus-visible {
+            outline: .25rem solid #2491ff;
+            outline-offset: 0rem;
+            position: relative;
+            z-index: 10;
         }
     }
     

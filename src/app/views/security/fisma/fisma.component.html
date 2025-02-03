@@ -32,12 +32,13 @@
 
   <div class="card-body card-text">
     <!-- Main Table -->
-    <app-table [tableCols]="tableCols" [tableData]="tableData" [preFilteredTableData]="filteredTableData" exportName="FISMA" reportStyle="security" [filterButtons]="filterButtons" tableType="fisma">
+    <app-table [tableCols]="tableCols" exportName="FISMA" reportStyle="security" tableType="fisma">
       <!-- FISMA Definition Popover -->
       <a tabindex="0" class="btn btn-sm btn-info text-white position-absolute float-right w-11" role="button" data-toggle="popover"
       data-trigger="focus" data-placement="auto" data-html="true" title="" data-content="A FISMA system represents a logical boundary for which common security controls and policies are applied to a grouping of related assets (e.g., networks, devices, and people) to accomplish some mission or business objective. It is informed by security artifacts, such as a system security and privacy plan (SSPP). (<a href='https://csrc.nist.gov/projects/risk-management/fisma-background' target='_blank' 
       rel='noopener'>Link</a>)">
       FISMA Definition
     </a>
+    <app-filter-buttons filterBtns [filterButtons]="filterButtons" (filterClick)="onFilterClick($event)" (filterResetClick)="onFilterResetClick()"></app-filter-buttons>
     </app-table>
 </div>

@@ -153,4 +153,8 @@ export class WebsitesModalComponent implements OnInit {
   getValues(value, maxValue) {
     return { '--value': value, '--max': maxValue };
   }
+
+  showRelatedSystemsTab() {
+    return $('#websitesRelSysTable').bootstrapTable('getData').length > 0;
+  }
 }

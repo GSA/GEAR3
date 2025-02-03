@@ -33,6 +33,7 @@ export class FismaComponent implements OnInit {
   }
 
   tableData: FISMA[] = [];
+  tableDataOriginal: FISMA[] = [];
   filteredTableData: FISMA[] = [];
 
   filterButtons: TwoDimArray<FilterButton> = [
@@ -156,12 +157,14 @@ export class FismaComponent implements OnInit {
     });
 
     this.apiService.getFISMA().subscribe(fisma => {
-      this.tableData = fisma;
+      this.tableDataOriginal = fisma;
       fisma.forEach(f => {
         if(f.Status === 'Active' && f.SystemLevel === 'System' && f.Reportable === 'Yes') {
           this.filteredTableData.push(f);
         }
       });
+      this.tableData = this.filteredTableData;
+      this.tableService.updateReportTableData(this.tableData);
     });
 
     // Method to open details modal when referenced directly via URL
@@ -178,5 +181,15 @@ export class FismaComponent implements OnInit {
           });
       }
     });
+  }
+
+  onFilterClick(filterButtons: FilterButton[]) {
+    this.tableData = this.tableDataOriginal;
+    this.tableService.filterButtonClick(filterButtons, this.tableData);
+  }
+
+  onFilterResetClick() {
+    this.tableData = this.filteredTableData;
+    this.tableService.updateReportTableData(this.tableData);
   }
 }

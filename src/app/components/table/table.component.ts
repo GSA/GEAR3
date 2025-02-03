@@ -64,10 +64,13 @@ export class TableComponent implements OnInit, OnChanges {
     this.setScreenHeight();
   }
 
+  testTableData: any[] = [];
+
   visibleColumns: Column[] = [];
   isPaginated: boolean = true;
   exportColumns!: ExportColumn[];
   currentFilterButton: string = '';
+  currentFilterButtons: string[] = [];
   screenHeight: string = '';
   showFilters: boolean = false;
   first: number = 0;
@@ -81,23 +84,26 @@ export class TableComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.exportColumns = this.tableCols.map((col) => ({ title: col.header, dataKey: col.field }));
-    this.activeTableData = this.getTableData();
+    // this.activeTableData = this.getTableData();
+    this.tableService.reportTableData$.subscribe(d => {
+      this.testTableData = d;
+    });
     this.generateColumns();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if(changes.tableData && (changes.tableData.previousValue && changes.tableData.previousValue.length === 0)
-      || changes.preFilteredTableData && (changes.preFilteredTableData.previousValue && changes.preFilteredTableData.previousValue.length === 0)) {
-      this.activeTableData = this.getTableData();
-    }
+    // if(changes.tableData && (changes.tableData.previousValue && changes.tableData.previousValue.length === 0)
+    //   || changes.preFilteredTableData && (changes.preFilteredTableData.previousValue && changes.preFilteredTableData.previousValue.length === 0)) {
+    //   this.activeTableData = this.getTableData();
+    // }
   }
 
-  getTableData() {
-    if(this.preFilteredTableData && this.preFilteredTableData.length > 0) {
-      return this.preFilteredTableData;
-    }
-    return this.tableData;
-  }
+  // getTableData() {
+  //   if(this.preFilteredTableData && this.preFilteredTableData.length > 0) {
+  //     return this.preFilteredTableData;
+  //   }
+  //   return this.tableData;
+  // }
 
   toggleVisible(e: any) {
     this.tableCols.map(c => {
@@ -129,9 +135,25 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   onFilterButtonClick(button: FilterButton) {
-    this.dt.filter('', '', '');
-    this.dt.reset();
-    this.activeTableData = this.tableData;
+    let currentFilterIndex = -1;
+    currentFilterIndex = this.currentFilterButtons.findIndex(b => b === button.buttonText);
+
+    if(currentFilterIndex >= 0) {
+      this.currentFilterButtons.splice(currentFilterIndex, 1);
+      if(button.filters && button.filters.length > 0){
+        button.filters.forEach(f => {
+          delete this.dt.filters[f.field];
+        });
+      }
+      // this.activeTableData = this.tableData;
+      this.filterEvent.emit('');
+      this.generateColumns();
+      return;
+    }
+
+    //this.dt.filter('', '', '');
+    //this.dt.reset();
+    // this.activeTableData = this.tableData;
 
     if(button && (button.filters && button.filters.length > 0)) {
       button.filters.forEach(f => {
@@ -141,7 +163,7 @@ export class TableComponent implements OnInit, OnChanges {
 
     this.filterEvent.emit(button.buttonText);
   
-    this.currentFilterButton = button.buttonText;
+    this.currentFilterButtons.push(button.buttonText);
 
     this.generateColumns();
   }
@@ -150,11 +172,11 @@ export class TableComponent implements OnInit, OnChanges {
     this.dt.reset();
     this.currentFilterButton = '';
 
-    if(this.hasPreFilteredTableData()) { 
-      this.activeTableData = this.preFilteredTableData;
-    } else {
-      this.activeTableData = this.tableData;
-    }
+    // if(this.hasPreFilteredTableData()) { 
+    //   this.activeTableData = this.preFilteredTableData;
+    // } else {
+    //   this.activeTableData = this.tableData;
+    // }
 
     this.dt.sortField = this.defaultSortField;
     this.dt.sortOrder = this.defaultSortOrder;
@@ -252,6 +274,14 @@ export class TableComponent implements OnInit, OnChanges {
         console.log('no type');
         break;
     }
+  }
+
+  isFilterButtonActive(filterButton: string) {
+    //if(this.currentFilterButtons && this.currentFilterButtons.length > 0) {
+      return this.currentFilterButtons.forEach(c => {
+        return c === filterButton;
+      });
+    //}
   }
 
 }

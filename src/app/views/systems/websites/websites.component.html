@@ -59,7 +59,7 @@
   </div>
   <div class="card-body card-text">
     <!-- Main Table -->
-    <app-table [tableCols]="tableCols" [tableData]="tableData" [preFilteredTableData]="filteredTableData" exportName="Websites" [filterButtons]="filterButtons" reportStyle="business-systems" tableType="website">
+    <app-table [tableCols]="tableCols" exportName="Websites" reportStyle="business-systems" tableType="website">
       <!-- Website Definition Popover -->
       <a definitionBtn tabindex="0" class="btn btn-sm btn-info text-white d-flex flex-wrap align-content-center" role="button"
       data-toggle="popover" data-trigger="focus" data-placement="auto" data-html="true" title=""
@@ -71,6 +71,7 @@
       <a href='https://github.com/GSA/EDX/tree/main/Tools/edxcli' target='_blank' rel='noopener'>ecxcli website scans</a>.">
       Website definition
       </a>
+      <app-filter-buttons filterBtns [filterButtons]="filterButtons" [singleFilterOnly]="true" (filterClick)="onFilterClick($event)" (filterResetClick)="onFilterResetClick()"></app-filter-buttons>
     </app-table>
   </div>
 </div>

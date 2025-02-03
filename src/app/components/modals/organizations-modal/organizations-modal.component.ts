@@ -69,7 +69,9 @@ export class OrganizationsModalComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.modalService.currentOrg.subscribe(organization => this.org = organization);
+    this.modalService.currentOrg.subscribe(organization => {
+      this.org = organization;
+    });
 
     $('#orgCapsTable').bootstrapTable($.extend(this.relCapsTableOptions, {
       columns: this.relCapsColumnDefs,
@@ -105,5 +107,13 @@ export class OrganizationsModalComponent implements OnInit {
       this.sharedService.removeIDfromURL();
     }.bind(this));
 
+  }
+
+  showRelatedCapsTab() {
+    return $('#orgCapsTable').bootstrapTable('getData').length > 0;
+  }
+
+  showOrgSystemsTab() {
+    return $('#orgSysTable').bootstrapTable('getData').length > 0;
   }
 }

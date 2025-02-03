@@ -34,6 +34,7 @@ export class WebsitesComponent implements OnInit {
   ) {}
 
   tableData: Website[] = [];
+  tableDataOriginal: Website[] = [];
   filteredTableData: Website[] = [];
 
   filterButtons: TwoDimArray<FilterButton> = [
@@ -184,7 +185,7 @@ export class WebsitesComponent implements OnInit {
     this.sharedService.setJWTonLogIn();
 
     this.apiService.getWebsites().subscribe(websites => {
-      this.tableData = websites;
+      this.tableDataOriginal = websites;
 
       // Filter websites for inital view data
       websites.forEach(w => {
@@ -196,6 +197,8 @@ export class WebsitesComponent implements OnInit {
           this.filteredTableData.push(w);
         }
       });
+      this.tableData = this.filteredTableData;
+      this.tableService.updateReportTableData(this.tableData);
       
     });
 
@@ -216,41 +219,13 @@ export class WebsitesComponent implements OnInit {
     });
   }
 
-  showProduction() {
-    this.filteredTable = true;
-    $('#websitesTable').bootstrapTable('filterBy', {
-      production_status: ['production'],
-      type_of_site: ['Informational', 'Application', 'Application Login'],
-      digital_brand_category: ['GSA Business', 'Hybrid', ''],
-    });
+  onFilterClick(filterButtons: FilterButton[]) {
+    this.tableData = this.tableDataOriginal;
+    this.tableService.filterButtonClick(filterButtons, this.tableData);
   }
 
-  showDecommissioned() {
-    this.filteredTable = true;
-    $('#websitesTable').bootstrapTable('filterBy', {
-      production_status: ['decommissioned'],
-    });
-  }
-
-  showRedirect() {
-    this.filteredTable = true;
-    $('#websitesTable').bootstrapTable('filterBy', {
-      production_status: ['redirect'],
-    });
-  }
-
-  showStaging() {
-    this.filteredTable = true;
-    $('#websitesTable').bootstrapTable('filterBy', {
-      production_status: ['staging'],
-    });
-  }
-
-  resetTableFilters() {
-    $('#websitesTable').bootstrapTable('filterBy', {
-      production_status: ['production', 'archived'],
-      type_of_site: ['Informational', 'Application', 'Application Login'],
-    });
-    this.filteredTable = false;
+  onFilterResetClick() {
+    this.tableData = this.filteredTableData;
+    this.tableService.updateReportTableData(this.tableData);
   }
 }

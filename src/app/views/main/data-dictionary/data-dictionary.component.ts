@@ -5,6 +5,7 @@ import { SharedService } from '@services/shared/shared.service';
 
 import { Column } from '../../../common/table-classes';
 import { DataDictionary } from '@api/models/data-dictionary.model';
+import { TableService } from '@services/tables/table.service';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -20,9 +21,11 @@ export class DataDictionaryComponent implements OnInit {
 
   constructor(
     private sharedService: SharedService,
-    private apiService: ApiService) {}
+    private apiService: ApiService,
+    private tableService: TableService) {}
 
   tableData: DataDictionary[] = [];
+  tableDataOriginal: DataDictionary[] = [];
 
   tableCols: Column[] = [
   {
@@ -66,7 +69,9 @@ export class DataDictionaryComponent implements OnInit {
 
   ngOnInit(): void {
     this.apiService.getEntireDataDictionary().subscribe(defs => {
+      this.tableDataOriginal = defs;
       this.tableData = defs;
+      this.tableService.updateReportTableData(defs);
     });
 
     // Enable popovers

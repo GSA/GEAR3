@@ -66,7 +66,9 @@
 
     <!-- Main Table -->
     <ng-container *ngIf="dataReady">
-      <app-table [tableCols]="tableCols" [tableData]="tableData" exportName="IT Standards" [filterButtons]="filterButtons" reportStyle="technologies" tableType="itStandards"></app-table>
+      <app-table [tableCols]="tableCols" exportName="IT Standards" reportStyle="technologies" tableType="itStandards">
+        <app-filter-buttons filterBtns [filterButtons]="filterButtons" [preloadedFilterButtons]="preloadedFilterButtons" (filterClick)="onFilterClick($event)" (filterResetClick)="onFilterResetClick()"></app-filter-buttons>
+      </app-table>
     </ng-container>
   </div>
 </div>

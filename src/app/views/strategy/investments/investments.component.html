@@ -63,6 +63,8 @@
     </div>
 
     <!-- Main Table -->
-    <app-table [tableCols]="tableCols" [tableData]="tableData" exportName="Investments" reportStyle="it-strategy" [filterButtons]="filterButtons" tableType="investments" (filterEvent)="onFilterEvent($event)"></app-table>
+    <app-table [tableCols]="tableCols" exportName="Investments" reportStyle="it-strategy" tableType="investments">
+      <app-filter-buttons filterBtns [filterButtons]="filterButtons" [singleFilterOnly]="true" (filterClick)="onFilterClick($event)" (filterResetClick)="onFilterResetClick()"></app-filter-buttons>
+    </app-table>
   </div>
 </div>
