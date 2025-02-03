@@ -8,6 +8,8 @@ import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
 import { Service_Category } from '@api/models/service-category.model';
 import { AnalyticsService } from '@services/analytics/analytics.service';
+import { BehaviorSubject, Observable, of, scheduled, Subscription } from 'rxjs';
+import { FilterButton } from '@common/table-classes';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -27,6 +29,11 @@ interface ClickOptions {
   providedIn: 'root',
 })
 export class TableService {
+  
+  // Active report table data
+  private reportTableDataSubject = new BehaviorSubject<any>([]);
+  reportTableData$ = this.reportTableDataSubject.asObservable();
+
   // Systems Related Table Options
   public relSysTableOptions: {} = this.createTableOptions({
     advancedSearch: true,
@@ -756,4 +763,34 @@ export class TableService {
     
     this.location.replaceState(`search/${gear_type}/${id}`);
   }
+
+  // Call this to update the report table data
+  public updateReportTableData(data: any) {
+    this.reportTableDataSubject.next(data);
+  }
+
+  public filterButtonClick(filterButtons: FilterButton[], data: any): void {
+    let filteredData = data;
+    for(let i = 0; i < filterButtons.length; i++) {
+      for(let f = 0; f < filterButtons[i].filters.length; f++) {
+        filteredData = filteredData.filter(x => {
+          let dataFieldValue = x[filterButtons[i].filters[f].field];
+          let filterValue = filterButtons[i].filters[f].value;
+          if(typeof(dataFieldValue) === 'string') {
+            dataFieldValue = dataFieldValue.toLocaleLowerCase();
+          }
+          if(typeof(filterValue) === 'string') {
+            filterValue = filterValue.toLocaleLowerCase();
+          }
+          if(filterButtons[i].filters[f].matchMode === 'contains') {
+            return dataFieldValue.includes(filterValue);
+          } else {
+            return dataFieldValue === filterValue;
+          }
+        });
+      }
+    }
+    this.updateReportTableData(filteredData);
+  }
+
 }

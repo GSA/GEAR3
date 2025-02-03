@@ -34,6 +34,7 @@ export class WebsiteServiceCategoryComponent implements OnInit {
   }
 
   tableData: Service_Category[] = [];
+  tableDataOriginal: Service_Category[] = [];
 
   tableCols: Column[] = [
     {
@@ -60,7 +61,11 @@ export class WebsiteServiceCategoryComponent implements OnInit {
       $('[data-toggle="popover"]').popover();
     });
 
-    this.apiService.getWebsiteServiceCategory().subscribe(w => this.tableData = w);
+    this.apiService.getWebsiteServiceCategory().subscribe(w => {
+      this.tableService.updateReportTableData(w);
+      this.tableData = w;
+      this.tableDataOriginal = w;
+    });
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
@@ -30,10 +29,8 @@ export class ItStandardsComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    private location: Location,
     private modalService: ModalsService,
     private route: ActivatedRoute,
-    private router: Router,
     public sharedService: SharedService,
     private tableService: TableService,
     private titleService: Title
@@ -42,9 +39,17 @@ export class ItStandardsComponent implements OnInit {
   }
   
   tableData: ITStandards[] = [];
+  tableDataOriginal: ITStandards[] = [];
 
+  preloadedFilterButtons: FilterButton[] = [];
   filterButtons: TwoDimArray<FilterButton> = [
     [
+      {
+        buttonText: 'Mobile',
+        filters: [
+          { field: 'DeploymentType', value: 'mobile' }
+        ]
+      },
       {
         buttonText: 'Desktop',
         filters: [
@@ -267,9 +272,23 @@ export class ItStandardsComponent implements OnInit {
         isSortable: false,
         showColumn: true,
         titleTooltip: this.getTooltip('Approved Versions')
+      },
+      {
+        field: 'OperatingSystems',
+        header: 'Operating Systems',
+        isSortable: false,
+        showColumn: false,
+        formatter: this.sharedService.csvFormatter,
+        titleTooltip: this.getTooltip('Operating Systems')
+      },
+      {
+        field: 'AppBundleIds',
+        header: 'App Bundle Ids',
+        isSortable: false,
+        showColumn: false,
+        formatter: this.sharedService.csvFormatter,
+        titleTooltip: this.getTooltip('App Bundle Ids')
       }];
-
-      this.dataReady = true;
     });
 
     // Enable popovers
@@ -280,11 +299,39 @@ export class ItStandardsComponent implements OnInit {
     // Set JWT when logged into GEAR Manager when returning from secureAuth
     this.sharedService.setJWTonLogIn();
 
-    this.apiService.getITStandards().subscribe(i => this.tableData = i);
+    this.apiService.getITStandards().subscribe(i => {
+      this.tableService.updateReportTableData(i);
+      this.tableData = i;
+      this.tableDataOriginal = i;
+      this.dataReady = true;
+    });
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {
-      var detailStandID = params['standardID'];
+      let detailStandID = params['standardID'];
+      let deploymentType = params['deploymentType'];
+      let status = params['status'];
+
+      if(deploymentType) {
+        let filterButton = {
+          buttonText: deploymentType[0].toUpperCase() + deploymentType.slice(1),
+          filters: [
+            { field: 'DeploymentType', value: deploymentType.toLocaleLowerCase() }
+          ]
+        };
+        this.preloadedFilterButtons.push(filterButton);
+      }
+
+      if(status) {
+        let filterButton = {
+          buttonText: status[0].toUpperCase() + status.slice(1),
+          filters: [
+            { field: 'Status', value: status.toLocaleLowerCase() }
+          ]
+        };
+        this.preloadedFilterButtons.push(filterButton);
+      }
+
       if (detailStandID) {
         this.titleService.setTitle(
           `${this.titleService.getTitle()} - ${detailStandID}`
@@ -321,5 +368,15 @@ export class ItStandardsComponent implements OnInit {
       return def.TermDefinition;
     }
     return '';
+  }
+
+  onFilterClick(filterButtons: FilterButton[]) {
+    this.tableData = this.tableDataOriginal;
+    this.tableService.filterButtonClick(filterButtons, this.tableData);
+  }
+
+  onFilterResetClick() {
+    this.tableData = this.tableDataOriginal;
+    this.tableService.updateReportTableData(this.tableDataOriginal);
   }
 }

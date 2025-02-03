@@ -43,7 +43,9 @@ export class InvestmentsComponent implements OnInit {
   }
 
   tableData: Investment[] = [];
+  tableDataOriginal: Investment[] = [];
 
+  preloadedFilterButtons: FilterButton[] = [];
   filterButtons: TwoDimArray<FilterButton> = [
     [
       {
@@ -291,7 +293,11 @@ export class InvestmentsComponent implements OnInit {
 
     this.tableCols = this.defaultCols;
 
-    this.apiService.getInvestments().subscribe(i => this.tableData = i);
+    this.apiService.getInvestments().subscribe(i => {
+      this.tableService.updateReportTableData(i);
+      this.tableData = i;
+      this.tableDataOriginal = i;
+    });
 
     // Get Investment data for visuals
     this.apiService.getInvestments().subscribe((data: any[]) => {
@@ -348,7 +354,7 @@ export class InvestmentsComponent implements OnInit {
       // Hide visualization
       $('#investViz').collapse('hide');
     } else if(filter === 'Budget Year $') {
-      this.tableCols === this.BYcolumnDefs;
+      this.tableCols = this.BYcolumnDefs;
       // Hide visualization
       $('#investViz').collapse('hide');
     } else {
@@ -386,5 +392,23 @@ export class InvestmentsComponent implements OnInit {
       },
     });
     this.sharedService.enableStickyHeader("investTable");
+  }
+
+  onFilterClick(filterButtons: FilterButton[]) {
+    this.tableData = this.tableDataOriginal;
+    // this.tableService.filterButtonClick(filterButtons, this.tableData);
+    filterButtons.forEach(f => {
+      if(f.filters &&  f.filters.length > 0) {
+        this.tableService.filterButtonClick(filterButtons, this.tableData);
+      }
+      this.onFilterEvent(f.buttonText);
+    });
+  }
+
+  onFilterResetClick() {
+    $('#investViz').collapse('show');
+    this.tableCols = this.defaultCols;
+    this.tableData = this.tableDataOriginal;
+    this.tableService.updateReportTableData(this.tableDataOriginal);
   }
 }

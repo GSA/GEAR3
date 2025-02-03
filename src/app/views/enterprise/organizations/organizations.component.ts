@@ -30,6 +30,7 @@ export class OrganizationsComponent implements OnInit {
   }
 
   tableData: Organization[] = [];
+  tableDataOriginal: Organization[] = [];
 
   tableCols: Column[] = [
     {
@@ -65,7 +66,11 @@ export class OrganizationsComponent implements OnInit {
       $('[data-toggle="popover"]').popover();
     });
 
-    this.apiService.getOrganizations().subscribe(o => this.tableData = o);
+    this.apiService.getOrganizations().subscribe(o => {
+      this.tableService.updateReportTableData(o);
+      this.tableData = o;
+      this.tableDataOriginal = o;
+    });
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {

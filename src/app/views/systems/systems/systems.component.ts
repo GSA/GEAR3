@@ -75,7 +75,8 @@ export class SystemsComponent implements OnInit {
   });
 
   tableData: System[] = [];
-  filteredTableData: System[] = [];
+  tableDataOriginal: System[] = [];
+  tableDataFiltered: System[] = [];
 
   filterButtons: TwoDimArray<FilterButton> = [
     [
@@ -295,14 +296,16 @@ export class SystemsComponent implements OnInit {
     this.tableCols = this.defaultTableCols;
 
     this.apiService.getSystems().subscribe(systems => {
-      this.tableData = systems;
+      this.tableDataOriginal = systems;
 
       systems.forEach(s => {
         if(s.Status === 'Active' && s.BusApp == 'Yes') {
-          this.filteredTableData.push(s);
+          this.tableDataFiltered.push(s);
         }
       });
-      
+
+      this.tableData = this.tableDataFiltered;
+      this.tableService.updateReportTableData(this.tableData);
     });
 
     // Get System data for visuals
@@ -396,6 +399,24 @@ export class SystemsComponent implements OnInit {
       },
     });
     this.sharedService.enableStickyHeader("systemTable");
+  }
+
+  onFilterClick(filterButtons: FilterButton[]) {
+    this.tableData = this.tableDataOriginal;
+    // this.tableService.filterButtonClick(filterButtons, this.tableData);
+    filterButtons.forEach(f => {
+      if(f.filters &&  f.filters.length > 0) {
+        this.tableService.filterButtonClick(filterButtons, this.tableData);
+      }
+      this.onFilterEvent(f.buttonText);
+    });
+  }
+
+  onFilterResetClick() {
+    $('#sysViz').collapse('show');
+    this.tableCols = this.defaultTableCols;
+    this.tableData = this.tableDataFiltered;
+    this.tableService.updateReportTableData(this.tableData);
   }
 
   //   private getInterfaceData(sysID: number) {

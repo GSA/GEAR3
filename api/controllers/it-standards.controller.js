@@ -86,42 +86,138 @@ exports.update = (req, res) => {
         });
       };
 
+      // Create string to update IT Standards Operating Systems
+      var osString = '';
+      var osToDelete = [];
+      var osToAdd = [];
+      if(data.itStandOperatingSystems && data.itStandOperatingSystems.length > 0) {
+        for(const osId of data.itStandOperatingSystems) {
+          if(!data.initialOS || (data.initialOS && data.initialOS.length === 0)) {
+            osToAdd.push(osId);
+          } else {
+            if(!data.initialOS.includes(osId)) {
+              osToAdd.push(osId);
+            }
+          }
+        }
+      }
+      if(data.initialOS && data.initialOS.length > 0) {
+        for(const osId of data.initialOS) {
+          if(!data.itStandOperatingSystems || (data.itStandOperatingSystems && data.itStandOperatingSystems.length === 0)) {
+            osToDelete.push(osId);
+          } else {
+            if(!data.itStandOperatingSystems.includes(osId)) {
+              osToDelete.push(osId);
+            }
+          }
+        }
+      }
+
+      if(osToDelete.length > 0) {
+        osToDelete.forEach(o => {
+          osString += `DELETE FROM zk_technology_operating_system WHERE obj_technology_Id=${req.params.id} AND obj_operating_system_Id=${o}; `;
+        });
+      }
+
+      if(osToAdd.length > 0) {
+        osToAdd.forEach(o => {
+          osString += `INSERT INTO zk_technology_operating_system (obj_operating_system_Id, obj_technology_Id) VALUES (${o}, ${req.params.id}); `;
+        });
+      }
+
+      // Create string to update IT Standards App Bundles
+      var appBundleString = '';
+      var appBundleToDelete = [];
+      var appBundleToAdd = [];
+      if(data.itStandMobileAppBundles && data.itStandMobileAppBundles.length > 0) {
+        for(const appId of data.itStandMobileAppBundles) {
+          if(!data.initialAppBundles || (data.initialAppBundles && data.initialAppBundles.length === 0)) {
+            appBundleToAdd.push(appId);
+          } else { 
+            if(!data.initialAppBundles.find(({Name}) => Name === appId.Name)) {
+              appBundleToAdd.push(appId);
+            }
+          }
+        }
+      }
+      if(data.initialAppBundles.length > 0) {
+        for(const appId of data.initialAppBundles) {
+          if(!data.itStandMobileAppBundles || (data.itStandMobileAppBundles && data.itStandMobileAppBundles.length === 0)) {
+            appBundleToDelete.push(appId);
+          } else {
+            if(!data.itStandMobileAppBundles.find(({Name}) => Name === appId.Name)) {
+              appBundleToDelete.push(appId);
+            }
+          }
+        }
+      }
+
+      // Delete from app bundle table and match table
+      if(appBundleToDelete.length > 0) {
+        appBundleToDelete.forEach(a => {
+          appBundleString += `DELETE FROM zk_technology_app_bundle WHERE obj_technology_Id=${req.params.id} AND obj_technology_app_bundle_Id=${a.ID}; `;
+          appBundleString += `DELETE FROM obj_technology_app_bundle WHERE Id=${a.ID}; `;
+        });
+      }
+
+      // Add to app bundle table and the match table
+      if(appBundleToAdd.length > 0) {
+        appBundleToAdd.forEach(a => {
+          appBundleString += `INSERT INTO obj_technology_app_bundle (Keyname) VALUES ('${a.Name}'); `;
+          appBundleString += `INSERT INTO zk_technology_app_bundle (obj_technology_app_bundle_Id, obj_technology_Id) VALUES (LAST_INSERT_ID(), ${req.params.id}); `;
+        });
+      }
+
       // Null any empty text fields
-      data.itStandDesc = ctrl.emptyTextFieldHandler(data.itStandDesc);
-      data.itStandAprvExp = ctrl.emptyTextFieldHandler(data.itStandAprvExp);
-      data.itStandRefDocs = ctrl.emptyTextFieldHandler(data.itStandRefDocs);
-      data.itStandApprovedVersions = ctrl.emptyTextFieldHandler(data.itStandApprovedVersions);
+      data.itStandDesc = ctrl.setNullEmptyTextHandler(data.itStandDesc);
+      data.itStandAprvExp = ctrl.setNullEmptyTextHandler(data.itStandAprvExp);
+      data.itStandRefDocs = ctrl.setNullEmptyTextHandler(data.itStandRefDocs);
+      data.itStandApprovedVersions = ctrl.setNullEmptyTextHandler(data.itStandApprovedVersions);
 
-      data.tcManufacturer = ctrl.emptyTextFieldHandler(data.tcManufacturer);
-      data.tcSoftwareProduct = ctrl.emptyTextFieldHandler(data.tcSoftwareProduct);
-      data.tcSoftwareVersion = ctrl.emptyTextFieldHandler(data.tcSoftwareVersion);
-      data.tcSoftwareRelease = ctrl.emptyTextFieldHandler(data.tcSoftwareRelease);
-      data.tcManufacturerName = ctrl.emptyTextFieldHandler(data.tcManufacturerName);
-      data.tcSoftwareProductName = ctrl.emptyTextFieldHandler(data.tcSoftwareProductName);
-      data.tcSoftwareVersionName = ctrl.emptyTextFieldHandler(data.tcSoftwareVersionName);
-      data.tcSoftwareReleaseName = ctrl.emptyTextFieldHandler(data.tcSoftwareReleaseName);
-      data.tcEndOfLifeDate = ctrl.emptyTextFieldHandler(data.tcEndOfLifeDate);
+      data.tcManufacturer = ctrl.setNullEmptyTextHandler(data.tcManufacturer);
+      data.tcSoftwareProduct = ctrl.setNullEmptyTextHandler(data.tcSoftwareProduct);
+      data.tcSoftwareVersion = ctrl.setNullEmptyTextHandler(data.tcSoftwareVersion);
+      data.tcSoftwareRelease = ctrl.setNullEmptyTextHandler(data.tcSoftwareRelease);
+      data.tcManufacturerName = ctrl.setNullEmptyTextHandler(data.tcManufacturerName);
+      data.tcSoftwareProductName = ctrl.setNullEmptyTextHandler(data.tcSoftwareProductName);
+      data.tcSoftwareVersionName = ctrl.setNullEmptyTextHandler(data.tcSoftwareVersionName);
+      data.tcSoftwareReleaseName = ctrl.setNullEmptyTextHandler(data.tcSoftwareReleaseName);
+      data.tcEndOfLifeDate = ctrl.setNullEmptyTextHandler(data.tcEndOfLifeDate);
 
-      data.itStandRITM = ctrl.setEmptyTextFieldHandler(data.itStandRITM);
+      data.itStandRITM = ctrl.setNullEmptyTextHandler(data.itStandRITM);
+
+      let keyname = '';
+      if (!data.tcSoftwareReleaseName || data.tcSoftwareReleaseName === 'NULL' || data.tcSoftwareReleaseName === 'null') {
+        if(!data.itStandName) {
+          res.status(500).json({
+            message: "IT Standards name missing from API payload."
+          });
+          return;
+        } else {
+          keyname = `"${data.itStandName}"`;
+        }
+      } else {
+        keyname = data.tcSoftwareReleaseName;
+      }
 
       const endOfLifeDateFragment = getEolFragment(data.tcEndOfLifeDate);
 
       var query = `SET FOREIGN_KEY_CHECKS=0;
         UPDATE obj_technology
         SET
-          Keyname                         = ${(!data.tcSoftwareReleaseName || data.tcSoftwareReleaseName === 'NULL') ? '"'+data.itStandName+'"' : ""},
+          Keyname                         = ${keyname},
           obj_technology_status_Id        = ${data.itStandStatus},
-          Description                     = "${data.itStandDesc}",
+          Description                     = ${data.itStandDesc},
           obj_standard_type_Id            = ${data.itStandType},
           obj_508_compliance_status_Id    = ${data.itStand508},
           Available_through_Myview        = "${data.itStandMyView}",
           Vendor_Standard_Organization    = "${data.itStandVendorOrg}",
           obj_deployment_type_Id          = ${data.itStandDeployment},
           Gold_Image                      = "${data.itStandGoldImg}",
-          attestation_required            = "${data.itStandReqAtte}",
+          attestation_required            = ${data.itStandReqAtte},
           fedramp                         = "${data.itStandFedramp}",
           open_source                     = "${data.itStandOpenSource}",
-          RITM                            = "${data.itStandRITM}",
+          RITM                            = ${data.itStandRITM},
           Gold_Image_Comment              = "${data.itStandGoldComment}",
           attestation_link                = "${data.itStandAtteLink}",
           Approved_Status_Expiration_Date = ${data.itStandAprvExp},
@@ -129,20 +225,22 @@ exports.update = (req, res) => {
           Reference_documents             = ${data.itStandRefDocs},
           ChangeAudit                     = "${data.auditUser}",
           ChangeDTG                       = NOW(),
-          manufacturer                    = "${data.tcManufacturer}",
+          manufacturer                    = ${data.tcManufacturer},
           softwareProduct                 = ${data.tcSoftwareProduct},
           softwareVersion                 = ${data.tcSoftwareVersion},
           softwareRelease                 = ${data.tcSoftwareRelease},
-          manufacturerName                = "${data.tcManufacturerName}",
-          softwareProductName             = "${data.tcSoftwareProductName}",
-          softwareVersionName             = "${data.tcSoftwareVersionName}",
-          softwareReleaseName             = "${data.tcSoftwareReleaseName}",
+          manufacturerName                = ${data.tcManufacturerName},
+          softwareProductName             = ${data.tcSoftwareProductName},
+          softwareVersionName             = ${data.tcSoftwareVersionName},
+          softwareReleaseName             = ${data.tcSoftwareReleaseName},
           endOfLifeDate                   = ${endOfLifeDateFragment},
-          approvedVersions                = "${data.itStandApprovedVersions}"
+          approvedVersions                = ${data.itStandApprovedVersions}
         WHERE Id = ${req.params.id};
         SET FOREIGN_KEY_CHECKS=1;
         ${catString}
-        ${pocString}`;
+        ${pocString}
+        ${osString}
+        ${appBundleString}`;
 
       var logStatement = `insert into gear_log.event (Event, User, DTG) values ('update IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
       res = ctrl.sendQuery(query + ' ' + logStatement, 'update IT Standard', res); //removed sendQuery_cowboy reference
@@ -168,22 +266,36 @@ exports.create = (req, res) => {
       //if (req.headers.authorization) {
       var data = req.body;
       // Null any empty text fields
-      data.itStandDesc = ctrl.emptyTextFieldHandler(data.itStandDesc);
-      data.itStandAprvExp = ctrl.emptyTextFieldHandler(data.itStandAprvExp);
-      data.itStandRefDocs = ctrl.emptyTextFieldHandler(data.itStandRefDocs);
-      data.itStandApprovedVersions = ctrl.emptyTextFieldHandler(data.itStandApprovedVersions);
+      data.itStandDesc = ctrl.setNullEmptyTextHandler(data.itStandDesc);
+      data.itStandAprvExp = ctrl.setNullEmptyTextHandler(data.itStandAprvExp);
+      data.itStandRefDocs = ctrl.setNullEmptyTextHandler(data.itStandRefDocs);
+      data.itStandApprovedVersions = ctrl.setNullEmptyTextHandler(data.itStandApprovedVersions);
 
-      data.tcManufacturer = ctrl.emptyTextFieldHandler(data.tcManufacturer);
-      data.tcSoftwareProduct = ctrl.emptyTextFieldHandler(data.tcSoftwareProduct);
-      data.tcSoftwareVersion = ctrl.emptyTextFieldHandler(data.tcSoftwareVersion);
-      data.tcSoftwareRelease = ctrl.emptyTextFieldHandler(data.tcSoftwareRelease);
-      data.tcManufacturerName = ctrl.emptyTextFieldHandler(data.tcManufacturerName);
-      data.tcSoftwareProductName = ctrl.emptyTextFieldHandler(data.tcSoftwareProductName);
-      data.tcSoftwareVersionName = ctrl.emptyTextFieldHandler(data.tcSoftwareVersionName);
-      data.tcSoftwareReleaseName = ctrl.emptyTextFieldHandler(data.tcSoftwareReleaseName);
-      data.tcEndOfLifeDate = ctrl.emptyTextFieldHandler(data.tcEndOfLifeDate);
+      data.tcManufacturer = ctrl.setNullEmptyTextHandler(data.tcManufacturer);
+      data.tcSoftwareProduct = ctrl.setNullEmptyTextHandler(data.tcSoftwareProduct);
+      data.tcSoftwareVersion = ctrl.setNullEmptyTextHandler(data.tcSoftwareVersion);
+      data.tcSoftwareRelease = ctrl.setNullEmptyTextHandler(data.tcSoftwareRelease);
+      data.tcManufacturerName = ctrl.setNullEmptyTextHandler(data.tcManufacturerName);
+      data.tcSoftwareProductName = ctrl.setNullEmptyTextHandler(data.tcSoftwareProductName);
+      data.tcSoftwareVersionName = ctrl.setNullEmptyTextHandler(data.tcSoftwareVersionName);
+      data.tcSoftwareReleaseName = ctrl.setNullEmptyTextHandler(data.tcSoftwareReleaseName);
+      data.tcEndOfLifeDate = ctrl.setNullEmptyTextHandler(data.tcEndOfLifeDate);
 
-      data.itStandRITM = ctrl.setEmptyTextFieldHandler(data.itStandRITM);
+      data.itStandRITM = ctrl.setNullEmptyTextHandler(data.itStandRITM);
+
+      let keyname = '';
+      if (!data.tcSoftwareReleaseName || data.tcSoftwareReleaseName === 'NULL' || data.tcSoftwareReleaseName === 'null') {
+        if(!data.itStandName) {
+          res.status(500).json({
+            message: "IT Standards name missing from API payload."
+          });
+          return;
+        } else {
+          keyname = `"${data.itStandName}"`;
+        }
+      } else {
+        keyname = data.tcSoftwareReleaseName;
+      }
 
       const endOfLifeDateFragment = getEolFragment(data.tcEndOfLifeDate);
 
@@ -218,17 +330,16 @@ exports.create = (req, res) => {
         softwareReleaseName,
         endOfLifeDate,
         approvedVersions) VALUES (
-        ${(!data.tcSoftwareReleaseName || data.tcSoftwareReleaseName === 'NULL' || data.tcSoftwareReleaseName === '') ?
-          '"' + data.itStandName + '"' : null},
+        ${keyname},
         ${data.itStandDesc},
         ${data.itStandAprvExp},
         "${data.itStandVendorOrg}",
         "${data.itStandMyView}",
         "${data.itStandGoldImg}",
-        "${data.itStandReqAtte}",
+        ${data.itStandReqAtte},
         "${data.itStandFedramp}",
         "${data.itStandOpenSource}",
-        "${data.itStandRITM}",
+        ${data.itStandRITM},
         "${data.itStandGoldComment}",
         "${data.itStandAtteLink}",
         "${data.itStandComments}",
@@ -239,14 +350,14 @@ exports.create = (req, res) => {
         ${data.itStandRefDocs},
         "${data.auditUser}",
         "${data.auditUser}",
-        "${data.tcManufacturer}",
-        "${data.tcSoftwareProduct}",
-        "${data.tcSoftwareVersion}",
-        "${data.tcSoftwareRelease}",
-        "${data.tcManufacturerName}",
-        "${data.tcSoftwareProductName}",
-        "${data.tcSoftwareVersionName}",
-        "${data.tcSoftwareReleaseName}",
+        ${data.tcManufacturer},
+        ${data.tcSoftwareProduct},
+        ${data.tcSoftwareVersion},
+        ${data.tcSoftwareRelease},
+        ${data.tcManufacturerName},
+        ${data.tcSoftwareProductName},
+        ${data.tcSoftwareVersionName},
+        ${data.tcSoftwareReleaseName},
         ${endOfLifeDateFragment},
         ${data.itStandApprovedVersions});`;
 
@@ -313,3 +424,16 @@ getEolFragment = (inputDate) => {
   
   return `STR_TO_DATE('${convertedDate}', '%Y-%m-%d %T')`;
 };
+
+exports.getAllOperatingSystems = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_operating_systems.sql`)).toString();
+
+  res = ctrl.sendQuery(query, 'Operating Systems', res);
+}
+
+exports.getAppBundles = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_it-standard_app_bundles.sql`)).toString() +
+  ` WHERE matchBundle.obj_technology_Id = ${req.params.id});`;
+
+  res = ctrl.sendQuery(query, 'App Bundles', res);
+}

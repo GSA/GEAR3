@@ -42,6 +42,7 @@ export class RecordsManagementComponent implements OnInit {
   ) {}
 
   tableData: Record[] = [];
+  tableDataOriginal: Record[] = [];
 
   tableCols: Column[] = [
     {
@@ -136,7 +137,11 @@ export class RecordsManagementComponent implements OnInit {
     // Set JWT when logged into GEAR Manager when returning from secureAuth
     this.sharedService.setJWTonLogIn();
 
-    this.apiService.getRecords().subscribe(r => this.tableData = r);
+    this.apiService.getRecords().subscribe(r => {
+      this.tableService.updateReportTableData(r);
+      this.tableData = r;
+      this.tableDataOriginal = r;
+    });
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {

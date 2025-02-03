@@ -234,7 +234,7 @@ export class SystemsModalComponent implements OnInit {
   sysTechTableOptions: {} = this.tableService.createTableOptions({
     advancedSearch: false,
     idTable: null,
-    classes: "table-hover table-light clickable-table",
+    classes: "table-hover table-light",
     showColumns: true,
     showExport: true,
     exportFileName: null,
@@ -258,10 +258,6 @@ export class SystemsModalComponent implements OnInit {
     sortable: true,
     visible: false,
     class: 'text-truncate'
-  }, {
-    field: 'Status',
-    title: 'Status',
-    sortable: true
   }, {
     field: 'Category',
     title: 'Software Category',
@@ -291,12 +287,7 @@ export class SystemsModalComponent implements OnInit {
     title: 'Requested Item (RITM)',
     visible: false,
     sortable: true,
-  }, {
-    field: 'ApprovalExpirationDate',
-    title: 'Approved Status Expiration Date',
-    sortable: true,
-    formatter: this.sharedService.dateFormatter
-  }];
+  },];
 
 
   // Related Records Table Options
@@ -541,14 +532,14 @@ sysWebsitesColumnDefs: any[] = [
     ));
 
     // Method to handle click events on the Related Technologies table
-    $(document).ready(
-      $('#systemTechTable').on('click-row.bs.table', function (e, row) {
-        // Hide First Modal before showing new modal
-        $('#systemDetail').modal('hide');
+    // $(document).ready(
+    //   $('#systemTechTable').on('click-row.bs.table', function (e, row) {
+    //     // Hide First Modal before showing new modal
+    //     $('#systemDetail').modal('hide');
 
-        self.tableService.itStandTableClick(row);
-      }.bind(this)
-    ));
+    //     self.tableService.itStandTableClick(row);
+    //   }.bind(this)
+    // ));
 
     // Method to handle click events on the Related Systems table
     $(document).ready(
@@ -631,6 +622,14 @@ sysWebsitesColumnDefs: any[] = [
     this.modalService.updateDetails(this.system, 'system', false);
     this.sharedService.setSystemForm();
     $('#systemManager').modal('show');
+  }
+
+  showInvestmentsTab() {
+    return $('#systemInvestTable').bootstrapTable('getData').length > 0;
+  }
+
+  showWebsitesTab() {
+    return $('#systemWebsitesTable').bootstrapTable('getData').length > 0;
   }
 
 }

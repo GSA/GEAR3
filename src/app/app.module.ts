@@ -90,6 +90,7 @@ import { TableComponent } from './components/table/table.component';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
+import { FilterButtonsComponent } from './components/filter-buttons/filter-buttons.component';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -138,7 +139,8 @@ import { InputTextModule } from 'primeng/inputtext';
         IdentifierComponent,
         SidebarComponent,
         DataDictionaryComponent,
-        TableComponent
+        TableComponent,
+        FilterButtonsComponent
     ],
     bootstrap: [AppComponent], imports: [AppRoutingModule,
         BrowserAnimationsModule,

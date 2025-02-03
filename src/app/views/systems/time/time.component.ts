@@ -58,6 +58,7 @@ export class TimeComponent implements OnInit {
   }
 
   tableData: TIME[] = [];
+  tableDataOriginal: TIME[] = [];
 
   tableCols: Column[] = [
     {
@@ -134,7 +135,11 @@ export class TimeComponent implements OnInit {
       $('[data-toggle="popover"]').popover();
     });
 
-    this.apiService.getTIME().subscribe(t => this.tableData = t);
+    this.apiService.getTIME().subscribe(t => {
+      this.tableService.updateReportTableData(t);
+      this.tableData = t;
+      this.tableDataOriginal = t;
+    });
 
     // Visualization data
     this.apiService.getTIME().subscribe((data: any[]) => {

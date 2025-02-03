@@ -37,6 +37,7 @@ export class CapabilitiesComponent implements OnInit {
   }
 
   tableData: Capability[] = [];
+  tableDataOriginal: Capability[] = [];
 
   tableCols: Column[] = [
     {
@@ -76,7 +77,11 @@ export class CapabilitiesComponent implements OnInit {
     // Set JWT when logged into GEAR Manager when returning from secureAuth
     this.sharedService.setJWTonLogIn();
 
-    this.apiService.getCapabilities().subscribe(c => this.tableData = c);
+    this.apiService.getCapabilities().subscribe(c => {
+      this.tableService.updateReportTableData(c);
+      this.tableData = c;
+      this.tableDataOriginal = c;
+    });
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {

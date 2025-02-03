@@ -187,4 +187,20 @@ export class ItStandardsModalComponent implements OnInit {
     this.showAllFields = !this.showAllFields;
   }
 
+  renderListFromCsvString(value: string) {
+    let html = '';
+    if(value) {
+      let list = value.split(', ');
+      list.forEach(l => {
+        html += `<li>${l}</li>`;
+      });
+    }
+
+    return html;
+  }
+
+  showSystemsUsingTab() {
+    return $('#itRelSysTable').bootstrapTable('getData').length > 0;
+  }
+
 }

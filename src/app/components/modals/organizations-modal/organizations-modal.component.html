@@ -37,12 +37,12 @@
               Overview</a
             >
           </li>
-          <li class="nav-item">
+          <li class="nav-item" *ngIf="showRelatedCapsTab()">
             <a class="nav-link" data-toggle="tab" href="#orgCaps">
               Related Capabilities</a
             >
           </li>
-          <li class="nav-item">
+          <li class="nav-item" *ngIf="showOrgSystemsTab()">
             <a class="nav-link" data-toggle="tab" href="#orgSys">
               Organizational Systems</a
             >

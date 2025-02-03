@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Column } from '@common/table-classes';
 
 import * as glossaryData from '../../../../../assets/statics/glossary.json';
+import { TableService } from '@services/tables/table.service';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -15,9 +16,10 @@ export class GlossaryComponent implements OnInit {
 
   row: Object = <any>{};
 
-  constructor() { }
+  constructor(private tableService: TableService) { }
 
   tableData: any[] = [];
+  tableDataOriginal: any[] = [];
 
   // Glossary Table Columns
   tableCols: Column[] = [{
@@ -41,6 +43,8 @@ export class GlossaryComponent implements OnInit {
     })
 
     let rawData = JSON.stringify(glossaryData);
+    this.tableDataOriginal = JSON.parse(rawData).default;
     this.tableData = JSON.parse(rawData).default;
+    this.tableService.updateReportTableData(JSON.parse(rawData).default);
   }
 }

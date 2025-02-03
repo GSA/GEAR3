@@ -62,4 +62,8 @@ export class RecordsModalComponent implements OnInit {
     this.sharedService.setRecordForm();
     $('#recordManager').modal('show');
   }
+
+  showRelatedSystemsTab() {
+    return $('#recordsRelSysTable').bootstrapTable('getData').length > 0;
+  }
 }

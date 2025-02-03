@@ -30,6 +30,7 @@ export class FismaPocsComponent implements OnInit {
   }
 
   tableData: FISMA[] = [];
+  tableDataOriginal: FISMA[] = [];
 
   tableCols: Column[] = [
     {
@@ -86,7 +87,11 @@ export class FismaPocsComponent implements OnInit {
       $('[data-toggle="popover"]').popover();
     });
 
-    this.apiService.getFISMA().subscribe(f => this.tableData = f);
+    this.apiService.getFISMA().subscribe(f => {
+      this.tableDataOriginal = f;
+      this.tableData = f;
+      this.tableService.updateReportTableData(f);
+    });
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {

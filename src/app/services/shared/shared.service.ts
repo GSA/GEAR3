@@ -320,6 +320,20 @@ export class SharedService {
     else return '<p class="description-wrap">' + value + "</p>";;
   };
 
+  //// OS & App Bundle formatter
+  public csvFormatter(value: any, row: any) {
+    if(value) {
+      let output = '';
+
+      const separatedValues = value.split(', ');
+      for(let i = 0; i < separatedValues.length; i++) {
+        output += `<p>${separatedValues[i]}</p>`;
+      }
+
+      return output;
+    }
+    return '-';
+  }
 
   // Set Forms Default
   public setCapabilityForm() {
