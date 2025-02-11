@@ -176,7 +176,6 @@ export class ItStandardsComponent implements OnInit {
         header: 'Description',
         isSortable: true,
         showColumn: true,
-        class: 'wid-25',
         formatter: this.sharedService.formatDescription,
         titleTooltip: this.getTooltip('Description')
       }, {

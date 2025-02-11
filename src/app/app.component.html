@@ -6,7 +6,13 @@
 
 <div class="page-wrap">
   <div class="sidebar-content-wrapper">
-    <div class="sidebar-icon-container" (mouseenter)="onSidebarIconsMouseEnter()" tabindex="0" (keydown)="onSidebarIconsKeyDown($event)" role="button">
+    <div class="sidebar-icon-container" 
+         (mouseenter)="onSidebarIconsMouseEnter()"
+         tabindex="0"
+         (keydown)="onSidebarIconsKeyDown($event)"
+         role="application"
+         aria-details="Press enter or space to open the sidebar navigation"
+         aria-roledescription="sidebar navigation toggle">
       <div class="sidebar-icon-wrap">
         <div class="sidebar-icon it-strategy"><i class="fas fa-puzzle-piece fa-lg fa-fw"></i></div>
         <div class="sidebar-icon gsa-enterprise"><i class="fas fa-sitemap fa-lg fa-fw"></i></div>
@@ -21,9 +27,9 @@
     
     <!-- Main Module -->
     <div class="container-fluid content-body" id="mainModule">
-      <div class="w-100 mr-2">
+      <div class="w-100">
         <main role="main">
-          <div class="container-fluid my-3">
+          <div class="">
             <div class="col-md-12">
               <!-- Logged In Notification -->
               <div
