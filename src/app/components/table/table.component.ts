@@ -232,44 +232,73 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   onRowSelect(e: TableRowSelectEvent) {
-    switch (this.tableType) {
+    if(this.tableType === 'globalSearch') {
+      this.tableRowClickSelection(e.data.GEAR_Type, e.data);
+    } else {
+      this.tableRowClickSelection(this.tableType, e.data);
+    }
+  }
+
+  private tableRowClickSelection(type: string, data: any) {
+    switch (type) {
+      case 'Investment':
+        this.tableService.globalSearchTableClick(data);
+        break;
       case 'investments':
-        this.tableService.investTableClick(e.data);
+        this.tableService.investTableClick(data);
+        break; 
+      case 'Capability': 
+        this.tableService.globalSearchTableClick(data);
         break;
       case 'capabilities':
-        this.tableService.capsTableClick(e.data);
+        this.tableService.capsTableClick(data);
         break;
       case 'websiteServiceCategory':
-        this.tableService.websiteServiceCategoryTableClick(e.data);
+        this.tableService.websiteServiceCategoryTableClick(data);
         break;
+        case 'Organization':
+          this.tableService.globalSearchTableClick(data);
+          break;
       case 'organizations':
-        this.tableService.orgsTableClick(e.data);
+        this.tableService.orgsTableClick(data);
+        break;
+      case 'Website':
+        this.tableService.globalSearchTableClick(data);
         break;
       case 'website':
-        this.tableService.websitesTableClick(e.data);
+        this.tableService.websitesTableClick(data);
         break;
       case 'records':
-        this.tableService.recordsTableClick(e.data);
+        this.tableService.recordsTableClick(data);
         break;
       case 'time':
-        this.apiService.getOneSys(e.data['System Id'])
+        this.apiService.getOneSys(data['System Id'])
           .subscribe((data: any[]) => {
               this.tableService.systemsTableClick(data[0]);
             });
 
           // Change URL to include ID
-          this.sharedService.addIDtoURL(e.data, 'System Id');
+          this.sharedService.addIDtoURL(data, 'System Id');
+      case 'System':
+        this.tableService.globalSearchTableClick(data);
+        break;
       case 'systems':
-        this.tableService.systemsTableClick(e.data);
+        this.tableService.systemsTableClick(data);
+        break;
+      case 'FISMA':
+        this.tableService.globalSearchTableClick(data);
         break;
       case 'fisma':
-        this.tableService.fismaTableClick(e.data);
+        this.tableService.fismaTableClick(data);
         break;
       case 'fismaPoc':
-        this.tableService.fismaTableClick(e.data);
+        this.tableService.fismaTableClick(data);
+        break;
+      case 'Technology':
+        this.tableService.globalSearchTableClick(data);
         break;
       case 'itStandards':
-        this.tableService.itStandTableClick(e.data);
+        this.tableService.itStandTableClick(data);
       default:
         console.log('no type');
         break;

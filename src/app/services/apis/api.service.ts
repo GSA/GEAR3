@@ -861,6 +861,12 @@ export class ApiService {
     };
   }
 
+  public getGlobalSearchResults(kw: string): Observable<any[]> {
+    return this.http
+      .get<any[]>(this.globalSearchUrl + kw)
+      .pipe(catchError(this.handleError<any[]>('GET Global Search Results', [])));
+  }
+
   //// Set JWT into Header Options
   setHeaderOpts() {
     return {
