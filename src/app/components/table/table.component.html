@@ -51,7 +51,7 @@
           [options]="tableCols" 
           [(ngModel)]="visibleColumns"
           (onChange)="toggleVisible($event)"
-          optionLabel="field"
+          optionLabel="header"
           pTooltip="Add/Remove Columns"
           [showToggleAll]="false"
           ariaLabel="Toggle Columns">
@@ -68,7 +68,6 @@
     </div>
   </ng-template>
 
-
   <!-- Table header -->
   <ng-template pTemplate="header" let-columns>
     <!-- Headings -->
@@ -78,6 +77,7 @@
           <div class="d-flex align-items-center table-heading">
             <span *ngIf="!col.titleTooltip" >{{ col.header }}</span>
             <span *ngIf="col.titleTooltip" [title]="col.titleTooltip">{{ col.header }}</span>
+            <!-- <span *ngIf="showFilters"><p-columnFilter type="text" [field]="col.field" display="menu" /></span> -->
             <ng-container *ngIf="col.isSortable">
               <p-sortIcon [field]="col.field"></p-sortIcon>
             </ng-container>
@@ -85,14 +85,27 @@
         </th>
       </ng-container>
     </tr>
-    <!-- Filters -->
     <tr *ngIf="showFilters">
+      <ng-container *ngFor="let col of columns">
+        <th *ngIf="showColumn(col)">
+          <p-columnFilter 
+              type="text" 
+              [field]="col.field"
+              [matchModeOptions]="matchModeOptions"
+              [matchMode]="'contains'"
+              [placeholder]="'Filter by ' + col.header" 
+              [ariaLabel]="'Filter ' + col.header" />
+        </th>
+      </ng-container>
+    </tr>
+    <!-- Filters -->
+    <!-- <tr *ngIf="showFilters">
       <ng-container *ngFor="let col of columns">
         <th *ngIf="showColumn(col)">
           <p-columnFilter type="text" [field]="col.field" [placeholder]="'Filter by ' + col.header" [ariaLabel]="'Filter ' + col.header"></p-columnFilter>
         </th>
       </ng-container>
-    </tr>
+    </tr> -->
   </ng-template>
   <!-- Table body -->
   <ng-template pTemplate="body" let-rowData let-columns="columns">

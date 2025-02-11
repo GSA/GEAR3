@@ -4,7 +4,7 @@ import { Column, ExportColumn, TwoDimArray, FilterButton } from '../../common/ta
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { ApiService } from '@services/apis/api.service';
-import { FilterMatchMode } from 'primeng/api';
+import { FilterMatchMode, SelectItem } from 'primeng/api';
 
 
 @Component({
@@ -78,11 +78,20 @@ export class TableComponent implements OnInit, OnChanges {
 
   activeTableData: any[] = [];
 
+  matchModeOptions: SelectItem[];
+
   constructor(public sharedService: SharedService, public tableService: TableService, public apiService: ApiService) {
     this.setScreenHeight();
    }
 
   ngOnInit(): void {
+    this.matchModeOptions = [
+      { label: 'Contains', value: FilterMatchMode.CONTAINS },
+      { label: 'Not Contains', value: FilterMatchMode.NOT_CONTAINS },
+      { label: 'Starts With', value: FilterMatchMode.STARTS_WITH },
+      { label: 'Ends With', value: FilterMatchMode.ENDS_WITH }
+  ];
+
     this.exportColumns = this.tableCols.map((col) => ({ title: col.header, dataKey: col.field }));
     // this.activeTableData = this.getTableData();
     this.tableService.reportTableData$.subscribe(d => {
@@ -312,5 +321,4 @@ export class TableComponent implements OnInit, OnChanges {
       });
     //}
   }
-
 }

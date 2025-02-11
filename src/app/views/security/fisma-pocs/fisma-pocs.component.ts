@@ -31,6 +31,7 @@ export class FismaPocsComponent implements OnInit {
 
   tableData: FISMA[] = [];
   tableDataOriginal: FISMA[] = [];
+  filteredTableData: FISMA[] = [];
 
   tableCols: Column[] = [
     {
@@ -87,10 +88,15 @@ export class FismaPocsComponent implements OnInit {
       $('[data-toggle="popover"]').popover();
     });
 
-    this.apiService.getFISMA().subscribe(f => {
-      this.tableDataOriginal = f;
-      this.tableData = f;
-      this.tableService.updateReportTableData(f);
+    this.apiService.getFISMA().subscribe(fisma => {
+      this.tableDataOriginal = fisma;
+      fisma.forEach(f => {
+        if(f.Status === 'Active' && f.SystemLevel === 'System' && f.Reportable === 'Yes') {
+          this.filteredTableData.push(f);
+        }
+      });
+      this.tableData = this.filteredTableData;
+      this.tableService.updateReportTableData(this.tableData);
     });
 
     // Method to open details modal when referenced directly via URL

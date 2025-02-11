@@ -11,6 +11,10 @@
             & .table-heading {
                 justify-content: space-between;
             }
+
+            & .p-column-filter-menu-button:hover, .p-column-filter-menu-button-active, .p-column-filter-clear-button:hover {
+                background: none;
+            }
         }
     }
 
