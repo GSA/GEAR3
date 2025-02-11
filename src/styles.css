@@ -307,6 +307,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
+  width: 20rem;
 }
 
 .fixed-table-toolbar .search input {
@@ -353,8 +354,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   color: #ce4844;
 }
 
-.it-standards-filter-button-active {
-  outline: 0.25rem solid #2491ff;
-  position: relative;
-  z-index: 10;
+.it-standards-filter-button-active button {
+  background-color: #2491ff;
+  border-color: #2491ff;
 }

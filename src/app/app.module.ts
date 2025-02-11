@@ -91,6 +91,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { FilterButtonsComponent } from './components/filter-buttons/filter-buttons.component';
+import { TooltipModule } from 'primeng/tooltip';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -157,7 +158,8 @@ import { FilterButtonsComponent } from './components/filter-buttons/filter-butto
         InputIconModule,
         InputTextModule,
         SidebarModule,
-        AccordionModule
+        AccordionModule,
+        TooltipModule
     ],
     providers: [Globals, provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule {

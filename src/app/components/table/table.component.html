@@ -34,7 +34,7 @@
 
   <!-- Table actions -->
   <ng-template pTemplate="caption" *ngIf="showToolbar">
-    <div style="text-align: right">
+    <div class="table-toolbar-container">
       <!-- Search bar -->
       <p-iconField iconPosition="left" *ngIf="showSearchbar">
         <p-inputIcon styleClass="fa fa-search" />
@@ -52,7 +52,7 @@
           [(ngModel)]="visibleColumns"
           (onChange)="toggleVisible($event)"
           optionLabel="field"
-          tooltip="Add/Remove Columns"
+          pTooltip="Add/Remove Columns"
           [showToggleAll]="false"
           ariaLabel="Toggle Columns">
           <ng-template pTemplate="selectedItems">
@@ -60,11 +60,11 @@
           </ng-template>
         </p-multiSelect>
         <!-- Pagination toggle button -->
-        <p-button icon="fa fa-caret-square-down" severity="primary" (click)="togglePagination()" *ngIf="showPaginationToggleButton" ariaLabel="Toggle Pagination" />
+        <!-- <p-button icon="fa fa-caret-square-down" severity="primary" (click)="togglePagination()" *ngIf="showPaginationToggleButton" ariaLabel="Toggle Pagination" /> -->
         <!-- Export button -->
-        <p-button icon="fa fa-download" severity="primary" (click)="onExportData()" *ngIf="showExportButton" ariaLabel="Export Data" />
+        <p-button icon="fa fa-download" pTooltip="Export table data" severity="primary" (click)="onExportData()" *ngIf="showExportButton" ariaLabel="Export Data" />
         <!-- Filter toggle button -->
-        <p-button icon="fa fa-filter" severity="primary" (click)="toggleFilter()" *ngIf="showFilterButton" ariaLabel="Toggle Filters" />
+        <p-button icon="fa fa-filter" pTooltip="Show/Hide column filters" severity="primary" (click)="toggleFilter()" *ngIf="showFilterButton" ariaLabel="Toggle Filters" />
     </div>
   </ng-template>
 

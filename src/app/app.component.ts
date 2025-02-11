@@ -77,7 +77,7 @@ export class AppComponent implements OnInit {
   }
 
   onSidebarIconsKeyDown(e: KeyboardEvent) {
-    if(e.code === 'Space' || e.code === 'Enter') {
+    if(e.key === ' ' || e.key === 'Enter' || e.key === 'Spacebar') {
       this.sharedService.openSidebar();
     }
   }
