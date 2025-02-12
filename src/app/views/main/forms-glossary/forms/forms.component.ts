@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
-import { SharedService } from '@services/shared/shared.service';
+import { Column } from '@common/table-classes';
 import { TableService } from '@services/tables/table.service';
 
-// Declare jQuery symbol
-declare var $: any;
+import * as accessFormsData from '../../../../../assets/statics/accessforms.json';
 
 @Component({
   selector: 'forms',
@@ -13,75 +12,39 @@ declare var $: any;
 })
 export class FormsComponent implements OnInit {
 
-  row: Object = <any>{};
+  tableData: any[] = [];
+  tableDataOriginal: any[] = [];
 
-  constructor(
-    private sharedService: SharedService,
-    private tableService: TableService) { }
-
-  // Forms Table Options
-  formsTableOptions: {} = this.tableService.createTableOptions({
-    advancedSearch: false,
-    idTable: null,
-    classes: "table-hover table-dark clickable-table",
-    showColumns: false,
-    showExport: false,
-    exportFileName: null,
-    headerStyle: null,
-    pagination: false,
-    search: false,
-    sortName: 'Title',
-    sortOrder: 'asc',
-    showToggle: false,
-    url: '/assets/statics/accessforms.json'
-  });
+  constructor(private tableService: TableService) { }
 
   // Forms Table Columns
-  formsColumnDefs: any[] = [{
+  tableCols: Column[] = [{
     field: 'Title',
-    title: 'Title',
-    sortable: true
+    header: 'Title',
+    isSortable: true
   },
   {
     field: 'Description',
-    title: 'Description'
+    header: 'Description'
   },
   {
     field: 'POC',
-    title: 'POC'
+    header: 'POC'
   }];
 
   ngOnInit(): void {
-    // Enable popovers
-    $(function () {
-      $('[data-toggle="popover"]').popover()
-    })
+    let rawData = JSON.stringify(accessFormsData);
+    this.tableDataOriginal = JSON.parse(rawData).default;
+    this.tableData = JSON.parse(rawData).default;
+    this.tableService.updateReportTableData(JSON.parse(rawData).default);
+  }
 
-    $('#formsTable').bootstrapTable($.extend(this.formsTableOptions, {
-      columns: this.formsColumnDefs,
-      data: [],
-    }));
+  onRowClick(e: any) {
+    if(e.originalEvent.srcElement.childNodes[0].data === e.data.POC) {
+      window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${e.data.POC_email}`);
+    } else {
+      window.open(e.data.Link);
+    }
 
-    const self = this;
-    $(document).ready(function() {
-      // Method to handle click events on the Investments table
-      $('#formsTable').on('click-cell.bs.table', function (e, field, value, row) {
-        // console.log("Forms Table Clicked Element: ", e);  // Debug
-        // console.log("Forms Table Clicked Field: ", field);  // Debug
-        // console.log("Forms Table Clicked Cell Value: ", value);  // Debug
-        // console.log("Forms Table Clicked Row: ", row);  // Debug
-
-        if (field === 'Description') {
-          // Open new tab with link of row
-          window.open(row.Link);
-        } else if (field === 'POC') {
-          // Open new tab to compose email
-          window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${row.POC_email}`);
-        }
-      }.bind(this));
-
-      //Enable table sticky header
-      self.sharedService.enableStickyHeader("formsTable");
-    });
   }
 }
