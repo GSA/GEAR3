@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Column } from '@common/table-classes';
 import { AnalyticsService } from '@services/analytics/analytics.service';
 import { ApiService } from '@services/apis/api.service';
 
@@ -17,6 +18,8 @@ declare var $: any;
 export class GlobalSearchComponent implements OnInit {
 
   public searchKW;
+  tableData: any[] = [];
+  tableDataOriginal: any[] = [];
 
   constructor(
     private sharedService: SharedService,
@@ -26,51 +29,34 @@ export class GlobalSearchComponent implements OnInit {
     private analyticsService: AnalyticsService
   ) { }
 
-  // Global Search Table Options
-  tableOptions: any = this.tableService.createTableOptions({
-    advancedSearch: true,
-    idTable: 'GlobalTable',
-    classes: "table-hover table-dark clickable-table fixed-table",
-    showColumns: false,
-    showExport: true,
-    exportFileName: null,
-    headerStyle: null,
-    pagination: true,
-    search: true,
-    sortName: 'Name',
-    sortOrder: 'asc',
-    showToggle: true,
-    url: null
-  });
-
-  // Global Search Table Columns
-  columnDefs: any[] = [{
-    field: 'Name',
-    title: 'Item Name',
-    sortable: true
-  },
-  {
-    field: 'Description',
-    title: 'Description',
-    sortable: true,
-    class: 'text-truncate'
-  },
-  {
-    field: 'GEAR_Type_Display',
-    title: 'GEAR Data Report',
-    sortable: true
-  }];
+  tableCols: Column[] = [];
 
   ngOnInit(): void {
+    // Global Search Table Columns
+    this.tableCols = [{
+      field: 'Name',
+      header: 'Item Name',
+      isSortable: true
+    },
+    {
+      field: 'Description',
+      header: 'Description',
+      isSortable: true,
+      class: 'text-truncate',
+      formatter: this.sharedService.formatDescription,
+    },
+    {
+      field: 'GEAR_Type_Display',
+      header: 'GEAR Data Report',
+      isSortable: true
+    }];
+
     // Enable popovers
     $(function () {
       $('[data-toggle="popover"]').popover()
     })
 
     this.route.params.subscribe((params) => {
-      //Disable table sticky header
-      this.sharedService.disableStickyHeader("globalSearchTable");
-
       // If the user pastes in an open global search modal url
       if(params && (params['reportType'] && params['id'])) {  
         let searchData = {
@@ -80,36 +66,17 @@ export class GlobalSearchComponent implements OnInit {
         this.tableService.globalSearchTableClick(searchData);
       }
 
-      /* On global search destroy the original table
-      *  so it doesn't cause an infinite loop when searching
-      *  while already on the search page since the bootstrap
-      *  table refresh method doesn't seem to work as expected.
-      *  Set the filename and url using the keyword and recreate the table.
-      */
       if(params && params['keyword']) {
-        $('#globalSearchTable').bootstrapTable('destroy');
+        // $('#globalSearchTable').bootstrapTable('destroy');
         let kw = params['keyword'];
-        this.tableOptions.url = this.apiService.globalSearchUrl + kw;
-        this.tableOptions.exportOptions.fileName = this.sharedService.fileNameFmt('GEAR_Global_Search-' + kw);
-        $('#globalSearchTable').bootstrapTable($.extend(this.tableOptions, {
-          columns: this.columnDefs,
-          data: [],
-        }));
+        this.apiService.getGlobalSearchResults(kw).subscribe(s => {
+          this.tableService.updateReportTableData(s);
+          this.tableData = s;
+          this.tableDataOriginal = s;
+        });
         // Log GA4 event
         this.analyticsService.logSearchEvent(kw);
       }
-
-      //Enable table sticky header
-      this.sharedService.enableStickyHeader("globalSearchTable");
     });
-
-    const self = this;
-    $(document).ready(() => {
-      // Method to handle click events on the Global Search table
-      $('#globalSearchTable').on('click-row.bs.table', function (e, row) {
-        this.tableService.globalSearchTableClick(row);
-      }.bind(this));
-  });
-
   }
 }

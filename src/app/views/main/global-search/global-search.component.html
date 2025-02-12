@@ -27,7 +27,7 @@
     </a>
   </div>
 
-  <div class="row card-body bg-light card-text justify-content-center">
-    <table id="globalSearchTable"></table>
+  <div>
+    <app-table [tableCols]="tableCols" reportStyle="default" exportName="Global Search" tableType="globalSearch" defaultSortField="Name"></app-table>
   </div>
 </div>
