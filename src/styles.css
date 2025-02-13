@@ -227,6 +227,10 @@ a.bg-royal-blue:hover, a.bg-royal-blue:focus, button.bg-royal-blue:hover, button
   box-shadow: 0 0 0 0.2rem rgba(43, 96, 222, 0.5);
 }
 
+.bg-light-blue {
+  background-color: #027eb2 !important;
+}
+
 .bg-teal {
   background-color: #008080 !important;
 }

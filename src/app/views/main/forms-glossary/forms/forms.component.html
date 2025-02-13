@@ -1,5 +1,5 @@
 <div class="card">
-  <div class="card-header text-white bg-dark text-center">
+  <div class="card-header text-white bg-light-blue text-center">
     <h3 class="card-title col-12 mb-0">
       <span>
         <i class="fab fa-wpforms"></i>
@@ -26,7 +26,7 @@
   <div class="card-body card-text">
     <div>
       <h3>Form Links</h3>
-      <table id="formsTable"></table>
+      <app-table [tableCols]="tableCols" exportName="Form Links" tableType="accessForms" reportStyle="additional-info" (rowClickEvent)="onRowClick($event)"></app-table>
     </div>
   </div>
 </div>

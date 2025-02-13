@@ -57,6 +57,9 @@ export class TableComponent implements OnInit, OnChanges {
   // Filter event (some reports change available columns when filtered)
   @Output() filterEvent = new EventEmitter<string>();
 
+  // Row click event
+  @Output() rowClickEvent = new EventEmitter<any>();
+
   @ViewChild(Table) private dt: Table;
 
   @HostListener('window:resize', ['$event'])
@@ -243,8 +246,13 @@ export class TableComponent implements OnInit, OnChanges {
   onRowSelect(e: TableRowSelectEvent) {
     if(this.tableType === 'globalSearch') {
       this.tableRowClickSelection(e.data.GEAR_Type, e.data);
+      return;
+    } else if(this.tableType === 'accessForms') {
+      this.rowClickEvent.emit(e);
+      return;
     } else {
       this.tableRowClickSelection(this.tableType, e.data);
+      return;
     }
   }
 

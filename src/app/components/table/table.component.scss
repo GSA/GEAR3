@@ -82,6 +82,16 @@
         }
     }
 
+    .additional-info.p-datatable .p-datatable-thead > tr > th {
+        color: #fff;
+        background-color: #027eb2;
+        border-color: #454d55;
+    
+        & .p-icon {
+            color: #fff;
+        }
+    }
+
 
     .p-datatable .p-datatable-tbody > tr {
         color: #fff;
