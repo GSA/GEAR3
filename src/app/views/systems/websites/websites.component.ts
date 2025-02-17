@@ -11,9 +11,6 @@ import { Title } from '@angular/platform-browser';
 import { FilterButton, Column, TwoDimArray } from '../../../common/table-classes';
 import { Website } from '@api/models/websites.model';
 
-// Declare jQuery symbol
-declare var $: any;
-
 @Component({
   selector: 'websites',
   templateUrl: './websites.component.html',
@@ -176,11 +173,6 @@ export class WebsitesComponent implements OnInit {
 ];
 
   ngOnInit(): void {
-    // Enable popovers
-    $(function () {
-      $('[data-toggle="popover"]').popover();
-    });
-
     // Set JWT when logged into GEAR Manager when returning from secureAuth
     this.sharedService.setJWTonLogIn();
 

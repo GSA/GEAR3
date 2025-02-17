@@ -314,6 +314,14 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   width: 20rem;
 }
 
+.description-wrap-short {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  width: 10rem;
+}
+
 .fixed-table-toolbar .search input {
   border: 1px solid;
   height: 100%;

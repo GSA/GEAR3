@@ -8,9 +8,6 @@ import { Title } from '@angular/platform-browser';
 import { Column } from '../../../common/table-classes';
 import { Organization } from '@api/models/organizations.model';
 
-// Declare jQuery symbol
-declare var $: any;
-
 @Component({
   selector: 'organizations',
   templateUrl: './organizations.component.html',
@@ -61,11 +58,6 @@ export class OrganizationsComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    // Enable popovers
-    $(function () {
-      $('[data-toggle="popover"]').popover();
-    });
-
     this.apiService.getOrganizations().subscribe(o => {
       this.tableService.updateReportTableData(o);
       this.tableData = o;

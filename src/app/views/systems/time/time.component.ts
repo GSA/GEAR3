@@ -13,9 +13,6 @@ import { Title } from '@angular/platform-browser';
 import { Column } from '../../../common/table-classes';
 import { TIME } from '@api/models/systime.model';
 
-// Declare jQuery symbol
-declare var $: any;
-
 @Component({
   selector: 'time',
   templateUrl: './time.component.html',
@@ -130,11 +127,6 @@ export class TimeComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    // Enable popovers
-    $(function () {
-      $('[data-toggle="popover"]').popover();
-    });
-
     this.apiService.getTIME().subscribe(t => {
       this.tableService.updateReportTableData(t);
       this.tableData = t;
@@ -199,6 +191,6 @@ export class TimeComponent implements OnInit {
   }
 
   onSelect(event) {
-    console.log(event);
+    // console.log(event);
   }
 }

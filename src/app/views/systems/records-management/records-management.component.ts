@@ -11,9 +11,6 @@ import { trigger, state, style, animate, transition } from '@angular/animations'
 import { Column } from '../../../common/table-classes';
 import { Record } from '@api/models/records.model';
 
-// Declare jQuery symbol
-declare var $: any;
-
 @Component({
   selector: 'records-management',
   templateUrl: './records-management.component.html',
@@ -129,11 +126,6 @@ export class RecordsManagementComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    // Enable popovers
-    $(function () {
-      $('[data-toggle="popover"]').popover();
-    });
-
     // Set JWT when logged into GEAR Manager when returning from secureAuth
     this.sharedService.setJWTonLogIn();
 

@@ -109,7 +109,7 @@ export class SystemsComponent implements OnInit {
     },
     {
       field: 'DisplayName',
-      header: 'Alias/Acronym',
+      header: 'Alias / Acronym',
       isSortable: true,
     },
     {
@@ -122,7 +122,7 @@ export class SystemsComponent implements OnInit {
       header: 'Description',
       isSortable: true,
       showColumn: true,
-      formatter: this.sharedService.formatDescription
+      formatter: this.sharedService.formatDescriptionShorter
     },
     {
       field: 'SystemLevel',
@@ -285,11 +285,6 @@ export class SystemsComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    // Enable popovers
-    $(function () {
-      $('[data-toggle="popover"]').popover();
-    });
-
     // Set JWT when logged into GEAR Manager when returning from secureAuth
     this.sharedService.setJWTonLogIn();
 
