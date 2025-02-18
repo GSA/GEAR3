@@ -1,0 +1,16 @@
+::ng-deep {
+    .p-overlaypanel {
+        width: 25%;
+    }
+
+    & .button-overlay-panel .p-button {
+        background-color: #027eb2;
+        border-color: #027eb2;
+        
+        & .p-button-label {
+            font-size: 10px;
+            line-height: 1.5;
+            text-transform: uppercase;
+        }
+    }
+}

@@ -319,6 +319,10 @@ export class SharedService {
     if (!value) return '';
     else return '<p class="description-wrap">' + value + "</p>";;
   };
+  public formatDescriptionShorter(value: any, row: any) {
+    if (!value) return '';
+    else return '<p class="description-wrap-short">' + value + "</p>";;
+  };
 
   //// OS & App Bundle formatter
   public csvFormatter(value: any, row: any) {

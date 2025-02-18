@@ -1,6 +1,7 @@
 <div class="card">
-  <div class="card-header text-white bg-success text-center">
-    <h3 class="card-title col-12 mb-0">
+  <div class="card-header text-white bg-success text-center d-flex align-items-center justify-content-between">
+    <div></div>
+    <h3 class="card-title mb-0">
       <span>
         <i class="fas fa-money-bill-wave mr-2"></i>
         <span [hidden]="!filteredTable">{{ filterTitle }} </span>
@@ -9,10 +10,8 @@
       </span>
     </h3>
     <!-- Help Button -->
-    <a tabindex="0"
-      class="btn btn-sm btn-info text-white shadow help-btn d-flex align-items-center justify-content-center"
-      role="button" data-toggle="popover" data-trigger="focus" data-placement="auto" data-html="true"
-      title="Help Using this Table" data-content="<b>Details:</b> Left click on a row within the table to view additional details.
+    <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
+      <b>Details:</b> Left click on a row within the table to view additional details.
         <br><br>
         <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
         <br><br>
@@ -24,36 +23,20 @@
         Search within specific columns by clicking on the <i class='fas fa-angle-down'></i> icon. 
         <br><br>
         <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
-        <i class='fas fa-caret-square-down'></i> icon to display everything on one page.">
-      <span class="mr-2">More Help</span><i class="far fa-question-circle fa-2x"></i>
-    </a>
+        <i class='fas fa-caret-square-down'></i> icon to display everything on one page.
+    </app-button-overlay-panel>
   </div>
 
   <div class="card-body card-text">
-    <!-- Investment Definition Popover -->
-    <a tabindex="0" class="btn btn-sm btn-info text-white position-absolute float-right w-11" role="button"
-      data-toggle="popover" data-trigger="focus" data-placement="auto" data-html="true" title=""
-      data-content="Information technology investment means an expenditure of information technology
-      resources to address mission delivery and management support. This may include a
-      project or projects for the development, modernization, enhancement, or maintenance of
-      a single information technology asset or group of information technology assets with
-      related functionality, and the subsequent operation of those assets in a production
-      environment. These investments shall have a defined life cycle with start and end dates.
-      (<a href='https://obamawhitehouse.archives.gov/sites/default/files/omb/assets/OMB/circulars/a130/a130revised.pdf' 
-      target='_blank' rel='noopener'>OMB A-130, pg 31</a>)">
-      Investment Definition
-    </a>
-
     <!-- Visualizations -->
     <span id="investVizText" tabindex="0"
-      [attr.aria-label]="getAriaLabel(vizData)" style="visibility: hidden;">
+      [attr.aria-label]="getAriaLabel(vizData)" style="display: none;">
       Pie Chart Details
     </span>
-
-
-    <div
-      id="investViz" class="row justify-content-center collapse show" style="height: 300px;"
-      [hidden]="filterTitle == 'Inactive'">
+    <div id="investViz" 
+         class="row justify-content-center collapse show"
+         style="height: 300px;"
+         [hidden]="filterTitle == 'Inactive'">
       <ngx-charts-advanced-pie-chart appSkipFocusPiechart [scheme]="colorScheme" [results]="vizData" [label]="vizLabel"
         role="navigation"
         [ariaLabel]="getAriaLabel(vizData)"
@@ -65,6 +48,17 @@
     <!-- Main Table -->
     <app-table [tableCols]="tableCols" exportName="Investments" reportStyle="it-strategy" tableType="investments">
       <app-filter-buttons filterBtns [filterButtons]="filterButtons" [singleFilterOnly]="true" (filterClick)="onFilterClick($event)" (filterResetClick)="onFilterResetClick()"></app-filter-buttons>
+        <!-- Investment Definition Popover -->
+        <app-button-overlay-panel definitionBtn buttonText="Investment Definition">
+          Information technology investment means an expenditure of information technology
+          resources to address mission delivery and management support. This may include a
+          project or projects for the development, modernization, enhancement, or maintenance of
+          a single information technology asset or group of information technology assets with
+          related functionality, and the subsequent operation of those assets in a production
+          environment. These investments shall have a defined life cycle with start and end dates.
+          (<a href='https://obamawhitehouse.archives.gov/sites/default/files/omb/assets/OMB/circulars/a130/a130revised.pdf' 
+          target='_blank' rel='noopener'>OMB A-130, pg 31</a>)
+        </app-button-overlay-panel>
     </app-table>
   </div>
 </div>

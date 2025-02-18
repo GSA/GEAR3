@@ -1,6 +1,16 @@
 <div class="card">
-  <div class="card-header text-white bg-royal-blue text-center">
-    <h3 class="card-title col-12 mb-0">
+  <div class="card-header text-white bg-royal-blue text-center d-flex align-items-center justify-content-between">
+    <!-- GEAR Manager Access -->
+    <a class="btn btn-sm btn-info text-white shadow d-flex align-items-center"
+      routerLink="/gear_manager" *ngIf="!sharedService.loggedIn" aria-label="GEAR Manager Login" (click)="sharedService.setRedirectPath()">
+      <span class="mr-2">GEAR Manager Login</span><i class="fa fa-sign-in-alt fa-2x"></i>
+    </a>
+    <a class="btn btn-sm btn-danger text-white shadow d-flex align-items-center"
+      routerLink="/capabilities" *ngIf="sharedService.loggedIn" aria-label="GEAR Manager Logout" (click)="sharedService.logoutManager()">
+      <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
+    </a>
+
+    <h3 class="card-title mb-0">
       <span>
         <i class="fas fa-project-diagram mr-2"></i>
         <span [hidden]="ssoTable">GSA </span>
@@ -8,22 +18,10 @@
         Business Capabilities List
       </span>
     </h3>
-
-    <!-- GEAR Manager Access -->
-    <a class="btn btn-sm btn-info text-white shadow mngr-btn d-flex align-items-center justify-content-center"
-      routerLink="/gear_manager" *ngIf="!sharedService.loggedIn" aria-label="GEAR Manager Login" (click)="sharedService.setRedirectPath()">
-      <span class="mr-2">GEAR Manager Login</span><i class="fa fa-sign-in-alt fa-2x"></i>
-    </a>
-    <a class="btn btn-sm btn-danger text-white shadow mngr-btn d-flex align-items-center justify-content-center"
-      routerLink="/capabilities" *ngIf="sharedService.loggedIn" aria-label="GEAR Manager Logout" (click)="sharedService.logoutManager()">
-      <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
-    </a>
     
     <!-- Help Button -->
-    <a tabindex="0"
-      class="btn btn-sm btn-info text-white shadow help-btn d-flex align-items-center justify-content-center"
-      role="button" data-toggle="popover" data-trigger="focus" data-placement="auto" data-html="true"
-      title="Help Using this Table" data-content="<b>Details:</b> Left click on a row within the table to view additional details.
+    <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
+      <b>Details:</b> Left click on a row within the table to view additional details.
         <br><br>
         <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
         <br><br>
@@ -35,24 +33,21 @@
         Search within specific columns by clicking on the <i class='fas fa-angle-down'></i> icon. 
         <br><br>
         <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
-        <i class='fas fa-caret-square-down'></i> icon to display everything on one page.">
-      <span class="mr-2">More Help</span><i class="far fa-question-circle fa-2x"></i>
-    </a>
+        <i class='fas fa-caret-square-down'></i> icon to display everything on one page.
+    </app-button-overlay-panel>
   </div>
 
   <div class="card-body card-text">
       <!-- Business Capability Definition Popover -->
-      <a tabindex="0" class="btn btn-sm btn-info text-white" role="button"
-        data-toggle="popover" data-trigger="focus" data-placement="auto" data-html="true" title=""
-        data-content="A classification taxonomy used to describe the business
+      <app-button-overlay-panel definitionBtn buttonText="Business Capability Definition">
+        A classification taxonomy used to describe the business
         functions and services at GSA. By describing GSA using standard business functions 
         rather than an organizational view, this taxonomy promotes collaboration, shared services, 
         and solution reuse in agency IT portfolios and inter-agency Lines of Business. While this taxonomy 
         provides a standardized way of classifying government functions, its true value is realized when 
         it is effectively used in business analysis, design, and decision support that help to improve the performance of GSA. 
-        (<a href='https://obamawhitehouse.archives.gov/sites/default/files/omb/assets/egov_docs/fea_v2.pdf' target='_blank' rel='noopener'>FEAF pg 30</a>)">
-        Business Capability Definition
-      </a>    
+        (<a href='https://obamawhitehouse.archives.gov/sites/default/files/omb/assets/egov_docs/fea_v2.pdf' target='_blank' rel='noopener'>FEAF pg 30</a>)
+      </app-button-overlay-panel> 
       <!-- Main Table -->
       <app-table [tableCols]="tableCols" exportName="Capabilities" reportStyle="gsa-enterprise" tableType="capabilities"></app-table>
   </div>

@@ -1,7 +1,19 @@
 <div class="card">
-  <div class="card-header text-white bg-teal text-center">
+  <div class="card-header text-white bg-teal text-center d-flex align-items-center justify-content-between">
+    <!-- GEAR Manager Access -->
+    <a class="btn btn-sm btn-info text-white shadow d-flex align-items-center"
+      routerLink="/gear_manager" *ngIf="!sharedService.loggedIn" aria-label="GEAR Manager Login"
+      (click)="sharedService.setRedirectPath()">
+      <span class="mr-2">GEAR Manager Login</span><i class="fa fa-sign-in-alt fa-2x"></i>
+    </a>
+    <a class="btn btn-sm btn-danger text-white shadow d-flex align-items-center"
+      routerLink="/it_standards" *ngIf="sharedService.loggedIn" aria-label="GEAR Manager Logout"
+      (click)="sharedService.logoutManager()">
+      <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
+    </a>
+
     <!-- Title -->
-    <h3 class="card-title col-12 mb-0">
+    <h3 class="card-title mb-0">
       <span>
         <i class="fas fa-microchip mr-2"></i>
         <span [hidden]="filteredTable">All GSA </span>
@@ -9,24 +21,11 @@
         IT Standards
       </span>
     </h3>
-
-    <!-- GEAR Manager Access -->
-    <a class="btn btn-sm btn-info text-white shadow mngr-btn d-flex align-items-center justify-content-center"
-      routerLink="/gear_manager" *ngIf="!sharedService.loggedIn" aria-label="GEAR Manager Login"
-      (click)="sharedService.setRedirectPath()">
-      <span class="mr-2">GEAR Manager Login</span><i class="fa fa-sign-in-alt fa-2x"></i>
-    </a>
-    <a class="btn btn-sm btn-danger text-white shadow mngr-btn d-flex align-items-center justify-content-center"
-      routerLink="/it_standards" *ngIf="sharedService.loggedIn" aria-label="GEAR Manager Logout"
-      (click)="sharedService.logoutManager()">
-      <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
-    </a>
     
     <!-- Help Button -->
-    <a tabindex="0"
-      class="btn btn-sm btn-info text-white shadow help-btn d-flex align-items-center justify-content-center"
-      role="button" data-toggle="popover" data-trigger="focus" data-placement="auto" data-html="true"
-      title="Help Using this Table" data-content="<b>Details:</b> Left click on a row within the table to view additional details.
+    <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
+      <span>
+        <b>Details:</b> Left click on a row within the table to view additional details.
         <br><br>
         <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
         <br><br>
@@ -38,9 +37,9 @@
         Search within specific columns by clicking on the <i class='fas fa-angle-down'></i> icon. 
         <br><br>
         <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
-        <i class='fas fa-caret-square-down'></i> icon to display everything on one page.">
-      <span class="mr-2">More Help</span><i class="far fa-question-circle fa-2x"></i>
-    </a>
+        <i class='fas fa-caret-square-down'></i> icon to display everything on one page.
+      </span>
+    </app-button-overlay-panel>
   </div>
 
   <div class="card-body card-text justify-content-center">
@@ -50,24 +49,23 @@
         (click)="createITStand()" [hidden]="!sharedService.loggedIn">
         <i class="fas fa-plus"></i>
       </button>
-
-      <!-- IT-Standard Definition Popover -->
-      <a tabindex="0" class="btn btn-sm btn-info text-white position-absolute float-right w-11" role="button"
-        data-toggle="popover" data-trigger="focus" data-placement="auto" data-html="true" title=""
-        data-content="The IT Standards inventory is the official GSA repository of software products/versions. 
-        This inventory can be used to determine which software has been reviewed and approved, ensuring that users are only requesting 
-        and using software that has been approved by IT Security. The Chief Technology Office (CTO) is responsible for managing 
-        the process and ensuring IT Standards are reviewed for use within GSA. 
-        For more information, please see the 
-        <a href='https://sites.google.com/a/gsa.gov/it_standards/it-standards' target='_blank' rel='noopener'>IT Standards site</a>">
-        IT-Standards definition
-      </a>
     </div>
-
+    
     <!-- Main Table -->
     <ng-container *ngIf="dataReady">
       <app-table [tableCols]="tableCols" exportName="IT Standards" reportStyle="technologies" tableType="itStandards">
+        <!-- IT-Standard Filter Buttons -->
         <app-filter-buttons filterBtns [filterButtons]="filterButtons" [preloadedFilterButtons]="preloadedFilterButtons" (filterClick)="onFilterClick($event)" (filterResetClick)="onFilterResetClick()"></app-filter-buttons>
+        <!-- IT-Standard Definition Popover -->
+        <app-button-overlay-panel definitionBtn buttonText="IT-Standards definition">
+          <span>The IT Standards inventory is the official GSA repository of software products/versions. 
+            This inventory can be used to determine which software has been reviewed and approved, ensuring that users are only requesting 
+            and using software that has been approved by IT Security. The Chief Technology Office (CTO) is responsible for managing 
+            the process and ensuring IT Standards are reviewed for use within GSA. 
+            For more information, please see the 
+            <a href='https://sites.google.com/a/gsa.gov/it_standards/it-standards' target='_blank' rel='noopener'>IT Standards site</a>
+          </span>
+        </app-button-overlay-panel>
       </app-table>
     </ng-container>
   </div>

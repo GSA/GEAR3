@@ -1,16 +1,15 @@
 <div class="card">
-  <div class="row card-header text-white bg-royal-blue text-center">
-    <h3 class="card-title col-12 mb-0">
+  <div class="row card-header text-white bg-royal-blue text-center d-flex align-items-center justify-content-between">
+    <div></div>
+    <h3 class="card-title mb-0">
       <span>
         <i class="fas fa-project-diagram"></i>
         GSA Capabilities Model
       </span>
     </h3>
     <!-- Help Button -->
-    <a tabindex="0"
-    class="btn btn-sm btn-info text-white shadow help-btn d-flex align-items-center justify-content-center"
-      role="button" data-toggle="popover" data-trigger="focus" data-placement="auto" data-html="true"
-      title="Help Using this Table" data-content="<b>Hover:</b> Hover over a circle next to an capabilities to see its description.
+    <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
+      <b>Hover:</b> Hover over a circle next to an capabilities to see its description.
         In the pop-up window, click the <i class='far fa-file-alt'></i> icon to see additional information about the capabilities
         or click the <i class='fa fa-times'></i> icon to close the window.
         <br><br>
@@ -19,25 +18,22 @@
         <br><br>
         <b>Search:</b> The search box below can search for any of the capabilities display names and expand the chart to the nodes that match.
         Enter your desired term into the search bar and press <i>Enter</i>. You will get an alert if no matching term is found.
-        Click the <i class='far fa-trash-alt fa-lg'></i> icon to clear the search box and reset the chart.">
-      <span class="mr-2">More Help</span><i class="far fa-question-circle fa-2x"></i>
-    </a>
+        Click the <i class='far fa-trash-alt fa-lg'></i> icon to clear the search box and reset the chart.
+    </app-button-overlay-panel>
   </div>
 
   <div class="row card-body bg-light card-text">
     <div>
       <!-- Business Capability Definition Popover -->
-      <a tabindex="0" class="btn btn-sm btn-info text-white" role="button"
-        data-toggle="popover" data-trigger="focus" data-placement="auto" data-html="true" title=""
-        data-content="A classification taxonomy used to describe the business
+      <app-button-overlay-panel buttonText="Business Capability Definition">
+        A classification taxonomy used to describe the business
         functions and services at GSA. By describing GSA using standard business functions 
         rather than an organizational view, this taxonomy promotes collaboration, shared services, 
         and solution reuse in agency IT portfolios and inter-agency Lines of Business. While this taxonomy 
         provides a standardized way of classifying government functions, its true value is realized when 
         it is effectively used in business analysis, design, and decision support that help to improve the performance of GSA. 
-        (<a href='https://obamawhitehouse.archives.gov/sites/default/files/omb/assets/egov_docs/fea_v2.pdf' target='_blank' rel='noopener'>FEAF pg 30</a>)">
-        Business Capability Definition
-      </a>
+        (<a href='https://obamawhitehouse.archives.gov/sites/default/files/omb/assets/egov_docs/fea_v2.pdf' target='_blank' rel='noopener'>FEAF pg 30</a>)
+      </app-button-overlay-panel>
     </div>
 
     <!-- Detail Card -->

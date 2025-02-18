@@ -8,9 +8,6 @@ import { Title } from '@angular/platform-browser';
 import { Column } from '../../../common/table-classes';
 import { FISMA } from '@api/models/fisma.model';
 
-// Declare jQuery symbol
-declare var $: any;
-
 @Component({
   selector: 'fisma-pocs',
   templateUrl: './fisma-pocs.component.html',
@@ -83,11 +80,6 @@ export class FismaPocsComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    // Enable popovers
-    $(function () {
-      $('[data-toggle="popover"]').popover();
-    });
-
     this.apiService.getFISMA().subscribe(fisma => {
       this.tableDataOriginal = fisma;
       fisma.forEach(f => {

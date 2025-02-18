@@ -9,9 +9,6 @@ import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
 
-// Declare jQuery symbol
-declare var $: any;
-
 interface OrgTree {
   identity: number;
   name: string;
@@ -51,11 +48,6 @@ export class OrganizationsChartComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Enable popovers
-    $(function () {
-      $('[data-toggle="popover"]').popover();
-    });
-
     this.getOrgData();
 
     // Method to open details modal when referenced directly via URL

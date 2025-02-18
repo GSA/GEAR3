@@ -290,11 +290,6 @@ export class ItStandardsComponent implements OnInit {
       }];
     });
 
-    // Enable popovers
-    $(function () {
-      $('[data-toggle="popover"]').popover();
-    });
-
     // Set JWT when logged into GEAR Manager when returning from secureAuth
     this.sharedService.setJWTonLogIn();
 

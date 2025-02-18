@@ -4,9 +4,6 @@ import { Column } from '@common/table-classes';
 import * as glossaryData from '../../../../../assets/statics/glossary.json';
 import { TableService } from '@services/tables/table.service';
 
-// Declare jQuery symbol
-declare var $: any;
-
 @Component({
   selector: 'glossary',
   templateUrl: './glossary.component.html',
@@ -37,11 +34,6 @@ export class GlossaryComponent implements OnInit {
   }]
 
   ngOnInit(): void {
-    // Enable popovers
-    $(function () {
-      $('[data-toggle="popover"]').popover()
-    })
-
     let rawData = JSON.stringify(glossaryData);
     this.tableDataOriginal = JSON.parse(rawData).default;
     this.tableData = JSON.parse(rawData).default;

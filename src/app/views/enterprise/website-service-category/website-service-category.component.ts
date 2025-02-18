@@ -9,9 +9,6 @@ import { Title } from '@angular/platform-browser';
 import { Column } from '../../../common/table-classes';
 import { Service_Category } from '@api/models/service-category.model';
 
-// Declare jQuery symbol
-declare var $: any;
-
 @Component({
   selector: 'website-service-category',
   templateUrl: './website-service-category.component.html',
@@ -56,11 +53,6 @@ export class WebsiteServiceCategoryComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    // Enable popovers
-    $(function () {
-      $('[data-toggle="popover"]').popover();
-    });
-
     this.apiService.getWebsiteServiceCategory().subscribe(w => {
       this.tableService.updateReportTableData(w);
       this.tableData = w;

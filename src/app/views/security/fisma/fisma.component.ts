@@ -9,9 +9,6 @@ import { Title } from '@angular/platform-browser';
 import { FilterButton, Column, TwoDimArray } from '../../../common/table-classes';
 import { FISMA } from '@api/models/fisma.model';
 
-// Declare jQuery symbol
-declare var $: any;
-
 @Component({
   selector: 'fisma',
   templateUrl: './fisma.component.html',
@@ -151,11 +148,6 @@ export class FismaComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    // Enable popovers
-    $(function () {
-      $('[data-toggle="popover"]').popover();
-    });
-
     this.apiService.getFISMA().subscribe(fisma => {
       this.tableDataOriginal = fisma;
       fisma.forEach(f => {

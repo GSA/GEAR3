@@ -7,9 +7,6 @@ import { Column } from '../../../common/table-classes';
 import { DataDictionary } from '@api/models/data-dictionary.model';
 import { TableService } from '@services/tables/table.service';
 
-// Declare jQuery symbol
-declare var $: any;
-
 @Component({
   selector: 'data-dictionary',
   templateUrl: './data-dictionary.component.html',
@@ -73,10 +70,5 @@ export class DataDictionaryComponent implements OnInit {
       this.tableData = defs;
       this.tableService.updateReportTableData(defs);
     });
-
-    // Enable popovers
-    $(function () {
-      $('[data-toggle="popover"]').popover()
-    })
   }
 }

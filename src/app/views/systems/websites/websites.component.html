@@ -1,15 +1,8 @@
 <div class="card">
-  <div class="card-header text-white bg-danger text-center">
-    <h3 class="card-title col-12 mb-0">
-      <span>
-        <i class="far fa-folder-open mr-2"></i>
-        GSA Websites
-      </span>
-    </h3>
-
+  <div class="card-header text-white bg-danger text-center d-flex align-items-center justify-content-between">
     <!-- GEAR Manager Access -->
     <a
-      class="btn btn-sm btn-info text-white shadow mngr-btn d-flex align-items-center justify-content-center"
+      class="btn btn-sm btn-info text-white shadow d-flex align-items-center"
       routerLink="/gear_manager"
       *ngIf="!sharedService.loggedIn"
       aria-label="GEAR Manager Login"
@@ -19,7 +12,7 @@
       ><i class="fa fa-sign-in-alt fa-2x"></i>
     </a>
     <a
-      class="btn btn-sm btn-danger text-white shadow mngr-btn d-flex align-items-center justify-content-center"
+      class="btn btn-sm btn-danger text-white shadow d-flex align-items-center"
       routerLink="/websites"
       *ngIf="sharedService.loggedIn"
       aria-label="GEAR Manager Logout"
@@ -28,17 +21,16 @@
       <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
     </a>
 
+    <h3 class="card-title mb-0">
+      <span>
+        <i class="far fa-folder-open mr-2"></i>
+        GSA Websites
+      </span>
+    </h3>
+
     <!-- Help Button -->
-    <a
-      tabindex="0"
-      class="btn btn-sm btn-info text-white shadow help-btn d-flex align-items-center justify-content-center"
-      role="button"
-      data-toggle="popover"
-      data-trigger="focus"
-      data-placement="auto"
-      data-html="true"
-      title="Help Using this Table"
-      data-content="<b>Details:</b> Left click on a row within the table to view additional details.
+    <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
+      <b>Details:</b> Left click on a row within the table to view additional details.
       <br><br>
       <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
       <br><br>
@@ -50,28 +42,23 @@
       Search within specific columns by clicking on the <i class='fas fa-angle-down'></i> icon. 
       <br><br>
       <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
-      <i class='fas fa-caret-square-down'></i> icon to display everything on one page."
-    >
-      <span class="mr-2">More Help</span
-      ><i class="far fa-question-circle fa-2x"></i>
-    </a>
+      <i class='fas fa-caret-square-down'></i> icon to display everything on one page.
+    </app-button-overlay-panel>
 
   </div>
   <div class="card-body card-text">
     <!-- Main Table -->
     <app-table [tableCols]="tableCols" exportName="Websites" reportStyle="business-systems" tableType="website">
-      <!-- Website Definition Popover -->
-      <a definitionBtn tabindex="0" class="btn btn-sm btn-info text-white d-flex flex-wrap align-content-center" role="button"
-      data-toggle="popover" data-trigger="focus" data-placement="auto" data-html="true" title=""
-      data-content="This report represents GSA's inventory of public-facing websites (i.e. accessible to the general public 
-      and not behind any authentication or firewall). This report can be used to better understand how the public views and interacts with GSA's
-      business services, offerings, and information. This data is imported from the  
-      <a href='https://touchpoints.app.cloud.gov/admin/websites' target='_blank' rel='noopener'>Touchpoints websites inventory</a>
-      as well as from the Enterprise Digital Experience (EDX) team's 
-      <a href='https://github.com/GSA/EDX/tree/main/Tools/edxcli' target='_blank' rel='noopener'>ecxcli website scans</a>.">
-      Website definition
-      </a>
       <app-filter-buttons filterBtns [filterButtons]="filterButtons" [singleFilterOnly]="true" (filterClick)="onFilterClick($event)" (filterResetClick)="onFilterResetClick()"></app-filter-buttons>
+      <!-- Website Definition Popover -->
+      <app-button-overlay-panel definitionBtn buttonText="Website definition">
+        This report represents GSA's inventory of public-facing websites (i.e. accessible to the general public 
+        and not behind any authentication or firewall). This report can be used to better understand how the public views and interacts with GSA's
+        business services, offerings, and information. This data is imported from the  
+        <a href='https://touchpoints.app.cloud.gov/admin/websites' target='_blank' rel='noopener'>Touchpoints websites inventory</a>
+        as well as from the Enterprise Digital Experience (EDX) team's 
+        <a href='https://github.com/GSA/EDX/tree/main/Tools/edxcli' target='_blank' rel='noopener'>ecxcli website scans</a>.
+      </app-button-overlay-panel>
     </app-table>
   </div>
 </div>

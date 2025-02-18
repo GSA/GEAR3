@@ -92,6 +92,8 @@ import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { FilterButtonsComponent } from './components/filter-buttons/filter-buttons.component';
 import { TooltipModule } from 'primeng/tooltip';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { ButtonOverlayPanelComponent } from './components/button-overlay-panel/button-overlay-panel.component';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -141,7 +143,8 @@ import { TooltipModule } from 'primeng/tooltip';
         SidebarComponent,
         DataDictionaryComponent,
         TableComponent,
-        FilterButtonsComponent
+        FilterButtonsComponent,
+        ButtonOverlayPanelComponent
     ],
     bootstrap: [AppComponent], imports: [AppRoutingModule,
         BrowserAnimationsModule,
@@ -159,7 +162,8 @@ import { TooltipModule } from 'primeng/tooltip';
         InputTextModule,
         SidebarModule,
         AccordionModule,
-        TooltipModule
+        TooltipModule,
+        OverlayPanelModule
     ],
     providers: [Globals, provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule {

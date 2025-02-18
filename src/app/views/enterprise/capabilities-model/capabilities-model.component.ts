@@ -4,13 +4,8 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
-import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
-import { Title } from '@angular/platform-browser';
-
-// Declare jQuery symbol
-declare var $: any;
 
 interface CapTree {
   identity: number;
@@ -53,20 +48,13 @@ export class CapabilitiesModelComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    private modalService: ModalsService,
     private route: ActivatedRoute,
     private sharedService: SharedService,
     private tableService: TableService,
-    private titleService: Title,
     private elementRef: ElementRef
   ) {}
 
   ngOnInit(): void {
-    // Enable popovers
-    $(function () {
-      $('[data-toggle="popover"]').popover();
-    });
-
     // Set JWT when logged into GEAR Manager when returning from secureAuth
     this.sharedService.setJWTonLogIn();
 
