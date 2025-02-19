@@ -24,7 +24,7 @@
           <i class="fas fa-money-bill-wave"></i>
           {{ investment.Name }}
         </h5>
-        <a role="button" aria-label="Close" data-dismiss="modal" tabindex="0">
+        <a role="button" aria-label="Close" data-bs-dismiss="modal" tabindex="0">
           <i class="fas fa-times fa-lg text-white align-self-center"></i>
         </a>
       </div>
@@ -33,18 +33,18 @@
         <!-- Tabs -->
         <ul id="investTabs" class="nav nav-tabs">
           <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#investOverview">
+            <a class="nav-link active" data-bs-toggle="tab" href="#investOverview">
               Overview</a
             >
           </li>
           <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#budgetYear">
+            <a class="nav-link" data-bs-toggle="tab" href="#budgetYear">
               Budget Year</a
             >
           </li>
           
           <li class="nav-item" *ngIf="showRelatedSystemsTab()">
-            <a class="nav-link" data-toggle="tab" href="#investRelatedSys">
+            <a class="nav-link" data-bs-toggle="tab" href="#investRelatedSys">
               Related Systems</a
             >
           </li>

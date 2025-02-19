@@ -124,7 +124,7 @@ export class CapabilitiesComponent implements OnInit {
   ngOnInit(): void {
     // Enable popovers
     $(function () {
-      $('[data-toggle="popover"]').popover();
+      $('[data-bs-toggle="popover"]').popover();
     });
 
     // Set JWT when logged into GEAR Manager when returning from secureAuth

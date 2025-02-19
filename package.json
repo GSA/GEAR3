@@ -42,7 +42,7 @@
     "async": "^2.6.4",
     "base-64": "^0.1.0",
     "body-parser": "^1.20.3",
-    "bootstrap": "^4.6.2",
+    "bootstrap": "^5.3.3",
     "bootstrap-datepicker": "^1.9.0",
     "bootstrap-table": "^1.18.3",
     "concurrently": "^5.3.0",
