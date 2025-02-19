@@ -18,9 +18,6 @@ export class TableComponent implements OnInit, OnChanges {
   // Table columns and their options
   @Input() tableCols: Column[] = [];
 
-  // The table data
-  @Input() tableData: any[] = [];
-
   // Two dimenstional array of button filters
   // Each array of strings is a grouping of buttons
   @Input() filterButtons: TwoDimArray<FilterButton> = [];
@@ -67,7 +64,7 @@ export class TableComponent implements OnInit, OnChanges {
     this.setScreenHeight();
   }
 
-  testTableData: any[] = [];
+  tableData: any[] = [];
 
   visibleColumns: Column[] = [];
   isPaginated: boolean = true;
@@ -98,7 +95,7 @@ export class TableComponent implements OnInit, OnChanges {
     this.exportColumns = this.tableCols.map((col) => ({ title: col.header, dataKey: col.field }));
     // this.activeTableData = this.getTableData();
     this.tableService.reportTableData$.subscribe(d => {
-      this.testTableData = d;
+      this.tableData = d;
     });
     this.generateColumns();
   }
@@ -328,5 +325,14 @@ export class TableComponent implements OnInit, OnChanges {
         return c === filterButton;
       });
     //}
+  }
+
+  onTableSearch(keyword: string) {
+    let isnum = /^\d+$/.test(keyword);
+    if(isnum) {
+      this.dt.filterGlobal(keyword, 'equals');
+    } else {
+      this.dt.filterGlobal(keyword, 'contains');
+    }
   }
 }

@@ -13,7 +13,7 @@
 <!-- Table -->
 <p-table #dt
   [columns]="tableCols"
-  [value]="testTableData"
+  [value]="tableData"
   [rowsPerPageOptions]="[10, 25, 50]"
   [rows]="10"
   [first]="first"
@@ -41,7 +41,7 @@
         <input 
           pInputText 
           type="text" 
-          (input)="dt.filterGlobal($event.target.value, 'contains')" 
+          (input)="onTableSearch($event.target.value)" 
           placeholder="Search keyword"
           aria-label="Table Search" />
       </p-iconField>
