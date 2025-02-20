@@ -99,7 +99,7 @@ export class FismaPocsComponent implements OnInit {
   ngOnInit(): void {
     // Enable popovers
     $(function () {
-      $('[data-toggle="popover"]').popover();
+      $('[data-bs-toggle="popover"]').popover();
     });
 
     $('#fismaPOCTable').bootstrapTable(

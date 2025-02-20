@@ -144,7 +144,7 @@ export class TimeComponent implements OnInit {
   ngOnInit(): void {
     // Enable popovers
     $(function () {
-      $('[data-toggle="popover"]').popover();
+      $('[data-bs-toggle="popover"]').popover();
     });
 
     $('#timeTable').bootstrapTable(

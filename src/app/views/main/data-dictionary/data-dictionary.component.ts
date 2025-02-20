@@ -87,7 +87,7 @@ export class DataDictionaryComponent implements OnInit {
 
     // Enable popovers
     $(function () {
-      $('[data-toggle="popover"]').popover()
+      $('[data-bs-toggle="popover"]').popover()
     })
 
     const self = this;

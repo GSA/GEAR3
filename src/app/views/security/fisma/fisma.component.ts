@@ -167,7 +167,7 @@ export class FismaComponent implements OnInit {
   ngOnInit(): void {
     // Enable popovers
     $(function () {
-      $('[data-toggle="popover"]').popover();
+      $('[data-bs-toggle="popover"]').popover();
     });
 
     $('#fismaTable').bootstrapTable(
