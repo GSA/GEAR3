@@ -34,7 +34,7 @@ export class AppComponent implements OnInit {
     let mainElem: HTMLElement = document.getElementById('mainModule');
     let topNavElem: HTMLElement = document.getElementById('topNav');
     let appBannerElem: HTMLElement = document.getElementById('appBanner');
-    mainElem.style['padding-top'] = `${topNavElem.offsetHeight + appBannerElem.offsetHeight}px`;
+    mainElem.style['padding-top'] = `${topNavElem.offsetHeight + appBannerElem.offsetHeight + 37}px`;
 
     // SideNavbar Offset
     let footerElem: HTMLElement = document.getElementById('footer');

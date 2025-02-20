@@ -27,3 +27,11 @@
 .nav-item .dropdown-item:hover {
   background-color: #cccccc;
 }
+
+.outage-banner {
+  background-color: red;
+  color: white;
+  padding: .5rem;
+  display: flex;
+  justify-content: center;
+}
