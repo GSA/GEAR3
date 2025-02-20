@@ -7,9 +7,6 @@ import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 
-// Declare jQuery symbol
-declare var $: any;
-
 @Component({
   selector: 'global-search',
   templateUrl: './global-search.component.html',
@@ -51,11 +48,6 @@ export class GlobalSearchComponent implements OnInit {
       isSortable: true
     }];
 
-    // Enable popovers
-    $(function () {
-      $('[data-toggle="popover"]').popover()
-    })
-
     this.route.params.subscribe((params) => {
       // If the user pastes in an open global search modal url
       if(params && (params['reportType'] && params['id'])) {  
@@ -67,16 +59,31 @@ export class GlobalSearchComponent implements OnInit {
       }
 
       if(params && params['keyword']) {
-        // $('#globalSearchTable').bootstrapTable('destroy');
         let kw = params['keyword'];
         this.apiService.getGlobalSearchResults(kw).subscribe(s => {
-          this.tableService.updateReportTableData(s);
-          this.tableData = s;
-          this.tableDataOriginal = s;
+          let sorted = this.sortBySearchTerm(s, kw, 'Name');
+          this.tableService.updateReportTableData(sorted);
+          this.tableData = sorted;
+          this.tableDataOriginal = sorted;
         });
         // Log GA4 event
         this.analyticsService.logSearchEvent(kw);
       }
     });
+  }
+
+  private sortBySearchTerm(arr, searchTerm, key) {
+    const matchFN = (item) => {
+      const value = item[key];
+      // if no direct match return 0
+      if (!value) return 0;
+      // if exact match make sure it goes to the top
+      if(value.toLowerCase() === searchTerm.toLowerCase()) return arr.length + 1;
+      const index = value.toLowerCase().indexOf(searchTerm.toLowerCase());
+      return index === -1 ? 0 : 1 / (index + 1);
+    }
+  
+    arr.sort((a, b) => matchFN(b) - matchFN(a));
+    return arr;
   }
 }

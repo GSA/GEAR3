@@ -1,12 +1,12 @@
 ::ng-deep {
     .p-datatable {
         font-family: Nunito Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", Segoe UI Symbol;
-        font-size: 14px;
+        font-size: 12px;
         font-weight: 200;
         line-height: 21px;
 
         & .p-datatable-thead > tr > th {
-            padding: .75rem;
+            padding: .5rem .25rem;
 
             & .table-heading {
                 justify-content: space-between;
@@ -100,7 +100,8 @@
         & td {
             color: #fff;
             border-color: #343a40;
-            padding: .5rem;
+            padding: 0 .5rem;
+            font-size: 12px;
         }
 
         &:nth-of-type(odd) {
@@ -108,7 +109,8 @@
 
             & td {
                 border-color: #41484e;
-                padding: .5rem;
+                padding: 0 .5rem;
+                font-size: 12px;
             }
         }
 
