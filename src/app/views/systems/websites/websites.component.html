@@ -2,7 +2,7 @@
   <div class="card-header text-white bg-danger text-center d-flex align-items-center justify-content-between">
     <!-- GEAR Manager Access -->
     <a
-      class="btn btn-sm btn-info text-white shadow d-flex align-items-center"
+      class="btn btn-sm btn-info text-white shadow d-flex align-items-center btn-border-white"
       routerLink="/gear_manager"
       *ngIf="!sharedService.loggedIn"
       aria-label="GEAR Manager Login"
@@ -12,7 +12,7 @@
       ><i class="fa fa-sign-in-alt fa-2x"></i>
     </a>
     <a
-      class="btn btn-sm btn-danger text-white shadow d-flex align-items-center"
+      class="btn btn-sm btn-danger text-white shadow d-flex align-items-center btn-border-white"
       routerLink="/websites"
       *ngIf="sharedService.loggedIn"
       aria-label="GEAR Manager Logout"

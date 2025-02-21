@@ -111,6 +111,13 @@ export class ItStandardsComponent implements OnInit {
         header: 'IT Standard Name',
         isSortable: true,
         titleTooltip: this.getTooltip('IT Standard Name')
+      },
+      {
+        field: 'ApprovedVersions',
+        header: 'Approved Versions',
+        isSortable: false,
+        showColumn: true,
+        titleTooltip: this.getTooltip('Approved Versions')
       }, {
         field: 'Manufacturer',
         header: 'Manufacturer ID',
@@ -264,13 +271,6 @@ export class ItStandardsComponent implements OnInit {
         showColumn: true,
         formatter: this.sharedService.dateFormatter,
         titleTooltip: this.getTooltip('Approval Expiration Date')
-      },
-      {
-        field: 'ApprovedVersions',
-        header: 'Approved Versions',
-        isSortable: false,
-        showColumn: true,
-        titleTooltip: this.getTooltip('Approved Versions')
       },
       {
         field: 'OperatingSystems',
