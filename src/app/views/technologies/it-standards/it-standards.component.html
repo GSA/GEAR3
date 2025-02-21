@@ -1,12 +1,12 @@
 <div class="card">
   <div class="card-header text-white bg-teal text-center d-flex align-items-center justify-content-between">
     <!-- GEAR Manager Access -->
-    <a class="btn btn-sm btn-info text-white shadow d-flex align-items-center"
+    <a class="btn btn-sm btn-info text-white shadow d-flex align-items-center btn-border-white"
       routerLink="/gear_manager" *ngIf="!sharedService.loggedIn" aria-label="GEAR Manager Login"
       (click)="sharedService.setRedirectPath()">
       <span class="mr-2">GEAR Manager Login</span><i class="fa fa-sign-in-alt fa-2x"></i>
     </a>
-    <a class="btn btn-sm btn-danger text-white shadow d-flex align-items-center"
+    <a class="btn btn-sm btn-danger text-white shadow d-flex align-items-center btn-border-white"
       routerLink="/it_standards" *ngIf="sharedService.loggedIn" aria-label="GEAR Manager Logout"
       (click)="sharedService.logoutManager()">
       <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>

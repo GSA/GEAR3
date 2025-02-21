@@ -317,11 +317,11 @@ export class SharedService {
   //// Description formattter
   public formatDescription(value: any, row: any) {
     if (!value) return '';
-    else return '<p class="description-wrap">' + value + "</p>";;
+    else return '<span class="description-wrap">' + value + "</span>";;
   };
   public formatDescriptionShorter(value: any, row: any) {
     if (!value) return '';
-    else return '<p class="description-wrap-short">' + value + "</p>";;
+    else return '<span class="description-wrap-short">' + value + "</span>";;
   };
 
   //// OS & App Bundle formatter

@@ -100,16 +100,16 @@
         & td {
             color: #fff;
             border-color: #343a40;
-            padding: 0 .5rem;
+            padding: .5rem;
             font-size: 12px;
         }
 
         &:nth-of-type(odd) {
-            background-color: #41484e;
+            background-color: #4a5055;
 
             & td {
-                border-color: #41484e;
-                padding: 0 .5rem;
+                border-color: #4a5055;
+                padding: .5rem;
                 font-size: 12px;
             }
         }
@@ -141,7 +141,7 @@
     .p-button-primary {
         color: #fff;
         background-color: #027eb2;
-        border-color: #027eb2;
+        border-left: 1px solid #fff;
 
         &:hover, &:active {
             background-color: #1a82ae;
@@ -164,7 +164,7 @@
         background-color: #027eb2;
         border-color: #027eb2;
         border-radius: 0;
-        height: 42px;
+        height: 40px;
 
         &:hover {
             background-color: #1a82ae;
