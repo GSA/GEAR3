@@ -98,14 +98,6 @@
         </th>
       </ng-container>
     </tr>
-    <!-- Filters -->
-    <!-- <tr *ngIf="showFilters">
-      <ng-container *ngFor="let col of columns">
-        <th *ngIf="showColumn(col)">
-          <p-columnFilter type="text" [field]="col.field" [placeholder]="'Filter by ' + col.header" [ariaLabel]="'Filter ' + col.header"></p-columnFilter>
-        </th>
-      </ng-container>
-    </tr> -->
   </ng-template>
   <!-- Table body -->
   <ng-template pTemplate="body" let-rowData let-columns="columns">
@@ -116,6 +108,15 @@
           <span *ngIf="col.formatter" [ngClass]="col.class" [innerHTML]="col.formatter(rowData[col.field])"></span>
         </td>
       </ng-container>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage" let-columns>
+    <tr>
+      <td [attr.colspan]="columns.length">
+        <div class="d-flex justify-content-center">
+          <span>No records found!</span>
+        </div>
+      </td>
     </tr>
   </ng-template>
 </p-table>
