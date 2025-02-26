@@ -94,6 +94,9 @@ import { FilterButtonsComponent } from './components/filter-buttons/filter-butto
 import { TooltipModule } from 'primeng/tooltip';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { ButtonOverlayPanelComponent } from './components/button-overlay-panel/button-overlay-panel.component';
+import { SidebarV2Component } from './components/sidebar-v2/sidebar-v2.component';
+import { TopbarComponent } from './components/topbar/topbar.component';
+import { SidebarButtonComponent } from './components/sidebar-button/sidebar-button.component';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -141,10 +144,13 @@ import { ButtonOverlayPanelComponent } from './components/button-overlay-panel/b
         BannerComponent,
         IdentifierComponent,
         SidebarComponent,
+        SidebarV2Component,
+        TopbarComponent,
         DataDictionaryComponent,
         TableComponent,
         FilterButtonsComponent,
-        ButtonOverlayPanelComponent
+        ButtonOverlayPanelComponent,
+        SidebarButtonComponent
     ],
     bootstrap: [AppComponent], imports: [AppRoutingModule,
         BrowserAnimationsModule,

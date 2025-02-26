@@ -1,0 +1,8 @@
+<div class="sidebar-button">
+    <div class="sidebar-button-icon">
+        <i [ngClass]="buttonIcon"></i>
+    </div>
+    <div class="sidebar-button-text" *ngIf="isSidebarExpanded">
+        {{buttonText}}
+    </div>
+</div>

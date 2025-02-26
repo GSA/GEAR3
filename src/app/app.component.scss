@@ -1,3 +1,17 @@
+.main-container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.content-container {
+  display: flex;
+  flex-flow: column wrap;
+  flex-grow: 1;
+  height: 100%;
+}
+
+
 .content-body {
   min-height: 100%;
   display: flex;

@@ -1,0 +1,22 @@
+.sidebar-button {
+    background: transparent;
+    color: var(--neutral-black-color-dark);
+    display: flex;
+    gap: 10px;
+    padding: 12px 16px;
+
+    &:hover {
+        cursor: pointer;
+        background-color: rgba(0, 94, 162, 0.1);
+        color: var(--primary-color);
+    }
+
+    & .sidebar-button-icon {
+        color: var(--primary-color);
+
+        & svg {
+            width: 1.25rem;
+            height: 1.25rem; 
+        }
+    }
+}
