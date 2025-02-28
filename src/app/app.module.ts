@@ -97,6 +97,8 @@ import { ButtonOverlayPanelComponent } from './components/button-overlay-panel/b
 import { SidebarV2Component } from './components/sidebar-v2/sidebar-v2.component';
 import { TopbarComponent } from './components/topbar/topbar.component';
 import { SidebarButtonComponent } from './components/sidebar-button/sidebar-button.component';
+import { ButtonComponent } from './components/button/button.component';
+import { DashboardComponent } from './views/dashboard/dashboard.component';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -150,7 +152,9 @@ import { SidebarButtonComponent } from './components/sidebar-button/sidebar-butt
         TableComponent,
         FilterButtonsComponent,
         ButtonOverlayPanelComponent,
-        SidebarButtonComponent
+        SidebarButtonComponent,
+        ButtonComponent,
+        DashboardComponent
     ],
     bootstrap: [AppComponent], imports: [AppRoutingModule,
         BrowserAnimationsModule,

@@ -1,0 +1,14 @@
+.dashboard-container {
+    padding: 36px 32px;
+    display: flex;
+    flex-direction: column;
+
+    & .dashboard-quick-view-container {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    & .dashboard-recent-report-container {
+        padding: 10px 24px;
+    }
+}

@@ -1,4 +1,6 @@
 export interface SidebarButtonChild {
     text: string;
-    route: string;
+    route?: string;
+    href?: string;
+    icon?: string;
   }

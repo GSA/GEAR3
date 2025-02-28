@@ -44,9 +44,10 @@ import { Title } from '@angular/platform-browser';
 import { FormsComponent } from './views/main/forms-glossary/forms/forms.component';
 import { GlossaryComponent } from './views/main/forms-glossary/glossary/glossary.component';
 import { DataDictionaryComponent } from './views/main/data-dictionary/data-dictionary.component';
+import { DashboardComponent } from './views/dashboard/dashboard.component';
 
 const routes: Routes = [
-  { path: '', component: HomeComponent, title: 'Home' },
+  { path: '', component: DashboardComponent, title: 'Dashboard' },
   { path: 'search/:keyword', component: GlobalSearchComponent, title: 'Search' },
   { path: 'search/:reportType/:id', component: GlobalSearchComponent, title: 'Search' },
   { path: 'about', component: AboutComponent, title: 'About' },

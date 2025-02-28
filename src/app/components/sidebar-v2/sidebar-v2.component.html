@@ -1,17 +1,23 @@
 <div class="sidebar-container" [ngClass]="{'expanded' : isSidebarExpanded}" (mouseenter)="toggleSidebar()" (mouseleave)="toggleSidebar()">
+    <div *ngIf="isSidebarExpanded">
+        <i class="sidebar-toggle-icon fas fa-chevron-left"></i>
+    </div>
+    <div *ngIf="!isSidebarExpanded">
+        <i class="sidebar-toggle-icon fas fa-chevron-right"></i>
+    </div>
     <div class="sidebar-logo">
         <i class="fas fa-cogs fa-w-20 fa-lg"></i>
         <span *ngIf="isSidebarExpanded">GSA EA ANALYTICS & REPORTING (GEAR)</span>
     </div>
     <div class="sidebar-button-container">
-        <app-sidebar-button buttonText="Dashboard" buttonIcon="fas fa-th-large" [buttonChildren]="" [isSidebarExpanded]="isSidebarExpanded"></app-sidebar-button>
-        <app-sidebar-button buttonText="IT Strategy" buttonIcon="fas fa-puzzle-piece" [buttonChildren]="" [isSidebarExpanded]="isSidebarExpanded"></app-sidebar-button>
-        <app-sidebar-button buttonText="GSA Enterprise" buttonIcon="fas fa-sitemap" [buttonChildren]="" [isSidebarExpanded]="isSidebarExpanded"></app-sidebar-button>
-        <app-sidebar-button buttonText="Business Systems" buttonIcon="fas fa-laptop" [buttonChildren]="" [isSidebarExpanded]="isSidebarExpanded"></app-sidebar-button>
-        <app-sidebar-button buttonText="Security" buttonIcon="fas fa-shield-alt" [buttonChildren]="" [isSidebarExpanded]="isSidebarExpanded"></app-sidebar-button>
-        <app-sidebar-button buttonText="Technologies" buttonIcon="fas fa-microchip" [buttonChildren]="" [isSidebarExpanded]="isSidebarExpanded"></app-sidebar-button>
-        <app-sidebar-button buttonText="Enterprise Architecture" buttonIcon="fas fa-network-wired" [buttonChildren]="" [isSidebarExpanded]="isSidebarExpanded"></app-sidebar-button>
+        <app-sidebar-button buttonText="Dashboard" buttonIcon="fas fa-th-large" buttonRoute="/" [isSidebarExpanded]="isSidebarExpanded"></app-sidebar-button>
+        <app-sidebar-button buttonText="IT Strategy" buttonIcon="fas fa-puzzle-piece" [buttonChildren]="itStrategyChildren" [isSidebarExpanded]="isSidebarExpanded"></app-sidebar-button>
+        <app-sidebar-button buttonText="GSA Enterprise" buttonIcon="fas fa-sitemap" [buttonChildren]="gsaEnterpriseChildren" [isSidebarExpanded]="isSidebarExpanded"></app-sidebar-button>
+        <app-sidebar-button buttonText="Business Systems" buttonIcon="fas fa-laptop" [buttonChildren]="businessSystemsChildren" [isSidebarExpanded]="isSidebarExpanded"></app-sidebar-button>
+        <app-sidebar-button buttonText="Security" buttonIcon="fas fa-shield-alt" [buttonChildren]="securityChildren" [isSidebarExpanded]="isSidebarExpanded"></app-sidebar-button>
+        <app-sidebar-button buttonText="Technologies" buttonIcon="fas fa-microchip" [buttonChildren]="technologiesChildren" [isSidebarExpanded]="isSidebarExpanded"></app-sidebar-button>
+        <app-sidebar-button buttonText="Enterprise Architecture" buttonIcon="fas fa-network-wired" [buttonChildren]="enterpriseArchitectureChildren" [isSidebarExpanded]="isSidebarExpanded"></app-sidebar-button>
         <hr class="sidebar-button-divider" [ngClass]="{'expanded' : isSidebarExpanded}" />
-        <app-sidebar-button buttonText="Additional Information" buttonIcon="fab fa-wpforms" [buttonChildren]="" [isSidebarExpanded]="isSidebarExpanded"></app-sidebar-button>
+        <app-sidebar-button buttonText="Additional Information" buttonIcon="fab fa-wpforms" [buttonChildren]="additionalInfoChildren" [isSidebarExpanded]="isSidebarExpanded"></app-sidebar-button>
     </div>
 </div>

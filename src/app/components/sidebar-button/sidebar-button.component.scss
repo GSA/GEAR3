@@ -20,3 +20,36 @@
         }
     }
 }
+
+.sidebar-children-container {
+    display: none;
+    transition: 150ms cubic-bezier(0, 0, 0, 1);
+
+    &.expanded {
+        display: flex;
+        flex-direction: column;
+        transition: 150ms cubic-bezier(0, 0, 0, 1);
+    }
+
+    & .sidebar-button-child {
+        background: transparent;
+        color: var(--neutral-black-color-dark);
+        display: flex;
+        gap: 10px;
+        padding: 12px 16px;
+        border-bottom: 1px solid #E2E8F0;
+
+        &:hover {
+            cursor: pointer;
+            background-color: rgba(0, 94, 162, 0.1);
+            color: var(--primary-color);
+        }
+    }
+
+    & .sidebar-button-child-icon {
+        & svg {
+            width: .75rem;
+            height: .75rem; 
+        }
+    }
+}

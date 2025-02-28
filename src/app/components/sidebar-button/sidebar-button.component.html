@@ -1,8 +1,18 @@
-<div class="sidebar-button">
+<div class="sidebar-button" (click)="onButtonClick()">
     <div class="sidebar-button-icon">
         <i [ngClass]="buttonIcon"></i>
     </div>
     <div class="sidebar-button-text" *ngIf="isSidebarExpanded">
         {{buttonText}}
+    </div>
+</div>
+<div class="sidebar-children-container" [ngClass]="{'expanded' : isButtonExpanded}">
+    <div class="sidebar-button-child" *ngFor="let child of buttonChildren" (click)="onChildButtonClick(child)">
+        <div class="sidebar-button-text">
+            {{child.text}}
+        </div>
+        <div class="sidebar-button-child-icon" *ngIf="child.icon">
+            <i [ngClass]="child.icon"></i>
+        </div>
     </div>
 </div>
