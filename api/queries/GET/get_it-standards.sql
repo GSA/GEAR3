@@ -27,7 +27,15 @@ SELECT
   tech.softwareProductName                        AS SoftwareProductName,
   tech.softwareVersionName                        AS SoftwareVersionName,
   tech.softwareReleaseName                        AS SoftwareReleaseName,
-
+ 
+  taxonomy.id                                     AS TaxonomySubcategory,
+  taxonomy.subcategory                            AS TaxonomySubcategoryName,
+  taxonomy.description                            AS TaxonomySubcategoryDescription,
+  taxonomy.categoryId                             AS TaxonomyCategory,
+  taxonomy.category                               AS TaxonomyCategoryName,
+  taxonomy2.description                           AS TaxonomyCategoryDescription,
+  taxonomy.categoryGroup                          AS TaxonomyCategoryGroup,
+  
   obj_technology_status.Keyname                   AS Status,
   obj_deployment_type.Keyname                     AS DeploymentType,
   obj_standard_type.Keyname                       AS StandardType,
@@ -57,3 +65,7 @@ LEFT JOIN zk_technology_operating_system      ON tech.Id = zk_technology_operati
 LEFT JOIN obj_operating_system		AS OS	  ON zk_technology_operating_system.obj_operating_system_Id = OS.Id
 LEFT JOIN zk_technology_app_bundle			  ON tech.Id = zk_technology_app_bundle.obj_technology_Id
 LEFT JOIN obj_technology_app_bundle AS BUNDLE ON zk_technology_app_bundle.obj_technology_app_bundle_Id = BUNDLE.Id
+
+LEFT JOIN tech_catalog.tp_SoftwareProduct 	AS tpSP  		  ON tech.softwareProduct = tpSP.id
+LEFT JOIN tech_catalog.tp_Taxonomy 			    AS taxonomy   ON tpSP.taxonomy = taxonomy.id
+LEFT JOIN tech_catalog.tp_Taxonomy 			    AS taxonomy2 	ON taxonomy.categoryId = taxonomy2.id
