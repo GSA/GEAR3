@@ -26,6 +26,13 @@ export class ITStandards {
   public SoftwareProductName: string = null;
   public SoftwareVersionName: string = null;
   public SoftwareReleaseName: string = null;
+  public TaxonomySubcategory: string = null;
+  public TaxonomySubcategoryName: string = null;
+  public TaxonomySubcategoryDescription: string = null;
+  public TaxonomyCategory: string = null;
+  public TaxonomyCategoryName: string = null;
+  public TaxonomyCategoryDescription: string = null;
+  public TaxonomyCategoryGroup: string = null;
   public Status: string = null;
   public Deploymenttype: string = null;
   public StandardType: string = null;

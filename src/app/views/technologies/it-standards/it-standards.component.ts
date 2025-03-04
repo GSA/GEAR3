@@ -173,11 +173,35 @@ export class ItStandardsComponent implements OnInit {
         formatter: this.sharedService.dateFormatter,
         titleTooltip: this.getTooltip('Software End of Life Date')
       }, {
-        field: 'OldName',
-        header: 'Also Known As',
+        field: 'TaxonomySubcategoryName',
+        header: 'TRM Subcategory',
         isSortable: true,
         showColumn: false,
-        titleTooltip: this.getTooltip('Previously Known As')
+        titleTooltip: this.getTooltip('TRM Subcategory')
+      }, {
+        field: 'TaxonomySubcategoryDescription',
+        header: 'TRM Subcategory Description',
+        isSortable: true,
+        showColumn: false,
+        titleTooltip: this.getTooltip('TRM Subcategory Description')
+      }, {
+        field: 'TaxonomyCategoryName',
+        header: 'TRM Category',
+        isSortable: true,
+        showColumn: false,
+        titleTooltip: this.getTooltip('TRM Category')
+      }, {
+        field: 'TaxonomyCategoryDescription',
+        header: 'TRM Category Description',
+        isSortable: true,
+        showColumn: false,
+        titleTooltip: this.getTooltip('TRM Category Description')
+      }, {
+        field: 'TaxonomyCategoryGroup',
+        header: 'TRM Category Group',
+        isSortable: true,
+        showColumn: false,
+        titleTooltip: this.getTooltip('TRM Category Group')
       }, {
         field: 'Description',
         header: 'Description',
