@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { Table, TableRowSelectEvent } from 'primeng/table';
 import { Column, ExportColumn, TwoDimArray, FilterButton } from '../../common/table-classes';
 import { SharedService } from '@services/shared/shared.service';
@@ -44,6 +44,9 @@ export class TableComponent implements OnInit, OnChanges {
   @Input() showExportButton: boolean = true;
   @Input() showFilterButton: boolean = true;
 
+  // Show/hide pagination
+  @Input() showPagination: boolean = true;
+
   // Default sort inputs order is either 1 or -1
   // for ascending and descending respectively
   @Input() defaultSortField: string = '';
@@ -67,7 +70,6 @@ export class TableComponent implements OnInit, OnChanges {
   tableData: any[] = [];
 
   visibleColumns: Column[] = [];
-  isPaginated: boolean = true;
   exportColumns!: ExportColumn[];
   currentFilterButton: string = '';
   currentFilterButtons: string[] = [];
@@ -123,7 +125,7 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   togglePagination() {
-    this.isPaginated = !this.isPaginated;
+    this.showPagination = !this.showPagination;
   }
 
   toggleFilter() {

@@ -2,16 +2,59 @@
     <h1>Welcome to GEAR</h1>
     <div class="dashboard-quick-view-container">
         <div class="dashboard-quick-view-item">
-            FISMA Expiring by...
+            <i class="dashboard-quick-view-icon fas fa-clipboard-list"></i>
+            <span class="dashboard-quick-view-number">{{ fismaExpiringThisQuarter }}</span>
+            <span class="dashboard-quick-view-text">FISMA Expiring by {{ getExpiringDate() }}</span>
+            <div class="dashboard-quick-view-expire-container">
+                <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle"></i>
+                <span class="dashboard-quick-view-expire-text">{{ fismaExpiringThisWeek }} items expiring within 7 days</span>
+            </div>
+            <a href="#" class="dashboard-quick-view-link">View All</a>
         </div>
         <div class="dashboard-quick-view-item">
-            IT Standards Expiring by...
+            <i class="dashboard-quick-view-icon fas fa-desktop"></i>
+            <span class="dashboard-quick-view-number">{{ standardsExpiringThisQuarter }}</span>
+            <span class="dashboard-quick-view-text">IT Standards Expiring by {{ getExpiringDate() }}</span>
+            <div class="dashboard-quick-view-expire-container">
+                <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle"></i>
+                <span class="dashboard-quick-view-expire-text">{{ standardsExpiringThisWeek }} items expiring within 7 days</span>
+            </div>
+            <a href="#" class="dashboard-quick-view-link">View All</a>
         </div>
         <div class="dashboard-quick-view-item">
-            Quick Links
+            <span class="dashboard-quick-links-title">
+                <i class="dashboard-quick-links-icon fas fa-link"></i>
+                <span class="dashboard-quick-links-text">Quick Links</span>
+            </span>
+            <div class="dashboard-quick-links-link-container">
+                <a href="#" class="dashboard-quick-links-link">
+                    External Link 1
+                    <i class="dashboard-quick-links-link-icon fas fa-external-link-alt"></i>
+                </a>
+                <a href="#" class="dashboard-quick-links-link">
+                    External Link 2
+                    <i class="dashboard-quick-links-link-icon fas fa-external-link-alt"></i>
+                </a>
+                <a href="#" class="dashboard-quick-links-link">
+                    External Link 3
+                    <i class="dashboard-quick-links-link-icon fas fa-external-link-alt"></i>
+                </a>
+                <a href="#" class="dashboard-quick-links-link">
+                    External Link 4
+                    <i class="dashboard-quick-links-link-icon fas fa-external-link-alt"></i>
+                </a>
+                <a href="#" class="dashboard-quick-links-link">
+                    External Link 5
+                    <i class="dashboard-quick-links-link-icon fas fa-external-link-alt"></i>
+                </a>
+            </div>
         </div>
     </div>
     <div class="dashboard-recent-report-container">
-        
+        <div class="dashboard-recent-report-title">
+            <span class="dashboard-recent-report-title-text">Recent GSA IT Standards</span>
+            <a href="#" class="dashboard-recent-report-title-link">View All</a>
+        </div>
+        <app-table [tableCols]="tableCols" [showToolbar]="false" [showPagination]="false" reportStyle="neutral"></app-table>
     </div>
 </div>

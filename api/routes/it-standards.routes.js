@@ -48,4 +48,13 @@ router.route('/operating_systems')
 router.route('/app_bundles/:id')
   .get(itsCtrl.getAppBundles);
 
+router.route('/recent/:records')
+  .get(itsCtrl.getRecent);
+
+router.route('/expiring_quarter')
+  .get(itsCtrl.getExpiringQuarter);
+
+router.route('/expiring_week')
+  .get(itsCtrl.getExpiringWeek);
+
 module.exports = router;

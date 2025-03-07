@@ -273,7 +273,7 @@ export class SharedService {
   public dateFormatter(value, row, index, field) {
     const date = new Date(value);
     if (value) return date.toLocaleDateString();
-    else return null;
+    else return '-';
   };
 
 
@@ -317,12 +317,38 @@ export class SharedService {
   //// Description formattter
   public formatDescription(value: any, row: any) {
     if (!value) return '';
-    else return '<span class="description-wrap">' + value + "</span>";;
+    else return '<span class="description-wrap">' + value + "</span>";
   };
   public formatDescriptionShorter(value: any, row: any) {
     if (!value) return '';
-    else return '<span class="description-wrap-short">' + value + "</span>";;
+    else return '<span class="description-wrap-short">' + value + "</span>";
   };
+  public formatDescriptionLite(value: any, row: any) {
+    if (!value) return '-';
+    else return '<span class="description-wrap-lite">' + value + "</span>";
+  };
+
+  //// Status Formatter
+  public formatStatus(value: any, row: any) {
+    if(!value) return '-';
+    else if(value === 'Approved') return `<span class="table-status-badge-green">${value}</span>`;
+    else return `<span class="table-status-badge-red">${value}</span>`;
+  }
+
+  //// Deployment Type Formatter
+  public formatDeploymentType(value: any, row: any) {
+    if(!value) return '-';
+    else if(value === 'Desktop') return `<span><i class="fas fa-desktop"></i> ${value}</span>`;
+    else if(value === 'Mobile') return `<span><i class="fas fa-mobile-alt"></i> ${value}</span>`;
+    else if(value === 'Server') return `<span><i class="fas fa-server"></i> ${value}</span>`;
+    else return `<span><i class="fas fa-keyboard"></i> ${value}</span>`;
+  }
+
+    //// Approved Versions Formatter
+    public formatApprovedVersions(value: any, row: any) {
+      if(!value) return '-';
+      else return value;
+    }
 
   //// OS & App Bundle formatter
   public csvFormatter(value: any, row: any) {

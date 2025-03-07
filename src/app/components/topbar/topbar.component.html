@@ -1,9 +1,15 @@
 <div class="topbar-container">
+    <div class="topbar-info-container">
+        <span class="topbar-info-env-mode" *ngIf="!isProd()">- {{ envName }} Environment</span>
+        <span class="topbar-info-manager-mode" *ngIf="isLoggedIn()">**GEAR Manager Mode**</span>
+    </div>
     <div class="topbar-items-container">
-        <p-iconField iconPosition="right">
-            <p-inputIcon styleClass="fas fa-search" />
-            <input type="text" placeholder="Global Search" pInputText />
-        </p-iconField>
-        <app-button buttonText="About GEAR" buttonType="button" buttonStyle="outline"></app-button>
+        <form role="search">
+            <p-iconField iconPosition="right">
+                <p-inputIcon styleClass="fas fa-search" />
+                <input type="text" placeholder="Global Search" id="globalSearch" name="globalSearchField" [(ngModel)]="searchKW" (keydown)="globalSearch($event)" pInputText />
+            </p-iconField>
+          </form>
+        <app-button buttonText="About GEAR" buttonType="button" buttonStyle="outline" (buttonClick)="onAboutClick()"></app-button>
     </div>
 </div>

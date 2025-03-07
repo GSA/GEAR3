@@ -18,4 +18,10 @@ router.route('/retired')
 /* router.route('/update')
   .put(fismaCtrl.updateAll); */
 
+router.route('/expiring_quarter')
+  .get(fismaCtrl.getExpiringQuarter);
+
+router.route('/expiring_week')
+  .get(fismaCtrl.getExpiringWeek);
+
 module.exports = router;

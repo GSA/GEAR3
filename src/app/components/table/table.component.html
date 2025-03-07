@@ -1,4 +1,4 @@
-<div class="d-flex justify-content-between" [ngClass]="{'mb-3': !showToolbar}">
+<div class="d-flex justify-content-between">
   <div></div>
   <!-- Filter buttons -->
   <div>
@@ -17,7 +17,7 @@
   [rowsPerPageOptions]="[10, 25, 50]"
   [rows]="10"
   [first]="first"
-  [paginator]="isPaginated"
+  [paginator]="showPagination"
   [scrollable]="true"
   [scrollHeight]="screenHeight" 
   [exportHeader]="'customExportHeader'"

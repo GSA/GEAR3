@@ -92,6 +92,52 @@
         }
     }
 
+    .neutral.p-datatable {
+        .p-datatable-thead > tr > th {
+            color: var(--neutral-black-color-dark);
+            background-color: var(--neutral-white-color);
+            border: none;
+            padding: .625rem;
+
+            & .table-heading {
+                text-transform: none;
+            }
+
+            & .p-icon {
+                color: var(--neutral-black-color-dark);
+            }
+        }
+
+        .p-datatable-tbody > tr {
+            color: var(--neutral-black-color-dark);
+            background-color: var(--neutral-white-color);
+            border: none;
+
+            & td {
+            color: var(--neutral-black-color-dark);
+            border: none;
+            border-bottom: 1px var(--neutral-black-color-light) solid;
+            padding: 1rem .625rem;
+            font-size: .75rem;    
+            width: 14rem;
+            }
+
+            &:nth-of-type(odd) {
+                background-color: var(--neutral-white-color);
+    
+                & td {
+                    border: none;
+                    border-bottom: 1px var(--neutral-black-color-light) solid;
+                    padding: .5rem;
+                    font-size: .75rem;
+                    padding: 1rem .625rem;
+                    font-size: .75rem;    
+                    width: 14rem;
+                }
+            }
+        }
+    }
+
 
     .p-datatable .p-datatable-tbody > tr {
         color: #fff;
@@ -102,8 +148,26 @@
         & td {
             color: #fff;
             border-color: #4a5055;
-            padding: .5rem;
+            padding: .5rem 1.5rem;
             font-size: 12px;
+
+            & .table-status-badge-green {
+                background: rgba(0, 128, 0, 0.30);
+                color: #008000;
+                padding: .25rem .625rem;
+                border-radius: .25rem;
+                display: flex;
+                justify-content: center;
+            }
+
+            & .table-status-badge-red {
+                background: rgba(255, 140, 4, 0.30);
+                color: #FF5E04;
+                padding: .25rem .625rem;
+                border-radius: .25rem;
+                display: flex;
+                justify-content: center;
+            }
         }
 
         &:nth-of-type(odd) {
@@ -111,8 +175,26 @@
 
             & td {
                 border-color: #343a40;
-                padding: .5rem;
+                padding: .5rem 1.5rem;
                 font-size: 12px;
+
+                & .table-status-badge-green {
+                    background: rgba(0, 128, 0, 0.30);
+                    color: #008000;
+                    padding: .25rem .625rem;
+                    border-radius: .25rem;
+                    display: flex;
+                    justify-content: center;
+                }
+
+                & .table-status-badge-red {
+                    background: rgba(255, 140, 4, 0.30);
+                    color: #FF5E04;
+                    padding: .25rem .625rem;
+                    border-radius: .25rem;
+                    display: flex;
+                    justify-content: center;
+                }
             }
         }
 

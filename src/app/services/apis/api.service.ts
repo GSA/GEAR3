@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 import { SharedService } from '@services/shared/shared.service';
 import { Globals } from '@common/globals';
@@ -184,6 +184,22 @@ export class ApiService {
     return this.http
       .get<FISMA[]>(this.fismaUrl + '/get/' + String(id))
       .pipe(catchError(this.handleError<FISMA[]>('GET FISMA System', [])));
+  }
+
+  public getFismaExpiringThisQuarter(): Observable<any> {
+    return this.http
+      .get<any>(this.fismaUrl + '/expiring_quarter')
+      .pipe(
+        map(r => r[0].Total),
+        catchError(this.handleError<any>(`GET FISMA expiring this quarter`)));
+  }
+
+  public getFismaExpiringThisWeek(): Observable<any> {
+    return this.http
+      .get<any>(this.fismaUrl + '/expiring_week')
+      .pipe(
+        map(r => r[0].Total),
+        catchError(this.handleError<any>(`GET FISMA expiring this week`)));
   }
 
   //// Investment
@@ -692,6 +708,27 @@ export class ApiService {
 
     return this.http
       .post<ITStandards[]>(this.techUrl + '/create', data, httpOptions);
+  }
+  public getRecentITStandards(records: number): Observable<ITStandards[]> {
+    return this.http
+      .get<ITStandards[]>(this.techUrl + '/recent/' + String(records))
+      .pipe(catchError(this.handleError<ITStandards[]>(`GET recent ${String(records)} IT Standards`, [])));
+  }
+
+  public getITStandardsExpiringThisQuarter(): Observable<any> {
+    return this.http
+      .get<any>(this.techUrl + '/expiring_quarter')
+      .pipe(
+        map(r => r[0].Total),
+        catchError(this.handleError<any>(`GET IT Standards expiring this quarter`)));
+  }
+
+  public getITStandardsExpiringThisWeek(): Observable<any> {
+    return this.http
+      .get<any>(this.techUrl + '/expiring_week')
+      .pipe(
+        map(r => r[0].Total),
+        catchError(this.handleError<any>(`GET IT Standards expiring this week`)));
   }
 
   //// Websites

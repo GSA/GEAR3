@@ -437,3 +437,24 @@ exports.getAppBundles = (req, res) => {
 
   res = ctrl.sendQuery(query, 'App Bundles', res);
 }
+
+exports.getRecent = (req, res) => {
+  var numberOfRecords = Number(req.params.records);
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards_recent.sql')).toString() +
+    ` GROUP BY tech.Id
+      ORDER BY tech.CreateDTG DESC LIMIT ${numberOfRecords};`;
+
+  res = ctrl.sendQuery(query, `latest ${numberOfRecords} IT Standard`, res);
+};
+
+exports.getExpiringQuarter = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_it-standards_expiring_quarter.sql`)).toString();
+
+  res = ctrl.sendQuery(query, `Expiring IT standards this quarter`, res);
+};
+
+exports.getExpiringWeek = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_it-standards_expiring_week.sql`)).toString();
+
+  res = ctrl.sendQuery(query, `Expiring IT standards this week`, res);
+};

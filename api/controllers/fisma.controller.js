@@ -204,3 +204,15 @@ exports.updateAll = (req, res) => {
   // console.log("Final query string: ", query); // Debug
   res = ctrl.sendQuery(query, 'Loading into FISMA Archer Table', res); //removed sendQuery_cowboy reference
 };
+
+exports.getExpiringQuarter = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_fisma_expiring_quarter.sql`)).toString();
+
+  res = ctrl.sendQuery(query, `Expiring FISMA this quarter`, res);
+};
+
+exports.getExpiringWeek = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_fisma_expiring_week.sql`)).toString();
+
+  res = ctrl.sendQuery(query, `Expiring FISMA this week`, res);
+};

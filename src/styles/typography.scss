@@ -1,9 +1,10 @@
 h1 {
-    font-family: var(--primary-font);
-    font-weight: bold;
-    font-size: 3.5rem;
-    line-height: 4.5rem;
-    letter-spacing: 0%;
+    font-family: var(--primary-font) !important;
+    font-weight: normal !important;
+    font-size: 3rem !important;
+    line-height: normal !important;
+    color: var(-neutral-black-color-dark) !important;
+    text-transform: none !important;
 }
 
 h2 {
