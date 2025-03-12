@@ -35,3 +35,10 @@ exports.getSoftwareReleases = (req, res) => {
 
   res = ctrl.sendQuery(query, 'SoftwareReleases', res);
 };
+
+exports.getTaxonomyChart = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_tc_taxonomy_chart.sql')).toString() +
+  ` order by child desc;`;
+
+  res = ctrl.sendQuery(query, 'TaxonomyChart', res);
+};

@@ -211,7 +211,10 @@
                   <td>{{ itStandard.EndOfLifeDate | date : "MMMM d, y" }}</td>
                 </tr>
                 <tr *ngIf="isFieldPopulated(itStandard.TaxonomySubcategoryName)">
-                  <td><i class="far fa-list-alt"></i><span [title]="getTooltip('TRM Subcategory')" role="tooltip">TRM Group, Category, Subcategory</span>
+                  <td><i class="far fa-list-alt"></i>
+                    <span [title]="getTooltip('TRM Category Group')" role="tooltip">TRM Group, </span>
+                    <span [title]="getTooltip('TRM Category')" role="tooltip">Category, </span>
+                    <span [title]="getTooltip('TRM Subcategory')" role="tooltip">Subcategory</span>
                   </td>
                   <td>{{ itStandard.TaxonomyCategoryGroup }} -> {{ itStandard.TaxonomyCategoryName }} -> {{ itStandard.TaxonomySubcategoryName }}</td>
                 </tr>

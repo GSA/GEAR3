@@ -31,7 +31,8 @@ exports.findSystems = (req, res) => {
     ` LEFT JOIN gear_schema.zk_systems_subsystems_capabilities AS cap_mappings ON systems.\`ex:GEAR_ID\` = cap_mappings.obj_systems_subsystems_Id
       LEFT JOIN gear_schema.obj_capability AS cap ON cap_mappings.obj_capability_Id = cap.capability_Id
     
-      WHERE cap.capability_Id = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`;
+      WHERE cap.capability_Id = ${req.params.id} AND systems.\`ex:Status\` = 'Active' AND systems.\`ex:BusinessApplication\` = 'Yes' 
+      GROUP BY systems.\`ex:GEAR_ID\`;`;
 
   res = ctrl.sendQuery(query, 'supporting systems for capability', res);
 };

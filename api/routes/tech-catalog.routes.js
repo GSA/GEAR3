@@ -15,4 +15,7 @@ router.route('/get/software_versions/:id')
 router.route('/get/software_releases/:id')
   .get(techCatalogCtrl.getSoftwareReleases);
 
+router.route('/get/taxonomy_chart')
+  .get(techCatalogCtrl.getTaxonomyChart);
+
 module.exports = router;

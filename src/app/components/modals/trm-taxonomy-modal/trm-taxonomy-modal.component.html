@@ -1,0 +1,68 @@
+<!-- Capabilities Detail Modal -->
+<div
+  class="modal fade"
+  id="trmDetail"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="trmTitle"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-scrollable modal-xl">
+    <div class="modal-content">
+      <div class="modal-header bg-royal-blue">
+        <a
+          class="mr-3 text-white"
+          role="button"
+          aria-label="Previous"
+          tabindex="0"
+          (click)="tableService.previousModalRoute('trmDetail')"
+          [hidden]="!modalService.checkModalRoutes()"
+        >
+          <i class="fas fa-arrow-circle-left fa-lg fa-fw"></i>
+        </a>
+        <h5 class="modal-title text-white" id="trmTitle">
+          <i class="fas fa-project-diagram"></i>
+          {{ trm.Name }} ({{ trm.ReferenceNum }})
+        </h5>
+        <a role="button" aria-label="Close" data-dismiss="modal" tabindex="0">
+          <i class="fas fa-times fa-lg text-white align-self-center"></i>
+        </a>
+      </div>
+
+      <div class="modal-body">
+        <!-- Tabs -->
+        <ul id="trmTabs" class="nav nav-tabs">
+          <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#trmOverview">
+              Overview</a
+            >
+          </li>
+          <li class="nav-item" *ngIf="showRelatedTechTab()">
+            <a class="nav-link" data-toggle="tab" href="#trmRelTech">
+              Related Organizations</a
+            >
+          </li>
+          
+        </ul>
+
+        <!-- Tab Panes -->
+        <div class="tab-content mt-3">
+          <div class="tab-pane fade show active" id="trmOverview">
+            <h4>Description</h4>
+            <p>{{ trm.Description }}</p>
+            <br /><br />
+
+            <h4>Level</h4>
+            <p>{{ trm.Level }}</p>
+          </div>
+          <!-- End of Overview Pane -->
+
+          <div class="tab-pane fade" id="trmRelSoftware">
+            <table id="trmRelSoftwareTable"></table>
+          </div>
+          <!-- End of Related Software Pane -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
