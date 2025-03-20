@@ -1,0 +1,20 @@
+<div class="button-container">
+    <button class="button" (click)="onDropdownClick()" #button>
+        {{dropdownName}}
+        <i class="fas fa-chevron-down"></i>
+    </button>
+    <div class="button-dropdown-container">
+        <ul class="button-dropdown-menu" *ngIf="dropdownOpen" #menu>
+            <ng-container *ngFor="let chip of chips">
+                <li (click)="onChipSelect(chip)" [ngClass]="{'selected' : isChipSelected(chip)}">{{chip}}</li>
+            </ng-container>
+        </ul>
+    </div>
+</div>
+<div class="chip-container" *ngIf="hasDisplayedChips()">
+    <div class="chip" (click)="removeChip(i)" *ngFor="let chip of displayedChips; let i = index">
+        <span class="chip-text">{{chip}}</span>
+        <i class="fas fa-times"></i>
+    </div>
+    <button class="remove-all" (click)="removeAllChips()">Clear All</button>
+</div>

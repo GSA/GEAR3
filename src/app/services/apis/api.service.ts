@@ -583,6 +583,14 @@ export class ApiService {
         catchError(this.handleError<ITStandards[]>('GET IT Standards', []))
       );
   }
+  public getITStandardsFilterTotals(): Observable<any> {
+    return this.http
+      .get<any>(this.techUrl + '/filter_totals')
+      .pipe(
+        map(t => t[0]),
+        catchError(this.handleError<any>('GET IT Standards Filter Totals', []))
+      );
+  }
   public getOneITStandard(id: number): Observable<ITStandards[]> {
     return this.http
       .get<ITStandards[]>(this.techUrl + '/get/' + String(id))

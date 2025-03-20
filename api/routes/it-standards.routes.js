@@ -57,4 +57,7 @@ router.route('/expiring_quarter')
 router.route('/expiring_week')
   .get(itsCtrl.getExpiringWeek);
 
+router.route('/filter_totals')
+  .get(itsCtrl.getFilterTotals);
+
 module.exports = router;

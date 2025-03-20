@@ -99,6 +99,7 @@ import { TopbarComponent } from './components/topbar/topbar.component';
 import { SidebarButtonComponent } from './components/sidebar-button/sidebar-button.component';
 import { ButtonComponent } from './components/button/button.component';
 import { DashboardComponent } from './views/dashboard/dashboard.component';
+import { FilterChipsComponent } from './components/filter-chips/filter-chips.component';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -154,7 +155,8 @@ import { DashboardComponent } from './views/dashboard/dashboard.component';
         ButtonOverlayPanelComponent,
         SidebarButtonComponent,
         ButtonComponent,
-        DashboardComponent
+        DashboardComponent,
+        FilterChipsComponent
     ],
     bootstrap: [AppComponent], imports: [AppRoutingModule,
         BrowserAnimationsModule,

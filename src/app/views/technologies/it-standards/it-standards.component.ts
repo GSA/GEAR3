@@ -10,22 +10,33 @@ import { Title } from '@angular/platform-browser';
 import { ITStandards } from '@api/models/it-standards.model';
 import { DataDictionary } from '@api/models/data-dictionary.model';
 import { FilterButton, Column, TwoDimArray } from '@common/table-classes';
+import { timeHours } from 'd3';
 
 // Declare jQuery symbol
-declare var $: any;
+// declare var $: any;
 
 @Component({
   selector: 'it-standards',
   templateUrl: './it-standards.component.html',
-  styleUrls: ['./it-standards.component.css'],
+  styleUrls: ['./it-standards.component.scss'],
 })
 export class ItStandardsComponent implements OnInit {
-  row: Object = <any>{};
-  filteredTable: boolean = false;
-  filterTitle: string = '';
+  // row: Object = <any>{};
+  // filteredTable: boolean = false;
+  // filterTitle: string = '';
   attrDefinitions: DataDictionary[] = [];
-  columnDefs: any[] = [];
-  dataReady: boolean = false;
+  // columnDefs: any[] = [];
+  // dataReady: boolean = false;
+
+  public defExpanded: boolean = false;
+  public tableCols: Column[] = [];
+  public selectedTab: string = 'All';
+  public filterTotals: any = null;
+  public itStandardsData: ITStandards[] = [];
+  public itStandardsDataTabFilterted: ITStandards[] = [];
+  public itStandardsDataChipFilterted: ITStandards[] = [];
+  public filterChips: string[] = ['Mobile', 'Desktop', 'Server', 'SaaS', 'PaaS', 'Other'];
+  private selectedChips: string[] = [];
 
   constructor(
     private apiService: ApiService,
@@ -35,59 +46,63 @@ export class ItStandardsComponent implements OnInit {
     private tableService: TableService,
     private titleService: Title
   ) {
-    this.modalService.currentITStand.subscribe((row) => (this.row = row));
+    // this.modalService.currentITStand.subscribe((row) => (this.row = row));
   }
-  
-  tableData: ITStandards[] = [];
-  tableDataOriginal: ITStandards[] = [];
 
-  preloadedFilterButtons: FilterButton[] = [];
-  filterButtons: TwoDimArray<FilterButton> = [
-    [
-      {
-        buttonText: 'Mobile',
-        filters: [
-          { field: 'DeploymentType', value: 'mobile' }
-        ]
-      },
-      {
-        buttonText: 'Desktop',
-        filters: [
-          { field: 'DeploymentType', value: 'desktop' }
-        ]
-      },
-      {
-        buttonText: 'Server',
-        filters: [
-          { field: 'DeploymentType', value: 'server' }
-        ]
+  public onViewAll(): void {
+    this.defExpanded = !this.defExpanded;
+  }
+
+  public onSelectTab(tabName: string): void {
+    this.selectedTab = tabName;
+    this.itStandardsDataTabFilterted = this.itStandardsData;
+
+    if(this.selectedTab === 'All') {
+      if(this.hasSelectedChips()) {
+        this.onFilterChipSelect(this.selectedChips);
+      } else {
+        this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
       }
-    ],
-    [
-      {
-        buttonText: 'Approved',
-        filters: [
-          { field: 'Status', value: 'approved' }
-        ]
-      },
-      {
-        buttonText: 'Denied',
-        filters: [
-          { field: 'Status', value: 'denied' }
-        ]
-      },
-      {
-        buttonText: 'Retired',
-        filters: [
-          { field: 'Status', value: 'retired' }
-        ]
+    } else {
+      if(this.hasSelectedChips()) {
+        this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
+          return x.Status === tabName;
+        });
+        this.onFilterChipSelect(this.selectedChips);
+      } else {
+        this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
+          return x.Status === tabName;
+        });
+        this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
       }
-    ]
-  ];
+    }
+  }
 
-  tableCols: Column[] = [];
+  public onFilterChipSelect(selectedChips: string[]): void {
+    this.selectedChips = selectedChips;
+    this.itStandardsDataChipFilterted = this.itStandardsDataTabFilterted;
+    if(this.hasSelectedChips()) {
+      this.itStandardsDataChipFilterted = this.itStandardsDataTabFilterted.filter(f => {
+        return selectedChips.includes(f.DeploymentType);
+      });
+      this.tableService.updateReportTableData(this.itStandardsDataChipFilterted);
+    } else {
+      this.itStandardsDataChipFilterted = this.itStandardsDataTabFilterted;
+      this.onSelectTab(this.selectedTab);
+      
+    }
+    
+  }
 
-  YesNo(value, row, index, field) {
+  public isTabSelected(tabName: string): boolean {
+    return this.selectedTab === tabName;
+  }
+
+  private hasSelectedChips(): boolean {
+    return this.selectedChips && this.selectedChips.length > 0;
+  }
+
+  private YesNo(value, row, index, field): string {
     return value === 'T'? "Yes" : "No";
   }
 
@@ -110,6 +125,7 @@ export class ItStandardsComponent implements OnInit {
         field: 'Name',
         header: 'IT Standard Name',
         isSortable: true,
+        showColumn: true,
         titleTooltip: this.getTooltip('IT Standard Name')
       },
       {
@@ -171,7 +187,7 @@ export class ItStandardsComponent implements OnInit {
         isSortable: true,
         showColumn: false,
         formatter: this.sharedService.dateFormatter,
-        titleTooltip: this.getTooltip('Software End of Life Date')
+       titleTooltip: this.getTooltip('Software End of Life Date')
       }, {
         field: 'OldName',
         header: 'Also Known As',
@@ -183,7 +199,7 @@ export class ItStandardsComponent implements OnInit {
         header: 'Description',
         isSortable: true,
         showColumn: true,
-        formatter: this.sharedService.formatDescription,
+        formatter: this.sharedService.formatDescriptionLite,
         titleTooltip: this.getTooltip('Description')
       }, {
         field: 'Category',
@@ -194,6 +210,7 @@ export class ItStandardsComponent implements OnInit {
         field: 'Status',
         header: 'Status',
         isSortable: true,
+        formatter: this.sharedService.formatStatus,
         titleTooltip: this.getTooltip('Status')
       }, {
         field: 'StandardType',
@@ -205,6 +222,7 @@ export class ItStandardsComponent implements OnInit {
         field: 'DeploymentType',
         header: 'Deployment Type',
         isSortable: true,
+        formatter: this.sharedService.formatDeploymentType,
         titleTooltip: this.getTooltip('Deployment Type')
       }, {
         field: 'ComplianceStatus',
@@ -290,71 +308,75 @@ export class ItStandardsComponent implements OnInit {
       }];
     });
 
-    // Set JWT when logged into GEAR Manager when returning from secureAuth
-    this.sharedService.setJWTonLogIn();
+  //   // Set JWT when logged into GEAR Manager when returning from secureAuth
+  //   this.sharedService.setJWTonLogIn();
 
     this.apiService.getITStandards().subscribe(i => {
+      this.itStandardsData = i;
+      this.itStandardsDataTabFilterted = i;
+      this.itStandardsDataChipFilterted = i;
       this.tableService.updateReportTableData(i);
-      this.tableData = i;
-      this.tableDataOriginal = i;
-      this.dataReady = true;
     });
 
-    // Method to open details modal when referenced directly via URL
-    this.route.params.subscribe((params) => {
-      let detailStandID = params['standardID'];
-      let deploymentType = params['deploymentType'];
-      let status = params['status'];
-
-      if(deploymentType) {
-        let filterButton = {
-          buttonText: deploymentType[0].toUpperCase() + deploymentType.slice(1),
-          filters: [
-            { field: 'DeploymentType', value: deploymentType.toLocaleLowerCase() }
-          ]
-        };
-        this.preloadedFilterButtons.push(filterButton);
-      }
-
-      if(status) {
-        let filterButton = {
-          buttonText: status[0].toUpperCase() + status.slice(1),
-          filters: [
-            { field: 'Status', value: status.toLocaleLowerCase() }
-          ]
-        };
-        this.preloadedFilterButtons.push(filterButton);
-      }
-
-      if (detailStandID) {
-        this.titleService.setTitle(
-          `${this.titleService.getTitle()} - ${detailStandID}`
-        );
-        this.apiService
-          .getOneITStandard(detailStandID)
-          .subscribe((data: any[]) => {
-            this.tableService.itStandTableClick(data[0]);
-          });
-      }
+    this.apiService.getITStandardsFilterTotals().subscribe(t => {
+      this.filterTotals = t;
     });
+
+  //   // Method to open details modal when referenced directly via URL
+  //   this.route.params.subscribe((params) => {
+  //     let detailStandID = params['standardID'];
+  //     let deploymentType = params['deploymentType'];
+  //     let status = params['status'];
+
+  //     if(deploymentType) {
+  //       let filterButton = {
+  //         buttonText: deploymentType[0].toUpperCase() + deploymentType.slice(1),
+  //         filters: [
+  //           { field: 'DeploymentType', value: deploymentType.toLocaleLowerCase() }
+  //         ]
+  //       };
+  //       this.preloadedFilterButtons.push(filterButton);
+  //     }
+
+  //     if(status) {
+  //       let filterButton = {
+  //         buttonText: status[0].toUpperCase() + status.slice(1),
+  //         filters: [
+  //           { field: 'Status', value: status.toLocaleLowerCase() }
+  //         ]
+  //       };
+  //       this.preloadedFilterButtons.push(filterButton);
+  //     }
+
+  //     if (detailStandID) {
+  //       this.titleService.setTitle(
+  //         `${this.titleService.getTitle()} - ${detailStandID}`
+  //       );
+  //       this.apiService
+  //         .getOneITStandard(detailStandID)
+  //         .subscribe((data: any[]) => {
+  //           this.tableService.itStandTableClick(data[0]);
+  //         });
+  //     }
+  //   });
   }
 
-  // Create new IT Standard when in GEAR Manager mode
-  createITStand() {
-    var emptyITStand = new ITStandards();
+  // // Create new IT Standard when in GEAR Manager mode
+  // createITStand() {
+  //   var emptyITStand = new ITStandards();
 
-    // By default, set new record status to "Pilot"
-    emptyITStand.Status = 'Pilot';
-    this.modalService.updateRecordCreation(true);
-    this.sharedService.setITStandardsForm();
-    this.modalService.updateDetails(emptyITStand, 'it-standard', false);
-    $('#itStandardsManager').modal('show');
+  //   // By default, set new record status to "Pilot"
+  //   emptyITStand.Status = 'Pilot';
+  //   this.modalService.updateRecordCreation(true);
+  //   this.sharedService.setITStandardsForm();
+  //   this.modalService.updateDetails(emptyITStand, 'it-standard', false);
+  //   $('#itStandardsManager').modal('show');
 
-    // disable the tcSoftwareProduct on the itStandardsManager modal
-    $('#divProduct').addClass("disabledDivProduct");
-    $('#divVersion').addClass("disabledDivVersion");
-    $('#divRelease').addClass("disabledDivRelease");
-  }
+  //   // disable the tcSoftwareProduct on the itStandardsManager modal
+  //   $('#divProduct').addClass("disabledDivProduct");
+  //   $('#divVersion').addClass("disabledDivVersion");
+  //   $('#divRelease').addClass("disabledDivRelease");
+  // }
 
   getTooltip (name: string): string {
     const def = this.attrDefinitions.find(def => def.Term === name);
@@ -364,13 +386,13 @@ export class ItStandardsComponent implements OnInit {
     return '';
   }
 
-  onFilterClick(filterButtons: FilterButton[]) {
-    this.tableData = this.tableDataOriginal;
-    this.tableService.filterButtonClick(filterButtons, this.tableData);
-  }
+  // onFilterClick(filterButtons: FilterButton[]) {
+  //   this.tableData = this.tableDataOriginal;
+  //   this.tableService.filterButtonClick(filterButtons, this.tableData);
+  // }
 
-  onFilterResetClick() {
-    this.tableData = this.tableDataOriginal;
-    this.tableService.updateReportTableData(this.tableDataOriginal);
-  }
+  // onFilterResetClick() {
+  //   this.tableData = this.tableDataOriginal;
+  //   this.tableService.updateReportTableData(this.tableDataOriginal);
+  // }
 }

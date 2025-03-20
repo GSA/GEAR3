@@ -1,0 +1,46 @@
+.filter-tabs-container {
+    display: flex;
+    gap: 1rem;
+    padding-top: 2rem;
+
+    & .filter-tab {
+        padding: 12px 24px;
+
+        &:hover {
+            cursor: pointer;
+        }
+
+        &.selected {
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        & .filter-tab-text {
+            font-size: 18px;
+            color: var(--primary-color);
+            font-size: normal;
+            font-weight: 500;
+            line-height: normal;
+            font-family: var(--primary-font);
+            padding-right: 10px;
+        }
+
+        & .filter-tab-number {
+            border-radius: 50px;
+            color: white;
+            padding: 4px 8px;
+
+            &.first {
+                background-color: var(--primary-color);
+            }
+            &.second {
+                background-color: #687442;
+            }
+            &.third {
+                background-color: #B65937;
+            }
+            &.fourth {
+                background-color: #595959;
+            }
+        }
+    }
+}

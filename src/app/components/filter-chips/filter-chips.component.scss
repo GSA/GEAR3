@@ -1,0 +1,89 @@
+.button-container {
+    display: inline-block;
+
+    .button {
+        padding: 8px 16px;
+        border-radius: 40px;
+        font-family: var(--primary-font);
+        font-size: 1rem;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+        letter-spacing: 0.18px;
+        border: none;
+        background: transparent;
+        color: var(--neutral-black-color-dark);
+        border: 1px solid var(--neutral-black-color-dark);
+
+        &:hover {
+            background: transparent;
+            color: var(--primary-color-hover);
+            border: 1px solid var(--primary-color-hover);
+        }
+
+        &:active {
+            background: transparent;
+            color: var(--primary-color-active);
+            border: 1px solid var(--primary-color-active);
+        }
+    }
+
+    .button-dropdown-container {
+        display: flex;
+
+        .button-dropdown-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            border: 1px solid #ccc;
+            background-color: white;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            flex-grow: 1;
+            position: absolute;
+            z-index: 999;
+            min-width: 15%;
+
+            & li {
+                padding: 10px;
+                cursor: pointer;
+        
+                &:hover {
+                    background-color: #f0f0f0; 
+                }
+
+                &.selected {
+                    background-color: #f0f0f0;
+                    cursor: not-allowed
+                }
+            }
+        }
+    }
+}
+
+.chip-container {
+    margin-top: 24px;
+    display: flex;
+    gap: 12px;
+
+    & .chip {
+        padding: .5rem 1rem;
+        border-radius: 4px;
+        border: 1px solid var(--primary-color);
+        color: var(--primary-color);
+
+        &:hover {
+            cursor: pointer;
+        }
+
+        & .chip-text {
+            margin-right: 4px;
+        }
+    }
+
+    & .remove-all {
+        border: none;
+        background: transparent;
+        color: var(--primary-color);
+        text-decoration: underline;
+    }
+}

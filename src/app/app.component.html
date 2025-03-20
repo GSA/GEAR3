@@ -1,10 +1,30 @@
-<div class="main-container">
+<div class="site-container">
+  <div class="main-container">
+    <app-sidebar-v2></app-sidebar-v2>
+    <div class="content-container">
+      <app-topbar></app-topbar>
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+  <footer>
+    <small class="footer-text">GSA Enterprise Architecture 2024, v3.0</small>
+    <app-identifier></app-identifier>
+  </footer>
+</div>
+
+
+
+<!-- <div class="main-container">
   <app-sidebar-v2></app-sidebar-v2>
   <div class="content-container">
     <app-topbar></app-topbar>
     <router-outlet></router-outlet>
   </div>
-</div>
+</div> -->
+<!-- <footer class="footer-container">
+  <small class="footer-text">GSA Enterprise Architecture 2024, v3.0</small>
+  <app-identifier></app-identifier>
+</footer> -->
 
 <!-- Top Navbar -->
 <!-- <top-navbar></top-navbar> -->

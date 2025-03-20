@@ -792,5 +792,4 @@ export class TableService {
     }
     this.updateReportTableData(filteredData);
   }
-
 }

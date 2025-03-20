@@ -458,3 +458,9 @@ exports.getExpiringWeek = (req, res) => {
 
   res = ctrl.sendQuery(query, `Expiring IT standards this week`, res);
 };
+
+exports.getFilterTotals = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_it-standards_filter_totals.sql`)).toString();
+
+  res = ctrl.sendQuery(query, `IT Standards filter totals`, res);
+}
