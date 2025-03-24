@@ -13,9 +13,10 @@ import { DataDictionary } from '@api/models/data-dictionary.model';
 declare var $: any;
 
 @Component({
-  selector: 'it-standards-modal',
-  templateUrl: './it-standards-modal.component.html',
-  styleUrls: ['./it-standards-modal.component.scss']
+    selector: 'it-standards-modal',
+    templateUrl: './it-standards-modal.component.html',
+    styleUrls: ['./it-standards-modal.component.scss'],
+    standalone: false
 })
 export class ItStandardsModalComponent implements OnInit {
 

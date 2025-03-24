@@ -10,9 +10,10 @@ import { Column } from '../../../common/table-classes';
 import { Service_Category } from '@api/models/service-category.model';
 
 @Component({
-  selector: 'website-service-category',
-  templateUrl: './website-service-category.component.html',
-  styleUrls: ['./website-service-category.component.css'],
+    selector: 'website-service-category',
+    templateUrl: './website-service-category.component.html',
+    styleUrls: ['./website-service-category.component.css'],
+    standalone: false
 })
 export class WebsiteServiceCategoryComponent implements OnInit {
   row: Object = <any>{};

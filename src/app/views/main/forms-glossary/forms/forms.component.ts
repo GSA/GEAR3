@@ -6,9 +6,10 @@ import { TableService } from '@services/tables/table.service';
 import * as accessFormsData from '../../../../../assets/statics/accessforms.json';
 
 @Component({
-  selector: 'forms',
-  templateUrl: './forms.component.html',
-  styleUrls: ['./forms.component.css']
+    selector: 'forms',
+    templateUrl: './forms.component.html',
+    styleUrls: ['./forms.component.css'],
+    standalone: false
 })
 export class FormsComponent implements OnInit {
 

@@ -8,9 +8,10 @@ import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 
 @Component({
-  selector: 'global-search',
-  templateUrl: './global-search.component.html',
-  styleUrls: ['./global-search.component.css']
+    selector: 'global-search',
+    templateUrl: './global-search.component.html',
+    styleUrls: ['./global-search.component.css'],
+    standalone: false
 })
 export class GlobalSearchComponent implements OnInit {
 

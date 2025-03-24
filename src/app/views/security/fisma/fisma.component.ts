@@ -10,9 +10,10 @@ import { FilterButton, Column, TwoDimArray } from '../../../common/table-classes
 import { FISMA } from '@api/models/fisma.model';
 
 @Component({
-  selector: 'fisma',
-  templateUrl: './fisma.component.html',
-  styleUrls: ['./fisma.component.css'],
+    selector: 'fisma',
+    templateUrl: './fisma.component.html',
+    styleUrls: ['./fisma.component.css'],
+    standalone: false
 })
 export class FismaComponent implements OnInit {
   row: Object = <any>{};

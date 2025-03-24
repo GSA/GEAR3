@@ -12,9 +12,10 @@ import { FilterButton, Column, TwoDimArray } from '../../../common/table-classes
 import { Website } from '@api/models/websites.model';
 
 @Component({
-  selector: 'websites',
-  templateUrl: './websites.component.html',
-  styleUrls: ['./websites.component.css'],
+    selector: 'websites',
+    templateUrl: './websites.component.html',
+    styleUrls: ['./websites.component.css'],
+    standalone: false
 })
 export class WebsitesComponent implements OnInit {
   filteredTable: boolean = false;

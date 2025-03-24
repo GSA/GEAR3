@@ -15,9 +15,10 @@ import { FilterButton, Column, TwoDimArray } from '@common/table-classes';
 declare var $: any;
 
 @Component({
-  selector: 'it-standards',
-  templateUrl: './it-standards.component.html',
-  styleUrls: ['./it-standards.component.css'],
+    selector: 'it-standards',
+    templateUrl: './it-standards.component.html',
+    styleUrls: ['./it-standards.component.css'],
+    standalone: false
 })
 export class ItStandardsComponent implements OnInit {
   row: Object = <any>{};
