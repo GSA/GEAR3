@@ -24,7 +24,7 @@
           <i class="fas fa-sitemap"></i>
           {{ org.Name }} ({{ org.OrgSymbol }})
         </h5>
-        <a role="button" aria-label="Close" data-dismiss="modal" tabindex="0">
+        <a role="button" aria-label="Close" data-bs-dismiss="modal" tabindex="0">
           <i class="fas fa-times fa-lg text-white align-self-center"></i>
         </a>
       </div>
@@ -33,17 +33,17 @@
         <!-- Tabs -->
         <ul id="orgTabs" class="nav nav-tabs">
           <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#orgOverview">
+            <a class="nav-link active" data-bs-toggle="tab" href="#orgOverview">
               Overview</a
             >
           </li>
           <li class="nav-item" *ngIf="showRelatedCapsTab()">
-            <a class="nav-link" data-toggle="tab" href="#orgCaps">
+            <a class="nav-link" data-bs-toggle="tab" href="#orgCaps">
               Related Capabilities</a
             >
           </li>
           <li class="nav-item" *ngIf="showOrgSystemsTab()">
-            <a class="nav-link" data-toggle="tab" href="#orgSys">
+            <a class="nav-link" data-bs-toggle="tab" href="#orgSys">
               Organizational Systems</a
             >
           </li>

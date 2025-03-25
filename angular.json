@@ -37,6 +37,7 @@
               "src/assets/fontawesome-free-5.13.0-web/css/all.min.css",
               "src/assets/bootstrap-theme/bootstrap.min.css",
               "node_modules/bootstrap-table/dist/bootstrap-table.min.css",
+              "node_modules/bootstrap-icons/font/bootstrap-icons.css",
               "node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css",
               "node_modules/@ng-select/ng-select/themes/default.theme.css",
               "node_modules/@uswds/uswds/dist/css/uswds.css",
