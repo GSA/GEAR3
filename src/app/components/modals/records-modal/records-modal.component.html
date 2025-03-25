@@ -24,7 +24,7 @@
           <i class="far fa-folder-open"></i>
           {{ record.Record_Item_Title }}
         </h5>
-        <a role="button" aria-label="Close" data-dismiss="modal" tabindex="0">
+        <a role="button" aria-label="Close" data-bs-dismiss="modal" tabindex="0">
           <i class="fas fa-times fa-lg text-white align-self-center"></i>
         </a>
       </div>
@@ -35,14 +35,14 @@
           <li class="nav-item">
             <a
               class="nav-link active"
-              data-toggle="tab"
+              data-bs-toggle="tab"
               href="#recordsOverview"
             >
               Overview</a
             >
           </li>
           <li class="nav-item" *ngIf="showRelatedSystemsTab()">
-            <a class="nav-link" data-toggle="tab" href="#recRelatedSystems">
+            <a class="nav-link" data-bs-toggle="tab" href="#recRelatedSystems">
               Related Systems</a
             >
           </li>

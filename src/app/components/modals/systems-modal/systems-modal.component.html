@@ -24,7 +24,7 @@
           <i class="fas fa-desktop"></i>
           {{ system.Name }}
         </h5>
-        <a role="button" aria-label="Close" data-dismiss="modal" tabindex="0">
+        <a role="button" aria-label="Close" data-bs-dismiss="modal" tabindex="0">
           <i class="fas fa-times fa-lg text-white align-self-center"></i>
         </a>
       </div>
@@ -33,42 +33,42 @@
         <!-- Tabs -->
         <ul class="nav nav-tabs">
           <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#systemOverview">
+            <a class="nav-link active" data-bs-toggle="tab" href="#systemOverview">
               Overview</a
             >
           </li>
           <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#businessRelated">
+            <a class="nav-link" data-bs-toggle="tab" href="#businessRelated">
               Business</a
             >
           </li>
           <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#technicalRelated">
+            <a class="nav-link" data-bs-toggle="tab" href="#technicalRelated">
               Technical</a
             >
           </li>
           <li class="nav-item" *ngIf="showInvestmentsTab()">
-            <a class="nav-link" data-toggle="tab" href="#relatedInvestments">
+            <a class="nav-link" data-bs-toggle="tab" href="#relatedInvestments">
               Investments</a
             >
           </li>
           <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#relatedRecords">
+            <a class="nav-link" data-bs-toggle="tab" href="#relatedRecords">
               Records</a
             >
           </li>
           <li class="nav-item" *ngIf="showWebsitesTab()">
-            <a class="nav-link" data-toggle="tab" href="#relatedWebsites">
+            <a class="nav-link" data-bs-toggle="tab" href="#relatedWebsites">
               Websites</a
             >
           </li>
           <li class="nav-item" [hidden]="system.SystemLevel != 'System'">
-            <a class="nav-link" data-toggle="tab" href="#systemSubs">
+            <a class="nav-link" data-bs-toggle="tab" href="#systemSubs">
               Subsystems</a
             >
           </li>
           <!-- <li class="nav-item" [hidden]="!interfaces.length">
-            <a class="nav-link" data-toggle="tab" href="#systemDataFlow">
+            <a class="nav-link" data-bs-toggle="tab" href="#systemDataFlow">
               Data Flow</a></li> -->
         </ul>
 

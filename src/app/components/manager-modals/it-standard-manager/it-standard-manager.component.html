@@ -1,6 +1,6 @@
 <!-- IT Standards Manager Modal -->
 <div class="modal fade" id="itStandardsManager" tabindex="-1" role="dialog" aria-labelledby="itStandMngrTitle"
-  aria-hidden="true" data-keyboard="false" data-backdrop="static">
+  aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
     <div class="modal-content">
       <div class="modal-header bg-success">
@@ -10,7 +10,7 @@
               class="text-primary">**EDITING**</span></span>
           <ng-template #elseITStandName> Create New IT-Standard</ng-template>
         </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="cleanup()">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="cleanup()">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -19,7 +19,7 @@
         <!-- Tabs -->
         <ul id="itStandMngrTabs" class="nav nav-tabs">
           <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#itStandMngrOverview">
+            <a class="nav-link active" data-bs-toggle="tab" href="#itStandMngrOverview">
               Overview</a></li>
         </ul>
         <div *ngIf="anyServerError" class="usa-alert usa-alert--error" role="alert">
