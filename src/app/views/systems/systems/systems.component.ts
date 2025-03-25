@@ -12,31 +12,37 @@ import { System } from '@api/models/systems.model';
 import { Column, FilterButton, TwoDimArray } from '../../../common/table-classes';
 
 // Declare D3 & Sankey library
-declare var d3: any;
-import * as d3Sankey from 'd3-sankey';
+// declare var d3: any;
+// import * as d3Sankey from 'd3-sankey';
 
-// Declare jQuery symbol
-declare var $: any;
+// // Declare jQuery symbol
+// declare var $: any;
 
 @Component({
   selector: 'systems',
   templateUrl: './systems.component.html',
-  styleUrls: ['./systems.component.css'],
+  styleUrls: ['./systems.component.scss'],
 })
 export class SystemsComponent implements OnInit {
-  row: Object = <any>{};
-  filteredTable: boolean = false;
-  filterTitle: string = '';
-  interfaces: any[] = [];
-  cloudTable: boolean = false;
-  inactiveTable: boolean = false;
-  pendingTable: boolean = false;
+  // row: Object = <any>{};
+  // filteredTable: boolean = false;
+  // filterTitle: string = '';
+  // interfaces: any[] = [];
+  // cloudTable: boolean = false;
+  // inactiveTable: boolean = false;
+  // pendingTable: boolean = false;
 
   vizData: any[] = [];
   vizLabel: string = 'Total Active Systems';
   colorScheme: {} = {
     domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5'],
   };
+
+  public tableCols: Column[] = [];
+  public selectedTab: string = 'All';
+
+  public systemsData: System[] = [];
+  public systemsDataTabFilterted: System[] = [];
 
   constructor(
     private apiService: ApiService,
@@ -48,57 +54,35 @@ export class SystemsComponent implements OnInit {
     private tableService: TableService,
     private titleService: Title
   ) {
-    this.modalService.currentSys.subscribe((row) => (this.row = row));
+    // this.modalService.currentSys.subscribe((row) => (this.row = row));
   }
 
-  //active table export ignore column indices
-  activeExportIgnoreColumn = [];
-  //inactive table export ignore column indices
-  inactiveExportIgnoreColumn = [];
-  
-  // Systems Table Options
-  tableOptions: {} = this.tableService.createTableOptions({
-    advancedSearch: true,
-    idTable: 'SystemTable',
-    classes: 'table-hover table-dark clickable-table',
-    showColumns: true,
-    showExport: true,
-    exportFileName: 'GSA_Systems_SubSystems',
-    exportIgnoreColumn: this.activeExportIgnoreColumn,
-    headerStyle: 'bg-danger',
-    pagination: true,
-    search: true,
-    sortName: 'Name',
-    sortOrder: 'asc',
-    showToggle: true,
-    url: this.apiService.sysUrl,
-  });
+  public onSelectTab(tabName: string): void {
+    this.selectedTab = tabName;
+    this.systemsDataTabFilterted = this.systemsData;
 
-  tableData: System[] = [];
-  tableDataOriginal: System[] = [];
-  tableDataFiltered: System[] = [];
+    if(this.selectedTab === 'All') {
+      this.systemsDataTabFilterted = this.systemsData.filter(s => {
+        return s.Status === 'Active' && s.BusApp === 'Yes';
+      });
+      this.tableCols = this.defaultTableCols;
+    } else if (this.selectedTab === 'Cloud Enabled') {
+      this.systemsDataTabFilterted = this.systemsData.filter(s => {
+        return s.Status === 'Active' && s.BusApp === 'Yes' && s.CloudYN === 'Yes';
+      });
+      this.tableCols = this.defaultTableCols;
+    } else if (this.selectedTab === 'Inactive') {
+      this.systemsDataTabFilterted = this.systemsData.filter(s => {
+        return s.Status === 'Inactive' && s.BusApp === 'Yes';
+      });
+      this.tableCols = this.inactiveColumnDefs;
+    }
+    this.tableService.updateReportTableData(this.systemsDataTabFilterted);
+  }
 
-  filterButtons: TwoDimArray<FilterButton> = [
-    [
-      {
-        buttonText: 'Cloud Enabled',
-        filters: [
-          { field: 'Status', value: 'Active' },
-          { field: 'BusApp', value: 'Yes' },
-          { field: 'CloudYN', value: 'Yes' }
-        ]
-      },
-      {
-        buttonText: 'Inactive',
-        filters: [
-          {field: 'Status', value: 'Inactive'},
-          {field: 'BusApp', value: 'Yes'}
-        ]
-      }
-    ]
-  ];
-
-  tableCols: Column[] = [];
+  public isTabSelected(tabName: string): boolean {
+    return this.selectedTab === tabName;
+  }
 
   defaultTableCols: Column[] = [
     {
@@ -285,22 +269,21 @@ export class SystemsComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    // Set JWT when logged into GEAR Manager when returning from secureAuth
-    this.sharedService.setJWTonLogIn();
+    // // Set JWT when logged into GEAR Manager when returning from secureAuth
+    // this.sharedService.setJWTonLogIn();
 
     this.tableCols = this.defaultTableCols;
 
     this.apiService.getSystems().subscribe(systems => {
-      this.tableDataOriginal = systems;
+      this.systemsData = systems;
 
       systems.forEach(s => {
-        if(s.Status === 'Active' && s.BusApp == 'Yes') {
-          this.tableDataFiltered.push(s);
+        if(s.Status === 'Active' && s.BusApp === 'Yes') {
+          this.systemsDataTabFilterted.push(s);
         }
       });
 
-      this.tableData = this.tableDataFiltered;
-      this.tableService.updateReportTableData(this.tableData);
+      this.tableService.updateReportTableData(this.systemsDataTabFilterted);
     });
 
     // Get System data for visuals
@@ -334,36 +317,36 @@ export class SystemsComponent implements OnInit {
 
 
 
-    // Method to open details modal when referenced directly via URL
-    this.route.params.subscribe((params) => {
-      var detailSysID = params['sysID'];
-      if (detailSysID) {
-        this.titleService.setTitle(
-          `${this.titleService.getTitle()} - ${detailSysID}`
-        );
-        this.apiService.getOneSys(detailSysID).subscribe((data: any[]) => {
-          this.tableService.systemsTableClick(data[0]);
-          // this.getInterfaceData(row.ID);
-        });
-      }
-    });
+    // // Method to open details modal when referenced directly via URL
+    // this.route.params.subscribe((params) => {
+    //   var detailSysID = params['sysID'];
+    //   if (detailSysID) {
+    //     this.titleService.setTitle(
+    //       `${this.titleService.getTitle()} - ${detailSysID}`
+    //     );
+    //     this.apiService.getOneSys(detailSysID).subscribe((data: any[]) => {
+    //       this.tableService.systemsTableClick(data[0]);
+    //       // this.getInterfaceData(row.ID);
+    //     });
+    //   }
+    // });
   }
 
-  onFilterEvent(filter: string) {
-      if(filter === 'Inactive') {
-        this.tableCols = this.inactiveColumnDefs;
-        // Hide visualization when on alternative filters
-        $('#sysViz').collapse('hide');
-      } else if(filter === 'Cloud Enabled'){
-        this.tableCols = this.defaultTableCols;
-        // Hide visualization when on alternative filters
-        $('#sysViz').collapse('hide');
-      } else {
-        this.tableCols = this.defaultTableCols;
-        // Hide visualization when on alternative filters
-        $('#sysViz').collapse('show');
-      }
-  }
+  // onFilterEvent(filter: string) {
+  //     if(filter === 'Inactive') {
+  //       this.tableCols = this.inactiveColumnDefs;
+  //       // Hide visualization when on alternative filters
+  //       $('#sysViz').collapse('hide');
+  //     } else if(filter === 'Cloud Enabled'){
+  //       this.tableCols = this.defaultTableCols;
+  //       // Hide visualization when on alternative filters
+  //       $('#sysViz').collapse('hide');
+  //     } else {
+  //       this.tableCols = this.defaultTableCols;
+  //       // Hide visualization when on alternative filters
+  //       $('#sysViz').collapse('show');
+  //     }
+  // }
 
   getAriaLabel(data: { name: string, value: number }[]): string {
     const total = data.reduce((acc, cur) => acc + cur.value, 0);
@@ -375,44 +358,44 @@ export class SystemsComponent implements OnInit {
     }
   }
 
-  onSelect(chartData): void {
-    this.sharedService.disableStickyHeader("systemTable");
-    this.filteredTable = true; // Filters are on, expose main table button
-    this.filterTitle = chartData.name;
+  // onSelect(chartData): void {
+  //   this.sharedService.disableStickyHeader("systemTable");
+  //   this.filteredTable = true; // Filters are on, expose main table button
+  //   this.filterTitle = chartData.name;
 
-    // Filter by RespOrg clicked on visualization
-    $('#systemTable').bootstrapTable('filterBy', {
-      Status: ['Active'],
-      BusApp: 'Yes',
-      BusOrgSymbolAndName: chartData.name,
-    });
-    $('#systemTable').bootstrapTable('refreshOptions', {
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt(
-          'GSA_Systems_SubSystems-' + chartData.name
-        ),
-      },
-    });
-    this.sharedService.enableStickyHeader("systemTable");
-  }
+  //   // Filter by RespOrg clicked on visualization
+  //   $('#systemTable').bootstrapTable('filterBy', {
+  //     Status: ['Active'],
+  //     BusApp: 'Yes',
+  //     BusOrgSymbolAndName: chartData.name,
+  //   });
+  //   $('#systemTable').bootstrapTable('refreshOptions', {
+  //     exportOptions: {
+  //       fileName: this.sharedService.fileNameFmt(
+  //         'GSA_Systems_SubSystems-' + chartData.name
+  //       ),
+  //     },
+  //   });
+  //   this.sharedService.enableStickyHeader("systemTable");
+  // }
 
-  onFilterClick(filterButtons: FilterButton[]) {
-    this.tableData = this.tableDataOriginal;
-    // this.tableService.filterButtonClick(filterButtons, this.tableData);
-    filterButtons.forEach(f => {
-      if(f.filters &&  f.filters.length > 0) {
-        this.tableService.filterButtonClick(filterButtons, this.tableData);
-      }
-      this.onFilterEvent(f.buttonText);
-    });
-  }
+  // onFilterClick(filterButtons: FilterButton[]) {
+  //   this.tableData = this.tableDataOriginal;
+  //   // this.tableService.filterButtonClick(filterButtons, this.tableData);
+  //   filterButtons.forEach(f => {
+  //     if(f.filters &&  f.filters.length > 0) {
+  //       this.tableService.filterButtonClick(filterButtons, this.tableData);
+  //     }
+  //     this.onFilterEvent(f.buttonText);
+  //   });
+  // }
 
-  onFilterResetClick() {
-    $('#sysViz').collapse('show');
-    this.tableCols = this.defaultTableCols;
-    this.tableData = this.tableDataFiltered;
-    this.tableService.updateReportTableData(this.tableData);
-  }
+  // onFilterResetClick() {
+  //   $('#sysViz').collapse('show');
+  //   this.tableCols = this.defaultTableCols;
+  //   this.tableData = this.tableDataFiltered;
+  //   this.tableService.updateReportTableData(this.tableData);
+  // }
 
   //   private getInterfaceData(sysID: number) {
   //     this.apiService.getOneDataFlow(sysID).subscribe((data: any[]) => {

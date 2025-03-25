@@ -12,11 +12,15 @@
 
         &.selected {
             border-bottom: 2px solid var(--primary-color);
+
+            & .filter-tab-text {
+                color: var(--primary-color);
+            }
         }
 
         & .filter-tab-text {
             font-size: 18px;
-            color: var(--primary-color);
+            color: var(--neutral-black-color-dark);
             font-size: normal;
             font-weight: 500;
             line-height: normal;
