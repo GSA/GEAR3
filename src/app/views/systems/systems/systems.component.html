@@ -37,20 +37,20 @@
           tabindex="0"
           role="navigation"></ngx-charts-advanced-pie-chart>
       </div>
-  <div class="systems-data-bs-container">
+  <div class="systems-data-container">
     <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral">
       <div class="filter-tabs-container" filterTabs>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')">
           <span class="filter-tab-text">All</span>
-          <span class="filter-tab-number first">100</span>
+          <span class="filter-tab-number first">{{filterTotals.AllTotal}}</span>
         </div>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Cloud Enabled')}" (click)="onSelectTab('Cloud Enabled')">
           <span class="filter-tab-text">Cloud Enabled</span>
-          <span class="filter-tab-number second">100</span>
+          <span class="filter-tab-number second">{{filterTotals.CloudEnabledTotal}}</span>
         </div>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Inactive')}" (click)="onSelectTab('Inactive')">
           <span class="filter-tab-text">Inactive</span>
-          <span class="filter-tab-number third">100</span>
+          <span class="filter-tab-number third">{{filterTotals.InactiveTotal}}</span>
         </div>
       </div>
     </app-table>

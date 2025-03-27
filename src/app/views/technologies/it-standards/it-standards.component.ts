@@ -89,9 +89,8 @@ export class ItStandardsComponent implements OnInit {
     } else {
       this.itStandardsDataChipFilterted = this.itStandardsDataTabFilterted;
       this.onSelectTab(this.selectedTab);
-      
     }
-    
+    this.updateTotals();
   }
 
   public isTabSelected(tabName: string): boolean {
@@ -104,6 +103,12 @@ export class ItStandardsComponent implements OnInit {
 
   private YesNo(value, row, index, field): string {
     return value === 'T'? "Yes" : "No";
+  }
+
+  private updateTotals(): void {
+    this.apiService.getITStandardsFilterTotals(this.selectedChips).subscribe(t => {
+      this.filterTotals = t;
+    })
   }
 
   ngOnInit(): void {
@@ -318,7 +323,7 @@ export class ItStandardsComponent implements OnInit {
       this.tableService.updateReportTableData(i);
     });
 
-    this.apiService.getITStandardsFilterTotals().subscribe(t => {
+    this.apiService.getITStandardsFilterTotals(this.selectedChips).subscribe(t => {
       this.filterTotals = t;
     });
 

@@ -460,7 +460,47 @@ exports.getExpiringWeek = (req, res) => {
 };
 
 exports.getFilterTotals = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_it-standards_filter_totals.sql`)).toString();
+  var filterQueryBase = 'AND (';
+  var filterQuery = '';
+  var filterQueryEnd  = ')';
+  var filterQueryFull = '';
+  if(req.params.filters && req.params.filters.length > 0) {
+    var filters = req.params.filters.split(',');
+
+    for(i = 0; i < filters.length; i++) {
+      if(i === 0) {
+        filterQuery += `obj_deployment_type.Keyname = '${filters[i]}'`;
+      } else {
+        filterQuery += ` OR obj_deployment_type.Keyname = '${filters[i]}'`;
+      }
+    }
+
+    filterQueryFull = filterQueryBase + filterQuery + filterQueryEnd;
+  }
+
+  var allQuery = '';
+  if(!filterQueryFull) {
+    allQuery = '*';
+  } else {
+    allQuery = `CASE WHEN (${filterQuery}) THEN 1 ELSE NULL END`;
+  }
+
+  var query = `SELECT COUNT(CASE WHEN obj_technology_status.Keyname = 'Approved' ${filterQueryFull} THEN 1
+                  ELSE NULL
+                END) AS ApprovedTotal,
+                COUNT(CASE WHEN obj_technology_status.Keyname = 'Denied' ${filterQueryFull} THEN 1
+                  ELSE NULL
+                END) AS DeniedTotal,
+                COUNT(CASE WHEN obj_technology_status.Keyname = 'Retired' ${filterQueryFull} THEN 1
+                  ELSE NULL
+                END) AS RetiredTotal,
+                COUNT(${allQuery}) AS AllTotal
+              FROM obj_technology AS tech
+              LEFT JOIN obj_technology_status   ON tech.obj_technology_status_Id = obj_technology_status.Id
+              LEFT JOIN obj_standard_type       ON tech.obj_standard_type_Id = obj_standard_type.Id
+              LEFT JOIN obj_deployment_type     ON tech.obj_deployment_type_Id = obj_deployment_type.Id
+              WHERE obj_standard_type.Keyname LIKE 'Software'
+              AND obj_technology_status.Keyname NOT LIKE 'Not yet submitted'`;
 
   res = ctrl.sendQuery(query, `IT Standards filter totals`, res);
-}
+};

@@ -199,3 +199,9 @@ exports.findTIME = (req, res) => {
 
   res = ctrl.sendQuery(query, 'related TIME designations for system', res);
 };
+
+exports.getFilterTotals = (req, res) => {  
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_systems_filter_totals.sql`)).toString();
+
+  res = ctrl.sendQuery(query, `Systems & Subsystems filter totals`, res);
+};

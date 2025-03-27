@@ -39,4 +39,7 @@ router.route('/updateTech/:id')
 router.route('/get/:id/time')
   .get(sysCtrl.findTIME);
 
+router.route('/filter_totals')
+  .get(sysCtrl.getFilterTotals);
+
 module.exports = router;

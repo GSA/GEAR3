@@ -40,6 +40,7 @@ export class SystemsComponent implements OnInit {
 
   public tableCols: Column[] = [];
   public selectedTab: string = 'All';
+  public filterTotals: any = null;
 
   public systemsData: System[] = [];
   public systemsDataTabFilterted: System[] = [];
@@ -284,6 +285,10 @@ export class SystemsComponent implements OnInit {
       });
 
       this.tableService.updateReportTableData(this.systemsDataTabFilterted);
+    });
+
+    this.apiService.getSystemsFilterTotals().subscribe(t => {
+      this.filterTotals = t;
     });
 
     // Get System data for visuals

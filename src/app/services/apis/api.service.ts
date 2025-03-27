@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, filter, map } from 'rxjs/operators';
 
 import { SharedService } from '@services/shared/shared.service';
 import { Globals } from '@common/globals';
@@ -460,6 +460,14 @@ export class ApiService {
         )
       );
   }
+  public getSystemsFilterTotals(): Observable<any> {
+    return this.http
+    .get<any>(this.sysUrl + '/filter_totals')
+    .pipe(
+      map(t => t[0]),
+      catchError(this.handleError<any>('GET Systems Filter Totals', []))
+    );
+  }
   public updateSystemCaps(id: number, data: {}): Observable<System[]> {
     if (this.globals.jwtToken) {
       var httpOptions = this.setHeaderOpts();
@@ -583,13 +591,13 @@ export class ApiService {
         catchError(this.handleError<ITStandards[]>('GET IT Standards', []))
       );
   }
-  public getITStandardsFilterTotals(): Observable<any> {
+  public getITStandardsFilterTotals(filters: string[]): Observable<any> {
     return this.http
-      .get<any>(this.techUrl + '/filter_totals')
-      .pipe(
-        map(t => t[0]),
-        catchError(this.handleError<any>('GET IT Standards Filter Totals', []))
-      );
+    .get<any>(this.techUrl + '/filter_totals/' + filters)
+    .pipe(
+      map(t => t[0]),
+      catchError(this.handleError<any>('GET IT Standards Filter Totals', []))
+    );
   }
   public getOneITStandard(id: number): Observable<ITStandards[]> {
     return this.http
