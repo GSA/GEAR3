@@ -7,6 +7,7 @@ exports.searchAll = (req, res) => {
         systems.\`ex:GEAR_ID\` AS \`Id\`,
         systems.\`ex:System_Name\` AS \`Name\`,
         systems.\`ex:Description\` AS \`Description\`,
+        systems.\`ex:Status\` AS \`Status\`,
         'System' AS \`GEAR_Type\`,
         'Business Systems & Subsystems Report' AS \`GEAR_Type_Display\`,
         '{}' AS \`Other\`
@@ -18,6 +19,7 @@ exports.searchAll = (req, res) => {
         fisma.\`ex:GEAR_ID\` AS \`Id\`,
         fisma.\`ex:System_Name\` AS \`Name\`,
         fisma.\`ex:Description\` AS \`Description\`,
+        fisma.\`ex:Status\` AS \`Status\`,
         'FISMA' AS \`GEAR_Type\`,
         'Security -> FISMA Systems Inventory' AS \`GEAR_Type_Display\`,
         '{}' AS \`Other\`
@@ -30,6 +32,7 @@ exports.searchAll = (req, res) => {
         tech.\`Id\` AS \`Id\`,
         IFNULL(tech.\`softwareReleaseName\`, tech.\`Keyname\`) AS \`Name\`,
         tech.\`Description\` AS \`Description\`,
+        obj_technology_status.\`Keyname\` AS \`Status\`,
         'Technology' AS \`GEAR_Type\`,
         'Technologies -> IT Standards List' AS \`GEAR_Type_Display\`,
         JSON_OBJECT('Vendor',
@@ -38,10 +41,12 @@ exports.searchAll = (req, res) => {
             tech.\`Comments\`) AS \`Other\`
       FROM
         obj_technology AS tech
+      LEFT JOIN obj_technology_status       ON tech.obj_technology_status_Id = obj_technology_status.Id
       UNION SELECT
         cap.\`capability_Id\` AS \`Id\`,
         cap.\`Capability_Name\` AS \`Name\`,
         cap.\`Description\` AS \`Description\`,
+        '-' AS \`Status\`,
         'Capability' AS \`GEAR_Type\`,
         'GSA Enterprise -> Business Capability List' AS \`GEAR_Type_Display\`,
         '{}' AS \`Other\`
@@ -51,6 +56,7 @@ exports.searchAll = (req, res) => {
         org.\`Organization_Id\` AS \`Id\`,
         org.\`Organization_Id\` AS \`Name\`,
         org.\`Organization_Name\` AS \`Description\`,
+        '-' AS \`Status\`,
         'Organization' AS \`GEAR_Type\`,
         'GSA Enterprise -> Organization List' AS \`GEAR_Type_Display\`,
         '{}' AS \`Other\`
@@ -60,6 +66,7 @@ exports.searchAll = (req, res) => {
         invest.\`Investment_Id\` AS \`Id\`,
         invest.\`Investment_Name\` AS \`Name\`,
         invest.\`Description\` AS \`Description\`,
+        invest.\`Investment_Status_Name\` AS \`Status\`,
         'Investment' AS \`GEAR_Type\`,
         'IT Strategy -> IT Investments' AS \`GEAR_Type_Display\`,
         '{}' AS \`Other\`
@@ -69,6 +76,7 @@ exports.searchAll = (req, res) => {
         web.\`id\` AS \`Id\`,
         web.\`domain\` AS \`Name\`,
         web.\`notes\` AS \`Description\`,
+        web.\`status_code\` AS \`Status\`,
         'Website' AS \`GEAR_Type\`,
         'Business Systems -> GSA Websites' AS \`GEAR_Type_Display\`,
         '{}' AS \`Other\`
