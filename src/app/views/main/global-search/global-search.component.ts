@@ -54,6 +54,11 @@ export class GlobalSearchComponent implements OnInit {
     class: 'text-truncate'
   },
   {
+    field: 'Status',
+    title: 'Status',
+    sortable: false,
+  },
+  {
     field: 'GEAR_Type_Display',
     title: 'GEAR Data Report',
     sortable: true
