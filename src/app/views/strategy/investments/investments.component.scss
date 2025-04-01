@@ -25,6 +25,14 @@
         }
     }
 
+    & .investments-graph-container {
+
+        & .investments-graph {
+            width: 95%;
+            height: 300px;
+        }
+    }
+
     & .it-investments-data-container {
         display: flex;
         flex-direction: column;

@@ -38,37 +38,39 @@
   <ng-template pTemplate="caption">
     <div class="caption-container">
       <ng-content select="[filterTabs]"></ng-content>
-      <div class="table-toolbar-container" *ngIf="showToolbar">
-        <!-- Search bar -->
-        <p-iconField iconPosition="left" *ngIf="showSearchbar">
-          <p-inputIcon styleClass="fa fa-search" />
-          <input 
-            pInputText 
-            type="text" 
-            (input)="onTableSearch($event.target.value)" 
-            placeholder="Search keyword"
-            aria-label="Table Search" />
-        </p-iconField>
-        <!-- Show/hide columns -->
-          <p-multiSelect 
-            *ngIf="showShowHideColumnButton"
-            [options]="tableCols" 
-            [(ngModel)]="visibleColumns"
-            (onChange)="toggleVisible($event)"
-            optionLabel="header"
-            pTooltip="Add/Remove Columns"
-            [showToggleAll]="false"
-            ariaLabel="Toggle Columns">
-            <ng-template pTemplate="selectedItems">
-              <i class="fa fa-th-list"></i>
-            </ng-template>
-          </p-multiSelect>
-          <!-- Pagination toggle button -->
-          <!-- <p-button icon="fa fa-caret-square-down" severity="primary" (click)="togglePagination()" *ngIf="showPaginationToggleButton" ariaLabel="Toggle Pagination" /> -->
-          <!-- Export button -->
-          <p-button icon="fa fa-download" pTooltip="Export table data" severity="primary" (click)="onExportData()" *ngIf="showExportButton" ariaLabel="Export Data" />
-          <!-- Filter toggle button -->
-          <p-button icon="fa fa-filter" pTooltip="Show/Hide column filters" severity="primary" (click)="toggleFilter()" *ngIf="showFilterButton" ariaLabel="Toggle Filters" />
+      <div class="caption-toolbar-container">
+        <div class="table-toolbar-container" *ngIf="showToolbar">
+          <!-- Search bar -->
+          <p-iconField iconPosition="left" *ngIf="showSearchbar">
+            <p-inputIcon styleClass="fa fa-search" />
+            <input 
+              pInputText 
+              type="text" 
+              (input)="onTableSearch($event.target.value)" 
+              placeholder="Search keyword"
+              aria-label="Table Search" />
+          </p-iconField>
+          <!-- Show/hide columns -->
+            <p-multiSelect 
+              *ngIf="showShowHideColumnButton"
+              [options]="tableCols" 
+              [(ngModel)]="visibleColumns"
+              (onChange)="toggleVisible($event)"
+              optionLabel="header"
+              pTooltip="Add/Remove Columns"
+              [showToggleAll]="false"
+              ariaLabel="Toggle Columns">
+              <ng-template pTemplate="selectedItems">
+                <i class="fa fa-th-list"></i>
+              </ng-template>
+            </p-multiSelect>
+            <!-- Pagination toggle button -->
+            <!-- <p-button icon="fa fa-caret-square-down" severity="primary" (click)="togglePagination()" *ngIf="showPaginationToggleButton" ariaLabel="Toggle Pagination" /> -->
+            <!-- Export button -->
+            <p-button icon="fa fa-download" pTooltip="Export table data" severity="primary" (click)="onExportData()" *ngIf="showExportButton" ariaLabel="Export Data" />
+            <!-- Filter toggle button -->
+            <p-button icon="fa fa-filter" pTooltip="Show/Hide column filters" severity="primary" (click)="toggleFilter()" *ngIf="showFilterButton" ariaLabel="Toggle Filters" />
+        </div>
       </div>
     </div>
   </ng-template>

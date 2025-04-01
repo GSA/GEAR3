@@ -1,7 +1,13 @@
 .caption-container {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: baseline;
+
+    & .caption-toolbar-container {
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+    }
 }
 
 ::ng-deep {

@@ -29,6 +29,12 @@ exports.findSystems = (req, res) => {
   res = ctrl.sendQuery(query, 'system relations for investment', res);
 };
 
+exports.getFilterTotals = (req, res) => {  
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_it-investments_filter_totals.sql`)).toString();
+
+  res = ctrl.sendQuery(query, `IT Investments filter totals`, res);
+};
+
 // exports.findLatest = (req, res) => {
 //   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_investments.sql')).toString() +
 //     ` ORDER BY invest.CreateDTG DESC LIMIT 1;`;

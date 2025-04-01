@@ -23,6 +23,10 @@ export class InvestmentsComponent implements OnInit {
   public defExpanded: boolean = false;
   public tableCols: Column[] = [];
   public selectedTab: string = 'All';
+  public filterTotals: any = null;
+
+  public itInvestmentsData: Investment[] = [];
+  public itInvesmentsDataTabFilterted: Investment[] = [];
 
   // row: Object = <any>{};
   // filteredTable: boolean = false;
@@ -30,11 +34,11 @@ export class InvestmentsComponent implements OnInit {
   // nonEliminatedTypes: any[] = ['11: No Change in Status', '10: New', '01: Upgraded from non-major to major IT Investment', '04: Consolidation of Investments'];
   // eliminatedTypes: any[] = ['06: Eliminated by funding', 'Eliminated by omission', '09: Eliminated by reorganization'];
 
-  // vizData: any[] = [];
-  // vizLabel: string = 'Total Current IT Investments';
-  // colorScheme: {} = {
-  //   domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5'],
-  // };
+  vizData: any[] = [];
+  vizLabel: string = 'Total Current IT Investments';
+  colorScheme: {} = {
+    domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5'],
+  };
 
   constructor(
     private apiService: ApiService,
@@ -53,40 +57,32 @@ export class InvestmentsComponent implements OnInit {
 
   public onSelectTab(tabName: string): void {
     this.selectedTab = tabName;
+    this.itInvesmentsDataTabFilterted = this.itInvestmentsData;
+
+    if(this.selectedTab === 'All') {
+      this.itInvesmentsDataTabFilterted = this.itInvestmentsData;
+      this.tableCols = this.defaultCols;
+    } else if (this.selectedTab === 'Current Year') {
+      this.itInvesmentsDataTabFilterted = this.itInvestmentsData;
+      this.tableCols = this.CYcolumnDefs;
+    } else if (this.selectedTab === 'Previous Year') {
+      this.itInvesmentsDataTabFilterted = this.itInvestmentsData;
+      this.tableCols = this.PYcolumnDefs;
+    } else if (this.selectedTab === 'Budget Year') {
+      this.itInvesmentsDataTabFilterted = this.itInvestmentsData;
+      this.tableCols = this.BYcolumnDefs;
+    } else if(this.selectedTab === 'Eliminated') {
+      this.itInvesmentsDataTabFilterted = this.itInvestmentsData.filter(s => {
+        return s.Status.includes('Eliminated');
+      });
+      this.tableCols = this.defaultCols;
+    }
+    this.tableService.updateReportTableData(this.itInvesmentsDataTabFilterted);
   }
 
   public isTabSelected(tabName: string): boolean {
     return this.selectedTab === tabName;
   }
-
-  // tableData: Investment[] = [];
-  // tableDataOriginal: Investment[] = [];
-
-  // preloadedFilterButtons: FilterButton[] = [];
-  // filterButtons: TwoDimArray<FilterButton> = [
-  //   [
-  //     {
-  //       buttonText: 'Eliminated',
-  //       filters: [
-  //         { field: 'Status', value: 'eliminated', matchMode: 'contains' }
-  //       ]
-  //     },
-  //     {
-  //       buttonText: 'Previous Year $',
-  //       filters: []
-  //     },
-  //     {
-  //       buttonText: 'Current Year $',
-  //       filters: []
-  //     },
-  //     {
-  //       buttonText: 'Budget Year $',
-  //       filters: []
-  //     }
-  //   ]
-  // ];
-
-  // tableCols: Column[] = [];
 
   defaultCols: Column[] = [
     {
@@ -172,135 +168,135 @@ export class InvestmentsComponent implements OnInit {
     },
   ];
 
-  // // Previous Year Investments Table Columns
-  // PYcolumnDefs: Column[] = [
-  //   {
-  //     field: 'UII',
-  //     header: 'Investment UII',
-  //     isSortable: true,
-  //     showColumn: false,
-  //   },
-  //   {
-  //     field: 'Name',
-  //     header: 'Investment Name',
-  //     isSortable: true,
-  //   },
-  //   {
-  //     field: 'Total_Spend_PY',
-  //     header: 'Total IT Spending ($ M): PY',
-  //     isSortable: true,
-  //   },
-  //   {
-  //     field: 'DME_Agency_Fund_PY',
-  //     header: 'DME Agency Funding ($ M): PY',
-  //     isSortable: true,
-  //   },
-  //   {
-  //     field: 'DME_Contributions_PY',
-  //     header: 'DME Contributions ($ M): PY',
-  //     isSortable: true,
-  //   },
-  //   {
-  //     field: 'OnM_Agency_Fund_PY',
-  //     header: 'O&M Agency Funding ($ M): PY',
-  //     isSortable: true,
-  //   },
-  //   {
-  //     field: 'OnM_Contributions_PY',
-  //     header: 'O&M Contributions ($ M): PY',
-  //     isSortable: true,
-  //   },
-  // ];
+  // Previous Year Investments Table Columns
+  PYcolumnDefs: Column[] = [
+    {
+      field: 'UII',
+      header: 'Investment UII',
+      isSortable: true,
+      showColumn: false,
+    },
+    {
+      field: 'Name',
+      header: 'Investment Name',
+      isSortable: true,
+    },
+    {
+      field: 'Total_Spend_PY',
+      header: 'Total IT Spending ($ M): PY',
+      isSortable: true,
+    },
+    {
+      field: 'DME_Agency_Fund_PY',
+      header: 'DME Agency Funding ($ M): PY',
+      isSortable: true,
+    },
+    {
+      field: 'DME_Contributions_PY',
+      header: 'DME Contributions ($ M): PY',
+      isSortable: true,
+    },
+    {
+      field: 'OnM_Agency_Fund_PY',
+      header: 'O&M Agency Funding ($ M): PY',
+      isSortable: true,
+    },
+    {
+      field: 'OnM_Contributions_PY',
+      header: 'O&M Contributions ($ M): PY',
+      isSortable: true,
+    },
+  ];
 
-  // // Current Year Investments Table Columns
-  // CYcolumnDefs: Column[] = [
-  //   {
-  //     field: 'UII',
-  //     header: 'Investment UII',
-  //     isSortable: true,
-  //     showColumn: false,
-  //   },
-  //   {
-  //     field: 'Name',
-  //     header: 'Investment Name',
-  //     isSortable: true,
-  //   },
-  //   {
-  //     field: 'Total_Spend_CY',
-  //     header: 'Total IT Spending ($ M): CY',
-  //     isSortable: true,
-  //   },
-  //   {
-  //     field: 'DME_Agency_Fund_CY',
-  //     header: 'DME Agency Funding ($ M): CY',
-  //     isSortable: true,
-  //   },
-  //   {
-  //     field: 'DME_Contributions_CY',
-  //     header: 'DME Contributions ($ M): CY',
-  //     isSortable: true,
-  //   },
-  //   {
-  //     field: 'OnM_Agency_Fund_CY',
-  //     header: 'O&M Agency Funding ($ M): CY',
-  //     isSortable: true,
-  //   },
-  //   {
-  //     field: 'OnM_Contributions_CY',
-  //     header: 'O&M Contributions ($ M): CY',
-  //     isSortable: true,
-  //   },
-  // ];
+  // Current Year Investments Table Columns
+  CYcolumnDefs: Column[] = [
+    {
+      field: 'UII',
+      header: 'Investment UII',
+      isSortable: true,
+      showColumn: false,
+    },
+    {
+      field: 'Name',
+      header: 'Investment Name',
+      isSortable: true,
+    },
+    {
+      field: 'Total_Spend_CY',
+      header: 'Total IT Spending ($ M): CY',
+      isSortable: true,
+    },
+    {
+      field: 'DME_Agency_Fund_CY',
+      header: 'DME Agency Funding ($ M): CY',
+      isSortable: true,
+    },
+    {
+      field: 'DME_Contributions_CY',
+      header: 'DME Contributions ($ M): CY',
+      isSortable: true,
+    },
+    {
+      field: 'OnM_Agency_Fund_CY',
+      header: 'O&M Agency Funding ($ M): CY',
+      isSortable: true,
+    },
+    {
+      field: 'OnM_Contributions_CY',
+      header: 'O&M Contributions ($ M): CY',
+      isSortable: true,
+    },
+  ];
 
-  // // Budget Year Investments Table Columns
-  // BYcolumnDefs: Column[] = [
-  //   {
-  //     field: 'UII',
-  //     header: 'Investment UII',
-  //     isSortable: true,
-  //     showColumn: false,
-  //   },
-  //   {
-  //     field: 'Name',
-  //     header: 'Investment Name',
-  //     isSortable: true,
-  //   },
-  //   {
-  //     field: 'Total_Spend_BY',
-  //     header: 'Total IT Spending ($ M): BY',
-  //     isSortable: true,
-  //   },
-  //   {
-  //     field: 'DME_Agency_Fund_BY',
-  //     header: 'DME Agency Funding ($ M): BY',
-  //     isSortable: true,
-  //   },
-  //   {
-  //     field: 'DME_Contributions_BY',
-  //     header: 'DME Contributions ($ M): BY',
-  //     isSortable: true,
-  //   },
-  //   {
-  //     field: 'DME_Budget_Auth_BY',
-  //     header: 'DME Budget Authority Agency Funding ($ M): BY',
-  //     isSortable: true,
-  //   },
-  //   {
-  //     field: 'OnM_Agency_Fund_BY',
-  //     header: 'O&M Agency Funding ($ M): BY',
-  //     isSortable: true,
-  //   },
-  //   {
-  //     field: 'OnM_Contributions_BY',
-  //     header: 'O&M Contributions ($ M): BY',
-  //     isSortable: true,
-  //   },
-  //   {
-  //     field: 'OnM_Budget_Auth_BY',
-  //     header: 'O&M Budget Authority Agency Funding ($ M): BY',
-  //     isSortable: true,
-  //   },
-  // ];
+  // Budget Year Investments Table Columns
+  BYcolumnDefs: Column[] = [
+    {
+      field: 'UII',
+      header: 'Investment UII',
+      isSortable: true,
+      showColumn: false,
+    },
+    {
+      field: 'Name',
+      header: 'Investment Name',
+      isSortable: true,
+    },
+    {
+      field: 'Total_Spend_BY',
+      header: 'Total IT Spending ($ M): BY',
+      isSortable: true,
+    },
+    {
+      field: 'DME_Agency_Fund_BY',
+      header: 'DME Agency Funding ($ M): BY',
+      isSortable: true,
+    },
+    {
+      field: 'DME_Contributions_BY',
+      header: 'DME Contributions ($ M): BY',
+      isSortable: true,
+    },
+    {
+      field: 'DME_Budget_Auth_BY',
+      header: 'DME Budget Authority Agency Funding ($ M): BY',
+      isSortable: true,
+    },
+    {
+      field: 'OnM_Agency_Fund_BY',
+      header: 'O&M Agency Funding ($ M): BY',
+      isSortable: true,
+    },
+    {
+      field: 'OnM_Contributions_BY',
+      header: 'O&M Contributions ($ M): BY',
+      isSortable: true,
+    },
+    {
+      field: 'OnM_Budget_Auth_BY',
+      header: 'O&M Budget Authority Agency Funding ($ M): BY',
+      isSortable: true,
+    },
+  ];
 
   ngOnInit(): void {
     // // Enable popovers
@@ -308,38 +304,42 @@ export class InvestmentsComponent implements OnInit {
     //   $('[data-bs-toggle="popover"]').popover();
     // });
 
-    // this.tableCols = this.defaultCols;
+    this.tableCols = this.defaultCols;
 
-    // this.apiService.getInvestments().subscribe(i => {
-    //   this.tableService.updateReportTableData(i);
-    //   this.tableData = i;
-    //   this.tableDataOriginal = i;
-    // });
+    this.apiService.getInvestments().subscribe(i => {
+      this.tableService.updateReportTableData(i);
+      this.itInvestmentsData = i;
+      this.itInvesmentsDataTabFilterted = i;
+    });
 
-    // // Get Investment data for visuals
-    // this.apiService.getInvestments().subscribe((data: any[]) => {
-    //   // Get counts by Investment Type
-    //   var counts = data.reduce((p, c) => {
-    //     var name = c.Type;
-    //     if (!p.hasOwnProperty(name)) {
-    //       p[name] = 0;
-    //     }
-    //     // Only count if not eliminated
-    //     if (c.Status.includes('Eliminated') == false) p[name]++;
-    //     return p;
-    //   }, {});
+    this.apiService.getITInvestmentsFilterTotals().subscribe(t => {
+      this.filterTotals = t;
+    });
 
-    //   // Resolve the counts into an object and sort by value
-    //   this.vizData = Object.keys(counts)
-    //     .map((k) => {
-    //       return { name: k, value: counts[k] };
-    //     })
-    //     .sort(function (a, b) {
-    //       return b.value - a.value;
-    //     });
+    // Get Investment data for visuals
+    this.apiService.getInvestments().subscribe((data: any[]) => {
+      // Get counts by Investment Type
+      var counts = data.reduce((p, c) => {
+        var name = c.Type;
+        if (!p.hasOwnProperty(name)) {
+          p[name] = 0;
+        }
+        // Only count if not eliminated
+        if (c.Status.includes('Eliminated') == false) p[name]++;
+        return p;
+      }, {});
 
-    //   // console.log(this.vizData);  // Debug
-    // });
+      // Resolve the counts into an object and sort by value
+      this.vizData = Object.keys(counts)
+        .map((k) => {
+          return { name: k, value: counts[k] };
+        })
+        .sort(function (a, b) {
+          return b.value - a.value;
+        });
+
+      // console.log(this.vizData);  // Debug
+    });
 
     // // Method to open details modal when referenced directly via URL
     // this.route.params.subscribe((params) => {
@@ -381,15 +381,15 @@ export class InvestmentsComponent implements OnInit {
   //   }
   // }
 
-  // getAriaLabel(data: { name: string, value: number }[]): string {
-  //   const total = data.reduce((acc, cur) => acc + cur.value, 0);
-  //   if (data.length === 1) {
-  //     return `Pie chart representing ${total} total IT investments, all of which are ${data[0].value} ${data[0].name}`;
-  //   } else {
-  //     const labels = data.map(item => `${Math.round((item.value / total) * 100)}% are ${item.name}`).join(', ');
-  //     return `Pie chart representing ${total} total IT investments, of which ${labels}}`;
-  //   }
-  // }
+  getAriaLabel(data: { name: string, value: number }[]): string {
+    const total = data.reduce((acc, cur) => acc + cur.value, 0);
+    if (data.length === 1) {
+      return `Pie chart representing ${total} total IT investments, all of which are ${data[0].value} ${data[0].name}`;
+    } else {
+      const labels = data.map(item => `${Math.round((item.value / total) * 100)}% are ${item.name}`).join(', ');
+      return `Pie chart representing ${total} total IT investments, of which ${labels}}`;
+    }
+  }
 
   // onSelect(chartData): void {
   //   this.sharedService.disableStickyHeader("investTable");

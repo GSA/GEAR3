@@ -238,6 +238,14 @@ export class ApiService {
         )
       );
   }
+  public getITInvestmentsFilterTotals(): Observable<any> {
+    return this.http
+    .get<any>(this.investUrl + '/filter_totals/')
+    .pipe(
+      map(t => t[0]),
+      catchError(this.handleError<any>('GET IT Investments Filter Totals', []))
+    );
+  }
   // public updateInvestment(id: number, data: {}): Observable<Investment[]> {
   //   if (this.globals.jwtToken) {
   //     var httpOptions = this.setHeaderOpts();

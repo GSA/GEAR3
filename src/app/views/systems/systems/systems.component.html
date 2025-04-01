@@ -28,15 +28,16 @@
       Pie Chart Details
     </span>
     <div class="systems-graph">
-        <ngx-charts-advanced-pie-chart
-          [scheme]="colorScheme"
-          [results]="vizData"
-          [label]="vizLabel"
-          [ariaLabel]="getAriaLabel(vizData)"
-          appSkipFocusPiechart
-          tabindex="0"
-          role="navigation"></ngx-charts-advanced-pie-chart>
-      </div>
+      <ngx-charts-advanced-pie-chart
+        [scheme]="colorScheme"
+        [results]="vizData"
+        [label]="vizLabel"
+        [ariaLabel]="getAriaLabel(vizData)"
+        appSkipFocusPiechart
+        tabindex="0"
+        role="navigation"></ngx-charts-advanced-pie-chart>
+    </div>
+  </div>
   <div class="systems-data-container">
     <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral">
       <div class="filter-tabs-container" filterTabs>
@@ -55,7 +56,6 @@
       </div>
     </app-table>
   </div>
-</div>
 
 
 

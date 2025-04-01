@@ -28,29 +28,45 @@
       <a href='https://sites.google.com/a/gsa.gov/it_standards/it-standards' target='_blank' rel='noopener'>IT Standards site</a>
       <app-button [buttonText]="defExpanded ? 'View Less' : 'View More'" buttonStyle="link" (buttonClick)="onViewAll()"></app-button>
   </div>
+  <div class="investments-graph-container">
+    <span id="investVizText" tabindex="0"
+      [attr.aria-label]="getAriaLabel(vizData)" style="display: none;">
+      Pie Chart Details
+    </span>
+    <div class="investments-graph">
+      <ngx-charts-advanced-pie-chart 
+        appSkipFocusPiechart
+        [scheme]="colorScheme"
+        [results]="vizData"
+        [label]="vizLabel"
+        role="navigation"
+        [ariaLabel]="getAriaLabel(vizData)"
+        tabindex="0"></ngx-charts-advanced-pie-chart>
+    </div>
+  </div>
   <div class="it-investments-data-container">
     <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral">
       <div class="filter-tabs-container" filterTabs>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')">
           <span class="filter-tab-text">All</span>
-          <span class="filter-tab-number first">100</span>
+          <span class="filter-tab-number first">{{filterTotals.AllTotal}}</span>
         </div>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Current Year')}" (click)="onSelectTab('Current Year')">
           <span class="filter-tab-text">Current Year</span>
-          <span class="filter-tab-number second">100</span>
+          <span class="filter-tab-number second">{{filterTotals.AllTotal}}</span>
         </div>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Previous Year')}" (click)="onSelectTab('Previous Year')">
           <span class="filter-tab-text">Previous Year</span>
-          <span class="filter-tab-number third">100</span>
+          <span class="filter-tab-number third">{{filterTotals.AllTotal}}</span>
         </div>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Budget Year')}" (click)="onSelectTab('Budget Year')">
           <span class="filter-tab-text">Budget Year</span>
-          <span class="filter-tab-number fourth">100</span>
+          <span class="filter-tab-number fourth">{{filterTotals.AllTotal}}</span>
         </div>
-      </div>
-      <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Eliminated')}" (click)="onSelectTab('Eliminated')">
-        <span class="filter-tab-text">Eliminated</span>
-        <span class="filter-tab-number first">100</span>
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Eliminated')}" (click)="onSelectTab('Eliminated')">
+          <span class="filter-tab-text">Eliminated</span>
+          <span class="filter-tab-number first">{{filterTotals.EliminatedTotal}}</span>
+        </div>
       </div>
     </app-table>
   </div>
