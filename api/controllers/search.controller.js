@@ -76,7 +76,7 @@ exports.searchAll = (req, res) => {
         web.\`id\` AS \`Id\`,
         web.\`domain\` AS \`Name\`,
         web.\`notes\` AS \`Description\`,
-        web.\`status_code\` AS \`Status\`,
+        web.\`production_status\` AS \`Status\`,
         'Website' AS \`GEAR_Type\`,
         'Business Systems -> GSA Websites' AS \`GEAR_Type_Display\`,
         '{}' AS \`Other\`
