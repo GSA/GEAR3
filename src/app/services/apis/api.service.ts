@@ -202,6 +202,15 @@ export class ApiService {
         catchError(this.handleError<any>(`GET FISMA expiring this week`)));
   }
 
+  public getFismaFilterTotals(): Observable<any> {
+    return this.http
+    .get<any>(this.fismaUrl + '/filter_totals')
+    .pipe(
+      map(t => t[0]),
+      catchError(this.handleError<any>('GET FISMA Filter Totals', []))
+    );
+  }
+
   //// Investment
   public getInvestments(): Observable<Investment[]> {
     return this.http
@@ -831,6 +840,15 @@ export class ApiService {
       .pipe(
         catchError(this.handleError<Website[]>('UPDATE Website-System', []))
       );
+  }
+
+  public getWebsitesFilterTotals(): Observable<any> {
+    return this.http
+    .get<any>(this.websitesUrl + '/filter_totals')
+    .pipe(
+      map(t => t[0]),
+      catchError(this.handleError<any>('GET Websites Filter Totals', []))
+    );
   }
 
   //// Tech Catalog

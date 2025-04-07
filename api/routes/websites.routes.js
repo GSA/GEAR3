@@ -19,4 +19,6 @@ router.route("/get/:id/systems").get(websitesCtrl.findSystems);
 
 router.route("/updateSystems/:id").put(websitesCtrl.updateSystems);
 
+router.route('/filter_totals').get(websitesCtrl.getFilterTotals);
+
 module.exports = router;

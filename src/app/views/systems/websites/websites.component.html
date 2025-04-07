@@ -1,7 +1,60 @@
-<div class="card">
-  <div class="card-header text-white bg-danger text-center d-flex align-items-center justify-content-between">
+<div class="websites-container">
+  <div class="websites-title-container">
+    <h2>GSA Websites</h2>
+    <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
+      <b>Details:</b> Left click on a row within the table to view additional details.
+      <br><br>
+      <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
+      <br><br>
+      <b>Export:</b> Export data by clicking on the <i class='fas fa-download'></i> icon and selecting the format that meets 
+      your needs.
+      <br><br>
+      <b>Search:</b> Perform a filtered search across all fields in the displayed data. Hit the 'Enter' button on your 
+      keyboard to execute. Click the <i class='far fa-trash-alt'></i> icon to clear the search box. 
+      Search within specific columns by clicking on the <i class='fas fa-angle-down'></i> icon. 
+      <br><br>
+      <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
+      <i class='fas fa-caret-square-down'></i> icon to display everything on one page.
+    </app-button-overlay-panel>
+  </div>
+  <div class="websites-definition-container">
+    <p class="websites-definition-text" [ngClass]="{'expanded' : defExpanded}">This report represents GSA's inventory of public-facing websites (i.e. accessible to the general public 
+      and not behind any authentication or firewall). This report can be used to better understand how the public views and interacts with GSA's
+      business services, offerings, and information. This data is imported from the  
+      <a href='https://touchpoints.app.cloud.gov/admin/websites' target='_blank' rel='noopener'>Touchpoints websites inventory</a>
+      as well as from the Enterprise Digital Experience (EDX) team's 
+      <a href='https://github.com/GSA/EDX/tree/main/Tools/edxcli' target='_blank' rel='noopener'>ecxcli website scans</a>.</p>
+      <app-button [buttonText]="defExpanded ? 'View Less' : 'View More'" buttonStyle="link" (buttonClick)="onViewAll()"></app-button>
+  </div>
+  <div class="websites-data-container">
+    <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral">
+      <div class="filter-tabs-container" filterTabs>
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')">
+          <span class="filter-tab-text">All</span>
+          <span class="filter-tab-number first">{{filterTotals.AllTotal}}</span>
+        </div>
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Decommissioned')}" (click)="onSelectTab('Decommissioned')">
+          <span class="filter-tab-text">Decommissioned</span>
+          <span class="filter-tab-number second">{{filterTotals.DecommissionedTotal}}</span>
+        </div>
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Redirects')}" (click)="onSelectTab('Redirects')">
+          <span class="filter-tab-text">Redirects</span>
+          <span class="filter-tab-number third">{{filterTotals.RedirectsTotal}}</span>
+        </div>
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('External')}" (click)="onSelectTab('External')">
+          <span class="filter-tab-text">External</span>
+          <span class="filter-tab-number fourth">{{filterTotals.ExternalTotal}}</span>
+        </div>
+      </div>
+    </app-table>
+  </div>
+</div>
+
+
+<!-- <div class="card">
+  <div class="card-header text-white bg-danger text-center d-flex align-items-center justify-content-between"> -->
     <!-- GEAR Manager Access -->
-    <a
+    <!-- <a
       class="btn btn-sm btn-info text-white shadow d-flex align-items-center btn-border-white"
       routerLink="/gear_manager"
       *ngIf="!sharedService.loggedIn"
@@ -26,10 +79,10 @@
         <i class="far fa-folder-open mr-2"></i>
         GSA Websites
       </span>
-    </h3>
+    </h3> -->
 
     <!-- Help Button -->
-    <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
+    <!-- <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
       <b>Details:</b> Left click on a row within the table to view additional details.
       <br><br>
       <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
@@ -46,12 +99,12 @@
     </app-button-overlay-panel>
 
   </div>
-  <div class="card-body card-text">
+  <div class="card-body card-text"> -->
     <!-- Main Table -->
-    <app-table [tableCols]="tableCols" exportName="Websites" reportStyle="business-systems" tableType="website">
-      <app-filter-buttons filterBtns [filterButtons]="filterButtons" [singleFilterOnly]="true" (filterClick)="onFilterClick($event)" (filterResetClick)="onFilterResetClick()"></app-filter-buttons>
+    <!-- <app-table [tableCols]="tableCols" exportName="Websites" reportStyle="business-systems" tableType="website">
+      <app-filter-buttons filterBtns [filterButtons]="filterButtons" [singleFilterOnly]="true" (filterClick)="onFilterClick($event)" (filterResetClick)="onFilterResetClick()"></app-filter-buttons> -->
       <!-- Website Definition Popover -->
-      <app-button-overlay-panel definitionBtn buttonText="Website definition">
+      <!-- <app-button-overlay-panel definitionBtn buttonText="Website definition">
         This report represents GSA's inventory of public-facing websites (i.e. accessible to the general public 
         and not behind any authentication or firewall). This report can be used to better understand how the public views and interacts with GSA's
         business services, offerings, and information. This data is imported from the  
@@ -61,4 +114,4 @@
       </app-button-overlay-panel>
     </app-table>
   </div>
-</div>
+</div> -->

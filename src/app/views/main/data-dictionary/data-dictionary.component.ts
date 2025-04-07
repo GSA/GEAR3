@@ -10,7 +10,7 @@ import { TableService } from '@services/tables/table.service';
 @Component({
   selector: 'data-dictionary',
   templateUrl: './data-dictionary.component.html',
-  styleUrls: ['./data-dictionary.component.css']
+  styleUrls: ['./data-dictionary.component.scss']
 })
 export class DataDictionaryComponent implements OnInit {
 

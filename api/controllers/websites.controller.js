@@ -106,3 +106,8 @@ exports.updateSystems = (req, res) => {
     }
   });
 };
+exports.getFilterTotals = (req, res) => {  
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_websites_filter_totals.sql`)).toString();
+
+  res = ctrl.sendQuery(query, `Websites filter totals`, res);
+};

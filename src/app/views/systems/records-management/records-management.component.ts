@@ -14,7 +14,7 @@ import { Record } from '@api/models/records.model';
 @Component({
   selector: 'records-management',
   templateUrl: './records-management.component.html',
-  styleUrls: ['./records-management.component.css'],
+  styleUrls: ['./records-management.component.scss'],
   animations: [
     trigger('loadingAnimation', [
       state('true', style({ opacity: 1 })),

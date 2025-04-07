@@ -16,7 +16,7 @@ import { TIME } from '@api/models/systime.model';
 @Component({
   selector: 'time',
   templateUrl: './time.component.html',
-  styleUrls: ['./time.component.css'],
+  styleUrls: ['./time.component.scss'],
 })
 export class TimeComponent implements OnInit {
   row: Object = <any>{};
@@ -192,5 +192,13 @@ export class TimeComponent implements OnInit {
 
   onSelect(event) {
     // console.log(event);
+  }
+
+  public onDefinitionsClick(): void {
+    this.router.navigate(['/about', 'sysRat']);
+  }
+
+  public onQuestionaireClick(): void {
+    window.open('https://docs.google.com/spreadsheets/d/1cx-gi-jjHSvAD57Z0T812a0o7eJ-IWIAqlhE0ZTTMTI/edit#gid=362432297', '_blank');
   }
 }

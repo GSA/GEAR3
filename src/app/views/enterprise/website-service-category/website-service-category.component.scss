@@ -1,0 +1,33 @@
+.website-categories-container {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 2.5rem 2.25rem 2rem;
+
+    & .website-categories-title-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    & .website-categories-definition-container {
+        padding: 1.5rem;
+
+        & .website-categories-definition-text {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;  
+            overflow: hidden;
+
+            &.expanded {
+                -webkit-line-clamp: none;
+                overflow: visible;
+            }
+        }
+    }
+
+    & .website-categories-data-container {
+        display: flex;
+        flex-direction: column;
+        padding: 1.5rem;
+    }
+}

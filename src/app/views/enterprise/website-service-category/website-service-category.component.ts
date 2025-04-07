@@ -12,9 +12,11 @@ import { Service_Category } from '@api/models/service-category.model';
 @Component({
   selector: 'website-service-category',
   templateUrl: './website-service-category.component.html',
-  styleUrls: ['./website-service-category.component.css'],
+  styleUrls: ['./website-service-category.component.scss'],
 })
 export class WebsiteServiceCategoryComponent implements OnInit {
+  public defExpanded: boolean = false;
+
   row: Object = <any>{};
 
   constructor(
@@ -73,5 +75,9 @@ export class WebsiteServiceCategoryComponent implements OnInit {
           });
       }
     });
+  }
+
+  public onViewAll(): void {
+    this.defExpanded = !this.defExpanded;
   }
 }

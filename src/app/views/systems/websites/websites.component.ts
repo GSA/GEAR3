@@ -14,10 +14,14 @@ import { Website } from '@api/models/websites.model';
 @Component({
   selector: 'websites',
   templateUrl: './websites.component.html',
-  styleUrls: ['./websites.component.css'],
+  styleUrls: ['./websites.component.scss'],
 })
 export class WebsitesComponent implements OnInit {
-  filteredTable: boolean = false;
+  public defExpanded: boolean = false;
+  public selectedTab: string = 'All';
+  public filterTotals: any = null;
+  public websitesData: Website[] = [];
+  public websitesTabFilterted: Website[] = [];
 
   constructor(
     private apiService: ApiService,
@@ -30,34 +34,30 @@ export class WebsitesComponent implements OnInit {
     private titleService: Title
   ) {}
 
-  tableData: Website[] = [];
-  tableDataOriginal: Website[] = [];
-  filteredTableData: Website[] = [];
+  // filterButtons: TwoDimArray<FilterButton> = [
+  //   [
+  //     {
+  //       buttonText: 'Decommissioned',
+  //       filters: [
+  //         { field: 'production_status', value: 'decommissioned' }
+  //       ]
+  //     },
+  //     {
+  //       buttonText: 'Redirects',
+  //       filters: [
+  //         { field: 'production_status', value: 'redirect' }
+  //       ]
+  //     },
+  //     {
+  //       buttonText: 'External',
+  //       filters: [
+  //         { field: 'digital_brand_category', value: 'External' }
+  //       ]
+  //     }
+  //   ]
+  // ];
 
-  filterButtons: TwoDimArray<FilterButton> = [
-    [
-      {
-        buttonText: 'Decommissioned',
-        filters: [
-          { field: 'production_status', value: 'decommissioned' }
-        ]
-      },
-      {
-        buttonText: 'Redirects',
-        filters: [
-          { field: 'production_status', value: 'redirect' }
-        ]
-      },
-      {
-        buttonText: 'External',
-        filters: [
-          { field: 'digital_brand_category', value: 'External' }
-        ]
-      }
-    ]
-  ];
-
-  tableCols: Column[] = [
+  public tableCols: Column[] = [
     {
       field: 'domain',
       header: 'Domain',
@@ -177,7 +177,7 @@ export class WebsitesComponent implements OnInit {
     this.sharedService.setJWTonLogIn();
 
     this.apiService.getWebsites().subscribe(websites => {
-      this.tableDataOriginal = websites;
+      this.websitesData = websites;
 
       // Filter websites for inital view data
       websites.forEach(w => {
@@ -186,12 +186,15 @@ export class WebsitesComponent implements OnInit {
           (w.digital_brand_category !== 'External') &&
           (w.type_of_site === 'Informational' || w.type_of_site === 'Application' || w.type_of_site === 'Application Login')
         ) {
-          this.filteredTableData.push(w);
+          this.websitesTabFilterted.push(w);
         }
       });
-      this.tableData = this.filteredTableData;
-      this.tableService.updateReportTableData(this.tableData);
+      this.tableService.updateReportTableData(this.websitesTabFilterted);
       
+    });
+
+    this.apiService.getWebsitesFilterTotals().subscribe(t => {
+      this.filterTotals = t;
     });
 
     // Method to open details modal when referenced directly via URL
@@ -211,13 +214,47 @@ export class WebsitesComponent implements OnInit {
     });
   }
 
-  onFilterClick(filterButtons: FilterButton[]) {
-    this.tableData = this.tableDataOriginal;
-    this.tableService.filterButtonClick(filterButtons, this.tableData);
+  // onFilterClick(filterButtons: FilterButton[]) {
+  //   this.tableData = this.tableDataOriginal;
+  //   this.tableService.filterButtonClick(filterButtons, this.tableData);
+  // }
+
+  // onFilterResetClick() {
+  //   this.tableData = this.filteredTableData;
+  //   this.tableService.updateReportTableData(this.tableData);
+  // }
+
+  public onViewAll(): void {
+    this.defExpanded = !this.defExpanded;
   }
 
-  onFilterResetClick() {
-    this.tableData = this.filteredTableData;
-    this.tableService.updateReportTableData(this.tableData);
+  public onSelectTab(tabName: string): void {
+    this.selectedTab = tabName;
+    this.websitesTabFilterted = this.websitesData;
+
+    if(this.selectedTab === 'All') {
+      this.websitesTabFilterted = this.websitesData.filter(w => {
+        return w.production_status === 'production' && w.digital_brand_category !== 'External' &&
+        (w.type_of_site === 'Informational' || w.type_of_site === 'Application' || w.type_of_site === 'Application Login');
+      });
+    } else if (this.selectedTab === 'Decommissioned') {
+      this.websitesTabFilterted = this.websitesData.filter(w => {
+        return w.production_status === 'decommissioned';
+      });
+    } else if (this.selectedTab === 'Redirects') {
+      this.websitesTabFilterted = this.websitesData.filter(w => {
+        return w.production_status === 'redirect';
+      });
+    } else if (this.selectedTab === 'External') {
+      this.websitesTabFilterted = this.websitesData.filter(w => {
+        return w.digital_brand_category === 'External';
+      });
+    }
+    this.tableService.updateReportTableData(this.websitesTabFilterted);
   }
+
+  public isTabSelected(tabName: string): boolean {
+    return this.selectedTab === tabName;
+  }
+
 }

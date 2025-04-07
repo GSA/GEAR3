@@ -11,7 +11,7 @@ import { FISMA } from '@api/models/fisma.model';
 @Component({
   selector: 'fisma-pocs',
   templateUrl: './fisma-pocs.component.html',
-  styleUrls: ['./fisma-pocs.component.css'],
+  styleUrls: ['./fisma-pocs.component.scss'],
 })
 export class FismaPocsComponent implements OnInit {
   row: Object = <any>{};

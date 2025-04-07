@@ -11,7 +11,7 @@ import { Organization } from '@api/models/organizations.model';
 @Component({
   selector: 'organizations',
   templateUrl: './organizations.component.html',
-  styleUrls: ['./organizations.component.css'],
+  styleUrls: ['./organizations.component.scss'],
 })
 export class OrganizationsComponent implements OnInit {
   row: Object = <any>{};

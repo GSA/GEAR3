@@ -13,9 +13,11 @@ import { Capability } from '@api/models/capabilities.model';
 @Component({
   selector: 'capabilities',
   templateUrl: './capabilities.component.html',
-  styleUrls: ['./capabilities.component.css'],
+  styleUrls: ['./capabilities.component.scss'],
 })
 export class CapabilitiesComponent implements OnInit {
+  public defExpanded: boolean = false;
+
   row: Object = <any>{};
   ssoTable: boolean = false;
   filterTitle: string = '';
@@ -86,5 +88,9 @@ export class CapabilitiesComponent implements OnInit {
         });
       }
     });
+  }
+
+  public onViewAll(): void {
+    this.defExpanded = !this.defExpanded;
   }
 }

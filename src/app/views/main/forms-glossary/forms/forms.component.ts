@@ -8,7 +8,7 @@ import * as accessFormsData from '../../../../../assets/statics/accessforms.json
 @Component({
   selector: 'forms',
   templateUrl: './forms.component.html',
-  styleUrls: ['./forms.component.css']
+  styleUrls: ['./forms.component.scss']
 })
 export class FormsComponent implements OnInit {
 

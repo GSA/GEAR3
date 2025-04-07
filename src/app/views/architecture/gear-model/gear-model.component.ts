@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'gear-model',
   templateUrl: './gear-model.component.html',
-  styleUrls: ['./gear-model.component.css']
+  styleUrls: ['./gear-model.component.scss']
 })
 export class GearModelComponent implements OnInit {
 

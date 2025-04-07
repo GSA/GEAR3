@@ -1,0 +1,17 @@
+.glossary-container {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 2.5rem 2.25rem 2rem;
+
+    & .glossary-title-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    & .glossary-data-container {
+        display: flex;
+        flex-direction: column;
+        padding: 1.5rem;
+    }
+}

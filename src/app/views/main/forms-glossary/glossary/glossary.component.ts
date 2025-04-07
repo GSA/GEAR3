@@ -7,7 +7,7 @@ import { TableService } from '@services/tables/table.service';
 @Component({
   selector: 'glossary',
   templateUrl: './glossary.component.html',
-  styleUrls: ['./glossary.component.css']
+  styleUrls: ['./glossary.component.scss']
 })
 export class GlossaryComponent implements OnInit {
 

@@ -1,15 +1,6 @@
-<div class="card">
-  <div class="card-header text-white bg-warning text-center d-flex align-items-center justify-content-between">
-    <div></div>
-    <h3 class="card-title mb-0">
-      <span>
-        <i class="fas fa-shield-alt mr-2"></i>GSA 
-        <span [hidden]="retiredTable">Active </span>
-        <span [hidden]="!retiredTable">Retired </span>
-        FISMA System Inventory
-      </span>
-    </h3>
-    <!-- Help Button -->
+<div class="fisma-inventory-container">
+  <div class="fisma-inventory-title-container">
+    <h2>FISMA Systems Inventory</h2>
     <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
       <b>Details:</b> <b><i>DOUBLE</i></b> left click on a row within the table to 
         view additional details.
@@ -27,15 +18,67 @@
         <i class='fas fa-caret-square-down'></i> icon to display everything on one page.
     </app-button-overlay-panel>
   </div>
+  <div class="fisma-inventory-definition-container">
+    <p class="fisma-inventory-definition-text">A FISMA system represents a logical boundary for which common
+       security controls and policies are applied to a grouping of related assets (e.g., networks, devices, and people) to accomplish some mission 
+       or business objective. It is informed by security artifacts, such as a system security and privacy plan (SSPP).
+        (<a href='https://csrc.nist.gov/projects/risk-management/fisma-background' target='_blank' rel='noopener'>Link</a>)</p>
+  </div>
+  <div class="fisma-inventory-data-container">
+    <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral">
+      <div class="filter-tabs-container" filterTabs>
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')">
+          <span class="filter-tab-text">All</span>
+          <span class="filter-tab-number first">{{filterTotals.AllTotal}}</span>
+        </div>
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Retired')}" (click)="onSelectTab('Retired')">
+          <span class="filter-tab-text">Retired</span>
+          <span class="filter-tab-number second">{{filterTotals.RetiredTotal}}</span>
+        </div>
+      </div>
+    </app-table>
+  </div>
+</div>
 
-  <div class="card-body card-text">
+
+<!-- <div class="card">
+  <div class="card-header text-white bg-warning text-center d-flex align-items-center justify-content-between">
+    <div></div>
+    <h3 class="card-title mb-0">
+      <span>
+        <i class="fas fa-shield-alt mr-2"></i>GSA 
+        <span [hidden]="retiredTable">Active </span>
+        <span [hidden]="!retiredTable">Retired </span>
+        FISMA System Inventory
+      </span>
+    </h3> -->
+    <!-- Help Button -->
+    <!-- <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
+      <b>Details:</b> <b><i>DOUBLE</i></b> left click on a row within the table to 
+        view additional details.
+        <br><br>
+        <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
+        <br><br>
+        <b>Export:</b> Export data by clicking on the <i class='fas fa-download'></i> icon and selecting the format that meets 
+        your needs.
+        <br><br>
+        <b>Search:</b> Perform a filtered search across all fields in the displayed data. Hit the 'Enter' button on your 
+        keyboard to execute. Click the <i class='far fa-trash-alt'></i> icon to clear the search box. 
+        Search within specific columns by clicking on the <i class='fas fa-angle-down'></i> icon. 
+        <br><br>
+        <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
+        <i class='fas fa-caret-square-down'></i> icon to display everything on one page.
+    </app-button-overlay-panel>
+  </div>
+
+  <div class="card-body card-text"> -->
     <!-- Main Table -->
-    <app-table [tableCols]="tableCols" exportName="FISMA" reportStyle="security" tableType="fisma" defaultSortField="Name">
+    <!-- <app-table [tableCols]="tableCols" exportName="FISMA" reportStyle="security" tableType="fisma" defaultSortField="Name"> -->
       <!-- FISMA Definition Popover -->
-      <app-button-overlay-panel definitionBtn buttonText="FISMA definition">
+      <!-- <app-button-overlay-panel definitionBtn buttonText="FISMA definition">
         A FISMA system represents a logical boundary for which common security controls and policies are applied to a grouping of related assets (e.g., networks, devices, and people) to accomplish some mission or business objective. It is informed by security artifacts, such as a system security and privacy plan (SSPP). (<a href='https://csrc.nist.gov/projects/risk-management/fisma-background' target='_blank' 
       rel='noopener'>Link</a>)
       </app-button-overlay-panel>
     <app-filter-buttons filterBtns [filterButtons]="filterButtons" (filterClick)="onFilterClick($event)" (filterResetClick)="onFilterResetClick()"></app-filter-buttons>
     </app-table>
-</div>
+</div> -->

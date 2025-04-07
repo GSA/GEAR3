@@ -12,11 +12,16 @@ import { FISMA } from '@api/models/fisma.model';
 @Component({
   selector: 'fisma',
   templateUrl: './fisma.component.html',
-  styleUrls: ['./fisma.component.css'],
+  styleUrls: ['./fisma.component.scss'],
 })
 export class FismaComponent implements OnInit {
+  public selectedTab: string = 'All';
+  public filterTotals: any = null;
+  public fismaData: FISMA[] = [];
+  public fismaTabFilterted: FISMA[] = [];
+
   row: Object = <any>{};
-  retiredTable: boolean = false;
+  // retiredTable: boolean = false;
 
   constructor(
     private apiService: ApiService,
@@ -29,20 +34,20 @@ export class FismaComponent implements OnInit {
     this.modalService.currentFismaSys.subscribe((row) => (this.row = row));
   }
 
-  tableData: FISMA[] = [];
-  tableDataOriginal: FISMA[] = [];
-  filteredTableData: FISMA[] = [];
+  // tableData: FISMA[] = [];
+  // tableDataOriginal: FISMA[] = [];
+  // filteredTableData: FISMA[] = [];
 
-  filterButtons: TwoDimArray<FilterButton> = [
-    [
-      {
-        buttonText: 'Retired Fisma Systems',
-        filters: [
-          { field: 'Status', value: 'Inactive' }
-        ]
-      }
-    ]
-  ];
+  // filterButtons: TwoDimArray<FilterButton> = [
+  //   [
+  //     {
+  //       buttonText: 'Retired Fisma Systems',
+  //       filters: [
+  //         { field: 'Status', value: 'Inactive' }
+  //       ]
+  //     }
+  //   ]
+  // ];
 
   tableCols: Column[] = [
     {
@@ -149,14 +154,17 @@ export class FismaComponent implements OnInit {
 
   ngOnInit(): void {
     this.apiService.getFISMA().subscribe(fisma => {
-      this.tableDataOriginal = fisma;
+      this.fismaData = fisma;
       fisma.forEach(f => {
         if(f.Status === 'Active' && f.SystemLevel === 'System' && f.Reportable === 'Yes') {
-          this.filteredTableData.push(f);
+          this.fismaTabFilterted.push(f);
         }
       });
-      this.tableData = this.filteredTableData;
-      this.tableService.updateReportTableData(this.tableData);
+      this.tableService.updateReportTableData(this.fismaTabFilterted);
+    });
+
+    this.apiService.getFismaFilterTotals().subscribe(t => {
+      this.filterTotals = t;
     });
 
     // Method to open details modal when referenced directly via URL
@@ -175,13 +183,33 @@ export class FismaComponent implements OnInit {
     });
   }
 
-  onFilterClick(filterButtons: FilterButton[]) {
-    this.tableData = this.tableDataOriginal;
-    this.tableService.filterButtonClick(filterButtons, this.tableData);
+  public onSelectTab(tabName: string): void {
+    this.selectedTab = tabName;
+    this.fismaTabFilterted = this.fismaData;
+
+    if(this.selectedTab === 'All') {
+      this.fismaTabFilterted = this.fismaData.filter(f => {
+        return f.Status === 'Active' && f.SystemLevel === 'System' && f.Reportable === 'Yes';
+      });
+    } else if (this.selectedTab === 'Retired') {
+      this.fismaTabFilterted = this.fismaData.filter(f => {
+        return f.Status === 'Inactive';
+      });
+    }
+    this.tableService.updateReportTableData(this.fismaTabFilterted);
   }
 
-  onFilterResetClick() {
-    this.tableData = this.filteredTableData;
-    this.tableService.updateReportTableData(this.tableData);
+  public isTabSelected(tabName: string): boolean {
+    return this.selectedTab === tabName;
   }
+
+  // onFilterClick(filterButtons: FilterButton[]) {
+  //   this.tableData = this.tableDataOriginal;
+  //   this.tableService.filterButtonClick(filterButtons, this.tableData);
+  // }
+
+  // onFilterResetClick() {
+  //   this.tableData = this.filteredTableData;
+  //   this.tableService.updateReportTableData(this.tableData);
+  // }
 }
