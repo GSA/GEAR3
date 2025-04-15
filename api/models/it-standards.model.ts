@@ -17,7 +17,7 @@ export class ITStandards {
   public Comments: string = null;
   public old_Id: string = null;
   public POCorg: string = null;
-  public ReferenceDocuments: string = null;
+  public ReferenceDocument: string = null;
   public Manufacturer: string = null;
   public SoftwareProduct: string = null;
   public SoftwareVersion: string = null;
@@ -35,6 +35,8 @@ export class ITStandards {
   public EndOfLifeDate: Date = null;
   public ApprovedVersions: string = null;
   public OperatingSystems: number[] = null;
-  public ApBundleIds: AppBundle[] = null;
+  public AppBundleIds: AppBundle[] = null;
   public DateCreated: Date = null;
+  public ComplianceStatus: string = null;
+  public ChangeDTG: Date = null;
 }

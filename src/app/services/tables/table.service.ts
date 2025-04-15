@@ -233,7 +233,7 @@ export class TableService {
       case 'Technology':
         this.apiService
           .getOneITStandard(searchData.Id)
-          .subscribe((apiData: any[]) => {
+          .subscribe((apiData: any) => {
             this.itStandTableClick(apiData[0]);
             this.setGlobalSearchModalUrl(searchData.GEAR_Type, searchData.Id);
           });

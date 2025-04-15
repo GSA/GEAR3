@@ -45,6 +45,7 @@ import { FormsComponent } from './views/main/forms-glossary/forms/forms.componen
 import { GlossaryComponent } from './views/main/forms-glossary/glossary/glossary.component';
 import { DataDictionaryComponent } from './views/main/data-dictionary/data-dictionary.component';
 import { DashboardComponent } from './views/dashboard/dashboard.component';
+import { ItStandardsDetailsComponent } from './views/technologies/details/it-standards-details.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, title: 'Dashboard' },
@@ -174,7 +175,7 @@ const routes: Routes = [
   },
   {
     path: 'it_standards/:standardID',
-    component: ItStandardsComponent,
+    component: ItStandardsDetailsComponent,
     title: 'IT Standard',
   },
   {

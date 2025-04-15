@@ -65,6 +65,8 @@ import { ItStandardsComponent } from './views/technologies/it-standards/it-stand
 import { ItStandardsModalComponent } from './components/modals/it-standards-modal/it-standards-modal.component';
 import { ItStandardManagerComponent } from './components/manager-modals/it-standard-manager/it-standard-manager.component';
 
+import { ItStandardsDetailsComponent } from './views/technologies/details/it-standards-details.component';
+
 //// Enterprise Architecture
 //import { ArtifactsComponent } from './views/architecture/artifacts/artifacts.component';
 import { EAViewComponent } from './views/architecture/ea-view/ea-view.component';
@@ -100,6 +102,7 @@ import { SidebarButtonComponent } from './components/sidebar-button/sidebar-butt
 import { ButtonComponent } from './components/button/button.component';
 import { DashboardComponent } from './views/dashboard/dashboard.component';
 import { FilterChipsComponent } from './components/filter-chips/filter-chips.component';
+import { BreadcrumbComponent } from './components/breadcrumb/breadcrumb.component';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -139,6 +142,7 @@ import { FilterChipsComponent } from './components/filter-chips/filter-chips.com
         ItStandardsComponent,
         ItStandardsModalComponent,
         ItStandardManagerComponent,
+        ItStandardsDetailsComponent,
         //ArtifactsComponent,
         EAViewComponent,
         GearModelComponent,
@@ -156,7 +160,8 @@ import { FilterChipsComponent } from './components/filter-chips/filter-chips.com
         SidebarButtonComponent,
         ButtonComponent,
         DashboardComponent,
-        FilterChipsComponent
+        FilterChipsComponent,
+        BreadcrumbComponent
     ],
     bootstrap: [AppComponent], imports: [AppRoutingModule,
         BrowserAnimationsModule,

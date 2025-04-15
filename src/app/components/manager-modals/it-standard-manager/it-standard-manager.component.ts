@@ -496,7 +496,7 @@ export class ItStandardManagerComponent implements OnInit {
           .then(res => {
             // Grab new data from database
             this.apiService.getOneITStandard(this.itStandard.ID).toPromise()
-              .then(data => { this.itStandDetailRefresh(data[0]) }),
+              .then(data => { this.itStandDetailRefresh(data) }),
               (error) => {
                 console.log("GET One IT Standard rejected with ", JSON.stringify(error));
               };

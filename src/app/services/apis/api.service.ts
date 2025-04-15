@@ -616,10 +616,12 @@ export class ApiService {
       catchError(this.handleError<any>('GET IT Standards Filter Totals', []))
     );
   }
-  public getOneITStandard(id: number): Observable<ITStandards[]> {
+  public getOneITStandard(id: number): Observable<ITStandards> {
     return this.http
-      .get<ITStandards[]>(this.techUrl + '/get/' + String(id))
-      .pipe(catchError(this.handleError<ITStandards[]>('GET IT Standard', [])));
+      .get<ITStandards>(this.techUrl + '/get/' + String(id))
+      .pipe(
+        map(s => s[0]),
+        catchError(this.handleError<ITStandards[]>('GET IT Standard', [])));
   }
   public getLatestITStand(): Observable<ITStandards[]> {
     return this.http

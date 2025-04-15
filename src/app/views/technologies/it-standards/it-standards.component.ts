@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
@@ -44,7 +44,8 @@ export class ItStandardsComponent implements OnInit {
     private route: ActivatedRoute,
     public sharedService: SharedService,
     private tableService: TableService,
-    private titleService: Title
+    private titleService: Title,
+    private router: Router
   ) {
     // this.modalService.currentITStand.subscribe((row) => (this.row = row));
   }
@@ -389,6 +390,11 @@ export class ItStandardsComponent implements OnInit {
       return def.TermDefinition;
     }
     return '';
+  }
+
+  public onRowClick(e: any) {
+    console.log(e);
+    this.router.navigate(['it_standards', e.ID]);
   }
 
   // onFilterClick(filterButtons: FilterButton[]) {

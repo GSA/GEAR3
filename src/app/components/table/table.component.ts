@@ -242,18 +242,22 @@ export class TableComponent implements OnInit, OnChanges {
     });
   }
 
-  onRowSelect(e: TableRowSelectEvent) {
-    if(this.tableType === 'globalSearch') {
-      this.tableRowClickSelection(e.data.GEAR_Type, e.data);
-      return;
-    } else if(this.tableType === 'accessForms') {
-      this.rowClickEvent.emit(e);
-      return;
-    } else {
-      this.tableRowClickSelection(this.tableType, e.data);
-      return;
-    }
+  public onRowSelect(e: TableRowSelectEvent) {
+    this.rowClickEvent.emit(e.data);
   }
+
+  // onRowSelect(e: TableRowSelectEvent) {
+  //   if(this.tableType === 'globalSearch') {
+  //     this.tableRowClickSelection(e.data.GEAR_Type, e.data);
+  //     return;
+  //   } else if(this.tableType === 'accessForms') {
+  //     this.rowClickEvent.emit(e);
+  //     return;
+  //   } else {
+  //     this.tableRowClickSelection(this.tableType, e.data);
+  //     return;
+  //   }
+  // }
 
   private tableRowClickSelection(type: string, data: any) {
     switch (type) {

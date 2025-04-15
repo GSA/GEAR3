@@ -1,0 +1,12 @@
+.breadcrumb-text {
+    font-size: 1rem;
+    a {
+        color: var(--primary-color);
+        text-decoration: underline;
+    }
+}
+
+.breadcrumb-separator {
+    font-size: 14px;
+    padding: 0 9px;
+}

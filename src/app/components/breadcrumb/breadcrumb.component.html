@@ -1,0 +1,10 @@
+<span class="breadcrumb-text">{{getTopLevelRotueName()}}</span>
+<span class="breadcrumb-separator">></span>
+<span class="breadcrumb-text">
+    <a [routerLink]="'/'+currentSubPath">{{getSubLevelRotueName()}}</a>
+</span>
+<span class="breadcrumb-separator">></span>
+<span  class="breadcrumb-text">
+    <ng-content select="[currentPageName]"></ng-content>
+</span>
+<!-- {{getTopLevelRotueName()}} > <a [routerLink]="'/'+currentSubPath">{{getSubLevelRotueName()}}</a> > <ng-content select="[currentPageName]"></ng-content> -->

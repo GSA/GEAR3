@@ -1,0 +1,266 @@
+<div class="it-standards-details-container" *ngIf="isDataReady">
+    <div class="breadcrumb-container">
+         <app-breadcrumb>
+            <span currentPageName>{{detailsData.Name}}</span>
+         </app-breadcrumb>
+    </div>
+    <div class="title-container">
+        <span class="title">{{detailsData.Name}}</span>
+    </div>
+    <div class="content-container">
+        <div class="data-overview-container">
+            <span class="data-overview-text">Overview</span>
+        </div>
+        <div class="overall-data-container">
+            <div class="main-data-container">
+                <div class="data">
+                    
+                    <label class="data-label">
+                        <span [title]="getTooltip('Status')" role="tooltip">
+                            Status
+                            <i class="fas fa-info-circle"></i>
+                        </span>
+                    </label>
+                    <span>
+                        <span [ngClass]="getStatusClass(detailsData.Status)">{{detailsData.Status}}</span>
+                    </span>
+                </div>
+                <div class="data">
+                    <label class="data-label">
+                        <span [title]="getTooltip('Software Release Name')" role="tooltip">
+                            Software Release Name
+                            <i class="fas fa-info-circle"></i>
+                        </span>
+                    </label>
+                    <span>{{detailsData.SoftwareReleaseName}}</span>
+                </div>
+                <div class="data" *ngIf="isApproved()">
+                    <label class="data-label">
+                        <span [title]="getTooltip('Approved Versions')" role="tooltip">
+                            Approved Versions
+                            <i class="fas fa-info-circle"></i>
+                        </span>
+                    </label>
+                    <span>{{detailsData.ApprovedVersions}}</span>
+                </div>
+                <div class="data" *ngIf="!isApproved()">
+                    <label class="data-label">
+                        <span [title]="getTooltip('Approved Versions')" role="tooltip">
+                            Approved Versions
+                            <i class="fas fa-info-circle"></i>
+                        </span>
+                    </label>
+                    <span>
+                        <span [ngClass]="getStatusClass(detailsData.Status)">{{detailsData.Status}}</span>
+                    </span>
+                </div>
+                <div class="data">
+                    <label class="data-label">
+                        <span [title]="getTooltip('Also Known As')" role="tooltip">
+                            Also Known As
+                            <i class="fas fa-info-circle"></i>
+                        </span>
+                    </label>
+                    <span>{{detailsData.OldName}}</span>
+                </div>
+                <div class="data">
+                    <label class="data-label">
+                        <span [title]="getTooltip('Approval Expiration Date')" role="tooltip">
+                            Approval Expires
+                            <i class="fas fa-info-circle"></i>
+                        </span>
+                    </label>
+                    <span class="data-icon-container">
+                        <span [ngClass]="getDateStatusCircle(detailsData.ApprovalExpirationDate)"></span>
+                        {{detailsData.ApprovalExpirationDate | date: 'longDate'}}
+                    </span>
+                </div>
+                <div class="data">
+                    <label class="data-label">
+                        <span [title]="getTooltip('508 Compliance')" role="tooltip">
+                            508 Compliance
+                            <i class="fas fa-info-circle"></i>
+                        </span>
+                    </label>
+                    <span class="data-icon-container">
+                        <span [ngClass]="getComplianceStatusCircle(detailsData.ComplianceStatus)"></span>
+                        {{detailsData.ComplianceStatus}}
+                    </span>
+                </div>
+                <div class="data">
+                    <label class="data-label">
+                        <span [title]="getTooltip('POC')" role="tooltip">
+                            POC
+                            <i class="fas fa-info-circle"></i>
+                        </span>
+                    </label>
+                    <span>{{detailsData.POC}}</span>
+                </div>
+                <div class="data">
+                    <label class="data-label">
+                        <span [title]="getTooltip('Deployment Type')" role="tooltip">
+                            Deployment Type
+                            <i class="fas fa-info-circle"></i>
+                        </span>
+                    </label>
+                    <span class="data-icon-container">
+                        <i [ngClass]="getDeploymentTypeIcon(detailsData.DeploymentType)"></i>
+                        {{detailsData.DeploymentType}}
+                    </span>
+                </div>
+                <div class="data-full">
+                    <label class="data-label">
+                        <span [title]="getTooltip('Description')" role="tooltip">
+                            Description
+                            <i class="fas fa-info-circle"></i>
+                        </span>
+                    </label>
+                    <span>{{detailsData.Description}}</span>
+                </div>
+                <div class="data-full">
+                    <label class="data-label">
+                        <span [title]="getTooltip('Comments')" role="tooltip">
+                            Comments
+                            <i class="fas fa-info-circle"></i>
+                        </span>
+                    </label>
+                    <span>{{detailsData.Comments}}</span>
+                </div>
+            </div>
+            <div class="sub-data-container">
+                <table>
+                    <tr>
+                        <th>Attribute</th>
+                        <th>Value</th>
+                    </tr>
+                    <tr *ngIf="isFieldPopulated(detailsData.ManufacturerName)">
+                        <td>
+                            <span [title]="getTooltip('Manufacturer Name')" role="tooltip">
+                                Manufacturer
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </td>
+                        <td>{{detailsData.ManufacturerName}}</td>
+                    </tr>
+                    <tr *ngIf="isFieldPopulated(detailsData.SoftwareProductName)">
+                        <td>
+                            <span [title]="getTooltip('Software Product Name')" role="tooltip">
+                                Product
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </td>
+                        <td>{{detailsData.SoftwareProductName}}</td>
+                    </tr>
+                    <tr *ngIf="isFieldPopulated(detailsData.SoftwareVersionName)">
+                        <td>
+                            <span [title]="getTooltip('Software Version Name')" role="tooltip">
+                                Version
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </td>
+                        <td>{{detailsData.SoftwareVersionName}}</td>
+                    </tr>
+                    <tr *ngIf="isFieldPopulated(detailsData.EndOfLifeDate)">
+                        <td>
+                            <span [title]="getTooltip('Software End of Life Date')" role="tooltip">
+                                Vendor End of Life Date
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </td>
+                        <td>{{detailsData.EndOfLifeDate | date : "MMMM d, y"}}</td>
+                    </tr>
+                    <tr *ngIf="isFieldPopulated(detailsData.Category)">
+                        <td>
+                            <span [title]="getTooltip('Category')" role="tooltip">
+                                Category
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </td>
+                        <td>{{detailsData.Category}}</td>
+                    </tr>
+                    <tr *ngIf="isFieldPopulated(detailsData.StandardType)">
+                        <td>
+                            <span [title]="getTooltip('Standard Type')" role="tooltip">
+                                Standard Type
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </td>
+                        <td>{{detailsData.StandardType}}</td>
+                    </tr>
+                    <tr *ngIf="isFieldPopulated(detailsData.attestation_required)">
+                        <td>
+                            <span [title]="getTooltip('Attestation Required')" role="tooltip">
+                                Attestation Required
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </td>
+                        <td>{{detailsData.attestation_required}}</td>
+                    </tr>
+                    <tr *ngIf="isFieldPopulated(detailsData.attestation_link)">
+                        <td>
+                            <span [title]="getTooltip('Attestation Link')" role="tooltip">
+                                Attestation Link
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </td>
+                        <td>{{detailsData.attestation_link}}</td>
+                    </tr>
+                    <tr *ngIf="isFieldPopulated(detailsData.fedramp)">
+                        <td>
+                            <span [title]="getTooltip('FedRAMP')" role="tooltip">
+                                FedRAMP
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </td>
+                        <td>{{getYesNoValue(detailsData.fedramp)}}</td>
+                    </tr>
+                    <tr *ngIf="isFieldPopulated(detailsData.open_source)">
+                        <td>
+                            <span [title]="getTooltip('Open Source')" role="tooltip">
+                                Open Source
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </td>
+                        <td>{{getYesNoValue(detailsData.open_source)}}</td>
+                    </tr>
+                    <tr *ngIf="isFieldPopulated(detailsData.RITM)">
+                        <td>
+                            <span [title]="getTooltip('Requested Item (RITM)')" role="tooltip">
+                                Requested Item (RITM)
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </td>
+                        <td>{{detailsData.RITM}}</td>
+                    </tr>
+                    <tr *ngIf="isFieldPopulated(detailsData.ReferenceDocument)">
+                        <td>
+                            <span [title]="getTooltip('Reference Document')" role="tooltip">
+                                Reference Document
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </td>
+                        <td *ngIf="detailsData.ReferenceDocument">
+                            <a href="{{ detailsData.ReferenceDocument }}" target="_blank" rel="noopener">
+                                {{ detailsData.ReferenceDocument }}
+                            </a>
+                        </td>
+                        <td *ngIf="!detailsData.ReferenceDocument">None</td>
+                    </tr>
+                    <tr *ngIf="isFieldPopulated(detailsData.AppBundleIds)">
+                        <td>
+                            <span [title]="getTooltip('App Bundle Ids')" role="tooltip">
+                                App Bundle IDs
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </td>
+                        <td [innerHtml]="renderAppBundleList(detailsData.AppBundleIds)"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="edit-info-container">
+            <app-button [buttonText]="getShowAllFieldsButtonText()" buttonStyle="outline" (buttonClick)="toggleShowAllFields()"></app-button>
+            Last Updated: {{detailsData.ChangeDTG | date: 'full'}}
+        </div>
+    </div>
+</div>
