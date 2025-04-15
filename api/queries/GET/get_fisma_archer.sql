@@ -4,6 +4,7 @@ SELECT
 	systems_ext.Business_Org                            AS BusOrg,
 	archer.`ex:System_Name`                        AS Name,
   systems_ext.Display_Name					                  AS DisplayName,
+  systems_ext.TIME_URL                                AS TIME_URL,
   archer.`ex:FederalContractor`                      	AS FedContractorLoc,
   archer.`ex:FIPS_Impact_Level`                      	AS FIPS_Impact_Level,
   archer.`ex:ATOIATO_Date`                           	AS ATODate,

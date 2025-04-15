@@ -5,6 +5,7 @@ export class System {
   public BusOrgSymbolAndName: string;
   public Name: string;
   public DisplayName: string;
+  public TIME_URL: string;
   public FedContractorLoc: string;
   public FIPS_Impact_Level: string;
   public BusApp: string;
