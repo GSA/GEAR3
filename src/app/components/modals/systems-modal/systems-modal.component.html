@@ -92,7 +92,7 @@
               </div>
             </div>
 
-            <div>
+            <div *ngIf="system.TIME_URL">
               <a class="btn btn-sm btn-success btn-link text-white mb-4" 
               [href]="system.TIME_URL"
               target="_blank"
