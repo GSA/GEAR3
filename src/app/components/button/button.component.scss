@@ -137,12 +137,14 @@
 }
 
 ::ng-deep {
-    & li {
-        padding: 10px;
-        cursor: pointer;
+    &.button-container {
+        & li {
+            padding: 10px;
+            cursor: pointer;
 
-        &:hover {
-            background-color: #f0f0f0; 
+            &:hover {
+                background-color: #f0f0f0; 
+            }
         }
     }
 }

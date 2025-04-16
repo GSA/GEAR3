@@ -123,11 +123,12 @@ export class ItStandardsDetailsComponent implements OnInit {
     }
   }
 
-  public renderAppBundleList(appBundle: AppBundle[]): string {
+  public renderAppBundleList(appBundle: any): string {
     let list = 'None';
-    if(appBundle && appBundle.length > 0) {
+    if(appBundle) {
       list = '<ul>';
-      appBundle.forEach(a => {
+      let ids = appBundle.split(', ');
+      ids.forEach(a => {
         list += `<li>${a}</li>`;
       });
       list += '</ul>';
