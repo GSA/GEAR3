@@ -75,7 +75,7 @@
         <!-- Tab Panes -->
         <div class="tab-content mt-3">
           <div class="tab-pane fade show active" id="systemOverview">
-            <div class="row mb-4">
+            <div class="row mb-2">
               <div class="col">
                 <h4>Alias/Acronym</h4>
                 <p>{{ system.DisplayName }}</p>
@@ -93,8 +93,8 @@
             </div>
 
             <div>
-              <a class="btn btn-sm btn-success btn-link text-white mb-2" 
-              href="https://docs.google.com/spreadsheets/d/1cx-gi-jjHSvAD57Z0T812a0o7eJ-IWIAqlhE0ZTTMTI/edit#gid=362432297"
+              <a class="btn btn-sm btn-success btn-link text-white mb-4" 
+              [href]="system.TIME_URL"
               target="_blank"
               rel="noopener">
                 Complete your system's 
