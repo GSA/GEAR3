@@ -393,7 +393,6 @@ export class ItStandardsComponent implements OnInit {
   }
 
   public onRowClick(e: any) {
-    console.log(e);
     this.router.navigate(['it_standards', e.ID]);
   }
 

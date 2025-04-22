@@ -3,7 +3,11 @@ import { ActivatedRoute } from '@angular/router';
 import { DataDictionary } from '@api/models/data-dictionary.model';
 import { AppBundle } from '@api/models/it-standards-app-bundle.model';
 import { ITStandards } from '@api/models/it-standards.model';
+import { System } from '@api/models/systems.model';
+import { Column } from '@common/table-classes';
 import { ApiService } from '@services/apis/api.service';
+import { SharedService } from '@services/shared/shared.service';
+import { TableService } from '@services/tables/table.service';
 
 @Component({
   selector: 'it-standards',
@@ -39,10 +43,137 @@ export class ItStandardsDetailsComponent implements OnInit {
   public showAllFields: boolean = false;
   public attrDefinitions = <DataDictionary[]>[];
   public isDataReady: boolean = false;
+  public relatedSystems: System[] = [];
+  public hasRelatedSystems: boolean = false;
+
+  public isOverviewTabActive: boolean = true;
+  public isSystemsTabActive: boolean = false;
+
+  relatedSystemsTableCols: Column[] = [
+    {
+      field: 'ID',
+      header: 'ID',
+      isSortable: true,
+      showColumn: false,
+    },
+    {
+      field: 'DisplayName',
+      header: 'Alias / Acronym',
+      isSortable: true,
+    },
+    {
+      field: 'Name',
+      header: 'System Name',
+      isSortable: true,
+    },
+    {
+      field: 'Description',
+      header: 'Description',
+      isSortable: true,
+      showColumn: false,
+      formatter: this.sharedService.formatDescriptionShorter
+    },
+    {
+      field: 'SystemLevel',
+      header: 'System Level',
+      isSortable: true,
+      showColumn: true
+    },
+    {
+      field: 'Status',
+      header: 'Status',
+      isSortable: true,
+      showColumn: true
+    },
+    {
+      field: 'RespOrg',
+      header: 'Responsible Org',
+      isSortable: true,
+      showColumn: true
+    },
+    {
+      field: 'BusOrgSymbolAndName',
+      header: 'SSO/CXO',
+      isSortable: true,
+    },
+    {
+      field: 'BusOrg',
+      header: 'Business Org',
+      isSortable: true,
+      showColumn: true
+    },
+    {
+      field: 'ParentName',
+      header: 'Parent System',
+      isSortable: true,
+      showColumn: false,
+    },
+    {
+      field: 'CSP',
+      header: 'Hosting Provider',
+      isSortable: true,
+      showColumn: false,
+    },
+    {
+      field: 'CloudYN',
+      header: 'Cloud Hosted?',
+      isSortable: true,
+      showColumn: false,
+    },
+    {
+      field: 'ServiceType',
+      header: 'Cloud Service Type',
+      isSortable: true,
+      showColumn: false,
+    },
+    {
+      field: 'AO',
+      header: 'Authorizing Official',
+      isSortable: true,
+      showColumn: false,
+      formatter: this.sharedService.pocStringNameFormatter,
+    },
+    {
+      field: 'SO',
+      header: 'System Owner',
+      isSortable: true,
+      showColumn: false,
+      formatter: this.sharedService.pocStringNameFormatter,
+    },
+    {
+      field: 'BusPOC',
+      header: 'Business POC',
+      isSortable: true,
+      showColumn: false,
+      formatter: this.sharedService.pocStringNameFormatter,
+    },
+    {
+      field: 'TechPOC',
+      header: 'Technical POC',
+      isSortable: true,
+      showColumn: false,
+      formatter: this.sharedService.pocStringNameFormatter,
+    },
+    {
+      field: 'DataSteward',
+      header: 'Data Steward',
+      isSortable: true,
+      showColumn: false,
+      formatter: this.sharedService.pocStringNameFormatter,
+    },
+    {
+      field: 'FISMASystemIdentifier',
+      header: 'FISMA System Identifier',
+      isSortable: true,
+      showColumn: false
+    },
+  ];
 
   constructor(
     private route: ActivatedRoute,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private sharedService: SharedService,
+    private tableService: TableService
   ) {
   }
 
@@ -50,9 +181,19 @@ export class ItStandardsDetailsComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       this.itStandardId = +params.get('standardID');
 
+      // Get IT standard details
       this.apiService.getOneITStandard(this.itStandardId).subscribe(s => {
         this.detailsData = s;
         this.isDataReady = true;
+
+        // Get systems using this standard
+        this.apiService.getITStandardsRelatedSystems(s.ID).subscribe(sys => {
+          this.relatedSystems = sys;
+          if(this.relatedSystems.length > 0) {
+            this.hasRelatedSystems = true;
+            this.tableService.updateReportTableData(this.relatedSystems);
+          }
+        });
       });
 
       // Get attribute definition list
@@ -160,8 +301,23 @@ export class ItStandardsDetailsComponent implements OnInit {
     return '';
   }
 
-  public isApproved() {
+  public isApproved(): boolean {
     return this.detailsData.Status === this.STATUS_STATES.approved;
+  }
+
+  public onTabClick(tabName: string): void {
+    switch (tabName) {
+      case 'overview':
+        this.isOverviewTabActive = true;
+        this.isSystemsTabActive = false;
+        break;
+      case 'systems':
+        this.isOverviewTabActive = false;
+        this.isSystemsTabActive = true;
+        break;
+      default:
+        break;
+    }
   }
 
 }

@@ -766,6 +766,12 @@ export class ApiService {
         catchError(this.handleError<any>(`GET IT Standards expiring this week`)));
   }
 
+  public getITStandardsRelatedSystems(id: number): Observable<System[]> {
+    return this.http
+      .get<System[]>(this.techUrl + '/get/' + String(id) + '/systems')
+      .pipe(catchError(this.handleError<System[]>(`GET IT Standards related systems`, [])));
+  }
+
   //// Websites
   public getWebsites(): Observable<Website[]> {
     return this.http
