@@ -1,0 +1,238 @@
+<div class="it-standards-details-container" *ngIf="isDataReady">
+    <div class="breadcrumb-container">
+         <app-breadcrumb>
+            <span currentPageName>{{detailsData.Name}}</span>
+         </app-breadcrumb>
+    </div>
+    <div class="title-container">
+        <span class="title">{{detailsData.Name}}</span>
+    </div>
+    <div class="content-container">
+        <div class="data-tab-container">
+            <span class="data-tab-text" [ngClass]="{'active' : isOverviewTabActive}" (click)="onTabClick('overview')">Overview</span>
+            <span class="data-tab-text" [ngClass]="{'active' : isBudgetYearTabActive}" (click)="onTabClick('budget_year')">Budget Year</span>
+            <span class="data-tab-text" [ngClass]="{'active' : isRelatedSystemsTabActive}" (click)="onTabClick('related_systems')" *ngIf="hasRelatedSystems">Related Systems</span>
+        </div>
+        <div class="overview-container" *ngIf="isOverviewTabActive">
+            <div class="overall-data-container">
+                <div class="main-data-container">
+                    <div class="data-full">
+                        <label class="data-label">
+                            <span>
+                                Description
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.Description}}</span>
+                        </span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                <i class="fas fa-calendar"></i>
+                                Budget Year
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.Budget_Year}}</span>
+                        </span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                <i class="fas fa-calendar"></i>
+                                Start Year
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.Start_Year}}</span>
+                        </span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                <i class="fas fa-calendar"></i>
+                                End Year
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.End_Year}}</span>
+                        </span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                <i class="fas fa-cloud"></i>
+                                Cloud Alternatives Evalutation
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.Cloud_Alt}}</span>
+                        </span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                <i class="fas fa-comments"></i>
+                                Comments
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.Comments}}</span>
+                        </span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                <i class="fas fa-user"></i>
+                                Investment Manager
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.InvManager}}</span>
+                        </span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                <i class="fas fa-database"></i>
+                                Investment Type
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.Type}}</span>
+                        </span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                <i class="fas fa-tag"></i>
+                                Investment UII
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.UII}}</span>
+                        </span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                <i class="fas fa-folder-open"></i>
+                                Part of IT Portfolio
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.IT_Portfolio}}</span>
+                        </span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                <i class="fas fa-border-none"></i>
+                                Primary Service Area
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.PSA}}</span>
+                        </span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                <i class="fas fa-info-circle"></i>
+                                Status
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.Status}}</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="budget-year-container" *ngIf="isBudgetYearTabActive">
+            <div class="overall-data-container">
+                <div class="main-data-container">
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                <i class="fas fa-calendar"></i>
+                                Budget Year
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.Budget_Year}}</span>
+                        </span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                Total IT Spending ($ M)r
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.Total_Spend_BY}}</span>
+                        </span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                DME Contributions ($ M)
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.DME_Contributions_BY}}</span>
+                        </span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                DME Budget Authority Agency Funding ($ M)
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.DME_Budget_Auth_BY}}</span>
+                        </span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                O&M Agency Funding ($ M)
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.OnM_Agency_Fund_BY}}</span>
+                        </span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                O&M Contributions ($ M)
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.OnM_Contributions_BY}}</span>
+                        </span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                O&M Budget Authority Agency Funding ($ M)
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.OnM_Budget_Auth_BY}}</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="related-systems-container" *ngIf="isRelatedSystemsTabActive">
+            <div class="overall-data-container">
+                <div class="main-data-container">
+                    <app-table [tableCols]="relatedSystemsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

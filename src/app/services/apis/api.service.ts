@@ -217,10 +217,12 @@ export class ApiService {
       .get<Investment[]>(this.investUrl)
       .pipe(catchError(this.handleError<Investment[]>('GET Investments', [])));
   }
-  public getOneInvest(id: number): Observable<Investment[]> {
+  public getOneInvest(id: number): Observable<Investment> {
     return this.http
-      .get<Investment[]>(this.investUrl + '/get/' + String(id))
-      .pipe(catchError(this.handleError<Investment[]>('GET Investment', [])));
+      .get<Investment>(this.investUrl + '/get/' + String(id))
+      .pipe(
+        map(i => i[0]),
+        catchError(this.handleError<Investment>('GET Investment')));
   }
   public getLatestInvest(): Observable<Investment[]> {
     return this.http

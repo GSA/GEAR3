@@ -46,6 +46,7 @@ import { GlossaryComponent } from './views/main/forms-glossary/glossary/glossary
 import { DataDictionaryComponent } from './views/main/data-dictionary/data-dictionary.component';
 import { DashboardComponent } from './views/dashboard/dashboard.component';
 import { ItStandardsDetailsComponent } from './views/technologies/details/it-standards-details.component';
+import { InvestmentsDetailsComponent } from './views/strategy/investments/details/investments-details.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, title: 'Dashboard' },
@@ -71,7 +72,7 @@ const routes: Routes = [
   },
   {
     path: 'investments/:investID',
-    component: InvestmentsComponent,
+    component: InvestmentsDetailsComponent,
     title: 'Investment',
   },
 

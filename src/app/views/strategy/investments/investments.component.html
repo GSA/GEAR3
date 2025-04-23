@@ -45,7 +45,7 @@
     </div>
   </div>
   <div class="it-investments-data-container">
-    <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral">
+    <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)">
       <div class="filter-tabs-container" filterTabs>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')">
           <span class="filter-tab-text">All</span>

@@ -331,7 +331,7 @@ export class SharedService {
   //// Status Formatter
   public formatStatus(value: any, row: any) {
     if(!value) return '-';
-    else if(value === 'Approved') return `<span class="table-status-badge-green">${value}</span>`;
+    else if(value === 'Approved' || value === 'Active') return `<span class="table-status-badge-green">${value}</span>`;
     else return `<span class="table-status-badge-red">${value}</span>`;
   }
 

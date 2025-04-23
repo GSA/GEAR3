@@ -217,7 +217,7 @@ export class TableService {
       case 'Investment':
         this.apiService
           .getOneInvest(searchData.Id)
-          .subscribe((apiData: any[]) => {
+          .subscribe((apiData: any) => {
             this.investTableClick(apiData[0]);
             this.setGlobalSearchModalUrl(searchData.GEAR_Type, searchData.Id);
           });
@@ -734,7 +734,7 @@ export class TableService {
     $(detailID).modal('hide');
 
     if (type === 'investment') {
-      this.apiService.getOneInvest(ID).subscribe((apiData: any[]) => {
+      this.apiService.getOneInvest(ID).subscribe((apiData: any) => {
         this.investTableClick(apiData[0]);
       });
     } else if (type === 'capability-name') {

@@ -1,0 +1,125 @@
+.it-standards-details-container {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 2.25rem;
+
+    & .breadcrumb-container {
+        display: flex;
+        padding-bottom: 2rem;
+    }
+
+    & .title-container {
+        display: flex;
+        padding-bottom: 1.5rem;
+
+        & .title {
+            color: var(--neutral-black-color-dark);
+            font-family: var(--primary-font);
+            font-size: 2rem;
+            font-weight: 500;
+            line-height: normal;
+        }
+    }
+
+    & .content-container {
+        display: flex;
+        flex-direction: column;
+
+        & .data-tab-container {
+            width: 100%;
+            padding-bottom: .7rem;
+            border-bottom: 1px solid #B2B2B2;
+
+            .data-tab-text {
+                padding: .75rem 1.5rem;
+                background-color: var(--neutral-white-color);
+                color: var(--neutral-black-color-dark);
+
+                &:hover {
+                    cursor: pointer;
+                }
+
+                &.active {
+                    background-color: var(--primary-color);
+                    color: var(--neutral-white-color);
+                }
+            }
+        }
+
+        & .overall-data-container, .budget-year-container, .related-systems-container {
+            display: flex;
+            flex-flow: row wrap;
+            & .main-data-container {
+                padding: 3.5rem 1.5rem;
+                display: flex;
+                flex-wrap: wrap;
+                width: 70%;
+
+                @media (max-width: 1560px) {
+                    width: 100%;
+                }
+    
+                & .data {
+                    display: flex;
+                    flex-direction: column;
+                    flex: 33%;;
+                    padding-bottom: 1.5rem;
+
+                    &:last-child {
+                        flex: 66%;
+                    }
+    
+                    & .data-label {
+                        font-weight: bold;
+                    }
+                }
+    
+                & .data-full {
+                    display: flex;
+                    flex-direction: column;
+                    flex: 100%;
+                    padding-bottom: 1.5rem;
+    
+                    & .data-label {
+                        font-weight: bold;
+                    }
+                }
+            }
+    
+            & .sub-data-container {
+                padding: 1.5rem 1.5rem;
+                width: 30%;
+
+                @media (max-width: 1560px) {
+                    flex: 50%;
+                    width: 100%;
+                }
+
+                & tr {
+                    border-bottom: 1px solid #E5E5E5;
+                    padding: 1rem 0;
+                }
+
+                & th {
+                    width: 70%;
+                    padding: .625rem;
+                }
+
+                & td {
+                    padding: 1rem .625rem;
+                    &:nth-of-type(odd) {
+                        font-weight: bold;
+                    }
+                }
+            }
+        }
+
+        & .edit-info-container {
+            display: flex;
+            align-items: flex-end;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+    }
+}

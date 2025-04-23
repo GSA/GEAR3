@@ -103,6 +103,7 @@ import { ButtonComponent } from './components/button/button.component';
 import { DashboardComponent } from './views/dashboard/dashboard.component';
 import { FilterChipsComponent } from './components/filter-chips/filter-chips.component';
 import { BreadcrumbComponent } from './components/breadcrumb/breadcrumb.component';
+import { InvestmentsDetailsComponent } from './views/strategy/investments/details/investments-details.component';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -117,6 +118,7 @@ import { BreadcrumbComponent } from './components/breadcrumb/breadcrumb.componen
         FrameworkComponent,
         InvestmentsComponent,
         InvestmentsModalComponent,
+        InvestmentsDetailsComponent,
         CapabilitiesModelComponent,
         CapabilitiesComponent,
         CapabilitiesModalComponent,

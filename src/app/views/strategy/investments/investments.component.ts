@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
@@ -46,7 +46,8 @@ export class InvestmentsComponent implements OnInit {
     private route: ActivatedRoute,
     public sharedService: SharedService,
     private tableService: TableService,
-    private titleService: Title
+    private titleService: Title,
+    private router: Router
   ) {
     // this.modalService.currentInvest.subscribe((row) => (this.row = row));
   }
@@ -389,6 +390,10 @@ export class InvestmentsComponent implements OnInit {
       const labels = data.map(item => `${Math.round((item.value / total) * 100)}% are ${item.name}`).join(', ');
       return `Pie chart representing ${total} total IT investments, of which ${labels}}`;
     }
+  }
+
+  public onRowClick(e: any) {
+    this.router.navigate(['investments', e.ID]);
   }
 
   // onSelect(chartData): void {

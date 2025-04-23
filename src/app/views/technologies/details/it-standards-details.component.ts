@@ -83,7 +83,8 @@ export class ItStandardsDetailsComponent implements OnInit {
       field: 'Status',
       header: 'Status',
       isSortable: true,
-      showColumn: true
+      showColumn: true,
+      formatter: this.sharedService.formatStatus
     },
     {
       field: 'RespOrg',
