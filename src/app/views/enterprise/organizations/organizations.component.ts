@@ -21,7 +21,8 @@ export class OrganizationsComponent implements OnInit {
     private modalService: ModalsService,
     private route: ActivatedRoute,
     private tableService: TableService,
-    private titleService: Title
+    private titleService: Title,
+    private router: Router
   ) {
     this.modalService.currentInvest.subscribe((row) => (this.row = row));
   }
@@ -65,16 +66,20 @@ export class OrganizationsComponent implements OnInit {
     });
 
     // Method to open details modal when referenced directly via URL
-    this.route.params.subscribe((params) => {
-      var detailOrgID = params['orgID'];
-      if (detailOrgID) {
-        this.titleService.setTitle(
-          `${this.titleService.getTitle()} - ${detailOrgID}`
-        );
-        this.apiService.getOneOrg(detailOrgID).subscribe((data: any[]) => {
-          this.tableService.orgsTableClick(data[0]);
-        });
-      }
-    });
+    // this.route.params.subscribe((params) => {
+    //   var detailOrgID = params['orgID'];
+    //   if (detailOrgID) {
+    //     this.titleService.setTitle(
+    //       `${this.titleService.getTitle()} - ${detailOrgID}`
+    //     );
+    //     this.apiService.getOneOrg(detailOrgID).subscribe((data: any) => {
+    //       this.tableService.orgsTableClick(data[0]);
+    //     });
+    //   }
+    // });
+  }
+
+  public onRowClick(e: any) {
+    this.router.navigate(['organizations', e.ID]);
   }
 }

@@ -1,0 +1,57 @@
+<div class="capability-details-container" *ngIf="isDataReady">
+    <div class="breadcrumb-container">
+         <app-breadcrumb>
+            <span currentPageName>{{detailsData.Name}}</span>
+         </app-breadcrumb>
+    </div>
+    <div class="title-container">
+        <span class="title">{{detailsData.Name}}</span>
+    </div>
+    <div class="content-container">
+        <div class="data-tab-container">
+            <span class="data-tab-text" [ngClass]="{'active' : isOverviewTabActive}" (click)="onTabClick('overview')">Overview</span>
+            <span class="data-tab-text" [ngClass]="{'active' : isRelatedOrganizationsTabActive}" (click)="onTabClick('related_organizations')" *ngIf="hasRelatedOrganizations">Related Organizations</span>
+            <span class="data-tab-text" [ngClass]="{'active' : isSupportingSystemsTabActive}" (click)="onTabClick('supporting_systems')">Supporting Systems</span>
+        </div>
+        <div class="overview-container" *ngIf="isOverviewTabActive">
+            <div class="overall-data-container">
+                <div class="main-data-container">
+                    <div class="data-full">
+                        <label class="data-label">
+                            <span>
+                                Description
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.Description}}</span>
+                        </span>
+                    </div>
+                    <div class="data-full">
+                        <label class="data-label">
+                            <span>
+                                Level
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.Level}}</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="related-organizations-container" *ngIf="isRelatedOrganizationsTabActive">
+            <div class="overall-data-container">
+                <div class="main-data-container">
+                    <app-table [tableCols]="relatedOrgsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                </div>
+            </div>
+        </div>
+        <div class="supporting-systems-container" *ngIf="isSupportingSystemsTabActive">
+            <div class="overall-data-container">
+                <div class="main-data-container">
+                    <app-table [tableCols]="supportingSystemsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

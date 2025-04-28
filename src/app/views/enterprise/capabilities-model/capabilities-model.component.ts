@@ -76,7 +76,7 @@ export class CapabilitiesModelComponent implements OnInit {
     this.route.params.subscribe((params) => {
       var detailCapID = params['capID'];
       if (detailCapID) {
-        this.apiService.getOneCap(detailCapID).subscribe((data: any[]) => {
+        this.apiService.getOneCap(detailCapID).subscribe((data: any) => {
           this.tableService.capsTableClick(data[0]);
         });
       }

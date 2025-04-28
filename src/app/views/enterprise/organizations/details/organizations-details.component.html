@@ -1,0 +1,61 @@
+<div class="organization-details-container" *ngIf="isDataReady">
+    <div class="breadcrumb-container">
+         <app-breadcrumb>
+            <span currentPageName>{{detailsData.DisplayName}}</span>
+         </app-breadcrumb>
+    </div>
+    <div class="title-container">
+        <span class="title">{{detailsData.DisplayName}}</span>
+    </div>
+    <div class="content-container">
+        <div class="data-tab-container">
+            <span class="data-tab-text active">Overview</span>
+        </div>
+        <div class="overview-container">
+            <div class="overall-data-container">
+                <div class="main-data-container">
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                Display Name
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.DisplayName}}</span>
+                        </span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                SSO Name
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.SSOName}}</span>
+                        </span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                Two Letter Org
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.TwoLetterOrgName}}</span>
+                        </span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                Parent Organization
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.Parent}}</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -114,11 +114,12 @@ export class ApiService {
       .get<Capability[]>(this.capUrl)
       .pipe(catchError(this.handleError<Capability[]>('GET Capabilities', [])));
   }
-  public getOneCap(id: number): Observable<Capability[]> {
+  public getOneCap(id: number): Observable<Capability> {
     return this.http
-      .get<Capability[]>(this.capUrl + '/get/' + String(id))
+      .get<Capability>(this.capUrl + '/get/' + String(id))
       .pipe(
-        catchError(this.handleError<Capability[]>('GET Capability by ID', []))
+        map(c => c[0]),
+        catchError(this.handleError<Capability>('GET Capability by ID'))
       );
   }
   public getOneCapName(name: string): Observable<Capability[]> {
@@ -134,6 +135,15 @@ export class ApiService {
       .pipe(
         catchError(
           this.handleError<Organization[]>('GET Capability Related Orgs', [])
+        )
+      );
+  }
+  public getCapSystems(id: number): Observable<System[]> {
+    return this.http
+      .get<System[]>(this.capUrl + '/get/' + String(id) + '/systems')
+      .pipe(
+        catchError(
+          this.handleError<System[]>('GET Capability Supporting Systems', [])
         )
       );
   }
@@ -288,11 +298,12 @@ export class ApiService {
         catchError(this.handleError<Organization[]>('GET Organizations', []))
       );
   }
-  public getOneOrg(id: number): Observable<Organization[]> {
+  public getOneOrg(id: string): Observable<Organization> {
     return this.http
-      .get<Organization[]>(this.orgUrl + '/get/' + String(id))
+      .get<Organization>(this.orgUrl + '/get/' + String(id))
       .pipe(
-        catchError(this.handleError<Organization[]>('GET Organization', []))
+        map(o => o[0]),
+        catchError(this.handleError<Organization>('GET Organization'))
       );
   }
   public getOrgCap(id: number): Observable<Capability[]> {
@@ -420,30 +431,30 @@ export class ApiService {
   }
   public getOneWebsiteServiceCategory(
     id: number
-  ): Observable<Service_Category[]> {
+  ): Observable<Service_Category> {
     return this.http
-      .get<Service_Category[]>(
+      .get<Service_Category>(
         this.websiteServiceCategoryUrl + '/get/' + String(id)
       )
       .pipe(
+        map(w => w[0]),
         catchError(
-          this.handleError<Service_Category[]>(
-            'GET Website Service Category',
-            []
+          this.handleError<Service_Category>(
+            'GET Website Service Category'
           )
         )
       );
   }
   public getWebsiteServiceCategoryRelatedWebsites(
     id: number
-  ): Observable<Service_Category[]> {
+  ): Observable<Website[]> {
     return this.http
-      .get<Service_Category[]>(
+      .get<Website[]>(
         this.websiteServiceCategoryUrl + '/get/' + String(id) + '/websites'
       )
       .pipe(
         catchError(
-          this.handleError<Service_Category[]>(
+          this.handleError<Website[]>(
             'GET Service Category Related Websites',
             []
           )

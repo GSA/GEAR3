@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
@@ -25,7 +25,8 @@ export class WebsiteServiceCategoryComponent implements OnInit {
     private route: ActivatedRoute,
     private sharedService: SharedService,
     private tableService: TableService,
-    private titleService: Title
+    private titleService: Title,
+    private router: Router
   ) {
     this.modalService.currentWebsiteServiceCategory.subscribe(
       (row) => (this.row = row)
@@ -70,7 +71,7 @@ export class WebsiteServiceCategoryComponent implements OnInit {
         );
         this.apiService
           .getOneWebsiteServiceCategory(detailWebsiteServiceCategoryID)
-          .subscribe((data: any[]) => {
+          .subscribe((data: any) => {
             this.tableService.websiteServiceCategoryTableClick(data[0]);
           });
       }
@@ -79,5 +80,9 @@ export class WebsiteServiceCategoryComponent implements OnInit {
 
   public onViewAll(): void {
     this.defExpanded = !this.defExpanded;
+  }
+
+  public onRowClick(e: any) {
+    this.router.navigate(['website_service_category', e.website_service_category_id]);
   }
 }

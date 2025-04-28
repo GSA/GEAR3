@@ -104,6 +104,9 @@ import { DashboardComponent } from './views/dashboard/dashboard.component';
 import { FilterChipsComponent } from './components/filter-chips/filter-chips.component';
 import { BreadcrumbComponent } from './components/breadcrumb/breadcrumb.component';
 import { InvestmentsDetailsComponent } from './views/strategy/investments/details/investments-details.component';
+import { CapabilitiesDetailsComponent } from './views/enterprise/capabilities/details/capabilities-details.component';
+import { OrganizationsDetailsComponent } from './views/enterprise/organizations/details/organizations-details.component';
+import { WebsiteServiceCategoryDetailsComponent } from './views/enterprise/website-service-category/details/website-service-category-details.component';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -121,12 +124,15 @@ import { InvestmentsDetailsComponent } from './views/strategy/investments/detail
         InvestmentsDetailsComponent,
         CapabilitiesModelComponent,
         CapabilitiesComponent,
+        CapabilitiesDetailsComponent,
         CapabilitiesModalComponent,
         CapabilityManagerComponent,
         OrganizationsChartComponent,
         OrganizationsComponent,
+        OrganizationsDetailsComponent,
         OrganizationsModalComponent,
         WebsiteServiceCategoryComponent,
+        WebsiteServiceCategoryDetailsComponent,
         WebsiteServiceCategoryModalComponent,
         SystemsComponent,
         SystemsModalComponent,

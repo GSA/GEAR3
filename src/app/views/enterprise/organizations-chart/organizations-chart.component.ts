@@ -54,7 +54,7 @@ export class OrganizationsChartComponent implements OnInit {
     this.route.params.subscribe((params) => {
       var detailOrgID = params['orgID'];
       if (detailOrgID) {
-        this.apiService.getOneOrg(detailOrgID).subscribe((data: any[]) => {
+        this.apiService.getOneOrg(detailOrgID).subscribe((data: any) => {
           this.tableService.orgsTableClick(data[0]);
         });
       }

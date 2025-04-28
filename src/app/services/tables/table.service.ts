@@ -10,6 +10,7 @@ import { Service_Category } from '@api/models/service-category.model';
 import { AnalyticsService } from '@services/analytics/analytics.service';
 import { BehaviorSubject, Observable, of, scheduled, Subscription } from 'rxjs';
 import { FilterButton } from '@common/table-classes';
+import { Website } from '@api/models/websites.model';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -199,7 +200,7 @@ export class TableService {
 
     switch (searchData.GEAR_Type) {
       case 'Capability':
-        this.apiService.getOneCap(searchData.Id).subscribe((apiData: any[]) => {
+        this.apiService.getOneCap(searchData.Id).subscribe((apiData: any) => {
           this.capsTableClick(apiData[0]);
           this.setGlobalSearchModalUrl(searchData.GEAR_Type, searchData.Id);
         });
@@ -243,7 +244,7 @@ export class TableService {
       case 'Organization':
           this.apiService
             .getOneOrg(searchData.Id)
-            .subscribe((apiData: any[]) => {
+            .subscribe((apiData: any) => {
               this.orgsTableClick(apiData[0]);
               this.setGlobalSearchModalUrl(searchData.GEAR_Type, searchData.Id);
             });
@@ -398,7 +399,7 @@ export class TableService {
     // load the related websites list to display within the main modal tab
     this.apiService
       .getWebsiteServiceCategoryRelatedWebsites(data[options.dataID])
-      .subscribe((websiteServiceCategoryWebsiteData: Service_Category[]) => {
+      .subscribe((websiteServiceCategoryWebsiteData: Website[]) => {
         $('#websiteServiceCategoryWebsites').bootstrapTable('refreshOptions', {
           exportOptions: {
             fileName: this.sharedService.fileNameFmt(
@@ -746,7 +747,7 @@ export class TableService {
         this.systemsTableClick(apiData[0]);
       });
     } else if (type === 'org') {
-      this.apiService.getOneOrg(ID).subscribe((apiData: any[]) => {
+      this.apiService.getOneOrg(ID).subscribe((apiData: any) => {
         this.orgsTableClick(apiData[0]);
       });
     } else if (type === 'fisma') {

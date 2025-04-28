@@ -1,4 +1,4 @@
-.investment-details-container {
+.organization-details-container {
     display: flex;
     flex-direction: column;
     padding: 2rem 2.25rem;
@@ -46,7 +46,7 @@
             }
         }
 
-        & .overall-data-container, .budget-year-container, .related-systems-container {
+        & .overall-data-container, .related-organizations-container, .supporting-systems-container {
             display: flex;
             flex-flow: row wrap;
             & .main-data-container {
@@ -85,41 +85,6 @@
                     }
                 }
             }
-    
-            & .sub-data-container {
-                padding: 1.5rem 1.5rem;
-                width: 30%;
-
-                @media (max-width: 1560px) {
-                    flex: 50%;
-                    width: 100%;
-                }
-
-                & tr {
-                    border-bottom: 1px solid #E5E5E5;
-                    padding: 1rem 0;
-                }
-
-                & th {
-                    width: 70%;
-                    padding: .625rem;
-                }
-
-                & td {
-                    padding: 1rem .625rem;
-                    &:nth-of-type(odd) {
-                        font-weight: bold;
-                    }
-                }
-            }
-        }
-
-        & .edit-info-container {
-            display: flex;
-            align-items: flex-end;
-            flex-direction: column;
-            gap: 1.5rem;
-            margin-top: 1.5rem;
         }
     }
 }

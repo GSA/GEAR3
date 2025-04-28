@@ -47,6 +47,9 @@ import { DataDictionaryComponent } from './views/main/data-dictionary/data-dicti
 import { DashboardComponent } from './views/dashboard/dashboard.component';
 import { ItStandardsDetailsComponent } from './views/technologies/details/it-standards-details.component';
 import { InvestmentsDetailsComponent } from './views/strategy/investments/details/investments-details.component';
+import { CapabilitiesDetailsComponent } from './views/enterprise/capabilities/details/capabilities-details.component';
+import { OrganizationsDetailsComponent } from './views/enterprise/organizations/details/organizations-details.component';
+import { WebsiteServiceCategoryDetailsComponent } from './views/enterprise/website-service-category/details/website-service-category-details.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, title: 'Dashboard' },
@@ -93,7 +96,7 @@ const routes: Routes = [
   },
   {
     path: 'capabilities/:capID',
-    component: CapabilitiesComponent,
+    component: CapabilitiesDetailsComponent,
     title: 'Capabilities',
   },
   {
@@ -113,7 +116,7 @@ const routes: Routes = [
   },
   {
     path: 'organizations/:orgID',
-    component: OrganizationsComponent,
+    component: OrganizationsDetailsComponent,
     title: 'Organization',
   },
   {
@@ -123,7 +126,7 @@ const routes: Routes = [
   },
   {
     path: 'website_service_category/:websiteServiceCategoryID',
-    component: WebsiteServiceCategoryComponent,
+    component: WebsiteServiceCategoryDetailsComponent,
     title: 'Website Service Category',
   },
 
