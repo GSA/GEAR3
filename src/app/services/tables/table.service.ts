@@ -225,7 +225,7 @@ export class TableService {
         break;
 
       case 'System': // TODO: need to change when gear_schema is fully transitioned
-        this.apiService.getOneSys(searchData.Id).subscribe((apiData: any[]) => {
+        this.apiService.getOneSys(searchData.Id).subscribe((apiData: any) => {
           this.systemsTableClick(apiData[0]);
           this.setGlobalSearchModalUrl(searchData.GEAR_Type, searchData.Id);
         });
@@ -743,7 +743,7 @@ export class TableService {
         this.capsTableClick(apiData[0]);
       });
     } else if (type === 'system') {
-      this.apiService.getOneSys(ID).subscribe((apiData: any[]) => {
+      this.apiService.getOneSys(ID).subscribe((apiData: any) => {
         this.systemsTableClick(apiData[0]);
       });
     } else if (type === 'org') {

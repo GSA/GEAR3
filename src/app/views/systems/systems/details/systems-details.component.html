@@ -1,0 +1,288 @@
+<div class="systems-details-container" *ngIf="isDataReady">
+    <div class="breadcrumb-container">
+         <app-breadcrumb>
+            <span currentPageName>{{detailsData.Name}}</span>
+         </app-breadcrumb>
+    </div>
+    <div class="title-container">
+        <span class="title">{{detailsData.Name}}</span>
+    </div>
+    <div class="content-container">
+        <div class="data-tab-container">
+            <span class="data-tab-text" [ngClass]="{'active' : isOverviewTabActive}" (click)="onTabClick('overview')">Overview</span>
+            <span class="data-tab-text" [ngClass]="{'active' : isBusinessTabActive}" (click)="onTabClick('business')">Business</span>
+            <span class="data-tab-text" [ngClass]="{'active' : isTechnicalTabActive}" (click)="onTabClick('technical')">Technical</span>
+            <span class="data-tab-text" [ngClass]="{'active' : isRecordsTabActive}" (click)="onTabClick('records')">Records</span>
+            <span class="data-tab-text" [ngClass]="{'active' : isWebsitesTabActive}" (click)="onTabClick('websites')">Websites</span>
+        </div>
+        <div class="tab-container" *ngIf="isOverviewTabActive">
+            <div class="overall-data-container">
+                <div class="main-data-container">
+                    <div class="data"> 
+                        <label class="data-label">
+                            <span>
+                                Alian/Acronym
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.DisplayName}}</span>
+                        </span>
+                    </div>
+                    <div class="data"> 
+                        <label class="data-label">
+                            <span>
+                                Status
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <span>
+                            <span [ngClass]="getStatusClass(detailsData.Status)">{{detailsData.Status}}</span>
+                        </span>
+                    </div>
+                    <div class="data"> 
+                        <label class="data-label">
+                            <span>
+                                System Level
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.SystemLevel}}</span>
+                        </span>
+                    </div>
+                    <div class="data-full">
+                        <label class="data-label">
+                            <span>
+                                Description
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <span>{{detailsData.Description}}</span>
+                    </div>
+                    <div class="data-full">
+                        <label class="data-label">
+                            <span>
+                                Related Artifacts
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <span *ngIf="detailsData.RelatedArtifacts">
+                            <ul [innerHTML]="getRelatedArtifacts()"></ul>
+                        </span>
+                        <span *ngIf="!detailsData.RelatedArtifacts">None</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-container" *ngIf="isBusinessTabActive">
+            <div class="overall-data-container">
+                <div class="main-data-container">
+                    <div class="data"> 
+                        <label class="data-label">
+                            <span>
+                                ATO Date
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.ATODate | date: 'longDate'}}</span>
+                        </span>
+                    </div>
+                    <div class="data"> 
+                        <label class="data-label">
+                            <span>
+                                ATO Type
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.ATOType}}</span>
+                        </span>
+                    </div>
+                    <div class="data"> 
+                        <label class="data-label">
+                            <span>
+                                Business Org
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.BusOrg}}</span>
+                        </span>
+                    </div>
+                    <div class="data"> 
+                        <label class="data-label">
+                            <span>
+                                CUI
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.CUI}}</span>
+                        </span>
+                    </div>
+                    <div class="data"> 
+                        <label class="data-label">
+                            <span>
+                                Responsible IT Org
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.RespOrg}}</span>
+                        </span>
+                    </div>
+                    <div class="data"> 
+                        <label class="data-label">
+                            <span>
+                                Cloud Service Type
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.ServiceType}}</span>
+                        </span>
+                    </div>
+
+                    <div class="sub-content">
+                        <span class="sub-header">Point of Contacts</span>
+                        <table>
+                            <tr>
+                                <th>Role</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                            </tr>
+                            <tr *ngFor="let poc of getPOCList()">
+                                <td> {{ poc.type }} </td>
+                                <td> {{ poc.name }} </td>
+                                <td> 
+                                    <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{poc.email}}" target="_blank" rel="noopener">{{ poc.email }}</a> 
+                                </td>
+                            </tr>
+                        </table>
+
+                        <span class="sub-header">System Time Report</span>
+                        <app-table [tableCols]="systemTimeCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+
+                        <span class="sub-header">Related Business Capabilities</span>
+                        <app-table [tableCols]="relatedCapabilitiesCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="tab-container" *ngIf="isTechnicalTabActive">
+            <div class="overall-data-container">
+                <div class="main-data-container">
+                    <div class="data"> 
+                        <label class="data-label">
+                            <span>
+                                Cloud Enabled?
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.CloudYN}}</span>
+                        </span>
+                    </div>
+                    <div class="data"> 
+                        <label class="data-label">
+                            <span>
+                                Hosting Provider
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.CSP}}</span>
+                        </span>
+                    </div>
+                    <div class="data"> 
+                        <label class="data-label">
+                            <span>
+                                Complete FISMA Assessment for Current FY
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.ComplFISMA}}</span>
+                        </span>
+                    </div>
+                    <div class="data"> 
+                        <label class="data-label">
+                            <span>
+                                FIPS Impact Level
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.FIPS_Impact_Level}}</span>
+                        </span>
+                    </div>
+                    <div class="data"> 
+                        <label class="data-label">
+                            <span>
+                                Gov't-Wide Shared Service
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.SharedService}}</span>
+                        </span>
+                    </div>
+                    <div class="data"> 
+                        <label class="data-label">
+                            <span>
+                                FISMA System Identifier
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.FISMASystemIdentifier}}</span>
+                        </span>
+                    </div>
+                    <div class="data"> 
+                        <label class="data-label">
+                            <span>
+                                Service Type
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.ServiceType}}</span>
+                        </span>
+                    </div>
+                    <div class="data"> 
+                        <label class="data-label">
+                            <span>
+                                PII Indicator
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.PII}}</span>
+                        </span>
+                    </div>
+                    <div class="sub-content">
+                        <span class="sub-header">Related Technology</span>
+                        <app-table [tableCols]="relatedTechnologyCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-container" *ngIf="isRecordsTabActive">
+            <div class="overall-data-container">
+                <div class="main-data-container">
+                    <app-table [tableCols]="recordsCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                </div>
+            </div>
+        </div>
+        <div class="tab-container" *ngIf="isWebsitesTabActive">
+            <div class="overall-data-container">
+                <div class="main-data-container">
+                    <app-table [tableCols]="websiteCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

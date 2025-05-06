@@ -363,6 +363,10 @@ export class SystemsComponent implements OnInit {
     }
   }
 
+  public onRowClick(e: any) {
+    this.router.navigate(['systems', e.ID]);
+  }
+
   // onSelect(chartData): void {
   //   this.sharedService.disableStickyHeader("systemTable");
   //   this.filteredTable = true; // Filters are on, expose main table button

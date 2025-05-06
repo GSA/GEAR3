@@ -468,10 +468,12 @@ export class ApiService {
       .get<System[]>(this.sysUrl)
       .pipe(catchError(this.handleError<System[]>('GET Systems', [])));
   }
-  public getOneSys(id: number): Observable<System[]> {
+  public getOneSys(id: number): Observable<System> {
     return this.http
-      .get<System[]>(this.sysUrl + '/get/' + String(id))
-      .pipe(catchError(this.handleError<System[]>('GET System', [])));
+      .get<System>(this.sysUrl + '/get/' + String(id))
+      .pipe(
+        map(s => s[0]),
+        catchError(this.handleError<System[]>('GET System')));
   }
   // public getChildSubSys(id: number): Observable<System[]> {
   //   return this.http.get<System[]>(this.sysUrl + '/get/' + String(id) + '/systems').pipe(

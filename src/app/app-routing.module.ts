@@ -50,6 +50,7 @@ import { InvestmentsDetailsComponent } from './views/strategy/investments/detail
 import { CapabilitiesDetailsComponent } from './views/enterprise/capabilities/details/capabilities-details.component';
 import { OrganizationsDetailsComponent } from './views/enterprise/organizations/details/organizations-details.component';
 import { WebsiteServiceCategoryDetailsComponent } from './views/enterprise/website-service-category/details/website-service-category-details.component';
+import { SystemsDetailsComponent } from './views/systems/systems/details/systems-details.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, title: 'Dashboard' },
@@ -131,7 +132,7 @@ const routes: Routes = [
   },
 
   { path: 'systems', component: SystemsComponent, title: 'Systems' },
-  { path: 'systems/:sysID', component: SystemsComponent, title: 'System' },
+  { path: 'systems/:sysID', component: SystemsDetailsComponent, title: 'System' },
   {
     path: 'systems_TIME',
     component: TimeComponent,

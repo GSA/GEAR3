@@ -182,7 +182,7 @@ export class TimeComponent implements OnInit {
         this.titleService.setTitle(
           `${this.titleService.getTitle()} - ${detailSysID}`
         );
-        this.apiService.getOneSys(detailSysID).subscribe((data: any[]) => {
+        this.apiService.getOneSys(detailSysID).subscribe((data: any) => {
           this.tableService.systemsTableClick(data[0]);
           // this.getInterfaceData(row.ID);
         });

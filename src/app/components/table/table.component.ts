@@ -293,7 +293,7 @@ export class TableComponent implements OnInit, OnChanges {
         break;
       case 'time':
         this.apiService.getOneSys(data['System Id'])
-          .subscribe((data: any[]) => {
+          .subscribe((data: any) => {
               this.tableService.systemsTableClick(data[0]);
             });
 
