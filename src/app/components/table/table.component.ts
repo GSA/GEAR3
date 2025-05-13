@@ -18,6 +18,9 @@ export class TableComponent implements OnInit, OnChanges {
   // Table columns and their options
   @Input() tableCols: Column[] = [];
 
+  @Input() localTableData: any[] = [];
+  @Input() isLocal: boolean = false;
+
   // Two dimenstional array of button filters
   // Each array of strings is a grouping of buttons
   @Input() filterButtons: TwoDimArray<FilterButton> = [];
@@ -96,9 +99,14 @@ export class TableComponent implements OnInit, OnChanges {
 
     this.exportColumns = this.tableCols.map((col) => ({ title: col.header, dataKey: col.field }));
     // this.activeTableData = this.getTableData();
-    this.tableService.reportTableData$.subscribe(d => {
-      this.tableData = d;
-    });
+    if(this.isLocal) {
+      this.tableData = this.localTableData;
+    } else {
+      this.tableService.reportTableData$.subscribe(d => {
+        this.tableData = d;
+      });
+    }
+
     this.generateColumns();
   }
 

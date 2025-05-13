@@ -1,0 +1,105 @@
+<div class="records-management-details-container" *ngIf="isDataReady">
+    <div class="breadcrumb-container">
+         <app-breadcrumb>
+            <span currentPageName>{{detailsData.Record_Item_Title}}</span>
+         </app-breadcrumb>
+    </div>
+    <div class="title-container">
+        <span class="title">{{detailsData.Record_Item_Title}}</span>
+    </div>
+    <div class="content-container">
+        <div class="data-tab-container">
+            <span class="data-tab-text active">Overview</span>
+        </div>
+        <div class="tab-container">
+            <div class="overall-data-container">
+                <div class="main-data-container">
+                    <div class="data-full">
+                        <label class="data-label">
+                            <span>
+                                Description
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <span>{{detailsData.Description}}</span>
+                    </div>
+                    <div class="data"> 
+                        <label class="data-label">
+                            <span>
+                                Retention Instructions
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.Retention_Instructions}}</span>
+                        </span>
+                    </div>
+                    <div class="data"> 
+                        <label class="data-label">
+                            <span>
+                                Disposition Notes
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <span>
+                            <span>{{detailsData.Disposition_Notes}}</span>
+                        </span>
+                    </div>
+
+                    <div class="sub-content">
+                        <table>
+                            <tr>
+                                <th>Attribute</th>
+                                <th>Value</th>
+                            </tr>
+                            <tr>
+                                <td>CUI</td>
+                                <td>{{ detailsData.CUI }}</td>
+                            </tr>
+                            <tr>
+                                <td>Retention Years</td>
+                                <td>{{ detailsData.FY_Retention_Years }}</td>
+                            </tr>
+                            <tr>
+                                <td>Disposition Authority</td>
+                                <td>{{ detailsData.Legal_Disposition_Authority }}</td>
+                            </tr>
+                            <tr>
+                                <td>DA Approval Date</td>
+                                <td>{{ detailsData.Date_DA_Approved }}</td>
+                            </tr>
+                            <tr>
+                                <td>Disposition Type</td>
+                                <td>{{ detailsData.Type_Disposition }}</td>
+                            </tr>
+                            <tr>
+                                <td>FP Category</td>
+                                <td>{{ detailsData.FP_Category }}</td>
+                            </tr>
+                            <tr>
+                                <td>GSA Number</td>
+                                <td>{{ detailsData.GSA_Number }}</td>
+                            </tr>
+                            <tr>
+                                <td>PII</td>
+                                <td>{{ detailsData.PII }}</td>
+                            </tr>
+                            <tr>
+                                <td>Record Group</td>
+                                <td>{{ detailsData.RG }}</td>
+                            </tr>
+                            <tr>
+                                <td>Record ID</td>
+                                <td>{{ detailsData.Rec_ID }}</td>
+                            </tr>
+                            <tr>
+                                <td>Status</td>
+                                <td>{{ detailsData.Record_Status }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

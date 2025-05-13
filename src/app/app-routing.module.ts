@@ -51,6 +51,9 @@ import { CapabilitiesDetailsComponent } from './views/enterprise/capabilities/de
 import { OrganizationsDetailsComponent } from './views/enterprise/organizations/details/organizations-details.component';
 import { WebsiteServiceCategoryDetailsComponent } from './views/enterprise/website-service-category/details/website-service-category-details.component';
 import { SystemsDetailsComponent } from './views/systems/systems/details/systems-details.component';
+import { TimeDetailsComponent } from './views/systems/time/details/time-details.component';
+import { RecordsManagementDetailsComponent } from './views/systems/records-management/details/records-management-details.component';
+import { WebsitesDetailsComponent } from './views/systems/websites/details/websites-details.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, title: 'Dashboard' },
@@ -140,7 +143,7 @@ const routes: Routes = [
   },
   {
     path: 'systems_TIME/:sysID',
-    component: TimeComponent,
+    component: TimeDetailsComponent,
     title: 'System TIME Model',
   },
   {
@@ -150,13 +153,13 @@ const routes: Routes = [
   },
   {
     path: 'records_mgmt/:recID',
-    component: RecordsManagementComponent,
+    component: RecordsManagementDetailsComponent,
     title: 'Records Management',
   },
   { path: 'websites', component: WebsitesComponent, title: 'Websites' },
   {
     path: 'websites/:websiteID',
-    component: WebsitesComponent,
+    component: WebsitesDetailsComponent,
     title: 'Website',
   },
 

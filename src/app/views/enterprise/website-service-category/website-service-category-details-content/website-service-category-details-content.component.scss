@@ -1,0 +1,25 @@
+.data {
+    display: flex;
+    flex-direction: column;
+    flex: 33%;;
+    padding-bottom: 1.5rem;
+
+    &:last-child {
+        flex: 66%;
+    }
+
+    & .data-label {
+        font-weight: bold;
+    }
+}
+
+.data-full {
+    display: flex;
+    flex-direction: column;
+    flex: 100%;
+    padding-bottom: 1.5rem;
+
+    & .data-label {
+        font-weight: bold;
+    }
+}

@@ -346,10 +346,12 @@ export class ApiService {
       .get<Record[]>(this.recordsUrl)
       .pipe(catchError(this.handleError<Record[]>('GET Records', [])));
   }
-  public getOneRecord(id: number): Observable<Record[]> {
+  public getOneRecord(id: number): Observable<Record> {
     return this.http
-      .get<Record[]>(this.recordsUrl + '/get/' + String(id))
-      .pipe(catchError(this.handleError<Record[]>('GET Record', [])));
+      .get<Record>(this.recordsUrl + '/get/' + String(id))
+      .pipe(
+        map(r => r[0]),
+        catchError(this.handleError<Record>('GET Record')));
   }
   public getRecordSys(id: number): Observable<System[]> {
     return this.http
@@ -431,15 +433,15 @@ export class ApiService {
   }
   public getOneWebsiteServiceCategory(
     id: number
-  ): Observable<Service_Category> {
+  ): Observable<WebsiteServiceCategory> {
     return this.http
-      .get<Service_Category>(
+      .get<WebsiteServiceCategory>(
         this.websiteServiceCategoryUrl + '/get/' + String(id)
       )
       .pipe(
         map(w => w[0]),
         catchError(
-          this.handleError<Service_Category>(
+          this.handleError<WebsiteServiceCategory>(
             'GET Website Service Category'
           )
         )
@@ -793,10 +795,12 @@ export class ApiService {
       .get<Website[]>(this.websitesUrl)
       .pipe(catchError(this.handleError<Website[]>('GET Websites', [])));
   }
-  public getOneWebsite(id: number): Observable<Website[]> {
+  public getOneWebsite(id: number): Observable<Website> {
     return this.http
-      .get<Website[]>(this.websitesUrl + '/get/' + String(id))
-      .pipe(catchError(this.handleError<Website[]>('GET Website', [])));
+      .get<Website>(this.websitesUrl + '/get/' + String(id))
+      .pipe(
+        map(w => w[0]),
+        catchError(this.handleError<Website>('GET Website')));
   }
   public getWebsiteScans(id: number): Observable<WebsiteScan[]> {
     return this.http

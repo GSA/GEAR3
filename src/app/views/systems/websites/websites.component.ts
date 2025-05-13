@@ -207,7 +207,7 @@ export class WebsitesComponent implements OnInit {
         );
         this.apiService
           .getOneWebsite(detailwebsiteID)
-          .subscribe((data: any[]) => {
+          .subscribe((data: any) => {
             this.tableService.websitesTableClick(data[0]);
           });
       }
@@ -255,6 +255,10 @@ export class WebsitesComponent implements OnInit {
 
   public isTabSelected(tabName: string): boolean {
     return this.selectedTab === tabName;
+  }
+
+  public onRowClick(e: any) {
+    this.router.navigate(['websites', e.website_id]);
   }
 
 }

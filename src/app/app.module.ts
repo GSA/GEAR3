@@ -108,6 +108,10 @@ import { CapabilitiesDetailsComponent } from './views/enterprise/capabilities/de
 import { OrganizationsDetailsComponent } from './views/enterprise/organizations/details/organizations-details.component';
 import { WebsiteServiceCategoryDetailsComponent } from './views/enterprise/website-service-category/details/website-service-category-details.component';
 import { SystemsDetailsComponent } from './views/systems/systems/details/systems-details.component';
+import { TimeDetailsComponent } from './views/systems/time/details/time-details.component';
+import { RecordsManagementDetailsComponent } from './views/systems/records-management/details/records-management-details.component';
+import { WebsitesDetailsComponent } from './views/systems/websites/details/websites-details.component';
+import { WebsiteServiceCategoryDetailsContentComponent } from './views/enterprise/website-service-category/website-service-category-details-content/website-service-category-details-content.component';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -134,16 +138,20 @@ import { SystemsDetailsComponent } from './views/systems/systems/details/systems
         OrganizationsModalComponent,
         WebsiteServiceCategoryComponent,
         WebsiteServiceCategoryDetailsComponent,
+        WebsiteServiceCategoryDetailsContentComponent,
         WebsiteServiceCategoryModalComponent,
         SystemsComponent,
         SystemsDetailsComponent,
         SystemsModalComponent,
         SystemManagerComponent,
         TimeComponent,
+        TimeDetailsComponent,
         RecordsManagementComponent,
+        RecordsManagementDetailsComponent,
         RecordsModalComponent,
         RecordManagerComponent,
         WebsitesComponent,
+        WebsitesDetailsComponent,
         WebsitesModalComponent,
         WebsiteManagerComponent,
         FismaComponent,

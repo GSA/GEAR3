@@ -1,0 +1,28 @@
+<div class="overview-container" *ngIf="isDataReady">
+    <div class="overall-data-container">
+        <div class="main-data-container">
+            <div class="data-full">
+                <label class="data-label">
+                    <span>
+                        {{data.name}}
+                    </span>
+                </label>
+                <span>
+                    <span>{{data.description}}</span>
+                </span>
+            </div>
+            <div class="data-full">
+                <label class="data-label">
+                    <span>
+                        About Related Websites
+                    </span>
+                </label>
+                <span>
+                    <span>Website Service Categories at GSA can stretch across multiple staff offices.
+                            Below are websites that fall into the website service category described above.</span>
+                </span>
+            </div>
+            <app-table [localTableData]="relatedWebsites" [isLocal]="true" [tableCols]="relatedWebsitesTableCols" [showToolbar]="showToolbar" [showPagination]="showPagination" reportStyle="neutral"></app-table>
+        </div>
+    </div>
+</div>

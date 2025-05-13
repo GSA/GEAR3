@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Service_Category } from '@api/models/service-category.model';
-import { Website } from '@api/models/websites.model';
-import { Column } from '@common/table-classes';
+import { WebsiteServiceCategory } from '@api/models/website-service-category.model';
 import { ApiService } from '@services/apis/api.service';
 import { TableService } from '@services/tables/table.service';
 
@@ -14,42 +13,8 @@ import { TableService } from '@services/tables/table.service';
 export class WebsiteServiceCategoryDetailsComponent implements OnInit {
 
   public websiteServiceCategoryId: number = null;
-  public detailsData: Service_Category;
+  public detailsData: WebsiteServiceCategory;
   public isDataReady: boolean = false;
-  public relatedWebsites: Website[] = [];
-
-  public relatedWebsitesTableCols: Column[] = [
-    {
-      field: 'website_id',
-      header: 'Website Id',
-      isSortable: true
-    },
-    {
-      field: 'domain',
-      header: 'Domain',
-      isSortable: true
-    },
-    {
-      field: 'site_owner_email',
-      header: 'Website Manager Email',
-      isSortable: true
-    },
-    {
-      field: 'office',
-      header: 'Office',
-      isSortable: true
-    },
-    {
-      field: 'sub_office',
-      header: 'Sub-Office',
-      isSortable: true
-    },
-    {
-      field: 'production_status',
-      header: 'Production Status',
-      isSortable: true
-    },
-  ];
 
   constructor(
     private route: ActivatedRoute,
@@ -66,12 +31,6 @@ export class WebsiteServiceCategoryDetailsComponent implements OnInit {
       this.apiService.getOneWebsiteServiceCategory(this.websiteServiceCategoryId).subscribe(w => {
         this.detailsData = w;
         this.isDataReady = true;
-      });
-
-      // Get Related Websites
-      this.apiService.getWebsiteServiceCategoryRelatedWebsites(this.websiteServiceCategoryId).subscribe(r => {
-        this.relatedWebsites = r;
-        this.tableService.updateReportTableData(this.relatedWebsites);
       });
     });
   }

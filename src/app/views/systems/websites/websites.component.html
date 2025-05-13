@@ -27,7 +27,7 @@
       <app-button [buttonText]="defExpanded ? 'View Less' : 'View More'" buttonStyle="link" (buttonClick)="onViewAll()"></app-button>
   </div>
   <div class="websites-data-container">
-    <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral">
+    <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)">
       <div class="filter-tabs-container" filterTabs>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')">
           <span class="filter-tab-text">All</span>

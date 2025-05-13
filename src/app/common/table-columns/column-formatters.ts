@@ -18,4 +18,17 @@ export function linksFormatter(value: any) {
 export function formatDescription(value: any) {
     if (!value) return '';
     else return '<span class="description-wrap">' + value + "</span>";
-  };
+};
+
+export function pocStringNameFormatter(value: any) {
+    let names = [];
+    let pocs = value.split(':')[1];  // Retrieve POC after colon
+    pocs = pocs.split('; ');  // Retrieve POC after colon
+    for (let i = 0; i < pocs.length; i++) {
+      let singleName = pocs[i].split(', ')[0];
+      if (singleName != '') names.push(singleName);  // Add only if there is a name
+    }
+
+    if (names.length === 0) return null;
+    else return names.join(', ');
+};

@@ -252,7 +252,7 @@ export class TableService {
       case 'Website':
           this.apiService
             .getOneWebsite(searchData.Id)
-            .subscribe((apiData: any[]) => {
+            .subscribe((apiData: any) => {
               this.websitesTableClick(apiData[0]);
               this.setGlobalSearchModalUrl(searchData.GEAR_Type, searchData.Id);
             });

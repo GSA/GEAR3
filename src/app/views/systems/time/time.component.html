@@ -42,7 +42,7 @@
     <app-button buttonText="Please complete your system's TIME Questionnaire" (buttonClick)="onQuestionaireClick()"></app-button>
   </div>
   <div class="time-data-container">
-    <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+    <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)"></app-table>
   </div>
 
 

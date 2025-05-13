@@ -201,4 +201,8 @@ export class TimeComponent implements OnInit {
   public onQuestionaireClick(): void {
     window.open('https://docs.google.com/spreadsheets/d/1cx-gi-jjHSvAD57Z0T812a0o7eJ-IWIAqlhE0ZTTMTI/edit#gid=362432297', '_blank');
   }
+
+  public onRowClick(e: any) {
+    this.router.navigate(['systems_TIME', e['System Id']]);
+  }
 }

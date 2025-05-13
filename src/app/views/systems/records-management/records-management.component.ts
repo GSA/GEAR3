@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
@@ -35,7 +35,8 @@ export class RecordsManagementComponent implements OnInit {
     private route: ActivatedRoute,
     public sharedService: SharedService,
     private tableService: TableService,
-    private titleService: Title
+    private titleService: Title,
+    private router: Router
   ) {}
 
   tableData: Record[] = [];
@@ -142,8 +143,8 @@ export class RecordsManagementComponent implements OnInit {
         this.titleService.setTitle(
           `${this.titleService.getTitle()} - ${detailrecID}`
         );
-        this.apiService.getOneRecord(detailrecID).subscribe((data: any[]) => {
-          this.tableService.recordsTableClick(data[0]);
+        this.apiService.getOneRecord(detailrecID).subscribe((data: any) => {
+          this.tableService.recordsTableClick(data);
         });
       }
     });
@@ -239,5 +240,9 @@ export class RecordsManagementComponent implements OnInit {
       // Set error true
       this.isError = true;
     }
+  }
+
+  public onRowClick(e: any) {
+    this.router.navigate(['records_mgmt', e.Rec_ID]);
   }
 }
