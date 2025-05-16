@@ -15,4 +15,13 @@ router.route('/get/software_versions/:id')
 router.route('/get/software_releases/:id')
   .get(techCatalogCtrl.getSoftwareReleases);
 
+router.route('/post/custom_manufacturer/:name')
+  .post(techCatalogCtrl.saveCustomManufacturer);
+
+router.route('/put/custom_software_product/:name')
+  .put(techCatalogCtrl.saveCustomSoftwareProduct);
+
+router.route('/put/custom_software_version/:name')
+  .put(techCatalogCtrl.saveCustomSoftwareVersion);
+
 module.exports = router;

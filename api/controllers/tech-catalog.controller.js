@@ -35,3 +35,31 @@ exports.getSoftwareReleases = (req, res) => {
 
   res = ctrl.sendQuery(query, 'SoftwareReleases', res);
 };
+
+exports.saveCustomManufacturer = (req, res) => {
+  var date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+  var query = `INSERT INTO obj_manufacturer
+                (name, createdDate)
+                VALUES ('${req.params.name}', '${date}');`;
+
+                console.log(query);
+
+  res = ctrl.sendQuery(query, 'CustomManufacturer'. res);
+}
+
+exports.saveCustomSoftwareProduct = (req, res) => {
+  var query = `INSERT INTO obj_software_product
+                (name, createdDate)
+                VALUES (${req.params.name}, ${new Date()})`;
+
+  res = ctrl.sendQuery(query, 'CustomSoftwareProduct'. res);
+}
+
+exports.saveCustomSoftwareVersion = (req, res) => {
+  var query = `INSERT INTO obj_software_version
+                (name, createdDate)
+                VALUES (${req.params.name}, ${new Date()})`;
+
+  res = ctrl.sendQuery(query, 'CustomSoftwareVersion'. res);
+}

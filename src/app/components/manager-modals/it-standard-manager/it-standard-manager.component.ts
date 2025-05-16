@@ -104,6 +104,10 @@ export class ItStandardManagerComponent implements OnInit {
   showDuplicateAppBundleMsg: boolean = false;
   showAppBundleField: boolean = false;
 
+  manufacturerToAdd: string = '';
+  productToAdd: string = '';
+  softwareVersionToAdd: string = '';
+
   constructor(
     private apiService: ApiService,
     private globals: Globals,
@@ -348,7 +352,7 @@ export class ItStandardManagerComponent implements OnInit {
   };
 
   submitForm() {
-
+    this.createCustomTechFields();
     //console.log("Submitting form"); //DEBUG
 
     //console.log("Form: ", this.itStandardsForm);  // Debug
@@ -466,6 +470,8 @@ export class ItStandardManagerComponent implements OnInit {
       if (this.createBool) {
         this.apiService.createITStandard(this.itStandardsForm.value).toPromise()
           .then(res => {
+            this.createCustomTechFields();
+
             // Grab new data from database for ID
             this.apiService.getLatestITStand().toPromise()
               .then(data => {
@@ -496,6 +502,8 @@ export class ItStandardManagerComponent implements OnInit {
       } else {
         this.apiService.updateITStandard(this.itStandard.ID, this.itStandardsForm.value).toPromise()
           .then(res => {
+            this.createCustomTechFields();
+
             // Grab new data from database
             this.apiService.getOneITStandard(this.itStandard.ID).toPromise()
               .then(data => { this.itStandDetailRefresh(data[0]) }),
@@ -509,6 +517,14 @@ export class ItStandardManagerComponent implements OnInit {
       }
 
       this.modalService.updateRecordCreation(false);  // Reset Creation flag
+
+    }
+  }
+
+  createCustomTechFields(): void {
+    console.log('creatingManufacturer');
+    if(this.manufacturerToAdd) {
+      this.apiService.createCustomManufacturer(this.manufacturerToAdd).subscribe();
     }
   }
 
@@ -680,7 +696,10 @@ export class ItStandardManagerComponent implements OnInit {
   }
 
   manufacturerChange(manufacturer: any) {
-
+    if(!manufacturer.id) {
+      this.manufacturerToAdd = manufacturer.name;
+      console.log('ADDING:', this.manufacturerToAdd);
+    }
     //console.log("Manufacturer changed to: ", manufacturer); //DEBUG
 
     this.softwareProductsLoading = true;
@@ -728,7 +747,10 @@ export class ItStandardManagerComponent implements OnInit {
   }
 
   softwareProductChange(softwareProduct: any) {
-
+    if(!softwareProduct.id) {
+      this.productToAdd = softwareProduct.name;
+      console.log('ADDING:', this.productToAdd);
+    }
     //console.log("Software Product changed to: ", softwareProduct); //DEBUG
 
     this.softwareVersionsLoading = true;
@@ -769,6 +791,10 @@ export class ItStandardManagerComponent implements OnInit {
   }
 
   softwareVersionChange(softwareVersion: any) {
+    if(!softwareVersion.id) {
+      this.softwareVersionToAdd = softwareVersion.name;
+      console.log('ADDING:', this.softwareVersionToAdd);
+    }
 
     //console.log("Software Version changed to: ", softwareVersion); //DEBUG
 
@@ -781,12 +807,20 @@ export class ItStandardManagerComponent implements OnInit {
       if (softwareVersion) {
         //console.log("(IF) Software Version ID: ", softwareVersion["id"]); //DEBUG
 
-        this.apiService.getSoftwareReleases(softwareVersion["id"]).subscribe((data: any[]) => {
-          this.softwareReleases = data;
-          this.softwareReleasesBuffer = this.softwareReleases.slice(0, this.bufferSize);
+        if(!this.manufacturerToAdd && !this.productToAdd && !this.softwareVersionToAdd) {
+          this.apiService.getSoftwareReleases(softwareVersion["id"]).subscribe((data: any[]) => {
+            this.softwareReleases = data;
+            this.softwareReleasesBuffer = this.softwareReleases.slice(0, this.bufferSize);
+            this.softwareReleasesLoading = false;
+            this.enableSoftwareRelease();
+          });
+        } else {
+          this.softwareReleases = [`${this.manufacturerToAdd} - ${this.productToAdd} - ${this.softwareVersionToAdd}`];
+          this.itStandardsForm.patchValue({
+            tcSoftwareRelease: `${this.manufacturerToAdd} - ${this.productToAdd} - ${this.softwareVersionToAdd}`
+          });
           this.softwareReleasesLoading = false;
-          this.enableSoftwareRelease();
-        });
+        }
       } else {
         //console.log("(ELSE) Software Version ID: ", softwareVersion["id"]); //DEBUG
 
@@ -799,6 +833,7 @@ export class ItStandardManagerComponent implements OnInit {
 
       this.softwareReleases = [];
       this.softwareReleasesLoading = false;
+
       //this.disableSoftwareRelease();
     }
   }
