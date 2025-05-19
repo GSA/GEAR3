@@ -27,7 +27,7 @@ SELECT
   tech.softwareProductName                        AS SoftwareProductName,
   tech.softwareVersionName                        AS SoftwareVersionName,
   tech.softwareReleaseName                        AS SoftwareReleaseName,
-  IFNULL(CONCAT(tech.manufacturerName, ' - ', tech.softwareProductName), tech.Keyname) AS ManufacturerSoftwareProductName,
+  IFNULL(CONCAT(tech.manufacturerName, ' ', tech.softwareProductName), tech.Keyname) AS ManufacturerSoftwareProductName,
 
   obj_technology_status.Keyname                   AS Status,
   obj_deployment_type.Keyname                     AS DeploymentType,
