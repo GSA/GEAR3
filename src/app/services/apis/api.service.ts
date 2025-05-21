@@ -920,4 +920,20 @@ export class ApiService {
     return this.http
       .post<any>(this.techCatalogUrl + '/post/custom_software_version/' + name, httpOptions);
   }
+
+  public updateITStandardTechFields(id: number): Observable<any> {
+    if (this.globals.jwtToken) {
+      var httpOptions = this.setHeaderOpts();
+    } else {
+      catchError(
+        this.handleError<any>(
+          'UPDATE IT Standard tech fields - No Authentication Token',
+          []
+        )
+      );
+    }
+
+    return this.http
+      .post<any>(this.techCatalogUrl + '/post/update_tech_fields/' + id, httpOptions);
+  }
 }

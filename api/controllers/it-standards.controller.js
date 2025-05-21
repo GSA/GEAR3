@@ -442,5 +442,18 @@ exports.updateITStandardWithCustomTechFields = (req, res) => {
   var itStandId = req.params.id;
   var query = `
     UPDATE 
+      obj_technology AS tech,
+      (SELECT id, name FROM obj_manufacturer ORDER BY id DESC LIMIT 1) AS manufac,
+      (SELECT id, name FROM obj_software_product ORDER BY id DESC LIMIT 1) AS product,
+      (SELECT id, name FROM obj_software_version ORDER BY id DESC LIMIT 1) AS version
+    SET
+      tech.manufacturer = manufac.id,
+      tech.manufacturer_name = manufac.name,
+      tech.software_product = product.id,
+      tech.software_product_name = product.name,
+      tech.software_version = version.id,
+      tech.software_version_name = version.name
+    WHERE
+      tech.Id = ${itStandId};
   `;
 };
