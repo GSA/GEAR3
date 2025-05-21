@@ -874,18 +874,50 @@ export class ApiService {
   }
 
   public createCustomManufacturer(name: string): Observable<any> {
-    //if (this.globals.jwtToken) {
-      // var httpOptions = this.setHeaderOpts();
-    // } else {
-    //   catchError(
-    //     this.handleError<any>(
-    //       'CREATE Manufacturer - No Authentication Token',
-    //       []
-    //     )
-    //   );
-    // }
+    if (this.globals.jwtToken) {
+      var httpOptions = this.setHeaderOpts();
+    } else {
+      catchError(
+        this.handleError<any>(
+          'CREATE Manufacturer - No Authentication Token',
+          []
+        )
+      );
+    }
 
     return this.http
-      .post<any>(this.techCatalogUrl + '/post/custom_manufacturer/' + name, name);
+      .post<any>(this.techCatalogUrl + '/post/custom_manufacturer/' + name, httpOptions);
+  }
+
+  public createCustomSoftwareProduct(name: string): Observable<any> {
+    if (this.globals.jwtToken) {
+      var httpOptions = this.setHeaderOpts();
+    } else {
+      catchError(
+        this.handleError<any>(
+          'CREATE Product - No Authentication Token',
+          []
+        )
+      );
+    }
+
+    return this.http
+      .post<any>(this.techCatalogUrl + '/post/custom_software_product/' + name, httpOptions);
+  }
+
+  public createCustomSoftwareVersion(name: string): Observable<any> {
+    if (this.globals.jwtToken) {
+      var httpOptions = this.setHeaderOpts();
+    } else {
+      catchError(
+        this.handleError<any>(
+          'CREATE Version - No Authentication Token',
+          []
+        )
+      );
+    }
+
+    return this.http
+      .post<any>(this.techCatalogUrl + '/post/custom_software_version/' + name, httpOptions);
   }
 }

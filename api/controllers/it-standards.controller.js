@@ -437,3 +437,10 @@ exports.getAppBundles = (req, res) => {
 
   res = ctrl.sendQuery(query, 'App Bundles', res);
 }
+
+exports.updateITStandardWithCustomTechFields = (req, res) => {
+  var itStandId = req.params.id;
+  var query = `
+    UPDATE 
+  `;
+};

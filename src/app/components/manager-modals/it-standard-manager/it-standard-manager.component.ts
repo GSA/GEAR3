@@ -352,7 +352,6 @@ export class ItStandardManagerComponent implements OnInit {
   };
 
   submitForm() {
-    this.createCustomTechFields();
     //console.log("Submitting form"); //DEBUG
 
     //console.log("Form: ", this.itStandardsForm);  // Debug
@@ -522,9 +521,16 @@ export class ItStandardManagerComponent implements OnInit {
   }
 
   createCustomTechFields(): void {
-    console.log('creatingManufacturer');
     if(this.manufacturerToAdd) {
       this.apiService.createCustomManufacturer(this.manufacturerToAdd).subscribe();
+    }
+
+    if(this.productToAdd) {
+      this.apiService.createCustomSoftwareProduct(this.productToAdd).subscribe();
+    }
+
+    if(this.softwareVersionToAdd) {
+      this.apiService.createCustomSoftwareVersion(this.softwareVersionToAdd).subscribe();
     }
   }
 
