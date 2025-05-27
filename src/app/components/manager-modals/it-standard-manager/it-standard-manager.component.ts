@@ -474,22 +474,29 @@ export class ItStandardManagerComponent implements OnInit {
             // Grab new data from database for ID
             this.apiService.getLatestITStand().toPromise()
               .then(data => {
-                // Update Categories and POCs with new ID
-                this.apiService.updateITStandard(data[0].ID, this.itStandardsForm.value).toPromise()
-                  .then(res => {
-                    // Now get all the complete new data
-                    this.apiService.getLatestITStand().toPromise()
-                      .then(data => {
-                        // Then update the details modal
-                        this.itStandDetailRefresh(data[0])
+                this.apiService.updateITStandardTechFields(data[0].ID).toPromise()
+                  .then(() => {
+                    // Update Categories and POCs with new ID
+                    this.apiService.updateITStandard(data[0].ID, this.itStandardsForm.value).toPromise()
+                      .then(res => {
+                        // Now get all the complete new data
+                        this.apiService.getLatestITStand().toPromise()
+                          .then(data => {
+                            // Then update the details modal
+                            this.itStandDetailRefresh(data[0])
+                          },
+                          (error) => {
+                            this.handleError("GET Latest IT Standard", error);
+                          });
                       },
                       (error) => {
-                        this.handleError("GET Latest IT Standard", error);
+                        this.handleError("UPDATE IT Standard", error);
                       });
                   },
                   (error) => {
-                    this.handleError("UPDATE IT Standard", error);
-                  });
+                    this.handleError('UPDATE Tech Fields', error);
+                  }
+                );
               },
               (error) => {
                 this.handleError("GET Latest IT Standard", error);
