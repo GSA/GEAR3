@@ -14,9 +14,10 @@ import { WebsiteServiceCategory } from '@api/models/website-service-category.mod
 declare var $: any;
 
 @Component({
-  selector: 'websites-modal',
-  templateUrl: './websites-modal.component.html',
-  styleUrls: ['./websites-modal.component.css'],
+    selector: 'websites-modal',
+    templateUrl: './websites-modal.component.html',
+    styleUrls: ['./websites-modal.component.css'],
+    standalone: false
 })
 export class WebsitesModalComponent implements OnInit {
   website = <any>{};

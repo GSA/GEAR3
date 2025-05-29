@@ -12,9 +12,10 @@ import { Title } from '@angular/platform-browser';
 declare var $: any;
 
 @Component({
-  selector: 'websites',
-  templateUrl: './websites.component.html',
-  styleUrls: ['./websites.component.css'],
+    selector: 'websites',
+    templateUrl: './websites.component.html',
+    styleUrls: ['./websites.component.css'],
+    standalone: false
 })
 export class WebsitesComponent implements OnInit {
   filteredTable: boolean = false;

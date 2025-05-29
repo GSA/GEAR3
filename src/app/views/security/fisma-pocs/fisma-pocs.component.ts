@@ -11,9 +11,10 @@ import { Title } from '@angular/platform-browser';
 declare var $: any;
 
 @Component({
-  selector: 'fisma-pocs',
-  templateUrl: './fisma-pocs.component.html',
-  styleUrls: ['./fisma-pocs.component.css'],
+    selector: 'fisma-pocs',
+    templateUrl: './fisma-pocs.component.html',
+    styleUrls: ['./fisma-pocs.component.css'],
+    standalone: false
 })
 export class FismaPocsComponent implements OnInit {
   row: Object = <any>{};

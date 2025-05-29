@@ -14,16 +14,17 @@ import { trigger, state, style, animate, transition } from '@angular/animations'
 declare var $: any;
 
 @Component({
-  selector: 'records-management',
-  templateUrl: './records-management.component.html',
-  styleUrls: ['./records-management.component.css'],
-  animations: [
-    trigger('loadingAnimation', [
-      state('true', style({ opacity: 1 })),
-      state('false', style({ opacity: 0 })),
-      transition('true <=> false', animate('500ms ease-in-out')),
-    ]),
-  ],
+    selector: 'records-management',
+    templateUrl: './records-management.component.html',
+    styleUrls: ['./records-management.component.css'],
+    animations: [
+        trigger('loadingAnimation', [
+            state('true', style({ opacity: 1 })),
+            state('false', style({ opacity: 0 })),
+            transition('true <=> false', animate('500ms ease-in-out')),
+        ]),
+    ],
+    standalone: false
 })
 export class RecordsManagementComponent implements OnInit {
   updateAllInfoData: any = "";

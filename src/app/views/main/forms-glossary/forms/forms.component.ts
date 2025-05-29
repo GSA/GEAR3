@@ -7,9 +7,10 @@ import { TableService } from '@services/tables/table.service';
 declare var $: any;
 
 @Component({
-  selector: 'forms',
-  templateUrl: './forms.component.html',
-  styleUrls: ['./forms.component.css']
+    selector: 'forms',
+    templateUrl: './forms.component.html',
+    styleUrls: ['./forms.component.css'],
+    standalone: false
 })
 export class FormsComponent implements OnInit {
 

@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'gear-model',
-  templateUrl: './gear-model.component.html',
-  styleUrls: ['./gear-model.component.css']
+    selector: 'gear-model',
+    templateUrl: './gear-model.component.html',
+    styleUrls: ['./gear-model.component.css'],
+    standalone: false
 })
 export class GearModelComponent implements OnInit {
 

@@ -10,9 +10,10 @@ import { TableService } from '@services/tables/table.service';
 declare var $: any;
 
 @Component({
-  selector: 'systems-modal',
-  templateUrl: './systems-modal.component.html',
-  styleUrls: ['./systems-modal.component.css']
+    selector: 'systems-modal',
+    templateUrl: './systems-modal.component.html',
+    styleUrls: ['./systems-modal.component.css'],
+    standalone: false
 })
 export class SystemsModalComponent implements OnInit {
 

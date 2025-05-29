@@ -8,9 +8,10 @@ import { TableService } from '@services/tables/table.service';
 declare var $: any;
 
 @Component({
-  selector: 'data-dictionary',
-  templateUrl: './data-dictionary.component.html',
-  styleUrls: ['./data-dictionary.component.css']
+    selector: 'data-dictionary',
+    templateUrl: './data-dictionary.component.html',
+    styleUrls: ['./data-dictionary.component.css'],
+    standalone: false
 })
 export class DataDictionaryComponent implements OnInit {
 

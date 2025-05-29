@@ -18,9 +18,10 @@ import * as d3Sankey from 'd3-sankey';
 declare var $: any;
 
 @Component({
-  selector: 'systems',
-  templateUrl: './systems.component.html',
-  styleUrls: ['./systems.component.css'],
+    selector: 'systems',
+    templateUrl: './systems.component.html',
+    styleUrls: ['./systems.component.css'],
+    standalone: false
 })
 export class SystemsComponent implements OnInit {
   row: Object = <any>{};

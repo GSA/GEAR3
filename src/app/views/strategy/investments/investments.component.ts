@@ -14,9 +14,10 @@ import { Investment } from '@api/models/investments.model';
 declare var $: any;
 
 @Component({
-  selector: 'investments',
-  templateUrl: './investments.component.html',
-  styleUrls: ['./investments.component.css'],
+    selector: 'investments',
+    templateUrl: './investments.component.html',
+    styleUrls: ['./investments.component.css'],
+    standalone: false
 })
 export class InvestmentsComponent implements OnInit {
   row: Object = <any>{};

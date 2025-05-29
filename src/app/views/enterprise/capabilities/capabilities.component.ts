@@ -12,9 +12,10 @@ import { Title } from '@angular/platform-browser';
 declare var $: any;
 
 @Component({
-  selector: 'capabilities',
-  templateUrl: './capabilities.component.html',
-  styleUrls: ['./capabilities.component.css'],
+    selector: 'capabilities',
+    templateUrl: './capabilities.component.html',
+    styleUrls: ['./capabilities.component.css'],
+    standalone: false
 })
 export class CapabilitiesComponent implements OnInit {
   row: Object = <any>{};

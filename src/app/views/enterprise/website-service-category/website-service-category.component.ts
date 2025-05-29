@@ -12,9 +12,10 @@ import { Title } from '@angular/platform-browser';
 declare var $: any;
 
 @Component({
-  selector: 'website-service-category',
-  templateUrl: './website-service-category.component.html',
-  styleUrls: ['./website-service-category.component.css'],
+    selector: 'website-service-category',
+    templateUrl: './website-service-category.component.html',
+    styleUrls: ['./website-service-category.component.css'],
+    standalone: false
 })
 export class WebsiteServiceCategoryComponent implements OnInit {
   row: Object = <any>{};

@@ -5,9 +5,10 @@ import { SharedService } from '@services/shared/shared.service';
 declare var $: any;
 
 @Component({
-  selector: 'sidenav',
-  templateUrl: './sidenav.component.html',
-  styleUrls: ['./sidenav.component.css']
+    selector: 'sidenav',
+    templateUrl: './sidenav.component.html',
+    styleUrls: ['./sidenav.component.css'],
+    standalone: false
 })
 export class SidenavComponent implements OnInit {
 
