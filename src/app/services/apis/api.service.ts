@@ -678,7 +678,7 @@ export class ApiService {
         httpOptions
       );
   }
-  public createITStandard(data: {}): Observable<ITStandards[]> {
+  public createITStandard(data: any, manufactuerToAdd: string, productToAdd: string, versionToAdd: string): Observable<ITStandards[]> {
     if (this.globals.jwtToken) {
       var httpOptions = this.setHeaderOpts();
     } else {
@@ -689,6 +689,10 @@ export class ApiService {
         )
       );
     }
+
+    data.manufacturerToAdd = manufactuerToAdd;
+    data.productToAdd = productToAdd;
+    data.versionToAdd = versionToAdd;
 
     return this.http
       .post<ITStandards[]>(this.techUrl + '/create', data, httpOptions);
@@ -921,7 +925,7 @@ export class ApiService {
       .post<any>(this.techCatalogUrl + '/post/custom_software_version/' + name, httpOptions);
   }
 
-  public updateITStandardTechFields(id: number): Observable<any> {
+  public updateITStandardTechFields(id: number, manu: string, prod: string, vers: string): Observable<any> {
     if (this.globals.jwtToken) {
       var httpOptions = this.setHeaderOpts();
     } else {
@@ -933,7 +937,49 @@ export class ApiService {
       );
     }
 
+    let data = {
+      manufactuerToAdd: manu,
+      productToAdd: prod,
+      versionToAdd: vers
+    };
+
     return this.http
-      .post<any>(this.techCatalogUrl + '/post/update_tech_fields/' + id, httpOptions);
+      .post<any>(this.techUrl + '/post/update_tech_fields/' + id, data, httpOptions);
+  }
+
+  public getCustomManufacturers(): Observable<Manufacturer[]> {
+    return this.http
+      .get<Manufacturer[]>(this.techCatalogUrl + '/get/custom_manufacturers')
+      .pipe(
+        catchError(
+          this.handleError<Manufacturer[]>('GET Custom Manufacturers', [])
+        )
+      );
+  }
+  
+  public getCustomSoftwareProducts(id: string): Observable<SoftwareProduct[]> {
+    return this.http
+      .get<SoftwareProduct[]>(this.techCatalogUrl + '/get/custom_software_products/' + id)
+      .pipe(
+        catchError(
+          this.handleError<SoftwareProduct[]>(
+            'GET Custom Software Products',
+            []
+          )
+        )
+      );
+  }
+  
+  public getCustomSoftwareVersions(id: string): Observable<SoftwareVersion[]> {
+    return this.http
+      .get<SoftwareVersion[]>(this.techCatalogUrl + '/get/custom_software_versions/' + id)
+      .pipe(
+        catchError(
+          this.handleError<SoftwareVersion[]>(
+            'GET Custom Software Versions',
+            []
+          )
+        )
+      );
   }
 }

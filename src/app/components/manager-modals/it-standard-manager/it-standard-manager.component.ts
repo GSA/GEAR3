@@ -10,6 +10,7 @@ import { SharedService } from "@services/shared/shared.service";
 import { TableService } from "@services/tables/table.service";
 import { OperatingSystem } from '@api/models/operating-systems.model';
 import { AppBundle } from '@api/models/it-standards-app-bundle.model';
+import { Observable } from 'rxjs';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -130,9 +131,12 @@ export class ItStandardManagerComponent implements OnInit {
     // Populate Manufacturer Options
     this.manufacturersLoading = true;
     this.apiService.getManufacturers().subscribe((data: any[]) => {
-      this.manufacturers = data;
-      this.manufacturersBuffer = this.manufacturers.slice(0, this.bufferSize);
-      this.manufacturersLoading = false;
+      this.apiService.getCustomManufacturers().subscribe((cData: any[]) => {
+        this.manufacturers = [...data, ...cData];
+        console.log('ALL MANUFACTURERES:', this.manufacturers);
+        this.manufacturersBuffer = this.manufacturers.slice(0, this.bufferSize);
+        this.manufacturersLoading = false;
+      });
     });
 
     // Populate Attestation Required Options
@@ -467,18 +471,18 @@ export class ItStandardManagerComponent implements OnInit {
 
       // Send data to database
       if (this.createBool) {
-        this.apiService.createITStandard(this.itStandardsForm.value).toPromise()
-          .then(res => {
-            this.createCustomTechFields();
-
+        if(this.manufacturerToAdd || this.productToAdd || this.softwareVersionToAdd) {
+          this.apiService.createITStandard(this.itStandardsForm.value, this.manufacturerToAdd, this.productToAdd, this.softwareVersionToAdd).toPromise()
+          .then(res => {        
             // Grab new data from database for ID
             this.apiService.getLatestITStand().toPromise()
               .then(data => {
-                this.apiService.updateITStandardTechFields(data[0].ID).toPromise()
-                  .then(() => {
+                
                     // Update Categories and POCs with new ID
                     this.apiService.updateITStandard(data[0].ID, this.itStandardsForm.value).toPromise()
                       .then(res => {
+                        this.apiService.updateITStandardTechFields(data[0].ID, this.manufacturerToAdd, this.productToAdd, this.softwareVersionToAdd).toPromise()
+                  .then(() => {
                         // Now get all the complete new data
                         this.apiService.getLatestITStand().toPromise()
                           .then(data => {
@@ -505,10 +509,41 @@ export class ItStandardManagerComponent implements OnInit {
           (error) => {
             this.handleError("CREATE IT Standard", error);
           });
+        } else {
+          this.apiService.createITStandard(this.itStandardsForm.value, this.manufacturerToAdd, this.productToAdd, this.softwareVersionToAdd).toPromise()
+          .then(res => {        
+            // Grab new data from database for ID
+            this.apiService.getLatestITStand().toPromise()
+              .then(data => {
+                  // Update Categories and POCs with new ID
+                  this.apiService.updateITStandard(data[0].ID, this.itStandardsForm.value).toPromise()
+                    .then(res => {
+                      // Now get all the complete new data
+                      this.apiService.getLatestITStand().toPromise()
+                        .then(data => {
+                          // Then update the details modal
+                          this.itStandDetailRefresh(data[0])
+                        },
+                        (error) => {
+                          this.handleError("GET Latest IT Standard", error);
+                        });
+                    },
+                    (error) => {
+                      this.handleError("UPDATE IT Standard", error);
+                    });
+              },
+              (error) => {
+                this.handleError("GET Latest IT Standard", error);
+              });
+          },
+          (error) => {
+            this.handleError("CREATE IT Standard", error);
+          });
+        }
       } else {
         this.apiService.updateITStandard(this.itStandard.ID, this.itStandardsForm.value).toPromise()
           .then(res => {
-            this.createCustomTechFields();
+            // this.createCustomTechFields();
 
             // Grab new data from database
             this.apiService.getOneITStandard(this.itStandard.ID).toPromise()
@@ -527,19 +562,21 @@ export class ItStandardManagerComponent implements OnInit {
     }
   }
 
-  createCustomTechFields(): void {
-    if(this.manufacturerToAdd) {
-      this.apiService.createCustomManufacturer(this.manufacturerToAdd).subscribe();
-    }
+  // createCustomTechFields(): Observable<any> {
+  //   let chained: Observable<any>
 
-    if(this.productToAdd) {
-      this.apiService.createCustomSoftwareProduct(this.productToAdd).subscribe();
-    }
+  //   if(this.manufacturerToAdd) {
+  //     this.apiService.createCustomManufacturer(this.manufacturerToAdd).subscribe();
+  //   }
 
-    if(this.softwareVersionToAdd) {
-      this.apiService.createCustomSoftwareVersion(this.softwareVersionToAdd).subscribe();
-    }
-  }
+  //   if(this.productToAdd) {
+  //     this.apiService.createCustomSoftwareProduct(this.productToAdd).subscribe();
+  //   }
+
+  //   if(this.softwareVersionToAdd) {
+  //     this.apiService.createCustomSoftwareVersion(this.softwareVersionToAdd).subscribe();
+  //   }
+  // }
 
   private handleError(operation: string = 'operation', error: any) {
     console.log(`Failed ${operation} Call: ${JSON.stringify(error)}`);
@@ -722,15 +759,23 @@ export class ItStandardManagerComponent implements OnInit {
 
     try {
       if (manufacturer) {
-        //console.log("(IF) Manufacturer ID: ", manufacturer["id"]); //DEBUG
+        console.log("(IF) Manufacturer ID: ", manufacturer["id"]); //DEBUG
 
-        this.apiService.getSoftwareProducts(manufacturer["id"]).subscribe((data: any[]) => {
-          this.softwareProducts = data;
-          this.softwareProductsBuffer = this.softwareProducts.slice(0, this.bufferSize);
+        if(manufacturer["id"]) {
+          this.apiService.getSoftwareProducts(manufacturer["id"]).subscribe((data: any[]) => {
+            this.apiService.getCustomSoftwareProducts(manufacturer["id"]).subscribe((cData: any[]) => {
+              this.softwareProducts = [...data, ...cData];
+              this.softwareProductsBuffer = this.softwareProducts.slice(0, this.bufferSize);
+              this.softwareProductsLoading = false;
+              this.enableSoftwareProduct();
+              //this.disableSoftwareVersion();
+            });
+          });
+        } else {
           this.softwareProductsLoading = false;
           this.enableSoftwareProduct();
-          //this.disableSoftwareVersion();
-        });
+        }
+
       } else {
         //console.log("(ELSE) Manufacturer ID: ", manufacturer["id"]); //DEBUG
 
@@ -774,13 +819,20 @@ export class ItStandardManagerComponent implements OnInit {
       if (softwareProduct) {
         //console.log("Software Product ID: ", softwareProduct["id"]); //DEBUG
 
-        this.apiService.getSoftwareVersions(softwareProduct["id"]).subscribe((data: any[]) => {
-          this.softwareVersions = data;
-          this.softwareVersionsBuffer = this.softwareVersions.slice(0, this.bufferSize);
+        if(softwareProduct["id"]) {
+          this.apiService.getSoftwareVersions(softwareProduct["id"]).subscribe((data: any[]) => {
+            this.apiService.getCustomSoftwareVersions(softwareProduct["id"]).subscribe((cData: any[]) => {
+              this.softwareVersions = [...data, ...cData];
+              this.softwareVersionsBuffer = this.softwareVersions.slice(0, this.bufferSize);
+              this.softwareVersionsLoading = false;
+              this.enableSoftwareVersion();
+              //this.disableSoftwareRelease();
+            });
+          });
+        } else {
           this.softwareVersionsLoading = false;
           this.enableSoftwareVersion();
-          //this.disableSoftwareRelease();
-        });
+        }
       } else {
         //console.log("Software Product ID: ", softwareProduct["id"]); //DEBUG
 
@@ -828,9 +880,9 @@ export class ItStandardManagerComponent implements OnInit {
             this.enableSoftwareRelease();
           });
         } else {
-          this.softwareReleases = [`${this.manufacturerToAdd} - ${this.productToAdd} - ${this.softwareVersionToAdd}`];
+          this.softwareReleases = [`${this.manufacturerToAdd} ${this.productToAdd} ${this.softwareVersionToAdd}`];
           this.itStandardsForm.patchValue({
-            tcSoftwareRelease: `${this.manufacturerToAdd} - ${this.productToAdd} - ${this.softwareVersionToAdd}`
+            tcSoftwareRelease: `${this.manufacturerToAdd} ${this.productToAdd} ${this.softwareVersionToAdd}`
           });
           this.softwareReleasesLoading = false;
         }

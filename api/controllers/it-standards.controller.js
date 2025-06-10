@@ -202,6 +202,27 @@ exports.update = (req, res) => {
 
       const endOfLifeDateFragment = getEolFragment(data.tcEndOfLifeDate);
 
+      var date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+      var customManuQuery = '';
+      if(data.manufacturerToAdd) {
+        customManuQuery = `INSERT INTO obj_manufacturer
+        (name, createdDate)
+        VALUES ('${data.manufacturerToAdd}', '${date}');`;
+      }
+      var customProductQuery = '';
+      if(data.productToAdd) {
+        customProductQuery = `INSERT INTO obj_software_product
+        (name, createdDate)
+        VALUES ('${data.productToAdd}', '${date}');`;
+      }
+      var customVersionQuery = '';
+      if(data.versionToAdd) {
+        customVersionQuery = `INSERT INTO obj_software_version
+        (name, createdDate)
+        VALUES ('${data.versionToAdd}', '${date}');`;
+      }
+
+
       var query = `SET FOREIGN_KEY_CHECKS=0;
         UPDATE obj_technology
         SET
@@ -240,7 +261,10 @@ exports.update = (req, res) => {
         ${catString}
         ${pocString}
         ${osString}
-        ${appBundleString}`;
+        ${appBundleString}
+        ${customManuQuery}
+        ${customProductQuery}
+        ${customVersionQuery}`;
 
       var logStatement = `insert into gear_log.event (Event, User, DTG) values ('update IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
       res = ctrl.sendQuery(query + ' ' + logStatement, 'update IT Standard', res); //removed sendQuery_cowboy reference
@@ -440,20 +464,84 @@ exports.getAppBundles = (req, res) => {
 
 exports.updateITStandardWithCustomTechFields = (req, res) => {
   var itStandId = req.params.id;
+  var data = req.body;
+
+  let manuQuery = '';
+  if(data.manufactuerToAdd) {
+    manuQuery = `
+      UPDATE 
+        obj_technology AS tech,
+        (SELECT CAST(id AS CHAR) AS id, name FROM obj_manufacturer ORDER BY createdDate DESC LIMIT 1) AS manufac
+      SET
+        tech.manufacturer = manufac.id,
+        tech.manufacturerName = manufac.name
+      WHERE
+        tech.Id = ${itStandId};
+    `;
+  }
+
+  let prodQuery = '';
+  let prodQuerySelf = '';
+  if(data.productToAdd) {
+    prodQuery = `
+      UPDATE 
+        obj_technology AS tech,
+        (SELECT CAST(id AS CHAR) AS id, name FROM obj_software_product ORDER BY createdDate DESC LIMIT 1) AS product
+      SET
+        tech.softwareProduct = product.id,
+        tech.softwareProductName = product.name
+      WHERE
+        tech.Id = ${itStandId};
+    `;
+    prodQuerySelf = `
+      UPDATE
+        obj_software_product AS product,
+        (SELECT id FROM obj_manufacturer ORDER BY id DESC LIMIT 1) AS manufac,
+        (SELECT id FROM obj_software_product ORDER BY id DESC LIMIT 1) AS prod
+      SET
+        product.manufacturer_id = manufac.id
+      WHERE
+        product.id = prod.id;
+    `;
+  }
+
+  let versQuery = '';
+  let versQuerySelf = '';
+  if(data.versionToAdd) {
+    versQuery = `
+      UPDATE 
+        obj_technology AS tech,
+        (SELECT CAST(id AS CHAR) as id, name FROM obj_software_version ORDER BY createdDate DESC LIMIT 1) AS version
+      SET
+        tech.softwareVersion = version.id,
+        tech.softwareVersionName = version.name
+      WHERE
+        tech.Id = ${itStandId};
+    `;
+    versQuerySelf = `
+      UPDATE
+        obj_software_version AS version,
+        (SELECT id FROM obj_software_product ORDER BY id DESC LIMIT 1) AS product,
+        (SELECT id FROM obj_software_version ORDER BY id DESC LIMIT 1) AS vers
+      SET
+        version.software_product_id = product.id
+      WHERE
+        version.id = vers.id;
+    `;
+  }
+
   var query = `
-    UPDATE 
-      obj_technology AS tech,
-      (SELECT id, name FROM obj_manufacturer ORDER BY id DESC LIMIT 1) AS manufac,
-      (SELECT id, name FROM obj_software_product ORDER BY id DESC LIMIT 1) AS product,
-      (SELECT id, name FROM obj_software_version ORDER BY id DESC LIMIT 1) AS version
-    SET
-      tech.manufacturer = manufac.id,
-      tech.manufacturer_name = manufac.name,
-      tech.software_product = product.id,
-      tech.software_product_name = product.name,
-      tech.software_version = version.id,
-      tech.software_version_name = version.name
-    WHERE
-      tech.Id = ${itStandId};
+    SET FOREIGN_KEY_CHECKS=0;
+    ${manuQuery}
+    ${prodQuery}
+    ${prodQuerySelf}
+    ${versQuery}
+    ${versQuerySelf}
+    SET FOREIGN_KEY_CHECKS=1;
   `;
+
+  console.log(query);
+  var logStatement = `insert into gear_log.event (Event, User, DTG) values ('Update technologies: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
+     
+  res = ctrl.sendQuery(query + ' ' + logStatement, 'Update Tech Fields', res);
 };

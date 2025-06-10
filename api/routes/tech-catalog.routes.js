@@ -12,16 +12,25 @@ router.route('/get/software_products/:id')
 router.route('/get/software_versions/:id')
   .get(techCatalogCtrl.getSoftwareVersions);
 
+  router.route('/get/custom_manufacturers')
+  .get(techCatalogCtrl.getCustomManufacturers);
+
+router.route('/get/custom_software_products/:id')
+  .get(techCatalogCtrl.getCustomSoftwareProducts);
+
+router.route('/get/custom_software_versions/:id')
+  .get(techCatalogCtrl.getCustomSoftwareVersions);
+
 router.route('/get/software_releases/:id')
   .get(techCatalogCtrl.getSoftwareReleases);
 
-router.route('/post/custom_manufacturer/:name')
+router.route('/post/custom_manufacturer')
   .post(techCatalogCtrl.saveCustomManufacturer);
 
-router.route('/put/custom_software_product/:name')
+router.route('/post/custom_software_product')
   .put(techCatalogCtrl.saveCustomSoftwareProduct);
 
-router.route('/put/custom_software_version/:name')
-  .put(techCatalogCtrl.saveCustomSoftwareVersion);
+router.route('/post/custom_software_version')
+  .post(techCatalogCtrl.saveCustomSoftwareVersion);
 
 module.exports = router;
