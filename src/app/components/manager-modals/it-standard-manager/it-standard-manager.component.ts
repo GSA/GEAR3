@@ -481,7 +481,7 @@ export class ItStandardManagerComponent implements OnInit {
                     // Update Categories and POCs with new ID
                     this.apiService.updateITStandard(data[0].ID, this.itStandardsForm.value).toPromise()
                       .then(res => {
-                        this.apiService.updateITStandardTechFields(data[0].ID, this.manufacturerToAdd, this.productToAdd, this.softwareVersionToAdd).toPromise()
+                        this.apiService.updateITStandardTechFields(data[0].ID, this.manufacturerToAdd, this.productToAdd, this.softwareVersionToAdd, this.itStandardsForm.value).toPromise()
                   .then(() => {
                         // Now get all the complete new data
                         this.apiService.getLatestITStand().toPromise()

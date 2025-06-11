@@ -2,6 +2,7 @@ const ctrl = require('./base.controller');
 
 const fs = require('fs');
 const path = require('path');
+const { Guid } = require('typescript-guid');
 
 const queryPath = '../queries/';
 
@@ -206,20 +207,20 @@ exports.update = (req, res) => {
       var customManuQuery = '';
       if(data.manufacturerToAdd) {
         customManuQuery = `INSERT INTO obj_manufacturer
-        (name, createdDate)
-        VALUES ('${data.manufacturerToAdd}', '${date}');`;
+        (id, name, createdDate)
+        VALUES ('${Guid.create().toString()}', '${data.manufacturerToAdd}', '${date}');`;
       }
       var customProductQuery = '';
       if(data.productToAdd) {
         customProductQuery = `INSERT INTO obj_software_product
-        (name, createdDate)
-        VALUES ('${data.productToAdd}', '${date}');`;
+        (id, name, createdDate)
+        VALUES ('${Guid.create().toString()}', '${data.productToAdd}', '${date}');`;
       }
       var customVersionQuery = '';
       if(data.versionToAdd) {
         customVersionQuery = `INSERT INTO obj_software_version
-        (name, createdDate)
-        VALUES ('${data.versionToAdd}', '${date}');`;
+        (id, name, createdDate)
+        VALUES ('${Guid.create().toString()}', '${data.versionToAdd}', '${date}');`;
       }
 
 
@@ -466,12 +467,14 @@ exports.updateITStandardWithCustomTechFields = (req, res) => {
   var itStandId = req.params.id;
   var data = req.body;
 
+  console.log('DATA TEST HERE', data);
+
   let manuQuery = '';
   if(data.manufactuerToAdd) {
     manuQuery = `
       UPDATE 
         obj_technology AS tech,
-        (SELECT CAST(id AS CHAR) AS id, name FROM obj_manufacturer ORDER BY createdDate DESC LIMIT 1) AS manufac
+        (SELECT id, name FROM obj_manufacturer ORDER BY createdDate DESC LIMIT 1) AS manufac
       SET
         tech.manufacturer = manufac.id,
         tech.manufacturerName = manufac.name
@@ -486,23 +489,36 @@ exports.updateITStandardWithCustomTechFields = (req, res) => {
     prodQuery = `
       UPDATE 
         obj_technology AS tech,
-        (SELECT CAST(id AS CHAR) AS id, name FROM obj_software_product ORDER BY createdDate DESC LIMIT 1) AS product
+        (SELECT id, name FROM obj_software_product ORDER BY createdDate DESC LIMIT 1) AS product
       SET
         tech.softwareProduct = product.id,
         tech.softwareProductName = product.name
       WHERE
         tech.Id = ${itStandId};
     `;
-    prodQuerySelf = `
+    if(data.manufactuerToAdd) {
+      prodQuerySelf = `
       UPDATE
         obj_software_product AS product,
-        (SELECT id FROM obj_manufacturer ORDER BY id DESC LIMIT 1) AS manufac,
-        (SELECT id FROM obj_software_product ORDER BY id DESC LIMIT 1) AS prod
+        (SELECT id FROM obj_manufacturer ORDER BY createdDate DESC LIMIT 1) AS manufac,
+        (SELECT id FROM obj_software_product ORDER BY createdDate DESC LIMIT 1) AS prod
       SET
         product.manufacturer_id = manufac.id
       WHERE
         product.id = prod.id;
     `;
+    } else {
+      prodQuerySelf = `
+      UPDATE
+        obj_software_product AS product,
+        (SELECT id FROM obj_software_product ORDER BY createdDate DESC LIMIT 1) AS prod
+      SET
+        product.manufacturer_id = '${data.manufacturerId}'
+      WHERE
+        product.id = prod.id;
+    `;
+    }
+
   }
 
   let versQuery = '';
@@ -511,23 +527,36 @@ exports.updateITStandardWithCustomTechFields = (req, res) => {
     versQuery = `
       UPDATE 
         obj_technology AS tech,
-        (SELECT CAST(id AS CHAR) as id, name FROM obj_software_version ORDER BY createdDate DESC LIMIT 1) AS version
+        (SELECT id, name FROM obj_software_version ORDER BY createdDate DESC LIMIT 1) AS version
       SET
         tech.softwareVersion = version.id,
         tech.softwareVersionName = version.name
       WHERE
         tech.Id = ${itStandId};
     `;
-    versQuerySelf = `
+    if(data.productToAdd) {
+      versQuerySelf = `
       UPDATE
         obj_software_version AS version,
-        (SELECT id FROM obj_software_product ORDER BY id DESC LIMIT 1) AS product,
-        (SELECT id FROM obj_software_version ORDER BY id DESC LIMIT 1) AS vers
+        (SELECT id FROM obj_software_product ORDER BY createdDate DESC LIMIT 1) AS product,
+        (SELECT id FROM obj_software_version ORDER BY createdDate DESC LIMIT 1) AS vers
       SET
         version.software_product_id = product.id
       WHERE
         version.id = vers.id;
     `;
+    } else {
+      versQuerySelf = `
+      UPDATE
+        obj_software_version AS version,
+        (SELECT id FROM obj_software_version ORDER BY createdDate DESC LIMIT 1) AS vers
+      SET
+        version.software_product_id = '${data.softwareProductId}'
+      WHERE
+        version.id = vers.id;
+    `;
+    }
+
   }
 
   var query = `

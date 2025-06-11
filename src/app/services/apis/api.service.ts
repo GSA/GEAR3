@@ -925,7 +925,7 @@ export class ApiService {
       .post<any>(this.techCatalogUrl + '/post/custom_software_version/' + name, httpOptions);
   }
 
-  public updateITStandardTechFields(id: number, manu: string, prod: string, vers: string): Observable<any> {
+  public updateITStandardTechFields(id: number, manu: string, prod: string, vers: string, formData: any): Observable<any> {
     if (this.globals.jwtToken) {
       var httpOptions = this.setHeaderOpts();
     } else {
@@ -940,7 +940,9 @@ export class ApiService {
     let data = {
       manufactuerToAdd: manu,
       productToAdd: prod,
-      versionToAdd: vers
+      versionToAdd: vers,
+      manufacturerId: formData.tcManufacturer,
+      softwareProductId: formData.tcSoftwareProduct
     };
 
     return this.http

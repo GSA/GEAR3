@@ -43,21 +43,21 @@ exports.getSoftwareReleases = (req, res) => {
 };
 
 exports.getCustomManufacturers = (req, res) => {
-  var query = `SELECT CAST(id AS CHAR) as id, name FROM obj_manufacturer;`;
+  var query = `SELECT id, name FROM obj_manufacturer;`;
   res = ctrl.sendQuery(query, 'CustomManufacturers', res);
 }
 
 exports.getCustomSoftwareProducts = (req, res) => {
   console.log(req.params.id);
   if(req.params.id !== 'undefined') {
-    var query = `SELECT CAST(id AS CHAR) as id, name FROM obj_software_product WHERE manufacturer_id = ${req.params.id};`;
+    var query = `SELECT id, name FROM obj_software_product WHERE manufacturer_id = '${req.params.id}';`;
     res = ctrl.sendQuery(query, 'CustomSoftwareProducts', res);
   }
 }
 
 exports.getCustomSoftwareVersions = (req, res) => {
   if(req.params.id) {
-    var query = `SELECT CAST(id AS CHAR) as id, name FROM obj_software_version WHERE software_product_id = ${req.params.id};`;
+    var query = `SELECT id, name FROM obj_software_version WHERE software_product_id = '${req.params.id}';`;
     res = ctrl.sendQuery(query, 'CustomSoftwareVersions', res);
   }
 }
