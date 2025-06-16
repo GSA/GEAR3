@@ -222,6 +222,12 @@ exports.update = (req, res) => {
         (id, name, createdDate)
         VALUES ('${Guid.create().toString()}', '${data.versionToAdd}', '${date}');`;
       }
+      var customReleaseQuery = '';
+      if(data.releaseToAdd) {
+        customReleaseQuery = `INSERT INTO obj_software_release
+        (id, name, createdDate)
+        VALUES ('${Guid.create().toString()}', '${data.releaseToAdd}', '${date}');`;
+      }
 
 
       var query = `SET FOREIGN_KEY_CHECKS=0;
@@ -265,7 +271,8 @@ exports.update = (req, res) => {
         ${appBundleString}
         ${customManuQuery}
         ${customProductQuery}
-        ${customVersionQuery}`;
+        ${customVersionQuery}
+        ${customReleaseQuery}`;
 
       var logStatement = `insert into gear_log.event (Event, User, DTG) values ('update IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
       res = ctrl.sendQuery(query + ' ' + logStatement, 'update IT Standard', res); //removed sendQuery_cowboy reference
@@ -559,6 +566,44 @@ exports.updateITStandardWithCustomTechFields = (req, res) => {
 
   }
 
+  let releaseQuery = '';
+  let releaseQuerySelf = '';
+  console.log('RELEASE TO ADD', data.releaseToAdd);
+  if(data.releaseToAdd) {
+    releaseQuery = `
+      UPDATE
+        obj_technology AS tech,
+        (SELECT id, name FROM obj_software_release ORDER BY createdDate DESC LIMIT 1) AS rel
+      SET
+        tech.softwareRelease = rel.id,
+        tech.softwareReleaseName = rel.name
+      WHERE
+        tech.Id = ${itStandId};
+    `;
+  }
+  if(data.versionToAdd) {
+    releaseQuerySelf = `
+      UPDATE
+        obj_software_release AS rel,
+        (SELECT id FROM obj_software_version ORDER BY createdDate DESC LIMIT 1) AS version,
+        (SELECT id FROM obj_software_release ORDER BY createdDate DESC LIMIT 1) AS rels
+      SET
+        rel.software_version_id = version.id
+      WHERE
+        rel.id = rels.id;
+    `;
+  } else {
+    releaseQuerySelf = `
+      UPDATE
+        obj_software_release AS rel,
+        (SELECT id FROM obj_software_release ORDER BY createdDate DESC LIMIT 1) AS rels
+      SET
+        rel.software_version_id = '${data.softwareReleaseId}'
+      WHERE
+        rel.id = rels.id;
+    `;
+  }
+
   var query = `
     SET FOREIGN_KEY_CHECKS=0;
     ${manuQuery}
@@ -566,6 +611,8 @@ exports.updateITStandardWithCustomTechFields = (req, res) => {
     ${prodQuerySelf}
     ${versQuery}
     ${versQuerySelf}
+    ${releaseQuery}
+    ${releaseQuerySelf}
     SET FOREIGN_KEY_CHECKS=1;
   `;
 

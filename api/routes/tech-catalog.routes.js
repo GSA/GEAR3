@@ -33,4 +33,7 @@ router.route('/post/custom_software_product')
 router.route('/post/custom_software_version')
   .post(techCatalogCtrl.saveCustomSoftwareVersion);
 
+router.route('/get/custom_software_releases/:id')
+  .post(techCatalogCtrl.getCustomSoftwareReleases);
+
 module.exports = router;

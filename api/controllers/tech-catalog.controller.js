@@ -62,6 +62,13 @@ exports.getCustomSoftwareVersions = (req, res) => {
   }
 }
 
+exports.getCustomSoftwareReleases = (req, res) => {
+  if(req.params.id) {
+    var query = `SELECT id, name FROM obj_software_release WHERE software_version_id = '${req.params.id}';`;
+    res = ctrl.sendQuery(query, 'CustomSoftwareReleases', res);
+  }
+}
+
 exports.saveCustomManufacturer = (req, res) => {
   var date = new Date().toISOString().slice(0, 19).replace('T', ' ');
   var data = req.body;

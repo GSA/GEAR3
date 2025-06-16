@@ -678,7 +678,7 @@ export class ApiService {
         httpOptions
       );
   }
-  public createITStandard(data: any, manufactuerToAdd: string, productToAdd: string, versionToAdd: string): Observable<ITStandards[]> {
+  public createITStandard(data: any, manufactuerToAdd: string, productToAdd: string, versionToAdd: string, releaseToAdd: string): Observable<ITStandards[]> {
     if (this.globals.jwtToken) {
       var httpOptions = this.setHeaderOpts();
     } else {
@@ -693,6 +693,7 @@ export class ApiService {
     data.manufacturerToAdd = manufactuerToAdd;
     data.productToAdd = productToAdd;
     data.versionToAdd = versionToAdd;
+    data.releaseToAdd = releaseToAdd;
 
     return this.http
       .post<ITStandards[]>(this.techUrl + '/create', data, httpOptions);
@@ -925,7 +926,7 @@ export class ApiService {
       .post<any>(this.techCatalogUrl + '/post/custom_software_version/' + name, httpOptions);
   }
 
-  public updateITStandardTechFields(id: number, manu: string, prod: string, vers: string, formData: any): Observable<any> {
+  public updateITStandardTechFields(id: number, manu: string, prod: string, vers: string, rels: string, formData: any): Observable<any> {
     if (this.globals.jwtToken) {
       var httpOptions = this.setHeaderOpts();
     } else {
@@ -941,8 +942,10 @@ export class ApiService {
       manufactuerToAdd: manu,
       productToAdd: prod,
       versionToAdd: vers,
+      releaseToAdd: rels,
       manufacturerId: formData.tcManufacturer,
-      softwareProductId: formData.tcSoftwareProduct
+      softwareProductId: formData.tcSoftwareProduct,
+      softwareReleaseId: formData.tcSoftwareRelease
     };
 
     return this.http
@@ -979,6 +982,19 @@ export class ApiService {
         catchError(
           this.handleError<SoftwareVersion[]>(
             'GET Custom Software Versions',
+            []
+          )
+        )
+      );
+  }
+
+  public getCustomSoftwareReleases(id: string): Observable<SoftwareRelease[]> {
+    return this.http
+      .get<SoftwareRelease[]>(this.techCatalogUrl + '/get/custom_software_releases/' + id)
+      .pipe(
+        catchError(
+          this.handleError<SoftwareRelease[]>(
+            'GET Custom Software Releases',
             []
           )
         )
