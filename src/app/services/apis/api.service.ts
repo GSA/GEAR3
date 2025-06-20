@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 import { SharedService } from '@services/shared/shared.service';
 import { Globals } from '@common/globals';
@@ -782,6 +782,10 @@ export class ApiService {
     return this.http
       .get<Manufacturer[]>(this.techCatalogUrl + '/get/manufacturers')
       .pipe(
+        map(manus => manus.map(m => {
+          m.IsCustom = false;
+          return m;
+        })),
         catchError(
           this.handleError<Manufacturer[]>('GET Tech Catalog Manufacturers', [])
         )
@@ -802,6 +806,10 @@ export class ApiService {
     return this.http
       .get<SoftwareProduct[]>(this.techCatalogUrl + '/get/software_products/' + id)
       .pipe(
+        map(prods => prods.map(p => {
+          p.IsCustom = false;
+          return p;
+        })),
         catchError(
           this.handleError<SoftwareProduct[]>(
             'GET Tech Catalog Software Products',
@@ -815,6 +823,10 @@ export class ApiService {
     return this.http
       .get<SoftwareVersion[]>(this.techCatalogUrl + '/get/software_versions/' + id)
       .pipe(
+        map(vers => vers.map(v => {
+          v.IsCustom = false;
+          return v;
+        })),
         catchError(
           this.handleError<SoftwareVersion[]>(
             'GET Tech Catalog Software Versions',
@@ -828,6 +840,10 @@ export class ApiService {
     return this.http
       .get<SoftwareRelease[]>(this.techCatalogUrl + '/get/software_Releases/' + id)
       .pipe(
+        map(rels => rels.map(r => {
+          r.IsCustom = false;
+          return r;
+        })),
         catchError(
           this.handleError<SoftwareRelease[]>(
             'GET Tech Catalog Software Releases',
@@ -956,6 +972,10 @@ export class ApiService {
     return this.http
       .get<Manufacturer[]>(this.techCatalogUrl + '/get/custom_manufacturers')
       .pipe(
+        map(manus => manus.map(m => {
+          m.IsCustom = true;
+          return m;
+        })),
         catchError(
           this.handleError<Manufacturer[]>('GET Custom Manufacturers', [])
         )
@@ -966,6 +986,10 @@ export class ApiService {
     return this.http
       .get<SoftwareProduct[]>(this.techCatalogUrl + '/get/custom_software_products/' + id)
       .pipe(
+        map(prods => prods.map(p => {
+          p.IsCustom = true;
+          return p;
+        })),
         catchError(
           this.handleError<SoftwareProduct[]>(
             'GET Custom Software Products',
@@ -979,6 +1003,10 @@ export class ApiService {
     return this.http
       .get<SoftwareVersion[]>(this.techCatalogUrl + '/get/custom_software_versions/' + id)
       .pipe(
+        map(vers => vers.map(v => {
+          v.IsCustom = true;
+          return v;
+        })),
         catchError(
           this.handleError<SoftwareVersion[]>(
             'GET Custom Software Versions',
@@ -992,6 +1020,10 @@ export class ApiService {
     return this.http
       .get<SoftwareRelease[]>(this.techCatalogUrl + '/get/custom_software_releases/' + id)
       .pipe(
+        map(rels => rels.map(r => {
+          r.IsCustom = true;
+          return r;
+        })),
         catchError(
           this.handleError<SoftwareRelease[]>(
             'GET Custom Software Releases',

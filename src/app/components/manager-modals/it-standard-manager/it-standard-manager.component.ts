@@ -472,7 +472,10 @@ export class ItStandardManagerComponent implements OnInit {
 
       // Send data to database
       if (this.createBool) {
-        if(this.manufacturerToAdd || this.productToAdd || this.softwareVersionToAdd) {
+        if((this.manufacturerToAdd || this.productToAdd || this.softwareVersionToAdd) || (this.isSelectedManufacturerCustom() || this.isSelectedSoftwareProductCustom() || this.isSelectedSoftwareVersionCustom())) {
+          this.softwareReleaseToAdd = this.buildReleaseName();
+          this.itStandardsForm.patchValue({tcSoftwareReleaseName: this.buildReleaseName()});
+          console.log('WHYYYY', this.itStandardsForm);
           this.apiService.createITStandard(this.itStandardsForm.value, this.manufacturerToAdd, this.productToAdd, this.softwareVersionToAdd, this.softwareReleaseToAdd).toPromise()
           .then(res => {        
             // Grab new data from database for ID
@@ -542,7 +545,28 @@ export class ItStandardManagerComponent implements OnInit {
           });
         }
       } else {
-        this.apiService.updateITStandard(this.itStandard.ID, this.itStandardsForm.value).toPromise()
+        if((this.manufacturerToAdd || this.productToAdd || this.softwareVersionToAdd) || (this.isSelectedManufacturerCustom() || this.isSelectedSoftwareProductCustom() || this.isSelectedSoftwareVersionCustom())) {
+          this.softwareReleaseToAdd = this.buildReleaseName();
+          this.itStandardsForm.patchValue({tcSoftwareReleaseName: this.buildReleaseName()});
+          this.apiService.updateITStandard(this.itStandard.ID, this.itStandardsForm.value).toPromise()
+          .then(res => {
+            // this.createCustomTechFields();
+            this.apiService.updateITStandardTechFields(this.itStandard.ID, this.manufacturerToAdd, this.productToAdd, this.softwareVersionToAdd, this.softwareReleaseToAdd, this.itStandardsForm.value).toPromise()
+              .then(() => {
+                
+                // Grab new data from database
+                this.apiService.getOneITStandard(this.itStandard.ID).toPromise()
+                .then(data => { this.itStandDetailRefresh(data[0]) }),
+                (error) => {
+                  console.log("GET One IT Standard rejected with ", JSON.stringify(error));
+                };
+              });
+          },
+          (error) => {
+            this.handleError("UPDATE IT Standard", error);
+          });
+        } else {
+          this.apiService.updateITStandard(this.itStandard.ID, this.itStandardsForm.value).toPromise()
           .then(res => {
             // this.createCustomTechFields();
 
@@ -556,6 +580,7 @@ export class ItStandardManagerComponent implements OnInit {
           (error) => {
             this.handleError("UPDATE IT Standard", error);
           });
+        }
       }
 
       this.modalService.updateRecordCreation(false);  // Reset Creation flag
@@ -1018,6 +1043,56 @@ export class ItStandardManagerComponent implements OnInit {
 
   escapeString(str: string) {
     return str.replace(/\\/g, "\\\\").replace(/[/"']/g, "\\$&");
+  }
+
+  isSelectedManufacturerCustom(): boolean {
+    let foundIndex = this.manufacturers.findIndex(x => x.id === this.itStandardsForm.value.tcManufacturer);
+    if(foundIndex) {
+      return this.manufacturers[foundIndex].IsCustom;
+    }
+    return true;
+  }
+
+  isSelectedSoftwareProductCustom(): boolean {
+    let foundIndex = this.softwareProducts.findIndex(x => x.id === this.itStandardsForm.value.tcSoftwareProduct);
+    if(foundIndex) {
+      return this.softwareProducts[foundIndex].IsCustom;
+    }
+    return true;
+  }
+
+  isSelectedSoftwareVersionCustom(): boolean {
+    let foundIndex = this.softwareVersions.findIndex(x => x.id === this.itStandardsForm.value.tcSoftwareVersion);
+    if(foundIndex) {
+      return this.softwareVersions[foundIndex].IsCustom;
+    }
+    return true;
+  }
+
+  buildReleaseName(): string {
+    let manu = '';
+    let prod = '';
+    let vers = '';
+
+    if(this.manufacturerToAdd) {
+      manu = this.manufacturerToAdd;
+    } else if(this.itStandardsForm.value.tcManufacturerName) {
+      manu = this.itStandardsForm.value.tcManufacturerName;
+    }
+
+    if(this.productToAdd) {
+      prod = this.productToAdd;
+    } else if(this.itStandardsForm.value.tcSoftwareProductName) {
+      prod = this.itStandardsForm.value.tcSoftwareProductName;
+    }
+
+    if(this.softwareVersionToAdd) {
+      vers = this.softwareVersionToAdd;
+    } else if(this.itStandardsForm.value.tcSoftwareVersionName) {
+      vers = this.itStandardsForm.value.tcSoftwareVersionName;
+    }
+
+    return `${manu} ${prod} ${vers}`;
   }
 
 }

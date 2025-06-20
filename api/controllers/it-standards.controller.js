@@ -83,7 +83,7 @@ exports.update = (req, res) => {
 
         // Insert new IDs
         data.itStandPOC.forEach(pocSamName => {
-          pocString += `INSERT INTO zk_technology_poc (obj_technology_Id, obj_ldap_SamAccountName) VALUES (${req.params.id}, '${pocSamName}'); `;
+          pocString += `INSERT INTO zk_technology_poc (obj_technology_Id, obj_ldap_SamAccountName) VALUES (${req.params.id}, '\"${pocSamName}\"'); `;
         });
       };
 
@@ -141,7 +141,7 @@ exports.update = (req, res) => {
           }
         }
       }
-      if(data.initialAppBundles.length > 0) {
+      if(data.initialAppBundles && data.initialAppBundles.length > 0) {
         for(const appId of data.initialAppBundles) {
           if(!data.itStandMobileAppBundles || (data.itStandMobileAppBundles && data.itStandMobileAppBundles.length === 0)) {
             appBundleToDelete.push(appId);
@@ -154,7 +154,7 @@ exports.update = (req, res) => {
       }
 
       // Delete from app bundle table and match table
-      if(appBundleToDelete.length > 0) {
+      if(appBundleToDelete && appBundleToDelete.length > 0) {
         appBundleToDelete.forEach(a => {
           appBundleString += `DELETE FROM zk_technology_app_bundle WHERE obj_technology_Id=${req.params.id} AND obj_technology_app_bundle_Id=${a.ID}; `;
           appBundleString += `DELETE FROM obj_technology_app_bundle WHERE Id=${a.ID}; `;
@@ -162,7 +162,7 @@ exports.update = (req, res) => {
       }
 
       // Add to app bundle table and the match table
-      if(appBundleToAdd.length > 0) {
+      if(appBundleToAdd && appBundleToAdd.length > 0) {
         appBundleToAdd.forEach(a => {
           appBundleString += `INSERT INTO obj_technology_app_bundle (Keyname) VALUES ('${a.Name}'); `;
           appBundleString += `INSERT INTO zk_technology_app_bundle (obj_technology_app_bundle_Id, obj_technology_Id) VALUES (LAST_INSERT_ID(), ${req.params.id}); `;
@@ -186,6 +186,27 @@ exports.update = (req, res) => {
       data.tcEndOfLifeDate = ctrl.setNullEmptyTextHandler(data.tcEndOfLifeDate);
 
       data.itStandRITM = ctrl.setNullEmptyTextHandler(data.itStandRITM);
+
+      if(data.itStandMyView === null || data.itStandMyView === true) {
+        data.itStandMyView = 'T';
+      } else {
+        data.itStandMyView = 'F';
+      }
+      if(data.itStandGoldImg === null || data.itStandGoldImg === true) {
+        data.itStandGoldImg = 'T';
+      } else {
+        data.itStandGoldImg = 'F';
+      }
+      if(data.itStandFedramp === null || data.itStandFedramp === true) {
+        data.itStandFedramp = 'T';
+      } else {
+        data.itStandFedramp = 'F';
+      }
+      if(data.itStandOpenSource === null || data.itStandOpenSource === true) {
+        data.itStandOpenSource = 'T';
+      } else {
+        data.itStandOpenSource = 'F';
+      }
 
       let keyname = '';
       if (!data.tcSoftwareReleaseName || data.tcSoftwareReleaseName === 'NULL' || data.tcSoftwareReleaseName === 'null') {
@@ -229,13 +250,12 @@ exports.update = (req, res) => {
         VALUES ('${Guid.create().toString()}', '${data.releaseToAdd}', '${date}');`;
       }
 
-
       var query = `SET FOREIGN_KEY_CHECKS=0;
         UPDATE obj_technology
         SET
           Keyname                         = ${keyname},
           obj_technology_status_Id        = ${data.itStandStatus},
-          Description                     = ${data.itStandDesc},
+          Description                     = '${data.itStandDesc}',
           obj_standard_type_Id            = ${data.itStandType},
           obj_508_compliance_status_Id    = ${data.itStand508},
           Available_through_Myview        = "${data.itStandMyView}",
@@ -273,6 +293,8 @@ exports.update = (req, res) => {
         ${customProductQuery}
         ${customVersionQuery}
         ${customReleaseQuery}`;
+
+        console.log('TEST THIS', query);
 
       var logStatement = `insert into gear_log.event (Event, User, DTG) values ('update IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
       res = ctrl.sendQuery(query + ' ' + logStatement, 'update IT Standard', res); //removed sendQuery_cowboy reference
@@ -314,6 +336,19 @@ exports.create = (req, res) => {
       data.tcEndOfLifeDate = ctrl.setNullEmptyTextHandler(data.tcEndOfLifeDate);
 
       data.itStandRITM = ctrl.setNullEmptyTextHandler(data.itStandRITM);
+
+      if(data.itStandMyView === null) {
+        data.itStandMyView = 'T';
+      }
+      if(data.itStandGoldImg === null) {
+        data.itStandGoldImg = 'T';
+      }
+      if(data.itStandFedramp === null) {
+        data.itStandFedramp = 'T';
+      }
+      if(data.itStandOpenSource === null) {
+        data.itStandOpenSource = 'T';
+      }
 
       let keyname = '';
       if (!data.tcSoftwareReleaseName || data.tcSoftwareReleaseName === 'NULL' || data.tcSoftwareReleaseName === 'null') {
