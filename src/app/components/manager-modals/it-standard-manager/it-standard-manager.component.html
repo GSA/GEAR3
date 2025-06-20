@@ -39,6 +39,7 @@
                 <div class="form-group col">
                   <label for="tcManufacturer">Manufacturer</label>
                     <ng-select id="tcManufacturer" formControlName="tcManufacturer"
+                      [addTag]="true"
                       [items]="manufacturers"
                       [multiple]="false"
                       appendTo="#itStandardsManager"
@@ -62,6 +63,7 @@
                 <div class="form-group col" id="divProduct">
                   <label for="tcSoftwareProduct">Product</label>
                     <ng-select id="tcSoftwareProduct" formControlName="tcSoftwareProduct"
+                      [addTag]="true"
                       [items]="softwareProducts"
                       [multiple]="false"
                       appendTo="#itStandardsManager"
@@ -88,6 +90,7 @@
                 <div class="form-group col-3" id="divVersion">
                   <label for="tcSoftwareVersion">Software Version</label>
                     <ng-select id="tcSoftwareVersion" formControlName="tcSoftwareVersion"
+                      [addTag]="true"  
                       [items]="softwareVersions"
                       [multiple]="false"
                       appendTo="#itStandardsManager"

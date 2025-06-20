@@ -10,6 +10,7 @@ import { SharedService } from "@services/shared/shared.service";
 import { TableService } from "@services/tables/table.service";
 import { OperatingSystem } from '@api/models/operating-systems.model';
 import { AppBundle } from '@api/models/it-standards-app-bundle.model';
+import { Observable } from 'rxjs';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -104,6 +105,11 @@ export class ItStandardManagerComponent implements OnInit {
   showDuplicateAppBundleMsg: boolean = false;
   showAppBundleField: boolean = false;
 
+  manufacturerToAdd: string = '';
+  productToAdd: string = '';
+  softwareVersionToAdd: string = '';
+  softwareReleaseToAdd: string = '';
+
   constructor(
     private apiService: ApiService,
     private globals: Globals,
@@ -126,9 +132,12 @@ export class ItStandardManagerComponent implements OnInit {
     // Populate Manufacturer Options
     this.manufacturersLoading = true;
     this.apiService.getManufacturers().subscribe((data: any[]) => {
-      this.manufacturers = data;
-      this.manufacturersBuffer = this.manufacturers.slice(0, this.bufferSize);
-      this.manufacturersLoading = false;
+      this.apiService.getCustomManufacturers().subscribe((cData: any[]) => {
+        this.manufacturers = [...data, ...cData];
+        console.log('ALL MANUFACTURERES:', this.manufacturers);
+        this.manufacturersBuffer = this.manufacturers.slice(0, this.bufferSize);
+        this.manufacturersLoading = false;
+      });
     });
 
     // Populate Attestation Required Options
@@ -348,7 +357,6 @@ export class ItStandardManagerComponent implements OnInit {
   };
 
   submitForm() {
-
     //console.log("Submitting form"); //DEBUG
 
     //console.log("Form: ", this.itStandardsForm);  // Debug
@@ -464,27 +472,39 @@ export class ItStandardManagerComponent implements OnInit {
 
       // Send data to database
       if (this.createBool) {
-        this.apiService.createITStandard(this.itStandardsForm.value).toPromise()
-          .then(res => {
+        if((this.manufacturerToAdd || this.productToAdd || this.softwareVersionToAdd) || (this.isSelectedManufacturerCustom() || this.isSelectedSoftwareProductCustom() || this.isSelectedSoftwareVersionCustom())) {
+          this.softwareReleaseToAdd = this.buildReleaseName();
+          this.itStandardsForm.patchValue({tcSoftwareReleaseName: this.buildReleaseName()});
+          console.log('WHYYYY', this.itStandardsForm);
+          this.apiService.createITStandard(this.itStandardsForm.value, this.manufacturerToAdd, this.productToAdd, this.softwareVersionToAdd, this.softwareReleaseToAdd).toPromise()
+          .then(res => {        
             // Grab new data from database for ID
             this.apiService.getLatestITStand().toPromise()
               .then(data => {
-                // Update Categories and POCs with new ID
-                this.apiService.updateITStandard(data[0].ID, this.itStandardsForm.value).toPromise()
-                  .then(res => {
-                    // Now get all the complete new data
-                    this.apiService.getLatestITStand().toPromise()
-                      .then(data => {
-                        // Then update the details modal
-                        this.itStandDetailRefresh(data[0])
+                
+                    // Update Categories and POCs with new ID
+                    this.apiService.updateITStandard(data[0].ID, this.itStandardsForm.value).toPromise()
+                      .then(res => {
+                        this.apiService.updateITStandardTechFields(data[0].ID, this.manufacturerToAdd, this.productToAdd, this.softwareVersionToAdd, this.softwareReleaseToAdd, this.itStandardsForm.value).toPromise()
+                  .then(() => {
+                        // Now get all the complete new data
+                        this.apiService.getLatestITStand().toPromise()
+                          .then(data => {
+                            // Then update the details modal
+                            this.itStandDetailRefresh(data[0])
+                          },
+                          (error) => {
+                            this.handleError("GET Latest IT Standard", error);
+                          });
                       },
                       (error) => {
-                        this.handleError("GET Latest IT Standard", error);
+                        this.handleError("UPDATE IT Standard", error);
                       });
                   },
                   (error) => {
-                    this.handleError("UPDATE IT Standard", error);
-                  });
+                    this.handleError('UPDATE Tech Fields', error);
+                  }
+                );
               },
               (error) => {
                 this.handleError("GET Latest IT Standard", error);
@@ -493,9 +513,63 @@ export class ItStandardManagerComponent implements OnInit {
           (error) => {
             this.handleError("CREATE IT Standard", error);
           });
+        } else {
+          this.apiService.createITStandard(this.itStandardsForm.value, this.manufacturerToAdd, this.productToAdd, this.softwareVersionToAdd, this.softwareReleaseToAdd).toPromise()
+          .then(res => {        
+            // Grab new data from database for ID
+            this.apiService.getLatestITStand().toPromise()
+              .then(data => {
+                  // Update Categories and POCs with new ID
+                  this.apiService.updateITStandard(data[0].ID, this.itStandardsForm.value).toPromise()
+                    .then(res => {
+                      // Now get all the complete new data
+                      this.apiService.getLatestITStand().toPromise()
+                        .then(data => {
+                          // Then update the details modal
+                          this.itStandDetailRefresh(data[0])
+                        },
+                        (error) => {
+                          this.handleError("GET Latest IT Standard", error);
+                        });
+                    },
+                    (error) => {
+                      this.handleError("UPDATE IT Standard", error);
+                    });
+              },
+              (error) => {
+                this.handleError("GET Latest IT Standard", error);
+              });
+          },
+          (error) => {
+            this.handleError("CREATE IT Standard", error);
+          });
+        }
       } else {
-        this.apiService.updateITStandard(this.itStandard.ID, this.itStandardsForm.value).toPromise()
+        if((this.manufacturerToAdd || this.productToAdd || this.softwareVersionToAdd) || (this.isSelectedManufacturerCustom() || this.isSelectedSoftwareProductCustom() || this.isSelectedSoftwareVersionCustom())) {
+          this.softwareReleaseToAdd = this.buildReleaseName();
+          this.itStandardsForm.patchValue({tcSoftwareReleaseName: this.buildReleaseName()});
+          this.apiService.updateITStandard(this.itStandard.ID, this.itStandardsForm.value).toPromise()
           .then(res => {
+            // this.createCustomTechFields();
+            this.apiService.updateITStandardTechFields(this.itStandard.ID, this.manufacturerToAdd, this.productToAdd, this.softwareVersionToAdd, this.softwareReleaseToAdd, this.itStandardsForm.value).toPromise()
+              .then(() => {
+                
+                // Grab new data from database
+                this.apiService.getOneITStandard(this.itStandard.ID).toPromise()
+                .then(data => { this.itStandDetailRefresh(data[0]) }),
+                (error) => {
+                  console.log("GET One IT Standard rejected with ", JSON.stringify(error));
+                };
+              });
+          },
+          (error) => {
+            this.handleError("UPDATE IT Standard", error);
+          });
+        } else {
+          this.apiService.updateITStandard(this.itStandard.ID, this.itStandardsForm.value).toPromise()
+          .then(res => {
+            // this.createCustomTechFields();
+
             // Grab new data from database
             this.apiService.getOneITStandard(this.itStandard.ID).toPromise()
               .then(data => { this.itStandDetailRefresh(data[0]) }),
@@ -506,11 +580,29 @@ export class ItStandardManagerComponent implements OnInit {
           (error) => {
             this.handleError("UPDATE IT Standard", error);
           });
+        }
       }
 
       this.modalService.updateRecordCreation(false);  // Reset Creation flag
+
     }
   }
+
+  // createCustomTechFields(): Observable<any> {
+  //   let chained: Observable<any>
+
+  //   if(this.manufacturerToAdd) {
+  //     this.apiService.createCustomManufacturer(this.manufacturerToAdd).subscribe();
+  //   }
+
+  //   if(this.productToAdd) {
+  //     this.apiService.createCustomSoftwareProduct(this.productToAdd).subscribe();
+  //   }
+
+  //   if(this.softwareVersionToAdd) {
+  //     this.apiService.createCustomSoftwareVersion(this.softwareVersionToAdd).subscribe();
+  //   }
+  // }
 
   private handleError(operation: string = 'operation', error: any) {
     console.log(`Failed ${operation} Call: ${JSON.stringify(error)}`);
@@ -558,6 +650,7 @@ export class ItStandardManagerComponent implements OnInit {
   // handles the software release change event
   softwareReleaseChange(data: any) {
     this.setApprovalExpirationDate(data);
+    this.softwareReleaseToAdd = data;
     this.itStandardsForm.patchValue({itStandName: data.application});
 
     // disable or enable old name
@@ -680,7 +773,10 @@ export class ItStandardManagerComponent implements OnInit {
   }
 
   manufacturerChange(manufacturer: any) {
-
+    if(!manufacturer.id) {
+      this.manufacturerToAdd = manufacturer.name;
+      console.log('ADDING:', this.manufacturerToAdd);
+    }
     //console.log("Manufacturer changed to: ", manufacturer); //DEBUG
 
     this.softwareProductsLoading = true;
@@ -690,15 +786,23 @@ export class ItStandardManagerComponent implements OnInit {
 
     try {
       if (manufacturer) {
-        //console.log("(IF) Manufacturer ID: ", manufacturer["id"]); //DEBUG
+        console.log("(IF) Manufacturer ID: ", manufacturer["id"]); //DEBUG
 
-        this.apiService.getSoftwareProducts(manufacturer["id"]).subscribe((data: any[]) => {
-          this.softwareProducts = data;
-          this.softwareProductsBuffer = this.softwareProducts.slice(0, this.bufferSize);
+        if(manufacturer["id"]) {
+          this.apiService.getSoftwareProducts(manufacturer["id"]).subscribe((data: any[]) => {
+            this.apiService.getCustomSoftwareProducts(manufacturer["id"]).subscribe((cData: any[]) => {
+              this.softwareProducts = [...data, ...cData];
+              this.softwareProductsBuffer = this.softwareProducts.slice(0, this.bufferSize);
+              this.softwareProductsLoading = false;
+              this.enableSoftwareProduct();
+              //this.disableSoftwareVersion();
+            });
+          });
+        } else {
           this.softwareProductsLoading = false;
           this.enableSoftwareProduct();
-          //this.disableSoftwareVersion();
-        });
+        }
+
       } else {
         //console.log("(ELSE) Manufacturer ID: ", manufacturer["id"]); //DEBUG
 
@@ -728,7 +832,10 @@ export class ItStandardManagerComponent implements OnInit {
   }
 
   softwareProductChange(softwareProduct: any) {
-
+    if(!softwareProduct.id) {
+      this.productToAdd = softwareProduct.name;
+      console.log('ADDING:', this.productToAdd);
+    }
     //console.log("Software Product changed to: ", softwareProduct); //DEBUG
 
     this.softwareVersionsLoading = true;
@@ -739,13 +846,20 @@ export class ItStandardManagerComponent implements OnInit {
       if (softwareProduct) {
         //console.log("Software Product ID: ", softwareProduct["id"]); //DEBUG
 
-        this.apiService.getSoftwareVersions(softwareProduct["id"]).subscribe((data: any[]) => {
-          this.softwareVersions = data;
-          this.softwareVersionsBuffer = this.softwareVersions.slice(0, this.bufferSize);
+        if(softwareProduct["id"]) {
+          this.apiService.getSoftwareVersions(softwareProduct["id"]).subscribe((data: any[]) => {
+            this.apiService.getCustomSoftwareVersions(softwareProduct["id"]).subscribe((cData: any[]) => {
+              this.softwareVersions = [...data, ...cData];
+              this.softwareVersionsBuffer = this.softwareVersions.slice(0, this.bufferSize);
+              this.softwareVersionsLoading = false;
+              this.enableSoftwareVersion();
+              //this.disableSoftwareRelease();
+            });
+          });
+        } else {
           this.softwareVersionsLoading = false;
           this.enableSoftwareVersion();
-          //this.disableSoftwareRelease();
-        });
+        }
       } else {
         //console.log("Software Product ID: ", softwareProduct["id"]); //DEBUG
 
@@ -769,6 +883,10 @@ export class ItStandardManagerComponent implements OnInit {
   }
 
   softwareVersionChange(softwareVersion: any) {
+    if(!softwareVersion.id) {
+      this.softwareVersionToAdd = softwareVersion.name;
+      console.log('ADDING:', this.softwareVersionToAdd);
+    }
 
     //console.log("Software Version changed to: ", softwareVersion); //DEBUG
 
@@ -781,12 +899,31 @@ export class ItStandardManagerComponent implements OnInit {
       if (softwareVersion) {
         //console.log("(IF) Software Version ID: ", softwareVersion["id"]); //DEBUG
 
-        this.apiService.getSoftwareReleases(softwareVersion["id"]).subscribe((data: any[]) => {
-          this.softwareReleases = data;
-          this.softwareReleasesBuffer = this.softwareReleases.slice(0, this.bufferSize);
-          this.softwareReleasesLoading = false;
-          this.enableSoftwareRelease();
-        });
+        //if(!this.manufacturerToAdd && !this.productToAdd && !this.softwareVersionToAdd) {
+          this.apiService.getSoftwareReleases(softwareVersion["id"]).subscribe((data: any[]) => {
+            this.apiService.getCustomSoftwareReleases(softwareVersion["id"]).subscribe((cData: any[]) => {
+              this.softwareReleases = [...data, ...cData];
+              this.softwareReleasesBuffer = this.softwareReleases.slice(0, this.bufferSize);
+              this.softwareReleasesLoading = false;
+              
+              if(this.manufacturerToAdd || this.productToAdd || this.softwareVersionToAdd) {
+                this.disableSoftwareRelease();
+                this.itStandardsForm.patchValue({
+                  tcSoftwareReleaseName: `${this.manufacturerToAdd} ${this.productToAdd} ${this.softwareVersionToAdd}`
+                });
+                this.softwareReleaseToAdd = `${this.manufacturerToAdd} ${this.productToAdd} ${this.softwareVersionToAdd}`;
+              } else {
+                this.enableSoftwareRelease();
+              }
+            });
+          });
+        //} else {
+          //this.softwareReleases = [`${this.manufacturerToAdd} ${this.productToAdd} ${this.softwareVersionToAdd}`];
+        //   this.itStandardsForm.patchValue({
+        //     tcSoftwareReleaseName: `${this.manufacturerToAdd} ${this.productToAdd} ${this.softwareVersionToAdd}`
+        //   });
+        //   this.softwareReleasesLoading = false;
+        // }
       } else {
         //console.log("(ELSE) Software Version ID: ", softwareVersion["id"]); //DEBUG
 
@@ -799,6 +936,7 @@ export class ItStandardManagerComponent implements OnInit {
 
       this.softwareReleases = [];
       this.softwareReleasesLoading = false;
+
       //this.disableSoftwareRelease();
     }
   }
@@ -905,6 +1043,56 @@ export class ItStandardManagerComponent implements OnInit {
 
   escapeString(str: string) {
     return str.replace(/\\/g, "\\\\").replace(/[/"']/g, "\\$&");
+  }
+
+  isSelectedManufacturerCustom(): boolean {
+    let foundIndex = this.manufacturers.findIndex(x => x.id === this.itStandardsForm.value.tcManufacturer);
+    if(foundIndex) {
+      return this.manufacturers[foundIndex].IsCustom;
+    }
+    return true;
+  }
+
+  isSelectedSoftwareProductCustom(): boolean {
+    let foundIndex = this.softwareProducts.findIndex(x => x.id === this.itStandardsForm.value.tcSoftwareProduct);
+    if(foundIndex) {
+      return this.softwareProducts[foundIndex].IsCustom;
+    }
+    return true;
+  }
+
+  isSelectedSoftwareVersionCustom(): boolean {
+    let foundIndex = this.softwareVersions.findIndex(x => x.id === this.itStandardsForm.value.tcSoftwareVersion);
+    if(foundIndex) {
+      return this.softwareVersions[foundIndex].IsCustom;
+    }
+    return true;
+  }
+
+  buildReleaseName(): string {
+    let manu = '';
+    let prod = '';
+    let vers = '';
+
+    if(this.manufacturerToAdd) {
+      manu = this.manufacturerToAdd;
+    } else if(this.itStandardsForm.value.tcManufacturerName) {
+      manu = this.itStandardsForm.value.tcManufacturerName;
+    }
+
+    if(this.productToAdd) {
+      prod = this.productToAdd;
+    } else if(this.itStandardsForm.value.tcSoftwareProductName) {
+      prod = this.itStandardsForm.value.tcSoftwareProductName;
+    }
+
+    if(this.softwareVersionToAdd) {
+      vers = this.softwareVersionToAdd;
+    } else if(this.itStandardsForm.value.tcSoftwareVersionName) {
+      vers = this.itStandardsForm.value.tcSoftwareVersionName;
+    }
+
+    return `${manu} ${prod} ${vers}`;
   }
 
 }

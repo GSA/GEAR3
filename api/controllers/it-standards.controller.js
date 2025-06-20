@@ -2,6 +2,7 @@ const ctrl = require('./base.controller');
 
 const fs = require('fs');
 const path = require('path');
+const { Guid } = require('typescript-guid');
 
 const queryPath = '../queries/';
 
@@ -82,7 +83,7 @@ exports.update = (req, res) => {
 
         // Insert new IDs
         data.itStandPOC.forEach(pocSamName => {
-          pocString += `INSERT INTO zk_technology_poc (obj_technology_Id, obj_ldap_SamAccountName) VALUES (${req.params.id}, '${pocSamName}'); `;
+          pocString += `INSERT INTO zk_technology_poc (obj_technology_Id, obj_ldap_SamAccountName) VALUES (${req.params.id}, '\"${pocSamName}\"'); `;
         });
       };
 
@@ -140,7 +141,7 @@ exports.update = (req, res) => {
           }
         }
       }
-      if(data.initialAppBundles.length > 0) {
+      if(data.initialAppBundles && data.initialAppBundles.length > 0) {
         for(const appId of data.initialAppBundles) {
           if(!data.itStandMobileAppBundles || (data.itStandMobileAppBundles && data.itStandMobileAppBundles.length === 0)) {
             appBundleToDelete.push(appId);
@@ -153,7 +154,7 @@ exports.update = (req, res) => {
       }
 
       // Delete from app bundle table and match table
-      if(appBundleToDelete.length > 0) {
+      if(appBundleToDelete && appBundleToDelete.length > 0) {
         appBundleToDelete.forEach(a => {
           appBundleString += `DELETE FROM zk_technology_app_bundle WHERE obj_technology_Id=${req.params.id} AND obj_technology_app_bundle_Id=${a.ID}; `;
           appBundleString += `DELETE FROM obj_technology_app_bundle WHERE Id=${a.ID}; `;
@@ -161,7 +162,7 @@ exports.update = (req, res) => {
       }
 
       // Add to app bundle table and the match table
-      if(appBundleToAdd.length > 0) {
+      if(appBundleToAdd && appBundleToAdd.length > 0) {
         appBundleToAdd.forEach(a => {
           appBundleString += `INSERT INTO obj_technology_app_bundle (Keyname) VALUES ('${a.Name}'); `;
           appBundleString += `INSERT INTO zk_technology_app_bundle (obj_technology_app_bundle_Id, obj_technology_Id) VALUES (LAST_INSERT_ID(), ${req.params.id}); `;
@@ -186,6 +187,27 @@ exports.update = (req, res) => {
 
       data.itStandRITM = ctrl.setNullEmptyTextHandler(data.itStandRITM);
 
+      if(data.itStandMyView === null || data.itStandMyView === true) {
+        data.itStandMyView = 'T';
+      } else {
+        data.itStandMyView = 'F';
+      }
+      if(data.itStandGoldImg === null || data.itStandGoldImg === true) {
+        data.itStandGoldImg = 'T';
+      } else {
+        data.itStandGoldImg = 'F';
+      }
+      if(data.itStandFedramp === null || data.itStandFedramp === true) {
+        data.itStandFedramp = 'T';
+      } else {
+        data.itStandFedramp = 'F';
+      }
+      if(data.itStandOpenSource === null || data.itStandOpenSource === true) {
+        data.itStandOpenSource = 'T';
+      } else {
+        data.itStandOpenSource = 'F';
+      }
+
       let keyname = '';
       if (!data.tcSoftwareReleaseName || data.tcSoftwareReleaseName === 'NULL' || data.tcSoftwareReleaseName === 'null') {
         if(!data.itStandName) {
@@ -202,12 +224,38 @@ exports.update = (req, res) => {
 
       const endOfLifeDateFragment = getEolFragment(data.tcEndOfLifeDate);
 
+      var date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+      var customManuQuery = '';
+      if(data.manufacturerToAdd) {
+        customManuQuery = `INSERT INTO obj_manufacturer
+        (id, name, createdDate)
+        VALUES ('${Guid.create().toString()}', '${data.manufacturerToAdd}', '${date}');`;
+      }
+      var customProductQuery = '';
+      if(data.productToAdd) {
+        customProductQuery = `INSERT INTO obj_software_product
+        (id, name, createdDate)
+        VALUES ('${Guid.create().toString()}', '${data.productToAdd}', '${date}');`;
+      }
+      var customVersionQuery = '';
+      if(data.versionToAdd) {
+        customVersionQuery = `INSERT INTO obj_software_version
+        (id, name, createdDate)
+        VALUES ('${Guid.create().toString()}', '${data.versionToAdd}', '${date}');`;
+      }
+      var customReleaseQuery = '';
+      if(data.releaseToAdd) {
+        customReleaseQuery = `INSERT INTO obj_software_release
+        (id, name, createdDate)
+        VALUES ('${Guid.create().toString()}', '${data.releaseToAdd}', '${date}');`;
+      }
+
       var query = `SET FOREIGN_KEY_CHECKS=0;
         UPDATE obj_technology
         SET
           Keyname                         = ${keyname},
           obj_technology_status_Id        = ${data.itStandStatus},
-          Description                     = ${data.itStandDesc},
+          Description                     = '${data.itStandDesc}',
           obj_standard_type_Id            = ${data.itStandType},
           obj_508_compliance_status_Id    = ${data.itStand508},
           Available_through_Myview        = "${data.itStandMyView}",
@@ -240,7 +288,13 @@ exports.update = (req, res) => {
         ${catString}
         ${pocString}
         ${osString}
-        ${appBundleString}`;
+        ${appBundleString}
+        ${customManuQuery}
+        ${customProductQuery}
+        ${customVersionQuery}
+        ${customReleaseQuery}`;
+
+        console.log('TEST THIS', query);
 
       var logStatement = `insert into gear_log.event (Event, User, DTG) values ('update IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
       res = ctrl.sendQuery(query + ' ' + logStatement, 'update IT Standard', res); //removed sendQuery_cowboy reference
@@ -282,6 +336,19 @@ exports.create = (req, res) => {
       data.tcEndOfLifeDate = ctrl.setNullEmptyTextHandler(data.tcEndOfLifeDate);
 
       data.itStandRITM = ctrl.setNullEmptyTextHandler(data.itStandRITM);
+
+      if(data.itStandMyView === null) {
+        data.itStandMyView = 'T';
+      }
+      if(data.itStandGoldImg === null) {
+        data.itStandGoldImg = 'T';
+      }
+      if(data.itStandFedramp === null) {
+        data.itStandFedramp = 'T';
+      }
+      if(data.itStandOpenSource === null) {
+        data.itStandOpenSource = 'T';
+      }
 
       let keyname = '';
       if (!data.tcSoftwareReleaseName || data.tcSoftwareReleaseName === 'NULL' || data.tcSoftwareReleaseName === 'null') {
@@ -437,3 +504,155 @@ exports.getAppBundles = (req, res) => {
 
   res = ctrl.sendQuery(query, 'App Bundles', res);
 }
+
+exports.updateITStandardWithCustomTechFields = (req, res) => {
+  var itStandId = req.params.id;
+  var data = req.body;
+
+  console.log('DATA TEST HERE', data);
+
+  let manuQuery = '';
+  if(data.manufactuerToAdd) {
+    manuQuery = `
+      UPDATE 
+        obj_technology AS tech,
+        (SELECT id, name FROM obj_manufacturer ORDER BY createdDate DESC LIMIT 1) AS manufac
+      SET
+        tech.manufacturer = manufac.id,
+        tech.manufacturerName = manufac.name
+      WHERE
+        tech.Id = ${itStandId};
+    `;
+  }
+
+  let prodQuery = '';
+  let prodQuerySelf = '';
+  if(data.productToAdd) {
+    prodQuery = `
+      UPDATE 
+        obj_technology AS tech,
+        (SELECT id, name FROM obj_software_product ORDER BY createdDate DESC LIMIT 1) AS product
+      SET
+        tech.softwareProduct = product.id,
+        tech.softwareProductName = product.name
+      WHERE
+        tech.Id = ${itStandId};
+    `;
+    if(data.manufactuerToAdd) {
+      prodQuerySelf = `
+      UPDATE
+        obj_software_product AS product,
+        (SELECT id FROM obj_manufacturer ORDER BY createdDate DESC LIMIT 1) AS manufac,
+        (SELECT id FROM obj_software_product ORDER BY createdDate DESC LIMIT 1) AS prod
+      SET
+        product.manufacturer_id = manufac.id
+      WHERE
+        product.id = prod.id;
+    `;
+    } else {
+      prodQuerySelf = `
+      UPDATE
+        obj_software_product AS product,
+        (SELECT id FROM obj_software_product ORDER BY createdDate DESC LIMIT 1) AS prod
+      SET
+        product.manufacturer_id = '${data.manufacturerId}'
+      WHERE
+        product.id = prod.id;
+    `;
+    }
+
+  }
+
+  let versQuery = '';
+  let versQuerySelf = '';
+  if(data.versionToAdd) {
+    versQuery = `
+      UPDATE 
+        obj_technology AS tech,
+        (SELECT id, name FROM obj_software_version ORDER BY createdDate DESC LIMIT 1) AS version
+      SET
+        tech.softwareVersion = version.id,
+        tech.softwareVersionName = version.name
+      WHERE
+        tech.Id = ${itStandId};
+    `;
+    if(data.productToAdd) {
+      versQuerySelf = `
+      UPDATE
+        obj_software_version AS version,
+        (SELECT id FROM obj_software_product ORDER BY createdDate DESC LIMIT 1) AS product,
+        (SELECT id FROM obj_software_version ORDER BY createdDate DESC LIMIT 1) AS vers
+      SET
+        version.software_product_id = product.id
+      WHERE
+        version.id = vers.id;
+    `;
+    } else {
+      versQuerySelf = `
+      UPDATE
+        obj_software_version AS version,
+        (SELECT id FROM obj_software_version ORDER BY createdDate DESC LIMIT 1) AS vers
+      SET
+        version.software_product_id = '${data.softwareProductId}'
+      WHERE
+        version.id = vers.id;
+    `;
+    }
+
+  }
+
+  let releaseQuery = '';
+  let releaseQuerySelf = '';
+  console.log('RELEASE TO ADD', data.releaseToAdd);
+  if(data.releaseToAdd) {
+    releaseQuery = `
+      UPDATE
+        obj_technology AS tech,
+        (SELECT id, name FROM obj_software_release ORDER BY createdDate DESC LIMIT 1) AS rel
+      SET
+        tech.softwareRelease = rel.id,
+        tech.softwareReleaseName = rel.name
+      WHERE
+        tech.Id = ${itStandId};
+    `;
+  }
+  if(data.versionToAdd) {
+    releaseQuerySelf = `
+      UPDATE
+        obj_software_release AS rel,
+        (SELECT id FROM obj_software_version ORDER BY createdDate DESC LIMIT 1) AS version,
+        (SELECT id FROM obj_software_release ORDER BY createdDate DESC LIMIT 1) AS rels
+      SET
+        rel.software_version_id = version.id
+      WHERE
+        rel.id = rels.id;
+    `;
+  } else {
+    releaseQuerySelf = `
+      UPDATE
+        obj_software_release AS rel,
+        (SELECT id FROM obj_software_release ORDER BY createdDate DESC LIMIT 1) AS rels
+      SET
+        rel.software_version_id = '${data.softwareReleaseId}'
+      WHERE
+        rel.id = rels.id;
+    `;
+  }
+
+  var query = `
+    SET FOREIGN_KEY_CHECKS=0;
+    ${manuQuery}
+    ${prodQuery}
+    ${prodQuerySelf}
+    ${versQuery}
+    ${versQuerySelf}
+    ${releaseQuery}
+    ${releaseQuerySelf}
+    SET FOREIGN_KEY_CHECKS=1;
+  `;
+
+  console.log(query);
+  var logStatement = `insert into gear_log.event (Event, User, DTG) values ('Update technologies: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
+     
+  res = ctrl.sendQuery(query + ' ' + logStatement, 'Update Tech Fields', res);
+};
