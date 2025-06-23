@@ -32,8 +32,8 @@
               }
             ],
             "styles": [
-              "src/styles/custom-theme.scss",
               "src/styles/styles.scss",
+              "src/styles/custom-theme.scss",
               "src/assets/fontawesome-free-5.13.0-web/css/all.min.css",
               "src/assets/bootstrap-theme/bootstrap.min.css",
               "node_modules/bootstrap-table/dist/bootstrap-table.min.css",
