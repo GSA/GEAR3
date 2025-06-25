@@ -1,0 +1,90 @@
+.container-fluid {
+    background-color: var(--neutral-black-color-darker);
+    color: var(--neutral-white-color-light);
+    padding: 2rem 1.5rem;
+    font-family: var(--primary-font);
+    border-top: 0.5rem solid var(--primary-color);
+  
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  
+    .footer-text {
+      font-size: 0.875rem;
+      color: var(--neutral-white-color-dark);
+      margin-bottom: 1rem;
+    }
+  
+    .usa-identifier__logo-img {
+      width: 120px;
+      margin-bottom: 1rem;
+    }
+  
+    .usa-identifier__identity-domain {
+      font-weight: bold;
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+      color: var(--neutral-white-color);
+    }
+  
+    .usa-identifier__identity-disclaimer {
+      font-size: 0.875rem;
+      color: var(--neutral-white-color-dark);
+      max-width: 700px;
+  
+      a {
+        color: var(--primary-color);
+        text-decoration: none;
+  
+        &:hover {
+          text-decoration: underline;
+          color: var(--primary-color-dark);
+        }
+      }
+    }
+  
+    .usa-identifier__required-links-list {
+      list-style: none;
+      padding: 0;
+      margin: 1.5rem 0 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+  
+      li {
+        a {
+          color: var(--neutral-white-color);
+          font-size: 0.875rem;
+          text-decoration: none;
+  
+          &:hover {
+            text-decoration: underline;
+            color: var(--primary-color-light-hover);
+          }
+        }
+      }
+    }
+  
+    .usa-identifier__container {
+      margin-top: 1rem;
+      font-size: 0.875rem;
+      color: var(--neutral-white-color-dark);
+      max-width: 700px;
+    }
+  
+    .usa-link {
+      display: inline-block;
+      margin-top: 1rem;
+      color: var(--primary-color);
+      font-weight: 500;
+      font-size: 0.875rem;
+  
+      &:hover {
+        color: var(--primary-color-dark);
+        text-decoration: underline;
+      }
+    }
+  }
+  

@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 
-import * as banner from 'node_modules/@uswds/uswds/packages/usa-banner/src/index.js';
+// import * as banner from 'node_modules/@uswds/uswds/packages/usa-banner/src/index.js';
 
 @Component({
   selector: 'app-banner',
@@ -27,7 +27,7 @@ export class BannerComponent implements AfterViewInit {
   }
 
   initBanner() {
-    banner.init(this.bannerPanelRef);
+    // banner.init(this.bannerPanelRef);
   }
 
   collpseBanner() {

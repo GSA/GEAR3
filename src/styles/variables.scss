@@ -1,95 +1,95 @@
 :root {
     /***** PRIMARY COLORS *****/
-    --primary-color-light: #e6eff6 !important;
-    --primary-color-light-hover: #d9e7f1 !important;
-    --primary-color-light-active: #b0cde2 !important;
+    --primary-color-light: #e6eff6;
+    --primary-color-light-hover: #d9e7f1;
+    --primary-color-light-active: #b0cde2;
 
-    --primary-color: #005ea2 !important;
-    --primary-color-hover: #005592 !important;
-    --primary-color-active: #00497F !important;
+    --primary-color: #005ea2;
+    --primary-color-hover: #005592;
+    --primary-color-active: #00497F;
 
-    --primary-color-dark: #00477a !important;
-    --primary-color-dark-hover: #003861 !important;
-    --primary-color-dark-active: #002a49 !important;
+    --primary-color-dark: #00477a;
+    --primary-color-dark-hover: #003861;
+    --primary-color-dark-active: #002a49;
 
-    --primary-color-darker: #002139 !important;
+    --primary-color-darker: #002139;
 
     /***** SECONDARY COLORS *****/
-    --secondary-color-light: #faf9f1 !important;
-    --secondary-color-light-hover: #f8f6ea !important;
-    --secondary-color-light-active: #f1ecd4 !important;
+    --secondary-color-light: #faf9f1;
+    --secondary-color-light-hover: #f8f6ea;
+    --secondary-color-light-active: #f1ecd4;
 
-    --secondary-color: #d1c173 !important;
-    --secondary-color-hover: #bcae68 !important;
-    --secondary-color-active: #a79a5c !important;
+    --secondary-color: #d1c173;
+    --secondary-color-hover: #bcae68;
+    --secondary-color-active: #a79a5c;
 
-    --secondary-color-dark: #9d9156 !important;
-    --secondary-color-dark-hover: #7d7445 !important;
-    --secondary-color-dark-active: #5e5734 !important;
+    --secondary-color-dark: #9d9156;
+    --secondary-color-dark-hover: #7d7445;
+    --secondary-color-dark-active: #5e5734;
 
-    --secondary-color-darker: #494428 !important;
+    --secondary-color-darker: #494428;
 
     /***** ALT ONE COLORS *****/
-    --alt-one-color-light: #fef1ed !important;
-    --alt-one-color-light-hover: #fdebe4 !important;
-    --alt-one-color-light-active: #fbd5c7 !important;
+    --alt-one-color-light: #fef1ed;
+    --alt-one-color-light-hover: #fdebe4;
+    --alt-one-color-light-active: #fbd5c7;
 
-    --alt-one-color: #f37749 !important;
-    --alt-one-color-hover: #db6b42 !important;
-    --alt-one-color-active: #c25f3a !important;
+    --alt-one-color: #f37749;
+    --alt-one-color-hover: #db6b42;
+    --alt-one-color-active: #c25f3a;
 
-    --alt-one-color-dark: #b65937 !important;
-    --alt-one-color-dark-hover: #92472c !important;
-    --alt-one-color-dark-active: #6d3621 !important;
+    --alt-one-color-dark: #b65937;
+    --alt-one-color-dark-hover: #92472c;
+    --alt-one-color-dark-active: #6d3621;
 
-    --alt-one-color-darker: #552a1a !important;
+    --alt-one-color-darker: #552a1a;
 
     /***** ALT TWO COLORS *****/
-    --alt-two-color-light: #f3f5ee !important;
-    --alt-two-color-light-hover: #edf0e6 !important;
-    --alt-two-color-light-active: #dbe0cb !important;
+    --alt-two-color-light: #f3f5ee;
+    --alt-two-color-light-hover: #edf0e6;
+    --alt-two-color-light-active: #dbe0cb;
 
-    --alt-two-color: #8a9a58 !important;
-    --alt-two-color-hover: #7c8b4f !important;
-    --alt-two-color-active: #6e7b46 !important;
+    --alt-two-color: #8a9a58;
+    --alt-two-color-hover: #7c8b4f;
+    --alt-two-color-active: #6e7b46;
 
-    --alt-two-color-dark: #687442 !important;
-    --alt-two-color-dark-hover: #535c35 !important;
-    --alt-two-color-dark-active: #3e4528 !important;
+    --alt-two-color-dark: #687442;
+    --alt-two-color-dark-hover: #535c35;
+    --alt-two-color-dark-active: #3e4528;
 
-    --alt-two-color-darker: #30361f !important;
+    --alt-two-color-darker: #30361f;
 
     /***** NEUTRAL BLACK COLORS *****/
-    --neutral-black-color-light: #e6e6e6 !important;
-    --neutral-black-color-light-hover: #d9d9d9 !important;
-    --neutral-black-color-light-active: #b0b0b0 !important;
+    --neutral-black-color-light: #e6e6e6;
+    --neutral-black-color-light-hover: #d9d9d9;
+    --neutral-black-color-light-active: #b0b0b0;
 
-    --neutral-black-color: #6D6D6D !important;
-    --neutral-black-color-hover: #474747 !important;
-    --neutral-black-color-active: #343434 !important;
+    --neutral-black-color: #6D6D6D;
+    --neutral-black-color-hover: #474747;
+    --neutral-black-color-active: #343434;
 
-    --neutral-black-color-dark: #352B2B !important;
-    --neutral-black-color-dark-hover: #2B2B2B !important;
-    --neutral-black-color-dark-active: #1B1B1B !important;
+    --neutral-black-color-dark: #352B2B;
+    --neutral-black-color-dark-hover: #2B2B2B;
+    --neutral-black-color-dark-active: #1B1B1B;
 
-    --neutral-black-color-darker: #000000 !important;
+    --neutral-black-color-darker: #000000;
 
     /***** NEUTRAL WHITE COLORS *****/
-    --neutral-white-color-light: #ffffff !important;
-    --neutral-white-color-light-hover: #ffffff !important;
-    --neutral-white-color-light-active: #ffffff !important;
+    --neutral-white-color-light: #ffffff;
+    --neutral-white-color-light-hover: #ffffff;
+    --neutral-white-color-light-active: #ffffff;
 
     --neutral-white-color: #ffffff;
-    --neutral-white-color-hover: #e6e6e6 !important;
-    --neutral-white-color-active: #cccccc !important;
+    --neutral-white-color-hover: #e6e6e6;
+    --neutral-white-color-active: #cccccc;
 
-    --neutral-white-color-dark: #bfbfbf !important;
-    --neutral-white-color-dark-hover: #999999 !important;
-    --neutral-white-color-dark-active: #737373 !important;
+    --neutral-white-color-dark: #bfbfbf;
+    --neutral-white-color-dark-hover: #999999;
+    --neutral-white-color-dark-active: #737373;
 
-    --neutral-white-color-darker: #595959 !important;
+    --neutral-white-color-darker: #595959;
 
     /***** FONTS *****/
-    --primary-font: Roboto, "Helvetica Neue", sans-serif !important;
-    --secondary-font: 'Source Sans Pro Web' !important;
+    --primary-font: Roboto, "Helvetica Neue", sans-serif;
+    --secondary-font: 'Source Sans Pro Web';
 }

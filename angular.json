@@ -19,17 +19,8 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "assets": [
-              "src/assets",
-              {
-                "glob": "*",
-                "input": "node_modules/@uswds/uswds/dist/fonts",
-                "output": "assets/fonts/"
-              },
-              {
-                "glob": "*",
-                "input": "node_modules/@uswds/uswds/dist/img",
-                "output": "assets/img/"
-              }
+              "src/assets"
+
             ],
             "styles": [
               "src/styles/styles.scss",
@@ -40,8 +31,8 @@
               "node_modules/bootstrap-icons/font/bootstrap-icons.css",
               "node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css",
               "node_modules/@ng-select/ng-select/themes/default.theme.css",
-              "node_modules/@uswds/uswds/dist/css/uswds.css",
-              "node_modules/primeng/resources/themes/lara-light-blue/theme.css",
+              
+             
               "node_modules/primeng/resources/primeng.min.css"
             ],
             "scripts": [
@@ -59,8 +50,8 @@
               "node_modules/tableexport.jquery.plugin/libs/html2canvas/html2canvas.min.js",
               "node_modules/tableexport.jquery.plugin/tableExport.min.js",
               "node_modules/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js",
-              "node_modules/bootstrap-table/dist/extensions/toolbar/bootstrap-table-toolbar.min.js",
-              "node_modules/@uswds/uswds/dist/js/uswds.js"
+              "node_modules/bootstrap-table/dist/extensions/toolbar/bootstrap-table-toolbar.min.js"
+             
             ],
             "vendorChunk": true,
             "extractLicenses": false,
