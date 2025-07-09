@@ -1,0 +1,41 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Angular Builid
+
+on:
+  push:
+    branches: [ "612-angular-19-upgrade_2" ]
+  pull_request:
+    branches: [ "612-angular-19-upgrade_2" ]
+
+jobs:
+  angular:
+    name: Angular Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    steps:
+      # {2}
+      - name: Checkout the source code
+        uses: actions/checkout@v3
+
+      # {3}
+      - name: Setup Node.js $
+        uses: actions/setup-node@v3
+        with:
+          node-version: $
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      # {4}
+      - name: Install dependencies
+        run: npm install
+      # {5}
+      #- name: Run tests
+      #  run: npm run test:ci
+      # {6}
+      - name: Build
+        run: npm run-script build-dev
