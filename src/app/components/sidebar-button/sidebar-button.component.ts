@@ -35,7 +35,7 @@ export class SidebarButtonComponent implements OnChanges {
     public onButtonClick(): void {
         if (this.hasChildren()) {
             // no toggle here anymore — parent handles it
-          } else if (this.buttonRoute) {
+          } else if (this.buttonRoute && this.router.url !== this.buttonRoute) {
             this.router.navigate([this.buttonRoute]);
           }
         
