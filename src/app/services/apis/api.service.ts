@@ -678,7 +678,7 @@ export class ApiService {
         httpOptions
       );
   }
-  public createITStandard(data: any, manufactuerToAdd: string, productToAdd: string, versionToAdd: string, releaseToAdd: string): Observable<ITStandards[]> {
+  public createITStandard(data: any): Observable<ITStandards[]> {
     if (this.globals.jwtToken) {
       var httpOptions = this.setHeaderOpts();
     } else {
@@ -690,13 +690,23 @@ export class ApiService {
       );
     }
 
-    data.manufacturerToAdd = manufactuerToAdd;
-    data.productToAdd = productToAdd;
-    data.versionToAdd = versionToAdd;
-    data.releaseToAdd = releaseToAdd;
-
     return this.http
       .post<ITStandards[]>(this.techUrl + '/create', data, httpOptions);
+  }
+
+  public createITStandardAdvanced(id: any, formData: any): Observable<ITStandards[]> {
+    if (this.globals.jwtToken) {
+      var httpOptions = this.setHeaderOpts();
+    } else {
+      catchError(
+        this.handleError<ITStandards[]>(
+          'CREATE Advanced Standard - No Authentication Token',
+          []
+        )
+      );
+    }
+
+    return this.http.post<ITStandards[]>(this.techUrl + '/create_advanced/' + String(id), formData, httpOptions);
   }
 
   //// Websites

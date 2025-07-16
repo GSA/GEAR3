@@ -28,7 +28,6 @@ exports.findAllNoFilter = (req, res) => {
 exports.findOne = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
     ` WHERE tech.Id = ${req.params.id};`;
-
   res = ctrl.sendQuery(query, 'individual IT Standard', res); //removed sendQuery_cowboy reference
 };
 
@@ -51,257 +50,58 @@ exports.findSystems = (req, res) => {
 };
 
 exports.update = (req, res) => {
-  //console.log('it-standard update starting...');
-
   ctrl.getApiToken (req, res)
   .then((response) => {
-    //console.log('*** API Security Testing - getApiToken response: ', response); //DEBUGGING
-
     if (response === 1) {
-      //console.log('*** API Security Testing - API Auth Validation: PASSED'); //DEBUGGING
+      let techId = req.params.id;
+      let data = req.body;
+      let query = '';
+      
+      // Update base data
+      query += updateData(techId, data);
 
-      //if (req.headers.authorization)
-      //console.log('it-standard update authorized...');
-      var data = req.body;  
-      // Create string to update IT Standards Categories
-      var catString = '';
-      if (data.itStandCategory) {
-        // Delete any references first
-        catString += `DELETE FROM zk_technology_standard_category WHERE obj_technology_Id=${req.params.id}; `;
+      // Update Technopedia Fields
+      query += saveCustomManufacturer(techId, data.tcManufacturer);
+      query += saveCustomSoftwareProduct(techId, data.tcSoftwareProduct);
+      query += saveCustomSoftwareVersion(techId, data.tcSoftwareVersion);
+      query += saveCustomSoftwareRelease(techId, data.tcSoftwareRelease);
 
-        // Insert new IDs
-        data.itStandCategory.forEach(catID => {
-          catString += `INSERT INTO zk_technology_standard_category (obj_standard_category_Id, obj_technology_Id) VALUES (${catID}, ${req.params.id}); `;
-        });
-      };
-
-      // Create string to update IT Standards POCs
-      var pocString = '';
-      if (data.itStandPOC) {
-        // Delete any references first
-        pocString += `DELETE FROM zk_technology_poc WHERE obj_technology_Id=${req.params.id}; `;
-
-        // Insert new IDs
-        data.itStandPOC.forEach(pocSamName => {
-          pocString += `INSERT INTO zk_technology_poc (obj_technology_Id, obj_ldap_SamAccountName) VALUES (${req.params.id}, '\"${pocSamName}\"'); `;
-        });
-      };
-
-      // Create string to update IT Standards Operating Systems
-      var osString = '';
-      var osToDelete = [];
-      var osToAdd = [];
-      if(data.itStandOperatingSystems && data.itStandOperatingSystems.length > 0) {
-        for(const osId of data.itStandOperatingSystems) {
-          if(!data.initialOS || (data.initialOS && data.initialOS.length === 0)) {
-            osToAdd.push(osId);
-          } else {
-            if(!data.initialOS.includes(osId)) {
-              osToAdd.push(osId);
-            }
-          }
-        }
-      }
-      if(data.initialOS && data.initialOS.length > 0) {
-        for(const osId of data.initialOS) {
-          if(!data.itStandOperatingSystems || (data.itStandOperatingSystems && data.itStandOperatingSystems.length === 0)) {
-            osToDelete.push(osId);
-          } else {
-            if(!data.itStandOperatingSystems.includes(osId)) {
-              osToDelete.push(osId);
-            }
-          }
-        }
-      }
-
-      if(osToDelete.length > 0) {
-        osToDelete.forEach(o => {
-          osString += `DELETE FROM zk_technology_operating_system WHERE obj_technology_Id=${req.params.id} AND obj_operating_system_Id=${o}; `;
+      // Update POCs
+      query += removeSavedPOCs(techId);
+      if(data.itStandPOC && data.itStandPOC.length > 0) {
+        data.itStandPOC.forEach(p => {
+          query += savePOCs(techId, p);
         });
       }
-
-      if(osToAdd.length > 0) {
-        osToAdd.forEach(o => {
-          osString += `INSERT INTO zk_technology_operating_system (obj_operating_system_Id, obj_technology_Id) VALUES (${o}, ${req.params.id}); `;
-        });
-      }
-
-      // Create string to update IT Standards App Bundles
-      var appBundleString = '';
-      var appBundleToDelete = [];
-      var appBundleToAdd = [];
+      
+      // Update App Bundles
+      query += removeSavedAppBundles(techId);
       if(data.itStandMobileAppBundles && data.itStandMobileAppBundles.length > 0) {
-        for(const appId of data.itStandMobileAppBundles) {
-          if(!data.initialAppBundles || (data.initialAppBundles && data.initialAppBundles.length === 0)) {
-            appBundleToAdd.push(appId);
-          } else { 
-            if(!data.initialAppBundles.find(({Name}) => Name === appId.Name)) {
-              appBundleToAdd.push(appId);
-            }
-          }
-        }
-      }
-      if(data.initialAppBundles && data.initialAppBundles.length > 0) {
-        for(const appId of data.initialAppBundles) {
-          if(!data.itStandMobileAppBundles || (data.itStandMobileAppBundles && data.itStandMobileAppBundles.length === 0)) {
-            appBundleToDelete.push(appId);
-          } else {
-            if(!data.itStandMobileAppBundles.find(({Name}) => Name === appId.Name)) {
-              appBundleToDelete.push(appId);
-            }
-          }
-        }
-      }
-
-      // Delete from app bundle table and match table
-      if(appBundleToDelete && appBundleToDelete.length > 0) {
-        appBundleToDelete.forEach(a => {
-          appBundleString += `DELETE FROM zk_technology_app_bundle WHERE obj_technology_Id=${req.params.id} AND obj_technology_app_bundle_Id=${a.ID}; `;
-          appBundleString += `DELETE FROM obj_technology_app_bundle WHERE Id=${a.ID}; `;
+        data.itStandMobileAppBundles.forEach(a => {
+          query += saveAppBundles(techId, a);
         });
       }
 
-      // Add to app bundle table and the match table
-      if(appBundleToAdd && appBundleToAdd.length > 0) {
-        appBundleToAdd.forEach(a => {
-          appBundleString += `INSERT INTO obj_technology_app_bundle (Keyname) VALUES ('${a.Name}'); `;
-          appBundleString += `INSERT INTO zk_technology_app_bundle (obj_technology_app_bundle_Id, obj_technology_Id) VALUES (LAST_INSERT_ID(), ${req.params.id}); `;
+      // Update OSs
+      query += removeSavedOS(techId);
+      if(data.itStandOperatingSystems && data.itStandOperatingSystems.length > 0) {
+        data.itStandOperatingSystems.forEach(o => {
+          query += saveOS(techId, o);
         });
       }
 
-      // Null any empty text fields
-      data.itStandDesc = ctrl.setNullEmptyTextHandler(data.itStandDesc);
-      data.itStandAprvExp = ctrl.setNullEmptyTextHandler(data.itStandAprvExp);
-      data.itStandRefDocs = ctrl.setNullEmptyTextHandler(data.itStandRefDocs);
-      data.itStandApprovedVersions = ctrl.setNullEmptyTextHandler(data.itStandApprovedVersions);
-
-      data.tcManufacturer = ctrl.setNullEmptyTextHandler(data.tcManufacturer);
-      data.tcSoftwareProduct = ctrl.setNullEmptyTextHandler(data.tcSoftwareProduct);
-      data.tcSoftwareVersion = ctrl.setNullEmptyTextHandler(data.tcSoftwareVersion);
-      data.tcSoftwareRelease = ctrl.setNullEmptyTextHandler(data.tcSoftwareRelease);
-      data.tcManufacturerName = ctrl.setNullEmptyTextHandler(data.tcManufacturerName);
-      data.tcSoftwareProductName = ctrl.setNullEmptyTextHandler(data.tcSoftwareProductName);
-      data.tcSoftwareVersionName = ctrl.setNullEmptyTextHandler(data.tcSoftwareVersionName);
-      data.tcSoftwareReleaseName = ctrl.setNullEmptyTextHandler(data.tcSoftwareReleaseName);
-      data.tcEndOfLifeDate = ctrl.setNullEmptyTextHandler(data.tcEndOfLifeDate);
-
-      data.itStandRITM = ctrl.setNullEmptyTextHandler(data.itStandRITM);
-
-      if(data.itStandMyView === null || data.itStandMyView === true) {
-        data.itStandMyView = 'T';
-      } else {
-        data.itStandMyView = 'F';
-      }
-      if(data.itStandGoldImg === null || data.itStandGoldImg === true) {
-        data.itStandGoldImg = 'T';
-      } else {
-        data.itStandGoldImg = 'F';
-      }
-      if(data.itStandFedramp === null || data.itStandFedramp === true) {
-        data.itStandFedramp = 'T';
-      } else {
-        data.itStandFedramp = 'F';
-      }
-      if(data.itStandOpenSource === null || data.itStandOpenSource === true) {
-        data.itStandOpenSource = 'T';
-      } else {
-        data.itStandOpenSource = 'F';
+      // Update Categories
+      query += removeSavedCategories(techId);
+      if(data.itStandCategory && data.itStandCategory.length > 0) {
+        data.itStandCategory.forEach(c => {
+          query += saveCategories(techId, c);
+        });
       }
 
-      let keyname = '';
-      if (!data.tcSoftwareReleaseName || data.tcSoftwareReleaseName === 'NULL' || data.tcSoftwareReleaseName === 'null') {
-        if(!data.itStandName) {
-          res.status(500).json({
-            message: "IT Standards name missing from API payload."
-          });
-          return;
-        } else {
-          keyname = `"${data.itStandName}"`;
-        }
-      } else {
-        keyname = data.tcSoftwareReleaseName;
-      }
-
-      const endOfLifeDateFragment = getEolFragment(data.tcEndOfLifeDate);
-
-      var date = new Date().toISOString().slice(0, 19).replace('T', ' ');
-      var customManuQuery = '';
-      if(data.manufacturerToAdd) {
-        customManuQuery = `INSERT INTO obj_manufacturer
-        (id, name, createdDate)
-        VALUES ('${Guid.create().toString()}', '${data.manufacturerToAdd}', '${date}');`;
-      }
-      var customProductQuery = '';
-      if(data.productToAdd) {
-        customProductQuery = `INSERT INTO obj_software_product
-        (id, name, createdDate)
-        VALUES ('${Guid.create().toString()}', '${data.productToAdd}', '${date}');`;
-      }
-      var customVersionQuery = '';
-      if(data.versionToAdd) {
-        customVersionQuery = `INSERT INTO obj_software_version
-        (id, name, createdDate)
-        VALUES ('${Guid.create().toString()}', '${data.versionToAdd}', '${date}');`;
-      }
-      var customReleaseQuery = '';
-      if(data.releaseToAdd) {
-        customReleaseQuery = `INSERT INTO obj_software_release
-        (id, name, createdDate)
-        VALUES ('${Guid.create().toString()}', '${data.releaseToAdd}', '${date}');`;
-      }
-
-      var query = `SET FOREIGN_KEY_CHECKS=0;
-        UPDATE obj_technology
-        SET
-          Keyname                         = ${keyname},
-          obj_technology_status_Id        = ${data.itStandStatus},
-          Description                     = '${data.itStandDesc}',
-          obj_standard_type_Id            = ${data.itStandType},
-          obj_508_compliance_status_Id    = ${data.itStand508},
-          Available_through_Myview        = "${data.itStandMyView}",
-          Vendor_Standard_Organization    = "${data.itStandVendorOrg}",
-          obj_deployment_type_Id          = ${data.itStandDeployment},
-          Gold_Image                      = "${data.itStandGoldImg}",
-          attestation_required            = ${data.itStandReqAtte},
-          fedramp                         = "${data.itStandFedramp}",
-          open_source                     = "${data.itStandOpenSource}",
-          RITM                            = ${data.itStandRITM},
-          Gold_Image_Comment              = "${data.itStandGoldComment}",
-          attestation_link                = "${data.itStandAtteLink}",
-          Approved_Status_Expiration_Date = ${data.itStandAprvExp},
-          Comments                        = "${data.itStandComments}",
-          Reference_documents             = ${data.itStandRefDocs},
-          ChangeAudit                     = "${data.auditUser}",
-          ChangeDTG                       = NOW(),
-          manufacturer                    = ${data.tcManufacturer},
-          softwareProduct                 = ${data.tcSoftwareProduct},
-          softwareVersion                 = ${data.tcSoftwareVersion},
-          softwareRelease                 = ${data.tcSoftwareRelease},
-          manufacturerName                = ${data.tcManufacturerName},
-          softwareProductName             = ${data.tcSoftwareProductName},
-          softwareVersionName             = ${data.tcSoftwareVersionName},
-          softwareReleaseName             = ${data.tcSoftwareReleaseName},
-          endOfLifeDate                   = ${endOfLifeDateFragment},
-          approvedVersions                = ${data.itStandApprovedVersions}
-        WHERE Id = ${req.params.id};
-        SET FOREIGN_KEY_CHECKS=1;
-        ${catString}
-        ${pocString}
-        ${osString}
-        ${appBundleString}
-        ${customManuQuery}
-        ${customProductQuery}
-        ${customVersionQuery}
-        ${customReleaseQuery}`;
-
-        console.log('TEST THIS', query);
-
-      var logStatement = `insert into gear_log.event (Event, User, DTG) values ('update IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
-      res = ctrl.sendQuery(query + ' ' + logStatement, 'update IT Standard', res); //removed sendQuery_cowboy reference
+      // var logStatement = `insert into gear_log.event (Event, User, DTG) values ('update IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
+      // res = ctrl.sendQuery(query + ' ' + logStatement, 'update IT Standard', res); //removed sendQuery_cowboy reference
+      res = ctrl.sendQuery(query, 'update IT Standard', res);
     } else {
-      //console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
-
-      //console.log('it-standard update no valid token!!!!');
       res.status(502).json({
         message: "No authorization token present. Not allowed to update IT-Standards"
       });
@@ -313,126 +113,72 @@ exports.create = (req, res) => {
   // api GEAR Manager authorization
   ctrl.getApiToken (req, res)
   .then((response) => {
-    //console.log('*** API Security Testing - getApiToken response: ', response); //DEBUGGING
-
     if (response === 1) {
-      //console.log('*** API Security Testing - API Auth Validation: PASSED'); //DEBUGGING
-      //if (req.headers.authorization) {
-      var data = req.body;
-      // Null any empty text fields
-      data.itStandDesc = ctrl.setNullEmptyTextHandler(data.itStandDesc);
-      data.itStandAprvExp = ctrl.setNullEmptyTextHandler(data.itStandAprvExp);
-      data.itStandRefDocs = ctrl.setNullEmptyTextHandler(data.itStandRefDocs);
-      data.itStandApprovedVersions = ctrl.setNullEmptyTextHandler(data.itStandApprovedVersions);
+      let data = req.body;
+      let query = '';
+      
+      query = saveData(data);
 
-      data.tcManufacturer = ctrl.setNullEmptyTextHandler(data.tcManufacturer);
-      data.tcSoftwareProduct = ctrl.setNullEmptyTextHandler(data.tcSoftwareProduct);
-      data.tcSoftwareVersion = ctrl.setNullEmptyTextHandler(data.tcSoftwareVersion);
-      data.tcSoftwareRelease = ctrl.setNullEmptyTextHandler(data.tcSoftwareRelease);
-      data.tcManufacturerName = ctrl.setNullEmptyTextHandler(data.tcManufacturerName);
-      data.tcSoftwareProductName = ctrl.setNullEmptyTextHandler(data.tcSoftwareProductName);
-      data.tcSoftwareVersionName = ctrl.setNullEmptyTextHandler(data.tcSoftwareVersionName);
-      data.tcSoftwareReleaseName = ctrl.setNullEmptyTextHandler(data.tcSoftwareReleaseName);
-      data.tcEndOfLifeDate = ctrl.setNullEmptyTextHandler(data.tcEndOfLifeDate);
+      // var logStatement = `insert into gear_log.event (Event, User, DTG) values ('create IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
+      // res = ctrl.sendQuery(query + ' ' + logStatement, 'create IT Standard', res); //removed sendQuery_cowboy reference
+      res = ctrl.sendQuery(query, 'create IT Standard', res);
+    } else {
+      res.status(502).json({
+        message: "No authorization token present. Not allowed to create IT Standard"
+      });
+    };
+  }); //end getApiToken
+};
 
-      data.itStandRITM = ctrl.setNullEmptyTextHandler(data.itStandRITM);
+exports.createAdvanced = (req, res) => {
+  ctrl.getApiToken (req, res)
+  .then((response) => {
+    if (response === 1) {
+      let data = req.body;
+      let techId = req.params.id;
+      let query = '';
 
-      if(data.itStandMyView === null) {
-        data.itStandMyView = 'T';
-      }
-      if(data.itStandGoldImg === null) {
-        data.itStandGoldImg = 'T';
-      }
-      if(data.itStandFedramp === null) {
-        data.itStandFedramp = 'T';
-      }
-      if(data.itStandOpenSource === null) {
-        data.itStandOpenSource = 'T';
-      }
+      // Update Technopedia Fields
+      query += saveCustomManufacturer(techId, data.tcManufacturer);
+      query += saveCustomSoftwareProduct(techId, data.tcSoftwareProduct);
+      query += saveCustomSoftwareVersion(techId, data.tcSoftwareVersion);
+      query += saveCustomSoftwareRelease(techId, data.tcSoftwareRelease);
 
-      let keyname = '';
-      if (!data.tcSoftwareReleaseName || data.tcSoftwareReleaseName === 'NULL' || data.tcSoftwareReleaseName === 'null') {
-        if(!data.itStandName) {
-          res.status(500).json({
-            message: "IT Standards name missing from API payload."
-          });
-          return;
-        } else {
-          keyname = `"${data.itStandName}"`;
-        }
-      } else {
-        keyname = data.tcSoftwareReleaseName;
+      // Update POCs
+      query += removeSavedPOCs(techId);
+      if(data.itStandPOC && data.itStandPOC.length > 0) {
+        data.itStandPOC.forEach(p => {
+          query += savePOCs(techId, p);
+        });
+      }
+      
+      // Update App Bundles
+      query += removeSavedAppBundles(techId);
+      if(data.itStandMobileAppBundles && data.itStandMobileAppBundles.length > 0) {
+        data.itStandMobileAppBundles.forEach(a => {
+          query += saveAppBundles(techId, a);
+        });
       }
 
-      const endOfLifeDateFragment = getEolFragment(data.tcEndOfLifeDate);
+      // Update OSs
+      query += removeSavedOS(techId);
+      if(data.itStandOperatingSystems && data.itStandOperatingSystems.length > 0) {
+        data.itStandOperatingSystems.forEach(o => {
+          query += saveOS(techId, o);
+        });
+      }
 
-      var query = `INSERT INTO obj_technology(
-        Keyname,
-        Description,
-        Approved_Status_Expiration_Date,
-        Vendor_Standard_Organization,
-        Available_through_Myview,
-        Gold_Image,
-        attestation_required,
-        fedramp,
-        open_source,
-        RITM,
-        Gold_Image_Comment,
-        attestation_link,
-        Comments,
-        obj_technology_status_Id,
-        obj_deployment_type_Id,
-        obj_standard_type_Id,
-        obj_508_compliance_status_Id,
-        Reference_documents,
-        CreateAudit,
-        ChangeAudit,
-        manufacturer,
-        softwareProduct,
-        softwareVersion,
-        softwareRelease,
-        manufacturerName,
-        softwareProductName,
-        softwareVersionName,
-        softwareReleaseName,
-        endOfLifeDate,
-        approvedVersions) VALUES (
-        ${keyname},
-        ${data.itStandDesc},
-        ${data.itStandAprvExp},
-        "${data.itStandVendorOrg}",
-        "${data.itStandMyView}",
-        "${data.itStandGoldImg}",
-        ${data.itStandReqAtte},
-        "${data.itStandFedramp}",
-        "${data.itStandOpenSource}",
-        ${data.itStandRITM},
-        "${data.itStandGoldComment}",
-        "${data.itStandAtteLink}",
-        "${data.itStandComments}",
-        ${data.itStandStatus},
-        ${data.itStandDeployment},
-        ${data.itStandType},
-        ${data.itStand508},
-        ${data.itStandRefDocs},
-        "${data.auditUser}",
-        "${data.auditUser}",
-        ${data.tcManufacturer},
-        ${data.tcSoftwareProduct},
-        ${data.tcSoftwareVersion},
-        ${data.tcSoftwareRelease},
-        ${data.tcManufacturerName},
-        ${data.tcSoftwareProductName},
-        ${data.tcSoftwareVersionName},
-        ${data.tcSoftwareReleaseName},
-        ${endOfLifeDateFragment},
-        ${data.itStandApprovedVersions});`;
+      // Update Categories
+      query += removeSavedCategories(techId);
+      if(data.itStandCategory && data.itStandCategory.length > 0) {
+        data.itStandCategory.forEach(c => {
+          query += saveCategories(techId, c);
+        });
+      }
 
       var logStatement = `insert into gear_log.event (Event, User, DTG) values ('create IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
       res = ctrl.sendQuery(query + ' ' + logStatement, 'create IT Standard', res); //removed sendQuery_cowboy reference
     } else {
-      //console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
-
       res.status(502).json({
         message: "No authorization token present. Not allowed to create IT Standard"
       });
@@ -505,154 +251,292 @@ exports.getAppBundles = (req, res) => {
   res = ctrl.sendQuery(query, 'App Bundles', res);
 }
 
-exports.updateITStandardWithCustomTechFields = (req, res) => {
-  var itStandId = req.params.id;
-  var data = req.body;
+// Remove and Save Categories
+function removeSavedCategories(techId) {
+  return `DELETE FROM zk_technology_standard_category WHERE obj_technology_Id=${techId};`;
+}
+function saveCategories(techId, categoryId) {
+  return `INSERT INTO zk_technology_standard_category (obj_standard_category_Id, obj_technology_Id) VALUES (${categoryId}, ${techId});`;
+}
 
-  console.log('DATA TEST HERE', data);
+// Remove and Save POCs
+function removeSavedPOCs(techId) {
+  return `DELETE FROM zk_technology_poc WHERE obj_technology_Id=${techId};`;
+}
+function savePOCs(techId, pocName) {
+  return `INSERT INTO zk_technology_poc (obj_technology_Id, obj_ldap_SamAccountName) VALUES (${techId}, '${pocName}');`;
+}
 
-  let manuQuery = '';
-  if(data.manufactuerToAdd) {
-    manuQuery = `
-      UPDATE 
-        obj_technology AS tech,
-        (SELECT id, name FROM obj_manufacturer ORDER BY createdDate DESC LIMIT 1) AS manufac
-      SET
-        tech.manufacturer = manufac.id,
-        tech.manufacturerName = manufac.name
-      WHERE
-        tech.Id = ${itStandId};
-    `;
-  }
+// Remove and Save OS
+function removeSavedOS(techId) {
+  return `DELETE FROM zk_technology_operating_system WHERE obj_technology_Id=${techId}; `;
+}
+function saveOS(techId, osId) {
+  return `INSERT INTO zk_technology_operating_system (obj_operating_system_Id, obj_technology_Id) VALUES (${osId}, ${techId});`;
+}
 
-  let prodQuery = '';
-  let prodQuerySelf = '';
-  if(data.productToAdd) {
-    prodQuery = `
-      UPDATE 
-        obj_technology AS tech,
-        (SELECT id, name FROM obj_software_product ORDER BY createdDate DESC LIMIT 1) AS product
-      SET
-        tech.softwareProduct = product.id,
-        tech.softwareProductName = product.name
-      WHERE
-        tech.Id = ${itStandId};
-    `;
-    if(data.manufactuerToAdd) {
-      prodQuerySelf = `
-      UPDATE
-        obj_software_product AS product,
-        (SELECT id FROM obj_manufacturer ORDER BY createdDate DESC LIMIT 1) AS manufac,
-        (SELECT id FROM obj_software_product ORDER BY createdDate DESC LIMIT 1) AS prod
-      SET
-        product.manufacturer_id = manufac.id
-      WHERE
-        product.id = prod.id;
-    `;
-    } else {
-      prodQuerySelf = `
-      UPDATE
-        obj_software_product AS product,
-        (SELECT id FROM obj_software_product ORDER BY createdDate DESC LIMIT 1) AS prod
-      SET
-        product.manufacturer_id = '${data.manufacturerId}'
-      WHERE
-        product.id = prod.id;
-    `;
-    }
+// Remove and Save App Bundles
+function removeSavedAppBundles(techId) {
+  let deletionString = '';
+  deletionString += `DELETE FROM zk_technology_app_bundle WHERE obj_technology_Id=${techId};`;
+  deletionString += `DELETE FROM obj_technology_app_bundle WHERE Id=${techId};`;
+  return deletionString;
+}
+function saveAppBundles(techId, appBundle) {
+  let saveString = '';
+  saveString += `INSERT INTO obj_technology_app_bundle (Keyname) VALUES ('${appBundle.Name}'); `;
+  saveString += `INSERT INTO zk_technology_app_bundle (obj_technology_app_bundle_Id, obj_technology_Id) VALUES (LAST_INSERT_ID(), ${techId}); `;
+  return saveString;
+}
 
-  }
+function saveCustomManufacturer(techId, manufacturer) {
+  // let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  let queryString = '';
 
-  let versQuery = '';
-  let versQuerySelf = '';
-  if(data.versionToAdd) {
-    versQuery = `
-      UPDATE 
-        obj_technology AS tech,
-        (SELECT id, name FROM obj_software_version ORDER BY createdDate DESC LIMIT 1) AS version
-      SET
-        tech.softwareVersion = version.id,
-        tech.softwareVersionName = version.name
-      WHERE
-        tech.Id = ${itStandId};
-    `;
-    if(data.productToAdd) {
-      versQuerySelf = `
-      UPDATE
-        obj_software_version AS version,
-        (SELECT id FROM obj_software_product ORDER BY createdDate DESC LIMIT 1) AS product,
-        (SELECT id FROM obj_software_version ORDER BY createdDate DESC LIMIT 1) AS vers
-      SET
-        version.software_product_id = product.id
-      WHERE
-        version.id = vers.id;
-    `;
-    } else {
-      versQuerySelf = `
-      UPDATE
-        obj_software_version AS version,
-        (SELECT id FROM obj_software_version ORDER BY createdDate DESC LIMIT 1) AS vers
-      SET
-        version.software_product_id = '${data.softwareProductId}'
-      WHERE
-        version.id = vers.id;
-    `;
-    }
-
-  }
-
-  let releaseQuery = '';
-  let releaseQuerySelf = '';
-  console.log('RELEASE TO ADD', data.releaseToAdd);
-  if(data.releaseToAdd) {
-    releaseQuery = `
-      UPDATE
-        obj_technology AS tech,
-        (SELECT id, name FROM obj_software_release ORDER BY createdDate DESC LIMIT 1) AS rel
-      SET
-        tech.softwareRelease = rel.id,
-        tech.softwareReleaseName = rel.name
-      WHERE
-        tech.Id = ${itStandId};
-    `;
-  }
-  if(data.versionToAdd) {
-    releaseQuerySelf = `
-      UPDATE
-        obj_software_release AS rel,
-        (SELECT id FROM obj_software_version ORDER BY createdDate DESC LIMIT 1) AS version,
-        (SELECT id FROM obj_software_release ORDER BY createdDate DESC LIMIT 1) AS rels
-      SET
-        rel.software_version_id = version.id
-      WHERE
-        rel.id = rels.id;
-    `;
+  if(manufacturer.id) {
+    queryString = `UPDATE 
+                    obj_technology
+                  SET
+                    manufacturer = '${manufacturer.id}',
+                    manufacturerName = '${manufacturer.name}'
+                  WHERE
+                    Id = ${techId};`;
   } else {
-    releaseQuerySelf = `
-      UPDATE
-        obj_software_release AS rel,
-        (SELECT id FROM obj_software_release ORDER BY createdDate DESC LIMIT 1) AS rels
-      SET
-        rel.software_version_id = '${data.softwareReleaseId}'
-      WHERE
-        rel.id = rels.id;
-    `;
+    let guid = Guid.create().toString();
+    queryString += `INSERT INTO obj_manufacturer
+                      (id, name, createdDate)
+                    VALUES ('${guid}', '${manufacturer.name}', NOW());`;
+    queryString += `UPDATE 
+                      obj_technology
+                    SET
+                      manufacturer = '${guid}',
+                      manufacturerName = '${manufacturer.name}'
+                    WHERE
+                      Id = ${techId};`;
   }
 
-  var query = `
-    SET FOREIGN_KEY_CHECKS=0;
-    ${manuQuery}
-    ${prodQuery}
-    ${prodQuerySelf}
-    ${versQuery}
-    ${versQuerySelf}
-    ${releaseQuery}
-    ${releaseQuerySelf}
-    SET FOREIGN_KEY_CHECKS=1;
-  `;
+  return queryString;
+}
+function saveCustomSoftwareProduct(techId, softwareProduct) {
+  // let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  let queryString = '';
 
-  console.log(query);
-  var logStatement = `insert into gear_log.event (Event, User, DTG) values ('Update technologies: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
-     
-  res = ctrl.sendQuery(query + ' ' + logStatement, 'Update Tech Fields', res);
-};
+  if(softwareProduct.id) {
+    queryString = `UPDATE 
+                    obj_technology
+                  SET
+                    softwareProduct = '${softwareProduct.id}',
+                    softwareProductName = '${softwareProduct.name}'
+                  WHERE
+                    Id = ${techId};`;
+  } else {
+    let guid = Guid.create().toString();
+    queryString += `INSERT INTO obj_software_product
+                      (id, name, createdDate)
+                    VALUES ('${guid}', '${softwareProduct.name}', NOW());`;
+    queryString += `UPDATE 
+                      obj_technology
+                    SET
+                      softwareProduct = '${guid}',
+                      softwareProductName = '${softwareProduct.name}'
+                    WHERE
+                      Id = ${techId};`;
+  }
+
+  return queryString;
+}
+function saveCustomSoftwareVersion(techId, softwareVersion) {
+  // let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  let queryString = '';
+
+  if(softwareVersion.id) {
+    queryString = `UPDATE 
+                    obj_technology
+                  SET
+                    softwareVersion = '${softwareVersion.id}',
+                    softwareVersionName = '${softwareVersion.name}'
+                  WHERE
+                    Id = ${techId};`;
+  } else {
+    let guid = Guid.create().toString();
+    queryString += `INSERT INTO obj_software_version
+                      (id, name, createdDate)
+                    VALUES ('${guid}', '${softwareVersion.name}', NOW());`;
+    queryString += `UPDATE 
+                      obj_technology
+                    SET
+                      softwareVersion = '${guid}',
+                      softwareVersionName = '${softwareVersion.name}'
+                    WHERE
+                      Id = ${techId};`;
+  }
+
+  return queryString;
+}
+function saveCustomSoftwareRelease(techId, softwareRelease) {
+  // let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  let queryString = '';
+
+  if(softwareRelease && softwareRelease.id) {
+    queryString = `UPDATE 
+                    obj_technology
+                  SET
+                    softwareRelease = '${softwareRelease.id}',
+                    softwareReleaseName = '${softwareRelease.application}'
+                  WHERE
+                    Id = ${techId};`;
+  } else if(softwareRelease && !softwareRelease.id) {
+    let guid = Guid.create().toString();
+    queryString += `INSERT INTO obj_software_release
+                      (id, name, createdDate)
+                    VALUES ('${guid}', '${softwareRelease.name}', NOW());`;
+    queryString += `UPDATE 
+                      obj_technology
+                    SET
+                      softwareRelease = '${guid}',
+                      softwareReleaseName = '${softwareRelease.name}'
+                    WHERE
+                      Id = ${techId};`;
+  }
+
+  return queryString;
+}
+
+function generateKeyname(data) {
+  let keyname = '';
+  if (!data.tcSoftwareReleaseName || data.tcSoftwareReleaseName === 'NULL' || data.tcSoftwareReleaseName === 'null') {
+    if(!data.itStandName) {
+      res.status(500).json({
+        message: "IT Standards name missing from API payload."
+      });
+      return;
+    } else {
+      keyname = data.itStandName;
+    }
+  } else {
+    keyname = data.tcSoftwareReleaseName;
+  }
+  return keyname;
+}
+
+function normalizeFormBooleanValues(booleanValue) {
+  if(booleanValue && booleanValue === true) {
+    return 'T';
+  } else {
+    return 'F';
+  }
+}
+
+function updateData(techId, data) {
+  const endOfLifeDateFragment = getEolFragment(data.tcEndOfLifeDate);
+  const keyname = generateKeyname(data);
+
+  data.itStandMyView = normalizeFormBooleanValues(data.itStandMyView);
+  data.itStandFedramp = normalizeFormBooleanValues(data.itStandFedramp);
+  data.itStandOpenSource = normalizeFormBooleanValues(data.itStandOpenSource);
+  data.itStandGoldImg = normalizeFormBooleanValues(data.itStandGoldImg);
+  data.itStandReqAtte = normalizeFormBooleanValues(data.itStandReqAtte);
+
+  data.itStandDesc = ctrl.setNullEmptyTextHandler(data.itStandDesc);
+  data.itStandAprvExp = ctrl.setNullEmptyTextHandler(data.itStandAprvExp);
+  data.itStandRefDocs = ctrl.setNullEmptyTextHandler(data.itStandRefDocs);
+  data.itStandApprovedVersions = ctrl.setNullEmptyTextHandler(data.itStandApprovedVersions);
+  data.itStandVendorOrg = ctrl.setNullEmptyTextHandler(data.itStandVendorOrg);
+  data.itStandAtteLink = ctrl.setNullEmptyTextHandler(data.itStandAtteLink);
+  data.itStandGoldComment = ctrl.setNullEmptyTextHandler(data.itStandGoldComment);
+  data.itStandRITM = ctrl.setNullEmptyTextHandler(data.itStandRITM);
+  data.itStandComments = ctrl.setNullEmptyTextHandler(data.itStandComments);
+
+  data.tcEndOfLifeDate = ctrl.setNullEmptyTextHandler(data.tcEndOfLifeDate);
+
+  return `UPDATE obj_technology
+          SET
+            obj_technology_status_Id          = ${data.itStandStatus},
+            Keyname                           = '${keyname}',
+            approvedVersions                  = ${data.itStandApprovedVersions},
+            Description                       = ${data.itStandDesc},
+            obj_standard_type_Id              = ${data.itStandType},
+            obj_508_compliance_status_Id      = ${data.itStand508},
+            Available_through_Myview          = '${data.itStandMyView}',
+            Vendor_Standard_Organization      = ${data.itStandVendorOrg},
+            obj_deployment_type_Id            = ${data.itStandDeployment},
+            Approved_Status_Expiration_Date   = ${data.itStandAprvExp},
+            attestation_required              = '${data.itStandReqAtte}',
+            attestation_link                  = ${data.itStandAtteLink},
+            fedramp                           = '${data.itStandFedramp}',
+            open_source                       = '${data.itStandOpenSource}',
+            Gold_Image                        = '${data.itStandGoldImg}',
+            Gold_Image_Comment                = ${data.itStandGoldComment},
+            RITM                              = ${data.itStandRITM},
+            Comments                          = ${data.itStandComments},
+            Reference_documents               = ${data.itStandRefDocs},
+            ChangeAudit                       = '${data.auditUser}',
+            ChangeDTG                         = NOW(),
+            endOfLifeDate                     = ${endOfLifeDateFragment}
+          WHERE Id = ${techId};`;
+}
+
+function saveData(data) {
+  const keyname = generateKeyname(data);
+  const endOfLifeDateFragment = getEolFragment(data.tcEndOfLifeDate);
+
+  data.itStandMyView = normalizeFormBooleanValues(data.itStandMyView);
+  data.itStandFedramp = normalizeFormBooleanValues(data.itStandFedramp);
+  data.itStandOpenSource = normalizeFormBooleanValues(data.itStandOpenSource);
+  data.itStandGoldImg = normalizeFormBooleanValues(data.itStandGoldImg);
+  data.itStandReqAtte = normalizeFormBooleanValues(data.itStandReqAtte);
+
+  data.itStandDesc = ctrl.setNullEmptyTextHandler(data.itStandDesc);
+  data.itStandAprvExp = ctrl.setNullEmptyTextHandler(data.itStandAprvExp);
+  data.itStandRefDocs = ctrl.setNullEmptyTextHandler(data.itStandRefDocs);
+  data.itStandApprovedVersions = ctrl.setNullEmptyTextHandler(data.itStandApprovedVersions);
+  data.itStandVendorOrg = ctrl.setNullEmptyTextHandler(data.itStandVendorOrg);
+  data.itStandAtteLink = ctrl.setNullEmptyTextHandler(data.itStandAtteLink);
+  data.itStandGoldComment = ctrl.setNullEmptyTextHandler(data.itStandGoldComment);
+  data.itStandRITM = ctrl.setNullEmptyTextHandler(data.itStandRITM);
+  data.itStandComments = ctrl.setNullEmptyTextHandler(data.itStandComments);
+
+  return `INSERT INTO obj_technology(
+            obj_technology_status_Id,
+            Keyname,
+            approvedVersions,
+            Description,
+            obj_standard_type_Id,
+            obj_508_compliance_status_Id,
+            Available_through_Myview,
+            Vendor_Standard_Organization,
+            obj_deployment_type_Id,
+            Approved_Status_Expiration_Date,
+            attestation_required,
+            attestation_link,
+            fedramp,
+            open_source,
+            Gold_Image,
+            Gold_Image_Comment,
+            RITM,
+            Comments,
+            Reference_documents,
+            endOfLifeDate
+          ) VALUES (
+           ${data.itStandStatus},
+           '${keyname}',
+           ${data.itStandApprovedVersions},
+           ${data.itStandDesc},
+           ${data.itStandType},
+           ${data.itStand508},
+           '${data.itStandMyView}',
+           ${data.itStandVendorOrg},
+           ${data.itStandDeployment},
+           ${data.itStandAprvExp},
+           '${data.itStandReqAtte}',
+           ${data.itStandAtteLink},
+           '${data.itStandFedramp}',
+           '${data.itStandOpenSource}',
+           '${data.itStandGoldImg}',
+           ${data.itStandGoldComment},
+           ${data.itStandRITM},
+           ${data.itStandComments},
+           ${data.itStandRefDocs},
+           ${endOfLifeDateFragment}
+          );`;
+}
