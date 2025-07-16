@@ -46,7 +46,9 @@ exports.findOneScan = (req, res) => {
 };
 
 exports.findServiceCategories = (req, res) => {
-  var query =
+  let id = req.params.id.trim();
+  if(/^\d+$/.test(id)) {
+    var query =
     fs
       .readFileSync(
         path.join(
@@ -56,20 +58,32 @@ exports.findServiceCategories = (req, res) => {
         )
       )
       .toString() +
-    ` WHERE obj_websites_id = ${req.params.id} ORDER BY name ASC`;
+    ` WHERE obj_websites_id = ${id} ORDER BY name ASC`;
 
-  res = ctrl.sendQuery(query, "service categories for a website", res);
-};
+    res = ctrl.sendQuery(query, "service categories for a website", res);
+  } else {
+    res.status(500).json({
+      message: "Error: Invalid ID",
+    });
+  }
+}
 
 exports.findSystems = (req, res) => {
-  var query =
+  let id = req.params.id.trim();
+  if(/^\d+$/.test(id)) {
+    var query =
     fs
       .readFileSync(path.join(__dirname, queryPath, "GET/get_systems.sql"))
       .toString() +
     ` LEFT JOIN gear_schema.zk_systems_subsystems_websites AS websites_mapping ON systems.\`ex:GEAR_ID\` = websites_mapping.obj_systems_subsystems_Id
-    WHERE websites_mapping.obj_websites_Id = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`;
+    WHERE websites_mapping.obj_websites_Id = ${id} GROUP BY systems.\`ex:GEAR_ID\`;`;
 
   res = ctrl.sendQuery(query, "related systems for website", res);
+  } else {
+    res.status(500).json({
+      message: "Error: Invalid ID",
+    });
+  }
 };
 
 exports.updateSystems = (req, res) => {
