@@ -51,7 +51,4 @@ router.route('/operating_systems')
 router.route('/app_bundles/:id')
   .get(itsCtrl.getAppBundles);
 
-router.route('/post/update_tech_fields/:id')
-  .post(itsCtrl.updateITStandardWithCustomTechFields);
-
 module.exports = router;
