@@ -300,10 +300,10 @@ export class ItStandardManagerComponent implements OnInit {
 
       // Set default values for form with current values
       this.itStandardsForm.patchValue({
-        tcManufacturer: this.itStandard.Manufacturer,
-        tcSoftwareProduct: this.itStandard.SoftwareProduct,
-        tcSoftwareVersion: this.itStandard.SoftwareVersion,
-        tcSoftwareRelease: this.itStandard.SoftwareRelease,
+        tcManufacturer: {id: this.itStandard.Manufacturer, name: this.itStandard.ManufacturerName},
+        tcSoftwareProduct: {id: this.itStandard.SoftwareProduct, name: this.itStandard.SoftwareProductName},
+        tcSoftwareVersion: {id: this.itStandard.SoftwareVersion, name: this.itStandard.SoftwareVersionName},
+        tcSoftwareRelease: {id: this.itStandard.SoftwareRelease, name: this.itStandard.SoftwareReleaseName},
         tcEndOfLifeDate: (this.itStandard.EndOfLifeDate ? formatDate(this.itStandard.EndOfLifeDate, 'MMMM dd, yyyy', 'en-US') : null),
         itStandStatus: this.sharedService.findInArray(this.statuses, 'Name', this.itStandard.Status),
         itStandName: (!this.itStandard.OldName ? this.itStandard.SoftwareReleaseName : this.itStandard.OldName),
