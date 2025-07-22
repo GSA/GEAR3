@@ -87,7 +87,7 @@ export class TableComponent implements OnInit, OnChanges {
 
   constructor(public sharedService: SharedService, public tableService: TableService, public apiService: ApiService) {
     this.setScreenHeight();
-   }
+  }
 
   ngOnInit(): void {
     this.matchModeOptions = [
@@ -95,17 +95,28 @@ export class TableComponent implements OnInit, OnChanges {
       { label: 'Not Contains', value: FilterMatchMode.NOT_CONTAINS },
       { label: 'Starts With', value: FilterMatchMode.STARTS_WITH },
       { label: 'Ends With', value: FilterMatchMode.ENDS_WITH }
-  ];
+    ];
 
     this.exportColumns = this.tableCols.map((col) => ({ title: col.header, dataKey: col.field }));
     // this.activeTableData = this.getTableData();
-    if(this.isLocal) {
+    if (this.isLocal) {
       this.tableData = this.localTableData;
     } else {
       this.tableService.reportTableData$.subscribe(d => {
         this.tableData = d;
       });
     }
+    const stored = localStorage.getItem('visibleColumns');
+    if (stored) {
+      this.visibleColumns = JSON.parse(stored);
+      // Sync showColumn state in tableCols
+      this.tableCols.forEach(col => {
+        col.showColumn = this.visibleColumns.some(v => v.field === col.field);
+      });
+    } else {
+      // Default to all visible
+      this.visibleColumns = this.tableCols.filter(col => col.showColumn !== false);
+    } 
 
     this.generateColumns();
   }
@@ -126,10 +137,13 @@ export class TableComponent implements OnInit, OnChanges {
 
   toggleVisible(e: any) {
     this.tableCols.map(c => {
-      if(c.field === e.originalEvent.option.field) {
+      if (c.field === e.originalEvent.option.field) {
         c.showColumn = e.originalEvent.selected;
       }
     });
+
+    this.visibleColumns = this.tableCols.filter(col => col.showColumn !== false);
+    localStorage.setItem('visibleColumns', JSON.stringify(this.visibleColumns));
   }
 
   togglePagination() {
@@ -157,9 +171,9 @@ export class TableComponent implements OnInit, OnChanges {
     let currentFilterIndex = -1;
     currentFilterIndex = this.currentFilterButtons.findIndex(b => b === button.buttonText);
 
-    if(currentFilterIndex >= 0) {
+    if (currentFilterIndex >= 0) {
       this.currentFilterButtons.splice(currentFilterIndex, 1);
-      if(button.filters && button.filters.length > 0){
+      if (button.filters && button.filters.length > 0) {
         button.filters.forEach(f => {
           delete this.dt.filters[f.field];
         });
@@ -174,14 +188,14 @@ export class TableComponent implements OnInit, OnChanges {
     //this.dt.reset();
     // this.activeTableData = this.tableData;
 
-    if(button && (button.filters && button.filters.length > 0)) {
+    if (button && (button.filters && button.filters.length > 0)) {
       button.filters.forEach(f => {
-        this.dt.filters[f.field] = [{value: f.value, matchMode: f.matchMode ? f.matchMode : FilterMatchMode.EQUALS, operator: 'and'}];
+        this.dt.filters[f.field] = [{ value: f.value, matchMode: f.matchMode ? f.matchMode : FilterMatchMode.EQUALS, operator: 'and' }];
       });
     }
 
     this.filterEvent.emit(button.buttonText);
-  
+
     this.currentFilterButtons.push(button.buttonText);
 
     this.generateColumns();
@@ -205,7 +219,7 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   onExportData() {
-    if(this.exportFunction) {
+    if (this.exportFunction) {
       this.dt.exportFunction();
     } else {
       this.dt.exportCSV();
@@ -213,7 +227,7 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   applyFilteredStyle(filter: string) {
-    if(this.currentFilterButton === filter) {
+    if (this.currentFilterButton === filter) {
       return 'filtered';
     }
 
@@ -226,7 +240,7 @@ export class TableComponent implements OnInit, OnChanges {
 
   setScreenHeight() {
     const TABLE_HEIGHT_OFFSET: number = 315;
-    if(window.innerHeight < 800) {
+    if (window.innerHeight < 800) {
       this.screenHeight = `${window.innerHeight}px`;
     } else {
       this.screenHeight = `${(window.innerHeight - TABLE_HEIGHT_OFFSET)}px`;
@@ -244,7 +258,7 @@ export class TableComponent implements OnInit, OnChanges {
 
   generateColumns() {
     this.tableCols.map(c => {
-      if(this.showColumn(c)) {
+      if (this.showColumn(c)) {
         this.visibleColumns.push(c);
       }
     });
@@ -274,8 +288,8 @@ export class TableComponent implements OnInit, OnChanges {
         break;
       case 'investments':
         this.tableService.investTableClick(data);
-        break; 
-      case 'Capability': 
+        break;
+      case 'Capability':
         this.tableService.globalSearchTableClick(data);
         break;
       case 'capabilities':
@@ -284,9 +298,9 @@ export class TableComponent implements OnInit, OnChanges {
       case 'websiteServiceCategory':
         this.tableService.websiteServiceCategoryTableClick(data);
         break;
-        case 'Organization':
-          this.tableService.globalSearchTableClick(data);
-          break;
+      case 'Organization':
+        this.tableService.globalSearchTableClick(data);
+        break;
       case 'organizations':
         this.tableService.orgsTableClick(data);
         break;
@@ -302,11 +316,11 @@ export class TableComponent implements OnInit, OnChanges {
       case 'time':
         this.apiService.getOneSys(data['System Id'])
           .subscribe((data: any) => {
-              this.tableService.systemsTableClick(data[0]);
-            });
+            this.tableService.systemsTableClick(data[0]);
+          });
 
-          // Change URL to include ID
-          this.sharedService.addIDtoURL(data, 'System Id');
+        // Change URL to include ID
+        this.sharedService.addIDtoURL(data, 'System Id');
       case 'System':
         this.tableService.globalSearchTableClick(data);
         break;
@@ -335,15 +349,15 @@ export class TableComponent implements OnInit, OnChanges {
 
   isFilterButtonActive(filterButton: string) {
     //if(this.currentFilterButtons && this.currentFilterButtons.length > 0) {
-      return this.currentFilterButtons.forEach(c => {
-        return c === filterButton;
-      });
+    return this.currentFilterButtons.forEach(c => {
+      return c === filterButton;
+    });
     //}
   }
 
   onTableSearch(keyword: string) {
     let isnum = /^\d+$/.test(keyword);
-    if(isnum) {
+    if (isnum) {
       this.dt.filterGlobal(keyword, 'equals');
     } else {
       this.dt.filterGlobal(keyword, 'contains');

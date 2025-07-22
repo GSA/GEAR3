@@ -1,7 +1,10 @@
 .systems-details-container {
     display: flex;
     flex-direction: column;
+    margin: 2rem 2.25rem;
     padding: 2rem 2.25rem;
+    background-color: #fff;
+
 
     & .breadcrumb-container {
         display: flex;
@@ -49,6 +52,7 @@
         & .overall-data-container {
             display: flex;
             flex-flow: row wrap;
+
             & .main-data-container {
                 padding: 3.5rem 1.5rem;
                 display: flex;
@@ -100,7 +104,7 @@
                         }
                     }
                 }
-    
+
                 & .data {
                     display: flex;
                     flex-direction: column;
@@ -110,7 +114,7 @@
                     &:last-child {
                         flex: 66%;
                     }
-                    
+
                     & .data-label {
                         font-weight: bold;
                     }
@@ -134,7 +138,8 @@
                     & .status-yellow {
                         padding: .5rem;
                         border-radius: 4px;
-                        background-color: rgba(255, 140, 4, 0.30);;
+                        background-color: rgba(255, 140, 4, 0.30);
+                        ;
                         color: #FF5E04;
                         display: inline-block;
                     }
@@ -151,7 +156,7 @@
                             background-color: #008000;
                             border-radius: 50px;
                         }
-    
+
                         & .circle-yellow {
                             display: inline-block;
                             height: 1rem;
@@ -159,7 +164,7 @@
                             background-color: #bdbd16;
                             border-radius: 50px;
                         }
-    
+
                         & .circle-red {
                             display: inline-block;
                             height: 1rem;
@@ -169,19 +174,19 @@
                         }
                     }
                 }
-    
+
                 & .data-full {
                     display: flex;
                     flex-direction: column;
                     flex: 100%;
                     padding-bottom: 1.5rem;
-    
+
                     & .data-label {
                         font-weight: bold;
                     }
                 }
             }
-    
+
             & .sub-data-container {
                 padding: 1.5rem 1.5rem;
                 width: 30%;
@@ -203,6 +208,7 @@
 
                 & td {
                     padding: 1rem .625rem;
+
                     &:nth-of-type(odd) {
                         font-weight: bold;
                     }

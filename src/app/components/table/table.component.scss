@@ -11,26 +11,34 @@
 }
 
 ::ng-deep {
-    .p-datatable-wrapper{
+    .p-datatable-wrapper {
         background-color: #fff;
         padding: 0.6rem;
         padding-top: 0;
     }
+
     .p-datatable {
         font-family: Nunito Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", Segoe UI Symbol;
         font-size: 12px;
         font-weight: 200;
         line-height: 21px;
 
-        & .p-datatable-thead > tr > th {
+        .p-datatable-thead {
+            top: -1px !important;
+            transition: all ease 0.3s;
+        }
+
+        & .p-datatable-thead>tr>th {
             padding: .5rem .25rem;
-            background-color: #f5f5f5;
+            background-color: #ececec;
 
             & .table-heading {
                 justify-content: space-between;
             }
 
-            & .p-column-filter-menu-button:hover, .p-column-filter-menu-button-active, .p-column-filter-clear-button:hover {
+            & .p-column-filter-menu-button:hover,
+            .p-column-filter-menu-button-active,
+            .p-column-filter-clear-button:hover {
                 background: none;
             }
         }
@@ -42,80 +50,82 @@
         border-radius: 0.3rem 0.3rem 0 0;
     }
 
-    .default.p-datatable .p-datatable-thead > tr > th {
+    .default.p-datatable .p-datatable-thead>tr>th {
         color: #fff;
         background-color: #343a40;
         border-color: #454d55;
-    
+
         & .p-icon {
             color: #fff;
         }
     }
 
-    .it-strategy.p-datatable .p-datatable-thead > tr > th {
+    .it-strategy.p-datatable .p-datatable-thead>tr>th {
         color: #fff;
-        background-color: #14883c ;
+        background-color: #14883c;
         border-color: #454d55;
-    
+
         & .p-icon {
             color: #fff;
         }
     }
 
-    .business-systems.p-datatable .p-datatable-thead > tr > th {
+    .business-systems.p-datatable .p-datatable-thead>tr>th {
         color: #fff;
         background-color: #ce4844;
         border-color: #454d55;
-    
+
         & .p-icon {
             color: #fff;
         }
     }
 
-    .gsa-enterprise.p-datatable .p-datatable-thead > tr > th {
+    .gsa-enterprise.p-datatable .p-datatable-thead>tr>th {
         color: #fff;
         background-color: #2b60de;
         border-color: #454d55;
-    
+
         & .p-icon {
             color: #fff;
         }
     }
 
-    .security.p-datatable .p-datatable-thead > tr > th {
+    .security.p-datatable .p-datatable-thead>tr>th {
         color: #fff;
         background-color: #aa6708;
         border-color: #454d55;
-    
+
         & .p-icon {
             color: #fff;
         }
     }
 
-    .technologies.p-datatable .p-datatable-thead > tr > th {
+    .technologies.p-datatable .p-datatable-thead>tr>th {
         color: #fff;
         background-color: #008080;
         border-color: #454d55;
-    
+
         & .p-icon {
             color: #fff;
         }
     }
 
-    .additional-info.p-datatable .p-datatable-thead > tr > th {
+    .additional-info.p-datatable .p-datatable-thead>tr>th {
         color: #fff;
         background-color: #027eb2;
         border-color: #454d55;
-    
+
         & .p-icon {
             color: #fff;
         }
     }
 
     .neutral.p-datatable {
-        .p-datatable-thead > tr > th {
+       
+
+        .p-datatable-thead>tr>th {
             color: var(--neutral-black-color-dark);
-            
+
             border: none;
             padding: .625rem;
 
@@ -128,41 +138,46 @@
             }
         }
 
-        .p-datatable-tbody > tr {
+        .p-datatable-tbody>tr {
             color: var(--neutral-black-color-dark);
             background-color: var(--neutral-white-color);
             border: none;
 
             & td {
-            color: var(--neutral-black-color-dark);
-            border: none;
-            border-bottom: 1px var(--neutral-black-color-light) solid;
-            padding: 1rem .625rem;
-            font-size: .75rem;    
-            width: 14rem;
+                color: var(--neutral-black-color-dark);
+                border: none;
+                border-bottom: 1px var(--neutral-black-color-light) solid;
+                padding: 1rem .625rem;
+                font-size: .75rem;
+                width: 14rem;
             }
+           
 
             &:nth-of-type(odd) {
                 background-color: var(--neutral-white-color);
-    
+
                 & td {
                     border: none;
                     border-bottom: 1px var(--neutral-black-color-light) solid;
                     padding: .5rem;
                     font-size: .75rem;
                     padding: 1rem .625rem;
-                    font-size: .75rem;    
+                    font-size: .75rem;
                     width: 14rem;
                 }
             }
-             &:nth-of-type(even) {
-                background-color: #f9fafb;
-             }
+
+            &:nth-of-type(even) {
+                background-color: #f4f4f4;
+            }
+             &:hover{
+                background-color: #e4e4e4;
+            }
         }
     }
 
 
-    .p-datatable .p-datatable-tbody > tr {
+    .p-datatable .p-datatable-tbody>tr {
         color: #fff;
         background-color: #343a40;
         border-width: 1px;
@@ -252,12 +267,14 @@
         background-color: #1a1a1a;
         border-color: #1a1a1a;
 
-        &:hover, &:active {
+        &:hover,
+        &:active {
             background-color: #070707;
             border-color: #010000;
         }
 
-        &:focus, &:focus-visible {
+        &:focus,
+        &:focus-visible {
             outline: .25rem solid #2491ff;
             outline-offset: 0rem;
             position: relative;
@@ -270,21 +287,23 @@
         background-color: #027eb2;
         border-left: 1px solid #fff;
 
-        &:hover, &:active {
+        &:hover,
+        &:active {
             background-color: #1a82ae;
             //border-color: #1a82ae;
             outline: 0.25rem solid #2491ff;
             position: relative;
         }
 
-        &:focus, &:focus-visible {
+        &:focus,
+        &:focus-visible {
             outline: .25rem solid #2491ff;
             outline-offset: 0rem;
             position: relative;
             z-index: 10;
         }
     }
-    
+
 
     .p-multiselect {
         color: #fff;
@@ -321,4 +340,3 @@
     align-content: center;
     justify-content: end;
 }
-
