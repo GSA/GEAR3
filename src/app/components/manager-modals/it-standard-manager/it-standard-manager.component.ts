@@ -22,9 +22,9 @@ declare var $: any;
 export class ItStandardManagerComponent implements OnInit {
 
   itStandardsForm: FormGroup = new FormGroup({
-    tcManufacturer: new FormControl(null),
-    tcSoftwareProduct: new FormControl(null),
-    tcSoftwareVersion: new FormControl(null),
+    tcManufacturer: new FormControl(null, [Validators.required]),
+    tcSoftwareProduct: new FormControl(null, [Validators.required]),
+    tcSoftwareVersion: new FormControl(null, [Validators.required]),
     tcSoftwareRelease: new FormControl(),
     tcEndOfLifeDate: new FormControl(),
     itStandStatus: new FormControl(null, [Validators.required]),
@@ -432,9 +432,10 @@ export class ItStandardManagerComponent implements OnInit {
       // Get list of initial app bundles so we an compare for update
       this.itStandardsForm.value.initialAppBundles = this.initalAppBundleIds;
 
-      if(this.hasCustomTechnoData()) {
-        this.itStandardsForm.patchValue({tcSoftwareRelease: this.buildCustomRelease()});
-      }
+      // if(this.hasCustomTechnoData()) {
+      //   this.itStandardsForm.patchValue({tcSoftwareRelease: this.buildCustomRelease()});
+      // }
+      this.itStandardsForm.patchValue({tcSoftwareRelease: this.buildCustomRelease()});
 
       // Send data to database
       if(this.createBool) {
@@ -765,11 +766,150 @@ export class ItStandardManagerComponent implements OnInit {
   }
 
   cleanup() {
-    this.showAppBundleField = false;
-    this.showDuplicateAppBundleMsg = false;
+    this.itStandardsForm = new FormGroup({
+      tcManufacturer: new FormControl(null),
+      tcSoftwareProduct: new FormControl(null),
+      tcSoftwareVersion: new FormControl(null),
+      tcSoftwareRelease: new FormControl(),
+      tcEndOfLifeDate: new FormControl(),
+      itStandStatus: new FormControl(null, [Validators.required]),
+      itStandName: new FormControl(null, [Validators.required]),
+      itStandPOC: new FormControl(null, [Validators.required]),
+      itStandDesc: new FormControl(),
+      itStandType: new FormControl(null, [Validators.required]),
+      itStandCategory: new FormControl(null, [Validators.required]),
+      itStand508: new FormControl(),
+      itStandMyView: new FormControl(),
+      itStandReqAtte: new FormControl(null),
+      itStandAtteLink: new FormControl(),
+      itStandFedramp: new FormControl(),
+      itStandOpenSource: new FormControl(),
+      itStandRITM: new FormControl(),
+      itStandVendorOrg: new FormControl(),
+      itStandDeployment: new FormControl(null, [Validators.required]),
+      itStandGoldImg: new FormControl(),
+      itStandGoldComment: new FormControl(),
+      itStandAprvExp: new FormControl(),
+      itStandComments: new FormControl(),
+      itStandRefDocs: new FormControl(),
+      itStandApprovedVersions: new FormControl(),
+      itStandOperatingSystems: new FormControl(),
+      itStandMobileAppBundles: new FormControl()
+    });
+    this.itStandard = {};
+    this.createBool = false;
+    this.statuses = [];
+    this.manufacturers = [];
+    this.manufacturersLoading = false;
+    this.manufacturersBuffer = [];
+    this.itStandReqAtteRefData = [];
+    this.itStandReqAtteLoading = false;
+    this.itStandReqAtteBuffer = [];
+    this.softwareProducts = [];
+    this.softwareProductsLoading = false;
+    this.softwareProductsBuffer = [];
+    this.softwareVersions = [];
+    this.softwareVersionsLoading = false;
+    this.softwareVersionsBuffer = [];
+    this.softwareReleases = [];
+    this.softwareReleasesLoading = false;
+    this.softwareReleasesBuffer = [];
+    this.endOfLifeDate = null;
+    this.types = [];
+    this.categories = [];
+    this.catsLoading = false;
+    this.catsBuffer = [];
+    this.compliance = [];
+    this.deploymentTypes = [];
+    this.aprvExpDate = null;
+    this.itStandCertify = false;
+    this.anyServerError = false;
+    this.operatingSystems = [];
     this.allAppBundleIds = [];
     this.initalAppBundleIds = [];
     this.currentAppBundleId = '';
+    this.showDuplicateAppBundleMsg = false;
+    this.showAppBundleField = false;
+
+    // Populate Manufacturer Options
+    this.manufacturersLoading = true;
+    this.apiService.getManufacturers().subscribe((data: any[]) => {
+      this.apiService.getCustomManufacturers().subscribe((cData: any[]) => {
+        this.manufacturers = [...data, ...cData];
+        this.manufacturersBuffer = this.manufacturers.slice(0, this.bufferSize);
+        this.manufacturersLoading = false;
+      });
+    });
+
+    // Populate Attestation Required Options
+    this.itStandReqAtteLoading = true;
+    this.apiService.getAttestationStatusTypes().subscribe((data: any[]) => {
+      data.forEach(item => item.ID = item.ID.toString())
+      this.itStandReqAtteRefData = data;
+      this.itStandReqAtteBuffer = this.itStandReqAtteRefData.slice(0, this.bufferSize);
+      this.itStandReqAtteLoading = false;
+    });
+
+    this.disableSoftwareProduct();
+    this.disableSoftwareVersion();
+    this.disableSoftwareRelease();
+
+    // disable the End of Life Date field
+    this.disableEndOfLifeDate();
+
+    // Populate Statuses
+    this.apiService.getITStandStatuses().subscribe((data: any[]) => { this.statuses = data });
+
+    // Populate POC Options
+    this.pocsLoading = true;
+    this.apiService.getPOCs().subscribe((data: any[]) => {
+      this.POCs = data;
+      this.pocsBuffer = this.POCs.slice(0, this.bufferSize);
+      this.pocsLoading = false;
+    });
+
+    // Populate Standard Types
+    this.apiService.getITStandTypes().subscribe((data: any[]) => { this.types = data });
+
+    // Populate Categories
+    this.catsLoading = true;
+    this.apiService.getITStandCategories().subscribe((data: any[]) => {
+      this.categories = data;
+      this.catsBuffer = this.categories.slice(0, this.bufferSize);
+      this.catsLoading = false;
+    });
+
+    // Populate 508 Compliance Statuses
+    this.apiService.getITStand508Statuses().subscribe((data: any[]) => { this.compliance = data });
+
+    // Populate Deployment Types
+    this.apiService.getITStandDeploymentTypes().subscribe((data: any[]) => { this.deploymentTypes = data });
+
+    // Populate operating systems
+    this.apiService.getOperatingSystems().subscribe((data: any[]) => { this.operatingSystems = data });
+
+    // Instantiate the date picker
+    $('#itStandAprvExp').datepicker({
+      todayBtn: true,
+      clearBtn: true,
+      daysOfWeekHighlighted: "0,6",
+      todayHighlight: true,
+      toggleActive: true,
+      templates: {
+        leftArrow: '<i class="fas fa-long-arrow-alt-left"></i>',
+        rightArrow: '<i class="fas fa-long-arrow-alt-right"></i>'
+      }
+    });
+
+    // If the manager modal is exited, clear the create flag
+    $('#itStandardsManager').on('hidden.bs.modal', function (e) {
+      this.modalService.updateRecordCreation(false);
+      this.itStandCertify = false;
+      $("#itStandMngrTabs li:first-child a").tab('show');
+    }.bind(this));
+
+    // Reset Form Errors on any value update
+    this.itStandardsForm.valueChanges.subscribe(change=>{  this.anyServerError = false; });
   }
 
   getCurrentSoftwareReleaseName(id: string) {
@@ -810,9 +950,15 @@ export class ItStandardManagerComponent implements OnInit {
     let softwareRelease = {
       name: ''
     };
-    softwareRelease.name = `${this.itStandardsForm.value.tcManufacturer.name} 
-                            ${this.itStandardsForm.value.tcSoftwareProduct.name} 
-                            ${this.itStandardsForm.value.tcSoftwareVersion.name}`;
+
+    if(this.hasAllCustomTechnoData()) {
+      softwareRelease.name = `${this.itStandardsForm.value.tcManufacturer.name} 
+                ${this.itStandardsForm.value.tcSoftwareProduct.name} 
+                ${this.itStandardsForm.value.tcSoftwareVersion.name}`;
+    } else {
+      softwareRelease.name = this.itStandardsForm.value.itStandName;
+    }
+
     return softwareRelease;
   }
 
@@ -820,6 +966,12 @@ export class ItStandardManagerComponent implements OnInit {
     return !this.itStandardsForm.value.tcManufacturer.id ||
             !this.itStandardsForm.value.tcSoftwareProduct.id ||
             !this.itStandardsForm.value.tcSoftwareVersion.id
+  }
+
+  hasAllCustomTechnoData(): boolean {
+    return !this.itStandardsForm.value.tcManufacturer.id &&
+            !this.itStandardsForm.value.tcSoftwareProduct.id &&
+            !this.itStandardsForm.value.tcSoftwareVersion.id;
   }
 
 }

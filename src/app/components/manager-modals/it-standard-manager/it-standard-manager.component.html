@@ -37,7 +37,7 @@
               <div class="row align-items-center">
 
                 <div class="form-group col">
-                  <label for="tcManufacturer">Manufacturer</label>
+                  <label for="tcManufacturer">Manufacturer<span class="text-danger">*</span></label>
                     <ng-select id="tcManufacturer" formControlName="tcManufacturer"
                       [addTag]="true"
                       [items]="manufacturers"
@@ -52,15 +52,21 @@
                       [virtualScroll]="true"
                       (scroll)="modalService.onScroll($event, manufacturersBuffer, bufferSize, manufacturers, manufacturersLoading)"
                       (scrollToEnd)="modalService.onScrollToEnd(manufacturersBuffer, bufferSize, manufacturers, manufacturersLoading)"
-                      (change)="manufacturerChange($event)">
+                      (change)="manufacturerChange($event)"
+                      [ngClass]="{'is-invalid': modalService.fieldValidCheck(itStandardsForm, 'tcManufacturer')}">
                       <ng-template ng-header-tmp>
                         <small class="form-text text-muted">Loaded {{ manufacturersBuffer.length }} of {{ manufacturers.length }}</small>
                       </ng-template>
                     </ng-select>
+                    <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'tcManufacturer')">
+                      <div class="invalid-feedback" *ngIf="itStandardsForm.controls['tcManufacturer'].errors.required">
+                        Manufacturer Required
+                      </div>
+                    </div>
                   </div>
 
                 <div class="form-group col" id="divProduct">
-                  <label for="tcSoftwareProduct">Product</label>
+                  <label for="tcSoftwareProduct">Product<span class="text-danger">*</span></label>
                     <ng-select id="tcSoftwareProduct" formControlName="tcSoftwareProduct"
                       [addTag]="true"
                       [items]="softwareProducts"
@@ -75,18 +81,24 @@
                       [virtualScroll]="true"
                       (scroll)="modalService.onScroll($event, softwareProductsBuffer, bufferSize, softwareProducts, softwareProductsLoading)"
                       (scrollToEnd)="modalService.onScrollToEnd(softwareProductsBuffer, bufferSize, softwareProducts, softwareProductsLoading)"
-                      (change)="softwareProductChange($event)">
+                      (change)="softwareProductChange($event)"
+                      [ngClass]="{'is-invalid': modalService.fieldValidCheck(itStandardsForm, 'tcSoftwareProduct')}">
                       <ng-template ng-header-tmp>
                         <small class="form-text text-muted">Loaded {{ softwareProductsBuffer.length }} of {{ softwareProducts.length }}</small>
                       </ng-template>
                     </ng-select>
+                    <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'tcSoftwareProduct')">
+                      <div class="invalid-feedback" *ngIf="itStandardsForm.controls['tcSoftwareProduct'].errors.required">
+                        Software Product Required
+                      </div>
+                    </div>
                   </div>
               </div>
 
               <!-- Tech Catalog Information row 2 -->
               <div class="row align-items-center">
                 <div class="form-group col-3" id="divVersion">
-                  <label for="tcSoftwareVersion">Software Version</label>
+                  <label for="tcSoftwareVersion">Software Version<span class="text-danger">*</span></label>
                     <ng-select id="tcSoftwareVersion" formControlName="tcSoftwareVersion"
                       [addTag]="true"  
                       [items]="softwareVersions"
@@ -101,11 +113,17 @@
                       [virtualScroll]="true"
                       (scroll)="modalService.onScroll($event, softwareVersionsBuffer, bufferSize, softwareVersions, softwareVersionsLoading)"
                       (scrollToEnd)="modalService.onScrollToEnd(softwareVersionsBuffer, bufferSize, softwareVersions, softwareVersionsLoading)"
-                      (change)="softwareVersionChange($event)">
+                      (change)="softwareVersionChange($event)"
+                      [ngClass]="{'is-invalid': modalService.fieldValidCheck(itStandardsForm, 'tcSoftwareVersion')}">
                       <ng-template ng-header-tmp>
                         <small class="form-text text-muted">Loaded {{ softwareVersionsBuffer.length }} of {{ softwareVersions.length }}</small>
                       </ng-template>
                     </ng-select>
+                    <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'tcSoftwareVersion')">
+                      <div class="invalid-feedback" *ngIf="itStandardsForm.controls['tcSoftwareVersion'].errors.required">
+                        Software Version Required
+                      </div>
+                    </div>
                   </div>
 
                 <div class="form-group col-6" id="divRelease">
