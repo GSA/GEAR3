@@ -974,4 +974,12 @@ export class ItStandardManagerComponent implements OnInit {
             !this.itStandardsForm.value.tcSoftwareVersion.id;
   }
 
+  getTitleName(): string {
+    if(this.itStandard.SoftwareReleaseName) {
+      return this.itStandard.SoftwareReleaseName;
+    } else {
+      return this.itStandard.Name;
+    }
+  }
+
 }
