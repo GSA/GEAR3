@@ -59,6 +59,8 @@
         &.link {
             background: transparent;
             color: var(--primary-color);
+            padding: 0;
+            text-decoration: underline;
 
             &:hover {
                 background: transparent;
@@ -143,7 +145,7 @@
             cursor: pointer;
 
             &:hover {
-                background-color: #f0f0f0; 
+                background-color: #f0f0f0;
             }
         }
     }

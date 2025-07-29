@@ -4,6 +4,7 @@ import {
   RouterModule,
   TitleStrategy,
   RouterStateSnapshot,
+  ExtraOptions,
 } from '@angular/router';
 
 // Main
@@ -246,12 +247,16 @@ export class TemplatePageTitleStrategy extends TitleStrategy {
     }
   }
 }
+const routerOption: ExtraOptions = {
+  scrollPositionRestoration: 'enabled',
+  anchorScrolling: 'enabled',
+   useHash: true
+
+}
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, {
-    useHash: true
-}),
+    RouterModule.forRoot(routes, routerOption),
   ],
   exports: [RouterModule],
   providers: [{ provide: TitleStrategy, useClass: TemplatePageTitleStrategy }],

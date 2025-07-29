@@ -11,6 +11,8 @@ import { TableService } from '@services/tables/table.service';
 })
 export class DashboardComponent implements OnInit {
 
+  public showTable = false;
+
   public tableCols: Column[] = [
     {
       field: 'Name',
@@ -77,6 +79,9 @@ export class DashboardComponent implements OnInit {
   public ngOnInit(): void {
     this.apiService.getRecentITStandards(10).subscribe(standards => {
       this.tableService.updateReportTableData(standards);
+      setTimeout(() => {
+        this.showTable = true;
+      }, 0);
     });
 
     this.apiService.getITStandardsExpiringThisQuarter().subscribe(q => this.standardsExpiringThisQuarter = q);

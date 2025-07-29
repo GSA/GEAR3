@@ -30,6 +30,7 @@
   </div>
   <div class="it-standards-data-container">
     <app-filter-chips [chips]="filterChips" dropdownName="Deployment Types" (chipSelect)="onFilterChipSelect($event)"></app-filter-chips>
+    <div *ngIf="filterTotals">
     <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)">
       <div class="filter-tabs-container" filterTabs>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')">
@@ -50,6 +51,7 @@
         </div>
       </div>
     </app-table>
+    </div>
   </div>
 </div>
 

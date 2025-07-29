@@ -7,16 +7,24 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+          margin-bottom: 1rem;
+
+        h2{
+            margin-bottom: 0;
+        }
     }
 
     & .systems-definition-container {
-        padding: 1.5rem;
+        padding: 1rem 1rem 0 1rem;
+         background-color: #fff;
+         border-radius: 0.3rem;
 
         & .systems-definition-text {
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;  
             overflow: hidden;
+            margin-bottom: 5px;
 
             &.expanded {
                 -webkit-line-clamp: none;
@@ -26,6 +34,7 @@
     }
 
     & .systems-graph-container {
+        background-color: #fff;
 
         & .systems-graph {
             width: 95%;
@@ -36,6 +45,6 @@
     & .systems-data-container {
         display: flex;
         flex-direction: column;
-        padding: 1.5rem;
+        padding: 1.5rem 0;
     }
 }

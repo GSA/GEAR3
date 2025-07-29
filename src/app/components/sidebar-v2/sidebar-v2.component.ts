@@ -9,6 +9,8 @@ import { SidebarButtonChild } from '@common/sidebar-classes';
 export class SidebarV2Component {
 
   isSidebarExpanded: boolean = false;
+  activeMenu: string | null = null;
+
 
   itStrategyChildren: SidebarButtonChild[] = [
     { text: 'IT Strategic Framework', route: '/strategic_framework' },
@@ -50,5 +52,8 @@ export class SidebarV2Component {
 
   public toggleSidebar(): void {
     this.isSidebarExpanded = !this.isSidebarExpanded;
+  }
+  onMenuToggle(menuKey: string): void {
+    this.activeMenu = this.activeMenu === menuKey ? null : menuKey;
   }
 }

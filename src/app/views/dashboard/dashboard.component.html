@@ -2,7 +2,9 @@
     <h1>Welcome to GEAR</h1>
     <div class="dashboard-quick-view-container">
         <div class="dashboard-quick-view-item">
+           <div class="dashboard-icon-box">
             <i class="dashboard-quick-view-icon fas fa-clipboard-list"></i>
+           </div>
             <span class="dashboard-quick-view-number">{{ fismaExpiringThisQuarter }}</span>
             <span class="dashboard-quick-view-text">FISMA Expiring by {{ getExpiringDate() }}</span>
             <div class="dashboard-quick-view-expire-container">
@@ -12,7 +14,9 @@
             <a href="#" class="dashboard-quick-view-link">View All</a>
         </div>
         <div class="dashboard-quick-view-item">
-            <i class="dashboard-quick-view-icon fas fa-desktop"></i>
+            <div class="dashboard-icon-box">
+                <i class="dashboard-quick-view-icon fas fa-desktop"></i>
+            </div>
             <span class="dashboard-quick-view-number">{{ standardsExpiringThisQuarter }}</span>
             <span class="dashboard-quick-view-text">IT Standards Expiring by {{ getExpiringDate() }}</span>
             <div class="dashboard-quick-view-expire-container">
@@ -27,25 +31,22 @@
                 <span class="dashboard-quick-links-text">Quick Links</span>
             </span>
             <div class="dashboard-quick-links-link-container">
-                <a href="#" class="dashboard-quick-links-link">
-                    External Link 1
-                    <i class="dashboard-quick-links-link-icon fas fa-external-link-alt"></i>
+                <a href="https://ea.gsa.gov/#/it_standards" class="dashboard-quick-links-link">
+                   Approved/denied software
+                   
                 </a>
-                <a href="#" class="dashboard-quick-links-link">
-                    External Link 2
-                    <i class="dashboard-quick-links-link-icon fas fa-external-link-alt"></i>
+                <a href="https://ea.gsa.gov/#/it_standards/filtered/Mobile/Approved" class="dashboard-quick-links-link">
+                    Approved mobile apps
+                    
                 </a>
-                <a href="#" class="dashboard-quick-links-link">
-                    External Link 3
-                    <i class="dashboard-quick-links-link-icon fas fa-external-link-alt"></i>
+                <a href="https://ea.gsa.gov/#/FISMA" class="dashboard-quick-links-link">
+                    Active FISMA systems
                 </a>
-                <a href="#" class="dashboard-quick-links-link">
-                    External Link 4
-                    <i class="dashboard-quick-links-link-icon fas fa-external-link-alt"></i>
+                <a href="https://ea.gsa.gov/#/systems" class="dashboard-quick-links-link">
+                   Business systems/subsystems
                 </a>
-                <a href="#" class="dashboard-quick-links-link">
-                    External Link 5
-                    <i class="dashboard-quick-links-link-icon fas fa-external-link-alt"></i>
+                <a href="https://ea.gsa.gov/#/org_chart" class="dashboard-quick-links-link">
+                    GSA org chart
                 </a>
             </div>
         </div>
@@ -55,8 +56,9 @@
             <span class="dashboard-recent-report-title-text">Recent GSA IT Standards</span>
             <a href="#" class="dashboard-recent-report-title-link">View All</a>
         </div>
-        <app-table [tableCols]="tableCols" [showToolbar]="false" [showPagination]="false" reportStyle="neutral">
+        <app-table *ngIf="showTable" [tableCols]="tableCols" [showToolbar]="false" [showPagination]="false" reportStyle="neutral">
             
         </app-table>
+        
     </div>
 </div>
