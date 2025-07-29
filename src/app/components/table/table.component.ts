@@ -361,6 +361,7 @@ export class TableComponent implements OnInit, OnChanges {
       this.dt.filterGlobal(keyword, 'equals');
     } else {
       this.dt.filterGlobal(keyword, 'contains');
+      
     }
   }
 }

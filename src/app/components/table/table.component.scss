@@ -201,6 +201,7 @@
                 border-radius: .25rem;
                 display: flex;
                 justify-content: center;
+                width: fit-content;
             }
 
             & .table-status-badge-red {
@@ -215,6 +216,7 @@
                 border-radius: .25rem;
                 display: flex;
                 justify-content: center;
+                width: fit-content;
             }
         }
 
@@ -238,6 +240,7 @@
                     border-radius: .25rem;
                     display: flex;
                     justify-content: center;
+                    
                 }
 
                 & .table-status-badge-red {
