@@ -35,7 +35,7 @@
     "@babel/core": "^7.23.2",
     "@babel/traverse": "^7.23.2",
     "@ng-select/ng-select": "^13.4.1",
-    "@node-saml/passport-saml": "^4.0.4",
+    "@node-saml/passport-saml": "^5.1.0",
     "@swimlane/ngx-charts": "^20.5.0",
     "@uswds/uswds": "3.8.1",
     "adjust-sourcemap-loader": "^4.0.0",
