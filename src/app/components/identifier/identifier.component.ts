@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./identifier.component.css']
 })
 export class IdentifierComponent {
-
+currentYear: number = new Date().getFullYear();
   constructor() {
   }
 }

@@ -3,49 +3,48 @@
     <h2>Business Systems & Subsystems</h2>
     <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
       <b>Details:</b> Left click on a row within the table to view additional details.
-        <br><br>
-        <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
-        <br><br>
-        <b>Export:</b> Export data by clicking on the <i class='fas fa-download'></i> icon and selecting the format that meets 
-        your needs.
-        <br><br>
-        <b>Search:</b> Perform a filtered search across all fields in the displayed data. Hit the 'Enter' button on your 
-        keyboard to execute. Click the <i class='far fa-trash-alt'></i> icon to clear the search box. 
-        Search within specific columns by clicking on the <i class='fas fa-angle-down'></i> icon. 
-        <br><br>
-        <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
-        <i class='fas fa-caret-square-down'></i> icon to display everything on one page.
+      <br><br>
+      <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
+      <br><br>
+      <b>Export:</b> Export data by clicking on the <i class='fas fa-download'></i> icon and selecting the format that
+      meets
+      your needs.
+      <br><br>
+      <b>Search:</b> Perform a filtered search across all fields in the displayed data. Hit the 'Enter' button on your
+      keyboard to execute. Click the <i class='far fa-trash-alt'></i> icon to clear the search box.
+      Search within specific columns by clicking on the <i class='fas fa-angle-down'></i> icon.
+      <br><br>
+      <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on
+      the
+      <i class='fas fa-caret-square-down'></i> icon to display everything on one page.
     </app-button-overlay-panel>
   </div>
   <div class="systems-definition-container">
-    <p class="systems-definition-text">A business system represents a logical boundary for related assets (e.g., software, devices, and people)
+    <p class="systems-definition-text">A business system represents a logical boundary for related assets (e.g.,
+      software, devices, and people)
       to accomplish one or more business capabilities. A business system is accessed by the end user via a graphical
-       user interface (e.g. web application, desktop application, etc.).
+      user interface (e.g. web application, desktop application, etc.).
   </div>
   <div class="systems-graph-container">
-    <span id="sysVizText" tabindex="0"
-      [attr.aria-label]="getAriaLabel(vizData)" style="display: none;">
+    <span id="sysVizText" tabindex="0" [attr.aria-label]="getAriaLabel(vizData)" style="display: none;">
       Pie Chart Details
     </span>
     <div class="systems-graph">
-      <ngx-charts-advanced-pie-chart
-        [scheme]="colorScheme"
-        [results]="vizData"
-        [label]="vizLabel"
-        [ariaLabel]="getAriaLabel(vizData)"
-        appSkipFocusPiechart
-        tabindex="0"
+      <ngx-charts-advanced-pie-chart [scheme]="colorScheme" [results]="vizData" [label]="vizLabel"
+        [ariaLabel]="getAriaLabel(vizData)" appSkipFocusPiechart tabindex="0" (select)="onSelect($event)"
         role="navigation"></ngx-charts-advanced-pie-chart>
     </div>
   </div>
   <div class="systems-data-container">
-    <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)">
+    <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"
+      (rowClickEvent)="onRowClick($event)">
       <div class="filter-tabs-container" filterTabs>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')">
           <span class="filter-tab-text">All</span>
           <span class="filter-tab-number first">{{filterTotals.AllTotal}}</span>
         </div>
-        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Cloud Enabled')}" (click)="onSelectTab('Cloud Enabled')">
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Cloud Enabled')}"
+          (click)="onSelectTab('Cloud Enabled')">
           <span class="filter-tab-text">Cloud Enabled</span>
           <span class="filter-tab-number second">{{filterTotals.CloudEnabledTotal}}</span>
         </div>
@@ -61,10 +60,10 @@
 
 
 
-<!-- <div class="card">
+  <!-- <div class="card">
   <div class="card-header text-white bg-danger text-center d-flex align-items-center justify-content-between"> -->
-    <!-- GEAR Manager Access -->
-    <!-- <a class="btn btn-sm btn-info text-white shadow d-flex align-items-center btn-border-white"
+  <!-- GEAR Manager Access -->
+  <!-- <a class="btn btn-sm btn-info text-white shadow d-flex align-items-center btn-border-white"
         routerLink="/gear_manager"
         *ngIf="!sharedService.loggedIn"
         aria-label="GEAR Manager Login"
@@ -79,8 +78,8 @@
         <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
     </a> -->
 
-    <!--Title -->
-    <!-- <h3 class="card-title mb-0">
+  <!--Title -->
+  <!-- <h3 class="card-title mb-0">
       <span>
         <i class="fas fa-server mr-2"></i>
         <span [hidden]="filteredTable">Active GSA </span>
@@ -89,8 +88,8 @@
       </span>
     </h3> -->
 
-    <!-- Help Button -->
-    <!-- <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
+  <!-- Help Button -->
+  <!-- <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
       <b>Details:</b> Left click on a row within the table to view additional details.
         <br><br>
         <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
@@ -108,8 +107,8 @@
   </div>
 
   <div class="card-body card-text">     -->
-    <!-- Visualizations -->
-    <!-- <span id="sysVizText" tabindex="0"
+  <!-- Visualizations -->
+  <!-- <span id="sysVizText" tabindex="0"
       [attr.aria-label]="getAriaLabel(vizData)" style="display: none;">
       Pie Chart Details
     </span>
@@ -133,11 +132,11 @@
       </ngx-charts-advanced-pie-chart>
     </div> -->
 
-    <!-- Main Table -->
-    <!-- <app-table [tableCols]="tableCols" defaultSortField="Name" exportName="Systems" reportStyle="business-systems" tableType="systems">
+  <!-- Main Table -->
+  <!-- <app-table [tableCols]="tableCols" defaultSortField="Name" exportName="Systems" reportStyle="business-systems" tableType="systems">
       <app-filter-buttons filterBtns [filterButtons]="filterButtons" [singleFilterOnly]="true" (filterClick)="onFilterClick($event)" (filterResetClick)="onFilterResetClick()"></app-filter-buttons> -->
-      <!-- System/Sub-System Definition Popover -->
-      <!-- <app-button-overlay-panel definitionBtn buttonText="Business System Definition">
+  <!-- System/Sub-System Definition Popover -->
+  <!-- <app-button-overlay-panel definitionBtn buttonText="Business System Definition">
         A business system represents a logical boundary for related assets (e.g., software, devices, and people)
          to accomplish one or more business capabilities. A business system is accessed by the end user via a graphical
           user interface (e.g. web application, desktop application, etc.).

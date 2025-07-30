@@ -4,7 +4,8 @@
    
 
     & .filter-tab {
-        padding: 12px 24px;
+        padding: 12px 0px;
+        margin-right: 16px;
 
         &:hover {
             cursor: pointer;
@@ -19,7 +20,7 @@
         }
 
         & .filter-tab-text {
-            font-size: 18px;
+            font-size: 14px;
             color: var(--neutral-black-color-dark);
             font-size: normal;
             font-weight: 500;
