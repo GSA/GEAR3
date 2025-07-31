@@ -16,7 +16,8 @@ export class SidebarButtonComponent implements OnChanges {
     @Input() buttonChildren: SidebarButtonChild[] = [];
     @Input() isSidebarExpanded: boolean = false;
 
-    public isButtonExpanded: boolean = false;
+    @Input() isButtonExpanded: boolean = false;
+
   
     constructor(
         private router: Router
@@ -32,13 +33,12 @@ export class SidebarButtonComponent implements OnChanges {
     }
 
     public onButtonClick(): void {
-        if(this.hasChildren()) {
-            this.isButtonExpanded = !this.isButtonExpanded;
-        } else {
-            if(this.buttonRoute) {
-                this.router.navigate([this.buttonRoute]);
-            }
-        }
+        if (this.hasChildren()) {
+            // no toggle here anymore — parent handles it
+          } else if (this.buttonRoute) {
+            this.router.navigate([this.buttonRoute]);
+          }
+        
     }
 
     public onChildButtonClick(child: SidebarButtonChild): void {
