@@ -7,10 +7,17 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+         margin-bottom: 2rem;
+
+        h2{
+            margin-bottom: 0;
+        }
     }
 
     & .websites-definition-container {
         padding: 1.5rem;
+         background-color: #fff;
+         border-radius: 0.3rem;
 
         & .websites-definition-text {
             display: -webkit-box;
@@ -28,6 +35,6 @@
     & .websites-data-container {
         display: flex;
         flex-direction: column;
-        padding: 1.5rem;
+        padding: 1.5rem 0;
     }
 }

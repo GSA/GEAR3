@@ -2,7 +2,9 @@
 @import "./typography.scss";
 @import "./filter-tabs.scss";
 
-
+body{
+  background-color: #F9F9F9 !important;
+}
 /* You can add global styles to this file, and also import other style files */
 
 /* Underline H4 Headers, email links, card links for easy distinction */
