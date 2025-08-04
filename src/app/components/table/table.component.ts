@@ -15,17 +15,14 @@ import { FilterMatchMode, SelectItem } from 'primeng/api';
 
 export class TableComponent implements OnInit, OnChanges {
 
-  // Table columns and their options
   @Input() tableCols: Column[] = [];
 
   @Input() localTableData: any[] = [];
   @Input() isLocal: boolean = false;
 
-  // Two dimenstional array of button filters
-  // Each array of strings is a grouping of buttons
   @Input() filterButtons: TwoDimArray<FilterButton> = [];
 
-  // Report style that drives the overall color of the table
+
   @Input() reportStyle: string = 'default';
 
   // Website type for modal click fn
