@@ -71,6 +71,7 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   tableData: any[] = [];
+  originalTableData: any[] = [];
 
   visibleColumns: Column[] = [];
   exportColumns!: ExportColumn[];
@@ -101,9 +102,11 @@ export class TableComponent implements OnInit, OnChanges {
     // this.activeTableData = this.getTableData();
     if (this.isLocal) {
       this.tableData = this.localTableData;
+      this.originalTableData = [...this.localTableData];
     } else {
       this.tableService.reportTableData$.subscribe(d => {
         this.tableData = d;
+        this.originalTableData = [...d];
       });
     }
     const stored = localStorage.getItem('visibleColumns');
@@ -122,10 +125,9 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    // if(changes.tableData && (changes.tableData.previousValue && changes.tableData.previousValue.length === 0)
-    //   || changes.preFilteredTableData && (changes.preFilteredTableData.previousValue && changes.preFilteredTableData.previousValue.length === 0)) {
-    //   this.activeTableData = this.getTableData();
-    // }
+    if (changes.localTableData && this.isLocal) {
+      this.originalTableData = [...this.localTableData];
+    }
   }
 
   // getTableData() {
@@ -178,15 +180,11 @@ export class TableComponent implements OnInit, OnChanges {
           delete this.dt.filters[f.field];
         });
       }
-      // this.activeTableData = this.tableData;
       this.filterEvent.emit('');
       this.generateColumns();
+      this.updateOriginalData();
       return;
     }
-
-    //this.dt.filter('', '', '');
-    //this.dt.reset();
-    // this.activeTableData = this.tableData;
 
     if (button && (button.filters && button.filters.length > 0)) {
       button.filters.forEach(f => {
@@ -199,23 +197,19 @@ export class TableComponent implements OnInit, OnChanges {
     this.currentFilterButtons.push(button.buttonText);
 
     this.generateColumns();
+    this.updateOriginalData();
   }
 
   onFilterButtonClear() {
     this.dt.reset();
     this.currentFilterButton = '';
 
-    // if(this.hasPreFilteredTableData()) { 
-    //   this.activeTableData = this.preFilteredTableData;
-    // } else {
-    //   this.activeTableData = this.tableData;
-    // }
-
     this.dt.sortField = this.defaultSortField;
     this.dt.sortOrder = this.defaultSortOrder;
 
     this.filterEvent.emit('');
     this.generateColumns();
+    this.updateOriginalData();
   }
 
   onExportData() {
@@ -356,12 +350,46 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   onTableSearch(keyword: string) {
-    let isnum = /^\d+$/.test(keyword);
-    if (isnum) {
-      this.dt.filterGlobal(keyword, 'equals');
-    } else {
-      this.dt.filterGlobal(keyword, 'contains');
+    if (!keyword || keyword.trim() === '') {
+      this.tableData = [...this.originalTableData];
+      return;
+    }
+
+    const searchTerm = keyword.toLowerCase().trim();
+    const searchableColumns = this.tableCols.filter(col => col.field && col.showColumn !== false);
+    
+    const rankedData = this.originalTableData.map(item => {
+      let maxScore = 0;
       
+      searchableColumns.forEach(col => {
+        const value = item[col.field];
+        if (!value) return;
+        
+        const stringValue = String(value).toLowerCase();
+        
+        if (stringValue === searchTerm) {
+          maxScore = Math.max(maxScore, this.originalTableData.length + 1);
+        } else {
+          const index = stringValue.indexOf(searchTerm);
+          if (index !== -1) {
+            maxScore = Math.max(maxScore, 1 / (index + 1));
+          }
+        }
+      });
+      
+      return { item, score: maxScore };
+    }).filter(ranked => ranked.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map(ranked => ranked.item);
+    
+    this.tableData = rankedData;
+  }
+
+  private updateOriginalData() {
+    if (this.isLocal) {
+      this.originalTableData = [...this.localTableData];
+    } else {
+      this.originalTableData = [...this.tableData];
     }
   }
 }
