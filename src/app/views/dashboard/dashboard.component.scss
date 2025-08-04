@@ -6,6 +6,7 @@
     & .dashboard-quick-view-container {
         display: flex;
         justify-content: space-between;
+        gap: 25px;
 
         & .dashboard-quick-view-item {
             width: 40%;
@@ -14,20 +15,33 @@
             flex-direction: column;
             gap: .5rem;
             align-items: center;
+            background-color: #fff;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
 
             &:last-child {
                 width: 20%;
                 align-items: start;
             }
 
-            & .dashboard-quick-view-icon {
+            & .dashboard-icon-box{
                 background: #F4E3DB;
                 border-radius: 3rem;
-                height: 4rem;
-                width: 4rem;
+                height: 3.8rem;
+                width: 3.8rem;
                 padding: 1rem 1.25rem;
                 color: #B50909;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                & .dashboard-quick-view-icon {
+                  width: 1.375rem;
+                  height: 1.375rem;
+                  
+                }
             }
+
+           
 
             & .dashboard-quick-view-number {
                 color: var(-neutral-black-color-dark);

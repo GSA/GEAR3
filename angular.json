@@ -32,8 +32,8 @@
               }
             ],
             "styles": [
-              "src/styles/custom-theme.scss",
               "src/styles/styles.scss",
+              "src/styles/custom-theme.scss",
               "src/assets/fontawesome-free-5.13.0-web/css/all.min.css",
               "src/assets/bootstrap-theme/bootstrap.min.css",
               "node_modules/bootstrap-table/dist/bootstrap-table.min.css",
@@ -60,7 +60,7 @@
               "node_modules/tableexport.jquery.plugin/tableExport.min.js",
               "node_modules/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js",
               "node_modules/bootstrap-table/dist/extensions/toolbar/bootstrap-table-toolbar.min.js",
-              "node_modules/@uswds/uswds/dist/js/uswds.js"
+             "node_modules/@uswds/uswds/dist/js/uswds.js"
             ],
             "vendorChunk": true,
             "extractLicenses": false,
