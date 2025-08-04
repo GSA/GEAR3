@@ -59,8 +59,9 @@
             <span class="dashboard-recent-report-title-text">Recent GSA IT Standards</span>
             <a href="#" class="dashboard-recent-report-title-link">View All</a>
         </div>
-        <app-table [tableCols]="tableCols" [showToolbar]="false" [showPagination]="false" reportStyle="neutral">
+        <app-table *ngIf="showTable" [tableCols]="tableCols" [showToolbar]="false" [showPagination]="false" reportStyle="neutral">
             
         </app-table>
+        
     </div>
 </div>

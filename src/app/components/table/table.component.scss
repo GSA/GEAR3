@@ -11,6 +11,10 @@
 }
 
 ::ng-deep {
+    .p-datatable-wrapper{
+        background-color: #fff;
+        padding: 0.6rem;
+    }
     .p-datatable {
         font-family: Nunito Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", Segoe UI Symbol;
         font-size: 12px;
@@ -32,6 +36,8 @@
 
     .p-datatable .p-datatable-header {
         border: none;
+        background-color: #fff;
+        border-radius: 0.3rem 0.3rem 0 0;
     }
 
     .default.p-datatable .p-datatable-thead > tr > th {
@@ -107,7 +113,7 @@
     .neutral.p-datatable {
         .p-datatable-thead > tr > th {
             color: var(--neutral-black-color-dark);
-            background-color: var(--neutral-white-color);
+            
             border: none;
             padding: .625rem;
 
@@ -310,3 +316,4 @@
     align-content: center;
     justify-content: end;
 }
+
