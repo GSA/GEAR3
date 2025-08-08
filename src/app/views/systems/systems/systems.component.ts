@@ -25,8 +25,8 @@ import { Column, FilterButton, TwoDimArray } from '../../../common/table-classes
 })
 export class SystemsComponent implements OnInit {
   // row: Object = <any>{};
-  // filteredTable: boolean = false;
-  // filterTitle: string = '';
+  filteredTable: boolean = false;
+  filterTitle: string = '';
   // interfaces: any[] = [];
   // cloudTable: boolean = false;
   // inactiveTable: boolean = false;
@@ -367,198 +367,29 @@ export class SystemsComponent implements OnInit {
     this.router.navigate(['systems', e.ID]);
   }
 
-  // onSelect(chartData): void {
-  //   this.sharedService.disableStickyHeader("systemTable");
-  //   this.filteredTable = true; // Filters are on, expose main table button
-  //   this.filterTitle = chartData.name;
+  onSelect(chartData: any): void {
+  this.sharedService.disableStickyHeader("systemTable");
+  this.filteredTable = true;
+  this.filterTitle = chartData.name;
 
-  //   // Filter by RespOrg clicked on visualization
-  //   $('#systemTable').bootstrapTable('filterBy', {
-  //     Status: ['Active'],
-  //     BusApp: 'Yes',
-  //     BusOrgSymbolAndName: chartData.name,
-  //   });
-  //   $('#systemTable').bootstrapTable('refreshOptions', {
-  //     exportOptions: {
-  //       fileName: this.sharedService.fileNameFmt(
-  //         'GSA_Systems_SubSystems-' + chartData.name
-  //       ),
-  //     },
-  //   });
-  //   this.sharedService.enableStickyHeader("systemTable");
-  // }
+  let filtered = this.systemsData.filter(s =>
+    s.Status === 'Active' &&
+    s.BusApp === 'Yes' &&
+    s.BusOrgSymbolAndName === chartData.name
+  );
 
-  // onFilterClick(filterButtons: FilterButton[]) {
-  //   this.tableData = this.tableDataOriginal;
-  //   // this.tableService.filterButtonClick(filterButtons, this.tableData);
-  //   filterButtons.forEach(f => {
-  //     if(f.filters &&  f.filters.length > 0) {
-  //       this.tableService.filterButtonClick(filterButtons, this.tableData);
-  //     }
-  //     this.onFilterEvent(f.buttonText);
-  //   });
-  // }
+  if (this.selectedTab === 'Cloud Enabled') {
+    filtered = filtered.filter(s => s.CloudYN === 'Yes');
+  } else if (this.selectedTab === 'Inactive') {
+    filtered = this.systemsData.filter(s =>
+      s.Status === 'Inactive' &&
+      s.BusApp === 'Yes' &&
+      s.BusOrgSymbolAndName === chartData.name
+    );
+  }
 
-  // onFilterResetClick() {
-  //   $('#sysViz').collapse('show');
-  //   this.tableCols = this.defaultTableCols;
-  //   this.tableData = this.tableDataFiltered;
-  //   this.tableService.updateReportTableData(this.tableData);
-  // }
-
-  //   private getInterfaceData(sysID: number) {
-  //     this.apiService.getOneDataFlow(sysID).subscribe((data: any[]) => {
-  //       this.interfaces = data;
-  //       this.modalService.updateDetails(this.interfaces, 'data-flow');
-  //       if (this.interfaces.length) this.createDataFlowChart(sysID);  // If there is interface data, create the flow chart
-  //     });
-  //   }
-
-  //   private createDataFlowChart(sysID: number) {
-  //     // console.log(sysID, this.interfaces);  // Debug
-
-  //     var CONTAINER_ID = '#dataFlowChart',
-  //       SVG_ID = 'dataflowSVG',
-  //       units = "Connections",
-
-  //       // Set the dimensions and margins of the graph
-  //       margin = { top: 20, right: 20, bottom: 20, left: 20 },
-  //       width = 960,
-  //       height = 500,
-  //       nodeWidth = 36,
-  //       nodePadding = 40;
-
-  //     if (document.getElementById(SVG_ID)) {
-  //       return false;
-  //     };
-
-  //     // Make sure element is empty first
-  //     d3.select(CONTAINER_ID + "> svg").remove();
-
-  //     // Append the svg object to the body of the page
-  //     var svg = d3.select(CONTAINER_ID).append("svg")
-  //       .attr('width', width)
-  //       .attr('height', height);
-
-  //     var g = svg.append("g")
-  //       .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-
-  //     // Format variables
-  //     var formatNumber = d3.format(",.0f"),    // zero decimal places
-  //       format = function (d) { return formatNumber(d) + " " + units; },
-  //       color = d3.scaleOrdinal()
-  //         .range(['#9dc6d8', '#00b3ca', '#7dd0b6', '#1d4e89',
-  //           '#d2b29b', '#e38690', '#f69256', '#ead98b', '#965251',
-  //           '#c6cccc', '#e5dfef', '#fbdce0', '#cbefe7', '#fffdce',
-  //           '#d7ffdd',
-  //         ]);
-
-  //     // Set the sankey diagram properties
-  //     var sankey = d3Sankey.sankey()
-  //       .nodeWidth(nodeWidth)
-  //       .nodePadding(nodePadding)
-  //       .size([width - margin.left - margin.right,
-  //       height - margin.top - margin.bottom])
-  //       .nodeId(function (d: any) {
-  //         return d.name;
-  //       });
-
-  //     var link = g.append("g")
-  //       .attr("class", "link")
-  //       .selectAll("path");
-
-  //     var node = g.append("g")
-  //       .attr("class", "node")
-  //       .selectAll("g");
-
-  //     // load the data
-  //     //set up graph in same style as original example but empty
-  //     var graph = {
-  //       "nodes": [],
-  //       "links": []
-  //     };
-
-  //     this.interfaces.forEach(function (d) {
-  //       graph.nodes.push({
-  //         "name": d.srcApp,
-  //         "id": d.srcAppID
-  //       });
-  //       graph.nodes.push({
-  //         "name": d.destApp,
-  //         "id": d.destAppID
-  //       });
-  //       graph.links.push({
-  //         "source": d.srcApp,
-  //         "target": d.destApp,
-  //         "sourceId": d.srcAppID,
-  //         "targetId": d.destAppID,
-  //         "value": 1
-  //       });
-  //     });
-
-  //     // return only the distinct / unique nodes
-  //     graph.nodes = Array.from(new Set(graph.nodes.map(node => node.name)))
-  //       .map(name => {
-  //         return graph.nodes.find(node => node.name === name)
-  //       });
-
-  //     // console.log("graph: ", graph);  // Debug
-
-  //     sankey(graph);
-
-  //     // Add in the links
-  //     link = link.data(graph.links)
-  //       .enter().append("path")
-  //       .attr("d", d3Sankey.sankeyLinkHorizontal())
-  //       .style("fill", "none")
-  //       // Change path color by target
-  //       .style("stroke", function (d: any) {
-  //         return d.color = color(d.targetId);
-  //       })
-  //       .style("stroke-opacity", 0.7)
-  //       // Path width is default or width if value is valid
-  //       .style("stroke-width", function (d: any) {
-  //         return Math.max(15, d.width);
-  //       });
-
-  //     // Add the link titles
-  //     link.append("title")
-  //       .text(function (d: any) {
-  //         return d.source.name + " → " +
-  //           d.target.name + "\n" + format(d.value)
-  //       });
-
-  //     // Add in the nodes
-  //     node = node.data(graph.nodes)
-  //       .enter().append("g")
-  //       .on("click", function (d: any) {
-  //         //Open new modal when selecting app on interface graphic
-  //         $('#sysDetail').modal('hide');
-
-  //         // Route to new app detail
-  //         window.location.href = `#/systems/${d.id}`;
-  //         window.location.reload();
-  //       }.bind(this));
-
-  //     // add the rectangles for the nodes
-  //     node.append("rect")
-  //       .attr("x", function (d) { return d.x0; }) //Use original sankey defined positions
-  //       .attr("y", function (d) { return d.y0 - (Math.max(30, d.height) / 2); }) //Use force defined positions
-  //       .attr("height", function (d) { return Math.max(30, d.height); })
-  //       .attr("width", function (d) { return d.x1 - d.x0; })
-  //       .style("fill", function (d) { return color(d.id); })
-  //       .style("opacity", 0.5)
-  //       .style("stroke", "white");
-
-  //     // add in the title for the nodes
-  //     node.append("text")
-  //       .attr("x", function (d) { return d.x0 - 6; })
-  //       .attr("y", function (d) { return d.y0 + ((d.y1 - d.y0) / 2); })
-  //       .attr("dy", "0.35em")
-  //       .attr("text-anchor", "end")
-  //       .text(function (d) { return d.name; })
-  //       .filter(function (d) { return d.x0 < width / 2; })
-  //       .attr("x", function (d) { return d.x1 + 6; })
-  //       .attr("text-anchor", "start");
-  //   }
+  this.systemsDataTabFilterted = filtered;
+  this.tableService.updateReportTableData(this.systemsDataTabFilterted);
+  this.sharedService.enableStickyHeader("systemTable");
+}
 }
