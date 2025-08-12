@@ -746,7 +746,7 @@ export class ApiService {
         httpOptions
       );
   }
-  public createITStandard(data: {}): Observable<ITStandards[]> {
+  public createITStandard(data: any): Observable<ITStandards[]> {
     if (this.globals.jwtToken) {
       var httpOptions = this.setHeaderOpts();
     } else {
@@ -761,6 +761,22 @@ export class ApiService {
     return this.http
       .post<ITStandards[]>(this.techUrl + '/create', data, httpOptions);
   }
+
+  public createITStandardAdvanced(id: any, formData: any): Observable<ITStandards[]> {
+    if (this.globals.jwtToken) {
+      var httpOptions = this.setHeaderOpts();
+    } else {
+      catchError(
+        this.handleError<ITStandards[]>(
+          'CREATE Advanced Standard - No Authentication Token',
+          []
+        )
+      );
+    }
+
+    return this.http.post<ITStandards[]>(this.techUrl + '/create_advanced/' + String(id), formData, httpOptions);
+  }
+
   public getRecentITStandards(records: number): Observable<ITStandards[]> {
     return this.http
       .get<ITStandards[]>(this.techUrl + '/recent/' + String(records))
@@ -883,6 +899,10 @@ export class ApiService {
     return this.http
       .get<Manufacturer[]>(this.techCatalogUrl + '/get/manufacturers')
       .pipe(
+        map(manus => manus.map(m => {
+          m.IsCustom = false;
+          return m;
+        })),
         catchError(
           this.handleError<Manufacturer[]>('GET Tech Catalog Manufacturers', [])
         )
@@ -903,6 +923,10 @@ export class ApiService {
     return this.http
       .get<SoftwareProduct[]>(this.techCatalogUrl + '/get/software_products/' + id)
       .pipe(
+        map(prods => prods.map(p => {
+          p.IsCustom = false;
+          return p;
+        })),
         catchError(
           this.handleError<SoftwareProduct[]>(
             'GET Tech Catalog Software Products',
@@ -916,6 +940,10 @@ export class ApiService {
     return this.http
       .get<SoftwareVersion[]>(this.techCatalogUrl + '/get/software_versions/' + id)
       .pipe(
+        map(vers => vers.map(v => {
+          v.IsCustom = false;
+          return v;
+        })),
         catchError(
           this.handleError<SoftwareVersion[]>(
             'GET Tech Catalog Software Versions',
@@ -929,6 +957,10 @@ export class ApiService {
     return this.http
       .get<SoftwareRelease[]>(this.techCatalogUrl + '/get/software_Releases/' + id)
       .pipe(
+        map(rels => rels.map(r => {
+          r.IsCustom = false;
+          return r;
+        })),
         catchError(
           this.handleError<SoftwareRelease[]>(
             'GET Tech Catalog Software Releases',
@@ -983,5 +1015,144 @@ export class ApiService {
         ApiToken: this.globals.apiToken
       }),
     };
+  }
+
+  public createCustomManufacturer(name: string): Observable<any> {
+    if (this.globals.jwtToken) {
+      var httpOptions = this.setHeaderOpts();
+    } else {
+      catchError(
+        this.handleError<any>(
+          'CREATE Manufacturer - No Authentication Token',
+          []
+        )
+      );
+    }
+
+    return this.http
+      .post<any>(this.techCatalogUrl + '/post/custom_manufacturer/' + name, httpOptions);
+  }
+
+  public createCustomSoftwareProduct(name: string): Observable<any> {
+    if (this.globals.jwtToken) {
+      var httpOptions = this.setHeaderOpts();
+    } else {
+      catchError(
+        this.handleError<any>(
+          'CREATE Product - No Authentication Token',
+          []
+        )
+      );
+    }
+
+    return this.http
+      .post<any>(this.techCatalogUrl + '/post/custom_software_product/' + name, httpOptions);
+  }
+
+  public createCustomSoftwareVersion(name: string): Observable<any> {
+    if (this.globals.jwtToken) {
+      var httpOptions = this.setHeaderOpts();
+    } else {
+      catchError(
+        this.handleError<any>(
+          'CREATE Version - No Authentication Token',
+          []
+        )
+      );
+    }
+
+    return this.http
+      .post<any>(this.techCatalogUrl + '/post/custom_software_version/' + name, httpOptions);
+  }
+
+  public updateITStandardTechFields(id: number, manu: string, prod: string, vers: string, rels: string, formData: any): Observable<any> {
+    if (this.globals.jwtToken) {
+      var httpOptions = this.setHeaderOpts();
+    } else {
+      catchError(
+        this.handleError<any>(
+          'UPDATE IT Standard tech fields - No Authentication Token',
+          []
+        )
+      );
+    }
+
+    let data = {
+      manufactuerToAdd: manu,
+      productToAdd: prod,
+      versionToAdd: vers,
+      releaseToAdd: rels,
+      manufacturerId: formData.tcManufacturer,
+      softwareProductId: formData.tcSoftwareProduct,
+      softwareReleaseId: formData.tcSoftwareRelease
+    };
+
+    return this.http
+      .post<any>(this.techUrl + '/post/update_tech_fields/' + id, data, httpOptions);
+  }
+
+  public getCustomManufacturers(): Observable<Manufacturer[]> {
+    return this.http
+      .get<Manufacturer[]>(this.techCatalogUrl + '/get/custom_manufacturers')
+      .pipe(
+        map(manus => manus.map(m => {
+          m.IsCustom = true;
+          return m;
+        })),
+        catchError(
+          this.handleError<Manufacturer[]>('GET Custom Manufacturers', [])
+        )
+      );
+  }
+
+  public getCustomSoftwareProducts(id: string): Observable<SoftwareProduct[]> {
+    return this.http
+      .get<SoftwareProduct[]>(this.techCatalogUrl + '/get/custom_software_products/' + id)
+      .pipe(
+        map(prods => prods.map(p => {
+          p.IsCustom = true;
+          return p;
+        })),
+        catchError(
+          this.handleError<SoftwareProduct[]>(
+            'GET Custom Software Products',
+            []
+          )
+        )
+      );
+  }
+
+  public getCustomSoftwareVersions(id: string): Observable<SoftwareVersion[]> {
+    return this.http
+      .get<SoftwareVersion[]>(this.techCatalogUrl + '/get/custom_software_versions/' + id)
+      .pipe(
+        map(vers => vers.map(v => {
+          v.IsCustom = true;
+          return v;
+        })),
+        catchError(
+          this.handleError<SoftwareVersion[]>(
+            'GET Custom Software Versions',
+            []
+          )
+        )
+      );
+  }
+
+  public getCustomSoftwareReleases(id: string): Observable<SoftwareRelease[]> {
+    return this.http
+      .get<SoftwareRelease[]>(this.techCatalogUrl + '/get/custom_software_releases/' + id)
+      .pipe(
+        map(rels => rels.map(r => {
+          r.IsCustom = true;
+          return r;
+        })),
+        catchError(
+          this.handleError<SoftwareRelease[]>(
+            'GET Custom Software Releases',
+            []
+          )
+        )
+      );
   }
 }

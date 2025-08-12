@@ -75,7 +75,7 @@
         <!-- Tab Panes -->
         <div class="tab-content mt-3">
           <div class="tab-pane fade show active" id="systemOverview">
-            <div class="row mb-4">
+            <div class="row mb-2">
               <div class="col">
                 <h4>Alias/Acronym</h4>
                 <p>{{ system.DisplayName }}</p>
@@ -90,6 +90,18 @@
                 <h4>System Level</h4>
                 <p>{{ system.SystemLevel }}</p>
               </div>
+            </div>
+
+            <div *ngIf="system.TIME_URL">
+              <a class="btn btn-sm btn-success btn-link text-white mb-4" 
+              [href]="system.TIME_URL"
+              target="_blank"
+              rel="noopener">
+                Complete your system's 
+                <b class="text-white font-weight-bold">
+                  TIME lifecycle questionnaire</b>
+                  for FY25
+                </a>
             </div>
 
             <h4>Description</h4>

@@ -1,0 +1,15 @@
+.time-helper-text-container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.time-helper-text {
+    width: 40%;
+    font-size: 14px;
+    font-style: italic;
+}
+
+.helper-link {
+    color: #027eb2;
+    text-decoration: underline;
+}

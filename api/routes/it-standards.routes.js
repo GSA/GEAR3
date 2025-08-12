@@ -24,6 +24,9 @@ router.route('/update/:id')
 router.route('/create')
   .post(itsCtrl.create);
 
+router.route('/create_advanced/:id')
+  .post(itsCtrl.createAdvanced);
+
 router.route('/508_compliance')
   .get(itsCtrl.find508Compliance);
 
@@ -59,6 +62,7 @@ router.route('/expiring_week')
 
 router.route('/filter_totals')
   .get(itsCtrl.getFilterTotals);
+  
 router.route('/filter_totals/:filters')
   .get(itsCtrl.getFilterTotals);
 

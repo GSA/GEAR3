@@ -160,7 +160,7 @@ export class TableService {
       advancedSearch: definitions.advancedSearch,
       idTable: definitions.idTable,
       buttonsClass: 'info',
-      icons: {advancedSearchIcon: "fa-search-plus"},
+      icons: {advancedSearchIcon: "bi-search"},
       formatAdvancedSearch: function () {return "Search on specific columns"},
       formatColumns: function () {return "Add/remove columns"},
       formatPaginationSwitch: function () {return "Show the entire list or show pages"},
