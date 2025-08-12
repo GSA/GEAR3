@@ -453,7 +453,7 @@ cron.schedule(process.env.RECORDS_CRON, async () => {
   await googleApiService.saveToken().catch(console.error);
   await cronCtrl.runUpdateAllRelatedRecordsJob();
 });
-
+/* 
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Tech Catalog Daily Import
 // (runs DAILY at 12:01 AM)
@@ -466,7 +466,7 @@ cron.schedule(process.env.TECH_CATALOG_CRON2, () => {
   cronCtrl.runTechCatalogImportJob();
 });
 // -------------------------------------------------------------------------------------------------
-
+*/
 // CRON JOB: Touchpoints API - Update Websites (runs every day at 11:05 PM)
 cron.schedule(process.env.TOUCHPOINTS_CRON, async () => { 
   await tpiJobHandler.runTouchpointImportJob();

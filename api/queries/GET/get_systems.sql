@@ -9,6 +9,7 @@ SELECT
     ELSE systems_ext.Normalized_Name
   END                                                   AS Name,
   systems_ext.Display_Name					                    AS DisplayName,
+  systems_ext.TIME_URL                                  AS TIME_URL,
   systems.`ex:FederalContractor`                      	AS FedContractorLoc,
   systems.`ex:FIPS_Impact_Level`                      	AS FIPS_Impact_Level,
   systems.`ex:BusinessApplication`						          AS BusApp,

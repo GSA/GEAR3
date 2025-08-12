@@ -124,6 +124,12 @@ export class TimeComponent implements OnInit {
       showColumn: false,
       formatter: this.sharedService.linksFormatter,
     },
+    {
+      field: 'System Id',
+      header: 'System Id',
+      isSortable: false,
+      showColumn: false
+    }
   ];
 
   ngOnInit(): void {

@@ -43,6 +43,11 @@ export class GlobalSearchComponent implements OnInit {
       formatter: this.sharedService.formatDescription,
     },
     {
+      field: 'Status',
+      header: 'Status',
+      isSortable: false,
+    },
+    {
       field: 'GEAR_Type_Display',
       header: 'GEAR Data Report',
       isSortable: true

@@ -3,6 +3,7 @@
   "version": "3.0.0",
   "description": "Next Iteration of the GEAR portal to latest tech stack of 2020",
   "main": "server.js",
+  "typings": "./src/typings.d.ts",
   "engines": {
     "node": ">=18.14.2"
   },
@@ -37,6 +38,7 @@
     "@ng-select/ng-select": "^13.4.1",
     "@node-saml/passport-saml": "^5.1.0",
     "@swimlane/ngx-charts": "^20.5.0",
+    "@uswds/uswds": "3.13.0",
     "adjust-sourcemap-loader": "^4.0.0",
     "async": "^2.6.4",
     "base-64": "^0.1.0",
@@ -90,7 +92,6 @@
     "sqlstring": "^2.3.3",
     "tableexport.jquery.plugin": "1.20.1",
     "tslib": "^2.0.0",
-    "@uswds/uswds": "3.8.1",
     "webpack": "^5.91.0",
     "webpack-dev-server": "^5.0.4",
     "xmlhttprequest": "^1.8.0",
@@ -120,6 +121,7 @@
     "ts-node": "~10.9.2",
     "tslint": "~6.1.0",
     "typescript": "^5.4.5",
+    "typescript-guid": "1.0.3",
     "webpack-bundle-analyzer": "^4.6.1"
   }
 }

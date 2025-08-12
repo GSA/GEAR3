@@ -1,0 +1,416 @@
+<!-- Container for sidebar(s) + page content -->
+<ng-sidebar-container (onBackdropClicked)="_onBackdropClicked()" role="navigation"
+[attr.aria-expanded]="_opened ? 'true' : 'false'">
+  <ng-sidebar
+    id="sidebar"
+    [(opened)]="_opened"
+    [mode]="_mode"
+    [keyClose]="_keyClose"
+    [position]="_position"
+    [dock]="_dock"
+    [dockedSize]="_dockedSize"
+    [autoCollapseHeight]="_autoCollapseHeight"
+    [autoCollapseWidth]="_autoCollapseWidth"
+    [closeOnClickOutside]="_closeOnClickOutside"
+    [closeOnClickBackdrop]="_closeOnClickBackdrop"
+    [showBackdrop]="_showBackdrop"
+    [animate]="_animate"
+    [trapFocus]="_trapFocus"
+    [autoFocus]="_autoFocus"
+    [sidebarClass]="'w-15'"
+    [ariaLabel]="'sideNavbar'"
+    (onOpenStart)="_onOpenStart()"
+    (onOpened)="_onOpened()"
+    (onCloseStart)="_onCloseStart()"
+    (onClosed)="_onClosed()"
+    (onTransitionEnd)="_onTransitionEnd()"
+    (mouseenter)="_opened = true"
+    (mouseleave)="_opened = false"
+  >
+    <ul id="sideMenu" class="list-group">
+      <!-- Strategy -->
+      <li>
+        <a
+          id="strategyBttn"
+          data-bs-toggle="collapse"
+          data-bs-target="#strategyDropdown"
+          aria-controls="#strategyDropdown"
+          aria-expanded="false"
+          class="bg-success list-group-item list-group-item-action flex-column align-items-start"
+        >
+          <div class="d-flex w-100 justify-content-start align-items-center">
+            IT Strategy
+            <span class="submenu-icon">
+              <i class="fas fa-puzzle-piece fa-lg fa-fw"></i>
+            </span>
+          </div>
+        </a>
+        <div
+          id="strategyDropdown"
+          aria-labelledby="strategyDropdown"
+          data-bs-parent="#sideMenu"
+          class="collapse sidebar-submenu"
+        >
+          <a
+            routerLink="/strategic_framework"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            IT Strategic Framework</a
+          >
+          <a
+            routerLink="/investments"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            IT Investments</a
+          >
+          <a
+            href="https://insite.gsa.gov/directives-library/staff-offices?staff_office=I"
+            target="_blank"
+            rel="noopener"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            IT Policies
+            <i class="fas fa-external-link-alt"></i
+          ></a>
+        </div>
+      </li>
+
+      <!-- Enterprise  -->
+      <li>
+        <a
+          id="enterpriseBttn"
+          data-bs-toggle="collapse"
+          data-bs-target="#enterpriseDropdown"
+          aria-controls="#enterpriseDropdown"
+          aria-expanded="false"
+          class="bg-royal-blue list-group-item list-group-item-action flex-column align-items-start"
+        >
+          <div class="d-flex w-100 justify-content-start align-items-center">
+            GSA Enterprise
+            <span class="submenu-icon">
+              <i class="fas fa-sitemap fa-lg fa-fw"></i>
+            </span>
+          </div>
+        </a>
+        <div
+          id="enterpriseDropdown"
+          aria-labelledby="enterpriseDropdown"
+          data-bs-parent="#sideMenu"
+          class="collapse sidebar-submenu"
+        >
+          <a
+            routerLink="/capabilities_model"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            Business Capability Model</a
+          >
+          <a
+            routerLink="/capabilities"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            Business Capability List</a
+          >
+          <a
+            routerLink="/org_chart"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            Organization Chart</a
+          >
+          <a
+            routerLink="/organizations"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            Organization List</a
+          >
+          <a
+            routerLink="/website_service_category"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            Website Service Category List</a
+          >
+        </div>
+      </li>
+
+      <!-- Systems -->
+      <li>
+        <a
+          id="systemBttn"
+          data-bs-toggle="collapse"
+          data-bs-target="#systemsDropdown"
+          aria-controls="#systemsDropdown"
+          aria-expanded="false"
+          class="bg-danger list-group-item list-group-item-action flex-column align-items-start"
+        >
+          <div class="d-flex w-100 justify-content-start align-items-center">
+            Business Systems
+            <span class="submenu-icon">
+              <i class="fas fa-laptop fa-lg fa-fw"></i>
+            </span>
+          </div>
+        </a>
+        <div
+          id="systemsDropdown"
+          aria-labelledby="systemsDropdown"
+          data-bs-parent="#sideMenu"
+          class="collapse sidebar-submenu"
+        >
+          <a
+            routerLink="/systems"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            Business Systems & Subsystems</a
+          >
+          <a
+            routerLink="/systems_TIME"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            TIME Report</a
+          >
+          <a
+            routerLink="/records_mgmt"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            Records Management</a
+          >
+          <a
+            routerLink="/websites"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            GSA Websites</a
+          >
+        </div>
+      </li>
+
+      <!-- Security -->
+      <li>
+        <a
+          id="securityBttn"
+          data-bs-toggle="collapse"
+          data-bs-target="#securityDropdown"
+          aria-controls="#securityDropdown"
+          aria-expanded="false"
+          class="bg-warning list-group-item list-group-item-action flex-column align-items-start"
+        >
+          <div class="d-flex w-100 justify-content-start align-items-center">
+            Security
+            <span class="submenu-icon">
+              <i class="fas fa-shield-alt fa-lg fa-fw"></i>
+            </span>
+          </div>
+        </a>
+        <div
+          id="securityDropdown"
+          aria-labelledby="securityDropdown"
+          data-bs-parent="#sideMenu"
+          class="collapse sidebar-submenu"
+        >
+          <a
+            routerLink="/FISMA"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            FISMA Systems Inventory</a
+          >
+          <a
+            routerLink="/FISMA_POC"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            FISMA System POCs</a
+          >
+        </div>
+      </li>
+
+      <!-- Technologies -->
+      <li>
+        <a
+          id="technologyBttn"
+          data-bs-toggle="collapse"
+          data-bs-target="#technologiesDropdown"
+          aria-controls="#technologiesDropdown"
+          aria-expanded="false"
+          class="bg-teal list-group-item list-group-item-action flex-column align-items-start"
+        >
+          <div class="d-flex w-100 justify-content-start align-items-center">
+            Technologies
+            <span class="submenu-icon">
+              <i class="fas fa-microchip fa-lg fa-fw"></i>
+            </span>
+          </div>
+        </a>
+        <div
+          id="technologiesDropdown"
+          aria-labelledby="technologiesDropdown"
+          data-bs-parent="#sideMenu"
+          class="collapse sidebar-submenu"
+        >
+          <a
+            routerLink="/it_standards"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            IT Standards List</a
+          >
+          <a
+            href="https://sites.google.com/a/gsa.gov/it_standards/software-approvals#h.vioogtbleinq"
+            target="_blank"
+            rel="noopener"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            IT Standards Approval Process
+            <i class="fas fa-external-link-alt"></i
+          ></a>
+        </div>
+      </li>
+
+      <!-- Enterprise Architecture -->
+      <li>
+        <a
+          id="eaBttn"
+          data-bs-toggle="collapse"
+          data-bs-target="#eaDropdown"
+          aria-controls="#eaDropdown"
+          aria-expanded="false"
+          class="bg-purple list-group-item list-group-item-action flex-column align-items-start"
+        >
+          <div class="d-flex w-100 justify-content-start align-items-center">
+            Enterprise Architecture
+            <span class="submenu-icon">
+              <i class="fas fa-network-wired fa-lg fa-fw"></i>
+            </span>
+          </div>
+        </a>
+        <div
+          id="eaDropdown"
+          aria-labelledby="eaDropdown"
+          data-bs-parent="#sideMenu"
+          class="collapse sidebar-submenu"
+        >
+          <!--<a
+            routerLink="/artifacts"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            Artifacts</a
+          >
+          <a
+            routerLink="/ea_view"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            EA View</a
+          >
+          We need to update the EA view to be more readable before publishing--> 
+          <a
+            routerLink="/gear_model"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            GEAR Model Diagram</a
+          >
+        </div>
+      </li>
+
+      <!-- Menu Break -->
+      <li><br /></li>
+
+      <!-- Additional Information -->
+      <li>
+        <a
+          id="addinfoBttn"
+          data-bs-toggle="collapse"
+          data-bs-target="#addinfoDropdown"
+          aria-controls="#addinfoDropdown"
+          aria-expanded="false"
+          class="bg-info list-group-item list-group-item-action flex-column align-items-start"
+        >
+          <div class="d-flex w-100 justify-content-start align-items-center">
+            Additional Information
+            <span class="submenu-icon">
+              <i class="fab fa-wpforms fa-lg fa-fw fa-fw"></i>
+            </span>
+          </div>
+        </a>
+        <div
+          id="addinfoDropdown"
+          aria-labelledby="addinfoDropdown"
+          data-bs-parent="#sideMenu"
+          class="collapse sidebar-submenu"
+        >
+          <a
+            routerLink="/forms"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+          Access Forms</a
+          >
+          <a
+            routerLink="/glossary"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+          Glossary</a
+          >
+          <a
+            routerLink="/data_dictionary"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            Data Dictionary</a>
+          <a
+            href="https://gsa.github.io/GEAR-Documentation/api-docs/"
+            target="_blank"
+            rel="noopener"
+            class="bg-dark list-group-item list-group-item-action"
+          >
+            API Documentation
+            <i class="fas fa-external-link-alt"></i
+          ></a>
+        </div>
+      </li>
+    </ul>
+  </ng-sidebar>
+
+  <!-- Page content -->
+  <div ng-sidebar-content>
+    <main role="main">
+      <div class="container-fluid my-3">
+        <div class="col-md-12">
+          <!-- Logged In Notification -->
+          <div
+            id="loggedIn"
+            class="container toast hide rounded-lg w-25"
+            role="alert"
+            aria-live="assertive"
+            aria-atomic="true"
+            data-bs-delay="3000"
+          >
+            <div id="loggedInCollapse" class="collapse">
+              <div class="toast-header">
+                <i class="fa fa-sign-in-alt mr-2 fa-fw"></i>
+                <strong class="mr-auto text-success"
+                  >You have successfully logged into GEAR Manager!</strong
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Logged Out Notification -->
+          <div
+            id="loggedOut"
+            class="container toast hide rounded-lg w-25"
+            role="alert"
+            aria-live="assertive"
+            aria-atomic="true"
+            data-bs-delay="3000"
+          >
+            <div id="loggedOutCollapse" class="collapse">
+              <div class="toast-header">
+                <i class="fas fa-sign-out-alt mr-2 fa-fw"></i>
+                <strong class="mr-auto text-warning"
+                  >You have been logged out of GEAR Manager!</strong
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Components Content -->
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+    </main>
+  </div>
+  <!-- End Page Content -->
+</ng-sidebar-container>
+<!-- End Side Navbar -->
