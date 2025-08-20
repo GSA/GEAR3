@@ -10,9 +10,10 @@ import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 
 @Component({
-  selector: 'it-standards',
-  templateUrl: './it-standards-details.component.html',
-  styleUrls: ['./it-standards-details.component.scss'],
+    selector: 'it-standards',
+    templateUrl: './it-standards-details.component.html',
+    styleUrls: ['./it-standards-details.component.scss'],
+    standalone: false
 })
 export class ItStandardsDetailsComponent implements OnInit {
 

@@ -31,19 +31,19 @@
       <div class="filter-tabs-container" filterTabs>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')">
           <span class="filter-tab-text">All</span>
-          <span class="filter-tab-number first">{{filterTotals.AllTotal}}</span>
+          <span class="filter-tab-number first">{{filterTotals?.AllTotal}}</span>
         </div>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Decommissioned')}" (click)="onSelectTab('Decommissioned')">
           <span class="filter-tab-text">Decommissioned</span>
-          <span class="filter-tab-number second">{{filterTotals.DecommissionedTotal}}</span>
+          <span class="filter-tab-number second">{{filterTotals?.DecommissionedTotal}}</span>
         </div>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Redirects')}" (click)="onSelectTab('Redirects')">
           <span class="filter-tab-text">Redirects</span>
-          <span class="filter-tab-number third">{{filterTotals.RedirectsTotal}}</span>
+          <span class="filter-tab-number third">{{filterTotals?.RedirectsTotal}}</span>
         </div>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('External')}" (click)="onSelectTab('External')">
           <span class="filter-tab-text">External</span>
-          <span class="filter-tab-number fourth">{{filterTotals.ExternalTotal}}</span>
+          <span class="filter-tab-number fourth">{{filterTotals?.ExternalTotal}}</span>
         </div>
       </div>
     </app-table>

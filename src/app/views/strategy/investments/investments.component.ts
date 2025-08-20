@@ -14,9 +14,10 @@ import { FilterButton, Column, TwoDimArray } from '../../../common/table-classes
 // declare var $: any;
 
 @Component({
-  selector: 'investments',
-  templateUrl: './investments.component.html',
-  styleUrls: ['./investments.component.scss'],
+    selector: 'investments',
+    templateUrl: './investments.component.html',
+    styleUrls: ['./investments.component.scss'],
+    standalone: false
 })
 export class InvestmentsComponent implements OnInit {
 

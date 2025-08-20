@@ -17,9 +17,10 @@ import { Record } from '@api/models/records.model';
 import { Website } from '@api/models/websites.model';
 
 @Component({
-  selector: 'systems-details',
-  templateUrl: './systems-details.component.html',
-  styleUrls: ['./systems-details.component.scss'],
+    selector: 'systems-details',
+    templateUrl: './systems-details.component.html',
+    styleUrls: ['./systems-details.component.scss'],
+    standalone: false
 })
 export class SystemsDetailsComponent implements OnInit {
 

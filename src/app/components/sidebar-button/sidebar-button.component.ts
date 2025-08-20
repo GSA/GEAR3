@@ -6,7 +6,8 @@ import { SidebarButtonChild } from '@common/sidebar-classes';
 @Component({
     selector: 'app-sidebar-button',
     templateUrl: './sidebar-button.component.html',
-    styleUrls: ['./sidebar-button.component.scss']
+    styleUrls: ['./sidebar-button.component.scss'],
+    standalone: false
 })
 export class SidebarButtonComponent implements OnChanges {
 
