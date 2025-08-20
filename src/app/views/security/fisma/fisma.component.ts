@@ -153,6 +153,13 @@ export class FismaComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    // Check for tab parameter in route
+    this.route.queryParams.subscribe(params => {
+      if (params['tab']) {
+        this.selectedTab = params['tab'];
+      }
+    });
+
     this.apiService.getFISMA().subscribe(fisma => {
       this.fismaData = fisma;
       fisma.forEach(f => {
@@ -161,6 +168,11 @@ export class FismaComponent implements OnInit {
         }
       });
       this.tableService.updateReportTableData(this.fismaTabFilterted);
+      
+      // Apply tab filter if specified in route
+      if (this.selectedTab !== 'All') {
+        this.onSelectTab(this.selectedTab);
+      }
     });
 
     this.apiService.getFismaFilterTotals().subscribe(t => {

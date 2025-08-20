@@ -7,11 +7,11 @@
            </div>
             <span class="dashboard-quick-view-number">{{ fismaExpiringThisQuarter }}</span>
             <span class="dashboard-quick-view-text">FISMA Expiring by {{ getExpiringDate() }}</span>
-            <div class="dashboard-quick-view-expire-container">
+            <div style="cursor: pointer;" (click)="navigateToFismaTabs()"  class="dashboard-quick-view-expire-container">
                 <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle"></i>
                 <span class="dashboard-quick-view-expire-text">{{ fismaExpiringThisWeek }} items expiring within 7 days</span>
             </div>
-            <a href="#" class="dashboard-quick-view-link">View All</a>
+            <a (click)="navigateToFisma()" class="dashboard-quick-view-link" style="cursor: pointer;">View All</a>
         </div>
         <div class="dashboard-quick-view-item">
             <div class="dashboard-icon-box">
@@ -19,11 +19,11 @@
             </div>
             <span class="dashboard-quick-view-number">{{ standardsExpiringThisQuarter }}</span>
             <span class="dashboard-quick-view-text">IT Standards Expiring by {{ getExpiringDate() }}</span>
-            <div class="dashboard-quick-view-expire-container">
+            <div style="cursor: pointer;" (click)="navigateToItStandardTabs()" class="dashboard-quick-view-expire-container">
                 <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle"></i>
                 <span class="dashboard-quick-view-expire-text">{{ standardsExpiringThisWeek }} items expiring within 7 days</span>
             </div>
-            <a href="#" class="dashboard-quick-view-link">View All</a>
+            <a (click)="navigateToItStandards()" class="dashboard-quick-view-link" style="cursor: pointer;">View All</a>
         </div>
         <div class="dashboard-quick-view-item">
             <span class="dashboard-quick-links-title">
@@ -54,7 +54,7 @@
     <div class="dashboard-recent-report-container">
         <div class="dashboard-recent-report-title">
             <span class="dashboard-recent-report-title-text">Recent GSA IT Standards</span>
-            <a href="#" class="dashboard-recent-report-title-link">View All</a>
+            <a  (click)="navigateToItStandards()"  class="dashboard-recent-report-title-link">View All</a>
         </div>
         <app-table *ngIf="showTable" [tableCols]="tableCols" [showToolbar]="false" [showPagination]="false" reportStyle="neutral">
             

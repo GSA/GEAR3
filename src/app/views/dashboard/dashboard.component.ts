@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Column } from '@common/table-classes';
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
@@ -70,10 +71,11 @@ export class DashboardComponent implements OnInit {
   public fismaExpiringThisQuarter: number = 0;
   public fismaExpiringThisWeek: number = 0;
   
-  constructor(
+ constructor(
     private apiService: ApiService,
     private tableService: TableService,
-    private sharedService: SharedService
+    private sharedService: SharedService,
+    private router: Router
   ) { }
 
   public ngOnInit(): void {
@@ -99,5 +101,18 @@ export class DashboardComponent implements OnInit {
     const month = threeMonthsFromNow.toLocaleString('default', { month: 'long' });
 
     return `${day}th ${month}`;
+  }
+  public navigateToFisma(): void {
+    this.router.navigate(['/FISMA']);
+  }
+   public navigateToFismaTabs(): void {
+    this.router.navigate(['/FISMA'], { queryParams: { tab: 'Retired' } });
+  }
+
+  public navigateToItStandards(): void {
+    this.router.navigate(['/it_standards']);
+  }
+  public navigateToItStandardTabs(): void {
+    this.router.navigate(['/it_standards'], { queryParams: { tab: 'Retired' } });
   }
 }

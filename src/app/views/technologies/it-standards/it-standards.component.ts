@@ -119,6 +119,11 @@ export class ItStandardsComponent implements OnInit {
     * Get definitions for the table header tooltips
     * Then set the column defintions and initialize the table
     */
+   this.route.queryParams.subscribe(params => {
+      if (params['tab']) {
+        this.selectedTab = params['tab'];
+      }
+    });
     this.apiService.getDataDictionaryByReportName('IT Standards List').subscribe(defs => {
       this.attrDefinitions = defs
 
@@ -319,11 +324,15 @@ export class ItStandardsComponent implements OnInit {
   //   // Set JWT when logged into GEAR Manager when returning from secureAuth
   //   this.sharedService.setJWTonLogIn();
 
-    this.apiService.getITStandards().subscribe(i => {
+  this.apiService.getITStandards().subscribe(i => {
       this.itStandardsData = i;
       this.itStandardsDataTabFilterted = i;
       this.itStandardsDataChipFilterted = i;
       this.tableService.updateReportTableData(i);
+      
+      if (this.selectedTab !== 'All') {
+        this.onSelectTab(this.selectedTab);
+      }
     });
 
     this.apiService.getITStandardsFilterTotals(this.selectedChips).subscribe(t => {
