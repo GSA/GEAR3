@@ -11,9 +11,10 @@ import { TableService } from '@services/tables/table.service';
 declare var $: any;
 
 @Component({
-  selector: 'website-service-category-modal',
-  templateUrl: './website-service-category-modal.component.html',
-  styleUrls: ['./website-service-category-modal.component.css'],
+    selector: 'website-service-category-modal',
+    templateUrl: './website-service-category-modal.component.html',
+    styleUrls: ['./website-service-category-modal.component.css'],
+    standalone: false
 })
 export class WebsiteServiceCategoryModalComponent implements OnInit {
   websiteServiceCategory = <any>{};

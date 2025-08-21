@@ -11,9 +11,10 @@ import { TableService } from '@services/tables/table.service';
 declare var $: any;
 
 @Component({
-  selector: 'records-modal',
-  templateUrl: './records-modal.component.html',
-  styleUrls: ['./records-modal.component.css']
+    selector: 'records-modal',
+    templateUrl: './records-modal.component.html',
+    styleUrls: ['./records-modal.component.css'],
+    standalone: false
 })
 export class RecordsModalComponent implements OnInit {
 

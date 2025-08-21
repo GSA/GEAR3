@@ -10,9 +10,10 @@ import { Column } from '../../../common/table-classes';
 import { Service_Category } from '@api/models/service-category.model';
 
 @Component({
-  selector: 'website-service-category',
-  templateUrl: './website-service-category.component.html',
-  styleUrls: ['./website-service-category.component.scss'],
+    selector: 'website-service-category',
+    templateUrl: './website-service-category.component.html',
+    styleUrls: ['./website-service-category.component.scss'],
+    standalone: false
 })
 export class WebsiteServiceCategoryComponent implements OnInit {
   public defExpanded: boolean = false;

@@ -18,9 +18,10 @@ import { timeHours } from 'd3';
 // declare var $: any;
 
 @Component({
-  selector: 'it-standards',
-  templateUrl: './it-standards.component.html',
-  styleUrls: ['./it-standards.component.scss'],
+    selector: 'it-standards',
+    templateUrl: './it-standards.component.html',
+    styleUrls: ['./it-standards.component.scss'],
+    standalone: false
 })
 export class ItStandardsComponent implements OnInit {
   // row: Object = <any>{};

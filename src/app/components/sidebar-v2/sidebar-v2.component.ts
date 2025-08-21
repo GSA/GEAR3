@@ -2,9 +2,10 @@ import { Component } from '@angular/core';
 import { SidebarButtonChild } from '@common/sidebar-classes';
 
 @Component({
-  selector: 'app-sidebar-v2',
-  templateUrl: './sidebar-v2.component.html',
-  styleUrls: ['./sidebar-v2.component.scss']
+    selector: 'app-sidebar-v2',
+    templateUrl: './sidebar-v2.component.html',
+    styleUrls: ['./sidebar-v2.component.scss'],
+    standalone: false
 })
 export class SidebarV2Component {
 
