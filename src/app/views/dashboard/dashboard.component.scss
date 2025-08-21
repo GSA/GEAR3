@@ -1,11 +1,11 @@
 .dashboard-container {
     display: flex;
     flex-direction: column;
-    padding: 1rem 1.5rem 1rem 1rem; // Reduced from 2rem 2.5rem 2.25rem 2rem
+    padding: 1rem 1.5rem 1rem 1rem;
 
     & .dashboard-title {
-        font-size: 1.75rem; // Smaller than default h1
-        margin-bottom: 1rem; // Reduced margin
+        font-size: 1.75rem;
+        margin-bottom: 1rem;
         color: var(-neutral-black-color-dark);
         font-family: var(--primary-font);
         font-weight: 600;
@@ -14,14 +14,14 @@
     & .dashboard-quick-view-container {
         display: flex;
         justify-content: space-between;
-        gap: 15px; // Reduced from 25px
+        gap: 15px;
 
         & .dashboard-quick-view-item {
             width: 40%;
-            padding: 1rem; // Reduced from 1.5rem
+            padding: 1rem;
             display: flex;
             flex-direction: column;
-            gap: .25rem; // Reduced from .5rem
+            gap: .25rem;
             align-items: center;
             background-color: #fff;
             box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
@@ -34,17 +34,17 @@
 
             & .dashboard-icon-box{
                 background: #F4E3DB;
-                border-radius: 2.5rem; // Reduced from 3rem
-                height: 3rem; // Reduced from 3.8rem
-                width: 3rem; // Reduced from 3.8rem
-                padding: .75rem 1rem; // Reduced from 1rem 1.25rem
+                border-radius: 2.5rem;
+                height: 3rem;
+                width: 3rem;
+                padding: .75rem 1rem;
                 color: #B50909;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 & .dashboard-quick-view-icon {
-                  width: 1.125rem; // Reduced from 1.375rem
-                  height: 1.125rem; // Reduced from 1.375rem
+                  width: 1.125rem;
+                  height: 1.125rem;
                   
                 }
             }
@@ -54,7 +54,7 @@
             & .dashboard-quick-view-number {
                 color: var(-neutral-black-color-dark);
                 font-family: var(--primary-font);
-                font-size: 1.5rem; // Reduced from 1.75rem
+                font-size: 1.5rem;
                 font-style: normal;
                 font-weight: 600;
                 line-height: normal;
@@ -63,7 +63,7 @@
             & .dashboard-quick-view-text {
                 color: var(-neutral-black-color-dark);
                 font-family: var(--primary-font);
-                font-size: .875rem; // Reduced from 1rem
+                font-size: .875rem;
                 font-style: normal;
                 font-weight: 400;
                 line-height: normal;
@@ -79,7 +79,7 @@
                 & .dashboard-quick-view-expire-text {
                     color: #D97706;
                     font-family: var(--primary-font);
-                    font-size: .875rem; // Reduced from 1rem
+                    font-size: .875rem;
                     font-style: normal;
                     font-weight: 400;
                     line-height: normal;
@@ -88,10 +88,10 @@
             }
 
             & .dashboard-quick-view-link {
-                margin-top: 1rem; // Reduced from 1.5rem
+                margin-top: 1rem;
                 color: var(--primary-color);
                 font-family: var(--primary-font);
-                font-size: .8rem; // Reduced from .875rem
+                font-size: .8rem;
                 font-style: normal;
                 font-weight: 500;
                 line-height: 1.25rem;
@@ -99,18 +99,18 @@
             }
 
             & .dashboard-quick-links-title {
-                padding-bottom: 1.5rem; // Reduced from 2rem
+                padding-bottom: 1.5rem;
 
                 & .dashboard-quick-links-icon {
                     color: var(-neutral-black-color-dark);
                     padding-right: .5rem;
-                    font-size: 1.125rem; // Reduced from 1.25rem
+                    font-size: 1.125rem;
                 }
 
                 & .dashboard-quick-links-text {
                     color: var(-neutral-black-color-dark);
                     font-family: var(--primary-font);
-                    font-size: 1.125rem; // Reduced from 1.25rem
+                    font-size: 1.125rem;
                     font-style: normal;
                     font-weight: 600;
                     line-height: normal;
@@ -120,12 +120,12 @@
             & .dashboard-quick-links-link-container {
                 display: flex;
                 flex-direction: column;
-                gap: .75rem; // Reduced from 1rem
+                gap: .75rem;
 
                 & .dashboard-quick-links-link {
                     color: var(--primary-color);
                     font-family: var(--primary-font);
-                    font-size: .875rem; // Reduced from 1rem
+                    font-size: .875rem;
                     font-style: normal;
                     font-weight: 500;
                     line-height: normal;
@@ -154,18 +154,18 @@
 
     & .dashboard-recent-report-container {
         
-        margin-top: 1.5rem; // Reduced from 2rem
+        margin-top: 1.5rem;
 
         & .dashboard-recent-report-title {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem; // Reduced from 1.5rem
+            margin-bottom: 1rem;
 
             & .dashboard-recent-report-title-text {
                 color: var(-neutral-black-color-dark);
                 font-family: var(--primary-font);
-                font-size: 1.25rem; // Reduced from 1.5rem
+                font-size: 1.25rem;
                 font-style: normal;
                 font-weight: 600;
                 line-height: normal;
@@ -174,7 +174,7 @@
             & .dashboard-recent-report-title-link {
                 color: var(--primary-color);
                 font-family: var(--primary-font);
-                font-size: .875rem; // Reduced from 1rem
+                font-size: .875rem;
                 font-style: normal;
                 font-weight: 500;
                 line-height: 1.25rem;
@@ -185,23 +185,27 @@
         // Dashboard-specific table optimizations
         ::ng-deep {
             .p-datatable-wrapper {
-                padding: 0.3rem; // Reduced from 0.6rem
+                padding: 0.3rem;
                 padding-top: 0;
             }
 
             .neutral.p-datatable .p-datatable-thead>tr>th {
-                padding: .4rem .4rem; // Reduced from .625rem
-                font-size: .7rem; // Smaller header text
+                padding: .4rem .4rem;
+                font-size: .7rem;
             }
 
-            .neutral.p-datatable .p-datatable-tbody>tr td {
-                padding: .5rem .4rem; // Reduced from 1rem .625rem
-                font-size: .7rem; // Smaller cell text
+            .neutral.p-datatable .p-datatable-tbody>tr {
+                cursor: pointer;
+                
+                & td {
+                    padding: .5rem .4rem;
+                    font-size: .7rem;
+                }
             }
 
             .neutral.p-datatable .p-datatable-tbody>tr:nth-of-type(odd) td {
-                padding: .5rem .4rem; // Reduced from 1rem .625rem
-                font-size: .7rem; // Smaller cell text
+                padding: .5rem .4rem;
+                font-size: .7rem;
             }
         }
     }
@@ -276,7 +280,6 @@
             
             & .dashboard-recent-report-title {
                 margin-bottom: 0.75rem;
-                
                 & .dashboard-recent-report-title-text {
                     font-size: 1.125rem;
                 }
@@ -296,10 +299,14 @@
                     font-size: 0.65rem;
                 }
                 
-                .neutral.p-datatable .p-datatable-tbody>tr td,
-                .neutral.p-datatable .p-datatable-tbody>tr:nth-of-type(odd) td {
-                    padding: 0.4rem 0.3rem;
-                    font-size: 0.65rem;
+                .neutral.p-datatable .p-datatable-tbody>tr {
+                    cursor: pointer; // Make rows appear clickable
+                    
+                    & td,
+                    &.p-datatable-tbody>tr:nth-of-type(odd) td {
+                        padding: 0.4rem 0.3rem;
+                        font-size: 0.65rem;
+                    }
                 }
             }
         }

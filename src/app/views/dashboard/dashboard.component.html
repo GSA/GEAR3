@@ -56,7 +56,7 @@
             <span class="dashboard-recent-report-title-text">Recent GSA IT Standards</span>
             <a  (click)="navigateToItStandards()"  class="dashboard-recent-report-title-link">View All</a>
         </div>
-        <app-table *ngIf="showTable" [tableCols]="tableCols" [showToolbar]="false" [showPagination]="false" reportStyle="neutral">
+        <app-table *ngIf="showTable" [tableCols]="tableCols" [showToolbar]="false" [showPagination]="false" reportStyle="neutral" (rowClickEvent)="onTableRowClick($event)">
             
         </app-table>
         

@@ -116,6 +116,8 @@ export class DashboardComponent implements OnInit {
   public navigateToItStandardTabs(): void {
     this.router.navigate(['/it_standards'], { queryParams: { tab: 'Retired' } });
   }
+
+  public onTableRowClick(rowData: any): void {
+    this.router.navigate(['/it_standards', rowData.ID]);
+  }
 }
-
-
