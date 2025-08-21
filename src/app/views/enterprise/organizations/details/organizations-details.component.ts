@@ -4,9 +4,10 @@ import { Organization } from '@api/models/organizations.model';
 import { ApiService } from '@services/apis/api.service';
 
 @Component({
-  selector: 'organizations-details',
-  templateUrl: './organizations-details.component.html',
-  styleUrls: ['./organizations-details.component.scss'],
+    selector: 'organizations-details',
+    templateUrl: './organizations-details.component.html',
+    styleUrls: ['./organizations-details.component.scss'],
+    standalone: false
 })
 export class OrganizationsDetailsComponent implements OnInit {
 

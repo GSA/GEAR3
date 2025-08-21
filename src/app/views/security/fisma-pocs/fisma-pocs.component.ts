@@ -9,9 +9,10 @@ import { Column } from '../../../common/table-classes';
 import { FISMA } from '@api/models/fisma.model';
 
 @Component({
-  selector: 'fisma-pocs',
-  templateUrl: './fisma-pocs.component.html',
-  styleUrls: ['./fisma-pocs.component.scss'],
+    selector: 'fisma-pocs',
+    templateUrl: './fisma-pocs.component.html',
+    styleUrls: ['./fisma-pocs.component.scss'],
+    standalone: false
 })
 export class FismaPocsComponent implements OnInit {
   row: Object = <any>{};

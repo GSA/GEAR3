@@ -6,9 +6,10 @@ import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 
 @Component({
-  selector: 'dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss']
+    selector: 'dashboard',
+    templateUrl: './dashboard.component.html',
+    styleUrls: ['./dashboard.component.scss'],
+    standalone: false
 })
 export class DashboardComponent implements OnInit {
 
@@ -116,3 +117,4 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['/it_standards'], { queryParams: { tab: 'Retired' } });
   }
 }
+

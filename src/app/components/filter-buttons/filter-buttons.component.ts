@@ -2,9 +2,10 @@ import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from
 import { FilterButton, TwoDimArray } from '@common/table-classes';
 
 @Component({
-  selector: 'app-filter-buttons',
-  templateUrl: './filter-buttons.component.html',
-  styleUrls: ['./filter-buttons.component.scss']
+    selector: 'app-filter-buttons',
+    templateUrl: './filter-buttons.component.html',
+    styleUrls: ['./filter-buttons.component.scss'],
+    standalone: false
 })
 
 export class FilterButtonsComponent implements OnChanges {

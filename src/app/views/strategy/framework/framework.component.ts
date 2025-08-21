@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'framework',
-  templateUrl: './framework.component.html',
-  styleUrls: ['./framework.component.scss']
+    selector: 'framework',
+    templateUrl: './framework.component.html',
+    styleUrls: ['./framework.component.scss'],
+    standalone: false
 })
 export class FrameworkComponent implements OnInit {
 

@@ -17,9 +17,10 @@ import { Record } from '@api/models/records.model';
 import { Website } from '@api/models/websites.model';
 
 @Component({
-  selector: 'time-details',
-  templateUrl: './time-details.component.html',
-  styleUrls: ['./time-details.component.scss'],
+    selector: 'time-details',
+    templateUrl: './time-details.component.html',
+    styleUrls: ['./time-details.component.scss'],
+    standalone: false
 })
 export class TimeDetailsComponent implements OnInit {
 

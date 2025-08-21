@@ -14,9 +14,10 @@ import { Column } from '../../../common/table-classes';
 import { TIME } from '@api/models/systime.model';
 
 @Component({
-  selector: 'time',
-  templateUrl: './time.component.html',
-  styleUrls: ['./time.component.scss'],
+    selector: 'time',
+    templateUrl: './time.component.html',
+    styleUrls: ['./time.component.scss'],
+    standalone: false
 })
 export class TimeComponent implements OnInit {
   row: Object = <any>{};

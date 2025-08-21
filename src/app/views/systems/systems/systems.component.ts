@@ -19,9 +19,10 @@ import { Column, FilterButton, TwoDimArray } from '../../../common/table-classes
 // declare var $: any;
 
 @Component({
-  selector: 'systems',
-  templateUrl: './systems.component.html',
-  styleUrls: ['./systems.component.scss'],
+    selector: 'systems',
+    templateUrl: './systems.component.html',
+    styleUrls: ['./systems.component.scss'],
+    standalone: false
 })
 export class SystemsComponent implements OnInit {
   // row: Object = <any>{};

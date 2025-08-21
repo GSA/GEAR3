@@ -8,9 +8,10 @@ import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 
 @Component({
-  selector: 'global-search',
-  templateUrl: './global-search.component.html',
-  styleUrls: ['./global-search.component.css']
+    selector: 'global-search',
+    templateUrl: './global-search.component.html',
+    styleUrls: ['./global-search.component.css'],
+    standalone: false
 })
 export class GlobalSearchComponent implements OnInit {
 
@@ -46,6 +47,7 @@ export class GlobalSearchComponent implements OnInit {
       field: 'Status',
       header: 'Status',
       isSortable: false,
+      formatter: this.sharedService.formatStatus,
     },
     {
       field: 'GEAR_Type_Display',
@@ -87,7 +89,7 @@ export class GlobalSearchComponent implements OnInit {
       const index = value.toLowerCase().indexOf(searchTerm.toLowerCase());
       return index === -1 ? 0 : 1 / (index + 1);
     }
-  
+
     arr.sort((a, b) => matchFN(b) - matchFN(a));
     return arr;
   }
