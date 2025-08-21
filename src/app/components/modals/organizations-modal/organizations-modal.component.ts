@@ -10,9 +10,10 @@ import { TableService } from '@services/tables/table.service';
 declare var $: any;
 
 @Component({
-  selector: 'organizations-modal',
-  templateUrl: './organizations-modal.component.html',
-  styleUrls: ['./organizations-modal.component.css']
+    selector: 'organizations-modal',
+    templateUrl: './organizations-modal.component.html',
+    styleUrls: ['./organizations-modal.component.css'],
+    standalone: false
 })
 export class OrganizationsModalComponent implements OnInit {
 

@@ -5,9 +5,10 @@ import * as glossaryData from '../../../../../assets/statics/glossary.json';
 import { TableService } from '@services/tables/table.service';
 
 @Component({
-  selector: 'glossary',
-  templateUrl: './glossary.component.html',
-  styleUrls: ['./glossary.component.scss']
+    selector: 'glossary',
+    templateUrl: './glossary.component.html',
+    styleUrls: ['./glossary.component.scss'],
+    standalone: false
 })
 export class GlossaryComponent implements OnInit {
 

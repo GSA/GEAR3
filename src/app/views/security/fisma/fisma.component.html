@@ -29,11 +29,11 @@
       <div class="filter-tabs-container" filterTabs>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')">
           <span class="filter-tab-text">All</span>
-          <span class="filter-tab-number first">{{filterTotals.AllTotal}}</span>
+          <span class="filter-tab-number first">{{filterTotals?.AllTotal}}</span>
         </div>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Retired')}" (click)="onSelectTab('Retired')">
           <span class="filter-tab-text">Retired</span>
-          <span class="filter-tab-number second">{{filterTotals.RetiredTotal}}</span>
+          <span class="filter-tab-number second">{{filterTotals?.RetiredTotal}}</span>
         </div>
       </div>
     </app-table>

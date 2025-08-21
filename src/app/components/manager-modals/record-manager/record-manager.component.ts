@@ -12,9 +12,10 @@ import { TableService } from "@services/tables/table.service";
 declare var $: any;
 
 @Component({
-  selector: 'record-manager',
-  templateUrl: './record-manager.component.html',
-  styleUrls: ['./record-manager.component.css']
+    selector: 'record-manager',
+    templateUrl: './record-manager.component.html',
+    styleUrls: ['./record-manager.component.css'],
+    standalone: false
 })
 export class RecordManagerComponent implements OnInit {
 

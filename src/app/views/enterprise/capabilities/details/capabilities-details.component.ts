@@ -10,9 +10,10 @@ import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 
 @Component({
-  selector: 'capabilities-details',
-  templateUrl: './capabilities-details.component.html',
-  styleUrls: ['./capabilities-details.component.scss'],
+    selector: 'capabilities-details',
+    templateUrl: './capabilities-details.component.html',
+    styleUrls: ['./capabilities-details.component.scss'],
+    standalone: false
 })
 export class CapabilitiesDetailsComponent implements OnInit {
 

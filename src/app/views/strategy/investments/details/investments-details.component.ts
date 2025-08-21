@@ -8,9 +8,10 @@ import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 
 @Component({
-  selector: 'investments-details',
-  templateUrl: './investments-details.component.html',
-  styleUrls: ['./investments-details.component.scss'],
+    selector: 'investments-details',
+    templateUrl: './investments-details.component.html',
+    styleUrls: ['./investments-details.component.scss'],
+    standalone: false
 })
 export class InvestmentsDetailsComponent implements OnInit {
 
