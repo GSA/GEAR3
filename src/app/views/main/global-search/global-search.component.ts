@@ -46,6 +46,7 @@ export class GlobalSearchComponent implements OnInit {
       field: 'Status',
       header: 'Status',
       isSortable: false,
+      formatter: this.sharedService.formatStatus,
     },
     {
       field: 'GEAR_Type_Display',
@@ -87,7 +88,7 @@ export class GlobalSearchComponent implements OnInit {
       const index = value.toLowerCase().indexOf(searchTerm.toLowerCase());
       return index === -1 ? 0 : 1 / (index + 1);
     }
-  
+
     arr.sort((a, b) => matchFN(b) - matchFN(a));
     return arr;
   }
