@@ -21,9 +21,10 @@ interface CapTree {
 }
 
 @Component({
-  selector: 'capabilities-model',
-  templateUrl: './capabilities-model.component.html',
-  styleUrls: ['./capabilities-model.component.scss'],
+    selector: 'capabilities-model',
+    templateUrl: './capabilities-model.component.html',
+    styleUrls: ['./capabilities-model.component.scss'],
+    standalone: false
 })
 export class CapabilitiesModelComponent implements OnInit {
   @ViewChild('busCapGraph') public graphContainer: ElementRef;

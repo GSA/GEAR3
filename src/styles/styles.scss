@@ -1,6 +1,6 @@
-@import "./variables.scss";
-@import "./typography.scss";
-@import "./filter-tabs.scss";
+@use "./variables.scss";
+@use "./typography.scss";
+@use "./filter-tabs.scss";
 
 body{
   background-color: #F9F9F9 !important;

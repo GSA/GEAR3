@@ -3,9 +3,10 @@ import { SharedService } from '../../../services/shared/shared.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'gear-manager',
-  templateUrl: './gear-manager.component.html',
-  styleUrls: ['./gear-manager.component.css']
+    selector: 'gear-manager',
+    templateUrl: './gear-manager.component.html',
+    styleUrls: ['./gear-manager.component.css'],
+    standalone: false
 })
 export class GearManagerComponent implements OnInit {
   isAuthenticated: boolean = false;

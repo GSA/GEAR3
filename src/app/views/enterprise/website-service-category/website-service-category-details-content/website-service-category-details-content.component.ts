@@ -9,9 +9,10 @@ import { ApiService } from '@services/apis/api.service';
 import { TableService } from '@services/tables/table.service';
 
 @Component({
-  selector: 'website-service-category-details-content',
-  templateUrl: './website-service-category-details-content.component.html',
-  styleUrls: ['./website-service-category-details-content.component.scss'],
+    selector: 'website-service-category-details-content',
+    templateUrl: './website-service-category-details-content.component.html',
+    styleUrls: ['./website-service-category-details-content.component.scss'],
+    standalone: false
 })
 export class WebsiteServiceCategoryDetailsContentComponent implements OnInit {
 

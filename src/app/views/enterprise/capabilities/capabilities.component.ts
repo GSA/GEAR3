@@ -11,9 +11,10 @@ import { Column } from '../../../common/table-classes';
 import { Capability } from '@api/models/capabilities.model';
 
 @Component({
-  selector: 'capabilities',
-  templateUrl: './capabilities.component.html',
-  styleUrls: ['./capabilities.component.scss'],
+    selector: 'capabilities',
+    templateUrl: './capabilities.component.html',
+    styleUrls: ['./capabilities.component.scss'],
+    standalone: false
 })
 export class CapabilitiesComponent implements OnInit {
   public defExpanded: boolean = false;

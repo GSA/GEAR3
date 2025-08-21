@@ -12,9 +12,10 @@ import { TableService } from "@services/tables/table.service";
 declare var $: any;
 
 @Component({
-  selector: 'capability-manager',
-  templateUrl: './capability-manager.component.html',
-  styleUrls: ['./capability-manager.component.css']
+    selector: 'capability-manager',
+    templateUrl: './capability-manager.component.html',
+    styleUrls: ['./capability-manager.component.css'],
+    standalone: false
 })
 export class CapabilityManagerComponent implements OnInit {
 

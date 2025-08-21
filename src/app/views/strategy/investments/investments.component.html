@@ -49,23 +49,23 @@
       <div class="filter-tabs-container" filterTabs>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')">
           <span class="filter-tab-text">All</span>
-          <span class="filter-tab-number first">{{filterTotals.AllTotal}}</span>
+          <span class="filter-tab-number first">{{filterTotals?.AllTotal}}</span>
         </div>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Current Year')}" (click)="onSelectTab('Current Year')">
           <span class="filter-tab-text">Current Year</span>
-          <span class="filter-tab-number second">{{filterTotals.AllTotal}}</span>
+          <span class="filter-tab-number second">{{filterTotals?.AllTotal}}</span>
         </div>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Previous Year')}" (click)="onSelectTab('Previous Year')">
           <span class="filter-tab-text">Previous Year</span>
-          <span class="filter-tab-number third">{{filterTotals.AllTotal}}</span>
+          <span class="filter-tab-number third">{{filterTotals?.AllTotal}}</span>
         </div>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Budget Year')}" (click)="onSelectTab('Budget Year')">
           <span class="filter-tab-text">Budget Year</span>
-          <span class="filter-tab-number fourth">{{filterTotals.AllTotal}}</span>
+          <span class="filter-tab-number fourth">{{filterTotals?.AllTotal}}</span>
         </div>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Eliminated')}" (click)="onSelectTab('Eliminated')">
           <span class="filter-tab-text">Eliminated</span>
-          <span class="filter-tab-number first">{{filterTotals.EliminatedTotal}}</span>
+          <span class="filter-tab-number first">{{filterTotals?.EliminatedTotal}}</span>
         </div>
       </div>
     </app-table>
