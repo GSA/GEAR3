@@ -3,6 +3,7 @@
   display: flex;
   justify-content: center;
   padding-right: 3rem;
+  overflow-x: hidden;
 
   @media (max-width: 1920px) {
     padding-right: 5rem;
