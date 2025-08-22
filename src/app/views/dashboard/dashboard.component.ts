@@ -71,6 +71,12 @@ export class DashboardComponent implements OnInit {
 
   public fismaExpiringThisQuarter: number = 0;
   public fismaExpiringThisWeek: number = 0;
+
+  public decommissionedSystemsLast6Months: number = 0;
+  public decommissionedSystemsLast7Days: number = 0;
+
+  public decommissionedITStandardsLast6Months: number = 0;
+  public decommissionedITStandardsLast7Days: number = 0;
   
  constructor(
     private apiService: ApiService,
@@ -92,6 +98,12 @@ export class DashboardComponent implements OnInit {
 
     this.apiService.getFismaExpiringThisQuarter().subscribe(q => this.fismaExpiringThisQuarter = q);
     this.apiService.getFismaExpiringThisWeek().subscribe(w => this.fismaExpiringThisWeek = w);
+
+    // For now, using static values from the image until API endpoints are available
+    this.decommissionedSystemsLast6Months = 156;
+    this.decommissionedSystemsLast7Days = 33;
+    this.decommissionedITStandardsLast6Months = 100;
+    this.decommissionedITStandardsLast7Days = 15;
   }
 
   public getExpiringDate(): string {
@@ -115,6 +127,22 @@ export class DashboardComponent implements OnInit {
   }
   public navigateToItStandardTabs(): void {
     this.router.navigate(['/it_standards'], { queryParams: { tab: 'Retired' } });
+  }
+
+  public navigateToSystems(): void {
+    this.router.navigate(['/systems']);
+  }
+
+  public navigateToSystemsTabs(): void {
+    this.router.navigate(['/systems'], { queryParams: { tab: 'Decommissioned' } });
+  }
+
+  public navigateToDecommissionedITStandards(): void {
+    this.router.navigate(['/it_standards'], { queryParams: { tab: 'Decommissioned' } });
+  }
+
+  public navigateToDecommissionedITStandardsTabs(): void {
+    this.router.navigate(['/it_standards'], { queryParams: { tab: 'Decommissioned' } });
   }
 
   public onTableRowClick(rowData: any): void {

@@ -1,31 +1,65 @@
 <div class="dashboard-container">
     <h1 class="dashboard-title">Welcome to GEAR</h1>
     <div class="dashboard-quick-view-container">
-        <div class="dashboard-quick-view-item">
-           <div class="dashboard-icon-box">
-            <i class="dashboard-quick-view-icon fas fa-clipboard-list"></i>
-           </div>
-            <span class="dashboard-quick-view-number">{{ fismaExpiringThisQuarter }}</span>
-            <span class="dashboard-quick-view-text">FISMA Expiring by {{ getExpiringDate() }}</span>
-            <div style="cursor: pointer;" (click)="navigateToFismaTabs()"  class="dashboard-quick-view-expire-container">
-                <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle"></i>
-                <span class="dashboard-quick-view-expire-text">{{ fismaExpiringThisWeek }} items expiring within 7 days</span>
+        <div class="dashboard-metrics-grid">
+            <div class="dashboard-quick-view-item">
+                <a (click)="navigateToFisma()" class="dashboard-quick-view-link" style="cursor: pointer;">View All</a>
+                <div class="dashboard-header-row">
+                    <div class="dashboard-icon-box">
+                        <i class="dashboard-quick-view-icon fas fa-clipboard-list"></i>
+                    </div>
+                    <span class="dashboard-quick-view-number">{{ fismaExpiringThisQuarter }}</span>
+                </div>
+                <span class="dashboard-quick-view-text">FISMA Expiring by {{ getExpiringDate() }}</span>
+                <div style="cursor: pointer;" (click)="navigateToFismaTabs()"  class="dashboard-quick-view-expire-container">
+                    <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle"></i>
+                    <span class="dashboard-quick-view-expire-text">{{ fismaExpiringThisWeek }} items expiring within 7 days</span>
+                </div>
             </div>
-            <a (click)="navigateToFisma()" class="dashboard-quick-view-link" style="cursor: pointer;">View All</a>
+            <div class="dashboard-quick-view-item">
+                <a (click)="navigateToItStandards()" class="dashboard-quick-view-link" style="cursor: pointer;">View All</a>
+                <div class="dashboard-header-row">
+                    <div class="dashboard-icon-box">
+                        <i class="dashboard-quick-view-icon fas fa-desktop"></i>
+                    </div>
+                    <span class="dashboard-quick-view-number">{{ standardsExpiringThisQuarter }}</span>
+                </div>
+                <span class="dashboard-quick-view-text">IT Standards Expiring by {{ getExpiringDate() }}</span>
+                <div style="cursor: pointer;" (click)="navigateToItStandardTabs()" class="dashboard-quick-view-expire-container">
+                    <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle"></i>
+                    <span class="dashboard-quick-view-expire-text">{{ standardsExpiringThisWeek }} items expiring within 7 days</span>
+                </div>
+            </div>
+            <div class="dashboard-quick-view-item">
+                <a (click)="navigateToSystems()" class="dashboard-quick-view-link" style="cursor: pointer;">View All</a>
+                <div class="dashboard-header-row">
+                    <div class="dashboard-icon-box">
+                        <i class="dashboard-quick-view-icon fas fa-server"></i>
+                    </div>
+                    <span class="dashboard-quick-view-number">{{ decommissionedSystemsLast6Months }}</span>
+                </div>
+                <span class="dashboard-quick-view-text">Decommissioned systems (Last 6 months)</span>
+                <div style="cursor: pointer;" (click)="navigateToSystemsTabs()" class="dashboard-quick-view-expire-container">
+                    <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle"></i>
+                    <span class="dashboard-quick-view-expire-text">{{ decommissionedSystemsLast7Days }} items decommissioned in last 7 days</span>
+                </div>
+            </div>
+            <div class="dashboard-quick-view-item">
+                <a (click)="navigateToDecommissionedITStandards()" class="dashboard-quick-view-link" style="cursor: pointer;">View All</a>
+                <div class="dashboard-header-row">
+                    <div class="dashboard-icon-box">
+                        <i class="dashboard-quick-view-icon fas fa-trash-alt"></i>
+                    </div>
+                    <span class="dashboard-quick-view-number">{{ decommissionedITStandardsLast6Months }}</span>
+                </div>
+                <span class="dashboard-quick-view-text">Decommissioned IT standards (Last 6 months)</span>
+                <div style="cursor: pointer;" (click)="navigateToDecommissionedITStandardsTabs()" class="dashboard-quick-view-expire-container">
+                    <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle"></i>
+                    <span class="dashboard-quick-view-expire-text">{{ decommissionedITStandardsLast7Days }} items expiring within 7 days</span>
+                </div>
+            </div>
         </div>
-        <div class="dashboard-quick-view-item">
-            <div class="dashboard-icon-box">
-                <i class="dashboard-quick-view-icon fas fa-desktop"></i>
-            </div>
-            <span class="dashboard-quick-view-number">{{ standardsExpiringThisQuarter }}</span>
-            <span class="dashboard-quick-view-text">IT Standards Expiring by {{ getExpiringDate() }}</span>
-            <div style="cursor: pointer;" (click)="navigateToItStandardTabs()" class="dashboard-quick-view-expire-container">
-                <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle"></i>
-                <span class="dashboard-quick-view-expire-text">{{ standardsExpiringThisWeek }} items expiring within 7 days</span>
-            </div>
-            <a (click)="navigateToItStandards()" class="dashboard-quick-view-link" style="cursor: pointer;">View All</a>
-        </div>
-        <div class="dashboard-quick-view-item">
+        <div class="dashboard-quick-view-item dashboard-quick-links-card">
             <span class="dashboard-quick-links-title">
                 <i class="dashboard-quick-links-icon fas fa-link"></i>
                 <span class="dashboard-quick-links-text">Quick Links</span>

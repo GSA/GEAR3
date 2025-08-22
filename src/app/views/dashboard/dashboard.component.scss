@@ -16,33 +16,47 @@
         justify-content: space-between;
         gap: 15px;
 
+        & .dashboard-metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 75%;
+        }
+
         & .dashboard-quick-view-item {
-            width: 40%;
+            width: 100%;
             padding: 1rem;
             display: flex;
             flex-direction: column;
             gap: .25rem;
-            align-items: center;
             background-color: #fff;
             box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
             border-radius: 8px;
+            position: relative;
 
-            &:last-child {
-                width: 20%;
+            &.dashboard-quick-links-card {
+                width: 25%;
                 align-items: start;
+            }
+
+            & .dashboard-header-row {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                margin-bottom: 0.5rem;
             }
 
             & .dashboard-icon-box{
                 background: #F4E3DB;
                 border-radius: 2.5rem;
-                height: 3rem;
-                width: 3rem;
+                height: 2rem;
+                width: 2rem;
                 padding: .75rem 1rem;
                 color: #B50909;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                margin-bottom: .5rem;
+                flex-shrink: 0;
                 & .dashboard-quick-view-icon {
                   width: 1.125rem;
                   height: 1.125rem;
@@ -89,7 +103,9 @@
             }
 
             & .dashboard-quick-view-link {
-                margin-top: 1rem;
+                position: absolute;
+                top: 1.3rem;
+                right: 0.75rem;
                 color: var(--primary-color);
                 font-family: var(--primary-font);
                 font-size: .8rem;
@@ -97,6 +113,7 @@
                 font-weight: 500;
                 line-height: 1.25rem;
                 text-decoration-line: underline;
+                z-index: 1;
             }
 
             & .dashboard-quick-links-title {
@@ -225,9 +242,18 @@
         & .dashboard-quick-view-container {
             gap: 12px;
             
+            & .dashboard-metrics-grid {
+                gap: 12px;
+            }
+            
             & .dashboard-quick-view-item {
                 padding: 0.75rem;
                 gap: 0.2rem;
+                
+                & .dashboard-header-row {
+                    gap: 0.5rem;
+                    margin-bottom: 0.4rem;
+                }
                 
                 & .dashboard-icon-box {
                     height: 2.5rem;
@@ -253,8 +279,9 @@
                 }
                 
                 & .dashboard-quick-view-link {
+                    top: 0.5rem;
+                    right: 0.5rem;
                     font-size: 0.75rem;
-                    margin-top: 0.75rem;
                 }
                 
                 & .dashboard-quick-links-title {
