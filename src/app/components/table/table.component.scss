@@ -310,20 +310,20 @@
 
     .p-multiselect {
         color: #fff;
-        background-color: #027eb2;
-        border-color: #027eb2;
+        background-color: var(--p-primary-color, #027eb2);
+        border-color: var(--p-primary-color, #027eb2);
         border-radius: 0;
         height: 40px;
 
         &:hover {
-            background-color: #1a82ae;
-            border-color: #187aa3;
+            background-color: var(--p-primary-hover-color, #1a82ae);
+            border-color: var(--p-primary-hover-color, #187aa3);
         }
 
         & .p-multiselect-trigger {
             color: #fff;
-            background-color: #027eb2;
-            border-color: #027eb2;
+            background-color: var(--p-primary-color, #027eb2);
+            border-color: var(--p-primary-color, #027eb2);
         }
 
         & .p-multiselect-label {
