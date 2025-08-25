@@ -1,5 +1,7 @@
 <div class="dashboard-container">
     <h1 class="dashboard-title">Welcome to GEAR</h1>
+    
+    <!-- Quick View Metrics Section -->
     <div class="dashboard-quick-view-container">
         <div class="dashboard-metrics-grid">
             <div class="dashboard-quick-view-item">
@@ -67,9 +69,7 @@
             <div class="dashboard-quick-links-link-container">
                 <a href="https://ea.gsa.gov/#/it_standards" class="dashboard-quick-links-link">
                    Approved/denied software
-                   
                 </a>
-               
                 <a href="https://ea.gsa.gov/#/FISMA" class="dashboard-quick-links-link">
                     Active FISMA systems
                 </a>
@@ -82,14 +82,71 @@
             </div>
         </div>
     </div>
+
+    <!-- Charts Section -->
+    <div class="dashboard-charts-container">
+        <div class="dashboard-charts-grid">
+            <!-- Hosting Platforms Bar Chart -->
+            <div class="dashboard-chart-card">
+                <div class="dashboard-chart-header">
+                    <h3 class="dashboard-chart-title">HOSTING PLATFORMS</h3>
+                    <a (click)="navigateToHostingPlatforms()" class="dashboard-quick-view-link" style="cursor: pointer;">View All</a>
+                </div>
+                <div class="dashboard-chart-content">
+                    <ngx-charts-bar-vertical
+                        [view]="chartView"
+                        [scheme]="colorScheme"
+                        [results]="hostingPlatformsData"
+                        [gradient]="false"
+                        [xAxis]="true"
+                        [yAxis]="true"
+                        [legend]="false"
+                        [showXAxisLabel]="true"
+                        [showYAxisLabel]="true"
+                        [xAxisLabel]="'Hosting Platforms Report (2025)'"
+                        [yAxisLabel]="'# of Hosting Platforms'"
+                        [rotateXAxisTicks]="false"
+                        [animations]="true">
+                    </ngx-charts-bar-vertical>
+                </div>
+            </div>
+
+            <!-- Cloud Business Systems Donut Chart -->
+            <div class="dashboard-chart-card">
+                <div class="dashboard-chart-header">
+                    <h3 class="dashboard-chart-title">Cloud Business Systems</h3>
+                    <a (click)="navigateToCloudSystems()" class="dashboard-quick-view-link" style="cursor: pointer;">View All</a>
+                </div>
+                <div class="dashboard-chart-content">
+                    <ngx-charts-pie-chart
+                        [view]="chartView"
+                        [scheme]="pieColorScheme"
+                        [results]="cloudBusinessSystemsData"
+                        [gradient]="false"
+                        [legend]="true"
+                        [labels]="true"
+                        [doughnut]="true"
+                        [animations]="true"
+                        [tooltipDisabled]="false">
+                    </ngx-charts-pie-chart>
+                    <div class="dashboard-chart-center-text">
+                        <div class="center-title">Business Systems</div>
+                        <div class="center-number">{{ totalBusinessSystems }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Reports Section -->
     <div class="dashboard-recent-report-container">
         <div class="dashboard-recent-report-title">
             <span class="dashboard-recent-report-title-text">Recent GSA IT Standards</span>
-            <a  (click)="navigateToItStandards()"  class="dashboard-recent-report-title-link">View All</a>
+            <a (click)="navigateToItStandards()" class="dashboard-recent-report-title-link">View All</a>
         </div>
         <app-table *ngIf="showTable" [tableCols]="tableCols" [showToolbar]="false" [showPagination]="false" reportStyle="neutral" (rowClickEvent)="onTableRowClick($event)">
-            
         </app-table>
-        
     </div>
+
+
 </div>

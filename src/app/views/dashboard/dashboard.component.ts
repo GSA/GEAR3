@@ -15,6 +15,34 @@ export class DashboardComponent implements OnInit {
 
   public showTable = false;
 
+  // Chart properties
+  public chartView: [number, number] = [500, 350];
+  public colorScheme = {
+    domain: ['#1f77b4', '#17becf', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b']
+  };
+  public pieColorScheme = {
+    domain: ['#2ca02c', '#ff7f0e']
+  };
+
+  // Hosting Platforms Bar Chart Data
+  public hostingPlatformsData = [
+    { name: 'AWS', value: 25 },
+    { name: 'AWS (GovCloud)', value: 20 },
+    { name: 'Cloud.gov', value: 10 },
+    { name: 'FCS', value: 35 },
+    { name: 'GSA', value: 75 },
+    { name: 'GSA salesforce', value: 50 },
+    { name: 'Others', value: 60 }
+  ];
+
+  // Cloud Business Systems Donut Chart Data
+  public cloudBusinessSystemsData = [
+    { name: 'Cloud Based', value: 231 },
+    { name: 'Not Cloud Based', value: 58 }
+  ];
+
+  public totalBusinessSystems: number = 289;
+
   public tableCols: Column[] = [
     {
       field: 'Name',
@@ -115,6 +143,18 @@ export class DashboardComponent implements OnInit {
 
     return `${day}th ${month}`;
   }
+
+  // Navigation methods for charts
+  public navigateToHostingPlatforms(): void {
+    // Navigate to hosting platforms page or systems page
+    this.router.navigate(['/systems']);
+  }
+
+  public navigateToCloudSystems(): void {
+    // Navigate to cloud systems page or systems page
+    this.router.navigate(['/systems']);
+  }
+
   public navigateToFisma(): void {
     this.router.navigate(['/FISMA']);
   }

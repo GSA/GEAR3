@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column;
     padding: 1rem 1.5rem 1rem 1rem;
+    position: relative;
 
     & .dashboard-title {
         font-size: 1.75rem;
@@ -170,6 +171,68 @@
         }
     }
 
+    // Charts Section Styles
+    & .dashboard-charts-container {
+        margin-top: 1.5rem;
+
+        & .dashboard-charts-grid {
+            display: grid;
+            grid-template-columns: 75% 25%;
+            gap: 15px;
+        }
+
+        & .dashboard-chart-card {
+            background-color: #fff;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
+            padding: 1rem;
+            position: relative;
+
+            & .dashboard-chart-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1rem;
+            }
+
+            & .dashboard-chart-content {
+                position: relative;
+                height: 350px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                // Center text for donut chart
+                & .dashboard-chart-center-text {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    text-align: center;
+                    z-index: 10;
+                    pointer-events: none;
+
+                    & .center-title {
+                        color: var(-neutral-black-color-dark);
+                        font-family: var(--primary-font);
+                        font-size: 0.875rem;
+                        font-weight: 500;
+                        margin-bottom: 0.25rem;
+                    }
+
+                    & .center-number {
+                        color: var(-neutral-black-color-dark);
+                        font-family: var(--primary-font);
+                        font-size: 1.5rem;
+                        font-weight: 600;
+                    }
+                }
+            }
+        }
+    }
+
+
+
     & .dashboard-recent-report-container {
         
         margin-top: 1.5rem;
@@ -224,6 +287,27 @@
             .neutral.p-datatable .p-datatable-tbody>tr:nth-of-type(odd) td {
                 padding: .5rem .4rem;
                 font-size: .7rem;
+            }
+
+            // Chart styling overrides
+            .ngx-charts {
+                .bar {
+                    stroke: none;
+                }
+                
+                .pie-label {
+                    font-size: 0.75rem;
+                    font-weight: 500;
+                }
+                
+                .legend-title {
+                    font-size: 0.75rem;
+                    font-weight: 500;
+                }
+                
+                .legend-labels {
+                    font-size: 0.75rem;
+                }
             }
         }
     }
@@ -298,6 +382,45 @@
                     
                     & .dashboard-quick-links-link {
                         font-size: 0.8rem;
+                    }
+                }
+            }
+        }
+
+        // Charts responsive adjustments
+        & .dashboard-charts-container {
+            margin-top: 1rem;
+
+            & .dashboard-charts-grid {
+                gap: 12px;
+            }
+
+            & .dashboard-chart-card {
+                padding: 0.75rem;
+
+                & .dashboard-chart-header {
+                    margin-bottom: 0.75rem;
+
+                    & .dashboard-chart-title {
+                        font-size: 1rem;
+                    }
+
+                    & .dashboard-chart-link {
+                        font-size: 0.8rem;
+                    }
+                }
+
+                & .dashboard-chart-content {
+                    height: 250px;
+
+                    & .dashboard-chart-center-text {
+                        & .center-title {
+                            font-size: 0.8rem;
+                        }
+
+                        & .center-number {
+                            font-size: 1.25rem;
+                        }
                     }
                 }
             }
