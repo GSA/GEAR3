@@ -67,6 +67,50 @@ $transition: all 0.3s ease;
   }
 }
 
+// Standardized classes for consistent styling
+.dashboard-view-all-link {
+  @include link-style;
+  @include responsive-font(0.875rem, 0.8rem);
+  position: absolute;
+  top: 1.3rem;
+  right: 0.75rem;
+  z-index: 1;
+
+  @media (max-width: 1366px) and (min-width: 1024px) {
+    top: 0.5rem;
+    right: 0.5rem;
+    font-size: 0.75rem;
+  }
+}
+
+.dashboard-card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 1.5rem;
+
+  @media (max-width: 1366px) and (min-width: 1024px) {
+    padding-bottom: 1rem;
+  }
+
+  & .dashboard-quick-links-icon {
+    @include text-style(1.125rem, 600);
+    color: $neutral-black;
+
+    @media (max-width: 1366px) and (min-width: 1024px) {
+      font-size: 1rem;
+    }
+  }
+}
+
+.dashboard-card-title-text {
+  @include text-style(1.25rem, 700);
+  @include responsive-font(1.25rem, 1rem);
+  margin: 0;
+  text-transform: capitalize;
+  letter-spacing: 0.5px;
+}
+
 .dashboard-container {
   display: flex;
   flex-direction: column;
@@ -177,45 +221,6 @@ $transition: all 0.3s ease;
         }
       }
 
-      & .dashboard-quick-view-link {
-        position: absolute;
-        top: 1.3rem;
-        right: 0.75rem;
-        @include link-style;
-        z-index: 1;
-
-        @media (max-width: 1366px) and (min-width: 1024px) {
-          top: 0.5rem;
-          right: 0.5rem;
-          font-size: 0.75rem;
-        }
-      }
-
-      & .dashboard-quick-links-title {
-        padding-bottom: 1.5rem;
-
-        @media (max-width: 1366px) and (min-width: 1024px) {
-          padding-bottom: 1rem;
-        }
-
-        & .dashboard-quick-links-icon {
-          @include text-style(1.125rem, 600);
-          padding-right: 0.5rem;
-
-          @media (max-width: 1366px) and (min-width: 1024px) {
-            font-size: 1rem;
-          }
-        }
-
-        & .dashboard-quick-links-text {
-          @include text-style(1.125rem, 600);
-
-          @media (max-width: 1366px) and (min-width: 1024px) {
-            font-size: 1rem;
-          }
-        }
-      }
-
       & .dashboard-quick-links-link-container {
         display: flex;
         flex-direction: column;
@@ -280,18 +285,6 @@ $transition: all 0.3s ease;
         @media (max-width: 1366px) and (min-width: 1024px) {
           margin-bottom: 0.75rem;
         }
-
-        & .dashboard-chart-title {
-          @include text-style(1.25rem, 700);
-          @include responsive-font(1.25rem, 1rem);
-          margin: 0;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        }
-
-        & .dashboard-chart-link {
-          @include link-style;
-        }
       }
 
       & .dashboard-chart-content {
@@ -352,16 +345,6 @@ $transition: all 0.3s ease;
 
       @media (max-width: 1366px) and (min-width: 1024px) {
         margin-bottom: 0.75rem;
-      }
-
-      & .dashboard-recent-report-title-text {
-        @include text-style(1.25rem, 600);
-        @include responsive-font(1.25rem, 1.125rem);
-      }
-
-      & .dashboard-recent-report-title-link {
-        @include link-style;
-        @include responsive-font(0.875rem, 0.8rem);
       }
     }
 

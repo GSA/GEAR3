@@ -5,7 +5,7 @@
     <div class="dashboard-quick-view-container">
         <div class="dashboard-metrics-grid">
             <div class="dashboard-quick-view-item">
-                <a (click)="navigateToFisma()" class="dashboard-quick-view-link" style="cursor: pointer;">View All</a>
+                <a (click)="navigateToFisma()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
                 <div class="dashboard-header-row">
                     <div class="dashboard-icon-box">
                         <i class="dashboard-quick-view-icon fas fa-clipboard-list"></i>
@@ -19,7 +19,7 @@
                 </div>
             </div>
             <div class="dashboard-quick-view-item">
-                <a (click)="navigateToItStandards()" class="dashboard-quick-view-link" style="cursor: pointer;">View All</a>
+                <a (click)="navigateToItStandards()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
                 <div class="dashboard-header-row">
                     <div class="dashboard-icon-box">
                         <i class="dashboard-quick-view-icon fas fa-desktop"></i>
@@ -33,7 +33,7 @@
                 </div>
             </div>
             <div class="dashboard-quick-view-item">
-                <a (click)="navigateToSystems()" class="dashboard-quick-view-link" style="cursor: pointer;">View All</a>
+                <a (click)="navigateToSystems()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
                 <div class="dashboard-header-row">
                     <div class="dashboard-icon-box">
                         <i class="dashboard-quick-view-icon fas fa-server"></i>
@@ -47,7 +47,7 @@
                 </div>
             </div>
             <div class="dashboard-quick-view-item">
-                <a (click)="navigateToDecommissionedITStandards()" class="dashboard-quick-view-link" style="cursor: pointer;">View All</a>
+                <a (click)="navigateToDecommissionedITStandards()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
                 <div class="dashboard-header-row">
                     <div class="dashboard-icon-box">
                         <i class="dashboard-quick-view-icon fas fa-trash-alt"></i>
@@ -62,9 +62,9 @@
             </div>
         </div>
         <div class="dashboard-quick-view-item dashboard-quick-links-card">
-            <span class="dashboard-quick-links-title">
+            <span class="dashboard-card-title">
                 <i class="dashboard-quick-links-icon fas fa-link"></i>
-                <span class="dashboard-quick-links-text">Quick Links</span>
+                <span class="dashboard-card-title-text">Quick Links</span>
             </span>
             <div class="dashboard-quick-links-link-container">
                 <a href="https://ea.gsa.gov/#/it_standards" class="dashboard-quick-links-link">
@@ -89,8 +89,8 @@
             <!-- Hosting Platforms Bar Chart -->
             <div class="dashboard-chart-card">
                 <div class="dashboard-chart-header">
-                    <h3 class="dashboard-chart-title">HOSTING PLATFORMS</h3>
-                    <a (click)="navigateToHostingPlatforms()" class="dashboard-quick-view-link" style="cursor: pointer;">View All</a>
+                    <h3 class="dashboard-card-title-text">Hosting Platforms</h3>
+                    <a (click)="navigateToHostingPlatforms()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
                 </div>
                 <div class="dashboard-chart-content">
                     <ngx-charts-bar-vertical
@@ -114,8 +114,8 @@
             <!-- Cloud Business Systems Donut Chart -->
             <div class="dashboard-chart-card">
                 <div class="dashboard-chart-header">
-                    <h3 class="dashboard-chart-title">Cloud Business Systems</h3>
-                    <a (click)="navigateToCloudSystems()" class="dashboard-quick-view-link" style="cursor: pointer;">View All</a>
+                    <h3 class="dashboard-card-title-text">Cloud Business Systems</h3>
+                    <a (click)="navigateToCloudSystems()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
                 </div>
                 <div class="dashboard-chart-content">
                     <ngx-charts-pie-chart
@@ -141,8 +141,8 @@
     <!-- Recent Reports Section -->
     <div class="dashboard-recent-report-container">
         <div class="dashboard-recent-report-title">
-            <span class="dashboard-recent-report-title-text">Recent GSA IT Standards</span>
-            <a (click)="navigateToItStandards()" class="dashboard-recent-report-title-link">View All</a>
+            <span class="dashboard-card-title-text">Recent GSA IT Standards</span>
+            <a (click)="navigateToItStandards()" class="dashboard-view-all-link">View All</a>
         </div>
         <app-table *ngIf="showTable" [tableCols]="tableCols" [showToolbar]="false" [showPagination]="false" reportStyle="neutral" (rowClickEvent)="onTableRowClick($event)">
         </app-table>
