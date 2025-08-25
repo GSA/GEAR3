@@ -40,11 +40,11 @@ export class DashboardComponent implements OnInit {
 
   // Cloud Business Systems Donut Chart Data
   public cloudBusinessSystemsData = [
-    { name: 'Cloud Based', value: 231 },
-    { name: 'Not Cloud Based', value: 58 }
+    { name: 'Cloud Based', value: 0 },
+    { name: 'Not Cloud Based', value: 0 }
   ];
 
-  public totalBusinessSystems: number = 289;
+  public totalBusinessSystems: number = 0;
 
   // Label formatting function for pie chart
   public labelFormatting = (value: any): string => {
@@ -135,6 +135,18 @@ export class DashboardComponent implements OnInit {
 
     this.apiService.getFismaExpiringThisQuarter().subscribe(q => this.fismaExpiringThisQuarter = q);
     this.apiService.getFismaExpiringThisWeek().subscribe(w => this.fismaExpiringThisWeek = w);
+
+    // Get cloud adoption data for the pie chart
+    this.apiService.getCloudAdoptionRate().subscribe(cloudData => {
+      if (cloudData && cloudData.length > 0) {
+        const latestData = cloudData[0]; // Get the most recent data
+        this.cloudBusinessSystemsData = [
+          { name: 'Cloud Based', value: latestData.CloudBusSystemsCount },
+          { name: 'Not Cloud Based', value: latestData.BusSystemsCount - latestData.CloudBusSystemsCount }
+        ];
+        this.totalBusinessSystems = latestData.BusSystemsCount;
+      }
+    });
 
     // For now, using static values from the image until API endpoints are available
     this.decommissionedSystemsLast6Months = 156;
