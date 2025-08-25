@@ -216,15 +216,15 @@ export class DashboardComponent implements OnInit {
   }
 
   public navigateToSystemsTabs(): void {
-    this.router.navigate(['/systems'], { queryParams: { tab: 'Decommissioned' } });
+    this.router.navigate(['/systems'], { queryParams: { tab: 'Inactive' } });
   }
 
   public navigateToDecommissionedITStandards(): void {
-    this.router.navigate(['/it_standards'], { queryParams: { tab: 'Decommissioned' } });
+    this.router.navigate(['/it_standards'], { queryParams: { tab: 'Denied' } });
   }
 
   public navigateToDecommissionedITStandardsTabs(): void {
-    this.router.navigate(['/it_standards'], { queryParams: { tab: 'Decommissioned' } });
+    this.router.navigate(['/it_standards'], { queryParams: { tab: 'Retired' } });
   }
 
   public onTableRowClick(rowData: any): void {

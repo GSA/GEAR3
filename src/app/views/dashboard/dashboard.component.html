@@ -18,21 +18,7 @@
                     <span class="dashboard-quick-view-expire-text">{{ fismaExpiringThisWeek }} items expiring within 7 days</span>
                 </div>
             </div>
-            <div class="dashboard-quick-view-item">
-                <a (click)="navigateToItStandards()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
-                <div class="dashboard-header-row">
-                    <div class="dashboard-icon-box">
-                        <i class="dashboard-quick-view-icon fas fa-desktop"></i>
-                    </div>
-                    <span class="dashboard-quick-view-number">{{ standardsExpiringThisQuarter }}</span>
-                </div>
-                <span class="dashboard-quick-view-text">IT Standards Expiring by {{ getExpiringDate() }}</span>
-                <div style="cursor: pointer;" (click)="navigateToItStandardTabs()" class="dashboard-quick-view-expire-container">
-                    <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle"></i>
-                    <span class="dashboard-quick-view-expire-text">{{ standardsExpiringThisWeek }} items expiring within 7 days</span>
-                </div>
-            </div>
-            <div class="dashboard-quick-view-item">
+             <div class="dashboard-quick-view-item">
                 <a (click)="navigateToSystems()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
                 <div class="dashboard-header-row">
                     <div class="dashboard-icon-box">
@@ -47,6 +33,21 @@
                 </div>
             </div>
             <div class="dashboard-quick-view-item">
+                <a (click)="navigateToItStandards()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
+                <div class="dashboard-header-row">
+                    <div class="dashboard-icon-box">
+                        <i class="dashboard-quick-view-icon fas fa-desktop"></i>
+                    </div>
+                    <span class="dashboard-quick-view-number">{{ standardsExpiringThisQuarter }}</span>
+                </div>
+                <span class="dashboard-quick-view-text">IT Standards Expiring by {{ getExpiringDate() }}</span>
+                <div style="cursor: pointer;" (click)="navigateToItStandardTabs()" class="dashboard-quick-view-expire-container">
+                    <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle"></i>
+                    <span class="dashboard-quick-view-expire-text">{{ standardsExpiringThisWeek }} items expiring within 7 days</span>
+                </div>
+            </div>
+           
+            <div class="dashboard-quick-view-item">
                 <a (click)="navigateToDecommissionedITStandards()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
                 <div class="dashboard-header-row">
                     <div class="dashboard-icon-box">
@@ -57,7 +58,7 @@
                 <span class="dashboard-quick-view-text">Decommissioned IT standards (Last 6 months)</span>
                 <div style="cursor: pointer;" (click)="navigateToDecommissionedITStandardsTabs()" class="dashboard-quick-view-expire-container">
                     <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle"></i>
-                    <span class="dashboard-quick-view-expire-text">{{ decommissionedITStandardsLast7Days }} items expiring within 7 days</span>
+                    <span class="dashboard-quick-view-expire-text">{{ decommissionedITStandardsLast7Days }} items expiring in last 7 days</span>
                 </div>
             </div>
         </div>
