@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { Column } from '@common/table-classes';
 import { ApiService } from '@services/apis/api.service';
@@ -16,7 +16,7 @@ export class DashboardComponent implements OnInit {
   public showTable = false;
 
   // Chart properties
-  public chartView: [number, number] = [500, 350];
+  public chartView: [number, number] = [0, 350];
   public colorScheme = {
     domain: ['#1f77b4', '#17becf', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b']
   };
@@ -114,6 +114,7 @@ export class DashboardComponent implements OnInit {
   ) { }
 
   public ngOnInit(): void {
+    this.updateChartView();
     this.apiService.getRecentITStandards(10).subscribe(standards => {
       this.tableService.updateReportTableData(standards);
       setTimeout(() => {
@@ -132,6 +133,19 @@ export class DashboardComponent implements OnInit {
     this.decommissionedSystemsLast7Days = 33;
     this.decommissionedITStandardsLast6Months = 100;
     this.decommissionedITStandardsLast7Days = 15;
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.updateChartView();
+  }
+
+  private updateChartView() {
+    const container = document.querySelector('.dashboard-chart-content');
+    if (container) {
+      const width = container.clientWidth;
+      this.chartView = [width, 350];
+    }
   }
 
   public getExpiringDate(): string {

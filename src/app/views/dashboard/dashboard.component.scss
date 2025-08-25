@@ -1,465 +1,416 @@
-.dashboard-container {
-    display: flex;
-    flex-direction: column;
-    padding: 1rem 1.5rem 1rem 1rem;
-    position: relative;
+// Variables
+$primary-color: var(--primary-color);
+$neutral-black: var(-neutral-black-color-dark);
+$primary-font: var(--primary-font);
+$card-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+$border-radius: 8px;
+$transition: all 0.3s ease;
 
-    & .dashboard-title {
-        font-size: 1.75rem;
-        margin-bottom: 1rem;
-        color: var(-neutral-black-color-dark);
-        font-family: var(--primary-font);
-        font-weight: 600;
-    }
-
-    & .dashboard-quick-view-container {
-        display: flex;
-        justify-content: space-between;
-        gap: 15px;
-
-        & .dashboard-metrics-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            width: 75%;
-        }
-
-        & .dashboard-quick-view-item {
-            width: 100%;
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: .25rem;
-            background-color: #fff;
-            box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
-            border-radius: 8px;
-            position: relative;
-
-            &.dashboard-quick-links-card {
-                width: 25%;
-                align-items: start;
-            }
-
-            & .dashboard-header-row {
-                display: flex;
-                align-items: center;
-                gap: 0.75rem;
-                margin-bottom: 0.5rem;
-            }
-
-            & .dashboard-icon-box{
-                background: #F4E3DB;
-                border-radius: 2.5rem;
-                height: 2rem;
-                width: 2rem;
-                padding: .75rem 1rem;
-                color: #B50909;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex-shrink: 0;
-                & .dashboard-quick-view-icon {
-                  width: 1.125rem;
-                  height: 1.125rem;
-                  
-                }
-            }
-
-           
-
-            & .dashboard-quick-view-number {
-                color: var(-neutral-black-color-dark);
-                font-family: var(--primary-font);
-                font-size: 1.5rem;
-                font-style: normal;
-                font-weight: 600;
-                line-height: normal;
-            }
-
-            & .dashboard-quick-view-text {
-                color: var(-neutral-black-color-dark);
-                font-family: var(--primary-font);
-                font-size: .875rem;
-                font-style: normal;
-                font-weight: 400;
-                line-height: normal;
-            }
-
-            & .dashboard-quick-view-expire-container {
-
-                & .dashboard-quick-view-expire-icon {
-                    color: #D97706;
-                    padding-right: .25rem;
-                }
-
-                & .dashboard-quick-view-expire-text {
-                    color: #D97706;
-                    font-family: var(--primary-font);
-                    font-size: .875rem;
-                    font-style: normal;
-                    font-weight: 400;
-                    line-height: normal;
-                    text-decoration-line: underline;
-                }
-            }
-
-            & .dashboard-quick-view-link {
-                position: absolute;
-                top: 1.3rem;
-                right: 0.75rem;
-                color: var(--primary-color);
-                font-family: var(--primary-font);
-                font-size: .8rem;
-                font-style: normal;
-                font-weight: 500;
-                line-height: 1.25rem;
-                text-decoration-line: underline;
-                z-index: 1;
-            }
-
-            & .dashboard-quick-links-title {
-                padding-bottom: 1.5rem;
-
-                & .dashboard-quick-links-icon {
-                    color: var(-neutral-black-color-dark);
-                    padding-right: .5rem;
-                    font-size: 1.125rem;
-                }
-
-                & .dashboard-quick-links-text {
-                    color: var(-neutral-black-color-dark);
-                    font-family: var(--primary-font);
-                    font-size: 1.125rem;
-                    font-style: normal;
-                    font-weight: 600;
-                    line-height: normal;
-                }
-            }
-
-            & .dashboard-quick-links-link-container {
-                display: flex;
-                flex-direction: column;
-                gap: .75rem;
-
-                & .dashboard-quick-links-link {
-                    color: var(--primary-color);
-                    font-family: var(--primary-font);
-                    font-size: .875rem;
-                    font-style: normal;
-                    font-weight: 500;
-                    line-height: normal;
-                    text-decoration: none;
-                    display: flex;
-                    flex-direction: row;
-                    align-items: start;
-                    gap: .5rem;
-
-                    &:hover {
-                        text-decoration: underline;
-                    }
-
-                    & .dashboard-quick-links-link-icon {
-                        color: var(--primary-color);
-                        font-size: .75rem;
-
-                        &:hover {
-                            text-decoration: underline;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    // Charts Section Styles
-    & .dashboard-charts-container {
-        margin-top: 1.5rem;
-
-        & .dashboard-charts-grid {
-            display: grid;
-            grid-template-columns: 75% 25%;
-            gap: 15px;
-        }
-
-        & .dashboard-chart-card {
-            background-color: #fff;
-            box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
-            border-radius: 8px;
-            padding: 1rem;
-            position: relative;
-
-            & .dashboard-chart-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 1rem;
-            }
-
-            & .dashboard-chart-content {
-                position: relative;
-                height: 350px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-
-                // Center text for donut chart
-                & .dashboard-chart-center-text {
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    text-align: center;
-                    z-index: 10;
-                    pointer-events: none;
-
-                    & .center-title {
-                        color: var(-neutral-black-color-dark);
-                        font-family: var(--primary-font);
-                        font-size: 0.875rem;
-                        font-weight: 500;
-                        margin-bottom: 0.25rem;
-                    }
-
-                    & .center-number {
-                        color: var(-neutral-black-color-dark);
-                        font-family: var(--primary-font);
-                        font-size: 1.5rem;
-                        font-weight: 600;
-                    }
-                }
-            }
-        }
-    }
-
-
-
-    & .dashboard-recent-report-container {
-        
-        margin-top: 1.5rem;
-
-        & .dashboard-recent-report-title {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-
-            & .dashboard-recent-report-title-text {
-                color: var(-neutral-black-color-dark);
-                font-family: var(--primary-font);
-                font-size: 1.25rem;
-                font-style: normal;
-                font-weight: 600;
-                line-height: normal;
-            }
-
-            & .dashboard-recent-report-title-link {
-                color: var(--primary-color);
-                font-family: var(--primary-font);
-                font-size: .875rem;
-                font-style: normal;
-                font-weight: 500;
-                line-height: 1.25rem;
-                text-decoration-line: underline;
-            }
-        }
-
-        // Dashboard-specific table optimizations
-        ::ng-deep {
-            .p-datatable-wrapper {
-                padding: 0.3rem;
-                padding-top: 0;
-            }
-
-            .neutral.p-datatable .p-datatable-thead>tr>th {
-                padding: .4rem .4rem;
-                font-size: .7rem;
-            }
-
-            .neutral.p-datatable .p-datatable-tbody>tr {
-                cursor: pointer;
-                
-                & td {
-                    padding: .5rem .4rem;
-                    font-size: .7rem;
-                }
-            }
-
-            .neutral.p-datatable .p-datatable-tbody>tr:nth-of-type(odd) td {
-                padding: .5rem .4rem;
-                font-size: .7rem;
-            }
-
-            // Chart styling overrides
-            .ngx-charts {
-                .bar {
-                    stroke: none;
-                }
-                
-                .pie-label {
-                    font-size: 0.75rem;
-                    font-weight: 500;
-                }
-                
-                .legend-title {
-                    font-size: 0.75rem;
-                    font-weight: 500;
-                }
-                
-                .legend-labels {
-                    font-size: 0.75rem;
-                }
-            }
-        }
-    }
+// Mixins
+@mixin card-style {
+  background-color: #fff;
+  box-shadow: $card-shadow;
+  border-radius: $border-radius;
+  padding: 1rem;
+  position: relative;
 }
 
-// Responsive optimizations for laptop screens
-@media (max-width: 1366px) and (min-width: 1024px) {
-    .dashboard-container {
-        padding: 0.75rem 1rem 0.75rem 0.75rem;
-        
-        & .dashboard-title {
-            font-size: 1.5rem;
-            margin-bottom: 0.75rem;
-        }
-        
-        & .dashboard-quick-view-container {
-            gap: 12px;
-            
-            & .dashboard-metrics-grid {
-                gap: 12px;
-            }
-            
-            & .dashboard-quick-view-item {
-                padding: 0.75rem;
-                gap: 0.2rem;
-                
-                & .dashboard-header-row {
-                    gap: 0.5rem;
-                    margin-bottom: 0.4rem;
-                }
-                
-                & .dashboard-icon-box {
-                    height: 2.5rem;
-                    width: 2.5rem;
-                    padding: 0.5rem 0.75rem;
-                    
-                    & .dashboard-quick-view-icon {
-                        width: 1rem;
-                        height: 1rem;
-                    }
-                }
-                
-                & .dashboard-quick-view-number {
-                    font-size: 1.25rem;
-                }
-                
-                & .dashboard-quick-view-text {
-                    font-size: 0.8rem;
-                }
-                
-                & .dashboard-quick-view-expire-text {
-                    font-size: 0.8rem;
-                }
-                
-                & .dashboard-quick-view-link {
-                    top: 0.5rem;
-                    right: 0.5rem;
-                    font-size: 0.75rem;
-                }
-                
-                & .dashboard-quick-links-title {
-                    padding-bottom: 1rem;
-                    
-                    & .dashboard-quick-links-icon,
-                    & .dashboard-quick-links-text {
-                        font-size: 1rem;
-                    }
-                }
-                
-                & .dashboard-quick-links-link-container {
-                    gap: 0.5rem;
-                    
-                    & .dashboard-quick-links-link {
-                        font-size: 0.8rem;
-                    }
-                }
-            }
-        }
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-        // Charts responsive adjustments
-        & .dashboard-charts-container {
-            margin-top: 1rem;
+@mixin flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-            & .dashboard-charts-grid {
-                gap: 12px;
-            }
+@mixin text-style($size: 1rem, $weight: 400, $color: $neutral-black) {
+  color: $color;
+  font-family: $primary-font;
+  font-size: $size;
+  font-style: normal;
+  font-weight: $weight;
+  line-height: normal;
+}
 
-            & .dashboard-chart-card {
-                padding: 0.75rem;
+@mixin link-style($color: $primary-color) {
+  color: $color;
+  font-family: $primary-font;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1.25rem;
+  text-decoration-line: underline;
+  cursor: pointer;
 
-                & .dashboard-chart-header {
-                    margin-bottom: 0.75rem;
+  &:hover {
+    text-decoration: none;
+  }
+}
 
-                    & .dashboard-chart-title {
-                        font-size: 1rem;
-                    }
+@mixin responsive-padding($desktop: 1rem, $laptop: 0.75rem) {
+  padding: $desktop;
+  
+  @media (max-width: 1366px) and (min-width: 1024px) {
+    padding: $laptop;
+  }
+}
 
-                    & .dashboard-chart-link {
-                        font-size: 0.8rem;
-                    }
-                }
+@mixin responsive-font($desktop: 1rem, $laptop: 0.875rem) {
+  font-size: $desktop;
+  
+  @media (max-width: 1366px) and (min-width: 1024px) {
+    font-size: $laptop;
+  }
+}
 
-                & .dashboard-chart-content {
-                    height: 250px;
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  @include responsive-padding(1rem 1.5rem 1rem 1rem, 0.75rem 1rem 0.75rem 0.75rem);
+  position: relative;
 
-                    & .dashboard-chart-center-text {
-                        & .center-title {
-                            font-size: 0.8rem;
-                        }
+  & .dashboard-title {
+    @include text-style(1.75rem, 600);
+    @include responsive-font(1.75rem, 1.5rem);
+    margin-bottom: 1rem;
+  }
 
-                        & .center-number {
-                            font-size: 1.25rem;
-                        }
-                    }
-                }
-            }
-        }
-        
-        & .dashboard-recent-report-container {
-            margin-top: 1rem;
-            
-            & .dashboard-recent-report-title {
-                margin-bottom: 0.75rem;
-                & .dashboard-recent-report-title-text {
-                    font-size: 1.125rem;
-                }
-                
-                & .dashboard-recent-report-title-link {
-                    font-size: 0.8rem;
-                }
-            }
-            
-            ::ng-deep {
-                .p-datatable-wrapper {
-                    padding: 0.2rem;
-                }
-                
-                .neutral.p-datatable .p-datatable-thead>tr>th {
-                    padding: 0.3rem 0.3rem;
-                    font-size: 0.65rem;
-                }
-                
-                .neutral.p-datatable .p-datatable-tbody>tr {
-                    cursor: pointer; // Make rows appear clickable
-                    
-                    & td,
-                    &.p-datatable-tbody>tr:nth-of-type(odd) td {
-                        padding: 0.4rem 0.3rem;
-                        font-size: 0.65rem;
-                    }
-                }
-            }
-        }
+  & .dashboard-quick-view-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+
+    @media (max-width: 1366px) and (min-width: 1024px) {
+      gap: 12px;
     }
+
+    & .dashboard-metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      width: 75%;
+
+      @media (max-width: 1366px) and (min-width: 1024px) {
+        gap: 12px;
+      }
+    }
+
+    & .dashboard-quick-view-item {
+      width: 100%;
+      @include card-style;
+      @include responsive-padding(1rem, 0.75rem);
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+
+      @media (max-width: 1366px) and (min-width: 1024px) {
+        gap: 0.2rem;
+      }
+
+      &.dashboard-quick-links-card {
+        width: 25%;
+        align-items: start;
+      }
+
+      & .dashboard-header-row {
+        @include flex-center;
+        gap: 0.75rem;
+        margin-bottom: 0.5rem;
+
+        @media (max-width: 1366px) and (min-width: 1024px) {
+          gap: 0.5rem;
+          margin-bottom: 0.4rem;
+        }
+      }
+
+      & .dashboard-icon-box {
+        background: #F4E3DB;
+        border-radius: 2.5rem;
+        height: 2rem;
+        width: 2rem;
+        padding: 0.75rem 1rem;
+        color: #B50909;
+        @include flex-center;
+        flex-shrink: 0;
+
+        @media (max-width: 1366px) and (min-width: 1024px) {
+          height: 2.5rem;
+          width: 2.5rem;
+          padding: 0.5rem 0.75rem;
+        }
+
+        & .dashboard-quick-view-icon {
+          width: 1.125rem;
+          height: 1.125rem;
+
+          @media (max-width: 1366px) and (min-width: 1024px) {
+            width: 1rem;
+            height: 1rem;
+          }
+        }
+      }
+
+      & .dashboard-quick-view-number {
+        @include text-style(1.5rem, 600);
+        @include responsive-font(1.5rem, 1.25rem);
+      }
+
+      & .dashboard-quick-view-text {
+        @include text-style(0.875rem, 400);
+        @include responsive-font(0.875rem, 0.8rem);
+      }
+
+      & .dashboard-quick-view-expire-container {
+        & .dashboard-quick-view-expire-icon {
+          color: #D97706;
+          padding-right: 0.25rem;
+        }
+
+        & .dashboard-quick-view-expire-text {
+          @include text-style(0.875rem, 400, #D97706);
+          @include responsive-font(0.875rem, 0.8rem);
+          text-decoration-line: underline;
+        }
+      }
+
+      & .dashboard-quick-view-link {
+        position: absolute;
+        top: 1.3rem;
+        right: 0.75rem;
+        @include link-style;
+        z-index: 1;
+
+        @media (max-width: 1366px) and (min-width: 1024px) {
+          top: 0.5rem;
+          right: 0.5rem;
+          font-size: 0.75rem;
+        }
+      }
+
+      & .dashboard-quick-links-title {
+        padding-bottom: 1.5rem;
+
+        @media (max-width: 1366px) and (min-width: 1024px) {
+          padding-bottom: 1rem;
+        }
+
+        & .dashboard-quick-links-icon {
+          @include text-style(1.125rem, 600);
+          padding-right: 0.5rem;
+
+          @media (max-width: 1366px) and (min-width: 1024px) {
+            font-size: 1rem;
+          }
+        }
+
+        & .dashboard-quick-links-text {
+          @include text-style(1.125rem, 600);
+
+          @media (max-width: 1366px) and (min-width: 1024px) {
+            font-size: 1rem;
+          }
+        }
+      }
+
+      & .dashboard-quick-links-link-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+
+        @media (max-width: 1366px) and (min-width: 1024px) {
+          gap: 0.5rem;
+        }
+
+        & .dashboard-quick-links-link {
+          @include link-style;
+          text-decoration: none;
+          display: flex;
+          flex-direction: row;
+          align-items: start;
+          gap: 0.5rem;
+          @include responsive-font(0.875rem, 0.8rem);
+
+          &:hover {
+            text-decoration: underline;
+          }
+
+          & .dashboard-quick-links-link-icon {
+            color: $primary-color;
+            font-size: 0.75rem;
+
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Charts Section Styles
+  & .dashboard-charts-container {
+    margin-top: 1.5rem;
+
+    @media (max-width: 1366px) and (min-width: 1024px) {
+      margin-top: 1rem;
+    }
+
+    & .dashboard-charts-grid {
+      display: grid;
+      grid-template-columns: 75% 25%;
+      gap: 15px;
+
+      @media (max-width: 1366px) and (min-width: 1024px) {
+        gap: 12px;
+      }
+    }
+
+    & .dashboard-chart-card {
+      @include card-style;
+      @include responsive-padding(1rem, 0.75rem);
+
+      & .dashboard-chart-header {
+        @include flex-between;
+        margin-bottom: 1rem;
+
+        @media (max-width: 1366px) and (min-width: 1024px) {
+          margin-bottom: 0.75rem;
+        }
+
+        & .dashboard-chart-title {
+          @include text-style(1.25rem, 700);
+          @include responsive-font(1.25rem, 1rem);
+          margin: 0;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        & .dashboard-chart-link {
+          @include link-style;
+        }
+      }
+
+      & .dashboard-chart-content {
+        position: relative;
+        height: 350px;
+        @include flex-center;
+        width: 100%;
+
+        @media (max-width: 1366px) and (min-width: 1024px) {
+          height: 250px;
+        }
+
+        // Ensure charts take full width
+        ::ng-deep ngx-charts-bar-vertical,
+        ::ng-deep ngx-charts-pie-chart {
+          width: 100% !important;
+          height: 100% !important;
+        }
+
+        // Center text for donut chart
+        & .dashboard-chart-center-text {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          text-align: center;
+          z-index: 10;
+          pointer-events: none;
+
+          & .center-title {
+            @include text-style(0.875rem, 500);
+            margin-bottom: 0.25rem;
+
+            @media (max-width: 1366px) and (min-width: 1024px) {
+              font-size: 0.8rem;
+            }
+          }
+
+          & .center-number {
+            @include text-style(1.5rem, 600);
+            @include responsive-font(1.5rem, 1.25rem);
+          }
+        }
+      }
+    }
+  }
+
+  & .dashboard-recent-report-container {
+    margin-top: 1.5rem;
+
+    @media (max-width: 1366px) and (min-width: 1024px) {
+      margin-top: 1rem;
+    }
+
+    & .dashboard-recent-report-title {
+      @include flex-between;
+      margin-bottom: 1rem;
+
+      @media (max-width: 1366px) and (min-width: 1024px) {
+        margin-bottom: 0.75rem;
+      }
+
+      & .dashboard-recent-report-title-text {
+        @include text-style(1.25rem, 600);
+        @include responsive-font(1.25rem, 1.125rem);
+      }
+
+      & .dashboard-recent-report-title-link {
+        @include link-style;
+        @include responsive-font(0.875rem, 0.8rem);
+      }
+    }
+
+    // Dashboard-specific table optimizations
+    ::ng-deep {
+      .p-datatable-wrapper {
+        @include responsive-padding(0.3rem, 0.2rem);
+        padding-top: 0;
+      }
+
+      .neutral.p-datatable .p-datatable-thead > tr > th {
+        @include responsive-padding(0.4rem, 0.3rem);
+        @include responsive-font(0.7rem, 0.65rem);
+      }
+
+      .neutral.p-datatable .p-datatable-tbody > tr {
+        cursor: pointer;
+
+        & td {
+          @include responsive-padding(0.5rem 0.4rem, 0.4rem 0.3rem);
+          @include responsive-font(0.7rem, 0.65rem);
+        }
+
+        &.p-datatable-tbody > tr:nth-of-type(odd) td {
+          @include responsive-padding(0.5rem 0.4rem, 0.4rem 0.3rem);
+          @include responsive-font(0.7rem, 0.65rem);
+        }
+      }
+
+      // Chart styling overrides
+      .ngx-charts {
+        .bar {
+          stroke: none;
+        }
+
+        .pie-label {
+          font-size: 0.75rem;
+          font-weight: 500;
+        }
+
+        .legend-title {
+          font-size: 0.75rem;
+          font-weight: 500;
+        }
+
+        .legend-labels {
+          font-size: 0.75rem;
+        }
+      }
+    }
+  }
 }
