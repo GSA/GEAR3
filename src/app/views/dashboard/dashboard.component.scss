@@ -266,7 +266,7 @@ $transition: all 0.3s ease;
 
     & .dashboard-charts-grid {
       display: grid;
-      grid-template-columns: 75% 25%;
+      grid-template-columns: 74% 25%;
       gap: 15px;
 
       @media (max-width: 1366px) and (min-width: 1024px) {
@@ -289,7 +289,7 @@ $transition: all 0.3s ease;
 
       & .dashboard-chart-content {
         position: relative;
-        height: 350px;
+        
         @include flex-center;
         width: 100%;
 
@@ -297,37 +297,13 @@ $transition: all 0.3s ease;
           height: 250px;
         }
 
-        // Ensure charts take full width
         ::ng-deep ngx-charts-bar-vertical,
         ::ng-deep ngx-charts-pie-chart {
           width: 100% !important;
           height: 100% !important;
         }
 
-        // Center text for donut chart
-        & .dashboard-chart-center-text {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          text-align: center;
-          z-index: 10;
-          pointer-events: none;
-
-          & .center-title {
-            @include text-style(0.875rem, 500);
-            margin-bottom: 0.25rem;
-
-            @media (max-width: 1366px) and (min-width: 1024px) {
-              font-size: 0.8rem;
-            }
-          }
-
-          & .center-number {
-            @include text-style(1.5rem, 600);
-            @include responsive-font(1.5rem, 1.25rem);
-          }
-        }
+       
       }
     }
   }
@@ -348,7 +324,6 @@ $transition: all 0.3s ease;
       }
     }
 
-    // Dashboard-specific table optimizations
     ::ng-deep {
       .p-datatable-wrapper {
         @include responsive-padding(0.3rem, 0.2rem);
@@ -373,27 +348,7 @@ $transition: all 0.3s ease;
           @include responsive-font(0.7rem, 0.65rem);
         }
       }
-
-      // Chart styling overrides
-      .ngx-charts {
-        .bar {
-          stroke: none;
-        }
-
-        .pie-label {
-          font-size: 0.75rem;
-          font-weight: 500;
-        }
-
-        .legend-title {
-          font-size: 0.75rem;
-          font-weight: 500;
-        }
-
-        .legend-labels {
-          font-size: 0.75rem;
-        }
-      }
     }
   }
 }
+
