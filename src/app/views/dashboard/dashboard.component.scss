@@ -75,6 +75,10 @@ $transition: all 0.3s ease;
   top: 1.3rem;
   right: 0.75rem;
   z-index: 1;
+  &.normal{
+    position: relative;
+    top: unset;
+  }
 
   @media (max-width: 1366px) and (min-width: 1024px) {
     top: 0.5rem;
@@ -150,6 +154,7 @@ $transition: all 0.3s ease;
       display: flex;
       flex-direction: column;
       gap: 0.25rem;
+      align-items: flex-start;
 
       @media (max-width: 1366px) and (min-width: 1024px) {
         gap: 0.2rem;
@@ -277,6 +282,8 @@ $transition: all 0.3s ease;
     & .dashboard-chart-card {
       @include card-style;
       @include responsive-padding(1rem, 0.75rem);
+      overflow: hidden;
+      max-width: 100%;
 
       & .dashboard-chart-header {
         @include flex-between;
@@ -289,21 +296,124 @@ $transition: all 0.3s ease;
 
       & .dashboard-chart-content {
         position: relative;
-        
-        @include flex-center;
+        height: 300px;
         width: 100%;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
         @media (max-width: 1366px) and (min-width: 1024px) {
           height: 250px;
         }
+      }
+    }
 
-        ::ng-deep ngx-charts-bar-vertical,
+    // Bar Chart Specific Styling
+    & .bar-chart-card {
+      .bar-chart-content {
+        height: 350px;
+        
+        @media (max-width: 1366px) and (min-width: 1024px) {
+          height: 300px;
+        }
+
+        ::ng-deep ngx-charts-bar-vertical {
+          width: 100% !important;
+          height: 100% !important;
+          max-width: 100% !important;
+        }
+      }
+    }
+
+    // Pie Chart Specific Styling
+    & .pie-chart-card {
+      .pie-chart-content {
+        height: 280px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
+        @media (max-width: 1366px) and (min-width: 1024px) {
+          height: 240px;
+        }
+
         ::ng-deep ngx-charts-pie-chart {
+          width: 100% !important;
+          height: 100% !important;
+          margin: 0 auto;
+          display: block !important;
+        }
+
+        ::ng-deep .ngx-charts-pie-chart {
           width: 100% !important;
           height: 100% !important;
         }
 
-       
+        // Center text styling
+        & .dashboard-chart-center-text {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          text-align: center;
+          z-index: 10;
+          pointer-events: none;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+
+          & .center-title {
+            @include text-style(0.75rem, 500);
+            @include responsive-font(0.75rem, 0.7rem);
+            color: #666666;
+            margin-bottom: 0.25rem;
+            text-transform: none;
+            letter-spacing: 0.2px;
+          }
+
+          & .center-number {
+            @include text-style(1.75rem, 700);
+            @include responsive-font(1.75rem, 1.5rem);
+            color: #000000;
+            line-height: 1;
+          }
+        }
+      }
+
+      // Custom legend styling
+      & .custom-legend {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-top: 1rem;
+        padding: 0.5rem 0;
+
+        & .legend-item {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+
+          & .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+
+            &.green {
+              background-color: #4CAF50;
+            }
+
+            &.orange {
+              background-color: #FF6B35;
+            }
+          }
+
+          & .legend-text {
+            @include text-style(0.875rem, 400);
+            color: #333;
+          }
+        }
       }
     }
   }
@@ -318,6 +428,7 @@ $transition: all 0.3s ease;
     & .dashboard-recent-report-title {
       @include flex-between;
       margin-bottom: 1rem;
+      position: relative;
 
       @media (max-width: 1366px) and (min-width: 1024px) {
         margin-bottom: 0.75rem;
@@ -331,8 +442,8 @@ $transition: all 0.3s ease;
       }
 
       .neutral.p-datatable .p-datatable-thead > tr > th {
-        @include responsive-padding(0.4rem, 0.3rem);
-        @include responsive-font(0.7rem, 0.65rem);
+        @include responsive-padding(0.8rem, 1rem);
+        @include responsive-font(0.8rem, 0.65rem);
       }
 
       .neutral.p-datatable .p-datatable-tbody > tr {

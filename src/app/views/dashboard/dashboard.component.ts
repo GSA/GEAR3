@@ -16,12 +16,15 @@ export class DashboardComponent implements OnInit {
   public showTable = false;
 
   // Chart properties
-  public chartView: [number, number] = [0, 350];
+  public chartView: [number, number] = [0, 400];
+  public barChartView: [number, number] = [0, 350];
+  public pieChartView: [number, number] = [0, 280];
+  
   public colorScheme = {
     domain: ['#1f77b4', '#17becf', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b']
   };
   public pieColorScheme = {
-    domain: ['#2ca02c', '#ff7f0e']
+    domain: ['#4CAF50', '#FF6B35']
   };
 
   // Hosting Platforms Bar Chart Data
@@ -42,6 +45,11 @@ export class DashboardComponent implements OnInit {
   ];
 
   public totalBusinessSystems: number = 289;
+
+  // Label formatting function for pie chart
+  public labelFormatting = (value: any): string => {
+    return value;
+  };
 
   public tableCols: Column[] = [
     {
@@ -114,7 +122,7 @@ export class DashboardComponent implements OnInit {
   ) { }
 
   public ngOnInit(): void {
-    this.updateChartView();
+    this.updateChartViews();
     this.apiService.getRecentITStandards(10).subscribe(standards => {
       this.tableService.updateReportTableData(standards);
       setTimeout(() => {
@@ -137,14 +145,22 @@ export class DashboardComponent implements OnInit {
 
   @HostListener('window:resize')
   onResize() {
-    this.updateChartView();
+    this.updateChartViews();
   }
 
-  private updateChartView() {
-    const container = document.querySelector('.dashboard-chart-content');
-    if (container) {
-      const width = container.clientWidth;
-      this.chartView = [width, 350];
+  private updateChartViews() {
+    // Update bar chart view
+    const barContainer = document.querySelector('.bar-chart-content');
+    if (barContainer) {
+      const barWidth = barContainer.clientWidth;
+      this.barChartView = [barWidth, 350];
+    }
+
+    // Update pie chart view
+    const pieContainer = document.querySelector('.pie-chart-content');
+    if (pieContainer) {
+      const pieWidth = pieContainer.clientWidth;
+      this.pieChartView = [pieWidth, 280];
     }
   }
 
