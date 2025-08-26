@@ -4,6 +4,7 @@ import { Column } from '@common/table-classes';
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
+import { Website } from '@api/models/websites.model';
 
 @Component({
     selector: 'dashboard',
@@ -27,16 +28,8 @@ export class DashboardComponent implements OnInit {
     domain: ['#4CAF50', '#FF6B35']
   };
 
-  // Hosting Platforms Bar Chart Data
-  public hostingPlatformsData = [
-    { name: 'AWS', value: 25 },
-    { name: 'AWS (GovCloud)', value: 20 },
-    { name: 'Cloud.gov', value: 10 },
-    { name: 'FCS', value: 35 },
-    { name: 'GSA', value: 75 },
-    { name: 'GSA salesforce', value: 50 },
-    { name: 'Others', value: 60 }
-  ];
+  // Hosting Platforms Bar Chart Data - now dynamic
+  public hostingPlatformsData: any[] = [];
 
   // Cloud Business Systems Donut Chart Data
   public cloudBusinessSystemsData = [
@@ -148,6 +141,9 @@ export class DashboardComponent implements OnInit {
       }
     });
 
+    // Get hosting platforms data for the bar chart
+    this.loadHostingPlatformsData();
+
     // For now, using static values from the image until API endpoints are available
     this.decommissionedSystemsLast6Months = 156;
     this.decommissionedSystemsLast7Days = 33;
@@ -158,6 +154,52 @@ export class DashboardComponent implements OnInit {
   @HostListener('window:resize')
   onResize() {
     this.updateChartViews();
+  }
+
+  private loadHostingPlatformsData(): void {
+    this.apiService.getWebsites().subscribe(websites => {
+      // Filter for active business applications
+      const activeBusinessWebsites = websites.filter(website => 
+        website.production_status === 'production' && 
+        (website.type_of_site === 'Application' || website.type_of_site === 'Application Login')
+      );
+
+      // Group by hosting platform and count
+      const platformCounts: { [key: string]: number } = {};
+      
+      activeBusinessWebsites.forEach(website => {
+        if (website.hosting_platform) {
+          // Combine AWS and AWS (GovCloud)
+          let platform = website.hosting_platform.trim();
+          if (platform === 'AWS (GovCloud)' || platform === 'AWS') {
+            platform = 'AWS';
+          }
+          
+          platformCounts[platform] = (platformCounts[platform] || 0) + 1;
+        }
+      });
+
+      // Separate platforms with count > 1 and count = 1
+      const platformsWithMultipleSystems = Object.entries(platformCounts)
+        .filter(([name, value]) => value > 1)
+        .map(([name, value]) => ({ name, value }))
+        .sort((a, b) => b.value - a.value);
+
+      const platformsWithSingleSystem = Object.entries(platformCounts)
+        .filter(([name, value]) => value === 1)
+        .map(([name, value]) => ({ name, value }));
+
+      // Create final array with individual platforms (count > 1) and "Others" (count = 1)
+      const finalData = [...platformsWithMultipleSystems];
+      
+      // Add "Others" bar if there are platforms with single systems
+      if (platformsWithSingleSystem.length > 0) {
+        const othersCount = platformsWithSingleSystem.length;
+        finalData.push({ name: 'Others', value: othersCount });
+      }
+
+      this.hostingPlatformsData = finalData;
+    });
   }
 
   private updateChartViews() {
