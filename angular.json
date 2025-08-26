@@ -11,12 +11,16 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/gear3",
+            "preserveSymlinks": true,
+            "outputPath": {
+              "base": "dist/gear3"
+            },
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": [
+              "src/polyfills.ts"
+            ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/assets",
@@ -32,8 +36,6 @@
               }
             ],
             "styles": [
-               "node_modules/primeng/resources/themes/lara-light-blue/theme.css",
-              "node_modules/primeng/resources/primeng.min.css",
               "src/styles/styles.scss",
               "src/styles/custom-theme.scss",
               "src/assets/fontawesome-free-5.13.0-web/css/all.min.css",
@@ -43,7 +45,6 @@
               "node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css",
               "node_modules/@ng-select/ng-select/themes/default.theme.css",
               "node_modules/@uswds/uswds/dist/css/uswds.css"
-             
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
@@ -63,12 +64,11 @@
               "node_modules/bootstrap-table/dist/extensions/toolbar/bootstrap-table-toolbar.min.js",
              "node_modules/@uswds/uswds/dist/js/uswds.js"
             ],
-            "vendorChunk": true,
             "extractLicenses": false,
-            "buildOptimizer": false,
             "sourceMap": true,
             "optimization": false,
-            "namedChunks": true
+            "namedChunks": true,
+            "browser": "src/main.ts"
           },
           "configurations": {
             "production": {
@@ -83,8 +83,6 @@
               "sourceMap": false,
               "namedChunks": false,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "budgets": [
                 {
                   "type": "initial",
@@ -110,8 +108,6 @@
               "sourceMap": false,
               "namedChunks": false,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "budgets": [
                 {
                   "type": "initial",
@@ -131,8 +127,6 @@
               "sourceMap": false,
               "namedChunks": false,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "budgets": [
                 {
                   "type": "initial",

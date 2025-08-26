@@ -17,9 +17,10 @@ interface OrgTree {
 }
 
 @Component({
-  selector: 'organizations-chart',
-  templateUrl: './organizations-chart.component.html',
-  styleUrls: ['./organizations-chart.component.css'],
+    selector: 'organizations-chart',
+    templateUrl: './organizations-chart.component.html',
+    styleUrls: ['./organizations-chart.component.css'],
+    standalone: false
 })
 export class OrganizationsChartComponent implements OnInit {
   @ViewChild('orgChart') public graphContainer: ElementRef;

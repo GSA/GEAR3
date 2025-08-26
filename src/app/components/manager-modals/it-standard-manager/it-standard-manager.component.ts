@@ -15,9 +15,10 @@ import { AppBundle } from '@api/models/it-standards-app-bundle.model';
 declare var $: any;
 
 @Component({
-  selector: 'it-standard-manager',
-  templateUrl: './it-standard-manager.component.html',
-  styleUrls: ['./it-standard-manager.component.css']
+    selector: 'it-standard-manager',
+    templateUrl: './it-standard-manager.component.html',
+    styleUrls: ['./it-standard-manager.component.css'],
+    standalone: false
 })
 export class ItStandardManagerComponent implements OnInit {
 

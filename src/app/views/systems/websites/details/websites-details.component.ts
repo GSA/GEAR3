@@ -12,9 +12,10 @@ import { of } from 'rxjs';
 import { RelatedSystemsCols } from '@common/table-columns/related-systems';
 
 @Component({
-  selector: 'websites-details',
-  templateUrl: './websites-details.component.html',
-  styleUrls: ['./websites-details.component.scss'],
+    selector: 'websites-details',
+    templateUrl: './websites-details.component.html',
+    styleUrls: ['./websites-details.component.scss'],
+    standalone: false
 })
 export class WebsitesDetailsComponent implements OnInit {
   

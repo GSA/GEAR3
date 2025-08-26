@@ -1,9 +1,10 @@
 import { Component, EventEmitter, ViewChild, ElementRef, Input, Output, Renderer2 } from '@angular/core';
 
 @Component({
-  selector: 'app-filter-chips',
-  templateUrl: './filter-chips.component.html',
-  styleUrls: ['./filter-chips.component.scss']
+    selector: 'app-filter-chips',
+    templateUrl: './filter-chips.component.html',
+    styleUrls: ['./filter-chips.component.scss'],
+    standalone: false
 })
 export class FilterChipsComponent {
 
@@ -20,9 +21,14 @@ export class FilterChipsComponent {
     constructor(private renderer: Renderer2) {
       // Handle outside clicks to close menu
       this.renderer.listen('window', 'click', (e: Event) => {
-        if(e.target !== this.button.nativeElement && e.target !== this.menu.nativeElement){
+        if(this.button && this.menu) {
+          if(e.target !== this.button.nativeElement && e.target !== this.menu.nativeElement) {
             this.dropdownOpen = false;
+          }
         }
+        // if(e.target !== this.button.nativeElement && e.target !== this.menu.nativeElement){
+        //     this.dropdownOpen = false;
+        // }
       });
     }
 

@@ -46,7 +46,7 @@ exports.searchAll = (req, res) => {
         cap.\`capability_Id\` AS \`Id\`,
         cap.\`Capability_Name\` AS \`Name\`,
         cap.\`Description\` AS \`Description\`,
-        '-' AS \`Status\`,
+        '' AS \`Status\`,
         'Capability' AS \`GEAR_Type\`,
         'GSA Enterprise -> Business Capability List' AS \`GEAR_Type_Display\`,
         '{}' AS \`Other\`
@@ -56,7 +56,7 @@ exports.searchAll = (req, res) => {
         org.\`Organization_Id\` AS \`Id\`,
         org.\`Organization_Id\` AS \`Name\`,
         org.\`Organization_Name\` AS \`Description\`,
-        '-' AS \`Status\`,
+        '' AS \`Status\`,
         'Organization' AS \`GEAR_Type\`,
         'GSA Enterprise -> Organization List' AS \`GEAR_Type_Display\`,
         '{}' AS \`Other\`
