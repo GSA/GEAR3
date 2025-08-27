@@ -44,6 +44,15 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     return value;
   };
 
+  // X-axis tick formatting function for bar chart
+  public xAxisTickFormatting = (value: string): string => {
+    // Truncate long platform names to fit better on x-axis
+    if (value.length > 12) {
+      return value.substring(0, 12) + '...';
+    }
+    return value;
+  };
+
   public tableCols: Column[] = [
     {
       field: 'Name',
@@ -182,7 +191,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       
       activeBusinessWebsites.forEach(website => {
         if (website.hosting_platform) {
-          // Combine AWS and AWS (GovCloud)
+          // Combine AWS and AWS (GovCloud) into one bar
           let platform = website.hosting_platform.trim();
           if (platform === 'AWS (GovCloud)' || platform === 'AWS') {
             platform = 'AWS';
@@ -192,15 +201,13 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         }
       });
 
-      // Separate platforms with count > 1 and count = 1
-      const platformsWithMultipleSystems = Object.entries(platformCounts)
-        .filter(([name, value]) => value > 1)
-        .map(([name, value]) => ({ name, value }))
-        .sort((a, b) => b.value - a.value);
-
-      const platformsWithSingleSystem = Object.entries(platformCounts)
-        .filter(([name, value]) => value === 1)
+      // Create array with all platforms including "Others" for single systems
+      const allPlatforms = Object.entries(platformCounts)
         .map(([name, value]) => ({ name, value }));
+
+      // Separate platforms with count > 1 and count = 1
+      const platformsWithMultipleSystems = allPlatforms.filter(item => item.value > 1);
+      const platformsWithSingleSystem = allPlatforms.filter(item => item.value === 1);
 
       // Create final array with individual platforms (count > 1) and "Others" (count = 1)
       const finalData = [...platformsWithMultipleSystems];
@@ -210,6 +217,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         const othersCount = platformsWithSingleSystem.length;
         finalData.push({ name: 'Others', value: othersCount });
       }
+
+      // Sort the final array by value in descending order (most systems on the left)
+      finalData.sort((a, b) => b.value - a.value);
 
       // Force chart re-render by temporarily clearing data
       this.hostingPlatformsData = [];
@@ -265,6 +275,27 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   public navigateToCloudSystems(): void {
     // Navigate to cloud systems page or systems page
     this.router.navigate(['/systems']);
+  }
+
+  public navigateToCloudBasedSystems(): void {
+    // Navigate to systems page with Cloud Enabled tab
+    this.router.navigate(['/systems'], { queryParams: { tab: 'Cloud Enabled' } });
+  }
+
+  public navigateToNonCloudBasedSystems(): void {
+    // Navigate to systems page with Inactive tab
+    this.router.navigate(['/systems'], { queryParams: { tab: 'Inactive' } });
+  }
+
+  public onPieChartSelect(event: any): void {
+    // Handle pie chart segment click
+    if (event && event.name) {
+      if (event.name === 'Cloud Based') {
+        this.navigateToCloudBasedSystems();
+      } else if (event.name === 'Not Cloud Based') {
+        this.navigateToNonCloudBasedSystems();
+      }
+    }
   }
 
   public navigateToFisma(): void {

@@ -104,11 +104,12 @@
                         [legend]="false"
                         [showXAxisLabel]="true"
                         [showYAxisLabel]="true"
-                        [xAxisLabel]="'Hosting Platforms Report (2025)'"
-                        [yAxisLabel]="'# of Hosting Platforms'"
-                        [rotateXAxisTicks]="false"
+                        [xAxisLabel]="'Hosting Platforms'"
+                        [yAxisLabel]="'# of Systems'"
+                        [rotateXAxisTicks]="true"
                         [animations]="true"
-                        [barPadding]="50">
+                        [barPadding]="20"
+                        [xAxisTickFormatting]="xAxisTickFormatting">
                     </ngx-charts-bar-vertical>
                 </div>
             </div>
@@ -130,7 +131,8 @@
                         [doughnut]="true"
                         [animations]="true"
                         [tooltipDisabled]="false"
-                        [arcWidth]="0.25">
+                        [arcWidth]="0.25"
+                        (select)="onPieChartSelect($event)">
                     </ngx-charts-pie-chart>
                     <div class="dashboard-chart-center-text">
                         <div class="center-title">Business Systems</div>
@@ -138,11 +140,11 @@
                     </div>
                 </div>
                 <div class="custom-legend">
-                    <div class="legend-item">
+                    <div class="legend-item" (click)="navigateToCloudBasedSystems()" style="cursor: pointer;">
                         <div class="legend-color green"></div>
                         <span class="legend-text">Cloud Based</span>
                     </div>
-                    <div class="legend-item">
+                    <div class="legend-item" (click)="navigateToNonCloudBasedSystems()" style="cursor: pointer;">
                         <div class="legend-color orange"></div>
                         <span class="legend-text">Not Cloud Based</span>
                     </div>
