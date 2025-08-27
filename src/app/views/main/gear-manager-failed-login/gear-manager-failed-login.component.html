@@ -1,0 +1,74 @@
+<div class="failed-login-container">
+  <div class="card failed-login-card">
+    <div class="card-header failed-login-header">
+      <div class="header-content">
+        <i class="fas fa-exclamation-triangle warning-icon"></i>
+        <h2 class="card-title">Access Denied</h2>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div class="warning-banner">
+        <div class="warning-content">
+          <h3 class="warning-title">******WARNING******</h3>
+          <p class="warning-text">
+            This is a U.S. General Services Administration Federal Government computer system that is "FOR OFFICIAL USE ONLY." 
+            This system is subject to monitoring. Therefore, no expectation of privacy is to be assumed. 
+            Individuals found performing unauthorized activities may be subject to disciplinary action including criminal prosecution.
+            This system contains Controlled Unclassified Information (CUI).  
+            All individuals viewing, reproducing or disposing of this information are required to protect it 
+            in accordance with 32 CFR Part 2002 and GSA Order CIO 2103.1 CUI Policy.
+          </p>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div class="error-section">
+          <div class="error-icon-container">
+            <i class="fas fa-lock error-icon"></i>
+          </div>
+          
+          <div class="error-message">
+            <h3 class="error-title">Login Failed</h3>
+            <p class="error-description">
+              Your login attempt was unsuccessful. This could be due to:
+            </p>
+            <ul class="error-reasons">
+              <li>Invalid credentials</li>
+              <li>Account not yet approved</li>
+              <li>Account access has been revoked</li>
+              <li>System authentication error</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="action-section">
+          <div class="help-text">
+            <p>
+              If you believe you should have access to the GEAR Manager portal, please 
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLSdmvOEESbKRJ5z4GnOw9hMqWIAI8m5H8I0-tB4zU3mc3aeYPA/viewform?usp=sf_link" 
+                 class="text-info card-link" target="_blank" rel="noopener noreferrer">
+                request access to GEAR Manager
+              </a>
+            </p>
+            <p>
+              The GEAR Manager portal provides the ability for the EA Team and the CTO Office to edit and update mappings of
+              investments and IT Standards to systems to reflect in GEAR.
+            </p>
+          </div>
+
+          <div class="button-group">
+            <button class="btn btn-primary retry-btn" (click)="retryLogin()">
+              <i class="fas fa-redo"></i>
+              Try Again
+            </button>
+            <button class="btn btn-secondary home-btn" (click)="goHome()">
+              <i class="fas fa-home"></i>
+              Return to Home
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

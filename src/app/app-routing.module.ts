@@ -13,6 +13,7 @@ import { GlobalSearchComponent } from './views/main/global-search/global-search.
 import { AboutComponent } from './views/main/about/about.component';
 import { AssistTechComponent } from './views/main/assist-tech/assist-tech.component';
 import { GearManagerComponent } from './views/main/gear-manager/gear-manager.component';
+import { GearManagerFailedLoginComponent } from './views/main/gear-manager-failed-login/gear-manager-failed-login.component';
 
 // Strategy
 import { FrameworkComponent } from './views/strategy/framework/framework.component';
@@ -218,6 +219,12 @@ const routes: Routes = [
     path: 'gear_manager',
     component: GearManagerComponent,
     title: 'GEAR Manager',
+  },
+
+  {
+    path: 'failed-login',
+    component: GearManagerFailedLoginComponent,
+    title: 'Access Denied',
   },
 
   {

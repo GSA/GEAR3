@@ -1,0 +1,261 @@
+.failed-login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.failed-login-card {
+  max-width: 800px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.failed-login-header {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  border-bottom: none;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.warning-icon {
+  font-size: 2rem;
+  color: #ffc107;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.card-body {
+  padding: 0;
+}
+
+.warning-banner {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  border-bottom: 3px solid #ffc107;
+  padding: 1.5rem;
+}
+
+.warning-content {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.warning-title {
+  color: #856404;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.warning-text {
+  color: #856404;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin: 0;
+  text-align: justify;
+}
+
+.main-content {
+  padding: 2rem;
+}
+
+.error-section {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #dc3545;
+}
+
+.error-icon-container {
+  flex-shrink: 0;
+}
+
+.error-icon {
+  font-size: 3rem;
+  color: #dc3545;
+}
+
+.error-message {
+  flex: 1;
+}
+
+.error-title {
+  color: #dc3545;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.error-description {
+  color: #6c757d;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.error-reasons {
+  color: #6c757d;
+  margin: 0;
+  padding-left: 1.5rem;
+  
+  li {
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+  }
+}
+
+.action-section {
+  text-align: center;
+}
+
+.help-text {
+  margin-bottom: 2rem;
+  
+  p {
+    color: #6c757d;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+  }
+  
+  a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+    
+    &:hover {
+      text-decoration: underline;
+      color: #0056b3;
+    }
+  }
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.retry-btn {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  
+  &:hover {
+    background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+    color: white;
+  }
+}
+
+.home-btn {
+  background: linear-gradient(135deg, #6c757d 0%, #545b62 100%);
+  color: white;
+  
+  &:hover {
+    background: linear-gradient(135deg, #545b62 0%, #3d4449 100%);
+    color: white;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .failed-login-container {
+    padding: 10px;
+  }
+  
+  .failed-login-card {
+    margin: 0;
+  }
+  
+  .error-section {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .error-icon {
+    font-size: 2.5rem;
+  }
+  
+  .button-group {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .btn {
+    width: 100%;
+    max-width: 250px;
+    justify-content: center;
+  }
+  
+  .warning-text {
+    font-size: 0.85rem;
+  }
+  
+  .main-content {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-content {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .card-title {
+    font-size: 1.5rem;
+  }
+  
+  .warning-icon {
+    font-size: 1.5rem;
+  }
+  
+  .error-title {
+    font-size: 1.3rem;
+  }
+}
