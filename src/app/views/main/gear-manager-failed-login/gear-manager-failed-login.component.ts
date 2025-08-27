@@ -15,12 +15,10 @@ export class GearManagerFailedLoginComponent implements OnInit {
   }
 
   public retryLogin(): void {
-    // Navigate back to the gear manager login page
     this.router.navigate(['/gear-manager']);
   }
 
   public goHome(): void {
-    // Navigate to the home page
     this.router.navigate(['/']);
   }
 
