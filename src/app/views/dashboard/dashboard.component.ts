@@ -16,7 +16,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   public showTable = false;
 
-  // Chart properties
   public chartView: [number, number] = [0, 400];
   public barChartView: [number, number] = [0, 350];
   public pieChartView: [number, number] = [0, 280];
@@ -28,10 +27,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     domain: ['#4CAF50', '#FF6B35']
   };
 
-  // Hosting Platforms Bar Chart Data - now dynamic
   public hostingPlatformsData: any[] = [];
 
-  // Cloud Business Systems Donut Chart Data
   public cloudBusinessSystemsData = [
     { name: 'Cloud Based', value: 0 },
     { name: 'Not Cloud Based', value: 0 }
@@ -39,14 +36,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   public totalBusinessSystems: number = 0;
 
-  // Label formatting function for pie chart
   public labelFormatting = (value: any): string => {
     return value;
   };
 
-  // X-axis tick formatting function for bar chart
   public xAxisTickFormatting = (value: string): string => {
-    // Truncate long platform names to fit better on x-axis
     if (value.length > 12) {
       return value.substring(0, 12) + '...';
     }
@@ -138,10 +132,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.apiService.getFismaExpiringThisQuarter().subscribe(q => this.fismaExpiringThisQuarter = q);
     this.apiService.getFismaExpiringThisWeek().subscribe(w => this.fismaExpiringThisWeek = w);
 
-    // Get cloud adoption data for the pie chart
     this.apiService.getCloudAdoptionRate().subscribe(cloudData => {
       if (cloudData && cloudData.length > 0) {
-        const latestData = cloudData[0]; // Get the most recent data
+        const latestData = cloudData[0];
         this.cloudBusinessSystemsData = [
           { name: 'Cloud Based', value: latestData.CloudBusSystemsCount },
           { name: 'Not Cloud Based', value: latestData.BusSystemsCount - latestData.CloudBusSystemsCount }
@@ -150,23 +143,19 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       }
     });
 
-    // Get hosting platforms data for the bar chart
     this.loadHostingPlatformsData();
 
-    // For now, using static values from the image until API endpoints are available
     this.decommissionedSystemsLast6Months = 156;
     this.decommissionedSystemsLast7Days = 33;
     this.decommissionedITStandardsLast6Months = 100;
     this.decommissionedITStandardsLast7Days = 15;
 
-    // Update chart views after a delay to ensure DOM is ready
     setTimeout(() => {
       this.updateChartViews();
     }, 100);
   }
 
   public ngAfterViewInit(): void {
-    // Force chart resize after view is initialized
     setTimeout(() => {
       this.updateChartViews();
       this.cdr.detectChanges();
@@ -180,18 +169,15 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   private loadHostingPlatformsData(): void {
     this.apiService.getWebsites().subscribe(websites => {
-      // Filter for active business applications
       const activeBusinessWebsites = websites.filter(website => 
         website.production_status === 'production' && 
         (website.type_of_site === 'Application' || website.type_of_site === 'Application Login')
       );
 
-      // Group by hosting platform and count
       const platformCounts: { [key: string]: number } = {};
       
       activeBusinessWebsites.forEach(website => {
         if (website.hosting_platform) {
-          // Combine AWS and AWS (GovCloud) into one bar
           let platform = website.hosting_platform.trim();
           if (platform === 'AWS (GovCloud)' || platform === 'AWS') {
             platform = 'AWS';
@@ -201,31 +187,24 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         }
       });
 
-      // Create array with all platforms including "Others" for single systems
       const allPlatforms = Object.entries(platformCounts)
         .map(([name, value]) => ({ name, value }));
 
-      // Separate platforms with count > 1 and count = 1
       const platformsWithMultipleSystems = allPlatforms.filter(item => item.value > 1);
       const platformsWithSingleSystem = allPlatforms.filter(item => item.value === 1);
 
-      // Create final array with individual platforms (count > 1) and "Others" (count = 1)
       const finalData = [...platformsWithMultipleSystems];
       
-      // Add "Others" bar if there are platforms with single systems
       if (platformsWithSingleSystem.length > 0) {
         const othersCount = platformsWithSingleSystem.length;
         finalData.push({ name: 'Others', value: othersCount });
       }
 
-      // Sort the final array by value in descending order (most systems on the left)
       finalData.sort((a, b) => b.value - a.value);
 
-      // Force chart re-render by temporarily clearing data
       this.hostingPlatformsData = [];
       this.cdr.detectChanges();
       
-      // Set the actual data after a brief delay
       setTimeout(() => {
         this.hostingPlatformsData = finalData;
         this.updateChartViews();
@@ -235,23 +214,19 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   private updateChartViews() {
-    // Update bar chart view
     const barContainer = document.querySelector('.bar-chart-content');
     if (barContainer && barContainer.clientWidth > 0) {
       const barWidth = barContainer.clientWidth;
       this.barChartView = [barWidth, 350];
     } else {
-      // Fallback to default size if container not ready
       this.barChartView = [600, 350];
     }
 
-    // Update pie chart view
     const pieContainer = document.querySelector('.pie-chart-content');
     if (pieContainer && pieContainer.clientWidth > 0) {
       const pieWidth = pieContainer.clientWidth;
       this.pieChartView = [pieWidth, 280];
     } else {
-      // Fallback to default size if container not ready
       this.pieChartView = [400, 280];
     }
   }
@@ -266,29 +241,23 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     return `${day}th ${month}`;
   }
 
-  // Navigation methods for charts
   public navigateToHostingPlatforms(): void {
-    // Navigate to hosting platforms page or systems page
     this.router.navigate(['/systems']);
   }
 
   public navigateToCloudSystems(): void {
-    // Navigate to cloud systems page or systems page
     this.router.navigate(['/systems']);
   }
 
   public navigateToCloudBasedSystems(): void {
-    // Navigate to systems page with Cloud Enabled tab
     this.router.navigate(['/systems'], { queryParams: { tab: 'Cloud Enabled' } });
   }
 
   public navigateToNonCloudBasedSystems(): void {
-    // Navigate to systems page with Inactive tab
     this.router.navigate(['/systems'], { queryParams: { tab: 'Inactive' } });
   }
 
   public onPieChartSelect(event: any): void {
-    // Handle pie chart segment click
     if (event && event.name) {
       if (event.name === 'Cloud Based') {
         this.navigateToCloudBasedSystems();
