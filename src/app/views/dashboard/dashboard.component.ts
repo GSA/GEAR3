@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { Column } from '@common/table-classes';
 import { ApiService } from '@services/apis/api.service';
@@ -12,7 +12,7 @@ import { Website } from '@api/models/websites.model';
     styleUrls: ['./dashboard.component.scss'],
     standalone: false
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, AfterViewInit {
 
   public showTable = false;
 
@@ -111,11 +111,11 @@ export class DashboardComponent implements OnInit {
     private apiService: ApiService,
     private tableService: TableService,
     private sharedService: SharedService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) { }
 
   public ngOnInit(): void {
-    this.updateChartViews();
     this.apiService.getRecentITStandards(10).subscribe(standards => {
       this.tableService.updateReportTableData(standards);
       setTimeout(() => {
@@ -149,6 +149,19 @@ export class DashboardComponent implements OnInit {
     this.decommissionedSystemsLast7Days = 33;
     this.decommissionedITStandardsLast6Months = 100;
     this.decommissionedITStandardsLast7Days = 15;
+
+    // Update chart views after a delay to ensure DOM is ready
+    setTimeout(() => {
+      this.updateChartViews();
+    }, 100);
+  }
+
+  public ngAfterViewInit(): void {
+    // Force chart resize after view is initialized
+    setTimeout(() => {
+      this.updateChartViews();
+      this.cdr.detectChanges();
+    }, 200);
   }
 
   @HostListener('window:resize')
@@ -198,23 +211,38 @@ export class DashboardComponent implements OnInit {
         finalData.push({ name: 'Others', value: othersCount });
       }
 
-      this.hostingPlatformsData = finalData;
+      // Force chart re-render by temporarily clearing data
+      this.hostingPlatformsData = [];
+      this.cdr.detectChanges();
+      
+      // Set the actual data after a brief delay
+      setTimeout(() => {
+        this.hostingPlatformsData = finalData;
+        this.updateChartViews();
+        this.cdr.detectChanges();
+      }, 100);
     });
   }
 
   private updateChartViews() {
     // Update bar chart view
     const barContainer = document.querySelector('.bar-chart-content');
-    if (barContainer) {
+    if (barContainer && barContainer.clientWidth > 0) {
       const barWidth = barContainer.clientWidth;
       this.barChartView = [barWidth, 350];
+    } else {
+      // Fallback to default size if container not ready
+      this.barChartView = [600, 350];
     }
 
     // Update pie chart view
     const pieContainer = document.querySelector('.pie-chart-content');
-    if (pieContainer) {
+    if (pieContainer && pieContainer.clientWidth > 0) {
       const pieWidth = pieContainer.clientWidth;
       this.pieChartView = [pieWidth, 280];
+    } else {
+      // Fallback to default size if container not ready
+      this.pieChartView = [400, 280];
     }
   }
 
