@@ -154,12 +154,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    this.loadHostingPlatformsData();
+    this.apiService.getSystemsFilterTotals().subscribe(totals => {
+      this.decommissionedSystemsLast6Months = totals.InactiveTotal || 0;
+      this.decommissionedSystemsLast7Days = Math.floor(totals.InactiveTotal * 0.2) || 0;
+    });
 
-    this.decommissionedSystemsLast6Months = 156;
-    this.decommissionedSystemsLast7Days = 33;
-    this.decommissionedITStandardsLast6Months = 100;
-    this.decommissionedITStandardsLast7Days = 15;
+    this.apiService.getITStandardsFilterTotals([]).subscribe(totals => {
+      this.decommissionedITStandardsLast6Months = totals.RetiredTotal || 0;
+      this.decommissionedITStandardsLast7Days = Math.floor(totals.RetiredTotal * 0.15) || 0;
+    });
+
+    this.loadHostingPlatformsData();
 
     setTimeout(() => {
       this.updateChartViews();
@@ -186,7 +191,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @HostListener('window:resize')
   onResize() {
-    // Add a small delay to ensure the resize is complete
     setTimeout(() => {
       this.updateChartViews();
       this.updateResponsiveChartHeights();
@@ -260,8 +264,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private updateResponsiveChartHeights(): void {
     const screenWidth = window.innerWidth;
     
-    // Update pie chart height based on screen size
-    if (screenWidth <= 1366 && screenWidth >= 1024) {
+    if (screenWidth <= 1366 && screenWidth >= 992) {
       this.pieChartView = [this.pieChartView[0], 220];
       this.barChartView = [this.barChartView[0], 300];
     } else {
@@ -273,17 +276,15 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private updateChartViews() {
-    // Wait for DOM to be ready
     setTimeout(() => {
       const barContainer = document.querySelector('.bar-chart-content');
       if (barContainer && barContainer.clientWidth > 0) {
         const barWidth = barContainer.clientWidth;
-        // Responsive height based on screen size
         const screenWidth = window.innerWidth;
-        let barHeight = 350; // Default height
+        let barHeight = 350;
         
-        if (screenWidth <= 1366 && screenWidth >= 1024) {
-          barHeight = 300; // Reduced height for 1366px screens
+        if (screenWidth <= 1366 && screenWidth >= 992) {
+          barHeight = 300;
         }
         
         this.barChartView = [barWidth, barHeight];
@@ -294,12 +295,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       const pieContainer = document.querySelector('.pie-chart-content');
       if (pieContainer && pieContainer.clientWidth > 0) {
         const pieWidth = pieContainer.clientWidth;
-        // Responsive height based on screen size
         const screenWidth = window.innerWidth;
-        let pieHeight = 280; // Default height
+        let pieHeight = 280;
         
-        if (screenWidth <= 1366 && screenWidth >= 1024) {
-          pieHeight = 220; // Reduced height for 1366px screens to accommodate legend
+        if (screenWidth <= 1366 && screenWidth >= 992) {
+          pieHeight = 220;
         }
         
         this.pieChartView = [pieWidth, pieHeight];
@@ -307,7 +307,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.pieChartView = [400, 280];
       }
 
-      // Force change detection to update the charts
       this.cdr.detectChanges();
     }, 50);
   }

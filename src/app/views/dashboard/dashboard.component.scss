@@ -118,7 +118,7 @@ $transition: all 0.3s ease;
 .dashboard-container {
   display: flex;
   flex-direction: column;
-  @include responsive-padding(1rem 1rem 1rem 1rem, 0.75rem 0.75rem 0.75rem 0.75rem);
+  @include responsive-padding(1rem 1.5rem 1rem 1rem, 0.75rem 1rem 0.75rem 0.75rem);
   position: relative;
 
   & .dashboard-title {
@@ -323,7 +323,7 @@ $transition: all 0.3s ease;
       &.pie-chart-card {
         min-height: 360px;
         
-        @media (max-width: 1366px) and (min-width: 1024px) {
+        @media (max-width: 1366px) and (min-width: 992px) {
           min-height: 320px;
         }
       }
@@ -331,7 +331,7 @@ $transition: all 0.3s ease;
       &.bar-chart-card {
         min-height: 400px;
         
-        @media (max-width: 1366px) and (min-width: 1024px) {
+        @media (max-width: 1366px) and (min-width: 992px) {
           min-height: 350px;
         }
       }
@@ -340,7 +340,7 @@ $transition: all 0.3s ease;
         @include flex-between;
         margin-bottom: 1rem;
 
-        @media (max-width: 1366px) and (min-width: 1024px) {
+        @media (max-width: 1366px) and (min-width: 992px) {
           margin-bottom: 0.75rem;
         }
       }
@@ -354,7 +354,7 @@ $transition: all 0.3s ease;
         justify-content: center;
         align-items: center;
 
-        @media (max-width: 1366px) and (min-width: 1024px) {
+        @media (max-width: 1366px) and (min-width: 992px) {
           height: 250px;
         }
       }
@@ -365,7 +365,7 @@ $transition: all 0.3s ease;
       .bar-chart-content {
         height: 350px;
         
-        @media (max-width: 1366px) and (min-width: 1024px) {
+        @media (max-width: 1366px) and (min-width: 992px) {
           height: 300px;
         }
 
@@ -385,7 +385,7 @@ $transition: all 0.3s ease;
         justify-content: center;
         align-items: center;
         
-        @media (max-width: 1366px) and (min-width: 1024px) {
+        @media (max-width: 1366px) and (min-width: 992px) {
           height: 220px;
         }
 
