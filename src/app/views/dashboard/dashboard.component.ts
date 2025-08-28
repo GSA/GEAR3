@@ -1,10 +1,11 @@
-import { Component, OnInit, HostListener, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, HostListener, AfterViewInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Column } from '@common/table-classes';
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Website } from '@api/models/websites.model';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'dashboard',
@@ -12,9 +13,11 @@ import { Website } from '@api/models/websites.model';
     styleUrls: ['./dashboard.component.scss'],
     standalone: false
 })
-export class DashboardComponent implements OnInit, AfterViewInit {
+export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public showTable = false;
+  private sidebarSubscription: Subscription;
+  private resizeObserver: ResizeObserver;
 
   public chartView: [number, number] = [0, 400];
   public barChartView: [number, number] = [0, 350];
@@ -119,6 +122,14 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   ) { }
 
   public ngOnInit(): void {
+    this.sidebarSubscription = this.sharedService.sidebarVisible.subscribe((isVisible: boolean) => {
+      setTimeout(() => {
+        this.updateChartViews();
+        this.updateResponsiveChartHeights();
+        this.cdr.detectChanges();
+      }, 200);
+    });
+
     this.apiService.getRecentITStandards(10).subscribe(standards => {
       this.tableService.updateReportTableData(standards);
       setTimeout(() => {
@@ -152,19 +163,34 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
     setTimeout(() => {
       this.updateChartViews();
+      this.updateResponsiveChartHeights();
     }, 100);
   }
 
   public ngAfterViewInit(): void {
     setTimeout(() => {
       this.updateChartViews();
+      this.setupResizeObserver();
       this.cdr.detectChanges();
     }, 200);
   }
 
+  public ngOnDestroy(): void {
+    if (this.sidebarSubscription) {
+      this.sidebarSubscription.unsubscribe();
+    }
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+    }
+  }
+
   @HostListener('window:resize')
   onResize() {
-    this.updateChartViews();
+    // Add a small delay to ensure the resize is complete
+    setTimeout(() => {
+      this.updateChartViews();
+      this.updateResponsiveChartHeights();
+    }, 100);
   }
 
   private loadHostingPlatformsData(): void {
@@ -213,22 +239,77 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
-  private updateChartViews() {
-    const barContainer = document.querySelector('.bar-chart-content');
-    if (barContainer && barContainer.clientWidth > 0) {
-      const barWidth = barContainer.clientWidth;
-      this.barChartView = [barWidth, 350];
-    } else {
-      this.barChartView = [600, 350];
-    }
+  private setupResizeObserver(): void {
+    if (typeof ResizeObserver !== 'undefined') {
+      this.resizeObserver = new ResizeObserver(() => {
+        this.updateChartViews();
+      });
 
-    const pieContainer = document.querySelector('.pie-chart-content');
-    if (pieContainer && pieContainer.clientWidth > 0) {
-      const pieWidth = pieContainer.clientWidth;
-      this.pieChartView = [pieWidth, 280];
-    } else {
-      this.pieChartView = [400, 280];
+      const barContainer = document.querySelector('.bar-chart-content');
+      const pieContainer = document.querySelector('.pie-chart-content');
+      
+      if (barContainer) {
+        this.resizeObserver.observe(barContainer);
+      }
+      if (pieContainer) {
+        this.resizeObserver.observe(pieContainer);
+      }
     }
+  }
+
+  private updateResponsiveChartHeights(): void {
+    const screenWidth = window.innerWidth;
+    
+    // Update pie chart height based on screen size
+    if (screenWidth <= 1366 && screenWidth >= 1024) {
+      this.pieChartView = [this.pieChartView[0], 220];
+      this.barChartView = [this.barChartView[0], 300];
+    } else {
+      this.pieChartView = [this.pieChartView[0], 280];
+      this.barChartView = [this.barChartView[0], 350];
+    }
+    
+    this.cdr.detectChanges();
+  }
+
+  private updateChartViews() {
+    // Wait for DOM to be ready
+    setTimeout(() => {
+      const barContainer = document.querySelector('.bar-chart-content');
+      if (barContainer && barContainer.clientWidth > 0) {
+        const barWidth = barContainer.clientWidth;
+        // Responsive height based on screen size
+        const screenWidth = window.innerWidth;
+        let barHeight = 350; // Default height
+        
+        if (screenWidth <= 1366 && screenWidth >= 1024) {
+          barHeight = 300; // Reduced height for 1366px screens
+        }
+        
+        this.barChartView = [barWidth, barHeight];
+      } else {
+        this.barChartView = [600, 350];
+      }
+
+      const pieContainer = document.querySelector('.pie-chart-content');
+      if (pieContainer && pieContainer.clientWidth > 0) {
+        const pieWidth = pieContainer.clientWidth;
+        // Responsive height based on screen size
+        const screenWidth = window.innerWidth;
+        let pieHeight = 280; // Default height
+        
+        if (screenWidth <= 1366 && screenWidth >= 1024) {
+          pieHeight = 220; // Reduced height for 1366px screens to accommodate legend
+        }
+        
+        this.pieChartView = [pieWidth, pieHeight];
+      } else {
+        this.pieChartView = [400, 280];
+      }
+
+      // Force change detection to update the charts
+      this.cdr.detectChanges();
+    }, 50);
   }
 
   public getExpiringDate(): string {

@@ -118,7 +118,7 @@ $transition: all 0.3s ease;
 .dashboard-container {
   display: flex;
   flex-direction: column;
-  @include responsive-padding(1rem 1.5rem 1rem 1rem, 0.75rem 1rem 0.75rem 0.75rem);
+  @include responsive-padding(1rem 1rem 1rem 1rem, 0.75rem 0.75rem 0.75rem 0.75rem);
   position: relative;
 
   & .dashboard-title {
@@ -132,8 +132,13 @@ $transition: all 0.3s ease;
     justify-content: space-between;
     gap: 15px;
 
-    @media (max-width: 1366px) and (min-width: 1024px) {
+    @media (max-width: 1366px) and (min-width: 992px) {
       gap: 12px;
+    }
+    
+    @media (max-width: 992px) {
+      flex-direction: column;
+      gap: 15px;
     }
 
     & .dashboard-metrics-grid {
@@ -142,8 +147,19 @@ $transition: all 0.3s ease;
       gap: 15px;
       width: 75%;
 
-      @media (max-width: 1366px) and (min-width: 1024px) {
+      @media (max-width: 1366px) and (min-width: 992px) {
         gap: 12px;
+      }
+      
+      @media (max-width: 992px) {
+        width: 100%;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      
+      @media (max-width: 776px) {
+        grid-template-columns: 1fr;
+        gap: 10px;
       }
     }
 
@@ -156,13 +172,17 @@ $transition: all 0.3s ease;
       gap: 0.25rem;
       align-items: flex-start;
 
-      @media (max-width: 1366px) and (min-width: 1024px) {
+      @media (max-width: 1366px) and (min-width: 992px) {
         gap: 0.2rem;
       }
 
       &.dashboard-quick-links-card {
         width: 25%;
         align-items: start;
+        
+        @media (max-width: 992px) {
+          width: 100%;
+        }
       }
 
       & .dashboard-header-row {
@@ -170,7 +190,7 @@ $transition: all 0.3s ease;
         gap: 0.75rem;
         margin-bottom: 0.5rem;
 
-        @media (max-width: 1366px) and (min-width: 1024px) {
+        @media (max-width: 1366px) and (min-width: 992px) {
           gap: 0.5rem;
           margin-bottom: 0.4rem;
         }
@@ -186,7 +206,7 @@ $transition: all 0.3s ease;
         @include flex-center;
         flex-shrink: 0;
 
-        @media (max-width: 1366px) and (min-width: 1024px) {
+        @media (max-width: 1366px) and (min-width: 992px) {
           height: 2.5rem;
           width: 2.5rem;
           padding: 0.5rem 0.75rem;
@@ -196,7 +216,7 @@ $transition: all 0.3s ease;
           width: 1.125rem;
           height: 1.125rem;
 
-          @media (max-width: 1366px) and (min-width: 1024px) {
+          @media (max-width: 1366px) and (min-width: 992px) {
             width: 1rem;
             height: 1rem;
           }
@@ -231,7 +251,7 @@ $transition: all 0.3s ease;
         flex-direction: column;
         gap: 0.75rem;
 
-        @media (max-width: 1366px) and (min-width: 1024px) {
+        @media (max-width: 1366px) and (min-width: 992px) {
           gap: 0.5rem;
         }
 
@@ -265,7 +285,7 @@ $transition: all 0.3s ease;
   & .dashboard-charts-container {
     margin-top: 1.5rem;
 
-    @media (max-width: 1366px) and (min-width: 1024px) {
+    @media (max-width: 1366px) and (min-width: 992px) {
       margin-top: 1rem;
     }
 
@@ -274,16 +294,47 @@ $transition: all 0.3s ease;
       grid-template-columns: 74% 25%;
       gap: 15px;
 
-      @media (max-width: 1366px) and (min-width: 1024px) {
+      @media (max-width: 1366px) and (min-width: 992px) {
         gap: 12px;
+      }
+      
+      @media (max-width: 1200px) and (min-width: 992px) {
+        grid-template-columns: 60% 40%;
+        gap: 10px;
+      }
+      
+      @media (max-width: 992px) {
+        grid-template-columns: 50% 50%;
+        gap: 10px;
+      }
+      
+      @media (max-width: 776px) {
+        grid-template-columns: 100%;
+        gap: 15px;
       }
     }
 
     & .dashboard-chart-card {
       @include card-style;
       @include responsive-padding(1rem, 0.75rem);
-      overflow: hidden;
+      overflow: visible;
       max-width: 100%;
+      
+      &.pie-chart-card {
+        min-height: 360px;
+        
+        @media (max-width: 1366px) and (min-width: 1024px) {
+          min-height: 320px;
+        }
+      }
+      
+      &.bar-chart-card {
+        min-height: 400px;
+        
+        @media (max-width: 1366px) and (min-width: 1024px) {
+          min-height: 350px;
+        }
+      }
 
       & .dashboard-chart-header {
         @include flex-between;
@@ -335,7 +386,7 @@ $transition: all 0.3s ease;
         align-items: center;
         
         @media (max-width: 1366px) and (min-width: 1024px) {
-          height: 240px;
+          height: 220px;
         }
 
         ::ng-deep ngx-charts-pie-chart {
@@ -387,8 +438,13 @@ $transition: all 0.3s ease;
         display: flex;
         justify-content: center;
         gap: 0.5rem;
-        margin-top: 1rem;
+        margin-top: 0.75rem;
         padding: 0.5rem 0;
+        
+        @media (max-width: 1366px) and (min-width: 1024px) {
+          margin-top: 0.5rem;
+          padding: 0.25rem 0;
+        }
 
         & .legend-item {
           display: flex;
@@ -411,6 +467,7 @@ $transition: all 0.3s ease;
 
           & .legend-text {
             @include text-style(0.875rem, 400);
+            @include responsive-font(0.875rem, 0.75rem);
             color: #333;
           }
         }
@@ -462,4 +519,3 @@ $transition: all 0.3s ease;
     }
   }
 }
-
