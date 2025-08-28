@@ -357,7 +357,10 @@ export class ItStandardManagerComponent implements OnInit {
       if (!this.itStandardsForm.value.itStandVendorOrg) this.itStandardsForm.value.itStandVendorOrg = 'N/A';
       if (!this.itStandardsForm.value.itStandGoldComment) this.itStandardsForm.value.itStandGoldComment = 'N/A';
       if (!this.itStandardsForm.value.itStandComments) this.itStandardsForm.value.itStandComments = 'N/A';
-      if (!this.itStandardsForm.value.itStand508) this.itStandardsForm.value.itStand508 = '3';
+      if(typeof(this.itStandardsForm.value.itStand508) === 'undefined') {
+        this.itStandardsForm.value.itStand508 = '3';
+        this.itStandardsForm.patchValue({itStand508: '3'});
+      }
       if (!this.itStandardsForm.value.itStandAtteLink) this.itStandardsForm.value.itStandAtteLink = 'N/A';
 
       // Escape strings
