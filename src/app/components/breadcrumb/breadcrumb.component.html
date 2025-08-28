@@ -1,7 +1,7 @@
 <span class="breadcrumb-text">{{getTopLevelRotueName()}}</span>
 <span class="breadcrumb-separator">></span>
 <span class="breadcrumb-text">
-    <a [routerLink]="'/'+currentSubPath">{{getSubLevelRotueName()}}</a>
+    <a [routerLink]="'/'+getBackRoute()">{{getSubLevelRotueName()}}</a>
 </span>
 <span class="breadcrumb-separator">></span>
 <span  class="breadcrumb-text">

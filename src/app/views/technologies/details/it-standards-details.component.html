@@ -261,7 +261,10 @@
                 </div>
             </div>
             <div class="edit-info-container">
-                <app-button [buttonText]="getShowAllFieldsButtonText()" buttonStyle="outline" (buttonClick)="toggleShowAllFields()"></app-button>
+                <div class="edit-info-button-wrapper">
+                    <app-button [buttonText]="'Edit'" buttonStyle="outline" (buttonClick)="editITStandard()"></app-button>
+                    <app-button [buttonText]="getShowAllFieldsButtonText()" buttonStyle="outline" (buttonClick)="toggleShowAllFields()"></app-button>
+                </div>
                 Last Updated: {{detailsData.ChangeDTG | date: 'full'}}
             </div>
         </div>

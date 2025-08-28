@@ -27,7 +27,7 @@ export class BreadcrumbComponent {
             return 'Business Systems';
         } else if(this.currentSubPath === 'FISMA' || this.currentSubPath === 'FISMA_POC') {
             return 'Security';
-        } else if(this.currentSubPath === 'it_standards') {
+        } else if(this.currentSubPath === 'it_standards' || this.currentSubPath === 'it_standards_manager') {
             return 'Technologies';
         }
     }
@@ -56,8 +56,17 @@ export class BreadcrumbComponent {
                 return 'FISMA System Points of Contact List';
             case 'it_standards':
                 return 'IT Standards List';
+            case 'it_standards_manager':
+                return 'IT Standards List';
             default:
                 return '';
         }
+    }
+
+    public getBackRoute(): string {
+        if(this.currentSubPath === 'it_standards_manager') {
+            return 'it_standards';
+        }
+        return this.currentSubPath;
     }
 }

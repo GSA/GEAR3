@@ -1,0 +1,241 @@
+<div class="it-standards-details-container" *ngIf="isDataReady">
+    <div class="breadcrumb-container">
+         <app-breadcrumb>
+            <span currentPageName>{{detailsData.Name}}</span>
+         </app-breadcrumb>
+    </div>
+    <div class="title-container">
+        <span class="title">{{detailsData.Name}}</span>
+    </div>
+    <div class="content-container">
+        <div class="data-tab-container">
+            <span class="data-tab-text active">Overview</span>
+        </div>
+        <div class="overview-container">
+            <div class="overall-data-container">
+                <div class="main-data-container">
+                    <div class="data"> 
+                        <label class="data-label" for="tcManufacturer">
+                            <span>
+                                Manufacturer
+                                <span class="text-danger">*</span>
+                            </span>
+                        </label>
+                        <ng-select id="tcManufacturer" formControlName="tcManufacturer"
+                            [addTag]="true"
+                            [items]="manufacturers"
+                            [multiple]="false"
+                            appendTo="#itStandardsManager"
+                            bindLabel="name"
+                            clearAllText="Clear All"
+                            [clearSearchOnAdd]="true"
+                            [closeOnSelect]="true"
+                            [loading]="manufacturersLoading"
+                            placeholder="Search & Select Manufacturer Here"
+                            [virtualScroll]="true"
+                            (scroll)="modalService.onScroll($event, manufacturersBuffer, bufferSize, manufacturers, manufacturersLoading)"
+                            (scrollToEnd)="modalService.onScrollToEnd(manufacturersBuffer, bufferSize, manufacturers, manufacturersLoading)"
+                            (change)="manufacturerChange($event)"
+                            [ngClass]="{'is-invalid': modalService.fieldValidCheck(itStandardsForm, 'tcManufacturer')}">
+                            <ng-template ng-header-tmp>
+                              <small class="form-text text-muted">Loaded {{ manufacturersBuffer.length }} of {{ manufacturers.length }}</small>
+                            </ng-template>
+                          </ng-select>
+                          <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'tcManufacturer')">
+                            <div class="invalid-feedback" *ngIf="itStandardsForm.controls['tcManufacturer'].errors.required">
+                              Manufacturer Required
+                            </div>
+                          </div>
+                    </div>
+
+                    <div class="data" id="divProduct"> 
+                        <label class="data-label" for="tcSoftwareProduct">
+                            <span>
+                                Product
+                                <span class="text-danger">*</span>
+                            </span>
+                        </label>
+                        <ng-select id="tcSoftwareProduct" formControlName="tcSoftwareProduct"
+                            [addTag]="true"
+                            [items]="softwareProducts"
+                            [multiple]="false"
+                            appendTo="#itStandardsManager"
+                            bindLabel="name"
+                            clearAllText="Clear All"
+                            [clearSearchOnAdd]="true"
+                            [closeOnSelect]="true"
+                            [loading]="softwareProductsLoading"
+                            placeholder="Search & Select Software Product"
+                            [virtualScroll]="true"
+                            (scroll)="modalService.onScroll($event, softwareProductsBuffer, bufferSize, softwareProducts, softwareProductsLoading)"
+                            (scrollToEnd)="modalService.onScrollToEnd(softwareProductsBuffer, bufferSize, softwareProducts, softwareProductsLoading)"
+                            (change)="softwareProductChange($event)"
+                            [ngClass]="{'is-invalid': modalService.fieldValidCheck(itStandardsForm, 'tcSoftwareProduct')}">
+                            <ng-template ng-header-tmp>
+                              <small class="form-text text-muted">Loaded {{ softwareProductsBuffer.length }} of {{ softwareProducts.length }}</small>
+                            </ng-template>
+                          </ng-select>
+                          <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'tcSoftwareProduct')">
+                            <div class="invalid-feedback" *ngIf="itStandardsForm.controls['tcSoftwareProduct'].errors.required">
+                              Software Product Required
+                            </div>
+                          </div>
+                    </div>
+
+                    <div class="data" id="divVersion"> 
+                        <label class="data-label" for="tcSoftwareVersion">
+                            <span>
+                                Software Version
+                                <span class="text-danger">*</span>
+                            </span>
+                        </label>
+                        <ng-select id="tcSoftwareVersion" formControlName="tcSoftwareVersion"
+                            [addTag]="true"  
+                            [items]="softwareVersions"
+                            [multiple]="false"
+                            appendTo="#itStandardsManager"
+                            bindLabel="name"
+                            clearAllText="Clear All"
+                            [clearSearchOnAdd]="true"
+                            [closeOnSelect]="true"
+                            [loading]="softwareVersionsLoading"
+                            placeholder="Search & Select Software Version"
+                            [virtualScroll]="true"
+                            (scroll)="modalService.onScroll($event, softwareVersionsBuffer, bufferSize, softwareVersions, softwareVersionsLoading)"
+                            (scrollToEnd)="modalService.onScrollToEnd(softwareVersionsBuffer, bufferSize, softwareVersions, softwareVersionsLoading)"
+                            (change)="softwareVersionChange($event)"
+                            [ngClass]="{'is-invalid': modalService.fieldValidCheck(itStandardsForm, 'tcSoftwareVersion')}">
+                            <ng-template ng-header-tmp>
+                              <small class="form-text text-muted">Loaded {{ softwareVersionsBuffer.length }} of {{ softwareVersions.length }}</small>
+                            </ng-template>
+                          </ng-select>
+                          <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'tcSoftwareVersion')">
+                            <div class="invalid-feedback" *ngIf="itStandardsForm.controls['tcSoftwareVersion'].errors.required">
+                              Software Version Required
+                            </div>
+                          </div>
+                    </div>
+
+      
+                      <div class="form-group col-6" id="divRelease">
+                        <label for="tcSoftwareRelease">Software Release</label>
+                          <ng-select id="tcSoftwareRelease" formControlName="tcSoftwareRelease"
+                            [items]="softwareReleases"
+                            [multiple]="false"
+                            appendTo="#itStandardsManager"
+                            bindLabel="application"
+                            clearAllText="Clear All"
+                            [clearSearchOnAdd]="true"
+                            [closeOnSelect]="true"
+                            [loading]="softwareReleasesLoading"
+                            placeholder="Search & Select Software Release"
+                            [virtualScroll]="true"
+                            (scroll)="modalService.onScroll($event, softwareReleasesBuffer, bufferSize, softwareReleases, softwareReleasesLoading)"
+                            (scrollToEnd)="modalService.onScrollToEnd(softwareReleasesBuffer, bufferSize, softwareReleases, softwareReleasesLoading)"
+                            (change)="softwareReleaseChange($event)">
+                            <ng-template ng-header-tmp>
+                              <small class="form-text text-muted">Loaded {{ softwareReleasesBuffer.length }} of {{ softwareReleases.length }}</small>
+                            </ng-template>
+                          </ng-select>
+                        </div>
+      
+                        <div class="form-group col-3" id="divEndOfLifeDate">
+                          <label for="tcEndOfLifeDate">Vendor End of Life Date</label>
+                          <input type="text" class="form-control" id="tcEndOfLifeDate"
+                            formControlName="tcEndOfLifeDate" placeholder="Not Available">
+                            <!--<div class="success-feedback" *ngIf="isAssignedToitStandAprvExp(endOfLifeDate, aprvExpDate)">
+                              This date value was set to the Approval Expiration Date
+                            </div>-->
+                            <div class="invalid-feedback" *ngIf="hasEndOfLifeDatePassed(endOfLifeDate)">
+                              Note: This Software is no longer supported
+                            </div>
+                        </div>
+                      </div>
+      
+                    <!-- Status, old IT Standard Name & POCs -->
+                    <div class="row align-items-center">
+                      <div class="form-group col-2">
+                        <label for="itStandStatus">Status<span class="text-danger">*</span></label>
+                        <select class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(itStandardsForm, 'itStandStatus')}" id="itStandStatus"
+                          formControlName="itStandStatus" required>
+                          <option *ngFor="let status of statuses" [value]="status.ID"
+                            [selected]="status.Name === itStandard.Status">{{ status.Name }}</option>
+                        </select>
+                        <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'itStandStatus')">
+                          <div class="invalid-feedback" *ngIf="itStandardsForm.controls['itStandStatus'].errors.required">
+                            IT Standard Status Required
+                          </div>
+                        </div>
+                      </div>
+      
+                      <div class="form-group col-6" id="divOldName">
+                        <label for="itStandName">Also Known As</label>
+                        <input type="text" class="form-control" id="itStandName"
+                          formControlName="itStandName" placeholder="Not Applicable" [value]="itStandard.OldName" >
+                          <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'itStandName')">
+                            <div class="invalid-feedback" *ngIf="itStandardsForm.controls['itStandName'].errors.required">
+                              Also Known As is Required
+                            </div>
+                          </div>
+      
+                      </div>
+      
+                      <div class="form-group col-4">
+                        <label for="itStandPOC">POC(s)<span class="text-danger">*</span></label>
+                        <ng-select id="itStandPOC" formControlName="itStandPOC"
+                          [items]="POCs"
+                          [multiple]="true"
+                          appendTo="#itStandardsManager"
+                          bindLabel="NameEmail"
+                          bindValue="SamAccountName"
+                          clearAllText="Clear All"
+                          [clearSearchOnAdd]="true"
+                          [closeOnSelect]="false"
+                          [loading]="pocsLoading"
+                          placeholder="Search & Select POCs Here"
+                          [virtualScroll]="true"
+                          (scroll)="modalService.onScroll($event, pocsBuffer, bufferSize, POCs, pocsLoading)"
+                          (scrollToEnd)="modalService.onScrollToEnd(pocsBuffer, bufferSize, POCs, pocsLoading)"
+                          required>
+                          <ng-template ng-header-tmp>
+                            <small class="form-text text-muted">Loaded {{ pocsBuffer.length }} of {{ POCs.length }}</small>
+                          </ng-template>
+                        </ng-select>
+                        <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'itStandPOC')">
+                          <div class="invalid-feedback" *ngIf="itStandardsForm.controls['itStandPOC'].errors.required">
+                            At least One Business Point of Contact Required
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+      
+                    <!-- Approved Versions -->
+                    <div class="form-group col-6" id="approvedVersions">
+                      <label for="itStandApprovedVersions">Approved Versions</label>
+                      <input type="text" class="form-control" id="itStandApprovedVersions"
+                        formControlName="itStandApprovedVersions" placeholder="Enter approved versions" [value]="itStandard.ApprovedVersions" maxlength="45">
+                    </div>
+      
+                    <div class="form-group col-6">
+                      <label for="itStandOperatingSystems">Operating System(s)</label><br/>
+                      <p-multiSelect 
+                        id="itStandOperatingSystems"
+                        [options]="operatingSystems" 
+                        formControlName="itStandOperatingSystems" 
+                        optionLabel="Name"
+                        optionValue="ID"
+                        placeholder="Select Operating System(s)"
+                        display="chip"
+                        [filter]="false"
+                        [showHeader]="false" />
+                    </div>
+      
+
+                </div>
+            </div>
+            <div class="edit-info-container">
+                Last Updated: {{detailsData.ChangeDTG | date: 'full'}}
+            </div>
+        </div>
+    </div>
+</div>

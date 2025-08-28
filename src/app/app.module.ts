@@ -63,8 +63,7 @@ import { FismaPocsComponent } from './views/security/fisma-pocs/fisma-pocs.compo
 //// Technologies
 import { ItStandardsComponent } from './views/technologies/it-standards/it-standards.component';
 import { ItStandardsModalComponent } from './components/modals/it-standards-modal/it-standards-modal.component';
-import { ItStandardManagerComponent } from './components/manager-modals/it-standard-manager/it-standard-manager.component';
-
+import { ItStandardsManagerComponent } from './views/technologies/manager/it-standards-manager.component';
 import { ItStandardsDetailsComponent } from './views/technologies/details/it-standards-details.component';
 
 //// Enterprise Architecture
@@ -162,8 +161,8 @@ import LaraLightBlue from '@primeng/themes/lara';
         FismaPocsComponent,
         ItStandardsComponent,
         ItStandardsModalComponent,
-        ItStandardManagerComponent,
         ItStandardsDetailsComponent,
+        ItStandardsManagerComponent,
         //ArtifactsComponent,
         EAViewComponent,
         GearModelComponent,

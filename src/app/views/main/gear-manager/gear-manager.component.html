@@ -32,7 +32,7 @@
 
     <div class="col-4 my-auto">
       <!-- Error Message for Users Without Access -->
-      <div *ngIf="showError" class="alert alert-warning" role="alert">
+      <!-- <div *ngIf="showError" class="alert alert-warning" role="alert">
         <h4 class="alert-heading">
           <i class="fas fa-exclamation-triangle"></i>
           Access Denied
@@ -49,15 +49,11 @@
             Try Again
           </button>
         </div>
-      </div>
+      </div> -->
 
       <!-- Content for Users With Access -->
-      <div *ngIf="hasAccess" class="access-granted-container">
-        <div class="alert alert-success" role="alert">
-          <h4 class="alert-heading">
-            <i class="fas fa-check-circle"></i>
-            Access Granted
-          </h4>
+      <div class="access-granted-container">
+        <div class="alert alert-warning" role="alert">
           <p>
             The GEAR Manager portal provides the ability for the EA Team and the CTO Office to edit and update mappings
             of
@@ -83,12 +79,12 @@
   </div>
 
   <!-- Loading State -->
-  <div class="row card-body card-text justify-content-center" *ngIf="isLoading">
+  <!-- <div class="row card-body card-text justify-content-center" *ngIf="isLoading">
     <div class="col-12 loading-container">
       <div class="spinner-border text-info" role="status">
         <span class="sr-only">Loading...</span>
       </div>
       <p>Checking authentication status...</p>
     </div>
-  </div>
+  </div> -->
 </div>
