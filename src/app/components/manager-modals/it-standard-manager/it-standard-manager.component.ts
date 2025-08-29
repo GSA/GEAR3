@@ -333,20 +333,39 @@ export class ItStandardManagerComponent implements OnInit {
   };
 
   submitForm() {
-    if (this.itStandardsForm.valid) {
+    if(this.itStandardsForm.valid) {
       // Adjust MyView & Gold Image for saving
-      if (this.itStandardsForm.value.itStandMyView) this.itStandardsForm.value.itStandMyView = 'T';
-      else this.itStandardsForm.value.itStandMyView = 'F';
+      if(this.itStandardsForm.value.itStandMyView) {
+        this.itStandardsForm.value.itStandMyView = 'T';
+        this.itStandardsForm.patchValue({itStandMyView: 'T'});
+      } else {
+        this.itStandardsForm.value.itStandMyView = 'F';
+        this.itStandardsForm.patchValue({itStandMyView: 'F'});
+      }
+      if(this.itStandardsForm.value.itStandGoldImg) {
+        this.itStandardsForm.value.itStandGoldImg = 'T';
+        this.itStandardsForm.patchValue({itStandGoldImg: 'T'});
+      } else {
+        this.itStandardsForm.value.itStandGoldImg = 'F';
+        this.itStandardsForm.patchValue({itStandGoldImg: 'F'});
+      }
 
-      if (this.itStandardsForm.value.itStandGoldImg) this.itStandardsForm.value.itStandGoldImg = 'T';
-      else this.itStandardsForm.value.itStandGoldImg = 'F';
+      if(this.itStandardsForm.value.itStandFedramp) {
+        this.itStandardsForm.value.itStandFedramp = 'T';
+        this.itStandardsForm.patchValue({itStandFedramp: 'T'});
+      } else {
+        this.itStandardsForm.value.itStandFedramp = 'F';
+        this.itStandardsForm.patchValue({itStandFedramp: 'F'});
+      } 
 
-
-      if (this.itStandardsForm.value.itStandFedramp) this.itStandardsForm.value.itStandFedramp = 'T';
-      else this.itStandardsForm.value.itStandFedramp = 'F';
-
-      if (this.itStandardsForm.value.itStandOpenSource) this.itStandardsForm.value.itStandOpenSource = 'T';
-      else this.itStandardsForm.value.itStandOpenSource = 'F';
+      if(this.itStandardsForm.value.itStandOpenSource) {
+        this.itStandardsForm.value.itStandOpenSource = 'T';
+        this.itStandardsForm.patchValue({itStandOpenSource: 'T'});
+      } else { 
+        this.itStandardsForm.value.itStandOpenSource = 'F';
+        this.itStandardsForm.patchValue({itStandOpenSource: 'F'});
+      }
+       
 
       // Set Date from Date Picker
       if ($('#itStandAprvExp').data('datepicker')) {
@@ -354,14 +373,30 @@ export class ItStandardManagerComponent implements OnInit {
       }
 
       // Adjust for N/A text fields
-      if (!this.itStandardsForm.value.itStandVendorOrg) this.itStandardsForm.value.itStandVendorOrg = 'N/A';
-      if (!this.itStandardsForm.value.itStandGoldComment) this.itStandardsForm.value.itStandGoldComment = 'N/A';
-      if (!this.itStandardsForm.value.itStandComments) this.itStandardsForm.value.itStandComments = 'N/A';
-      if(typeof(this.itStandardsForm.value.itStand508) === 'undefined') {
+      if(!this.itStandardsForm.value.itStandVendorOrg || typeof(this.itStandardsForm.value.itStandVendorOrg) === 'undefined') {
+        this.itStandardsForm.value.itStandVendorOrg = 'N/A';
+        this.itStandardsForm.patchValue({itStandVendorOrg: 'N/A'});
+      }
+
+      if(!this.itStandardsForm.value.itStandGoldComment || typeof(this.itStandardsForm.value.itStandGoldComment) === 'undefined') {
+        this.itStandardsForm.value.itStandGoldComment = 'N/A';
+        this.itStandardsForm.patchValue({itStandGoldComment: 'N/A'});
+      } 
+
+      if(!this.itStandardsForm.value.itStandComments || typeof(this.itStandardsForm.value.itStandComments) === 'undefined') {
+        this.itStandardsForm.value.itStandComments = 'N/A';
+        this.itStandardsForm.patchValue({itStandComments: 'N/A'});
+      }
+
+      if(!this.itStandardsForm.value.itStand508 || typeof(this.itStandardsForm.value.itStand508) === 'undefined') {
         this.itStandardsForm.value.itStand508 = '3';
         this.itStandardsForm.patchValue({itStand508: '3'});
       }
-      if (!this.itStandardsForm.value.itStandAtteLink) this.itStandardsForm.value.itStandAtteLink = 'N/A';
+
+      if(!this.itStandardsForm.value.itStandAtteLink || typeof(this.itStandardsForm.value.itStandAtteLink) === 'undefined') {
+        this.itStandardsForm.value.itStandAtteLink = 'N/A';
+        this.itStandardsForm.patchValue({itStandAtteLink: 'N/A'});
+      }
 
       // Escape strings
       if(this.itStandardsForm.value.itStandDesc) {
@@ -410,7 +445,9 @@ export class ItStandardManagerComponent implements OnInit {
 
       // add Attestation Status to payload
       if (this.itStandardsForm.value.itStandReqAtte && isNaN(this.itStandardsForm.value.itStandReqAtte)) {
-        this.itStandardsForm.value.itStandReqAtte = this.sharedService.findInArray(this.itStandReqAtteRefData, 'Name', this.itStandardsForm.value.itStandReqAtte, 'ID');
+        const foundAtte = this.sharedService.findInArray(this.itStandReqAtteRefData, 'Name', this.itStandardsForm.value.itStandReqAtte, 'ID');
+        this.itStandardsForm.value.itStandReqAtte = foundAtte;
+        this.itStandardsForm.patchValue({itStandReqAtte: foundAtte});
       }
 
       if(this.allAppBundleIds && this.allAppBundleIds.length > 0) {
