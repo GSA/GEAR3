@@ -36,4 +36,5 @@ export class ITStandards {
   public ApprovedVersions: string = null;
   public OperatingSystems: number[] = null;
   public ApBundleIds: AppBundle[] = null;
+  public ManufacturerSoftwareProductName: string = null;
 }

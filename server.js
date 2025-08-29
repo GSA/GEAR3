@@ -26,6 +26,7 @@ const bodyParser = require('body-parser'),
   JWTStrategy = passportJWT.Strategy;
 
   const pocJobHandler = require('./api/cron-jobs/poc-job-handler.js');
+  const cloudJobHandler = require('./api/cron-jobs/cloud-adoption-handler.js');
   const tpiJobHandler = require('./api/cron-jobs/tpi-job-handler.js');
 
   const CryptoJS = require("crypto-js")
@@ -46,9 +47,10 @@ const samlConfig = {
   host: process.env.SAML_HOST,
   port: process.env.SAML_PORT,
   path: process.env.SAML_PATH,
+  callbackUrl: process.env.SAML_PROTOCOL + process.env.SAML_HOST + process.env.SAML_PATH,
+  idpCert: process.env.SAML_CERT,
   entryPoint: process.env.SAML_ENTRY_POINT,
   issuer: process.env.SAML_ISSUER,
-  cert: process.env.SAML_CERT,
   acceptedClockSkewMs: -1,
   wantAuthnResponseSigned: false,
   audience: false,
@@ -436,6 +438,13 @@ const { consoleTestResultHandler } = require('tslint/lib/test.js');
 
 cron.schedule(process.env.POC_CRON, async () => { //PRODUCTION
   await pocJobHandler.runPocJob();
+});
+
+// -------------------------------------------------------------------------------------------------
+// Function to Insert calculated cloud adoption rate based on obj_fisma_archer data every day at 10:20 PM ET
+
+cron.schedule(process.env.CLOUD_ADOPTION_CRON, async () => { //PRODUCTION
+  await cloudJobHandler.runCloudAdoptionJob();
 });
 
 // -------------------------------------------------------------------------------------------------
