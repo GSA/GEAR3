@@ -47,7 +47,7 @@ const samlConfig = {
   host: process.env.SAML_HOST,
   port: process.env.SAML_PORT,
   path: process.env.SAML_PATH,
-  callbackUrl: process.env.SAML_PROTOCOL + process.env.SAML_HOST + process.env.SAML_PATH,
+  callbackUrl: process.env.SAML_CALLBACK,
   idpCert: process.env.SAML_CERT,
   entryPoint: process.env.SAML_ENTRY_POINT,
   issuer: process.env.SAML_ISSUER,
