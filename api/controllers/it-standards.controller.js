@@ -27,7 +27,7 @@ exports.findAllNoFilter = (req, res) => {
 
 exports.findOne = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
-    ` WHERE tech.Id = ${req.params.id};`;
+    ` WHERE tech.Id = ${req.params.id.replace(/\D/g, "")};`;
   res = ctrl.sendQuery(query, 'individual IT Standard', res); //removed sendQuery_cowboy reference
 };
 
@@ -44,7 +44,7 @@ exports.findSystems = (req, res) => {
     ` LEFT JOIN zk_systems_subsystems_technology_xml AS mappings ON systems.\`ex:GEAR_ID\` = mappings.\`ex:obj_systems_subsystems_Id\`
       LEFT JOIN obj_technology AS tech                                ON mappings.\`ex:obj_technology_Id\` = tech.Id
 
-      WHERE tech.Id = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`; //removed LEFT JOIN cowboy_ods.obj_technology reference
+      WHERE tech.Id = ${req.params.id.replace(/\D/g, "")} GROUP BY systems.\`ex:GEAR_ID\`;`; //removed LEFT JOIN cowboy_ods.obj_technology reference
 
   res = ctrl.sendQuery(query, 'systems using IT Standard', res);
 };
@@ -53,7 +53,7 @@ exports.update = (req, res) => {
   ctrl.getApiToken (req, res)
   .then((response) => {
     if (response === 1) {
-      let techId = req.params.id;
+      let techId = req.params.id.replace(/\D/g, "");
       let data = req.body;
       let query = '';
       
@@ -135,7 +135,7 @@ exports.createAdvanced = (req, res) => {
   .then((response) => {
     if (response === 1) {
       let data = req.body;
-      let techId = req.params.id;
+      let techId = req.params.id.replace(/\D/g, "");;
       let query = '';
 
       // Update Technopedia Fields
@@ -246,7 +246,7 @@ exports.getAllOperatingSystems = (req, res) => {
 
 exports.getAppBundles = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_it-standard_app_bundles.sql`)).toString() +
-  ` WHERE matchBundle.obj_technology_Id = ${req.params.id});`;
+  ` WHERE matchBundle.obj_technology_Id = ${req.params.id.replace(/\D/g, "")});`;
 
   res = ctrl.sendQuery(query, 'App Bundles', res);
 }
