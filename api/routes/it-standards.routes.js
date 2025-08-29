@@ -24,6 +24,9 @@ router.route('/update/:id')
 router.route('/create')
   .post(itsCtrl.create);
 
+router.route('/create_advanced/:id')
+  .post(itsCtrl.createAdvanced);
+
 router.route('/508_compliance')
   .get(itsCtrl.find508Compliance);
 
