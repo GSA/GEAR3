@@ -141,7 +141,9 @@ exports.createAdvanced = (req, res) => {
       // Update Technopedia Fields
       query += saveCustomManufacturer(techId, data.tcManufacturer);
       query += saveCustomSoftwareProduct(techId, data.tcSoftwareProduct);
-      query += saveCustomSoftwareVersion(techId, data.tcSoftwareVersion);
+      if(data.tcSoftwareVersion.name) {
+        query += saveCustomSoftwareVersion(techId, data.tcSoftwareVersion);
+      }
       query += saveCustomSoftwareRelease(techId, data.tcSoftwareRelease);
 
       // Update POCs
@@ -389,12 +391,12 @@ function saveCustomSoftwareRelease(techId, softwareRelease) {
     let guid = Guid.create().toString();
     queryString += `INSERT INTO obj_software_release
                       (id, name, createdDate)
-                    VALUES ('${guid}', '${softwareRelease.name}', NOW());`;
+                    VALUES ('${guid}', '${softwareRelease.application}', NOW());`;
     queryString += `UPDATE 
                       obj_technology
                     SET
                       softwareRelease = '${guid}',
-                      softwareReleaseName = '${softwareRelease.name}'
+                      softwareReleaseName = '${softwareRelease.application}'
                     WHERE
                       Id = ${techId};`;
   }
@@ -404,7 +406,11 @@ function saveCustomSoftwareRelease(techId, softwareRelease) {
 
 function generateKeyname(data) {
   let keyname = '';
-  if (!data.tcSoftwareReleaseName || data.tcSoftwareReleaseName === 'NULL' || data.tcSoftwareReleaseName === 'null') {
+  if(!data.tcSoftwareRelease ||
+     (data.tcSoftwareRelease && data.tcSoftwareRelease.application === '') ||
+     (data.tcSoftwareRelease && data.tcSoftwareRelease.application === 'null') || 
+     (data.tcSoftwareRelease && data.tcSoftwareRelease.application === 'NULL')
+  ) {
     if(!data.itStandName) {
       res.status(500).json({
         message: "IT Standards name missing from API payload."
@@ -414,7 +420,7 @@ function generateKeyname(data) {
       keyname = data.itStandName;
     }
   } else {
-    keyname = data.tcSoftwareReleaseName;
+    keyname = data.tcSoftwareRelease.application;
   }
   return keyname;
 }
