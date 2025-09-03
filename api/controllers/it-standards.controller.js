@@ -27,7 +27,7 @@ exports.findAllNoFilter = (req, res) => {
 
 exports.findOne = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
-    ` WHERE tech.Id = ${req.params.id};`;
+    ` WHERE tech.Id = ${req.params.id.replace(/\D/g, "")};`;
   res = ctrl.sendQuery(query, 'individual IT Standard', res); //removed sendQuery_cowboy reference
 };
 
@@ -44,7 +44,7 @@ exports.findSystems = (req, res) => {
     ` LEFT JOIN zk_systems_subsystems_technology_xml AS mappings ON systems.\`ex:GEAR_ID\` = mappings.\`ex:obj_systems_subsystems_Id\`
       LEFT JOIN obj_technology AS tech                                ON mappings.\`ex:obj_technology_Id\` = tech.Id
 
-      WHERE tech.Id = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`; //removed LEFT JOIN cowboy_ods.obj_technology reference
+      WHERE tech.Id = ${req.params.id.replace(/\D/g, "")} GROUP BY systems.\`ex:GEAR_ID\`;`; //removed LEFT JOIN cowboy_ods.obj_technology reference
 
   res = ctrl.sendQuery(query, 'systems using IT Standard', res);
 };
@@ -53,7 +53,7 @@ exports.update = (req, res) => {
   ctrl.getApiToken (req, res)
   .then((response) => {
     if (response === 1) {
-      let techId = req.params.id;
+      let techId = req.params.id.replace(/\D/g, "");
       let data = req.body;
       let query = '';
       
@@ -135,13 +135,15 @@ exports.createAdvanced = (req, res) => {
   .then((response) => {
     if (response === 1) {
       let data = req.body;
-      let techId = req.params.id;
+      let techId = req.params.id.replace(/\D/g, "");;
       let query = '';
 
       // Update Technopedia Fields
       query += saveCustomManufacturer(techId, data.tcManufacturer);
       query += saveCustomSoftwareProduct(techId, data.tcSoftwareProduct);
-      query += saveCustomSoftwareVersion(techId, data.tcSoftwareVersion);
+      if(data.tcSoftwareVersion.name) {
+        query += saveCustomSoftwareVersion(techId, data.tcSoftwareVersion);
+      }
       query += saveCustomSoftwareRelease(techId, data.tcSoftwareRelease);
 
       // Update POCs
@@ -246,7 +248,7 @@ exports.getAllOperatingSystems = (req, res) => {
 
 exports.getAppBundles = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_it-standard_app_bundles.sql`)).toString() +
-  ` WHERE matchBundle.obj_technology_Id = ${req.params.id});`;
+  ` WHERE matchBundle.obj_technology_Id = ${req.params.id.replace(/\D/g, "")});`;
 
   res = ctrl.sendQuery(query, 'App Bundles', res);
 }
@@ -389,12 +391,12 @@ function saveCustomSoftwareRelease(techId, softwareRelease) {
     let guid = Guid.create().toString();
     queryString += `INSERT INTO obj_software_release
                       (id, name, createdDate)
-                    VALUES ('${guid}', '${softwareRelease.name}', NOW());`;
+                    VALUES ('${guid}', '${softwareRelease.application}', NOW());`;
     queryString += `UPDATE 
                       obj_technology
                     SET
                       softwareRelease = '${guid}',
-                      softwareReleaseName = '${softwareRelease.name}'
+                      softwareReleaseName = '${softwareRelease.application}'
                     WHERE
                       Id = ${techId};`;
   }
@@ -404,7 +406,11 @@ function saveCustomSoftwareRelease(techId, softwareRelease) {
 
 function generateKeyname(data) {
   let keyname = '';
-  if (!data.tcSoftwareReleaseName || data.tcSoftwareReleaseName === 'NULL' || data.tcSoftwareReleaseName === 'null') {
+  if(!data.tcSoftwareRelease ||
+     (data.tcSoftwareRelease && data.tcSoftwareRelease.application === '') ||
+     (data.tcSoftwareRelease && data.tcSoftwareRelease.application === 'null') || 
+     (data.tcSoftwareRelease && data.tcSoftwareRelease.application === 'NULL')
+  ) {
     if(!data.itStandName) {
       res.status(500).json({
         message: "IT Standards name missing from API payload."
@@ -414,7 +420,7 @@ function generateKeyname(data) {
       keyname = data.itStandName;
     }
   } else {
-    keyname = data.tcSoftwareReleaseName;
+    keyname = data.tcSoftwareRelease.application;
   }
   return keyname;
 }
@@ -431,11 +437,11 @@ function updateData(techId, data) {
   const endOfLifeDateFragment = getEolFragment(data.tcEndOfLifeDate);
   const keyname = generateKeyname(data);
 
-  data.itStandMyView = normalizeFormBooleanValues(data.itStandMyView);
-  data.itStandFedramp = normalizeFormBooleanValues(data.itStandFedramp);
-  data.itStandOpenSource = normalizeFormBooleanValues(data.itStandOpenSource);
-  data.itStandGoldImg = normalizeFormBooleanValues(data.itStandGoldImg);
-  data.itStandReqAtte = normalizeFormBooleanValues(data.itStandReqAtte);
+  // data.itStandMyView = normalizeFormBooleanValues(data.itStandMyView);
+  // data.itStandFedramp = normalizeFormBooleanValues(data.itStandFedramp);
+  // data.itStandOpenSource = normalizeFormBooleanValues(data.itStandOpenSource);
+  // data.itStandGoldImg = normalizeFormBooleanValues(data.itStandGoldImg);
+  // data.itStandReqAtte = normalizeFormBooleanValues(data.itStandReqAtte);
 
   data.itStandDesc = ctrl.setNullEmptyTextHandler(data.itStandDesc);
   data.itStandAprvExp = ctrl.setNullEmptyTextHandler(data.itStandAprvExp);

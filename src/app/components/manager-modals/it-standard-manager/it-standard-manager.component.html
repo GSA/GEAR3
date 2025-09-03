@@ -98,7 +98,7 @@
               <!-- Tech Catalog Information row 2 -->
               <div class="row align-items-center">
                 <div class="form-group col-3" id="divVersion">
-                  <label for="tcSoftwareVersion">Software Version<span class="text-danger">*</span></label>
+                  <label for="tcSoftwareVersion">Software Version</label>
                     <ng-select id="tcSoftwareVersion" formControlName="tcSoftwareVersion"
                       [addTag]="true"  
                       [items]="softwareVersions"
@@ -119,11 +119,6 @@
                         <small class="form-text text-muted">Loaded {{ softwareVersionsBuffer.length }} of {{ softwareVersions.length }}</small>
                       </ng-template>
                     </ng-select>
-                    <div *ngIf="modalService.fieldValidCheck(itStandardsForm, 'tcSoftwareVersion')">
-                      <div class="invalid-feedback" *ngIf="itStandardsForm.controls['tcSoftwareVersion'].errors.required">
-                        Software Version Required
-                      </div>
-                    </div>
                   </div>
 
                 <div class="form-group col-6" id="divRelease">
