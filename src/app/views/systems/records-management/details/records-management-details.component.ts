@@ -6,9 +6,10 @@ import { TableService } from '@services/tables/table.service';
 import { Record } from '@api/models/records.model';
 
 @Component({
-  selector: 'records-management-details',
-  templateUrl: './records-management-details.component.html',
-  styleUrls: ['./records-management-details.component.scss'],
+    selector: 'records-management-details',
+    templateUrl: './records-management-details.component.html',
+    styleUrls: ['./records-management-details.component.scss'],
+    standalone: false
 })
 export class RecordsManagementDetailsComponent implements OnInit {
 

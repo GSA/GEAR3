@@ -10,9 +10,10 @@ import { FilterButton, Column, TwoDimArray } from '../../../common/table-classes
 import { FISMA } from '@api/models/fisma.model';
 
 @Component({
-  selector: 'fisma',
-  templateUrl: './fisma.component.html',
-  styleUrls: ['./fisma.component.scss'],
+    selector: 'fisma',
+    templateUrl: './fisma.component.html',
+    styleUrls: ['./fisma.component.scss'],
+    standalone: false
 })
 export class FismaComponent implements OnInit {
   public selectedTab: string = 'All';

@@ -3,9 +3,10 @@ import { AfterViewInit, Component, ElementRef, Renderer2, ViewChild } from '@ang
 // import * as banner from 'node_modules/@uswds/uswds/packages/usa-banner/src/index.js';
 
 @Component({
-  selector: 'app-banner',
-  templateUrl: './banner.component.html',
-  styleUrls: ['./banner.component.css']
+    selector: 'app-banner',
+    templateUrl: './banner.component.html',
+    styleUrls: ['./banner.component.css'],
+    standalone: false
 })
 export class BannerComponent implements AfterViewInit {
 

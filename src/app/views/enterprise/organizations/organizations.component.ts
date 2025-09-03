@@ -9,9 +9,10 @@ import { Column } from '../../../common/table-classes';
 import { Organization } from '@api/models/organizations.model';
 
 @Component({
-  selector: 'organizations',
-  templateUrl: './organizations.component.html',
-  styleUrls: ['./organizations.component.scss'],
+    selector: 'organizations',
+    templateUrl: './organizations.component.html',
+    styleUrls: ['./organizations.component.scss'],
+    standalone: false
 })
 export class OrganizationsComponent implements OnInit {
   row: Object = <any>{};

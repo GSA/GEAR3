@@ -113,6 +113,9 @@ import { TimeDetailsComponent } from './views/systems/time/details/time-details.
 import { RecordsManagementDetailsComponent } from './views/systems/records-management/details/records-management-details.component';
 import { WebsitesDetailsComponent } from './views/systems/websites/details/websites-details.component';
 import { WebsiteServiceCategoryDetailsContentComponent } from './views/enterprise/website-service-category/website-service-category-details-content/website-service-category-details-content.component';
+import { providePrimeNG } from 'primeng/config';
+
+import LaraLightBlue from '@primeng/themes/lara';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -202,7 +205,14 @@ import { WebsiteServiceCategoryDetailsContentComponent } from './views/enterpris
         TooltipModule,
         OverlayPanelModule
     ],
-    providers: [Globals, provideHttpClient(withInterceptorsFromDi())] })
+    providers: [
+      Globals, provideHttpClient(withInterceptorsFromDi()),
+      providePrimeNG({
+        theme: {
+          preset: LaraLightBlue
+        }
+      })
+    ] })
 export class AppModule {
   constructor() {}
 }

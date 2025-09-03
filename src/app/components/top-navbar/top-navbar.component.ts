@@ -9,9 +9,10 @@ import { SharedService } from '@services/shared/shared.service';
 declare var $: any;
 
 @Component({
-  selector: 'top-navbar',
-  templateUrl: './top-navbar.component.html',
-  styleUrls: ['./top-navbar.component.css'],
+    selector: 'top-navbar',
+    templateUrl: './top-navbar.component.html',
+    styleUrls: ['./top-navbar.component.css'],
+    standalone: false
 })
 export class TopNavbarComponent implements AfterViewInit {
   public envName: string = '';
