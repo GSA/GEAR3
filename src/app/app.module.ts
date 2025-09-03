@@ -20,6 +20,7 @@ import { TopNavbarComponent } from './components/top-navbar/top-navbar.component
 import { HomeComponent } from './views/main/home/home.component';
 import { GlobalSearchComponent } from './views/main/global-search/global-search.component';
 import { AboutComponent } from './views/main/about/about.component';
+import { AboutModalComponent } from './components/modals/about-modal/about-modal.component';
 import { AssistTechComponent } from './views/main/assist-tech/assist-tech.component';
 import { FormsComponent } from './views/main/forms-glossary/forms/forms.component';
 import { GlossaryComponent } from './views/main/forms-glossary/glossary/glossary.component';
@@ -119,6 +120,7 @@ import { WebsiteServiceCategoryDetailsContentComponent } from './views/enterpris
         HomeComponent,
         GlobalSearchComponent,
         AboutComponent,
+        AboutModalComponent,
         AssistTechComponent,
         FormsComponent,
         GlossaryComponent,

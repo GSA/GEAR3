@@ -27,7 +27,13 @@ export class TopbarComponent {
   }
 
   public onAboutClick(): void {
-    this.router.navigate(['/about']);
+    // Open About modal instead of navigating to About page
+    const aboutModal = document.getElementById('aboutModal');
+    if (aboutModal) {
+      // Using Bootstrap modal API
+      const modal = new (window as any).bootstrap.Modal(aboutModal);
+      modal.show();
+    }
   }
 
   public isProd(): boolean {

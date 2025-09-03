@@ -127,4 +127,16 @@ export class TopNavbarComponent implements AfterViewInit {
       this.processTopNavLink();
     }
   }
+
+  public onAboutClick(event: Event): void {
+    event.preventDefault();
+    // Open About modal instead of navigating to About page
+    const aboutModal = document.getElementById('aboutModal');
+    if (aboutModal) {
+      // Using Bootstrap modal API
+      const modal = new (window as any).bootstrap.Modal(aboutModal);
+      modal.show();
+    }
+    this.processTopNavLink();
+  }
 }
