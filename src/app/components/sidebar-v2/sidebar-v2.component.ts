@@ -61,3 +61,4 @@ export class SidebarV2Component {
     this.activeMenu = this.activeMenu === menuKey ? null : menuKey;
   }
 }
+
