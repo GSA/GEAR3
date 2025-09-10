@@ -441,6 +441,8 @@ function generateKeyname(data) {
   } else {
     keyname = data.tcSoftwareRelease.application;
   }
+
+  keyname = keyname.replace(/\s+/g, ' ').trim();
   return keyname;
 }
 
