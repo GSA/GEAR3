@@ -499,6 +499,9 @@ export class ItStandardManagerComponent implements OnInit {
       this.itStandardsForm.value.tcSoftwareRelease = this.buildCustomRelease();
       this.itStandardsForm.patchValue({tcSoftwareRelease: this.buildCustomRelease()});
 
+      this.itStandardsForm.value.itStandName = this.itStandardsForm.value.itStandName.replace(/\s+/g, ' ').trim();
+      this.itStandardsForm.patchValue({itStandName: this.itStandardsForm.value.itStandName.replace(/\s+/g, ' ').trim()});
+
       // Send data to database
       if(this.createBool) {
 
@@ -1052,6 +1055,7 @@ export class ItStandardManagerComponent implements OnInit {
       softwareRelease.application = this.itStandardsForm.value?.itStandName;
     }
 
+    softwareRelease.application = softwareRelease.application.replace(/\s+/g, ' ').trim();
     return softwareRelease;
   }
 
