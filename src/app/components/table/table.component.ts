@@ -32,6 +32,7 @@ export class TableComponent implements OnInit, OnChanges {
   // The name of report for the export csv
   @Input() exportName: string = '';
 
+
   // An optional function to use for exporting the data
   // instead of the built in export function
   @Input() exportFunction: Function = null;
@@ -89,6 +90,7 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+
     this.matchModeOptions = [
       { label: 'Contains', value: FilterMatchMode.CONTAINS },
       { label: 'Not Contains', value: FilterMatchMode.NOT_CONTAINS },
@@ -97,7 +99,7 @@ export class TableComponent implements OnInit, OnChanges {
     ];
 
     this.exportColumns = this.tableCols.map((col) => ({ title: col.header, dataKey: col.field }));
-    // this.activeTableData = this.getTableData();
+    
     if (this.isLocal) {
       this.tableData = this.localTableData;
       this.originalTableData = [...this.localTableData];
@@ -107,29 +109,26 @@ export class TableComponent implements OnInit, OnChanges {
         this.originalTableData = [...d];
       });
     }
-    const stored = localStorage.getItem('visibleColumns');
-    if (stored) {
-      this.visibleColumns = JSON.parse(stored);
-      // Sync showColumn state in tableCols
-      this.tableCols.forEach(col => {
-        col.showColumn = this.visibleColumns.some(v => v.field === col.field);
-      });
-    } else {
-      // Default to all visible - ensure showColumn is set properly
-      this.tableCols.forEach(col => {
-        if (col.showColumn === undefined) {
-          col.showColumn = true;
-        }
-      });
-      this.visibleColumns = this.tableCols.filter(col => col.showColumn !== false);
-    }
+    
+    this.initializeColumnVisibility();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.localTableData && this.isLocal) {
       this.originalTableData = [...this.localTableData];
     }
+    
+    // Handle tableCols changes (e.g., when switching tabs)
+    if (changes.tableCols && !changes.tableCols.firstChange) {
+      this.initializeColumnVisibility();
+    }
   }
+
+  private initializeColumnVisibility() {
+    // Simply set visibleColumns to all columns that should be visible
+    this.visibleColumns = this.tableCols.filter(col => col.showColumn !== false);
+  }
+
 
   // getTableData() {
   //   if(this.preFilteredTableData && this.preFilteredTableData.length > 0) {
@@ -138,17 +137,12 @@ export class TableComponent implements OnInit, OnChanges {
   //   return this.tableData;
   // }
 
+
   toggleVisible(e: any) {
-    // Update showColumn property for each column based on visibleColumns selection
+    // Update showColumn property for each column based on multiSelect selection
     this.tableCols.forEach(col => {
       col.showColumn = this.visibleColumns.some(visibleCol => visibleCol.field === col.field);
     });
-
-    // Save to localStorage 
-    localStorage.setItem('visibleColumns', JSON.stringify(this.visibleColumns));
-    
-    // Regenerate columns to ensure proper display
-    this.generateColumns();
   }
 
   togglePagination() {
@@ -254,7 +248,15 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   generateColumns() {
-    this.visibleColumns = this.tableCols.filter(c => this.showColumn(c));
+    // Clear existing visible columns to avoid duplicates
+    this.visibleColumns = [];
+    
+    // Add columns that should be visible
+    this.tableCols.forEach(c => {
+      if (this.showColumn(c)) {
+        this.visibleColumns.push(c);
+      }
+    });
   }
 
   public onRowSelect(e: TableRowSelectEvent) {
