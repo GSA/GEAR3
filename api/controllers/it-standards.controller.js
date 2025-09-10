@@ -63,10 +63,13 @@ exports.update = (req, res) => {
       // Update Technopedia Fields
       query += saveCustomManufacturer(techId, data.tcManufacturer);
       query += saveCustomSoftwareProduct(techId, data.tcSoftwareProduct, data.tcManufacturer);
-      if(data.tcSoftwareVersion.name) {
+      if(data.tcSoftwareVersion && data.tcSoftwareVersion?.name) {
         query += saveCustomSoftwareVersion(techId, data.tcSoftwareVersion, data.tcSoftwareProduct);
+        query += saveCustomSoftwareRelease(techId, data.tcSoftwareRelease, data.tcSoftwareVersion);
+      } else {
+        query += updateITStandardRelease(techId, data.tcSoftwareRelease);
       }
-      query += saveCustomSoftwareRelease(techId, data.tcSoftwareRelease, data.tcSoftwareVersion);
+      
 
       // Update POCs
       query += removeSavedPOCs(techId);
@@ -143,10 +146,13 @@ exports.createAdvanced = (req, res) => {
       // Update Technopedia Fields
       query += saveCustomManufacturer(techId, data.tcManufacturer);
       query += saveCustomSoftwareProduct(techId, data.tcSoftwareProduct, data.tcManufacturer);
-      if(data.tcSoftwareVersion.name) {
+      if(data.tcSoftwareVersion && data.tcSoftwareVersion?.name) {
         query += saveCustomSoftwareVersion(techId, data.tcSoftwareVersion, data.tcSoftwareProduct);
+        query += saveCustomSoftwareRelease(techId, data.tcSoftwareRelease, data.tcSoftwareVersion);
+      } else {
+        query += updateITStandardRelease(techId, data.tcSoftwareRelease);
       }
-      query += saveCustomSoftwareRelease(techId, data.tcSoftwareRelease, data.tcSoftwareVersion);
+      
 
       // Update POCs
       query += removeSavedPOCs(techId);
@@ -403,6 +409,17 @@ function saveCustomSoftwareRelease(techId, softwareRelease, softwareVersion) {
                       Id = ${techId};`;
   }
 
+  return queryString;
+}
+
+function updateITStandardRelease(techId, softwareRelease) {
+  let queryString = '';
+  queryString = `UPDATE 
+                  obj_technology
+                SET
+                  softwareReleaseName = '${softwareRelease.application}'
+                WHERE
+                  Id = ${techId};`;
   return queryString;
 }
 

@@ -746,7 +746,7 @@ export class ItStandardManagerComponent implements OnInit {
     this.itStandardsForm.patchValue({ tcEndOfLifeDate: null });
     this.itStandardsForm.get('tcSoftwareRelease')?.reset();
 
-    if(!this.hasAllCustomTechnoData()) {
+    if(!this.hasAllTechnoData()) {
       try {
         if (softwareVersion) {
             this.apiService.getSoftwareReleases(softwareVersion["id"]).subscribe((data: any[]) => {
@@ -775,25 +775,25 @@ export class ItStandardManagerComponent implements OnInit {
       }
     }
 
-    try {
-      if (softwareVersion) {
-          this.apiService.getSoftwareReleases(softwareVersion["id"]).subscribe((data: any[]) => {
-            this.apiService.getCustomSoftwareReleases(softwareVersion["id"]).subscribe((cData: any[]) => {
-              this.softwareReleases = [...data, ...cData];
-              this.softwareReleasesBuffer = this.softwareReleases.slice(0, this.bufferSize);
-              this.softwareReleasesLoading = false;
-            });
-          });
-      } else {
-        this.softwareReleases = [];
-        this.softwareReleasesLoading = false;
-      }
-    } catch (error) {
-      this.softwareReleases = [];
-      this.softwareReleasesLoading = false;
-      this.itStandardsForm.value.tcSoftwareRelease = this.buildCustomRelease();
-      this.itStandardsForm.patchValue({tcSoftwareRelease: this.buildCustomRelease()});
-    }
+    // try {
+    //   if (softwareVersion) {
+    //       this.apiService.getSoftwareReleases(softwareVersion["id"]).subscribe((data: any[]) => {
+    //         this.apiService.getCustomSoftwareReleases(softwareVersion["id"]).subscribe((cData: any[]) => {
+    //           this.softwareReleases = [...data, ...cData];
+    //           this.softwareReleasesBuffer = this.softwareReleases.slice(0, this.bufferSize);
+    //           this.softwareReleasesLoading = false;
+    //         });
+    //       });
+    //   } else {
+    //     this.softwareReleases = [];
+    //     this.softwareReleasesLoading = false;
+    //   }
+    // } catch (error) {
+    //   this.softwareReleases = [];
+    //   this.softwareReleasesLoading = false;
+    //   this.itStandardsForm.value.tcSoftwareRelease = this.buildCustomRelease();
+    //   this.itStandardsForm.patchValue({tcSoftwareRelease: this.buildCustomRelease()});
+    // }
   }
 
   // enable the software product field
@@ -1044,7 +1044,7 @@ export class ItStandardManagerComponent implements OnInit {
       application: ''
     };
 
-    if(this.hasAllCustomTechnoData()) {
+    if(this.hasAllTechnoData()) {
       softwareRelease.application = `${this.itStandardsForm.value?.tcManufacturer?.name} 
                 ${this.itStandardsForm.value?.tcSoftwareProduct?.name} 
                 ${this.itStandardsForm.value?.tcSoftwareVersion?.name}`;
@@ -1065,6 +1065,12 @@ export class ItStandardManagerComponent implements OnInit {
     return !this.itStandardsForm.value?.tcManufacturer?.id &&
             !this.itStandardsForm.value?.tcSoftwareProduct?.id &&
             !this.itStandardsForm.value?.tcSoftwareVersion?.id;
+  }
+
+  hasAllTechnoData(): boolean {
+    return this.itStandardsForm.value?.tcManufacturer?.name &&
+           this.itStandardsForm.value?.tcSoftwareProduct?.name &&
+           this.itStandardsForm.value?.tcSoftwareVersion?.name;
   }
 
   getTitleName(): string {
