@@ -121,7 +121,7 @@
     }
 
     .neutral.p-datatable {
-       
+
 
         .p-datatable-thead>tr>th {
             color: var(--neutral-black-color-dark);
@@ -151,7 +151,7 @@
                 font-size: .75rem;
                 width: 14rem;
             }
-           
+
 
             &:nth-of-type(odd) {
                 background-color: var(--neutral-white-color);
@@ -170,7 +170,8 @@
             &:nth-of-type(even) {
                 background-color: #f4f4f4;
             }
-             &:hover{
+
+            &:hover {
                 background-color: #e4e4e4;
             }
         }
@@ -240,7 +241,7 @@
                     border-radius: .25rem;
                     display: flex;
                     justify-content: center;
-                    
+
                 }
 
                 & .table-status-badge-red {
@@ -287,21 +288,18 @@
 
     .p-button-primary {
         color: #fff;
-        background-color: #027eb2;
+        background-color: var(--primary-color) !important;
         border-left: 1px solid #fff;
 
         &:hover,
         &:active {
-            background-color: #1a82ae;
-            //border-color: #1a82ae;
-            outline: 0.25rem solid #2491ff;
+            background-color: var(--primary-color-hover) !important;
             position: relative;
         }
 
         &:focus,
         &:focus-visible {
-            outline: .25rem solid #2491ff;
-            outline-offset: 0rem;
+            outline: none !important;
             position: relative;
             z-index: 10;
         }
@@ -310,31 +308,38 @@
 
     .p-multiselect {
         color: #fff;
-        background-color: #027eb2;
-        border-color: #027eb2;
+        background-color: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
         border-radius: 0;
-        height: 40px;
+        height: 34px;
 
         &:hover {
-            background-color: #1a82ae;
-            border-color: #187aa3;
+            background-color: var(--primary-color-hover);
+            border-color: var(--primary-color-hover);
+            outline: none !important;
         }
 
         & .p-multiselect-trigger {
             color: #fff;
-            background-color: #027eb2;
-            border-color: #027eb2;
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
         }
 
         & .p-multiselect-label {
-            padding: .5rem .75rem;
+            color: #fff;
         }
+
+
     }
 
     .p-inputtext {
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
     }
+}
+
+.p-inputicon {
+    margin-top: -5px;
 }
 
 .table-toolbar-container {

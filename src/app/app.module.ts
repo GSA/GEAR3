@@ -114,7 +114,7 @@ import { WebsitesDetailsComponent } from './views/systems/websites/details/websi
 import { WebsiteServiceCategoryDetailsContentComponent } from './views/enterprise/website-service-category/website-service-category-details-content/website-service-category-details-content.component';
 import { providePrimeNG } from 'primeng/config';
 
-import LaraLightBlue from '@primeng/themes/lara';
+import Lara from '@primeng/themes/lara';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -207,8 +207,18 @@ import LaraLightBlue from '@primeng/themes/lara';
       Globals, provideHttpClient(withInterceptorsFromDi()),
       providePrimeNG({
         theme: {
-          preset: LaraLightBlue
-        }
+          preset: Lara,
+          options: {
+            prefix: 'p',
+            darkModeSelector: 'system',
+            cssLayer: {
+              name: 'primeng',
+              order: 'tailwind-base, primeng, tailwind-utilities'
+            }
+          }
+        },
+        ripple: true,
+        inputStyle: 'outlined'
       })
     ] })
 export class AppModule {

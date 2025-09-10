@@ -92,4 +92,82 @@
     /***** FONTS *****/
     --primary-font: Roboto, "Helvetica Neue", sans-serif;
     --secondary-font: 'Source Sans Pro Web';
+
+    /***** PRIMENG 19 THEME OVERRIDES *****/
+    // Map your primary colors to PrimeNG variables
+    --p-primary-50: var(--primary-color-light);
+    --p-primary-100: var(--primary-color-light-hover);
+    --p-primary-200: var(--primary-color-light-active);
+    --p-primary-300: #87b3d3;
+    --p-primary-400: #5e99c4;
+    --p-primary-500: var(--primary-color);
+    --p-primary-600: var(--primary-color-hover);
+    --p-primary-700: var(--primary-color-active);
+    --p-primary-800: var(--primary-color-dark);
+    --p-primary-900: var(--primary-color-darker);
+    --p-primary-950: #001a2e;
+
+    // Primary color mappings
+    --p-primary-color: var(--primary-color);
+    --p-primary-color-text: var(--neutral-white-color);
+    --p-primary-color-contrast: var(--neutral-white-color);
+
+    // Focus and selection colors
+    --p-focus-ring-color: var(--primary-color);
+    --p-focus-ring-offset-color: var(--neutral-white-color);
+    --p-focus-ring-offset: 2px;
+    --p-focus-ring-width: 2px;
+    --p-focus-ring-style: solid;
+    --p-focus-ring-shadow: 0 0 0 var(--p-focus-ring-width) var(--p-focus-ring-color);
+
+    // Surface colors
+    --p-surface-0: var(--neutral-white-color);
+    --p-surface-50: #f9fafb;
+    --p-surface-100: #f3f4f6;
+    --p-surface-200: #e5e7eb;
+    --p-surface-300: #d1d5db;
+    --p-surface-400: #9ca3af;
+    --p-surface-500: #6b7280;
+    --p-surface-600: #4b5563;
+    --p-surface-700: #374151;
+    --p-surface-800: #1f2937;
+    --p-surface-900: #111827;
+    --p-surface-950: #030712;
+
+    // Text colors
+    --p-text-color: #1f2937;
+    --p-text-color-secondary: #6b7280;
+    --p-text-color-muted: #9ca3af;
+    --p-text-color-on-primary: var(--neutral-white-color);
+
+    // Border colors
+    --p-border-color: #e5e7eb;
+    --p-border-color-focus: var(--primary-color);
+
+    // Component-specific overrides
+    --p-multiselect-option-selected-background: var(--primary-color);
+    --p-multiselect-option-selected-color: var(--neutral-white-color);
+    --p-multiselect-option-selected-focus-background: var(--primary-color-hover);
+    --p-multiselect-option-selected-focus-color: var(--neutral-white-color);
+    --p-multiselect-option-focus-background: var(--primary-color-light);
+    --p-multiselect-option-focus-color: var(--neutral-black-color-dark);
+    --p-multiselect-option-hover-background: var(--primary-color-light);
+    --p-multiselect-option-hover-color: var(--neutral-black-color-dark);
+
+    // Button overrides
+    --p-button-primary-background: var(--primary-color);
+    --p-button-primary-color: var(--neutral-white-color);
+    --p-button-primary-hover-background: var(--primary-color-hover);
+    --p-button-primary-hover-color: var(--neutral-white-color);
+    --p-button-primary-focus-background: var(--primary-color-hover);
+    --p-button-primary-focus-color: var(--neutral-white-color);
+
+    // Input overrides
+    --p-inputtext-focus-border-color: var(--primary-color);
+    --p-inputtext-focus-box-shadow: 0 0 0 0.2rem rgba(0, 94, 162, 0.25);
+
+    // Checkbox overrides
+    --p-checkbox-checked-background: var(--primary-color);
+    --p-checkbox-checked-border-color: var(--primary-color);
+    --p-checkbox-focus-ring-color: var(--primary-color);
 }
