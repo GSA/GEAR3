@@ -5,7 +5,8 @@
 
 
 .p-multiselect-option.p-multiselect-option-selected{
-background-color: var(--primary-color-hover);
+background-color: transparent !important;
+color: unset;
 }
 .p-checkbox{
   border: 1px solid #fff;

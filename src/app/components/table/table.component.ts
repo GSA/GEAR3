@@ -115,11 +115,14 @@ export class TableComponent implements OnInit, OnChanges {
         col.showColumn = this.visibleColumns.some(v => v.field === col.field);
       });
     } else {
-      // Default to all visible
+      // Default to all visible - ensure showColumn is set properly
+      this.tableCols.forEach(col => {
+        if (col.showColumn === undefined) {
+          col.showColumn = true;
+        }
+      });
       this.visibleColumns = this.tableCols.filter(col => col.showColumn !== false);
-    } 
-
-    this.generateColumns();
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -136,14 +139,16 @@ export class TableComponent implements OnInit, OnChanges {
   // }
 
   toggleVisible(e: any) {
-    this.tableCols.map(c => {
-      if (c.field === e.originalEvent.option.field) {
-        c.showColumn = e.originalEvent.selected;
-      }
+    // Update showColumn property for each column based on visibleColumns selection
+    this.tableCols.forEach(col => {
+      col.showColumn = this.visibleColumns.some(visibleCol => visibleCol.field === col.field);
     });
 
-    this.visibleColumns = this.tableCols.filter(col => col.showColumn !== false);
+    // Save to localStorage 
     localStorage.setItem('visibleColumns', JSON.stringify(this.visibleColumns));
+    
+    // Regenerate columns to ensure proper display
+    this.generateColumns();
   }
 
   togglePagination() {
@@ -249,11 +254,7 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   generateColumns() {
-    this.tableCols.map(c => {
-      if (this.showColumn(c)) {
-        this.visibleColumns.push(c);
-      }
-    });
+    this.visibleColumns = this.tableCols.filter(c => this.showColumn(c));
   }
 
   public onRowSelect(e: TableRowSelectEvent) {
