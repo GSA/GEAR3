@@ -393,6 +393,9 @@ export class ItStandardManagerComponent implements OnInit {
       if(!this.itStandardsForm.value.itStand508 || typeof(this.itStandardsForm.value.itStand508) === 'undefined') {
         this.itStandardsForm.value.itStand508 = '3';
         this.itStandardsForm.patchValue({itStand508: '3'});
+      } else {
+        this.itStandardsForm.value.itStand508 = +this.itStandardsForm.value.itStand508;
+        this.itStandardsForm.patchValue({itStand508: +this.itStandardsForm.value.itStand508});
       }
 
       if(!this.itStandardsForm.value.itStandAtteLink || typeof(this.itStandardsForm.value.itStandAtteLink) === 'undefined') {
@@ -416,6 +419,22 @@ export class ItStandardManagerComponent implements OnInit {
       if(this.itStandardsForm.value.itStandRefDocs) {
         this.itStandardsForm.value.itStandRefDocs = this.escapeString(this.itStandardsForm.value.itStandRefDocs);
       }
+
+      // Status
+      this.itStandardsForm.value.itStandStatus = +this.itStandardsForm.value.itStandStatus;
+      this.itStandardsForm.patchValue({itStandStatus: +this.itStandardsForm.value.itStandStatus});
+
+      // Deployment
+      this.itStandardsForm.value.itStandDeployment = +this.itStandardsForm.value.itStandDeployment;
+      this.itStandardsForm.patchValue({itStandDeployment: +this.itStandardsForm.value.itStandDeployment});
+
+      // Type
+      this.itStandardsForm.value.itStandType = +this.itStandardsForm.value.itStandType;
+      this.itStandardsForm.patchValue({itStandType: +this.itStandardsForm.value.itStandType});
+
+      // AtteRequired
+      this.itStandardsForm.value.itStandReqAtte = +this.itStandardsForm.value.itStandReqAtte;
+      this.itStandardsForm.patchValue({itStandReqAtte: +this.itStandardsForm.value.itStandReqAtte});
       
       // Add username to payload
       this.itStandardsForm.value.auditUser = this.globals.authUser;
@@ -446,11 +465,11 @@ export class ItStandardManagerComponent implements OnInit {
       }
 
       // add Attestation Status to payload
-      if (this.itStandardsForm.value.itStandReqAtte && isNaN(this.itStandardsForm.value.itStandReqAtte)) {
-        const foundAtte = this.sharedService.findInArray(this.itStandReqAtteRefData, 'Name', this.itStandardsForm.value.itStandReqAtte, 'ID');
-        this.itStandardsForm.value.itStandReqAtte = foundAtte;
-        this.itStandardsForm.patchValue({itStandReqAtte: foundAtte});
-      }
+      // if (this.itStandardsForm.value.itStandReqAtte) {
+      //   const foundAtte = this.sharedService.findInArray(this.itStandReqAtteRefData, 'Name', this.itStandardsForm.value.itStandReqAtte, 'ID');
+      //   this.itStandardsForm.value.itStandReqAtte = foundAtte;
+      //   this.itStandardsForm.patchValue({itStandReqAtte: foundAtte});
+      // }
 
       if(this.allAppBundleIds && this.allAppBundleIds.length > 0) {
         this.itStandardsForm.value.itStandMobileAppBundles = this.allAppBundleIds;

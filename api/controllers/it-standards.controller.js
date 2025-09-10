@@ -62,9 +62,11 @@ exports.update = (req, res) => {
 
       // Update Technopedia Fields
       query += saveCustomManufacturer(techId, data.tcManufacturer);
-      query += saveCustomSoftwareProduct(techId, data.tcSoftwareProduct);
-      query += saveCustomSoftwareVersion(techId, data.tcSoftwareVersion);
-      query += saveCustomSoftwareRelease(techId, data.tcSoftwareRelease);
+      query += saveCustomSoftwareProduct(techId, data.tcSoftwareProduct, data.tcManufacturer);
+      if(data.tcSoftwareVersion.name) {
+        query += saveCustomSoftwareVersion(techId, data.tcSoftwareVersion, data.tcSoftwareProduct);
+      }
+      query += saveCustomSoftwareRelease(techId, data.tcSoftwareRelease, data.tcSoftwareVersion);
 
       // Update POCs
       query += removeSavedPOCs(techId);
@@ -140,11 +142,11 @@ exports.createAdvanced = (req, res) => {
 
       // Update Technopedia Fields
       query += saveCustomManufacturer(techId, data.tcManufacturer);
-      query += saveCustomSoftwareProduct(techId, data.tcSoftwareProduct);
+      query += saveCustomSoftwareProduct(techId, data.tcSoftwareProduct, data.tcManufacturer);
       if(data.tcSoftwareVersion.name) {
-        query += saveCustomSoftwareVersion(techId, data.tcSoftwareVersion);
+        query += saveCustomSoftwareVersion(techId, data.tcSoftwareVersion, data.tcSoftwareProduct);
       }
-      query += saveCustomSoftwareRelease(techId, data.tcSoftwareRelease);
+      query += saveCustomSoftwareRelease(techId, data.tcSoftwareRelease, data.tcSoftwareVersion);
 
       // Update POCs
       query += removeSavedPOCs(techId);
@@ -319,7 +321,7 @@ function saveCustomManufacturer(techId, manufacturer) {
 
   return queryString;
 }
-function saveCustomSoftwareProduct(techId, softwareProduct) {
+function saveCustomSoftwareProduct(techId, softwareProduct, manufacturer) {
   // let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
   let queryString = '';
 
@@ -334,8 +336,8 @@ function saveCustomSoftwareProduct(techId, softwareProduct) {
   } else {
     let guid = Guid.create().toString();
     queryString += `INSERT INTO obj_software_product
-                      (id, name, createdDate)
-                    VALUES ('${guid}', '${softwareProduct.name}', NOW());`;
+                      (id, name, createdDate, manufacturer_id)
+                    VALUES ('${guid}', '${softwareProduct.name}', NOW(), '${manufacturer.id}');`;
     queryString += `UPDATE 
                       obj_technology
                     SET
@@ -347,7 +349,7 @@ function saveCustomSoftwareProduct(techId, softwareProduct) {
 
   return queryString;
 }
-function saveCustomSoftwareVersion(techId, softwareVersion) {
+function saveCustomSoftwareVersion(techId, softwareVersion, softwareProduct) {
   // let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
   let queryString = '';
 
@@ -362,8 +364,8 @@ function saveCustomSoftwareVersion(techId, softwareVersion) {
   } else {
     let guid = Guid.create().toString();
     queryString += `INSERT INTO obj_software_version
-                      (id, name, createdDate)
-                    VALUES ('${guid}', '${softwareVersion.name}', NOW());`;
+                      (id, name, createdDate, software_product_id)
+                    VALUES ('${guid}', '${softwareVersion.name}', NOW(), '${softwareProduct.id}');`;
     queryString += `UPDATE 
                       obj_technology
                     SET
@@ -375,7 +377,7 @@ function saveCustomSoftwareVersion(techId, softwareVersion) {
 
   return queryString;
 }
-function saveCustomSoftwareRelease(techId, softwareRelease) {
+function saveCustomSoftwareRelease(techId, softwareRelease, softwareVersion) {
   // let date = new Date().toISOString().slice(0, 19).replace('T', ' ');
   let queryString = '';
 
@@ -390,8 +392,8 @@ function saveCustomSoftwareRelease(techId, softwareRelease) {
   } else if(softwareRelease && !softwareRelease.id) {
     let guid = Guid.create().toString();
     queryString += `INSERT INTO obj_software_release
-                      (id, name, createdDate)
-                    VALUES ('${guid}', '${softwareRelease.application}', NOW());`;
+                      (id, name, createdDate, software_version_id)
+                    VALUES ('${guid}', '${softwareRelease.application}', NOW(), '${softwareVersion.id}');`;
     queryString += `UPDATE 
                       obj_technology
                     SET
@@ -467,7 +469,7 @@ function updateData(techId, data) {
             Vendor_Standard_Organization      = ${data.itStandVendorOrg},
             obj_deployment_type_Id            = ${data.itStandDeployment},
             Approved_Status_Expiration_Date   = ${data.itStandAprvExp},
-            attestation_required              = '${data.itStandReqAtte}',
+            attestation_required              = ${data.itStandReqAtte},
             attestation_link                  = ${data.itStandAtteLink},
             fedramp                           = '${data.itStandFedramp}',
             open_source                       = '${data.itStandOpenSource}',
@@ -486,11 +488,11 @@ function saveData(data) {
   const keyname = generateKeyname(data);
   const endOfLifeDateFragment = getEolFragment(data.tcEndOfLifeDate);
 
-  data.itStandMyView = normalizeFormBooleanValues(data.itStandMyView);
-  data.itStandFedramp = normalizeFormBooleanValues(data.itStandFedramp);
-  data.itStandOpenSource = normalizeFormBooleanValues(data.itStandOpenSource);
-  data.itStandGoldImg = normalizeFormBooleanValues(data.itStandGoldImg);
-  data.itStandReqAtte = normalizeFormBooleanValues(data.itStandReqAtte);
+  // data.itStandMyView = normalizeFormBooleanValues(data.itStandMyView);
+  // data.itStandFedramp = normalizeFormBooleanValues(data.itStandFedramp);
+  // data.itStandOpenSource = normalizeFormBooleanValues(data.itStandOpenSource);
+  // data.itStandGoldImg = normalizeFormBooleanValues(data.itStandGoldImg);
+  // data.itStandReqAtte = normalizeFormBooleanValues(data.itStandReqAtte);
 
   data.itStandDesc = ctrl.setNullEmptyTextHandler(data.itStandDesc);
   data.itStandAprvExp = ctrl.setNullEmptyTextHandler(data.itStandAprvExp);
@@ -534,7 +536,7 @@ function saveData(data) {
            ${data.itStandVendorOrg},
            ${data.itStandDeployment},
            ${data.itStandAprvExp},
-           '${data.itStandReqAtte}',
+           ${data.itStandReqAtte},
            ${data.itStandAtteLink},
            '${data.itStandFedramp}',
            '${data.itStandOpenSource}',
