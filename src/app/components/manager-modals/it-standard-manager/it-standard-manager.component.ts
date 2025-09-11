@@ -393,6 +393,9 @@ export class ItStandardManagerComponent implements OnInit {
       if(!this.itStandardsForm.value.itStand508 || typeof(this.itStandardsForm.value.itStand508) === 'undefined') {
         this.itStandardsForm.value.itStand508 = '3';
         this.itStandardsForm.patchValue({itStand508: '3'});
+      } else {
+        this.itStandardsForm.value.itStand508 = +this.itStandardsForm.value.itStand508;
+        this.itStandardsForm.patchValue({itStand508: +this.itStandardsForm.value.itStand508});
       }
 
       if(!this.itStandardsForm.value.itStandAtteLink || typeof(this.itStandardsForm.value.itStandAtteLink) === 'undefined') {
@@ -416,6 +419,22 @@ export class ItStandardManagerComponent implements OnInit {
       if(this.itStandardsForm.value.itStandRefDocs) {
         this.itStandardsForm.value.itStandRefDocs = this.escapeString(this.itStandardsForm.value.itStandRefDocs);
       }
+
+      // Status
+      this.itStandardsForm.value.itStandStatus = +this.itStandardsForm.value.itStandStatus;
+      this.itStandardsForm.patchValue({itStandStatus: +this.itStandardsForm.value.itStandStatus});
+
+      // Deployment
+      this.itStandardsForm.value.itStandDeployment = +this.itStandardsForm.value.itStandDeployment;
+      this.itStandardsForm.patchValue({itStandDeployment: +this.itStandardsForm.value.itStandDeployment});
+
+      // Type
+      this.itStandardsForm.value.itStandType = +this.itStandardsForm.value.itStandType;
+      this.itStandardsForm.patchValue({itStandType: +this.itStandardsForm.value.itStandType});
+
+      // AtteRequired
+      this.itStandardsForm.value.itStandReqAtte = +this.itStandardsForm.value.itStandReqAtte;
+      this.itStandardsForm.patchValue({itStandReqAtte: +this.itStandardsForm.value.itStandReqAtte});
       
       // Add username to payload
       this.itStandardsForm.value.auditUser = this.globals.authUser;
@@ -446,11 +465,11 @@ export class ItStandardManagerComponent implements OnInit {
       }
 
       // add Attestation Status to payload
-      if (this.itStandardsForm.value.itStandReqAtte && isNaN(this.itStandardsForm.value.itStandReqAtte)) {
-        const foundAtte = this.sharedService.findInArray(this.itStandReqAtteRefData, 'Name', this.itStandardsForm.value.itStandReqAtte, 'ID');
-        this.itStandardsForm.value.itStandReqAtte = foundAtte;
-        this.itStandardsForm.patchValue({itStandReqAtte: foundAtte});
-      }
+      // if (this.itStandardsForm.value.itStandReqAtte) {
+      //   const foundAtte = this.sharedService.findInArray(this.itStandReqAtteRefData, 'Name', this.itStandardsForm.value.itStandReqAtte, 'ID');
+      //   this.itStandardsForm.value.itStandReqAtte = foundAtte;
+      //   this.itStandardsForm.patchValue({itStandReqAtte: foundAtte});
+      // }
 
       if(this.allAppBundleIds && this.allAppBundleIds.length > 0) {
         this.itStandardsForm.value.itStandMobileAppBundles = this.allAppBundleIds;
@@ -479,6 +498,9 @@ export class ItStandardManagerComponent implements OnInit {
       // }
       this.itStandardsForm.value.tcSoftwareRelease = this.buildCustomRelease();
       this.itStandardsForm.patchValue({tcSoftwareRelease: this.buildCustomRelease()});
+
+      this.itStandardsForm.value.itStandName = this.itStandardsForm.value.itStandName.replace(/\s+/g, ' ').trim();
+      this.itStandardsForm.patchValue({itStandName: this.itStandardsForm.value.itStandName.replace(/\s+/g, ' ').trim()});
 
       // Send data to database
       if(this.createBool) {
@@ -727,7 +749,7 @@ export class ItStandardManagerComponent implements OnInit {
     this.itStandardsForm.patchValue({ tcEndOfLifeDate: null });
     this.itStandardsForm.get('tcSoftwareRelease')?.reset();
 
-    if(!this.hasAllCustomTechnoData()) {
+    if(!this.hasAllTechnoData()) {
       try {
         if (softwareVersion) {
             this.apiService.getSoftwareReleases(softwareVersion["id"]).subscribe((data: any[]) => {
@@ -756,25 +778,25 @@ export class ItStandardManagerComponent implements OnInit {
       }
     }
 
-    try {
-      if (softwareVersion) {
-          this.apiService.getSoftwareReleases(softwareVersion["id"]).subscribe((data: any[]) => {
-            this.apiService.getCustomSoftwareReleases(softwareVersion["id"]).subscribe((cData: any[]) => {
-              this.softwareReleases = [...data, ...cData];
-              this.softwareReleasesBuffer = this.softwareReleases.slice(0, this.bufferSize);
-              this.softwareReleasesLoading = false;
-            });
-          });
-      } else {
-        this.softwareReleases = [];
-        this.softwareReleasesLoading = false;
-      }
-    } catch (error) {
-      this.softwareReleases = [];
-      this.softwareReleasesLoading = false;
-      this.itStandardsForm.value.tcSoftwareRelease = this.buildCustomRelease();
-      this.itStandardsForm.patchValue({tcSoftwareRelease: this.buildCustomRelease()});
-    }
+    // try {
+    //   if (softwareVersion) {
+    //       this.apiService.getSoftwareReleases(softwareVersion["id"]).subscribe((data: any[]) => {
+    //         this.apiService.getCustomSoftwareReleases(softwareVersion["id"]).subscribe((cData: any[]) => {
+    //           this.softwareReleases = [...data, ...cData];
+    //           this.softwareReleasesBuffer = this.softwareReleases.slice(0, this.bufferSize);
+    //           this.softwareReleasesLoading = false;
+    //         });
+    //       });
+    //   } else {
+    //     this.softwareReleases = [];
+    //     this.softwareReleasesLoading = false;
+    //   }
+    // } catch (error) {
+    //   this.softwareReleases = [];
+    //   this.softwareReleasesLoading = false;
+    //   this.itStandardsForm.value.tcSoftwareRelease = this.buildCustomRelease();
+    //   this.itStandardsForm.patchValue({tcSoftwareRelease: this.buildCustomRelease()});
+    // }
   }
 
   // enable the software product field
@@ -1025,7 +1047,7 @@ export class ItStandardManagerComponent implements OnInit {
       application: ''
     };
 
-    if(this.hasAllCustomTechnoData()) {
+    if(this.hasAllTechnoData()) {
       softwareRelease.application = `${this.itStandardsForm.value?.tcManufacturer?.name} 
                 ${this.itStandardsForm.value?.tcSoftwareProduct?.name} 
                 ${this.itStandardsForm.value?.tcSoftwareVersion?.name}`;
@@ -1033,6 +1055,7 @@ export class ItStandardManagerComponent implements OnInit {
       softwareRelease.application = this.itStandardsForm.value?.itStandName;
     }
 
+    softwareRelease.application = softwareRelease.application.replace(/\s+/g, ' ').trim();
     return softwareRelease;
   }
 
@@ -1046,6 +1069,12 @@ export class ItStandardManagerComponent implements OnInit {
     return !this.itStandardsForm.value?.tcManufacturer?.id &&
             !this.itStandardsForm.value?.tcSoftwareProduct?.id &&
             !this.itStandardsForm.value?.tcSoftwareVersion?.id;
+  }
+
+  hasAllTechnoData(): boolean {
+    return this.itStandardsForm.value?.tcManufacturer?.name &&
+           this.itStandardsForm.value?.tcSoftwareProduct?.name &&
+           this.itStandardsForm.value?.tcSoftwareVersion?.name;
   }
 
   getTitleName(): string {
