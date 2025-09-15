@@ -335,6 +335,18 @@
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
     }
+    .p-paginator-page.p-paginator-page-selected{
+        background-color: #027eb2;
+        color: #fff;
+    }
+    .p-select:not(.p-disabled):hover{
+        border-color: #027eb2 !important;
+        box-shadow: none !important;
+    }
+    .p-select-option.p-select-option-selected.p-focus{
+        background-color: #027eb2 !important;
+        color: #fff !important;
+    }
 }
 
 .table-toolbar-container {
