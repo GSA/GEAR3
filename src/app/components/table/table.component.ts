@@ -32,6 +32,7 @@ export class TableComponent implements OnInit, OnChanges {
   // The name of report for the export csv
   @Input() exportName: string = '';
 
+
   // An optional function to use for exporting the data
   // instead of the built in export function
   @Input() exportFunction: Function = null;
@@ -106,6 +107,7 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+
     this.matchModeOptions = [
       { label: 'Contains', value: FilterMatchMode.CONTAINS },
       { label: 'Not Contains', value: FilterMatchMode.NOT_CONTAINS },
@@ -125,29 +127,25 @@ export class TableComponent implements OnInit, OnChanges {
       });
     }
     
-    const stored = localStorage.getItem('visibleColumns');
-    if (stored) {
-      this.visibleColumns = JSON.parse(stored);
-      this.tableCols.forEach(col => {
-        col.showColumn = this.visibleColumns.some(v => v.field === col.field);
-      });
-    } else {
-      this.visibleColumns = this.tableCols.filter(col => col.showColumn !== false);
-    } 
-
-    this.generateColumns();
-    
-    setTimeout(() => {
-      this.setScreenHeight();
-      this.adjustTableHeight();
-    }, 100);
+    this.initializeColumnVisibility();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.localTableData && this.isLocal) {
       this.originalTableData = [...this.localTableData];
     }
+    
+    // Handle tableCols changes (e.g., when switching tabs)
+    if (changes.tableCols && !changes.tableCols.firstChange) {
+      this.initializeColumnVisibility();
+    }
   }
+
+  private initializeColumnVisibility() {
+    // Simply set visibleColumns to all columns that should be visible
+    this.visibleColumns = this.tableCols.filter(col => col.showColumn !== false);
+  }
+
 
   // getTableData() {
   //   if(this.preFilteredTableData && this.preFilteredTableData.length > 0) {
@@ -156,21 +154,12 @@ export class TableComponent implements OnInit, OnChanges {
   //   return this.tableData;
   // }
 
-  toggleVisible(e: any) {
-    // Clear the visible columns array first
-    this.visibleColumns = [];
-    
-    // Update the showColumn property for each column based on the selected items
-    this.tableCols.forEach(col => {
-      const isSelected = e.value.some((selectedCol: Column) => selectedCol.field === col.field);
-      col.showColumn = isSelected;
-      
-      if (isSelected) {
-        this.visibleColumns.push(col);
-      }
-    });
 
-    localStorage.setItem('visibleColumns', JSON.stringify(this.visibleColumns));
+  toggleVisible(e: any) {
+    // Update showColumn property for each column based on multiSelect selection
+    this.tableCols.forEach(col => {
+      col.showColumn = this.visibleColumns.some(visibleCol => visibleCol.field === col.field);
+    });
   }
 
   togglePagination() {
@@ -284,8 +273,15 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   generateColumns() {
-    // Clear and rebuild visible columns based on showColumn property
-    this.visibleColumns = this.tableCols.filter(col => this.showColumn(col));
+    // Clear existing visible columns to avoid duplicates
+    this.visibleColumns = [];
+    
+    // Add columns that should be visible
+    this.tableCols.forEach(c => {
+      if (this.showColumn(c)) {
+        this.visibleColumns.push(c);
+      }
+    });
   }
 
   public onRowSelect(e: TableRowSelectEvent) {
