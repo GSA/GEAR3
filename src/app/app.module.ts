@@ -24,6 +24,7 @@ import { AssistTechComponent } from './views/main/assist-tech/assist-tech.compon
 import { FormsComponent } from './views/main/forms-glossary/forms/forms.component';
 import { GlossaryComponent } from './views/main/forms-glossary/glossary/glossary.component';
 import { GearManagerComponent } from './views/main/gear-manager/gear-manager.component';
+import { GearManagerFailedLoginComponent } from './views/main/gear-manager-failed-login/gear-manager-failed-login.component';
 
 //// Strategy
 import { FrameworkComponent } from './views/strategy/framework/framework.component';
@@ -127,6 +128,7 @@ import Lara from '@primeng/themes/lara';
         FormsComponent,
         GlossaryComponent,
         GearManagerComponent,
+        GearManagerFailedLoginComponent,
         FrameworkComponent,
         InvestmentsComponent,
         InvestmentsModalComponent,
