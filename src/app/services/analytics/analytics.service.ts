@@ -38,12 +38,4 @@ export class AnalyticsService {
             gtag('event', this.ANALYTIC_EVENT_TYPES.sidebar_navigation, { 'route': routeValue });
         }
     }
-
-    public logTopbarNavEvent(routeValue: string, isKeyboardEvent: boolean = false) {
-        if(isKeyboardEvent) {
-            gtag('event', this.ANALYTIC_EVENT_TYPES.topbar_navigation_keyboard, { 'route': routeValue });
-        } else {
-            gtag('event', this.ANALYTIC_EVENT_TYPES.topbar_navigation, { 'route': routeValue });
-        }
-    }
 }
