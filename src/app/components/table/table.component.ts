@@ -358,7 +358,7 @@ export class TableComponent implements OnInit, OnChanges {
         this.tableService.fismaTableClick(data);
         break;
       case 'fismaPoc':
-        this.tableService.fismaTableClick(data);
+        this.rowClickEvent.emit(data);
         break;
       case 'Technology':
         this.tableService.globalSearchTableClick(data);

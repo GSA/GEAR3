@@ -59,6 +59,7 @@ import { WebsiteManagerComponent } from './components/manager-modals/website-man
 import { FismaComponent } from './views/security/fisma/fisma.component';
 import { FismaModalComponent } from './components/modals/fisma-modal/fisma-modal.component';
 import { FismaPocsComponent } from './views/security/fisma-pocs/fisma-pocs.component';
+import { FismaPocsDetailsComponent } from './views/security/fisma-pocs/details/fisma-pocs-details.component';
 
 //// Technologies
 import { ItStandardsComponent } from './views/technologies/it-standards/it-standards.component';
@@ -160,6 +161,7 @@ import LaraLightBlue from '@primeng/themes/lara';
         FismaComponent,
         FismaModalComponent,
         FismaPocsComponent,
+    FismaPocsDetailsComponent,
         ItStandardsComponent,
         ItStandardsModalComponent,
         ItStandardManagerComponent,

@@ -33,6 +33,7 @@ import { WebsitesComponent } from './views/systems/websites/websites.component';
 // Security
 import { FismaComponent } from './views/security/fisma/fisma.component';
 import { FismaPocsComponent } from './views/security/fisma-pocs/fisma-pocs.component';
+import { FismaPocsDetailsComponent } from './views/security/fisma-pocs/details/fisma-pocs-details.component';
 
 // Technologies
 import { ItStandardsComponent } from './views/technologies/it-standards/it-standards.component';
@@ -173,7 +174,7 @@ const routes: Routes = [
   },
   {
     path: 'FISMA_POC/:fismaID',
-    component: FismaPocsComponent,
+    component: FismaPocsDetailsComponent,
     title: 'FISMA Point of Contact',
   },
 
