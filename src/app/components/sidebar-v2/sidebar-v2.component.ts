@@ -45,7 +45,10 @@ export class SidebarV2Component {
     { text: 'Access Forms', route: '/forms' },
     { text: 'Glossary', route: '/glossary' },
     { text: 'Data Dictionary', route: '/data_dictionary' },
-    { text: 'API Documentation', href: 'https://gsa.github.io/GEAR-Documentation/api-docs/', icon: 'fas fa-external-link-alt' }
+    { text: 'API Documentation', href: 'https://gsa.github.io/GEAR-Documentation/api-docs/', icon: 'fas fa-external-link-alt' },
+    { text: 'Overview', route: '/about/overview' },
+    { text: 'Data', route: '/about/data' },
+    { text: 'Systems Rationalization', route: '/about/sysRat' }
   ];
   
   constructor() {
@@ -58,3 +61,4 @@ export class SidebarV2Component {
     this.activeMenu = this.activeMenu === menuKey ? null : menuKey;
   }
 }
+
