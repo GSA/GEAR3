@@ -1,56 +1,49 @@
-<div class="d-flex justify-content-between">
-  <div></div>
-  <!-- Filter buttons -->
-  <div>
-    <ng-content select="[filterBtns]"></ng-content>
+<div class="table-responsive-container">
+  <div class="d-flex justify-content-between">
+    <div></div>
+    <div>
+      <ng-content select="[filterBtns]"></ng-content>
+    </div>
+    <div>
+      <ng-content select="[definitionBtn]"></ng-content>
+    </div>
   </div>
-  <!-- Definition tooltip -->
-  <div>
-    <ng-content select="[definitionBtn]"></ng-content>
-  </div>
-</div>
 
-<!-- Table -->
-<p-table #dt
-  [columns]="tableCols"
-  [value]="tableData"
-  [rowsPerPageOptions]="[10, 25, 50, 100, 200]"
-  [rows]="10"
-  [first]="first"
-  [paginator]="showPagination"
-  [scrollable]="true"
-  [scrollHeight]="screenHeight" 
-  [exportHeader]="'customExportHeader'"
-  [exportFilename]="getExportFilename()"
-  [styleClass]="reportStyle + ' p-datatable-gridlines'"
-  [exportFunction]="exportFunction"
-  [sortOrder]="defaultSortOrder"
-  [sortField]="defaultSortField"
-  selectionMode="single"
-  [showCurrentPageReport]="true"
-  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-  (onPage)="pageChange($event)"
-  (onRowSelect)="onRowSelect($event)">
+  <p-table #dt
+    [columns]="tableCols"
+    [value]="tableData"
+    [rowsPerPageOptions]="[10, 25, 50, 100, 200]"
+    [rows]="10"
+    [first]="first"
+    [paginator]="showPagination"
+    [scrollable]="true"
+    [scrollHeight]="screenHeight" 
+    [exportHeader]="'customExportHeader'"
+    [exportFilename]="getExportFilename()"
+    [styleClass]="reportStyle + ' p-datatable-gridlines'"
+    [exportFunction]="exportFunction"
+    [sortOrder]="defaultSortOrder"
+    [sortField]="defaultSortField"
+    selectionMode="single"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    (onPage)="pageChange($event)"
+    (onRowSelect)="onRowSelect($event)">
 
-
-  
-  <!-- Table actions -->
-  <ng-template pTemplate="caption">
-    <div class="caption-container">
-      <ng-content select="[filterTabs]"></ng-content>
-      <div class="caption-toolbar-container">
-        <div class="table-toolbar-container" *ngIf="showToolbar">
-          <!-- Search bar -->
-          <p-iconField iconPosition="left" *ngIf="showSearchbar">
-            <p-inputIcon styleClass="fa fa-search" />
-            <input 
-              pInputText 
-              type="text" 
-              (input)="onTableSearch($event.target.value)" 
-              placeholder="Search keyword"
-              aria-label="Table Search" />
-          </p-iconField>
-          <!-- Show/hide columns -->
+    <ng-template pTemplate="caption">
+      <div class="caption-container">
+        <ng-content select="[filterTabs]"></ng-content>
+        <div class="caption-toolbar-container">
+          <div class="table-toolbar-container" *ngIf="showToolbar">
+            <p-iconField iconPosition="left" *ngIf="showSearchbar">
+              <p-inputIcon styleClass="fa fa-search" />
+              <input 
+                pInputText 
+                type="text" 
+                (input)="onTableSearch($event.target.value)" 
+                placeholder="Search keyword"
+                aria-label="Table Search" />
+            </p-iconField>
             <p-multiSelect 
               *ngIf="showShowHideColumnButton"
               [options]="tableCols" 
@@ -64,66 +57,61 @@
                 <i class="fa fa-th-list"></i>
               </ng-template>
             </p-multiSelect>
-            <!-- Pagination toggle button -->
-            <!-- <p-button icon="fa fa-caret-square-down" severity="primary" (click)="togglePagination()" *ngIf="showPaginationToggleButton" ariaLabel="Toggle Pagination" /> -->
-            <!-- Export button -->
             <p-button icon="fa fa-download" pTooltip="Export table data" severity="primary" (click)="onExportData()" *ngIf="showExportButton" ariaLabel="Export Data" />
-            <!-- Filter toggle button -->
             <p-button icon="fa fa-filter" pTooltip="Show/Hide column filters" severity="primary" (click)="toggleFilter()" *ngIf="showFilterButton" ariaLabel="Toggle Filters" />
+          </div>
         </div>
       </div>
-    </div>
-  </ng-template>
+    </ng-template>
 
-  <!-- Table header -->
-  <ng-template pTemplate="header" let-columns>
-    <!-- Headings -->
-    <tr>
-      <ng-container *ngFor="let col of columns">
-        <th *ngIf="showColumn(col)" [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.isSortable ? true : false">
-          <div class="d-flex align-items-center table-heading">
-            <span *ngIf="!col.titleTooltip" >{{ col.header }}</span>
-            <span *ngIf="col.titleTooltip" [title]="col.titleTooltip">{{ col.header }}</span>
-            <!-- <span *ngIf="showFilters"><p-columnFilter type="text" [field]="col.field" display="menu" /></span> -->
-            <ng-container *ngIf="col.isSortable">
-              <p-sortIcon [field]="col.field"></p-sortIcon>
-            </ng-container>
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <ng-container *ngFor="let col of columns">
+          <th *ngIf="showColumn(col)" [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.isSortable ? true : false">
+            <div class="d-flex align-items-center table-heading">
+              <span *ngIf="!col.titleTooltip" >{{ col.header }}</span>
+              <span *ngIf="col.titleTooltip" [title]="col.titleTooltip">{{ col.header }}</span>
+              <ng-container *ngIf="col.isSortable">
+                <p-sortIcon [field]="col.field"></p-sortIcon>
+              </ng-container>
+            </div>
+          </th>
+        </ng-container>
+      </tr>
+      <tr *ngIf="showFilters">
+        <ng-container *ngFor="let col of columns">
+          <th *ngIf="showColumn(col)">
+            <p-columnFilter 
+                type="text" 
+                [field]="col.field"
+                [matchModeOptions]="matchModeOptions"
+                [matchMode]="'contains'"
+                [placeholder]="'Filter by ' + col.header" 
+                [ariaLabel]="'Filter ' + col.header" />
+          </th>
+        </ng-container>
+      </tr>
+    </ng-template>
+    
+    <ng-template pTemplate="body" let-rowData let-columns="columns">
+      <tr [pSelectableRow]="rowData">
+        <ng-container *ngFor="let col of columns">
+          <td *ngIf="showColumn(col)">
+            <span *ngIf="!col.formatter" [ngClass]="col.class">{{ rowData[col.field] }}</span>
+            <span *ngIf="col.formatter" [ngClass]="col.class" [innerHTML]="col.formatter(rowData[col.field])"></span>
+          </td>
+        </ng-container>
+      </tr>
+    </ng-template>
+    
+    <ng-template pTemplate="emptymessage" let-columns>
+      <tr>
+        <td [attr.colspan]="columns.length">
+          <div class="d-flex justify-content-center">
+            <span>No records found!</span>
           </div>
-        </th>
-      </ng-container>
-    </tr>
-    <tr *ngIf="showFilters">
-      <ng-container *ngFor="let col of columns">
-        <th *ngIf="showColumn(col)">
-          <p-columnFilter 
-              type="text" 
-              [field]="col.field"
-              [matchModeOptions]="matchModeOptions"
-              [matchMode]="'contains'"
-              [placeholder]="'Filter by ' + col.header" 
-              [ariaLabel]="'Filter ' + col.header" />
-        </th>
-      </ng-container>
-    </tr>
-  </ng-template>
-  <!-- Table body -->
-  <ng-template pTemplate="body" let-rowData let-columns="columns">
-    <tr [pSelectableRow]="rowData">
-      <ng-container *ngFor="let col of columns">
-        <td *ngIf="showColumn(col)">
-          <span *ngIf="!col.formatter" [ngClass]="col.class">{{ rowData[col.field] }}</span>
-          <span *ngIf="col.formatter" [ngClass]="col.class" [innerHTML]="col.formatter(rowData[col.field])"></span>
         </td>
-      </ng-container>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="emptymessage" let-columns>
-    <tr>
-      <td [attr.colspan]="columns.length">
-        <div class="d-flex justify-content-center">
-          <span>No records found!</span>
-        </div>
-      </td>
-    </tr>
-  </ng-template>
-</p-table>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

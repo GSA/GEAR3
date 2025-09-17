@@ -66,6 +66,23 @@ export class TableComponent implements OnInit, OnChanges {
   @HostListener('window:resize', ['$event'])
   onResize(event) {
     this.setScreenHeight();
+    this.adjustTableHeight();
+  }
+
+  @HostListener('window:orientationchange', ['$event'])
+  onOrientationChange(event) {
+    setTimeout(() => {
+      this.setScreenHeight();
+      this.adjustTableHeight();
+    }, 300);
+  }
+
+  private adjustTableHeight() {
+    setTimeout(() => {
+      if (this.dt) {
+        this.dt.resetScrollTop();
+      }
+    }, 100);
   }
 
   tableData: any[] = [];
@@ -97,7 +114,7 @@ export class TableComponent implements OnInit, OnChanges {
     ];
 
     this.exportColumns = this.tableCols.map((col) => ({ title: col.header, dataKey: col.field }));
-    // this.activeTableData = this.getTableData();
+    
     if (this.isLocal) {
       this.tableData = this.localTableData;
       this.originalTableData = [...this.localTableData];
@@ -107,19 +124,23 @@ export class TableComponent implements OnInit, OnChanges {
         this.originalTableData = [...d];
       });
     }
+    
     const stored = localStorage.getItem('visibleColumns');
     if (stored) {
       this.visibleColumns = JSON.parse(stored);
-      // Sync showColumn state in tableCols
       this.tableCols.forEach(col => {
         col.showColumn = this.visibleColumns.some(v => v.field === col.field);
       });
     } else {
-      // Default to all visible
       this.visibleColumns = this.tableCols.filter(col => col.showColumn !== false);
     } 
 
     this.generateColumns();
+    
+    setTimeout(() => {
+      this.setScreenHeight();
+      this.adjustTableHeight();
+    }, 100);
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -136,13 +157,19 @@ export class TableComponent implements OnInit, OnChanges {
   // }
 
   toggleVisible(e: any) {
-    this.tableCols.map(c => {
-      if (c.field === e.originalEvent.option.field) {
-        c.showColumn = e.originalEvent.selected;
+    // Clear the visible columns array first
+    this.visibleColumns = [];
+    
+    // Update the showColumn property for each column based on the selected items
+    this.tableCols.forEach(col => {
+      const isSelected = e.value.some((selectedCol: Column) => selectedCol.field === col.field);
+      col.showColumn = isSelected;
+      
+      if (isSelected) {
+        this.visibleColumns.push(col);
       }
     });
 
-    this.visibleColumns = this.tableCols.filter(col => col.showColumn !== false);
     localStorage.setItem('visibleColumns', JSON.stringify(this.visibleColumns));
   }
 
@@ -231,11 +258,19 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   setScreenHeight() {
-    const TABLE_HEIGHT_OFFSET: number = 315;
-    if (window.innerHeight < 800) {
-      this.screenHeight = `${window.innerHeight}px`;
+    const MIN_HEIGHT = 400;
+    const MAX_HEIGHT = 600;
+    const HEADER_OFFSET = 200;
+    const PAGINATION_OFFSET = 100;
+    
+    const availableHeight = window.innerHeight - HEADER_OFFSET - PAGINATION_OFFSET;
+    
+    if (availableHeight < MIN_HEIGHT) {
+      this.screenHeight = `${MIN_HEIGHT}px`;
+    } else if (availableHeight > MAX_HEIGHT) {
+      this.screenHeight = `${MAX_HEIGHT}px`;
     } else {
-      this.screenHeight = `${(window.innerHeight - TABLE_HEIGHT_OFFSET)}px`;
+      this.screenHeight = `${availableHeight}px`;
     }
   }
 
@@ -249,11 +284,8 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   generateColumns() {
-    this.tableCols.map(c => {
-      if (this.showColumn(c)) {
-        this.visibleColumns.push(c);
-      }
-    });
+    // Clear and rebuild visible columns based on showColumn property
+    this.visibleColumns = this.tableCols.filter(col => this.showColumn(col));
   }
 
   public onRowSelect(e: TableRowSelectEvent) {
