@@ -1,21 +1,23 @@
 <div class="websites-details-container" *ngIf="isDataReady">
     <div class="breadcrumb-container">
-         <app-breadcrumb>
+        <app-breadcrumb>
             <span currentPageName>{{detailsData.domain}}</span>
-         </app-breadcrumb>
+        </app-breadcrumb>
     </div>
     <div class="title-container">
         <span class="title">{{detailsData.domain}}</span>
     </div>
     <div class="content-container">
         <div class="data-tab-container">
-            <span class="data-tab-text" [ngClass]="{'active' : isOverviewTabActive}" (click)="onTabClick('overview')">Overview</span>
-            <span class="data-tab-text" [ngClass]="{'active' : isRelatedSystemsTabActive}" (click)="onTabClick('relatedSystems')">Related Systems</span>
+            <span class="data-tab-text" [ngClass]="{'active' : isOverviewTabActive}"
+                (click)="onTabClick('overview')">Overview</span>
+            <span class="data-tab-text" [ngClass]="{'active' : isRelatedSystemsTabActive}"
+                (click)="onTabClick('relatedSystems')">Related Systems</span>
         </div>
         <div class="tab-container" *ngIf="isOverviewTabActive">
             <div class="overall-data-container">
                 <div class="main-data-container">
-                    <div class="data"> 
+                    <div class="data">
                         <label class="data-label">
                             <span>
                                 Status
@@ -26,7 +28,7 @@
                             <span>{{detailsData.production_status}}</span>
                         </span>
                     </div>
-                    <div class="data"> 
+                    <div class="data">
                         <label class="data-label">
                             <span>
                                 Type of Site
@@ -37,7 +39,7 @@
                             <span>{{detailsData.type_of_site}}</span>
                         </span>
                     </div>
-                    <div class="data"> 
+                    <div class="data">
                         <label class="data-label">
                             <span>
                                 Recent Screenshots
@@ -52,160 +54,116 @@
                             <span>{{websiteScan.scan_date | date : "mediumDate"}}</span>
                         </span>
                     </div>
-                    <div class="data"></div>
-                    <div class="sub-content">
-                        <div class="website-scan-image-container" *ngIf="hasImages()">
-                            <img [src]="getDesktopImg()" [alt]="getDesktopImgAltText()" class=" shadow"/>
-                            <img [src]="getMobileImg()" [alt]="getMobileImgAltText()" class=" shadow"/>
-                        </div>
-                        <div class="service-category-container" *ngIf="hasServiceCategories()">
-                            <p-accordion>
-                                <p-accordionTab *ngFor="let sc of websiteServiceCategories; let i = index" [header]="sc.name">
-                                    <website-service-category-details-content [data]="sc" [showToolbar]="false" [showPagination]="false"></website-service-category-details-content>
-                                </p-accordionTab>
-                            </p-accordion>
-                        </div>
-                        <div class="chart-container">
-                            <h4>EDX Compiled Indicator</h4>
-                            <div class="row mb-3">
-                                <div class="col-auto">
-                                  <div>
-                                    <svg
-                                      class="website-chart"
-                                      style="display: block; margin: 0 auto"
-                                      id="graph"
-                                      height="100"
-                                      width="100"
-                                      viewBox="0 0 100 100"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                      <title>
-                                        Coxcomb chart showing website strengths and weaknesses
-                                        on a 0 to 1 scale with 1 being the highest value. Scores
-                                        are as follows: Customer Centricity:
-                                        {{ detailsData.customer_centricity }}, Required Links:
-                                        {{ detailsData.required_links }}, Mobile Performance:
-                                        {{ detailsData.mobile_performance }}, Accessibility:
-                                        {{ detailsData.accessibility }}, Google Analytics:
-                                        {{ detailsData.google_analytics }}, USWDS:
-                                        {{ detailsData.uswds }}
-                                      </title>
-                                      <g class="background">
-                                        <circle cx="50" cy="50" r="50" pathLength="100" />
-                                      </g>
-                
-                                      <g id="website-chart" class="graph">
-                                        <circle
-                                          cx="50"
-                                          cy="50"
-                                          class="one"
-                                          ngClass="{{
+                    
+
+                </div>
+                <div class="sub-content">
+                    <div class="website-scan-image-container" *ngIf="hasImages()">
+                        <img [src]="getDesktopImg()" [alt]="getDesktopImgAltText()" class=" shadow" />
+                        <img [src]="getMobileImg()" [alt]="getMobileImgAltText()" class=" shadow" />
+                    </div>
+                    <div class="service-category-container" *ngIf="hasServiceCategories()">
+                        <p-accordion>
+                            <p-accordionTab *ngFor="let sc of websiteServiceCategories; let i = index"
+                                [header]="sc.name">
+                                <website-service-category-details-content [data]="sc" [showToolbar]="false"
+                                    [showPagination]="false"></website-service-category-details-content>
+                            </p-accordionTab>
+                        </p-accordion>
+                    </div>
+                    <div class="chart-container">
+                        <h4>EDX Compiled Indicator</h4>
+                        <div class="row mb-3">
+                            <div class="col-auto">
+                                <div>
+                                    <svg class="website-chart" style="display: block; margin: 0 auto" id="graph"
+                                        height="100" width="100" viewBox="0 0 100 100"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <title>
+                                            Coxcomb chart showing website strengths and weaknesses
+                                            on a 0 to 1 scale with 1 being the highest value. Scores
+                                            are as follows: Customer Centricity:
+                                            {{ detailsData.customer_centricity }}, Required Links:
+                                            {{ detailsData.required_links }}, Mobile Performance:
+                                            {{ detailsData.mobile_performance }}, Accessibility:
+                                            {{ detailsData.accessibility }}, Google Analytics:
+                                            {{ detailsData.google_analytics }}, USWDS:
+                                            {{ detailsData.uswds }}
+                                        </title>
+                                        <g class="background">
+                                            <circle cx="50" cy="50" r="50" pathLength="100" />
+                                        </g>
+
+                                        <g id="website-chart" class="graph">
+                                            <circle cx="50" cy="50" class="one" ngClass="{{
                                             detailsData.customer_centricity === '0.00'
                                               ? 'zeroValue'
                                               : ''
-                                          }}"
-                                          transform="rotate(-90 50 50)"
-                                          [style.--value]="detailsData.customer_centricity"
-                                          [style.--max]="1"
-                                        />
-                                        <circle
-                                          cx="50"
-                                          cy="50"
-                                          class="two"
-                                          ngClass="{{
+                                          }}" transform="rotate(-90 50 50)"
+                                                [style.--value]="detailsData.customer_centricity" [style.--max]="1" />
+                                            <circle cx="50" cy="50" class="two" ngClass="{{
                                             detailsData.required_links === '0.00' ? 'zeroValue' : ''
-                                          }}"
-                                          transform="rotate(-30 50 50)"
-                                          [style.--value]="detailsData.required_links"
-                                          [style.--max]="1"
-                                        />
-                                        <circle
-                                          cx="50"
-                                          cy="50"
-                                          class="three"
-                                          ngClass="{{
+                                          }}" transform="rotate(-30 50 50)"
+                                                [style.--value]="detailsData.required_links" [style.--max]="1" />
+                                            <circle cx="50" cy="50" class="three" ngClass="{{
                                             detailsData.mobile_performance === '0.00'
                                               ? 'zeroValue'
                                               : ''
-                                          }}"
-                                          transform="rotate(30 50 50)"
-                                          [style.--value]="detailsData.mobile_performance"
-                                          [style.--max]="1"
-                                        />
-                                        <circle
-                                          cx="50"
-                                          cy="50"
-                                          class="four"
-                                          ngClass="{{
+                                          }}" transform="rotate(30 50 50)"
+                                                [style.--value]="detailsData.mobile_performance" [style.--max]="1" />
+                                            <circle cx="50" cy="50" class="four" ngClass="{{
                                             detailsData.accessibility === '0.00' ? 'zeroValue' : ''
-                                          }}"
-                                          transform="rotate(90 50 50)"
-                                          [style.--value]="detailsData.accessibility"
-                                          [style.--max]="1"
-                                        />
-                                        <circle
-                                          cx="50"
-                                          cy="50"
-                                          class="five"
-                                          ngClass="{{
+                                          }}" transform="rotate(90 50 50)" [style.--value]="detailsData.accessibility"
+                                                [style.--max]="1" />
+                                            <circle cx="50" cy="50" class="five" ngClass="{{
                                             detailsData.google_analytics === '0.00'
                                               ? 'zeroValue'
                                               : ''
-                                          }}"
-                                          transform="rotate(150 50 50)"
-                                          [style.--value]="detailsData.google_analytics"
-                                          [style.--max]="1"
-                                        />
-                                        <circle
-                                          cx="50"
-                                          cy="50"
-                                          class="six"
-                                          ngClass="{{
+                                          }}" transform="rotate(150 50 50)"
+                                                [style.--value]="detailsData.google_analytics" [style.--max]="1" />
+                                            <circle cx="50" cy="50" class="six" ngClass="{{
                                             detailsData.uswds === '0.00' ? 'zeroValue' : ''
-                                          }}"
-                                          transform="rotate(210 50 50)"
-                                          [style.--value]="detailsData.uswds"
-                                          [style.--max]="1"
-                                        />
-                                      </g>
+                                          }}" transform="rotate(210 50 50)" [style.--value]="detailsData.uswds"
+                                                [style.--max]="1" />
+                                        </g>
                                     </svg>
-                                  </div>
                                 </div>
-                                <div class="col-8">
-                                  <p>
+                            </div>
+                            <div class="col-8">
+                                <p>
                                     The following charts show the relative strengths and
                                     weaknesses of each website across 6 areas.
-                                  </p>
-                                  <p>
+                                </p>
+                                <p>
                                     A gray semi-circle appears when data is unavailable for the
                                     website in that particular category.
-                                  </p>
-                                  <div class="row">
+                                </p>
+                                <div class="row">
                                     <div class="col-12 col-md-4 mb-2">
-                                      <span class="legend one"></span>Customer Centricity
+                                        <span class="legend one"></span>Customer Centricity
                                     </div>
                                     <div class="col-12 col-md-4 mb-2">
-                                      <span class="legend two"></span>Required Links
+                                        <span class="legend two"></span>Required Links
                                     </div>
                                     <div class="col-12 col-md-4 mb-2">
-                                      <span class="legend three"></span>Mobile Performance
+                                        <span class="legend three"></span>Mobile Performance
                                     </div>
                                     <div class="col-12 col-md-4 mb-2">
-                                      <span class="legend four"></span>Accessibility (AMP)
+                                        <span class="legend four"></span>Accessibility (AMP)
                                     </div>
                                     <div class="col-12 col-md-4 mb-2">
-                                      <span class="legend five"></span>Google Analytics
+                                        <span class="legend five"></span>Google Analytics
                                     </div>
                                     <div class="col-12 col-md-4 mb-2">
-                                      <span class="legend six"></span>USWDS
+                                        <span class="legend six"></span>USWDS
                                     </div>
-                                  </div>
                                 </div>
-                              </div>
+                            </div>
                         </div>
-                        <div class="additional-info-container">
-                            <div class="main-data-container">
-                            <div class="data"> 
+                    </div>
+                    <div class="additional-info-container">
+                        <div class="main-data-container">
+                            <div class="data">
                                 <label class="data-label">
                                     <span>
                                         Office
@@ -216,7 +174,7 @@
                                     <span>{{detailsData.office}}</span>
                                 </span>
                             </div>
-                            <div class="data"> 
+                            <div class="data">
                                 <label class="data-label">
                                     <span>
                                         Sub Office
@@ -227,7 +185,7 @@
                                     <span>{{detailsData.sub_office}}</span>
                                 </span>
                             </div>
-                            <div class="data"> 
+                            <div class="data">
                                 <label class="data-label">
                                     <span>
                                         Website Manager
@@ -238,7 +196,7 @@
                                     <span>{{detailsData.site_owner_email}}</span>
                                 </span>
                             </div>
-                            <div class="data"> 
+                            <div class="data">
                                 <label class="data-label">
                                     <span>
                                         Contact Email
@@ -249,7 +207,7 @@
                                     <span>{{detailsData.contact_email}}</span>
                                 </span>
                             </div>
-                            <div class="data"> 
+                            <div class="data">
                                 <label class="data-label">
                                     <span>
                                         Redirect URL
@@ -260,7 +218,7 @@
                                     <span>{{detailsData.redirects_to}}</span>
                                 </span>
                             </div>
-                            <div class="data"> 
+                            <div class="data">
                                 <label class="data-label">
                                     <span>
                                         Required By Law/Policy
@@ -271,7 +229,7 @@
                                     <span>{{detailsData.required_by_law_or_policy}}</span>
                                 </span>
                             </div>
-                            <div class="data"> 
+                            <div class="data">
                                 <label class="data-label">
                                     <span>
                                         DAP Enabled
@@ -282,7 +240,7 @@
                                     <span>{{detailsData.has_dap}}</span>
                                 </span>
                             </div>
-                            <div class="data"> 
+                            <div class="data">
                                 <label class="data-label">
                                     <span>
                                         Current USWDS Score
@@ -293,7 +251,7 @@
                                     <span>{{detailsData.uswds}}</span>
                                 </span>
                             </div>
-                            <div class="data"> 
+                            <div class="data">
                                 <label class="data-label">
                                     <span>
                                         Mobile Friendly?
@@ -304,7 +262,7 @@
                                     <span>{{detailsData.mobile_friendly}}</span>
                                 </span>
                             </div>
-                            <div class="data"> 
+                            <div class="data">
                                 <label class="data-label">
                                     <span>
                                         Has Search?
@@ -315,7 +273,7 @@
                                     <span>{{detailsData.has_search}}</span>
                                 </span>
                             </div>
-                            <div class="data"> 
+                            <div class="data">
                                 <label class="data-label">
                                     <span>
                                         HTTPS Enabled
@@ -326,7 +284,7 @@
                                     <span>{{detailsData.https}}</span>
                                 </span>
                             </div>
-                            <div class="data"> 
+                            <div class="data">
                                 <label class="data-label">
                                     <span>
                                         Hosting Platform
@@ -337,7 +295,7 @@
                                     <span>{{detailsData.hosting_platform}}</span>
                                 </span>
                             </div>
-                            <div class="data"> 
+                            <div class="data">
                                 <label class="data-label">
                                     <span>
                                         Content Management Platform
@@ -348,7 +306,7 @@
                                     <span>{{detailsData.cms_platform}}</span>
                                 </span>
                             </div>
-                            <div class="data"> 
+                            <div class="data">
                                 <label class="data-label">
                                     <span>
                                         Repository URL
@@ -359,7 +317,7 @@
                                     <span>{{detailsData.repository_url}}</span>
                                 </span>
                             </div>
-                            <div class="data"> 
+                            <div class="data">
                                 <label class="data-label">
                                     <span>
                                         Target Decommission Date
@@ -370,7 +328,7 @@
                                     <span>{{detailsData.target_decommission_date | date:'shortDate'}}</span>
                                 </span>
                             </div>
-                            <div class="data"> 
+                            <div class="data">
                                 <label class="data-label">
                                     <span>
                                         Sitemap URL
@@ -382,7 +340,6 @@
                                 </span>
                             </div>
                         </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -390,7 +347,8 @@
         <div class="tab-container" *ngIf="isRelatedSystemsTabActive">
             <div class="overall-data-container">
                 <div class="main-data-container">
-                    <app-table [localTableData]="relatedSystemsData" [isLocal]="true" [tableCols]="relatedSystemsCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                    <app-table [localTableData]="relatedSystemsData" [isLocal]="true" [tableCols]="relatedSystemsCols"
+                        [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
                 </div>
             </div>
         </div>
