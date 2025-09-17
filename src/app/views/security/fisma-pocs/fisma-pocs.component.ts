@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
@@ -21,6 +21,7 @@ export class FismaPocsComponent implements OnInit {
     private apiService: ApiService,
     private modalService: ModalsService,
     private route: ActivatedRoute,
+    private router: Router,
     private tableService: TableService,
     private titleService: Title
   ) {
@@ -106,6 +107,10 @@ export class FismaPocsComponent implements OnInit {
           });
       }
     });
+  }
+
+  public onRowClick(e: any) {
+    this.router.navigate(['FISMA_POC', e.ID]);
   }
 
   pocFormatter(value) {

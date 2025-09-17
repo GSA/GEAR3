@@ -32,6 +32,7 @@ export class TableComponent implements OnInit, OnChanges {
   // The name of report for the export csv
   @Input() exportName: string = '';
 
+
   // An optional function to use for exporting the data
   // instead of the built in export function
   @Input() exportFunction: Function = null;
@@ -66,6 +67,23 @@ export class TableComponent implements OnInit, OnChanges {
   @HostListener('window:resize', ['$event'])
   onResize(event) {
     this.setScreenHeight();
+    this.adjustTableHeight();
+  }
+
+  @HostListener('window:orientationchange', ['$event'])
+  onOrientationChange(event) {
+    setTimeout(() => {
+      this.setScreenHeight();
+      this.adjustTableHeight();
+    }, 300);
+  }
+
+  private adjustTableHeight() {
+    setTimeout(() => {
+      if (this.dt) {
+        this.dt.resetScrollTop();
+      }
+    }, 100);
   }
 
   tableData: any[] = [];
@@ -89,6 +107,7 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+
     this.matchModeOptions = [
       { label: 'Contains', value: FilterMatchMode.CONTAINS },
       { label: 'Not Contains', value: FilterMatchMode.NOT_CONTAINS },
@@ -97,7 +116,7 @@ export class TableComponent implements OnInit, OnChanges {
     ];
 
     this.exportColumns = this.tableCols.map((col) => ({ title: col.header, dataKey: col.field }));
-    // this.activeTableData = this.getTableData();
+    
     if (this.isLocal) {
       this.tableData = this.localTableData;
       this.originalTableData = [...this.localTableData];
@@ -107,26 +126,26 @@ export class TableComponent implements OnInit, OnChanges {
         this.originalTableData = [...d];
       });
     }
-    const stored = localStorage.getItem('visibleColumns');
-    if (stored) {
-      this.visibleColumns = JSON.parse(stored);
-      // Sync showColumn state in tableCols
-      this.tableCols.forEach(col => {
-        col.showColumn = this.visibleColumns.some(v => v.field === col.field);
-      });
-    } else {
-      // Default to all visible
-      this.visibleColumns = this.tableCols.filter(col => col.showColumn !== false);
-    } 
-
-    this.generateColumns();
+    
+    this.initializeColumnVisibility();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.localTableData && this.isLocal) {
       this.originalTableData = [...this.localTableData];
     }
+    
+    // Handle tableCols changes (e.g., when switching tabs)
+    if (changes.tableCols && !changes.tableCols.firstChange) {
+      this.initializeColumnVisibility();
+    }
   }
+
+  private initializeColumnVisibility() {
+    // Simply set visibleColumns to all columns that should be visible
+    this.visibleColumns = this.tableCols.filter(col => col.showColumn !== false);
+  }
+
 
   // getTableData() {
   //   if(this.preFilteredTableData && this.preFilteredTableData.length > 0) {
@@ -135,15 +154,12 @@ export class TableComponent implements OnInit, OnChanges {
   //   return this.tableData;
   // }
 
-  toggleVisible(e: any) {
-    this.tableCols.map(c => {
-      if (c.field === e.originalEvent.option.field) {
-        c.showColumn = e.originalEvent.selected;
-      }
-    });
 
-    this.visibleColumns = this.tableCols.filter(col => col.showColumn !== false);
-    localStorage.setItem('visibleColumns', JSON.stringify(this.visibleColumns));
+  toggleVisible(e: any) {
+    // Update showColumn property for each column based on multiSelect selection
+    this.tableCols.forEach(col => {
+      col.showColumn = this.visibleColumns.some(visibleCol => visibleCol.field === col.field);
+    });
   }
 
   togglePagination() {
@@ -231,11 +247,19 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   setScreenHeight() {
-    const TABLE_HEIGHT_OFFSET: number = 315;
-    if (window.innerHeight < 800) {
-      this.screenHeight = `${window.innerHeight}px`;
+    const MIN_HEIGHT = 400;
+    const MAX_HEIGHT = 600;
+    const HEADER_OFFSET = 200;
+    const PAGINATION_OFFSET = 100;
+    
+    const availableHeight = window.innerHeight - HEADER_OFFSET - PAGINATION_OFFSET;
+    
+    if (availableHeight < MIN_HEIGHT) {
+      this.screenHeight = `${MIN_HEIGHT}px`;
+    } else if (availableHeight > MAX_HEIGHT) {
+      this.screenHeight = `${MAX_HEIGHT}px`;
     } else {
-      this.screenHeight = `${(window.innerHeight - TABLE_HEIGHT_OFFSET)}px`;
+      this.screenHeight = `${availableHeight}px`;
     }
   }
 
@@ -249,7 +273,11 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   generateColumns() {
-    this.tableCols.map(c => {
+    // Clear existing visible columns to avoid duplicates
+    this.visibleColumns = [];
+    
+    // Add columns that should be visible
+    this.tableCols.forEach(c => {
       if (this.showColumn(c)) {
         this.visibleColumns.push(c);
       }
@@ -326,7 +354,7 @@ export class TableComponent implements OnInit, OnChanges {
         this.tableService.fismaTableClick(data);
         break;
       case 'fismaPoc':
-        this.tableService.fismaTableClick(data);
+        this.rowClickEvent.emit(data);
         break;
       case 'Technology':
         this.tableService.globalSearchTableClick(data);
