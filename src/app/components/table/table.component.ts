@@ -5,6 +5,7 @@ import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { ApiService } from '@services/apis/api.service';
 import { FilterMatchMode, SelectItem } from 'primeng/api';
+import { ColumnFilter } from '../modals/table-column-filter-modal/table-column-filter-modal.component';
 
 
 @Component({
@@ -95,6 +96,7 @@ export class TableComponent implements OnInit, OnChanges {
   currentFilterButtons: string[] = [];
   screenHeight: string = '';
   showFilters: boolean = false;
+  showColumnFilterModal: boolean = false;
   first: number = 0;
   rows: number = 10;
 
@@ -154,12 +156,21 @@ export class TableComponent implements OnInit, OnChanges {
   //   return this.tableData;
   // }
 
-
   toggleVisible(e: any) {
-    // Update showColumn property for each column based on multiSelect selection
+    // Clear the visible columns array first
+    this.visibleColumns = [];
+    
+    // Update the showColumn property for each column based on the selected items
     this.tableCols.forEach(col => {
-      col.showColumn = this.visibleColumns.some(visibleCol => visibleCol.field === col.field);
+      const isSelected = e.value.some((selectedCol: Column) => selectedCol.field === col.field);
+      col.showColumn = isSelected;
+      
+      if (isSelected) {
+        this.visibleColumns.push(col);
+      }
     });
+
+    localStorage.setItem('visibleColumns', JSON.stringify(this.visibleColumns));
   }
 
   togglePagination() {
@@ -273,15 +284,8 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   generateColumns() {
-    // Clear existing visible columns to avoid duplicates
-    this.visibleColumns = [];
-    
-    // Add columns that should be visible
-    this.tableCols.forEach(c => {
-      if (this.showColumn(c)) {
-        this.visibleColumns.push(c);
-      }
-    });
+    // Clear and rebuild visible columns based on showColumn property
+    this.visibleColumns = this.tableCols.filter(col => this.showColumn(col));
   }
 
   public onRowSelect(e: TableRowSelectEvent) {
@@ -417,5 +421,33 @@ export class TableComponent implements OnInit, OnChanges {
     } else {
       this.originalTableData = [...this.tableData];
     }
+  }
+
+  openColumnFilterModal(): void {
+    this.showColumnFilterModal = true;
+  }
+
+  onColumnFilterSave(filters: ColumnFilter[]): void {
+    // Clear existing filters first
+    this.dt.filters = {};
+    
+    // Apply new filters
+    filters.forEach(filter => {
+      this.dt.filters[filter.field] = [{ 
+        value: filter.value, 
+        matchMode: filter.matchMode as any, 
+        operator: 'and' 
+      }];
+    });
+    
+    this.showColumnFilterModal = false;
+  }
+
+  onColumnFilterCancel(): void {
+    this.showColumnFilterModal = false;
+  }
+
+  onColumnFilterClose(): void {
+    this.showColumnFilterModal = false;
   }
 }

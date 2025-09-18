@@ -59,6 +59,7 @@ import { WebsiteManagerComponent } from './components/manager-modals/website-man
 //// Security
 import { FismaComponent } from './views/security/fisma/fisma.component';
 import { FismaModalComponent } from './components/modals/fisma-modal/fisma-modal.component';
+import { TableColumnFilterModalComponent } from './components/modals/table-column-filter-modal/table-column-filter-modal.component';
 import { FismaPocsComponent } from './views/security/fisma-pocs/fisma-pocs.component';
 import { FismaPocsDetailsComponent } from './views/security/fisma-pocs/details/fisma-pocs-details.component';
 
@@ -162,6 +163,7 @@ import Lara from '@primeng/themes/lara';
         WebsiteManagerComponent,
         FismaComponent,
         FismaModalComponent,
+        TableColumnFilterModalComponent,
         FismaPocsComponent,
     FismaPocsDetailsComponent,
         ItStandardsComponent,
