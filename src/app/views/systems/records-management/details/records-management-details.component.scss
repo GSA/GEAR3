@@ -25,37 +25,28 @@
         display: flex;
         flex-direction: column;
 
-        & .data-tab-container {
-            width: 100%;
-            padding-bottom: .7rem;
-            border-bottom: 1px solid #B2B2B2;
-            margin-bottom: 1.5rem;
-
-            .data-tab-text {
-                padding: .75rem 1.5rem;
-                background-color: var(--neutral-white-color);
-                color: var(--neutral-black-color-dark);
-
-                &:hover {
-                    cursor: pointer;
-                }
-
-                &.active {
-                    background-color: var(--primary-color);
-                    color: var(--neutral-white-color);
-                }
-            }
+        & .nav-tabs {
+            margin-bottom: 2rem;
         }
 
         & .overall-data-container {
 
 
             & .main-data-container {
-
                 display: flex;
                 flex-flow: row wrap;
                 gap: 15px;
 
+                & .data-wrapper {
+                    display: flex;
+                    flex-wrap: wrap;
+                    background-color: #fff;
+                    box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.08);
+                    border-radius: 4px;
+                    padding: 1.5rem;
+                    margin-bottom: 1.5rem;
+                    width: 100%;
+                }
 
                 .data-holder {
                     padding: 1.5rem;
@@ -85,6 +76,12 @@
                     @media (max-width: 1200px) {
                         max-width: 100%;
                         flex: 0 0 100%;
+                    }
+
+                    &.full-width {
+                        width: 100%;
+                        flex: 0 0 100%;
+                        max-width: 100%;
                     }
 
                     & .sub-header {

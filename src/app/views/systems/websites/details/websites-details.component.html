@@ -8,54 +8,56 @@
         <span class="title">{{detailsData.domain}}</span>
     </div>
     <div class="content-container">
-        <div class="data-tab-container">
-            <span class="data-tab-text" [ngClass]="{'active' : isOverviewTabActive}"
-                (click)="onTabClick('overview')">Overview</span>
-            <span class="data-tab-text" [ngClass]="{'active' : isRelatedSystemsTabActive}"
-                (click)="onTabClick('relatedSystems')">Related Systems</span>
-        </div>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link" [class.active]="isOverviewTabActive" (click)="onTabClick('overview', $event)" href="#overview">Overview</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" [class.active]="isRelatedSystemsTabActive" (click)="onTabClick('relatedSystems', $event)" href="#relatedSystems">Related Systems</a>
+            </li>
+        </ul>
         <div class="tab-container" *ngIf="isOverviewTabActive">
             <div class="overall-data-container">
                 <div class="main-data-container">
-                    <div class="data">
-                        <label class="data-label">
+                    <div class="data-wrapper">
+                        <div class="data">
+                            <label class="data-label">
+                                <span>
+                                    Status
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                            </label>
                             <span>
-                                Status
-                                <i class="fas fa-info-circle"></i>
+                                <span>{{detailsData.production_status}}</span>
                             </span>
-                        </label>
-                        <span>
-                            <span>{{detailsData.production_status}}</span>
-                        </span>
-                    </div>
-                    <div class="data">
-                        <label class="data-label">
+                        </div>
+                        <div class="data">
+                            <label class="data-label">
+                                <span>
+                                    Type of Site
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                            </label>
                             <span>
-                                Type of Site
-                                <i class="fas fa-info-circle"></i>
+                                <span>{{detailsData.type_of_site}}</span>
                             </span>
-                        </label>
-                        <span>
-                            <span>{{detailsData.type_of_site}}</span>
-                        </span>
-                    </div>
-                    <div class="data">
-                        <label class="data-label">
-                            <span>
-                                Recent Screenshots
-                                <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="data">
+                            <label class="data-label">
+                                <span>
+                                    Recent Screenshots
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                            </label>
+                            <span *ngIf="!inProduction()" class="alert alert-warning" role="alert">
+                                Websites that are not in a production status or are
+                                considered infrastructure do not contain screenshots
                             </span>
-                        </label>
-                        <span *ngIf="!inProduction()" class="alert alert-warning" role="alert">
-                            Websites that are not in a production status or are
-                            considered infrastructure do not contain screenshots
-                        </span>
-                        <span *ngIf="hasScanDate()">
-                            <span>{{websiteScan.scan_date | date : "mediumDate"}}</span>
-                        </span>
+                            <span *ngIf="hasScanDate()">
+                                <span>{{websiteScan.scan_date | date : "mediumDate"}}</span>
+                            </span>
+                        </div>
                     </div>
-                    
-
                 </div>
                 <div class="sub-content">
                     <div class="website-scan-image-container" *ngIf="hasImages()">
@@ -347,8 +349,11 @@
         <div class="tab-container" *ngIf="isRelatedSystemsTabActive">
             <div class="overall-data-container">
                 <div class="main-data-container">
-                    <app-table [localTableData]="relatedSystemsData" [isLocal]="true" [tableCols]="relatedSystemsCols"
-                        [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                    <div class="sub-content full-width">
+                        <span class="sub-header">Related Systems</span>
+                        <app-table [localTableData]="relatedSystemsData" [isLocal]="true" [tableCols]="relatedSystemsCols"
+                            [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                    </div>
                 </div>
             </div>
         </div>
