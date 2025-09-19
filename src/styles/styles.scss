@@ -27,7 +27,7 @@ body{
 
 /* Underline H4 Headers, email links, card links for easy distinction */
 
-h4, a.email, a.link, .card-link, .modal .modal-body table th {
+h4, a.email, a.link, .card-link {
   text-decoration: underline;
 }
 
@@ -410,3 +410,6 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .p-multiselect-dropdown{
 color: #fff;}
 
+button svg{
+  margin: 0 !important;
+}

@@ -1,27 +1,16 @@
 <!-- Table Column Filter Modal -->
-<div
-  class="modal fade"
-  [class.show]="isVisible"
-  [style.display]="isVisible ? 'block' : 'none'"
-  tabindex="-1"
-  role="dialog"
-  aria-labelledby="columnFilterTitle"
-  aria-hidden="true"
-  [attr.aria-hidden]="!isVisible"
->
+<div class="modal fade" [class.show]="isVisible" [style.display]="isVisible ? 'block' : 'none'" tabindex="-1"
+  role="dialog" aria-labelledby="columnFilterTitle" aria-hidden="true" [attr.aria-hidden]="!isVisible">
   <div class="modal-dialog modal-lg modal-dialog-scrollable">
     <div class="modal-content">
-      <div class="modal-header bg-primary">
-        <h5 class="modal-title text-white" id="columnFilterTitle">
+      <div class="modal-header bg-success">
+        <h5 class="modal-title" id="columnFilterTitle">
           <i class="fas fa-filter"></i>
           Column Filters
         </h5>
-        <button 
-          type="button" 
-          class="btn-close btn-close-white" 
-          aria-label="Close"
-          (click)="onCloseModal()"
-        ></button>
+        <button type="button" class="btn btn-sm btn-outline-light" aria-label="Close" (click)="onCloseModal()">
+          <i class="fas fa-times"></i>
+        </button>
       </div>
 
       <div class="modal-body">
@@ -38,12 +27,8 @@
           <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-3">
               <h6 class="mb-0">Column Filters</h6>
-              <button 
-                type="button" 
-                class="btn btn-sm btn-outline-secondary"
-                (click)="clearAllFilters()"
-                [disabled]="!hasActiveFilters()"
-              >
+              <button type="button" class="btn btn-sm btn-danger text-white shadow btn-border-white"
+                (click)="clearAllFilters()" [disabled]="!hasActiveFilters()">
                 <i class="fas fa-eraser"></i> Clear All
               </button>
             </div>
@@ -55,45 +40,35 @@
                     <th style="width: 30%">Column</th>
                     <th style="width: 25%">Filter Type</th>
                     <th style="width: 35%">Filter Value</th>
-                    <th style="width: 10%">Actions</th>
+                    <th style="width: 10%">Clear</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let column of columns" [hidden]="column.showColumn === false">
                     <td>
-                      <label class="form-label fw-bold">
+                      <label class="form-label">
                         {{ getColumnLabel(column.field) }}
                       </label>
                     </td>
                     <td>
-                      <select 
-                        class="form-select form-select-sm"
-                        [ngModel]="columnFilters[column.field]?.matchMode"
-                        (ngModelChange)="columnFilters[column.field].matchMode = $event"
-                      >
+                      <select class="form-select form-select-sm" [ngModel]="columnFilters[column.field]?.matchMode"
+                        (ngModelChange)="columnFilters[column.field].matchMode = $event">
                         <option *ngFor="let option of matchModeOptions" [value]="option.value">
                           {{ option.label }}
                         </option>
                       </select>
                     </td>
                     <td>
-                      <input 
-                        type="text" 
-                        class="form-control form-control-sm"
+                      <input type="text" class="form-control form-control-sm"
                         [ngModel]="columnFilters[column.field]?.value"
                         (ngModelChange)="columnFilters[column.field].value = $event"
                         [placeholder]="'Filter ' + getColumnLabel(column.field)"
-                        [attr.aria-label]="'Filter ' + getColumnLabel(column.field)"
-                      />
+                        [attr.aria-label]="'Filter ' + getColumnLabel(column.field)" />
                     </td>
                     <td class="text-center">
-                      <button 
-                        type="button" 
-                        class="btn btn-sm btn-outline-danger"
-                        (click)="columnFilters[column.field].value = ''"
-                        [disabled]="!columnFilters[column.field]?.value"
-                        title="Clear this filter"
-                      >
+                      <button type="button" class="btn btn-sm btn-danger text-white shadow btn-border-white"
+                        (click)="clearColumnFilter(column.field)" [disabled]="!columnFilters[column.field]?.value"
+                        title="Clear this filter">
                         <i class="fas fa-times"></i>
                       </button>
                     </td>
@@ -108,11 +83,11 @@
           <div class="col-12">
             <div class="alert alert-warning">
               <i class="fas fa-exclamation-triangle"></i>
-              <strong>Active Filters:</strong> 
+              <strong>Active Filters:</strong>
               <span *ngFor="let filter of getActiveFilters(); let i = index">
                 <span *ngIf="i > 0">, </span>
-                <strong>{{ getColumnLabel(filter.field) }}</strong> 
-                {{ getMatchModeLabel(filter.matchMode) }} 
+                <strong>{{ getColumnLabel(filter.field) }}</strong>
+                {{ getMatchModeLabel(filter.matchMode) }}
                 "{{ filter.value }}"
               </span>
             </div>
@@ -121,29 +96,17 @@
       </div>
 
       <div class="modal-footer">
-        <button 
-          type="button" 
-          class="btn btn-secondary"
-          (click)="onCancelChanges()"
-        >
+        <button type="button" class="btn btn-outline-secondary btn-sm me-2" (click)="onCancelChanges()">
           <i class="fas fa-times"></i> Cancel
         </button>
-        <button 
-          type="button" 
-          class="btn btn-primary"
-          (click)="onSaveChanges()"
-        >
-          <i class="fas fa-save"></i> Save Changes
-        </button>
+        <p-button label="Save Changes" icon="fas fa-save" severity="primary" size="small"
+          (onClick)="onSaveChanges()"></p-button>
       </div>
     </div>
   </div>
 </div>
 
 <!-- Modal backdrop -->
-<div 
-  class="modal-backdrop fade" 
-  [class.show]="isVisible"
-  [style.display]="isVisible ? 'block' : 'none'"
-  (click)="onCloseModal()"
-></div>
+<div class="modal-backdrop fade" [class.show]="isVisible" [style.display]="isVisible ? 'block' : 'none'"
+  (click)="onCloseModal()">
+</div>

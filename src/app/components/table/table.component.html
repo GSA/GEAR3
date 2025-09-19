@@ -58,8 +58,7 @@
               </ng-template>
             </p-multiSelect>
             <p-button icon="fa fa-download" pTooltip="Export table data" severity="primary" (click)="onExportData()" *ngIf="showExportButton" ariaLabel="Export Data" />
-            <p-button icon="fa fa-filter" pTooltip="Show/Hide column filters" severity="primary" (click)="toggleFilter()" *ngIf="showFilterButton" ariaLabel="Toggle Filters" />
-            <p-button icon="fa fa-cog" pTooltip="Advanced column filters" severity="secondary" (click)="openColumnFilterModal()" *ngIf="showFilterButton" ariaLabel="Advanced Filters" />
+            <p-button icon="fa fa-filter" pTooltip="Column filters" severity="primary" (click)="openColumnFilterModal()" *ngIf="showFilterButton" ariaLabel="Column Filters" />
           </div>
         </div>
       </div>
@@ -121,6 +120,7 @@
 <table-column-filter-modal
   [columns]="tableCols"
   [isVisible]="showColumnFilterModal"
+  [existingFilters]="dt?.filters || {}"
   (saveChanges)="onColumnFilterSave($event)"
   (cancelChanges)="onColumnFilterCancel()"
   (closeModal)="onColumnFilterClose()">

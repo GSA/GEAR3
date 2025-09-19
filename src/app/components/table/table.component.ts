@@ -1,11 +1,10 @@
 import { Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { Table, TableRowSelectEvent } from 'primeng/table';
-import { Column, ExportColumn, TwoDimArray, FilterButton } from '../../common/table-classes';
+import { Column, ExportColumn, TwoDimArray, FilterButton, ColumnFilter } from '../../common/table-classes';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { ApiService } from '@services/apis/api.service';
 import { FilterMatchMode, SelectItem } from 'primeng/api';
-import { ColumnFilter } from '../modals/table-column-filter-modal/table-column-filter-modal.component';
 
 
 @Component({
@@ -429,16 +428,31 @@ export class TableComponent implements OnInit, OnChanges {
 
   onColumnFilterSave(filters: ColumnFilter[]): void {
     // Clear existing filters first
-    this.dt.filters = {};
+    if (this.dt && this.dt.filters) {
+      this.dt.filters = {};
+    }
     
     // Apply new filters
-    filters.forEach(filter => {
-      this.dt.filters[filter.field] = [{ 
-        value: filter.value, 
-        matchMode: filter.matchMode as any, 
-        operator: 'and' 
-      }];
-    });
+    if (filters && filters.length > 0) {
+      filters.forEach(filter => {
+        if (this.dt && this.dt.filters && filter.value && filter.value.toString().trim() !== '') {
+          this.dt.filters[filter.field] = [{ 
+            value: filter.value, 
+            matchMode: filter.matchMode, 
+            operator: 'and' 
+          }];
+        }
+      });
+    }
+    
+    // Force table to refresh and apply filters
+    if (this.dt) {
+      // Trigger filter refresh
+      this.dt._filter();
+      // Reset pagination to first page
+      this.dt.first = 0;
+      this.first = 0;
+    }
     
     this.showColumnFilterModal = false;
   }
@@ -449,5 +463,14 @@ export class TableComponent implements OnInit, OnChanges {
 
   onColumnFilterClose(): void {
     this.showColumnFilterModal = false;
+  }
+
+  clearAllColumnFilters(): void {
+    if (this.dt && this.dt.filters) {
+      this.dt.filters = {};
+      this.dt._filter();
+      this.dt.first = 0;
+      this.first = 0;
+    }
   }
 }
