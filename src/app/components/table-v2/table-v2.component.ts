@@ -8,7 +8,7 @@ import { FilterMatchMode, SelectItem } from 'primeng/api';
 
 
 @Component({
-  selector: 'app-table',
+  selector: 'app-table-v2',
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss']
 })
