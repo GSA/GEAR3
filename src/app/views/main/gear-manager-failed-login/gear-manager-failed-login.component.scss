@@ -1,0 +1,136 @@
+$error-color: #dc3545;
+$warning-color: #856404;
+$warning-bg: #fff9de;
+$text-muted: #6c757d;
+$text-dark: #495057;
+$border-color: rgba(0, 0, 0, 0.125);
+$border-light: #dee2e6;
+
+.error-icon-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.error-icon {
+  font-size: 4rem;
+  color: $error-color;
+}
+
+.card {
+  margin: 2rem auto;
+  max-width: 900px;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+
+  .card-header {
+    border-bottom: 1px solid $border-color;
+
+    h3 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    i {
+      margin-right: 0.5rem;
+    }
+  }
+
+  > div[style*="background-color:#fff9de"] {
+    border-top: 1px solid $border-color;
+    border-bottom: 1px solid $border-color;
+    padding: 1rem 0;
+
+    h3 {
+      color: $warning-color;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      color: $warning-color;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin: 0;
+    }
+  }
+
+  .card-body {
+    padding: 2rem;
+
+    .error-message {
+      h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+
+        i {
+          margin-right: 0.5rem;
+        }
+      }
+
+      ul {
+        padding-left: 1.5rem;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+        color: $text-muted;
+      }
+    }
+
+    .help-section {
+      p {
+        color: $text-dark;
+        line-height: 1.6;
+      }
+    }
+
+    .action-buttons {
+      border-top: 1px solid $border-light;
+      padding-top: 1.5rem;
+
+      .btn {
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+
+        i {
+          margin-right: 0.5rem;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .card {
+    margin: 1rem;
+
+    .card-body {
+      padding: 1rem;
+
+      .row {
+        flex-direction: column;
+      }
+
+      .col-2, .col-10 {
+        flex: 0 0 100%;
+        max-width: 100%;
+      }
+
+      .col-2 {
+        margin-bottom: 1rem;
+      }
+
+      .action-buttons {
+        text-align: center;
+
+        .btn {
+          display: block;
+          width: 100%;
+          margin-bottom: 0.5rem;
+        }
+      }
+    }
+  }
+}

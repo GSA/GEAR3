@@ -13,6 +13,7 @@ import { GlobalSearchComponent } from './views/main/global-search/global-search.
 import { AboutComponent } from './views/main/about/about.component';
 import { AssistTechComponent } from './views/main/assist-tech/assist-tech.component';
 import { GearManagerComponent } from './views/main/gear-manager/gear-manager.component';
+import { GearManagerFailedLoginComponent } from './views/main/gear-manager-failed-login/gear-manager-failed-login.component';
 
 // Strategy
 import { FrameworkComponent } from './views/strategy/framework/framework.component';
@@ -33,6 +34,7 @@ import { WebsitesComponent } from './views/systems/websites/websites.component';
 // Security
 import { FismaComponent } from './views/security/fisma/fisma.component';
 import { FismaPocsComponent } from './views/security/fisma-pocs/fisma-pocs.component';
+import { FismaPocsDetailsComponent } from './views/security/fisma-pocs/details/fisma-pocs-details.component';
 
 // Technologies
 import { ItStandardsComponent } from './views/technologies/it-standards/it-standards.component';
@@ -173,7 +175,7 @@ const routes: Routes = [
   },
   {
     path: 'FISMA_POC/:fismaID',
-    component: FismaPocsComponent,
+    component: FismaPocsDetailsComponent,
     title: 'FISMA Point of Contact',
   },
 
@@ -218,6 +220,13 @@ const routes: Routes = [
     path: 'gear_manager',
     component: GearManagerComponent,
     title: 'GEAR Manager',
+  },
+
+  {
+    path: 'failed-login',
+    component: GearManagerFailedLoginComponent,
+    title: 'Access Denied',
+    
   },
 
   {

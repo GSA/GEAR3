@@ -1,0 +1,273 @@
+<div class="fisma-pocs-details-container" *ngIf="isDataReady">
+    <div class="breadcrumb-container">
+         <app-breadcrumb>
+            <span currentPageName>{{detailsData.Name}}</span>
+         </app-breadcrumb>
+    </div>
+    <div class="title-container">
+        <span class="title">{{detailsData.Name}}</span>
+    </div>
+    <div class="content-container">
+        <div class="data-tab-container">
+            <span class="data-tab-text" [ngClass]="{'active' : isOverviewTabActive}" (click)="onTabClick('overview')">Overview</span>
+            <span class="data-tab-text" [ngClass]="{'active' : isPocTabActive}" (click)="onTabClick('poc')">Points of Contact</span>
+        </div>
+        <div class="overview-container" *ngIf="isOverviewTabActive">
+            <div class="overall-data-container">
+                <div class="main-data-container">
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                Status
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <span>
+                            <span [ngClass]="getStatusClass(detailsData.Status)">{{detailsData.Status}}</span>
+                        </span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                <i class="fas fa-shield-alt"></i>
+                                FIPS Impact Level
+                            </span>
+                        </label>
+                        <span>{{detailsData.FIPS_Impact_Level}}</span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                <i class="fas fa-calendar-alt"></i>
+                                ATO Date
+                            </span>
+                        </label>
+                        <span>{{detailsData.ATODate | date : "longDate"}}</span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                <i class="fas fa-calendar-check"></i>
+                                Renewal Date
+                            </span>
+                        </label>
+                        <span>{{detailsData.RenewalDate | date : "longDate"}}</span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                <i class="fas fa-check-circle"></i>
+                                FISMA Compliant
+                            </span>
+                        </label>
+                        <span>{{detailsData.ComplFISMA}}</span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                <i class="fas fa-user-shield"></i>
+                                PII
+                            </span>
+                        </label>
+                        <span>{{detailsData.PII}}</span>
+                    </div>
+                    <div class="data">
+                        <label class="data-label">
+                            <span>
+                                <i class="fas fa-lock"></i>
+                                CUI
+                            </span>
+                        </label>
+                        <span>{{detailsData.CUI}}</span>
+                    </div>
+                    <div class="data-full">
+                        <label class="data-label">
+                            <span>
+                                Description
+                                <i class="fas fa-info-circle"></i>
+                            </span>
+                        </label>
+                        <span>{{detailsData.Description}}</span>
+                    </div>
+                </div>
+                <div class="sub-data-container">
+                    <table>
+                        <tr>
+                            <th>Attribute</th>
+                            <th>Value</th>
+                        </tr>
+                        <tr *ngIf="isFieldPopulated(detailsData.SystemLevel)">
+                            <td>
+                                <span>
+                                    System Level
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                            </td>
+                            <td>{{detailsData.SystemLevel}}</td>
+                        </tr>
+                        <tr *ngIf="isFieldPopulated(detailsData.SharedService)">
+                            <td>
+                                <span>
+                                    Shared Service
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                            </td>
+                            <td>{{detailsData.SharedService}}</td>
+                        </tr>
+                        <tr *ngIf="isFieldPopulated(detailsData.RespOrg)">
+                            <td>
+                                <span>
+                                    Responsible Organization
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                            </td>
+                            <td>{{detailsData.RespOrg}}</td>
+                        </tr>
+                        <tr *ngIf="isFieldPopulated(detailsData.BusOrg)">
+                            <td>
+                                <span>
+                                    Business Organization
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                            </td>
+                            <td>{{detailsData.BusOrg}}</td>
+                        </tr>
+                        <tr *ngIf="isFieldPopulated(detailsData.FISMASystemIdentifier)">
+                            <td>
+                                <span>
+                                    FISMA System Identifier
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                            </td>
+                            <td>{{detailsData.FISMASystemIdentifier}}</td>
+                        </tr>
+                        <tr *ngIf="isFieldPopulated(detailsData.ATOType)">
+                            <td>
+                                <span>
+                                    ATO Type
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                            </td>
+                            <td>{{detailsData.ATOType}}</td>
+                        </tr>
+                        <tr *ngIf="isFieldPopulated(detailsData.CloudYN)">
+                            <td>
+                                <span>
+                                    Cloud Hosted
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                            </td>
+                            <td>{{detailsData.CloudYN}}</td>
+                        </tr>
+                        <tr *ngIf="isFieldPopulated(detailsData.CSP)">
+                            <td>
+                                <span>
+                                    Hosting Provider
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                            </td>
+                            <td>{{detailsData.CSP}}</td>
+                        </tr>
+                        <tr *ngIf="isFieldPopulated(detailsData.ServiceType)">
+                            <td>
+                                <span>
+                                    Service Type
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                            </td>
+                            <td>{{detailsData.ServiceType}}</td>
+                        </tr>
+                        <tr *ngIf="isFieldPopulated(detailsData.FedContractorLoc)">
+                            <td>
+                                <span>
+                                    Fed/Contractor Location
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                            </td>
+                            <td>{{detailsData.FedContractorLoc}}</td>
+                        </tr>
+                        <tr *ngIf="isFieldPopulated(detailsData.Reportable)">
+                            <td>
+                                <span>
+                                    Reportable
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                            </td>
+                            <td>{{detailsData.Reportable}}</td>
+                        </tr>
+                        <tr *ngIf="isFieldPopulated(detailsData.ParentName)">
+                            <td>
+                                <span>
+                                    Parent System
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                            </td>
+                            <td>{{detailsData.ParentName}}</td>
+                        </tr>
+                        <tr *ngIf="isFieldPopulated(detailsData.SubSystem_Tag)">
+                            <td>
+                                <span>
+                                    Sub System Tag
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                            </td>
+                            <td>{{detailsData.SubSystem_Tag}}</td>
+                        </tr>
+                        <tr *ngIf="isFieldPopulated(detailsData.InactiveDate)">
+                            <td>
+                                <span>
+                                    Inactive Date
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                            </td>
+                            <td>{{detailsData.InactiveDate | date : "longDate"}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="edit-info-container">
+                <app-button [buttonText]="getShowAllFieldsButtonText()" buttonStyle="outline" (buttonClick)="toggleShowAllFields()"></app-button>
+            </div>
+        </div>
+        <div class="poc-container" *ngIf="isPocTabActive">
+            <div class="overall-data-container">
+                <div class="main-data-container">
+                    <div class="poc-grid">
+                        <div class="poc-item" *ngIf="detailsData.AO">
+                            <h4>Authorizing Official</h4>
+                            <div [innerHTML]="pocFormatter(detailsData.AO)"></div>
+                        </div>
+                        <div class="poc-item" *ngIf="detailsData.SO">
+                            <h4>System Owner</h4>
+                            <div [innerHTML]="pocFormatter(detailsData.SO)"></div>
+                        </div>
+                        <div class="poc-item" *ngIf="detailsData.ISSM">
+                            <h4>ISSM</h4>
+                            <div [innerHTML]="pocFormatter(detailsData.ISSM)"></div>
+                        </div>
+                        <div class="poc-item" *ngIf="detailsData.ISSO">
+                            <h4>ISSO</h4>
+                            <div [innerHTML]="pocFormatter(detailsData.ISSO)"></div>
+                        </div>
+                        <div class="poc-item" *ngIf="detailsData.CO">
+                            <h4>Contracting Officer</h4>
+                            <div [innerHTML]="pocFormatter(detailsData.CO)"></div>
+                        </div>
+                        <div class="poc-item" *ngIf="detailsData.COR">
+                            <h4>Contracting Officer Representative</h4>
+                            <div [innerHTML]="pocFormatter(detailsData.COR)"></div>
+                        </div>
+                        <div class="poc-item" *ngIf="detailsData.BusPOC">
+                            <h4>Business POC</h4>
+                            <div [innerHTML]="pocFormatter(detailsData.BusPOC)"></div>
+                        </div>
+                        <div class="poc-item" *ngIf="detailsData.TechPOC">
+                            <h4>Technical POC</h4>
+                            <div [innerHTML]="pocFormatter(detailsData.TechPOC)"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

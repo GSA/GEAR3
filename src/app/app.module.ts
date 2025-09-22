@@ -24,6 +24,7 @@ import { AssistTechComponent } from './views/main/assist-tech/assist-tech.compon
 import { FormsComponent } from './views/main/forms-glossary/forms/forms.component';
 import { GlossaryComponent } from './views/main/forms-glossary/glossary/glossary.component';
 import { GearManagerComponent } from './views/main/gear-manager/gear-manager.component';
+import { GearManagerFailedLoginComponent } from './views/main/gear-manager-failed-login/gear-manager-failed-login.component';
 
 //// Strategy
 import { FrameworkComponent } from './views/strategy/framework/framework.component';
@@ -59,6 +60,7 @@ import { WebsiteManagerComponent } from './components/manager-modals/website-man
 import { FismaComponent } from './views/security/fisma/fisma.component';
 import { FismaModalComponent } from './components/modals/fisma-modal/fisma-modal.component';
 import { FismaPocsComponent } from './views/security/fisma-pocs/fisma-pocs.component';
+import { FismaPocsDetailsComponent } from './views/security/fisma-pocs/details/fisma-pocs-details.component';
 
 //// Technologies
 import { ItStandardsComponent } from './views/technologies/it-standards/it-standards.component';
@@ -114,7 +116,7 @@ import { WebsitesDetailsComponent } from './views/systems/websites/details/websi
 import { WebsiteServiceCategoryDetailsContentComponent } from './views/enterprise/website-service-category/website-service-category-details-content/website-service-category-details-content.component';
 import { providePrimeNG } from 'primeng/config';
 
-import LaraLightBlue from '@primeng/themes/lara';
+import Lara from '@primeng/themes/lara';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -126,6 +128,7 @@ import LaraLightBlue from '@primeng/themes/lara';
         FormsComponent,
         GlossaryComponent,
         GearManagerComponent,
+        GearManagerFailedLoginComponent,
         FrameworkComponent,
         InvestmentsComponent,
         InvestmentsModalComponent,
@@ -160,6 +163,7 @@ import LaraLightBlue from '@primeng/themes/lara';
         FismaComponent,
         FismaModalComponent,
         FismaPocsComponent,
+    FismaPocsDetailsComponent,
         ItStandardsComponent,
         ItStandardsModalComponent,
         ItStandardManagerComponent,
@@ -207,8 +211,18 @@ import LaraLightBlue from '@primeng/themes/lara';
       Globals, provideHttpClient(withInterceptorsFromDi()),
       providePrimeNG({
         theme: {
-          preset: LaraLightBlue
-        }
+          preset: Lara,
+          options: {
+            prefix: 'p',
+            darkModeSelector: 'system',
+            cssLayer: {
+              name: 'primeng',
+              order: 'tailwind-base, primeng, tailwind-utilities'
+            }
+          }
+        },
+        ripple: true,
+        inputStyle: 'outlined'
       })
     ] })
 export class AppModule {
