@@ -69,12 +69,14 @@ $transition: all 0.3s ease;
 
 // Standardized classes for consistent styling
 .dashboard-view-all-link {
-  @include link-style;
-  @include responsive-font(0.875rem, 0.8rem);
   position: absolute;
   top: 1.3rem;
   right: 0.75rem;
   z-index: 1;
+  cursor: pointer;
+  @include link-style;
+  @include responsive-font(0.875rem, 0.8rem);
+
   &.normal{
     position: relative;
     top: unset;
@@ -108,23 +110,23 @@ $transition: all 0.3s ease;
 }
 
 .dashboard-card-title-text {
-  @include text-style(1.25rem, 700);
-  @include responsive-font(1.25rem, 1rem);
   margin: 0;
   text-transform: capitalize;
   letter-spacing: 0.5px;
+  @include text-style(1.25rem, 700);
+  @include responsive-font(1.25rem, 1rem);
 }
 
 .dashboard-container {
   display: flex;
   flex-direction: column;
-  @include responsive-padding(1rem 1.5rem 1rem 1rem, 0.75rem 1rem 0.75rem 0.75rem);
   position: relative;
+  @include responsive-padding(1rem 1.5rem 1rem 1rem, 0.75rem 1rem 0.75rem 0.75rem);
 
   & .dashboard-title {
+    margin-bottom: 1rem;
     @include text-style(1.75rem, 600);
     @include responsive-font(1.75rem, 1.5rem);
-    margin-bottom: 1rem;
   }
 
   & .dashboard-quick-view-container {
@@ -165,12 +167,12 @@ $transition: all 0.3s ease;
 
     & .dashboard-quick-view-item {
       width: 100%;
-      @include card-style;
-      @include responsive-padding(1rem, 0.75rem);
       display: flex;
       flex-direction: column;
       gap: 0.25rem;
       align-items: flex-start;
+      @include card-style;
+      @include responsive-padding(1rem, 0.75rem);
 
       @media (max-width: 1366px) and (min-width: 992px) {
         gap: 0.2rem;
@@ -242,7 +244,12 @@ $transition: all 0.3s ease;
         & .dashboard-quick-view-expire-text {
           @include text-style(0.875rem, 400, #D97706);
           @include responsive-font(0.875rem, 0.8rem);
+          // text-decoration-line: underline;
+        }
+
+        & .positive-expire-text {
           text-decoration-line: underline;
+          cursor: pointer;
         }
       }
 
@@ -315,10 +322,10 @@ $transition: all 0.3s ease;
     }
 
     & .dashboard-chart-card {
-      @include card-style;
-      @include responsive-padding(1rem, 0.75rem);
       overflow: visible;
       max-width: 100%;
+      @include card-style;
+      @include responsive-padding(1rem, 0.75rem);
       
       &.pie-chart-card {
         min-height: 360px;
@@ -416,19 +423,19 @@ $transition: all 0.3s ease;
           align-items: center;
 
           & .center-title {
-            @include text-style(0.75rem, 500);
-            @include responsive-font(0.75rem, 0.7rem);
             color: #666666;
             margin-bottom: 0.25rem;
             text-transform: none;
             letter-spacing: 0.2px;
+            @include text-style(0.75rem, 500);
+            @include responsive-font(0.75rem, 0.7rem);
           }
 
           & .center-number {
-            @include text-style(1.75rem, 700);
-            @include responsive-font(1.75rem, 1.5rem);
             color: #000000;
             line-height: 1;
+            @include text-style(1.75rem, 700);
+            @include responsive-font(1.75rem, 1.5rem);
           }
         }
       }
@@ -466,9 +473,9 @@ $transition: all 0.3s ease;
           }
 
           & .legend-text {
+            color: #333;
             @include text-style(0.875rem, 400);
             @include responsive-font(0.875rem, 0.75rem);
-            color: #333;
           }
         }
       }
@@ -494,8 +501,9 @@ $transition: all 0.3s ease;
 
     ::ng-deep {
       .p-datatable-wrapper {
-        @include responsive-padding(0.3rem, 0.2rem);
         padding-top: 0;
+        @include responsive-padding(0.3rem, 0.2rem);
+
       }
 
       .neutral.p-datatable .p-datatable-thead > tr > th {

@@ -192,7 +192,6 @@ exports.updateTech = (req, res) => {
   });
 };
 
-
 exports.findTIME = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_sysTIME.sql')).toString() +
     ` AND \`System Id\` = ${req.params.id};`;
@@ -204,4 +203,10 @@ exports.getFilterTotals = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_systems_filter_totals.sql`)).toString();
 
   res = ctrl.sendQuery(query, `Systems & Subsystems filter totals`, res);
+};
+
+exports.getDecommissionedSystemTotals = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_systems_decommissioned_totals.sql`)).toString();
+
+  res = ctrl.sendQuery(query, `Systems decommissioned totals`, res);
 };

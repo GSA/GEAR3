@@ -101,17 +101,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   ];
 
-  public standardsExpiringThisQuarter: number = 0;
-  public standardsExpiringThisWeek: number = 0;
-
   public fismaExpiringThisQuarter: number = 0;
   public fismaExpiringThisWeek: number = 0;
 
   public decommissionedSystemsLast6Months: number = 0;
   public decommissionedSystemsLast7Days: number = 0;
 
-  public decommissionedITStandardsLast6Months: number = 0;
-  public decommissionedITStandardsLast7Days: number = 0;
+  public standardsExpiringThisQuarter: number = 0;
+  public standardsExpiringThisWeek: number = 0;
+
+  public retiredITStandardsLast6Months: number = 0;
+  public retiredITStandardsLast7Days: number = 0;
   
  constructor(
     private apiService: ApiService,
@@ -154,14 +154,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    this.apiService.getSystemsFilterTotals().subscribe(totals => {
-      this.decommissionedSystemsLast6Months = totals.InactiveTotal || 0;
-      this.decommissionedSystemsLast7Days = Math.floor(totals.InactiveTotal * 0.2) || 0;
+    this.apiService.getDecommissionedSystemTotals().subscribe(totals => {
+      this.decommissionedSystemsLast6Months = totals[0].DecommissionedSystemsLastSixMonths;
+      this.decommissionedSystemsLast7Days = totals[0].DecommissionedSystemsLastWeek;
     });
 
-    this.apiService.getITStandardsFilterTotals([]).subscribe(totals => {
-      this.decommissionedITStandardsLast6Months = totals.RetiredTotal || 0;
-      this.decommissionedITStandardsLast7Days = Math.floor(totals.RetiredTotal * 0.15) || 0;
+    this.apiService.getRetiredStandardsTotals().subscribe(totals => {
+      this.retiredITStandardsLast6Months = totals[0].RetiredStandardsLastSixMonths;
+      this.retiredITStandardsLast7Days = totals[0].RetiredStandardsLastWeek;
     });
 
     this.loadHostingPlatformsData();
@@ -347,34 +347,27 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  public navigateToFisma(): void {
+  public viewAllFisma(): void {
     this.router.navigate(['/FISMA']);
   }
-   public navigateToFismaTabs(): void {
-    this.router.navigate(['/FISMA'], { queryParams: { tab: 'Retired' } });
-  }
-
-  public navigateToItStandards(): void {
-    this.router.navigate(['/it_standards']);
-  }
-  public navigateToItStandardTabs(): void {
-    this.router.navigate(['/it_standards'], { queryParams: { tab: 'Retired' } });
-  }
-
-  public navigateToSystems(): void {
+  public viewAllSystems(): void {
     this.router.navigate(['/systems']);
   }
-
-  public navigateToSystemsTabs(): void {
-    this.router.navigate(['/systems'], { queryParams: { tab: 'Inactive' } });
+  public viewAllITStandards(): void {
+    this.router.navigate(['/it_standards']);
   }
 
-  public navigateToDecommissionedITStandards(): void {
-    this.router.navigate(['/it_standards'], { queryParams: { tab: 'Denied' } });
+  public viewExpiringFisma():void {
+    this.router.navigate(['/FISMA'], { queryParams: { expiringWithinDays: '7' } }); // expiring this week
   }
-
-  public navigateToDecommissionedITStandardsTabs(): void {
-    this.router.navigate(['/it_standards'], { queryParams: { tab: 'Retired' } });
+  public viewDecommissionedSystems(): void {
+    this.router.navigate(['/systems'], { queryParams: { decommissionedWithinDays: '7' } }); // decommissioned this week
+  }
+  public viewExpiringITStandards(): void {
+    this.router.navigate(['/it_standards'], { queryParams: { expiringWithinDays: '7' } }); // expiring this week
+  }
+  public viewRecentRetiredITStandards(): void {
+    this.router.navigate(['/it_standards'], { queryParams: { retiredWithinDays: '7' } }); // retired this week
   }
 
   public onTableRowClick(rowData: any): void {

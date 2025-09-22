@@ -5,7 +5,7 @@
     <div class="dashboard-quick-view-container">
         <div class="dashboard-metrics-grid">
             <div class="dashboard-quick-view-item">
-                <a (click)="navigateToFisma()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
+                <a (click)="viewAllFisma()" class="dashboard-view-all-link">View All</a>
                 <div class="dashboard-header-row">
                     <div class="dashboard-icon-box">
                         <i class="dashboard-quick-view-icon fas fa-clipboard-list"></i>
@@ -13,13 +13,13 @@
                     <span class="dashboard-quick-view-number">{{ fismaExpiringThisQuarter }}</span>
                 </div>
                 <span class="dashboard-quick-view-text">FISMA Expiring by {{ getExpiringDate() }}</span>
-                <div style="cursor: pointer;" (click)="navigateToFismaTabs()"  class="dashboard-quick-view-expire-container">
+                <div (click)="viewExpiringFisma()"  class="dashboard-quick-view-expire-container">
                     <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle"></i>
-                    <span class="dashboard-quick-view-expire-text">{{ fismaExpiringThisWeek }} items expiring within 7 days</span>
+                    <span class="dashboard-quick-view-expire-text" [ngClass]="{'positive-expire-text' : fismaExpiringThisWeek > 0}">{{ fismaExpiringThisWeek }} items expiring within 7 days</span>
                 </div>
             </div>
              <div class="dashboard-quick-view-item">
-                <a (click)="navigateToSystems()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
+                <a (click)="viewAllSystems()" class="dashboard-view-all-link">View All</a>
                 <div class="dashboard-header-row">
                     <div class="dashboard-icon-box">
                         <i class="dashboard-quick-view-icon fas fa-server"></i>
@@ -27,13 +27,13 @@
                     <span class="dashboard-quick-view-number">{{ decommissionedSystemsLast6Months }}</span>
                 </div>
                 <span class="dashboard-quick-view-text">Decommissioned systems (Last 6 months)</span>
-                <div style="cursor: pointer;" (click)="navigateToSystemsTabs()" class="dashboard-quick-view-expire-container">
+                <div (click)="viewDecommissionedSystems()" class="dashboard-quick-view-expire-container">
                     <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle"></i>
-                    <span class="dashboard-quick-view-expire-text">{{ decommissionedSystemsLast7Days }} items decommissioned in last 7 days</span>
+                    <span class="dashboard-quick-view-expire-text" [ngClass]="{'positive-expire-text' : decommissionedSystemsLast7Days > 0}">{{ decommissionedSystemsLast7Days }} items decommissioned in last 7 days</span>
                 </div>
             </div>
             <div class="dashboard-quick-view-item">
-                <a (click)="navigateToItStandards()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
+                <a (click)="viewAllITStandards()" class="dashboard-view-all-link">View All</a>
                 <div class="dashboard-header-row">
                     <div class="dashboard-icon-box">
                         <i class="dashboard-quick-view-icon fas fa-desktop"></i>
@@ -41,24 +41,24 @@
                     <span class="dashboard-quick-view-number">{{ standardsExpiringThisQuarter }}</span>
                 </div>
                 <span class="dashboard-quick-view-text">IT Standards Expiring by {{ getExpiringDate() }}</span>
-                <div style="cursor: pointer;" (click)="navigateToItStandardTabs()" class="dashboard-quick-view-expire-container">
+                <div (click)="viewExpiringITStandards()" class="dashboard-quick-view-expire-container">
                     <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle"></i>
-                    <span class="dashboard-quick-view-expire-text">{{ standardsExpiringThisWeek }} items expiring within 7 days</span>
+                    <span class="dashboard-quick-view-expire-text" [ngClass]="{'positive-expire-text' : standardsExpiringThisWeek > 0}">{{ standardsExpiringThisWeek }} items expiring within 7 days</span>
                 </div>
             </div>
            
             <div class="dashboard-quick-view-item">
-                <a (click)="navigateToDecommissionedITStandards()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
+                <a (click)="viewAllITStandards()" class="dashboard-view-all-link">View All</a>
                 <div class="dashboard-header-row">
                     <div class="dashboard-icon-box">
                         <i class="dashboard-quick-view-icon fas fa-trash-alt"></i>
                     </div>
-                    <span class="dashboard-quick-view-number">{{ decommissionedITStandardsLast6Months }}</span>
+                    <span class="dashboard-quick-view-number">{{ retiredITStandardsLast6Months }}</span>
                 </div>
-                <span class="dashboard-quick-view-text">Decommissioned IT standards (Last 6 months)</span>
-                <div style="cursor: pointer;" (click)="navigateToDecommissionedITStandardsTabs()" class="dashboard-quick-view-expire-container">
+                <span class="dashboard-quick-view-text">Retired IT standards (Last 6 months)</span>
+                <div (click)="viewRecentRetiredITStandards()" class="dashboard-quick-view-expire-container">
                     <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle"></i>
-                    <span class="dashboard-quick-view-expire-text">{{ decommissionedITStandardsLast7Days }} items expiring in last 7 days</span>
+                    <span class="dashboard-quick-view-expire-text" [ngClass]="{'positive-expire-text' : retiredITStandardsLast7Days > 0}">{{ retiredITStandardsLast7Days }} items retired in last 7 days</span>
                 </div>
             </div>
         </div>
@@ -68,16 +68,16 @@
                 <span class="dashboard-card-title-text">Quick Links</span>
             </span>
             <div class="dashboard-quick-links-link-container">
-                <a href="https://ea.gsa.gov/#/it_standards" class="dashboard-quick-links-link">
+                <a routerLink="/it_standards" class="dashboard-quick-links-link">
                    Approved/denied software
                 </a>
-                <a href="https://ea.gsa.gov/#/FISMA" class="dashboard-quick-links-link">
+                <a routerLink="/FISMA" class="dashboard-quick-links-link">
                     Active FISMA systems
                 </a>
-                <a href="https://ea.gsa.gov/#/systems" class="dashboard-quick-links-link">
+                <a routerLink="/systems" class="dashboard-quick-links-link">
                    Business systems/subsystems
                 </a>
-                <a href="https://ea.gsa.gov/#/org_chart" class="dashboard-quick-links-link">
+                <a routerLink="/org_chart" class="dashboard-quick-links-link">
                     GSA org chart
                 </a>
             </div>
@@ -91,7 +91,7 @@
             <div class="dashboard-chart-card bar-chart-card">
                 <div class="dashboard-chart-header">
                     <h3 class="dashboard-card-title-text">Hosting Platforms</h3>
-                    <a (click)="navigateToHostingPlatforms()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
+                    <a (click)="viewAllSystems()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
                 </div>
                 <div class="dashboard-chart-content bar-chart-content">
                     <ngx-charts-bar-vertical
@@ -118,7 +118,7 @@
             <div class="dashboard-chart-card pie-chart-card">
                 <div class="dashboard-chart-header">
                     <h3 class="dashboard-card-title-text">Business Systems</h3>
-                    <a (click)="navigateToCloudSystems()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
+                    <a (click)="viewAllSystems()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
                 </div>
                 <div class="dashboard-chart-content pie-chart-content">
                     <ngx-charts-pie-chart
@@ -157,7 +157,7 @@
     <div class="dashboard-recent-report-container">
         <div class="dashboard-recent-report-title">
             <span class="dashboard-card-title-text">Recent GSA IT Standards</span>
-            <a (click)="navigateToItStandards()" class="dashboard-view-all-link normal">View All</a>
+            <a (click)="viewAllITStandards()" class="dashboard-view-all-link normal">View All</a>
         </div>
         <app-table *ngIf="showTable" [tableCols]="tableCols" [showToolbar]="false" [showPagination]="false" reportStyle="neutral" (rowClickEvent)="onTableRowClick($event)">
         </app-table>

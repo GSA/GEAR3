@@ -507,6 +507,24 @@ export class ApiService {
     );
   }
 
+  public getDecommissionedSystemTotals(): Observable<any> {
+    return this.http
+    .get<any>(this.sysUrl + '/decommissioned_system_totals')
+    .pipe(
+      map(t => t[0]),
+      catchError(this.handleError<any>('GET Decommissioned System Totals', []))
+    );
+  }
+
+  public getRetiredStandardsTotals(): Observable<any> {
+    return this.http
+    .get<any>(this.techUrl + '/retired_standard_totals')
+    .pipe(
+      map(t => t[0]),
+      catchError(this.handleError<any>('GET Retired Standard Totals', []))
+    );
+  }
+
   public getCloudAdoptionRate(): Observable<CloudAdoptionRate[]> {
     return this.http
       .get<CloudAdoptionRate[]>(this.cloudAdoptionUrl)

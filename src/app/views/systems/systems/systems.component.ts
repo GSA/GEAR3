@@ -46,6 +46,8 @@ export class SystemsComponent implements OnInit {
   public systemsData: System[] = [];
   public systemsDataTabFilterted: System[] = [];
 
+  public daysDecommissioned: number = 0;
+
   constructor(
     private apiService: ApiService,
     private location: Location,
@@ -279,13 +281,31 @@ export class SystemsComponent implements OnInit {
       if (params['tab']) {
         this.selectedTab = params['tab'];
       }
+      if(params['decommissionedWithinDays']) {
+        this.daysDecommissioned = +params['decommissionedWithinDays'];
+      }
     });
 
     this.apiService.getSystems().subscribe(systems => {
       this.systemsData = systems;
 
-      // Apply tab filter based on selectedTab
-      this.onSelectTab(this.selectedTab);
+      if(this.daysDecommissioned > 0) {
+        const now = new Date(); // Current date and time
+        const expiringWithin = new Date();
+        expiringWithin.setDate(now.getDate() + this.daysDecommissioned); // number of days set in the url
+        const expiringFiltered = [];
+        systems.forEach(s => {
+          let renewal = new Date(s.RenewalDate);
+          if(s.RenewalDate && (renewal >= now && renewal <= expiringWithin) && (s.Status === 'Inactive') && (s.BusApp === 'Yes')) {
+            expiringFiltered.push(s);
+          }
+        });
+        this.tableService.updateReportTableData(expiringFiltered);
+        return;
+      } { 
+        // Apply tab filter based on selectedTab
+        this.onSelectTab(this.selectedTab);;
+      }
     });
 
     this.apiService.getSystemsFilterTotals().subscribe(t => {
