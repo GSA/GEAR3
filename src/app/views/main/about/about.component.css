@@ -1,3 +1,16 @@
 .card-header h4, .tab-pane h4{
     text-decoration: none !important;
 }
+
+.card-link{
+    color: #005ea2 !important ;
+}
+
+.card-link:hover{
+    text-decoration: none !important;
+}
+
+.h-100{
+    min-height: 100% !important;
+    height: unset !important;
+}

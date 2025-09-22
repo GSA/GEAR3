@@ -21,7 +21,7 @@
     </app-button-overlay-panel>
   </div>
   <div class="fisma-poc-data-container">
-    <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+    <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="fismaPoc" (rowClickEvent)="onRowClick($event)"></app-table>
   </div>
 </div>
 

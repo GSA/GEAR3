@@ -21,6 +21,8 @@ export class FismaComponent implements OnInit {
   public fismaData: FISMA[] = [];
   public fismaTabFilterted: FISMA[] = [];
 
+  public daysExpiring: number = 0;
+
   row: Object = <any>{};
   // retiredTable: boolean = false;
 
@@ -154,14 +156,45 @@ export class FismaComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    // Check for tab parameter in route
+    this.route.queryParams.subscribe(params => {
+      if (params['tab']) {
+        this.selectedTab = params['tab'];
+      }
+      if(params['expiringWithinDays']) {
+        this.daysExpiring = +params['expiringWithinDays'];
+      }
+    });
+
     this.apiService.getFISMA().subscribe(fisma => {
       this.fismaData = fisma;
       fisma.forEach(f => {
         if(f.Status === 'Active' && f.SystemLevel === 'System' && f.Reportable === 'Yes') {
           this.fismaTabFilterted.push(f);
         }
+
+        if(this.daysExpiring > 0) {
+          const now = new Date(); // Current date and time
+          const expiringWithin = new Date();
+          expiringWithin.setDate(now.getDate() + this.daysExpiring); // number of days set in the url
+          const expiringFiltered = [];
+          fisma.forEach(f => {
+            let renewal = new Date(f.RenewalDate);
+            if(f.RenewalDate && (renewal >= now && renewal <= expiringWithin)) {
+              expiringFiltered.push(f);
+            }
+          });
+          this.tableService.updateReportTableData(expiringFiltered);
+          return;
+        } else {
+          this.tableService.updateReportTableData(this.fismaTabFilterted);
+        }
       });
-      this.tableService.updateReportTableData(this.fismaTabFilterted);
+      
+      // Apply tab filter if specified in route
+      if (this.selectedTab !== 'All') {
+        this.onSelectTab(this.selectedTab);
+      }
     });
 
     this.apiService.getFismaFilterTotals().subscribe(t => {

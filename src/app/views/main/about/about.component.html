@@ -1,253 +1,157 @@
 <div class="card bg-light">
-  <div class="card-header text-white bg-dark">
+  <div class="card-header text-white bg-info">
     <h3 class="card-title my-auto">About GSA Enterprise Architecture Program</h3>
   </div>
   <div class="card-body card-text">
     <!-- Tabs -->
     <ul id="aboutTabs" class="nav nav-tabs">
       <li class="nav-item">
-        <a class="nav-link active" data-bs-toggle="tab" href="#overview">
-          Overview</a></li>
+        <a class="nav-link" [class.active]="isActiveTab('overview')" (click)="onTabClick('overview', $event)" href="#overview"> Overview</a>
+      </li>
       <li class="nav-item">
-        <a class="nav-link" data-bs-toggle="tab" href="#data">
-          Data</a></li>
+        <a class="nav-link" [class.active]="isActiveTab('data')" (click)="onTabClick('data', $event)" href="#data"> Data</a>
+      </li>
       <li class="nav-item">
-        <a class="nav-link" data-bs-toggle="tab" href="#sysRat">
-          Systems Rationalization</a></li>
-      <li class="nav-item">
-        <a class="nav-link" data-bs-toggle="tab" href="#appRat">
-          Application Rationalization</a></li>
-      <li class="nav-item">
-        <a class="nav-link" data-bs-toggle="tab" href="#videoTutorials">
-          Quick Video Tutorials</a></li>
+        <a class="nav-link" [class.active]="isActiveTab('sysRat')" (click)="onTabClick('sysRat', $event)" href="#sysRat"> Systems Rationalization</a>
+      </li>
     </ul>
-
     <!-- Tab Panes -->
     <div class="tab-content mt-3">
-      <div class="tab-pane fade show active" id="overview">
-        <div class="card-header bg-info">
-          <h4 class="my-0 font-weight-normal text-white">What is GEAR?</h4>
-        </div>
-        <div class="card-body d-flex">
-          <p>
-            GSA Enterprise Architecture (EA) Analytics and Reporting (AR), or GEAR, 
-            provides commonly-used strategic, business, and technical information. 
-            Use GEAR to gain insight into the common direction for GSA IT, and get 
-            the data you need to do your job.
-
-            <br /><br />
-            GEAR combines authoritative sources of Agency data with helpful references 
-            between the datasets to make the data actionable and to provide a more holistic 
-            understanding of GSA and its operations.
-          </p>
-        </div>
-        <div class="card mb-4 shadow">
-          <div class="card-header bg-info">
-            <h4 class="my-0 font-weight-normal text-white">Who Can Use GEAR?</h4>
+      <div class="tab-pane fade" [class.show]="isActiveTab('overview')" [class.active]="isActiveTab('overview')" id="overview">
+        <div class="row align-items-stretch">
+          <div class="col-xl-4 col-md-6 h-100 mb-4">
+            <div class="card shadow h-100">
+              <div class="card-header bg-info">
+                <h4 class="my-0 font-weight-normal text-white">What is GEAR?</h4>
+              </div>
+              <div class="card-body d-flex">
+                <p> GSA Enterprise Architecture (EA) Analytics and Reporting (AR), or GEAR, provides commonly-used strategic, business, and technical information. Use GEAR to gain insight into the common direction for GSA IT, and get the data you need to do your job. <br /><br /> GEAR combines authoritative sources of Agency data with helpful references between the datasets to make the data actionable and to provide a more holistic understanding of GSA and its operations. </p>
+              </div>
+            </div>
           </div>
-          <div class="card-body d-flex">
-            <p>
-              Anyone logged on to the GSA network can access and download data from GEAR. 
-              Please address any data discrepancies with data owners, so they can update 
-              their respective data sources.
-              <br /><br />
-              Use the "Contact/Feedback" dropdown menu in the top right corner of the page 
-              to ask questions about IT Standards or GEAR itself.
-            </p>
+          <div class="col-xl-4 col-md-6 h-100 mb-4">
+            <div class="card shadow h-100">
+              <div class="card-header bg-info">
+                <h4 class="my-0 font-weight-normal text-white">Who Can Use GEAR?</h4>
+              </div>
+              <div class="card-body d-flex">
+                <p> Anyone logged on to the GSA network can access and download data from GEAR. Please address any data discrepancies with data owners, so they can update their respective data sources. <br /><br /> Use the "Contact/Feedback" dropdown menu in the top right corner of the page to ask questions about IT Standards or GEAR itself. </p>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="card mb-4 shadow">
-          <div class="card-header bg-info">
-            <h4 class="my-0 font-weight-normal text-white">How Do I Use GEAR?</h4>
-          </div>
-          <div class="card-body d-flex">
-            <p>
-              Click on the tabs on the left (or use the expansion button on the top left to 
-              expand the tabs), to explore the various investments, applications, FISMA systems, 
-              and technology standards used in GSA. Each section has an
-              <i class="far fa-question-circle"></i> icon for more information on
-              how to use that table. <br /><br />
-              To search, use either the “Global Search” box at the top of the screen, or the 
-              topic-specific search box near the top of each topic page. 
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="tab-pane fade show" id="data">
-        <div class="card-header bg-info">
-          <h4 class="my-0 font-weight-normal text-white">Data</h4>
-        </div>
-        <div class="card-body d-flex">
-          <p>The Office of Digital Management (IR) team provides strategic and policy support for GSA
-            customers across the entire organization. Enterprise Architecture (EA) is responsible for providing the
-            necessary support for designing organizational changes based on ever-evolving programmatic requirements. EA is
-            involved in business transformation planning through the modeling of existing processes and environments and
-            the development of roadmaps to reach the desired target states. In addition, EA is responsible for assessing
-            the impact of change across the organization such as business, application, and technological layers.</p>
-        </div>
-        
-        <div class="card mb-4 shadow">
-          <div class="card-header bg-info">
-            <h4 class="my-0 font-weight-normal text-white">Sources of Data</h4>
-          </div>
-          <div class="card-body d-flex">
-            <p>GEAR aims to be a hub of data by relying on authoritative sources of information as much as possible. We strive 
-              to limit the redundancy of data calls by determining if data can be imported from existing systems. 
-              For that reason, GEAR has formed partnerships with several organizations across GSA to import data, 
-              analyze and make the proper references between data sets, and present it in an intuitive and actionable manner. 
-              GEAR's data sources are provided in <a routerLink="/gear_model"><u>the GEAR Data Flow Model.</u></a></p>
-          </div>
-        </div>
-        
-        <div class="card mb-4 shadow">
-          <div class="card-header bg-info">
-            <h4 class="my-0 font-weight-normal text-white">GEAR API</h4>
-          </div>
-          <div class="card-body ">
-            <p>The GEAR development team has built a set of openly available REST API services 
-            (<a href="https://gsa.github.io/GEAR-Documentation/api-docs/"><u>documentation here</u></a>) to provide the data
-            from this portal to other users who might need direct access to the EA data. Currently, the portal is
-            available to all users within the GSA firewall.</p>
-            <br>
-            <p>
-              <!-- removed for gg-174 <a href="/known_issues" target="blank" class="card-link">
-                GEAR Known Issues</a> -->
-              <!--<a href="https://insite.gsa.gov/directives-library/gsa-enterprise-architecture-policy-21104-cio"
-                target="blank" class="card-link">CIO GSA Enterprise Architecture Policy</a> -->
-              <a href="https://github.com/GSA/GEAR3" target="blank" class="card-link">
-                GEAR Code Repository and Issue Management on GitHub</a>
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="tab-pane fade" id="sysRat">
-        <div class="card-header bg-info">
-          <h4 class="my-0 font-weight-normal text-white">Systems Rationalization</h4>
-        </div>
-        <div class="card-body d-flex">
-          <p>GSA's Enterprise Architecture program uses a business-focused, 
-            data-bs-driven methodology to analyze the IT application portfolio and help guide IT investment decisions. 
-            This methodology is used to calculate whether a system should be tolerated, invested, migrated, or eliminated 
-            (TIME). To derive the current TIME value of a business system, we ask system owners to work with their teams 
-            to complete a <b>TIME Assessment Questionnaire</b>. For access to a TIME Assessment Questionnaire,
-            please <a href="https://mail.google.com/mail/?view=cm&fs=1&to=ea_planning&#64;gsa.gov"
-            target="_blank"><u>contact the EA team</u></a>, and we will provide you with a custom link to a questionnaire for your system. 
-          <br><br>
-            If you provide a response to our TIME Assessment Questionnaire, it will be visible on 
-            <a routerLink="/systems_TIME" class="card-link">the TIME report</a>.</p>
-        </div>
-
-        <div class="card mb-4 shadow">
-          <div class="card-header bg-info">
-            <h4 class="my-0 font-weight-normal text-white">TIME</h4>
-          </div>
-          <div class="card-body">
-            <p><b>Tolerate:</b> the business system is stable and meets business needs but may not be essential for future goals. 
-              It requires minimal maintenance and can be kept for the time being.</p>
-
-            <p><b>Invest:</b> the business system delivers high-value capabilities that are critical to the business and should be continuously improved and modernized.</p>
-
-            <p><b>Migrate:</b> the business system is no longer meeting business needs or is technically outdated. It should be replaced with a newer, more suitable solution.</p>
-
-            <p><b>Eliminate:</b> the business system is no longer used or is redundant. It should be decommissioned to free up resources.</p>
-            <br>
-
-            <p>
-              <a routerLink="/systems_TIME" class="card-link">
-                Systems TIME Report</a>
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="tab-pane fade" id="appRat">
-        <div class="card-header bg-info">
-          <h4 class="my-0 font-weight-normal text-white">Application Rationalization</h4>
-        </div>
-        <div class="card-body d-flex">
-          <p>GSA's Enterprise Architecture program uses a business-focused, 
-            data-driven methodology to analyze the IT application portfolio and help guide IT investment decisions. 
-            This methodology is used to calculate whether an application should be tolerated, invested, migrated, or eliminated 
-            (TIME). To derive the current TIME value of an application, we ask application owners to work with their teams 
-            to complete a <b>TIME Assessment Questionnaire</b>. For access to a TIME Assessment Questionnaire,
-            please <a href="https://mail.google.com/mail/?view=cm&fs=1&to=ea_planning&#64;gsa.gov"
-            target="_blank"><u>contact the EA team</u></a>, and we will provide you with a custom link to a questionnaire for your application. 
-          <br><br>
-            If you provide a response to our TIME Assessment Questionnaire, it will be visible on 
-            <a routerLink="/systems_TIME" class="card-link">the TIME report</a>.</p>
-        </div>
-
-        <div class="card mb-4 shadow">
-          <div class="card-header bg-info">
-            <h4 class="my-0 font-weight-normal text-white">System Lifecycle Questionnaire FAQs</h4>
-          </div>
-          <div class="card-body d-flex">
-            <div>
-              <h5>What is the purpose of filling out the TIME (system lifecycle) questionnaire?</h5>
-              <p>The TIME questionnaire is designed to assess the current state and future direction of GSA's IT applications. 
-              It helps us understand whether each application should be Tolerated, Invested in, Migrated to a new solution, or Eliminated. 
-              This assessment is crucial for making informed IT investment decisions and ensuring our technology portfolio aligns with GSA's strategic goals.</p>
-
-              <h5>Why should I fill this out?</h5>
-              <p>Completing the TIME questionnaire helps ensure your application receives appropriate attention and resources. 
-              It provides valuable input for strategic planning and helps identify opportunities for modernization, consolidation, 
-              or retirement of systems. Your input directly influences how GSA allocates IT resources and prioritizes technology initiatives.</p>
-
-              <h5>What will be done with the data?</h5>
-              <p>The data collected through the TIME questionnaire is used to:</p>
-              <ul>
-                <li>Generate TIME analysis reports that inform IT investment decisions</li>
-                <li>Identify opportunities for system consolidation and modernization</li>
-                <li>Support strategic planning and budget allocation</li>
-                <li>Create transparency in our IT portfolio management</li>
-                <li>Help prioritize technology initiatives across the agency</li>
-              </ul>
-              <p>The results are visible on <a routerLink="/systems_TIME" class="card-link">the TIME report</a> and are used by GSA leadership 
-              to make data-driven decisions about our technology investments.</p>
-
-              <h5>How can I propose changes to the questions or listed responses?</h5>
-              <p>We welcome feedback on the questionnaire structure and content. If you have suggestions for improving the questions 
-              or response options, please contact the EA team at <a href="https://mail.google.com/mail/?view=cm&fs=1&to=ea_planning&#64;gsa.gov" 
-              target="_blank">ea_planning&#64;gsa.gov</a>. Your input helps us continuously improve the assessment process.</p>
-
-              <br>
-              <p><strong>Need a TIME Assessment Questionnaire?</strong> Please 
-              <a href="https://mail.google.com/mail/?view=cm&fs=1&to=ea_planning&#64;gsa.gov" target="_blank">contact the EA team</a> 
-              to request a custom questionnaire for your system.</p>
+          <div class="col-xl-4 col-md-6 h-100 mb-4">
+            <div class="card shadow h-100 ">
+              <div class="card-header bg-info">
+                <h4 class="my-0 font-weight-normal text-white">How Do I Use GEAR?</h4>
+              </div>
+              <div class="card-body d-flex">
+                <p> Click on the tabs on the left (or use the expansion button on the top left to expand the tabs), to explore the various investments, applications, FISMA systems, and technology standards used in GSA. Each section has an <i class="far fa-question-circle"></i> icon for more information on how to use that table. <br /><br /> To search, use either the “Global Search” box at the top of the screen, or the topic-specific search box near the top of each topic page. </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-
-      <div id="videoTutorials" class="tab-pane fade">
-        <div class="card-header bg-info">
-          <h4 class="my-0 font-weight-normal text-white">Quick Video Tutorials</h4>
+      <div class="tab-pane fade" [class.show]="isActiveTab('data')" [class.active]="isActiveTab('data')" id="data">
+        <div class="row align-items-stretch">
+          <div class="col-xl-4 col-md-6 h-100 mb-4">
+            <div class="card shadow h-100">
+              <div class="card-header bg-info">
+                <h4 class="my-0 font-weight-normal text-white">Data</h4>
+              </div>
+              <div class="card-body d-flex">
+                <p>The Office of Digital Management (IR) team provides strategic and policy support for GSA customers across the entire organization. Enterprise Architecture (EA) is responsible for providing the necessary support for designing organizational changes based on ever-evolving programmatic requirements. EA is involved in business transformation planning through the modeling of existing processes and environments and the development of roadmaps to reach the desired target states. In addition, EA is responsible for assessing the impact of change across the organization such as business, application, and technological layers.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-4 col-md-6 h-100 mb-4">
+            <div class="card shadow h-100">
+              <div class="card-header bg-info">
+                <h4 class="my-0 font-weight-normal text-white">Sources of Data</h4>
+              </div>
+              <div class="card-body d-flex">
+                <p>GEAR aims to be a hub of data by relying on authoritative sources of information as much as possible. We strive to limit the redundancy of data calls by determining if data can be imported from existing systems. For that reason, GEAR has formed partnerships with several organizations across GSA to import data, analyze and make the proper references between data sets, and present it in an intuitive and actionable manner. GEAR's data sources are provided in <a routerLink="/gear_model" class="card-link"><u>the GEAR Data Flow Model.</u></a></p>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-4 col-md-6 h-100 mb-4">
+            <div class="card shadow h-100">
+              <div class="card-header bg-info">
+                <h4 class="my-0 font-weight-normal text-white">GEAR API</h4>
+              </div>
+              <div class="card-body ">
+                <p>The GEAR development team has built a set of openly available REST API services (<a href="https://gsa.github.io/GEAR-Documentation/api-docs/" class="card-link" target="_blank"><u>documentation here</u></a>) to provide the data from this portal to other users who might need direct access to the EA data. Currently, the portal is available to all users within the GSA firewall.</p>
+                <p>
+                  <!-- removed for gg-174 <a href="/known_issues" target="blank" class="card-link">
+                    GEAR Known Issues</a> -->
+                  <!--<a href="https://insite.gsa.gov/directives-library/gsa-enterprise-architecture-policy-21104-cio"
+                    target="blank" class="card-link">CIO GSA Enterprise Architecture Policy</a> -->
+                  <a href="https://github.com/GSA/GEAR3" target="blank" class="card-link"> GEAR Code Repository and Issue Management on GitHub</a>
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="card-body d-flex">
-          <div class="row justify-content-center">
-            <p>Coming Soon...</p>
-            <!-- Placeholder for video tutorials -->
-            <!-- <div class="eavp-player-cntr row tablefix">
-            <div class="col-md-12">
-              <div class="panel" style="height:auto;">
-                <div class="panel-body">
-                  <div id="inline-player" class="eavp-player">
-                    <div class="eavp-owl-cntr">
-                      <div id="owl" class="owl-carousel owl-theme">
-                      </div>
-                    </div>
-                    <ul id="eavp-playlist" class="eavp-playlist">
-                    </ul>
-                  </div>
+      </div>
+      <div class="tab-pane fade" [class.show]="isActiveTab('sysRat')" [class.active]="isActiveTab('sysRat')" id="sysRat">
+        <div class="row align-items-stretch">
+          <div class=" col-md-6 h-100 mb-4">
+            <div class="card shadow h-100">
+              <div class="card-header bg-info">
+                <h4 class="my-0 font-weight-normal text-white">Systems Rationalization</h4>
+              </div>
+              <div class="card-body d-flex">
+                <p>GSA's Enterprise Architecture program uses a business-focused, data-bs-driven methodology to analyze the IT application portfolio and help guide IT investment decisions. This methodology is used to calculate whether a system should be tolerated, invested, migrated, or eliminated (TIME). To derive the current TIME value of a business system, we ask system owners to work with their teams to complete a <b>TIME Assessment Questionnaire</b>. For access to a TIME Assessment Questionnaire, please <a href="https://mail.google.com/mail/?view=cm&fs=1&to=ea_planning&#64;gsa.gov"
+                    target="_blank" class="card-link"><u>contact the EA team</u></a>, and we will provide you with a custom link to a questionnaire for your system. <br><br> If you provide a response to our TIME Assessment Questionnaire, it will be visible on <a routerLink="/systems_TIME" class="card-link"><u>the TIME report</u></a>.</p>
+              </div>
+            </div>
+          </div>
+          <div class=" col-md-6 h-100 mb-4">
+            <div class="card shadow h-100">
+              <div class="card-header bg-info">
+                <h4 class="my-0 font-weight-normal text-white">TIME</h4>
+              </div>
+              <div class="card-body">
+                <p><b>Tolerate:</b> the business system is stable and meets business needs but may not be essential for future goals. It requires minimal maintenance and can be kept for the time being.</p>
+                <p><b>Invest:</b> the business system delivers high-value capabilities that are critical to the business and should be continuously improved and modernized.</p>
+                <p><b>Migrate:</b> the business system is no longer meeting business needs or is technically outdated. It should be replaced with a newer, more suitable solution.</p>
+                <p><b>Eliminate:</b> the business system is no longer used or is redundant. It should be decommissioned to free up resources.</p>
+                <p>
+                  <a routerLink="/systems_TIME" class="card-link"><u> Systems TIME Report</u></a>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 h-100 mb-4">
+            <div class="card shadow h-100">
+              <div class="card-header bg-info">
+                <h4 class="my-0 font-weight-normal text-white">System Lifecycle Questionnaire FAQs</h4>
+              </div>
+              <div class="card-body d-flex">
+                <div>
+                  <h5>What is the purpose of filling out the TIME (system lifecycle) questionnaire?</h5>
+                  <p>The TIME questionnaire is designed to assess the current state and future direction of GSA's IT systems and applications. It helps us understand whether each system or application should be Tolerated, Invested in, Migrated to a new solution, or Eliminated. This assessment is crucial for making informed IT investment decisions and ensuring our technology portfolio aligns with GSA's strategic goals.</p>
+                  <h5>Why should I fill this out?</h5>
+                  <p>Completing the TIME questionnaire helps ensure your system or application receives appropriate attention and resources. It provides valuable input for strategic planning and helps identify opportunities for modernization, consolidation, or retirement of systems. Your input directly influences how GSA allocates IT resources and prioritizes technology initiatives.</p>
+                  <h5>What will be done with the data?</h5>
+                  <p>The data collected through the TIME questionnaire is used to:</p>
+                  <ul>
+                    <li>Generate TIME analysis reports that inform IT investment decisions</li>
+                    <li>Identify opportunities for system consolidation and modernization</li>
+                    <li>Support strategic planning and budget allocation</li>
+                    <li>Create transparency in our IT portfolio management</li>
+                    <li>Help prioritize technology initiatives across the agency</li>
+                  </ul>
+                  <p>The results are visible on <a routerLink="/systems_TIME" class="card-link"><u>the TIME report</u></a> and are used by GSA leadership to make data-driven decisions about our technology investments.</p>
+                  <h5>How can I propose changes to the questions or listed responses?</h5>
+                  <p>We welcome feedback on the questionnaire structure and content. If you have suggestions for improving the questions or response options, please contact the EA team at <a href="https://mail.google.com/mail/?view=cm&fs=1&to=ea_planning&#64;gsa.gov"
+                      target="_blank" class="card-link"><u>ea_planning&#64;gsa.gov</u></a>. Your input helps us continuously improve the assessment process.</p>
+                  <p><strong>Need a TIME Assessment Questionnaire?</strong> Please <a href="https://mail.google.com/mail/?view=cm&fs=1&to=ea_planning&#64;gsa.gov" target="_blank" class="card-link"><u>contact the EA team</u></a> to request a custom questionnaire for your system or application.</p>
                 </div>
               </div>
             </div>
-          </div> -->
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </div>
