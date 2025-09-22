@@ -156,10 +156,20 @@ export class TableComponent implements OnInit, OnChanges {
 
 
   toggleVisible(e: any) {
-    // Update showColumn property for each column based on multiSelect selection
+    // Clear the visible columns array first
+    this.visibleColumns = [];
+    
+    // Update the showColumn property for each column based on the selected items
     this.tableCols.forEach(col => {
-      col.showColumn = this.visibleColumns.some(visibleCol => visibleCol.field === col.field);
+      const isSelected = e.value.some((selectedCol: Column) => selectedCol.field === col.field);
+      col.showColumn = isSelected;
+      
+      if (isSelected) {
+        this.visibleColumns.push(col);
+      }
     });
+
+    localStorage.setItem('visibleColumns', JSON.stringify(this.visibleColumns));
   }
 
   togglePagination() {
@@ -273,15 +283,8 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   generateColumns() {
-    // Clear existing visible columns to avoid duplicates
-    this.visibleColumns = [];
-    
-    // Add columns that should be visible
-    this.tableCols.forEach(c => {
-      if (this.showColumn(c)) {
-        this.visibleColumns.push(c);
-      }
-    });
+    // Clear and rebuild visible columns based on showColumn property
+    this.visibleColumns = this.tableCols.filter(col => this.showColumn(col));
   }
 
   public onRowSelect(e: TableRowSelectEvent) {

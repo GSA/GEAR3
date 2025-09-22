@@ -767,7 +767,7 @@ export class TableService {
 
   // Call this to update the report table data
   public updateReportTableData(data: any) {
-    this.reportTableDataSubject.next(data);
+    this.reportTableDataSubject.next(data); 
   }
 
   public filterButtonClick(filterButtons: FilterButton[], data: any): void {
