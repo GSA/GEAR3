@@ -13,14 +13,12 @@ export class AnalyticsService {
         search: 'search',
         sidebar_navigation: 'sidebar_navigation', // custom
         sidebar_navigation_keyboard: 'sidebar_navigation_keyboard', // custom
-        topbar_navigation: 'topbar_navigation', // custom
-        topbar_navigation_keyboard: 'topbar_navigation_keyboard' // custom
     };
 
     constructor() {}
 
-    public logClickEvent(pagePathValue: string) {
-        gtag('event', this.ANALYTIC_EVENT_TYPES.click, { 'page_path': pagePathValue });
+    public logClickEvent(pagePathValue: string, clickedValue: string = '') {
+        gtag('event', this.ANALYTIC_EVENT_TYPES.click, { 'page_path': pagePathValue, 'clicked_value': clickedValue });
     }
 
     public logPageViewEvent(pagePathValue: string) {
