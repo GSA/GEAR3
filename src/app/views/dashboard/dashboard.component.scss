@@ -93,7 +93,7 @@ $transition: all 0.3s ease;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding-bottom: 1.5rem;
+  padding-bottom: 1rem;
 
   @media (max-width: 1366px) and (min-width: 1024px) {
     padding-bottom: 1rem;
@@ -148,6 +148,7 @@ $transition: all 0.3s ease;
       grid-template-columns: 1fr 1fr;
       gap: 15px;
       width: 75%;
+      align-items: stretch;
 
       @media (max-width: 1366px) and (min-width: 992px) {
         gap: 12px;
@@ -173,6 +174,7 @@ $transition: all 0.3s ease;
       align-items: flex-start;
       @include card-style;
       @include responsive-padding(1rem, 0.75rem);
+      
 
       @media (max-width: 1366px) and (min-width: 992px) {
         gap: 0.2rem;
@@ -181,6 +183,7 @@ $transition: all 0.3s ease;
       &.dashboard-quick-links-card {
         width: 25%;
         align-items: start;
+        min-height: 100%;
         
         @media (max-width: 992px) {
           width: 100%;
@@ -212,6 +215,11 @@ $transition: all 0.3s ease;
           height: 2.5rem;
           width: 2.5rem;
           padding: 0.5rem 0.75rem;
+        }
+
+        &.zero-value {
+          background: #E5E7EB;
+          color: #6B7280;
         }
 
         & .dashboard-quick-view-icon {
@@ -250,6 +258,19 @@ $transition: all 0.3s ease;
         & .positive-expire-text {
           text-decoration-line: underline;
           cursor: pointer;
+        }
+
+        &.neutral-message {
+          margin: 0;
+          padding: 0;
+          
+          & .neutral-text {
+            @include text-style(0.875rem, 400, #6B7280);
+            @include responsive-font(0.875rem, 0.8rem);
+            line-height: 1.2;
+            margin: 0;
+            padding: 0;
+          }
         }
       }
 

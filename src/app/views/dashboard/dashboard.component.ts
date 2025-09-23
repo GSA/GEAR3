@@ -6,7 +6,6 @@ import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Website } from '@api/models/websites.model';
 import { Subscription } from 'rxjs';
-import { AnalyticsService } from '@services/analytics/analytics.service';
 
 @Component({
     selector: 'dashboard',
@@ -119,8 +118,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private tableService: TableService,
     private sharedService: SharedService,
     private router: Router,
-    private cdr: ChangeDetectorRef,
-    private analyticsService: AnalyticsService
+    private cdr: ChangeDetectorRef
   ) { }
 
   public ngOnInit(): void {
@@ -139,11 +137,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }, 0);
     });
 
-    this.apiService.getITStandardsExpiringThisQuarter().subscribe(q => this.standardsExpiringThisQuarter = q);
-    this.apiService.getITStandardsExpiringThisWeek().subscribe(w => this.standardsExpiringThisWeek = w);
+    this.apiService.getITStandardsExpiringThisQuarter().subscribe(q => this.standardsExpiringThisQuarter = q || 0);
+    this.apiService.getITStandardsExpiringThisWeek().subscribe(w => this.standardsExpiringThisWeek = w || 0);
 
-    this.apiService.getFismaExpiringThisQuarter().subscribe(q => this.fismaExpiringThisQuarter = q);
-    this.apiService.getFismaExpiringThisWeek().subscribe(w => this.fismaExpiringThisWeek = w);
+    this.apiService.getFismaExpiringThisQuarter().subscribe(q => this.fismaExpiringThisQuarter = q || 0);
+    this.apiService.getFismaExpiringThisWeek().subscribe(w => this.fismaExpiringThisWeek = w || 0);
 
     this.apiService.getCloudAdoptionRate().subscribe(cloudData => {
       if (cloudData && cloudData.length > 0) {
@@ -152,18 +150,18 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           { name: 'Cloud Based', value: latestData.CloudBusSystemsCount },
           { name: 'Not Cloud Based', value: latestData.BusSystemsCount - latestData.CloudBusSystemsCount }
         ];
-        this.totalBusinessSystems = latestData.BusSystemsCount;
+        this.totalBusinessSystems = latestData.BusSystemsCount || 0;
       }
     });
 
     this.apiService.getDecommissionedSystemTotals().subscribe(totals => {
-      this.decommissionedSystemsLast6Months = totals.DecommissionedSystemsLastSixMonths;
-      this.decommissionedSystemsLast7Days = totals.DecommissionedSystemsLastWeek;
+      this.decommissionedSystemsLast6Months = totals[0]?.DecommissionedSystemsLastSixMonths || 0;
+      this.decommissionedSystemsLast7Days = totals[0]?.DecommissionedSystemsLastWeek || 0;
     });
 
     this.apiService.getRetiredStandardsTotals().subscribe(totals => {
-      this.retiredITStandardsLast6Months = totals.RetiredStandardsLastSixMonths;
-      this.retiredITStandardsLast7Days = totals.RetiredStandardsLastWeek;
+      this.retiredITStandardsLast6Months = totals[0]?.RetiredStandardsLastSixMonths || 0;
+      this.retiredITStandardsLast7Days = totals[0]?.RetiredStandardsLastWeek || 0;
     });
 
     this.loadHostingPlatformsData();
@@ -323,13 +321,19 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     return `${day}th ${month}`;
   }
 
+  public navigateToHostingPlatforms(): void {
+    this.router.navigate(['/systems']);
+  }
+
+  public navigateToCloudSystems(): void {
+    this.router.navigate(['/systems']);
+  }
+
   public navigateToCloudBasedSystems(): void {
-    this.analyticsService.logClickEvent('/systems?tab=CloudEnabled', 'Dashboard business systems graph');
     this.router.navigate(['/systems'], { queryParams: { tab: 'Cloud Enabled' } });
   }
 
   public navigateToNonCloudBasedSystems(): void {
-    this.analyticsService.logClickEvent('/systems?tab=Inactive', 'Dashboard business systems graph');
     this.router.navigate(['/systems'], { queryParams: { tab: 'Inactive' } });
   }
 
@@ -344,32 +348,25 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public viewAllFisma(): void {
-    this.analyticsService.logClickEvent('/FISMA', 'Dashboard view all FISMA');
     this.router.navigate(['/FISMA']);
   }
   public viewAllSystems(): void {
-    this.analyticsService.logClickEvent('/systems', 'Dashboard view all systems');
     this.router.navigate(['/systems']);
   }
   public viewAllITStandards(): void {
-    this.analyticsService.logClickEvent('/it_standards', 'Dashboard view all IT standards');
     this.router.navigate(['/it_standards']);
   }
 
   public viewExpiringFisma():void {
-    this.analyticsService.logClickEvent('/FISMA', 'Dashboard FISMA expiring this week');
     this.router.navigate(['/FISMA'], { queryParams: { expiringWithinDays: '7' } }); // expiring this week
   }
   public viewDecommissionedSystems(): void {
-    this.analyticsService.logClickEvent('/systems', 'Dashboard decommissioned systems this week');
     this.router.navigate(['/systems'], { queryParams: { decommissionedWithinDays: '7' } }); // decommissioned this week
   }
   public viewExpiringITStandards(): void {
-    this.analyticsService.logClickEvent('/it_standards', 'Dashboard IT standards expiring this week');
     this.router.navigate(['/it_standards'], { queryParams: { expiringWithinDays: '7' } }); // expiring this week
   }
   public viewRecentRetiredITStandards(): void {
-    this.analyticsService.logClickEvent('/it_standards', 'Dashboard IT standards retired in past week');
     this.router.navigate(['/it_standards'], { queryParams: { retiredWithinDays: '7' } }); // retired this week
   }
 
