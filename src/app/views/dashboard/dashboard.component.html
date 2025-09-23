@@ -1,64 +1,165 @@
 <div class="dashboard-container">
-    <h1>Welcome to GEAR</h1>
+    <h1 class="dashboard-title">Welcome to GEAR</h1>
+    
+    <!-- Quick View Metrics Section -->
     <div class="dashboard-quick-view-container">
-        <div class="dashboard-quick-view-item">
-           <div class="dashboard-icon-box">
-            <i class="dashboard-quick-view-icon fas fa-clipboard-list"></i>
-           </div>
-            <span class="dashboard-quick-view-number">{{ fismaExpiringThisQuarter }}</span>
-            <span class="dashboard-quick-view-text">FISMA Expiring by {{ getExpiringDate() }}</span>
-            <div class="dashboard-quick-view-expire-container">
-                <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle"></i>
-                <span class="dashboard-quick-view-expire-text">{{ fismaExpiringThisWeek }} items expiring within 7 days</span>
+        <div class="dashboard-metrics-grid">
+            <div class="dashboard-quick-view-item">
+                <a (click)="viewAllFisma()" class="dashboard-view-all-link">View All</a>
+                <div class="dashboard-header-row">
+                    <div class="dashboard-icon-box">
+                        <i class="dashboard-quick-view-icon fas fa-clipboard-list"></i>
+                    </div>
+                    <span class="dashboard-quick-view-number">{{ fismaExpiringThisQuarter }}</span>
+                </div>
+                <span class="dashboard-quick-view-text">FISMA Expiring by {{ getExpiringDate() }}</span>
+                <div (click)="viewExpiringFisma()"  class="dashboard-quick-view-expire-container">
+                    <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle"></i>
+                    <span class="dashboard-quick-view-expire-text" [ngClass]="{'positive-expire-text' : fismaExpiringThisWeek > 0}">{{ fismaExpiringThisWeek }} items expiring within 7 days</span>
+                </div>
             </div>
-            <a href="#" class="dashboard-quick-view-link">View All</a>
+             <div class="dashboard-quick-view-item">
+                <a (click)="viewAllSystems()" class="dashboard-view-all-link">View All</a>
+                <div class="dashboard-header-row">
+                    <div class="dashboard-icon-box">
+                        <i class="dashboard-quick-view-icon fas fa-server"></i>
+                    </div>
+                    <span class="dashboard-quick-view-number">{{ decommissionedSystemsLast6Months }}</span>
+                </div>
+                <span class="dashboard-quick-view-text">Decommissioned systems (Last 6 months)</span>
+                <div (click)="viewDecommissionedSystems()" class="dashboard-quick-view-expire-container">
+                    <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle"></i>
+                    <span class="dashboard-quick-view-expire-text" [ngClass]="{'positive-expire-text' : decommissionedSystemsLast7Days > 0}">{{ decommissionedSystemsLast7Days }} items decommissioned in last 7 days</span>
+                </div>
+            </div>
+            <div class="dashboard-quick-view-item">
+                <a (click)="viewAllITStandards()" class="dashboard-view-all-link">View All</a>
+                <div class="dashboard-header-row">
+                    <div class="dashboard-icon-box">
+                        <i class="dashboard-quick-view-icon fas fa-desktop"></i>
+                    </div>
+                    <span class="dashboard-quick-view-number">{{ standardsExpiringThisQuarter }}</span>
+                </div>
+                <span class="dashboard-quick-view-text">IT Standards Expiring by {{ getExpiringDate() }}</span>
+                <div (click)="viewExpiringITStandards()" class="dashboard-quick-view-expire-container">
+                    <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle"></i>
+                    <span class="dashboard-quick-view-expire-text" [ngClass]="{'positive-expire-text' : standardsExpiringThisWeek > 0}">{{ standardsExpiringThisWeek }} items expiring within 7 days</span>
+                </div>
+            </div>
+           
+            <div class="dashboard-quick-view-item">
+                <a (click)="viewAllITStandards()" class="dashboard-view-all-link">View All</a>
+                <div class="dashboard-header-row">
+                    <div class="dashboard-icon-box">
+                        <i class="dashboard-quick-view-icon fas fa-trash-alt"></i>
+                    </div>
+                    <span class="dashboard-quick-view-number">{{ retiredITStandardsLast6Months }}</span>
+                </div>
+                <span class="dashboard-quick-view-text">Retired IT standards (Last 6 months)</span>
+                <div (click)="viewRecentRetiredITStandards()" class="dashboard-quick-view-expire-container">
+                    <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle"></i>
+                    <span class="dashboard-quick-view-expire-text" [ngClass]="{'positive-expire-text' : retiredITStandardsLast7Days > 0}">{{ retiredITStandardsLast7Days }} items retired in last 7 days</span>
+                </div>
+            </div>
         </div>
-        <div class="dashboard-quick-view-item">
-            <div class="dashboard-icon-box">
-                <i class="dashboard-quick-view-icon fas fa-desktop"></i>
-            </div>
-            <span class="dashboard-quick-view-number">{{ standardsExpiringThisQuarter }}</span>
-            <span class="dashboard-quick-view-text">IT Standards Expiring by {{ getExpiringDate() }}</span>
-            <div class="dashboard-quick-view-expire-container">
-                <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle"></i>
-                <span class="dashboard-quick-view-expire-text">{{ standardsExpiringThisWeek }} items expiring within 7 days</span>
-            </div>
-            <a href="#" class="dashboard-quick-view-link">View All</a>
-        </div>
-        <div class="dashboard-quick-view-item">
-            <span class="dashboard-quick-links-title">
+        <div class="dashboard-quick-view-item dashboard-quick-links-card">
+            <span class="dashboard-card-title">
                 <i class="dashboard-quick-links-icon fas fa-link"></i>
-                <span class="dashboard-quick-links-text">Quick Links</span>
+                <span class="dashboard-card-title-text">Quick Links</span>
             </span>
             <div class="dashboard-quick-links-link-container">
-                <a href="https://ea.gsa.gov/#/it_standards" class="dashboard-quick-links-link">
+                <a routerLink="/it_standards" class="dashboard-quick-links-link">
                    Approved/denied software
-                   
                 </a>
-                <a href="https://ea.gsa.gov/#/it_standards/filtered/Mobile/Approved" class="dashboard-quick-links-link">
-                    Approved mobile apps
-                    
-                </a>
-                <a href="https://ea.gsa.gov/#/FISMA" class="dashboard-quick-links-link">
+                <a routerLink="/FISMA" class="dashboard-quick-links-link">
                     Active FISMA systems
                 </a>
-                <a href="https://ea.gsa.gov/#/systems" class="dashboard-quick-links-link">
+                <a routerLink="/systems" class="dashboard-quick-links-link">
                    Business systems/subsystems
                 </a>
-                <a href="https://ea.gsa.gov/#/org_chart" class="dashboard-quick-links-link">
+                <a routerLink="/org_chart" class="dashboard-quick-links-link">
                     GSA org chart
                 </a>
             </div>
         </div>
     </div>
+
+    <!-- Charts Section -->
+    <div class="dashboard-charts-container">
+        <div class="dashboard-charts-grid">
+            <!-- Hosting Platforms Bar Chart -->
+            <div class="dashboard-chart-card bar-chart-card">
+                <div class="dashboard-chart-header">
+                    <h3 class="dashboard-card-title-text">Hosting Platforms</h3>
+                    <a (click)="viewAllSystems()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
+                </div>
+                <div class="dashboard-chart-content bar-chart-content">
+                    <ngx-charts-bar-vertical
+                        [view]="barChartView"
+                        [scheme]="colorScheme"
+                        [results]="hostingPlatformsData"
+                        [gradient]="false"
+                        [xAxis]="true"
+                        [yAxis]="true"
+                        [legend]="false"
+                        [showXAxisLabel]="true"
+                        [showYAxisLabel]="true"
+                        [xAxisLabel]="'Hosting Platforms'"
+                        [yAxisLabel]="'# of Systems'"
+                        [rotateXAxisTicks]="true"
+                        [animations]="true"
+                        [barPadding]="20"
+                        [xAxisTickFormatting]="xAxisTickFormatting">
+                    </ngx-charts-bar-vertical>
+                </div>
+            </div>
+
+            <!-- Cloud Business Systems Donut Chart -->
+            <div class="dashboard-chart-card pie-chart-card">
+                <div class="dashboard-chart-header">
+                    <h3 class="dashboard-card-title-text">Business Systems</h3>
+                    <a (click)="viewAllSystems()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
+                </div>
+                <div class="dashboard-chart-content pie-chart-content">
+                    <ngx-charts-pie-chart
+                        [view]="pieChartView"
+                        [scheme]="pieColorScheme"
+                        [results]="cloudBusinessSystemsData"
+                        [gradient]="false"
+                        [legend]="false"
+                        [labels]="false"
+                        [doughnut]="true"
+                        [animations]="true"
+                        [tooltipDisabled]="false"
+                        [arcWidth]="0.25"
+                        (select)="onPieChartSelect($event)">
+                    </ngx-charts-pie-chart>
+                    <div class="dashboard-chart-center-text">
+                        <div class="center-title">Business Systems</div>
+                        <div class="center-number">{{ totalBusinessSystems }}</div>
+                    </div>
+                </div>
+                <div class="custom-legend">
+                    <div class="legend-item" (click)="navigateToCloudBasedSystems()" style="cursor: pointer;">
+                        <div class="legend-color green"></div>
+                        <span class="legend-text">Cloud Based</span>
+                    </div>
+                    <div class="legend-item" (click)="navigateToNonCloudBasedSystems()" style="cursor: pointer;">
+                        <div class="legend-color orange"></div>
+                        <span class="legend-text">Not Cloud Based</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Reports Section -->
     <div class="dashboard-recent-report-container">
         <div class="dashboard-recent-report-title">
-            <span class="dashboard-recent-report-title-text">Recent GSA IT Standards</span>
-            <a href="#" class="dashboard-recent-report-title-link">View All</a>
+            <span class="dashboard-card-title-text">Recent GSA IT Standards</span>
+            <a (click)="viewAllITStandards()" class="dashboard-view-all-link normal">View All</a>
         </div>
-        <app-table *ngIf="showTable" [tableCols]="tableCols" [showToolbar]="false" [showPagination]="false" reportStyle="neutral">
-            
+        <app-table *ngIf="showTable" [tableCols]="tableCols" [showToolbar]="false" [showPagination]="false" reportStyle="neutral" (rowClickEvent)="onTableRowClick($event)">
         </app-table>
-        
     </div>
-</div>
+</div> 
