@@ -1,6 +1,12 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
-import { Column, ColumnFilter } from '../../../common/table-classes';
+import { Column } from '../../../common/table-classes';
 import { FilterMatchMode } from 'primeng/api';
+
+export interface ColumnFilter {
+  field: string;
+  value: any;
+  matchMode: FilterMatchMode;
+}
 
 @Component({
   selector: 'table-column-filter-modal',
@@ -12,7 +18,6 @@ export class TableColumnFilterModalComponent implements OnInit, OnChanges {
 
   @Input() columns: Column[] = [];
   @Input() isVisible: boolean = false;
-  @Input() existingFilters: any = {};
   @Output() saveChanges = new EventEmitter<ColumnFilter[]>();
   @Output() cancelChanges = new EventEmitter<void>();
   @Output() closeModal = new EventEmitter<void>();
@@ -35,18 +40,22 @@ export class TableColumnFilterModalComponent implements OnInit, OnChanges {
 
   ngOnChanges(): void {
     if (this.isVisible) {
-      this.initializeFilters();
+      setTimeout(() => {
+        const modalBody = document.querySelector('.modal-body');
+        if (modalBody) {
+          modalBody.scrollTop = 0;
+        }
+      }, 100);
     }
   }
 
   private initializeFilters(): void {
     this.columns.forEach(col => {
       if (col.field && col.showColumn !== false) {
-        const existingFilter = this.existingFilters[col.field];
         this.columnFilters[col.field] = {
           field: col.field,
-          value: existingFilter ? existingFilter[0]?.value || '' : '',
-          matchMode: existingFilter ? existingFilter[0]?.matchMode || FilterMatchMode.CONTAINS as string : FilterMatchMode.CONTAINS as string
+          value: '',
+          matchMode: FilterMatchMode.CONTAINS
         };
       }
     });
@@ -54,11 +63,7 @@ export class TableColumnFilterModalComponent implements OnInit, OnChanges {
 
   onSaveChanges(): void {
     const activeFilters = Object.values(this.columnFilters)
-      .filter(filter => filter.value && filter.value.toString().trim() !== '')
-      .map(filter => ({
-        ...filter,
-        value: filter.value.toString().trim()
-      }));
+      .filter(filter => filter.value && filter.value.toString().trim() !== '');
     this.saveChanges.emit(activeFilters);
     this.closeModal.emit();
   }
@@ -79,12 +84,6 @@ export class TableColumnFilterModalComponent implements OnInit, OnChanges {
     });
   }
 
-  clearColumnFilter(field: string): void {
-    if (this.columnFilters[field]) {
-      this.columnFilters[field].value = '';
-    }
-  }
-
   hasActiveFilters(): boolean {
     return Object.values(this.columnFilters).some(filter => 
       filter.value && filter.value.toString().trim() !== ''
@@ -101,7 +100,7 @@ export class TableColumnFilterModalComponent implements OnInit, OnChanges {
       .filter(filter => filter.value && filter.value.toString().trim() !== '');
   }
 
-  getMatchModeLabel(matchMode: string): string {
+  getMatchModeLabel(matchMode: FilterMatchMode): string {
     const option = this.matchModeOptions.find(opt => opt.value === matchMode);
     return option ? option.label : 'Contains';
   }
