@@ -18,6 +18,7 @@ export class TableColumnFilterModalComponent implements OnInit, OnChanges {
 
   @Input() columns: Column[] = [];
   @Input() isVisible: boolean = false;
+  @Input() existingFilters: any = {};
   @Output() saveChanges = new EventEmitter<ColumnFilter[]>();
   @Output() cancelChanges = new EventEmitter<void>();
   @Output() closeModal = new EventEmitter<void>();
@@ -40,12 +41,36 @@ export class TableColumnFilterModalComponent implements OnInit, OnChanges {
 
   ngOnChanges(): void {
     if (this.isVisible) {
-      setTimeout(() => {
-        const modalBody = document.querySelector('.modal-body');
-        if (modalBody) {
-          modalBody.scrollTop = 0;
-        }
-      }, 100);
+      // Multiple attempts to ensure scroll reset works
+      this.resetScrollPosition();
+      setTimeout(() => this.resetScrollPosition(), 50);
+      setTimeout(() => this.resetScrollPosition(), 100);
+      setTimeout(() => this.resetScrollPosition(), 200);
+    }
+    
+    // Initialize filters with existing values if provided
+    if (this.existingFilters && Object.keys(this.existingFilters).length > 0) {
+      this.initializeFiltersWithExisting();
+    }
+  }
+
+  private resetScrollPosition(): void {
+    // Target the modal dialog with scrollable class
+    const modalDialog = document.querySelector('.modal-dialog-scrollable');
+    if (modalDialog) {
+      modalDialog.scrollTop = 0;
+    }
+    
+    // Also try the modal body as fallback
+    const modalBody = document.querySelector('.modal-body');
+    if (modalBody) {
+      modalBody.scrollTop = 0;
+    }
+    
+    // Try to scroll the modal into view at the top
+    const modal = document.querySelector('.modal.show .modal-dialog');
+    if (modal) {
+      modal.scrollIntoView({ behavior: 'instant', block: 'start' });
     }
   }
 
@@ -57,6 +82,27 @@ export class TableColumnFilterModalComponent implements OnInit, OnChanges {
           value: '',
           matchMode: FilterMatchMode.CONTAINS
         };
+      }
+    });
+  }
+
+  private initializeFiltersWithExisting(): void {
+    this.columns.forEach(col => {
+      if (col.field && col.showColumn !== false) {
+        const existingFilter = this.existingFilters[col.field];
+        if (existingFilter && existingFilter.length > 0) {
+          this.columnFilters[col.field] = {
+            field: col.field,
+            value: existingFilter[0].value || '',
+            matchMode: existingFilter[0].matchMode || FilterMatchMode.CONTAINS
+          };
+        } else {
+          this.columnFilters[col.field] = {
+            field: col.field,
+            value: '',
+            matchMode: FilterMatchMode.CONTAINS
+          };
+        }
       }
     });
   }
@@ -82,6 +128,12 @@ export class TableColumnFilterModalComponent implements OnInit, OnChanges {
     Object.keys(this.columnFilters).forEach(key => {
       this.columnFilters[key].value = '';
     });
+  }
+
+  clearColumnFilter(field: string): void {
+    if (this.columnFilters[field]) {
+      this.columnFilters[field].value = '';
+    }
   }
 
   hasActiveFilters(): boolean {
