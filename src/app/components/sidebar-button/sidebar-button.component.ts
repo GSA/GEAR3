@@ -2,6 +2,7 @@ import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { SidebarButtonChild } from '@common/sidebar-classes';
+import { AnalyticsService } from '@services/analytics/analytics.service';
 
 @Component({
     selector: 'app-sidebar-button',
@@ -21,7 +22,8 @@ export class SidebarButtonComponent implements OnChanges {
 
   
     constructor(
-        private router: Router
+        private router: Router,
+        private analyticsService: AnalyticsService
     ) {
     }
 
@@ -37,6 +39,7 @@ export class SidebarButtonComponent implements OnChanges {
         if (this.hasChildren()) {
             // no toggle here anymore — parent handles it
           } else if (this.buttonRoute && this.router.url !== this.buttonRoute) {
+            this.analyticsService.logClickEvent(this.buttonRoute);
             this.router.navigate([this.buttonRoute]);
           }
         
@@ -44,8 +47,10 @@ export class SidebarButtonComponent implements OnChanges {
 
     public onChildButtonClick(child: SidebarButtonChild): void {
         if(child.route) {
+            this.analyticsService.logClickEvent(child.route);
             this.router.navigate([child.route]);
         } else if(child.href) {
+            this.analyticsService.logClickEvent(child.href);
             window.open(child.href, '_blank');
         }
     }

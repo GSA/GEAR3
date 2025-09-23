@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { SharedService } from '@services/shared/shared.service';
 import { environment } from '@environments/environment';
+import { AnalyticsService } from '@services/analytics/analytics.service';
 
 @Component({
     selector: 'app-topbar',
@@ -16,18 +17,21 @@ export class TopbarComponent {
   
   constructor(
     private router: Router,
-    private sharedService: SharedService
+    private sharedService: SharedService,
+    private analyticsService: AnalyticsService
   ) {
     this.envName = environment.name;
   }
 
   public globalSearch(event) {
     if (event.key === 'Enter' || event.type === 'click') {
+      this.analyticsService.logSearchEvent(this.searchKW);
       this.router.navigate([`/search/${this.searchKW}`]);
     }
   }
 
   public onAboutClick(): void {
+    this.analyticsService.logClickEvent('/about');
     this.router.navigate(['/about']);
   }
 
