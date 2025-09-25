@@ -10,16 +10,20 @@ import { SharedService } from "@services/shared/shared.service";
 import { TableService } from "@services/tables/table.service";
 import { OperatingSystem } from '@api/models/operating-systems.model';
 import { AppBundle } from '@api/models/it-standards-app-bundle.model';
+import { ActivatedRoute, Router } from '@angular/router';
+import { forkJoin } from 'rxjs';
 
 // Declare jQuery symbol
 declare var $: any;
 
 @Component({
-  selector: 'it-standard-manager',
-  templateUrl: './it-standard-manager.component.html',
-  styleUrls: ['./it-standard-manager.component.css']
+    selector: 'it-standards-manager',
+    templateUrl: './it-standards-manager.component.html',
+    styleUrls: ['./it-standards-manager.component.scss'],
+    standalone: false
 })
-export class ItStandardManagerComponent implements OnInit {
+export class ItStandardsManagerComponent implements OnInit {
+
 
   itStandardsForm: FormGroup = new FormGroup({
     tcManufacturer: new FormControl(null, [Validators.required]),
@@ -53,7 +57,7 @@ export class ItStandardManagerComponent implements OnInit {
   });
 
   itStandard = <any>{};
-  createBool: any;
+  createBool: boolean = false;
   statuses: any[];
 
   POCs: any = [];
@@ -104,41 +108,37 @@ export class ItStandardManagerComponent implements OnInit {
   showDuplicateAppBundleMsg: boolean = false;
   showAppBundleField: boolean = false;
 
+  public dataReady: boolean = false;
+
   constructor(
     private apiService: ApiService,
     private globals: Globals,
     public modalService: ModalsService,
     private sharedService: SharedService,
-    private tableService: TableService) { }
+    private tableService: TableService,
+    private route: ActivatedRoute,
+    private router: Router) { }
 
   ngOnInit(): void {
     // Emit setFormDefaults for when edit button is pressed
-    if (this.sharedService.itStandardsFormSub == undefined) {
-      this.sharedService.itStandardsFormSub = this.sharedService.itStandardsFormEmitter.subscribe(() => { this.setFormDefaults(); });
-    }
+    // if (this.sharedService.itStandardsFormSub == undefined) {
+    //   this.sharedService.itStandardsFormSub = this.sharedService.itStandardsFormEmitter.subscribe(() => { this.setFormDefaults(); });
+    // }
 
-    this.modalService.currentITStand.subscribe(itStandard => this.itStandard = itStandard);
-    this.modalService.currentCreate.subscribe(createBool => this.createBool = createBool);
+    // this.modalService.currentITStand.subscribe(itStandard => this.itStandard = itStandard);
+    // this.modalService.currentCreate.subscribe(createBool => this.createBool = createBool);
 
-    // Populate Manufacturer Options
-    this.manufacturersLoading = true;
-    this.apiService.getManufacturers().subscribe((data: any[]) => {
-      this.apiService.getCustomManufacturers().subscribe((cData: any[]) => {
-        this.manufacturers = [...data, ...cData];
-        console.log(this.manufacturers);
-        this.manufacturersBuffer = this.manufacturers.slice(0, this.bufferSize);
-        this.manufacturersLoading = false;
+    const standardId:number = +this.route.snapshot.paramMap.get('standardID');
+    if(standardId) {
+      this.createBool = false;
+      this.apiService.getOneITStandard(standardId).subscribe(s => {
+        this.itStandard = s;
+        this.loadFormData();
       });
-    });
-
-    // Populate Attestation Required Options
-    this.itStandReqAtteLoading = true;
-    this.apiService.getAttestationStatusTypes().subscribe((data: any[]) => {
-      data.forEach(item => item.ID = item.ID.toString())
-      this.itStandReqAtteRefData = data;
-      this.itStandReqAtteBuffer = this.itStandReqAtteRefData.slice(0, this.bufferSize);
-      this.itStandReqAtteLoading = false;
-    });
+    } else {
+      this.createBool = true;
+      this.loadFormData();
+    }
 
     this.disableSoftwareProduct();
     this.disableSoftwareVersion();
@@ -147,85 +147,137 @@ export class ItStandardManagerComponent implements OnInit {
     // disable the End of Life Date field
     this.disableEndOfLifeDate();
 
-    // Populate Statuses
-    this.apiService.getITStandStatuses().subscribe((data: any[]) => { this.statuses = data });
+    // // Instantiate the date picker
+    // $('#itStandAprvExp').datepicker({
+    //   todayBtn: true,
+    //   clearBtn: true,
+    //   daysOfWeekHighlighted: "0,6",
+    //   todayHighlight: true,
+    //   toggleActive: true,
+    //   templates: {
+    //     leftArrow: '<i class="fas fa-long-arrow-alt-left"></i>',
+    //     rightArrow: '<i class="fas fa-long-arrow-alt-right"></i>'
+    //   }
+    // });
 
-    // Populate POC Options
-    this.pocsLoading = true;
-    this.apiService.getPOCs().subscribe((data: any[]) => {
-      this.POCs = data;
-      this.pocsBuffer = this.POCs.slice(0, this.bufferSize);
-      this.pocsLoading = false;
-    });
-
-    // Populate Standard Types
-    this.apiService.getITStandTypes().subscribe((data: any[]) => { this.types = data });
-
-    // Populate Categories
-    this.catsLoading = true;
-    this.apiService.getITStandCategories().subscribe((data: any[]) => {
-      this.categories = data;
-      this.catsBuffer = this.categories.slice(0, this.bufferSize);
-      this.catsLoading = false;
-    });
-
-    // Populate 508 Compliance Statuses
-    this.apiService.getITStand508Statuses().subscribe((data: any[]) => { this.compliance = data });
-
-    // Populate Deployment Types
-    this.apiService.getITStandDeploymentTypes().subscribe((data: any[]) => { this.deploymentTypes = data });
-
-    // Populate operating systems
-    this.apiService.getOperatingSystems().subscribe((data: any[]) => { this.operatingSystems = data });
-
-    // Instantiate the date picker
-    $('#itStandAprvExp').datepicker({
-      todayBtn: true,
-      clearBtn: true,
-      daysOfWeekHighlighted: "0,6",
-      todayHighlight: true,
-      toggleActive: true,
-      templates: {
-        leftArrow: '<i class="fas fa-long-arrow-alt-left"></i>',
-        rightArrow: '<i class="fas fa-long-arrow-alt-right"></i>'
-      }
-    });
-
-    // If the manager modal is exited, clear the create flag
-    $('#itStandardsManager').on('hidden.bs.modal', function (e) {
-      this.modalService.updateRecordCreation(false);
-      this.itStandCertify = false;
-      $("#itStandMngrTabs li:first-child a").tab('show');
-    }.bind(this));
+    // // If the manager modal is exited, clear the create flag
+    // $('#itStandardsManager').on('hidden.bs.modal', function (e) {
+    //   this.modalService.updateRecordCreation(false);
+    //   this.itStandCertify = false;
+    //   $("#itStandMngrTabs li:first-child a").tab('show');
+    // }.bind(this));
 
     // Reset Form Errors on any value update
     this.itStandardsForm.valueChanges.subscribe(change=>{  this.anyServerError = false; })
+
+  }
+
+  public loadFormData(): void {
+    this.manufacturersLoading = true;
+    this.itStandReqAtteLoading = true;
+    this.pocsLoading = true;
+    this.catsLoading = true;
+    forkJoin([
+      this.apiService.getManufacturers(),
+      this.apiService.getCustomManufacturers(),
+      this.apiService.getAttestationStatusTypes(),
+      this.apiService.getITStandStatuses(),
+      this.apiService.getPOCs(),
+      this.apiService.getITStandTypes(),
+      this.apiService.getITStandCategories(),
+      this.apiService.getITStand508Statuses(),
+      this.apiService.getITStandDeploymentTypes(),
+      this.apiService.getOperatingSystems()
+    ]).subscribe(
+      ([
+        manufacturers,
+        customManufacturers,
+        attestationStatus,
+        statuses,
+        pocs,
+        types,
+        cats,
+        compliance,
+        deploymentTypes,
+        os
+      ]) => {
+        // manufactureres
+        this.manufacturers = [...manufacturers, ...customManufacturers];
+        this.manufacturersBuffer = this.manufacturers.slice(0, this.bufferSize);
+        this.manufacturersLoading = false;
+
+        // attestation status
+        attestationStatus.forEach(item => item.ID = item.ID.toString())
+        this.itStandReqAtteRefData = attestationStatus;
+        this.itStandReqAtteBuffer = this.itStandReqAtteRefData.slice(0, this.bufferSize);
+        this.itStandReqAtteLoading = false;
+
+        // statuses
+        this.statuses = statuses;
+
+        // pocs
+        this.POCs = pocs;
+        this.pocsBuffer = this.POCs.slice(0, this.bufferSize);
+        this.pocsLoading = false;
+
+        // types
+        this.types = types;
+
+        // categories
+        this.categories = cats;
+        this.catsBuffer = this.categories.slice(0, this.bufferSize);
+        this.catsLoading = false;
+
+        // 508 compliance
+        this.compliance = compliance;
+
+        // deployment types
+        this.deploymentTypes = deploymentTypes;
+
+        // os
+        this.operatingSystems = os;
+
+        this.dataReady = true;
+        this.setFormDefaults();
+      },
+      (error) => {
+        console.log('Failed to load form data', error);
+      }
+    );
+  }
+
+  public getBreadcrumbManagerType(): string {
+    if(this.createBool) {
+      return 'Create';
+    } else {
+      return 'Edit';
+    }
+  }
+
+  public getBreadcrumbValue(): string {
+    if(this.createBool) {
+      return 'New IT Standard';
+    } else {
+      return `${!this.itStandard.SoftwareReleaseName ? this.itStandard.OldName : this.itStandard.SoftwareReleaseName}`;
+    }
+  }
+
+  public getDefaultDate(): Date {
+    const twoYearsLater = new Date();
+    twoYearsLater.setHours(13); // 1pm
+    twoYearsLater.setFullYear(twoYearsLater.getFullYear() + 2);
+    return twoYearsLater;
   }
 
   setFormDefaults(): void {
-    // Only set status default for creating new record
-    const twoYearsLater = new Date();
-    twoYearsLater.setFullYear(twoYearsLater.getFullYear() + 2);
-
     if (this.createBool) {
       this.itStandardsForm.reset();  // Clear any erroneous values if any
-      // Set Approval Expiration Date on Date Picker to +2 years from current date
-      $('#itStandAprvExp').datepicker('setDate', twoYearsLater);
       this.itStandardsForm.patchValue({
         itStandStatus: 2,
-        itStandReqAtte: "1"
+        itStandReqAtte: "1",
+        itStandAprvExp: this.getDefaultDate()
       });
     } else {
-
-      // Set Approval Expiration Date on Date Picker
-      const datecheck = new Date();
-      if (this.itStandard.ApprovalExpirationDate !== null) {
-        this.aprvExpDate = new Date(this.itStandard.ApprovalExpirationDate);
-        $('#itStandAprvExp').datepicker('setDate', this.aprvExpDate);
-      } else {
-        this.aprvExpDate = twoYearsLater;
-        $('#itStandAprvExp').datepicker('setDate', twoYearsLater);
-      }
 
       // Set End of Life Date on Date
       if (this.itStandard.EndOfLifeDate !== null) {
@@ -323,7 +375,7 @@ export class ItStandardManagerComponent implements OnInit {
         itStandDeployment: this.sharedService.findInArray(this.deploymentTypes, 'Name', this.itStandard.DeploymentType),
         itStandGoldImg: goldImg,
         itStandGoldComment: this.itStandard.Gold_Image_Comment,
-        itStandAprvExp: formatDate(this.itStandard.ApprovalExpirationDate, 'yyyy-MM-dd', 'en-US'),
+        itStandAprvExp: new Date(this.itStandard.ApprovalExpirationDate),
         itStandComments: this.itStandard.Comments,
         itStandRefDocs: this.itStandard.ReferenceDocument,
         itStandApprovedVersions: this.itStandard.ApprovedVersions,
@@ -369,9 +421,20 @@ export class ItStandardManagerComponent implements OnInit {
        
 
       // Set Date from Date Picker
-      if ($('#itStandAprvExp').data('datepicker')) {
-        this.itStandardsForm.value.itStandAprvExp = $('#itStandAprvExp').data('datepicker').getFormattedDate('yyyy-mm-dd');
-        this.itStandardsForm.patchValue({itStandAprvExp: $('#itStandAprvExp').data('datepicker').getFormattedDate('yyyy-mm-dd')});
+      // if ($('#itStandAprvExp').data('datepicker')) {
+      //   this.itStandardsForm.value.itStandAprvExp = $('#itStandAprvExp').data('datepicker').getFormattedDate('yyyy-mm-dd');
+      //   this.itStandardsForm.patchValue({itStandAprvExp: $('#itStandAprvExp').data('datepicker').getFormattedDate('yyyy-mm-dd')});
+      // }
+
+      if(this.itStandardsForm.value.itStandAprvExp) {
+        const dateToSave = new Date(this.itStandardsForm.value.itStandAprvExp);
+        dateToSave.setHours(13); // 1pm
+        const year = dateToSave.getFullYear();
+        const month = String(dateToSave.getMonth() + 1).padStart(2, '0');
+        const day = String(dateToSave.getDate()).padStart(2, '0');
+        const formattedDate = String(`${year}-${month}-${day}`);
+        this.itStandardsForm.value.itStandAprvExp = formattedDate;
+        this.itStandardsForm.patchValue({itStandAprvExp: formattedDate});
       }
 
       // Adjust for N/A text fields
@@ -533,7 +596,7 @@ export class ItStandardManagerComponent implements OnInit {
           });
         });
       }
-      this.modalService.updateRecordCreation(false);  // Reset Creation flag
+      // this.modalService.updateRecordCreation(false);  // Reset Creation flag
     }
   }
 
@@ -549,13 +612,15 @@ export class ItStandardManagerComponent implements OnInit {
     this.initalAppBundleIds = [];
     this.currentAppBundleId = '';
 
+    this.router.navigate([`/it_standards/${this.itStandard.ID}`]);
+
     // Refresh Table
-    $('#itStandardsTable').bootstrapTable('refresh');
+    // $('#itStandardsTable').bootstrapTable('refresh');
 
     // Close Manager Modal and go back to showing Detail Modal
-    $('#itStandardsManager').modal('hide');
-    this.tableService.itStandTableClick(data, false);
-    $('#itStandardDetail').modal('show');
+    // $('#itStandardsManager').modal('hide');
+    // this.tableService.itStandTableClick(data, false);
+    // $('#itStandardDetail').modal('show');
   }
 
   hasValue(data : any) {
@@ -985,24 +1050,24 @@ export class ItStandardManagerComponent implements OnInit {
     this.apiService.getOperatingSystems().subscribe((data: any[]) => { this.operatingSystems = data });
 
     // Instantiate the date picker
-    $('#itStandAprvExp').datepicker({
-      todayBtn: true,
-      clearBtn: true,
-      daysOfWeekHighlighted: "0,6",
-      todayHighlight: true,
-      toggleActive: true,
-      templates: {
-        leftArrow: '<i class="fas fa-long-arrow-alt-left"></i>',
-        rightArrow: '<i class="fas fa-long-arrow-alt-right"></i>'
-      }
-    });
+    // $('#itStandAprvExp').datepicker({
+    //   todayBtn: true,
+    //   clearBtn: true,
+    //   daysOfWeekHighlighted: "0,6",
+    //   todayHighlight: true,
+    //   toggleActive: true,
+    //   templates: {
+    //     leftArrow: '<i class="fas fa-long-arrow-alt-left"></i>',
+    //     rightArrow: '<i class="fas fa-long-arrow-alt-right"></i>'
+    //   }
+    // });
 
     // If the manager modal is exited, clear the create flag
-    $('#itStandardsManager').on('hidden.bs.modal', function (e) {
-      this.modalService.updateRecordCreation(false);
-      this.itStandCertify = false;
-      $("#itStandMngrTabs li:first-child a").tab('show');
-    }.bind(this));
+    // $('#itStandardsManager').on('hidden.bs.modal', function (e) {
+    //   this.modalService.updateRecordCreation(false);
+    //   this.itStandCertify = false;
+    //   $("#itStandMngrTabs li:first-child a").tab('show');
+    // }.bind(this));
 
     // Reset Form Errors on any value update
     this.itStandardsForm.valueChanges.subscribe(change=>{  this.anyServerError = false; });

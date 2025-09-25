@@ -172,6 +172,12 @@
             flex-direction: column;
             gap: 1.5rem;
             margin-top: 1.5rem;
+
+            & .edit-info-button-wrapper {
+                display: flex;
+                flex-direction: row;
+                gap: 1.5rem;
+            }
         }
     }
 }

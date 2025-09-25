@@ -4,12 +4,45 @@
     }
 
     & .button-overlay-panel .p-button {
-        background-color: #027eb2;
-        border-color: #fff;
+        background-color: var(--primary-color);
+        border-color: var(--neutral-white-color);
+        padding: 10px 20px;
+        border-radius: 4px;
+        font-family: var(--primary-font);
+        font-size: 0.875rem;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+        letter-spacing: 0.18px;
+        border: none;
+
+        &:hover {
+            background-color: var(--primary-color-hover);
+            color: var(--neutral-white-color);
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-family: var(--primary-font);
+            font-size: 0.875rem;
+            font-style: normal;
+            font-weight: 500;
+            line-height: normal;
+            letter-spacing: 0.18px;
+            border: none;
+        }
+
+        &:active {
+            background-color: var(--primary-color-active);
+            color: var(--neutral-white-color);
+        }
+
+        &:disabled {
+            background-color: var(--neutral-black-color-light);
+            color: var(--neutral-white-color-darker);
+        }
         
         & .p-button-label {
             font-size: 10px;
-            line-height: 1.5;
+            line-height: 1.6;
             text-transform: uppercase;
         }
     }

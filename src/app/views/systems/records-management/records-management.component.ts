@@ -151,6 +151,10 @@ export class RecordsManagementComponent implements OnInit {
     });
   }
 
+  public isLoggedIn(): boolean {
+    return this.sharedService.loggedIn;
+  }
+
   runUpdateAllRecordSys(){
     console.log("Starting update all record system data...")
     let data: any = ""

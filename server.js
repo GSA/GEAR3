@@ -47,7 +47,7 @@ const samlConfig = {
   host: process.env.SAML_HOST,
   port: process.env.SAML_PORT,
   path: process.env.SAML_PATH,
-  callbackUrl: process.env.SAML_PROTOCOL + process.env.SAML_HOST + process.env.SAML_PATH,
+  callbackUrl: process.env.SAML_CALLBACK,
   idpCert: process.env.SAML_CERT,
   entryPoint: process.env.SAML_ENTRY_POINT,
   issuer: process.env.SAML_ISSUER,
@@ -179,6 +179,64 @@ app.get('/verify',
     }
   }
 );
+
+app.get('/checkGearManagerAccess',
+  (req, res, next) => {
+    const headers = req.headers;
+    // get ALL cookie from the request
+    const pairs = String(headers.cookie).split(';');
+    const cookies = {};
+    // parse the cookies into an object
+    for (let i = 0; i < pairs.length; i++) {
+      const pair = pairs[i].split('=');
+      cookies[(pair[0] + '').trim()] = unescape(pair.slice(1).join('='));
+    }
+    
+    // get the GSAGEARManUN cookie value
+    const userName = cookies.GSAGEARManUN;
+    // get the GSAGEARAPIT cookie value
+    const apiToken = cookies.GSAGEARAPIT;
+    
+    if (!apiToken || !userName) {
+      res.status(401).json({ 
+        hasAccess: false, 
+        message: 'No authentication credentials found',
+        error: 'You do not have the appropriate role in GEAR to access GEAR Manager. If you have a business need to edit/add data to the IT Standards list, please request access to GEAR Manager.'
+      });
+      return;
+    }
+    
+    const query = `select count(*) as cnt from gear_acl.logins where email = '${userName}' and jwt = '${apiToken}' and date_add(expireDate, interval 1 day) > now();`;
+    const db = mysql.createConnection(dbCredentials);
+    db.connect();
+    
+    db.query(query,
+      (err, results, fields) => {
+        if (err) {
+          res.status(500).json({ 
+            hasAccess: false, 
+            message: 'Database error',
+            error: 'An error occurred while checking your access. Please try again.'
+          });
+        } else {
+          if (results[0].cnt === 1) {
+            res.status(200).json({ 
+              hasAccess: true, 
+              message: 'Access granted',
+              user: userName
+            });
+          } else {
+            res.status(401).json({ 
+              hasAccess: false, 
+              message: 'Invalid or expired token',
+              error: 'You do not have the appropriate role in GEAR to access GEAR Manager. If you have a business need to edit/add data to the IT Standards list, please request access to GEAR Manager.'
+            });
+          }
+        }
+      }
+    );
+  }
+);
 app.post('/logout', (req, res) => {
   const headers = req.headers;
   // remove ALL cookies from the response
@@ -229,8 +287,42 @@ app.post(samlConfig.path,
             // log user not found to log.event
             db.query(`insert into gear_log.event (Event, User, DTG) values ('GEAR Manager - Unable to Verify User', '${samlProfile.nameID}', now());`);
             
-            userLookupStatus = `Unable to verify user, <strong>${samlProfile.nameID}</strong><br/><a href="${process.env.SAML_ENTRY_POINT}">TRY AGAIN</a>`;
-            html = `<html><body style="font-family:sans-serif;"><p>${userLookupStatus}</p></body></html>`;
+            // Create a more user-friendly error page that redirects back to GEAR Manager
+            html = `
+<html>
+<head>
+  <title>Access Denied - GEAR Manager</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; background-color: #f8f9fa; }
+    .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .error-header { color: #dc3545; font-size: 24px; margin-bottom: 20px; }
+    .error-message { color: #856404; background-color: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+    .btn { display: inline-block; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 10px 5px; }
+    .btn-primary { background-color: #17a2b8; color: white; }
+    .btn-secondary { background-color: #6c757d; color: white; }
+    .btn:hover { opacity: 0.9; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="error-header">
+      <i class="fas fa-exclamation-triangle"></i> Access Denied
+    </div>
+    <div class="error-message">
+      <strong>User: ${samlProfile.nameID}</strong><br><br>
+      You do not have the appropriate role in GEAR to access GEAR Manager. If you have a business need to edit/add data to the IT Standards list, please request access to GEAR Manager.
+    </div>
+    <div style="text-align: center;">
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSdmvOEESbKRJ5z4GnOw9hMqWIAI8m5H8I0-tB4zU3mc3aeYPA/viewform?usp=sf_link" class="btn btn-primary" target="_blank">
+        Request Access to GEAR Manager
+      </a>
+      <a href="/#/gear_manager" class="btn btn-secondary">
+        Return to GEAR Manager
+      </a>
+    </div>
+  </div>
+</body>
+</html>`;
             res.status(401);
             res.send(html);
             return false;

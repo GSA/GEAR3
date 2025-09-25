@@ -92,6 +92,10 @@ export class CapabilitiesComponent implements OnInit {
     // });
   }
 
+  public isLoggedIn(): boolean {
+    return this.sharedService.loggedIn;
+  }
+
   public onViewAll(): void {
     this.defExpanded = !this.defExpanded;
   }

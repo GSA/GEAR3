@@ -65,8 +65,7 @@ import { FismaPocsDetailsComponent } from './views/security/fisma-pocs/details/f
 //// Technologies
 import { ItStandardsComponent } from './views/technologies/it-standards/it-standards.component';
 import { ItStandardsModalComponent } from './components/modals/it-standards-modal/it-standards-modal.component';
-import { ItStandardManagerComponent } from './components/manager-modals/it-standard-manager/it-standard-manager.component';
-
+import { ItStandardsManagerComponent } from './views/technologies/manager/it-standards-manager.component';
 import { ItStandardsDetailsComponent } from './views/technologies/details/it-standards-details.component';
 
 //// Enterprise Architecture
@@ -115,6 +114,8 @@ import { RecordsManagementDetailsComponent } from './views/systems/records-manag
 import { WebsitesDetailsComponent } from './views/systems/websites/details/websites-details.component';
 import { WebsiteServiceCategoryDetailsContentComponent } from './views/enterprise/website-service-category/website-service-category-details-content/website-service-category-details-content.component';
 import { providePrimeNG } from 'primeng/config';
+import { DatePickerModule } from 'primeng/datepicker';
+import { PopoverModule } from 'primeng/popover';
 
 import Lara from '@primeng/themes/lara';
 
@@ -166,8 +167,8 @@ import Lara from '@primeng/themes/lara';
     FismaPocsDetailsComponent,
         ItStandardsComponent,
         ItStandardsModalComponent,
-        ItStandardManagerComponent,
         ItStandardsDetailsComponent,
+        ItStandardsManagerComponent,
         //ArtifactsComponent,
         EAViewComponent,
         GearModelComponent,
@@ -205,7 +206,9 @@ import Lara from '@primeng/themes/lara';
         SidebarModule,
         AccordionModule,
         TooltipModule,
-        OverlayPanelModule
+        OverlayPanelModule,
+        DatePickerModule,
+        PopoverModule
     ],
     providers: [
       Globals, provideHttpClient(withInterceptorsFromDi()),

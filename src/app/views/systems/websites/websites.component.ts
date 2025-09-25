@@ -215,6 +215,10 @@ export class WebsitesComponent implements OnInit {
     });
   }
 
+  public isLoggedIn(): boolean {
+    return this.sharedService.loggedIn;
+  }
+
   // onFilterClick(filterButtons: FilterButton[]) {
   //   this.tableData = this.tableDataOriginal;
   //   this.tableService.filterButtonClick(filterButtons, this.tableData);
