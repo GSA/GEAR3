@@ -53,7 +53,7 @@ export class ItStandardsComponent implements OnInit {
     // this.modalService.currentITStand.subscribe((row) => (this.row = row));
   }
 
-  public showCreateButton(): boolean {
+  public isLoggedIn(): boolean {
     return this.sharedService.loggedIn;
   }
 
@@ -330,8 +330,8 @@ export class ItStandardsComponent implements OnInit {
       }];
     });
 
-  //   // Set JWT when logged into GEAR Manager when returning from secureAuth
-  //   this.sharedService.setJWTonLogIn();
+    // Set JWT when logged into GEAR Manager when returning from secureAuth
+    this.sharedService.setJWTonLogIn();
 
   this.apiService.getITStandards().subscribe(i => {
       this.itStandardsData = i;

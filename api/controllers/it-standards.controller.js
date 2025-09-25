@@ -455,11 +455,11 @@ function updateData(techId, data) {
   const endOfLifeDateFragment = getEolFragment(data.tcEndOfLifeDate);
   const keyname = generateKeyname(data);
 
-  data.itStandMyView = normalizeFormBooleanValues(data.itStandMyView);
-  data.itStandFedramp = normalizeFormBooleanValues(data.itStandFedramp);
-  data.itStandOpenSource = normalizeFormBooleanValues(data.itStandOpenSource);
-  data.itStandGoldImg = normalizeFormBooleanValues(data.itStandGoldImg);
-  data.itStandReqAtte = normalizeFormBooleanValues(data.itStandReqAtte);
+  // data.itStandMyView = normalizeFormBooleanValues(data.itStandMyView);
+  // data.itStandFedramp = normalizeFormBooleanValues(data.itStandFedramp);
+  // data.itStandOpenSource = normalizeFormBooleanValues(data.itStandOpenSource);
+  // data.itStandGoldImg = normalizeFormBooleanValues(data.itStandGoldImg);
+  // data.itStandReqAtte = normalizeFormBooleanValues(data.itStandReqAtte);
 
   data.itStandDesc = ctrl.setNullEmptyTextHandler(data.itStandDesc);
   data.itStandAprvExp = ctrl.setNullEmptyTextHandler(data.itStandAprvExp);

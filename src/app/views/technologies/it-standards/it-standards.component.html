@@ -1,38 +1,28 @@
 <div class="it-standards-container">
   <div class="it-standards-title-container">
     <h2>All GSA IT Standards</h2>
-    <div class="card">
-      <div class="card-header text-white bg-teal text-center d-flex align-items-center justify-content-between">
-        <!-- GEAR Manager Access -->
-        <a class="btn btn-sm btn-info text-white shadow d-flex align-items-center btn-border-white"
-          routerLink="/gear_manager" *ngIf="!sharedService.loggedIn" aria-label="GEAR Manager Login"
-          (click)="sharedService.setRedirectPath()">
-          <span class="mr-2">GEAR Manager Login</span><i class="fa fa-sign-in-alt fa-2x"></i>
-        </a>
-        <a class="btn btn-sm btn-danger text-white shadow d-flex align-items-center btn-border-white"
-          routerLink="/it_standards" *ngIf="sharedService.loggedIn" aria-label="GEAR Manager Logout"
-          (click)="sharedService.logoutManager()">
-          <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
-        </a>
-      </div>
+    <app-button buttonText="Create New" (buttonClick)="onCreateNew()" *ngIf="isLoggedIn()"></app-button>
+    <div class="it-standards-title-right-button-container">
+      <app-button buttonText="GEAR Manager Login" (buttonClick)="sharedService.setRedirectPath()" *ngIf="!isLoggedIn()"></app-button>
+      <app-button buttonText="Logout" buttonStyle="error" (buttonClick)="sharedService.logoutManager()" *ngIf="isLoggedIn()"></app-button>
+      <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
+        <span>
+          <b>Details:</b> Left click on a row within the table to view additional details.
+          <br><br>
+          <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
+          <br><br>
+          <b>Export:</b> Export data by clicking on the <i class='fas fa-download'></i> icon and selecting the format that meets 
+          your needs.
+          <br><br>
+          <b>Search:</b> Perform a filtered search across all fields in the displayed data. Hit the 'Enter' button on your 
+          keyboard to execute. Click the <i class='far fa-trash-alt'></i> icon to clear the search box. 
+          Search within specific columns by clicking on the <i class='fas fa-angle-down'></i> icon. 
+          <br><br>
+          <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
+          <i class='fas fa-caret-square-down'></i> icon to display everything on one page.
+        </span>
+      </app-button-overlay-panel>
     </div>
-    <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
-      <span>
-        <b>Details:</b> Left click on a row within the table to view additional details.
-        <br><br>
-        <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
-        <br><br>
-        <b>Export:</b> Export data by clicking on the <i class='fas fa-download'></i> icon and selecting the format that meets 
-        your needs.
-        <br><br>
-        <b>Search:</b> Perform a filtered search across all fields in the displayed data. Hit the 'Enter' button on your 
-        keyboard to execute. Click the <i class='far fa-trash-alt'></i> icon to clear the search box. 
-        Search within specific columns by clicking on the <i class='fas fa-angle-down'></i> icon. 
-        <br><br>
-        <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
-        <i class='fas fa-caret-square-down'></i> icon to display everything on one page.
-      </span>
-    </app-button-overlay-panel>
   </div>
   <div class="it-standards-definition-container">
     <p class="it-standards-definition-text" [ngClass]="{'expanded' : defExpanded}">The IT Standards inventory is the official GSA repository of software products/versions. 
@@ -44,7 +34,6 @@
       <app-button [buttonText]="defExpanded ? 'View Less' : 'View More'" buttonStyle="link" (buttonClick)="onViewAll()"></app-button>
   </div>
   <div class="it-standards-data-container">
-    <app-button buttonText="Create New" (buttonClick)="onCreateNew()" *ngIf="showCreateButton()"></app-button>
     <app-filter-chips [chips]="filterChips" dropdownName="Deployment Types" (chipSelect)="onFilterChipSelect($event)"></app-filter-chips>
     <div *ngIf="filterTotals">
     <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)">

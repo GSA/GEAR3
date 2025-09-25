@@ -10,7 +10,7 @@ import { SharedService } from "@services/shared/shared.service";
 import { TableService } from "@services/tables/table.service";
 import { OperatingSystem } from '@api/models/operating-systems.model';
 import { AppBundle } from '@api/models/it-standards-app-bundle.model';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 
 // Declare jQuery symbol
@@ -116,7 +116,8 @@ export class ItStandardsManagerComponent implements OnInit {
     public modalService: ModalsService,
     private sharedService: SharedService,
     private tableService: TableService,
-    private route: ActivatedRoute) { }
+    private route: ActivatedRoute,
+    private router: Router) { }
 
   ngOnInit(): void {
     // Emit setFormDefaults for when edit button is pressed
@@ -263,39 +264,20 @@ export class ItStandardsManagerComponent implements OnInit {
 
   public getDefaultDate(): Date {
     const twoYearsLater = new Date();
+    twoYearsLater.setHours(13); // 1pm
     twoYearsLater.setFullYear(twoYearsLater.getFullYear() + 2);
     return twoYearsLater;
   }
 
   setFormDefaults(): void {
-    // Only set status default for creating new record
-    // const twoYearsLater = new Date();
-    // twoYearsLater.setFullYear(twoYearsLater.getFullYear() + 2);
-
     if (this.createBool) {
       this.itStandardsForm.reset();  // Clear any erroneous values if any
-      // Set Approval Expiration Date on Date Picker to +2 years from current date
-      // $('#itStandAprvExp').datepicker('setDate', twoYearsLater);
-      // this.itStandardsForm.get('itStandAprvExp').setValue(this.getDefaultDate());
       this.itStandardsForm.patchValue({
         itStandStatus: 2,
         itStandReqAtte: "1",
         itStandAprvExp: this.getDefaultDate()
       });
     } else {
-      // this.itStandardsForm.value.itStandAprvExp = this.itStandard.ApprovalExpirationDate;
-      // this.itStandardsForm.setValue({
-      //   itStandAprvExp: this.itStandard.ApprovalExpirationDate
-      // });
-      // // Set Approval Expiration Date on Date Picker
-      // const datecheck = new Date();
-      // if (this.itStandard.ApprovalExpirationDate !== null) {
-      //   this.aprvExpDate =  
-      //   $('#itStandAprvExp').datepicker('setDate', this.aprvExpDate);
-      // } else {
-      //   this.aprvExpDate = twoYearsLater;
-      //   $('#itStandAprvExp').datepicker('setDate', twoYearsLater);
-      // }
 
       // Set End of Life Date on Date
       if (this.itStandard.EndOfLifeDate !== null) {
@@ -439,9 +421,20 @@ export class ItStandardsManagerComponent implements OnInit {
        
 
       // Set Date from Date Picker
-      if ($('#itStandAprvExp').data('datepicker')) {
-        this.itStandardsForm.value.itStandAprvExp = $('#itStandAprvExp').data('datepicker').getFormattedDate('yyyy-mm-dd');
-        this.itStandardsForm.patchValue({itStandAprvExp: $('#itStandAprvExp').data('datepicker').getFormattedDate('yyyy-mm-dd')});
+      // if ($('#itStandAprvExp').data('datepicker')) {
+      //   this.itStandardsForm.value.itStandAprvExp = $('#itStandAprvExp').data('datepicker').getFormattedDate('yyyy-mm-dd');
+      //   this.itStandardsForm.patchValue({itStandAprvExp: $('#itStandAprvExp').data('datepicker').getFormattedDate('yyyy-mm-dd')});
+      // }
+
+      if(this.itStandardsForm.value.itStandAprvExp) {
+        const dateToSave = new Date(this.itStandardsForm.value.itStandAprvExp);
+        dateToSave.setHours(13); // 1pm
+        const year = dateToSave.getFullYear();
+        const month = String(dateToSave.getMonth() + 1).padStart(2, '0');
+        const day = String(dateToSave.getDate()).padStart(2, '0');
+        const formattedDate = String(`${year}-${month}-${day}`);
+        this.itStandardsForm.value.itStandAprvExp = formattedDate;
+        this.itStandardsForm.patchValue({itStandAprvExp: formattedDate});
       }
 
       // Adjust for N/A text fields
@@ -603,7 +596,7 @@ export class ItStandardsManagerComponent implements OnInit {
           });
         });
       }
-      this.modalService.updateRecordCreation(false);  // Reset Creation flag
+      // this.modalService.updateRecordCreation(false);  // Reset Creation flag
     }
   }
 
@@ -619,13 +612,15 @@ export class ItStandardsManagerComponent implements OnInit {
     this.initalAppBundleIds = [];
     this.currentAppBundleId = '';
 
+    this.router.navigate([`/it_standards/${this.itStandard.ID}`]);
+
     // Refresh Table
-    $('#itStandardsTable').bootstrapTable('refresh');
+    // $('#itStandardsTable').bootstrapTable('refresh');
 
     // Close Manager Modal and go back to showing Detail Modal
-    $('#itStandardsManager').modal('hide');
-    this.tableService.itStandTableClick(data, false);
-    $('#itStandardDetail').modal('show');
+    // $('#itStandardsManager').modal('hide');
+    // this.tableService.itStandTableClick(data, false);
+    // $('#itStandardDetail').modal('show');
   }
 
   hasValue(data : any) {
@@ -1055,17 +1050,17 @@ export class ItStandardsManagerComponent implements OnInit {
     this.apiService.getOperatingSystems().subscribe((data: any[]) => { this.operatingSystems = data });
 
     // Instantiate the date picker
-    $('#itStandAprvExp').datepicker({
-      todayBtn: true,
-      clearBtn: true,
-      daysOfWeekHighlighted: "0,6",
-      todayHighlight: true,
-      toggleActive: true,
-      templates: {
-        leftArrow: '<i class="fas fa-long-arrow-alt-left"></i>',
-        rightArrow: '<i class="fas fa-long-arrow-alt-right"></i>'
-      }
-    });
+    // $('#itStandAprvExp').datepicker({
+    //   todayBtn: true,
+    //   clearBtn: true,
+    //   daysOfWeekHighlighted: "0,6",
+    //   todayHighlight: true,
+    //   toggleActive: true,
+    //   templates: {
+    //     leftArrow: '<i class="fas fa-long-arrow-alt-left"></i>',
+    //     rightArrow: '<i class="fas fa-long-arrow-alt-right"></i>'
+    //   }
+    // });
 
     // If the manager modal is exited, clear the create flag
     // $('#itStandardsManager').on('hidden.bs.modal', function (e) {

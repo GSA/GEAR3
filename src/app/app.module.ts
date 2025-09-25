@@ -113,6 +113,7 @@ import { WebsitesDetailsComponent } from './views/systems/websites/details/websi
 import { WebsiteServiceCategoryDetailsContentComponent } from './views/enterprise/website-service-category/website-service-category-details-content/website-service-category-details-content.component';
 import { providePrimeNG } from 'primeng/config';
 import { DatePickerModule } from 'primeng/datepicker';
+import { PopoverModule } from 'primeng/popover';
 
 import LaraLightBlue from '@primeng/themes/lara';
 
@@ -202,7 +203,8 @@ import LaraLightBlue from '@primeng/themes/lara';
         AccordionModule,
         TooltipModule,
         OverlayPanelModule,
-        DatePickerModule
+        DatePickerModule,
+        PopoverModule
     ],
     providers: [
       Globals, provideHttpClient(withInterceptorsFromDi()),

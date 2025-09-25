@@ -327,4 +327,8 @@ export class ItStandardsDetailsComponent implements OnInit {
     this.router.navigate(['it_standards_manager', this.detailsData.ID]);
   }
 
+  public isLoggedIn(): boolean {
+    return this.sharedService.loggedIn;
+  }
+
 }

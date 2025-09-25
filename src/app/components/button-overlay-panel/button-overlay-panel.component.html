@@ -1,6 +1,6 @@
 <div class="button-overlay-panel">
 <p-button (onClick)="op.toggle($event)" [label]="buttonText" [icon]="buttonIcon" [iconPos]="buttonIconPos" />
-<p-overlayPanel #op>
+<p-popover #op>
     <ng-content></ng-content>
-</p-overlayPanel>
+</p-popover>
 </div>
