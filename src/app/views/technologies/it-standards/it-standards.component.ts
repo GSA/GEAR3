@@ -53,6 +53,14 @@ export class ItStandardsComponent implements OnInit {
     // this.modalService.currentITStand.subscribe((row) => (this.row = row));
   }
 
+  public showCreateButton(): boolean {
+    return this.sharedService.loggedIn;
+  }
+
+  public onCreateNew(): void {
+    this.router.navigate(['/it_standards_manager']);
+  }
+
   public onViewAll(): void {
     this.defExpanded = !this.defExpanded;
   }

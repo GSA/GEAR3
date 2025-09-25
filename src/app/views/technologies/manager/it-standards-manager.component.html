@@ -1,7 +1,8 @@
-<div class="it-standards-details-container">
+<div class="it-standards-details-container" *ngIf="isDataLoaded()">
     <div class="breadcrumb-container">
-         <app-breadcrumb>
-            <span currentPageName>{{(!itStandard.SoftwareReleaseName ? itStandard.OldName : itStandard.SoftwareReleaseName)}}</span>
+          <app-breadcrumb [showManagerLevel]="true">
+            <span managerType>{{getBreadcrumbManagerType()}}</span>
+            <span currentPageName>{{getBreadcrumbValue()}}</span>
          </app-breadcrumb>
     </div>
     <div class="title-container">
@@ -27,7 +28,6 @@
                               [addTag]="true"
                               [items]="manufacturers"
                               [multiple]="false"
-                              appendTo="#itStandardsManager"
                               bindLabel="name"
                               clearAllText="Clear All"
                               [clearSearchOnAdd]="true"
@@ -56,7 +56,6 @@
                               [addTag]="true"
                               [items]="softwareProducts"
                               [multiple]="false"
-                              appendTo="#itStandardsManager"
                               bindLabel="name"
                               clearAllText="Clear All"
                               [clearSearchOnAdd]="true"
@@ -88,7 +87,6 @@
                               [addTag]="true"  
                               [items]="softwareVersions"
                               [multiple]="false"
-                              appendTo="#itStandardsManager"
                               bindLabel="name"
                               clearAllText="Clear All"
                               [clearSearchOnAdd]="true"
@@ -111,7 +109,6 @@
                             <ng-select id="tcSoftwareRelease" formControlName="tcSoftwareRelease"
                               [items]="softwareReleases"
                               [multiple]="false"
-                              appendTo="#itStandardsManager"
                               bindLabel="application"
                               clearAllText="Clear All"
                               [clearSearchOnAdd]="true"
@@ -174,7 +171,6 @@
                           <ng-select id="itStandPOC" formControlName="itStandPOC"
                             [items]="POCs"
                             [multiple]="true"
-                            appendTo="#itStandardsManager"
                             bindLabel="NameEmail"
                             bindValue="SamAccountName"
                             clearAllText="Clear All"
@@ -248,7 +244,6 @@
                               <ng-select id="itStandCategory" formControlName="itStandCategory"
                                 [items]="categories"
                                 [multiple]="true"
-                                appendTo="#itStandardsManager"
                                 bindLabel="Name"
                                 bindValue="ID"
                                 clearAllText="Clear All"

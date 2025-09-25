@@ -189,6 +189,11 @@ const routes: Routes = [
     title: 'IT Standard',
   },
   {
+    path: 'it_standards_manager',
+    component: ItStandardsManagerComponent,
+    title: 'IT Standard Manager',
+  },
+  {
     path: 'it_standards_manager/:standardID',
     component: ItStandardsManagerComponent,
     title: 'IT Standard Manager',

@@ -10,6 +10,7 @@ import { SharedService } from "@services/shared/shared.service";
 import { TableService } from "@services/tables/table.service";
 import { OperatingSystem } from '@api/models/operating-systems.model';
 import { AppBundle } from '@api/models/it-standards-app-bundle.model';
+import { ActivatedRoute } from '@angular/router';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -21,6 +22,7 @@ declare var $: any;
     standalone: false
 })
 export class ItStandardsManagerComponent implements OnInit {
+
 
   itStandardsForm: FormGroup = new FormGroup({
     tcManufacturer: new FormControl(null, [Validators.required]),
@@ -54,7 +56,7 @@ export class ItStandardsManagerComponent implements OnInit {
   });
 
   itStandard = <any>{};
-  createBool: any;
+  createBool: boolean = false;
   statuses: any[];
 
   POCs: any = [];
@@ -105,21 +107,36 @@ export class ItStandardsManagerComponent implements OnInit {
   showDuplicateAppBundleMsg: boolean = false;
   showAppBundleField: boolean = false;
 
+  public dataReady: boolean = false;
+
   constructor(
     private apiService: ApiService,
     private globals: Globals,
     public modalService: ModalsService,
     private sharedService: SharedService,
-    private tableService: TableService) { }
+    private tableService: TableService,
+    private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     // Emit setFormDefaults for when edit button is pressed
-    if (this.sharedService.itStandardsFormSub == undefined) {
-      this.sharedService.itStandardsFormSub = this.sharedService.itStandardsFormEmitter.subscribe(() => { this.setFormDefaults(); });
-    }
+    // if (this.sharedService.itStandardsFormSub == undefined) {
+    //   this.sharedService.itStandardsFormSub = this.sharedService.itStandardsFormEmitter.subscribe(() => { this.setFormDefaults(); });
+    // }
 
-    this.modalService.currentITStand.subscribe(itStandard => this.itStandard = itStandard);
-    this.modalService.currentCreate.subscribe(createBool => this.createBool = createBool);
+    // this.modalService.currentITStand.subscribe(itStandard => this.itStandard = itStandard);
+    // this.modalService.currentCreate.subscribe(createBool => this.createBool = createBool);
+
+    const standardId:number = +this.route.snapshot.paramMap.get('standardID');
+    if(standardId) {
+      this.createBool = false;
+      this.apiService.getOneITStandard(standardId).subscribe(s => {
+        this.itStandard = s;
+        this.dataReady = true;
+      });
+    } else {
+      this.createBool = true;
+      this.dataReady = true;
+    }
 
     // Populate Manufacturer Options
     this.manufacturersLoading = true;
@@ -201,6 +218,29 @@ export class ItStandardsManagerComponent implements OnInit {
 
     // Reset Form Errors on any value update
     this.itStandardsForm.valueChanges.subscribe(change=>{  this.anyServerError = false; })
+    if(this.isDataLoaded()) {
+      this.setFormDefaults();
+    }
+  }
+
+  public isDataLoaded(): boolean {
+    return this.dataReady && !this.manufacturersLoading && !this.itStandReqAtteLoading && !this.pocsLoading && !this.catsLoading;
+  }
+
+  public getBreadcrumbManagerType(): string {
+    if(this.itStandard && this.itStandard.ID) {
+      return 'Edit';
+    } else {
+      return 'Create';
+    }
+  }
+
+  public getBreadcrumbValue(): string {
+    if(this.itStandard && this.itStandard.ID) {
+      return `${!this.itStandard.SoftwareReleaseName ? this.itStandard.OldName : this.itStandard.SoftwareReleaseName}`;
+    } else {
+      return 'New IT Standard';
+    }
   }
 
   setFormDefaults(): void {
@@ -394,6 +434,9 @@ export class ItStandardsManagerComponent implements OnInit {
       if(!this.itStandardsForm.value.itStand508 || typeof(this.itStandardsForm.value.itStand508) === 'undefined') {
         this.itStandardsForm.value.itStand508 = '3';
         this.itStandardsForm.patchValue({itStand508: '3'});
+      } else {
+        this.itStandardsForm.value.itStand508 = +this.itStandardsForm.value.itStand508;
+        this.itStandardsForm.patchValue({itStand508: +this.itStandardsForm.value.itStand508});
       }
 
       if(!this.itStandardsForm.value.itStandAtteLink || typeof(this.itStandardsForm.value.itStandAtteLink) === 'undefined') {
@@ -417,6 +460,22 @@ export class ItStandardsManagerComponent implements OnInit {
       if(this.itStandardsForm.value.itStandRefDocs) {
         this.itStandardsForm.value.itStandRefDocs = this.escapeString(this.itStandardsForm.value.itStandRefDocs);
       }
+
+      // Status
+      this.itStandardsForm.value.itStandStatus = +this.itStandardsForm.value.itStandStatus;
+      this.itStandardsForm.patchValue({itStandStatus: +this.itStandardsForm.value.itStandStatus});
+
+      // Deployment
+      this.itStandardsForm.value.itStandDeployment = +this.itStandardsForm.value.itStandDeployment;
+      this.itStandardsForm.patchValue({itStandDeployment: +this.itStandardsForm.value.itStandDeployment});
+
+      // Type
+      this.itStandardsForm.value.itStandType = +this.itStandardsForm.value.itStandType;
+      this.itStandardsForm.patchValue({itStandType: +this.itStandardsForm.value.itStandType});
+
+      // AtteRequired
+      this.itStandardsForm.value.itStandReqAtte = +this.itStandardsForm.value.itStandReqAtte;
+      this.itStandardsForm.patchValue({itStandReqAtte: +this.itStandardsForm.value.itStandReqAtte});
       
       // Add username to payload
       this.itStandardsForm.value.auditUser = this.globals.authUser;
@@ -447,11 +506,11 @@ export class ItStandardsManagerComponent implements OnInit {
       }
 
       // add Attestation Status to payload
-      if (this.itStandardsForm.value.itStandReqAtte && isNaN(this.itStandardsForm.value.itStandReqAtte)) {
-        const foundAtte = this.sharedService.findInArray(this.itStandReqAtteRefData, 'Name', this.itStandardsForm.value.itStandReqAtte, 'ID');
-        this.itStandardsForm.value.itStandReqAtte = foundAtte;
-        this.itStandardsForm.patchValue({itStandReqAtte: foundAtte});
-      }
+      // if (this.itStandardsForm.value.itStandReqAtte) {
+      //   const foundAtte = this.sharedService.findInArray(this.itStandReqAtteRefData, 'Name', this.itStandardsForm.value.itStandReqAtte, 'ID');
+      //   this.itStandardsForm.value.itStandReqAtte = foundAtte;
+      //   this.itStandardsForm.patchValue({itStandReqAtte: foundAtte});
+      // }
 
       if(this.allAppBundleIds && this.allAppBundleIds.length > 0) {
         this.itStandardsForm.value.itStandMobileAppBundles = this.allAppBundleIds;
@@ -480,6 +539,9 @@ export class ItStandardsManagerComponent implements OnInit {
       // }
       this.itStandardsForm.value.tcSoftwareRelease = this.buildCustomRelease();
       this.itStandardsForm.patchValue({tcSoftwareRelease: this.buildCustomRelease()});
+
+      this.itStandardsForm.value.itStandName = this.itStandardsForm.value.itStandName.replace(/\s+/g, ' ').trim();
+      this.itStandardsForm.patchValue({itStandName: this.itStandardsForm.value.itStandName.replace(/\s+/g, ' ').trim()});
 
       // Send data to database
       if(this.createBool) {
@@ -728,7 +790,7 @@ export class ItStandardsManagerComponent implements OnInit {
     this.itStandardsForm.patchValue({ tcEndOfLifeDate: null });
     this.itStandardsForm.get('tcSoftwareRelease')?.reset();
 
-    if(!this.hasAllCustomTechnoData()) {
+    if(!this.hasAllTechnoData()) {
       try {
         if (softwareVersion) {
             this.apiService.getSoftwareReleases(softwareVersion["id"]).subscribe((data: any[]) => {
@@ -757,25 +819,25 @@ export class ItStandardsManagerComponent implements OnInit {
       }
     }
 
-    try {
-      if (softwareVersion) {
-          this.apiService.getSoftwareReleases(softwareVersion["id"]).subscribe((data: any[]) => {
-            this.apiService.getCustomSoftwareReleases(softwareVersion["id"]).subscribe((cData: any[]) => {
-              this.softwareReleases = [...data, ...cData];
-              this.softwareReleasesBuffer = this.softwareReleases.slice(0, this.bufferSize);
-              this.softwareReleasesLoading = false;
-            });
-          });
-      } else {
-        this.softwareReleases = [];
-        this.softwareReleasesLoading = false;
-      }
-    } catch (error) {
-      this.softwareReleases = [];
-      this.softwareReleasesLoading = false;
-      this.itStandardsForm.value.tcSoftwareRelease = this.buildCustomRelease();
-      this.itStandardsForm.patchValue({tcSoftwareRelease: this.buildCustomRelease()});
-    }
+    // try {
+    //   if (softwareVersion) {
+    //       this.apiService.getSoftwareReleases(softwareVersion["id"]).subscribe((data: any[]) => {
+    //         this.apiService.getCustomSoftwareReleases(softwareVersion["id"]).subscribe((cData: any[]) => {
+    //           this.softwareReleases = [...data, ...cData];
+    //           this.softwareReleasesBuffer = this.softwareReleases.slice(0, this.bufferSize);
+    //           this.softwareReleasesLoading = false;
+    //         });
+    //       });
+    //   } else {
+    //     this.softwareReleases = [];
+    //     this.softwareReleasesLoading = false;
+    //   }
+    // } catch (error) {
+    //   this.softwareReleases = [];
+    //   this.softwareReleasesLoading = false;
+    //   this.itStandardsForm.value.tcSoftwareRelease = this.buildCustomRelease();
+    //   this.itStandardsForm.patchValue({tcSoftwareRelease: this.buildCustomRelease()});
+    // }
   }
 
   // enable the software product field
@@ -977,11 +1039,11 @@ export class ItStandardsManagerComponent implements OnInit {
     });
 
     // If the manager modal is exited, clear the create flag
-    $('#itStandardsManager').on('hidden.bs.modal', function (e) {
-      this.modalService.updateRecordCreation(false);
-      this.itStandCertify = false;
-      $("#itStandMngrTabs li:first-child a").tab('show');
-    }.bind(this));
+    // $('#itStandardsManager').on('hidden.bs.modal', function (e) {
+    //   this.modalService.updateRecordCreation(false);
+    //   this.itStandCertify = false;
+    //   $("#itStandMngrTabs li:first-child a").tab('show');
+    // }.bind(this));
 
     // Reset Form Errors on any value update
     this.itStandardsForm.valueChanges.subscribe(change=>{  this.anyServerError = false; });
@@ -1026,7 +1088,7 @@ export class ItStandardsManagerComponent implements OnInit {
       application: ''
     };
 
-    if(this.hasAllCustomTechnoData()) {
+    if(this.hasAllTechnoData()) {
       softwareRelease.application = `${this.itStandardsForm.value?.tcManufacturer?.name} 
                 ${this.itStandardsForm.value?.tcSoftwareProduct?.name} 
                 ${this.itStandardsForm.value?.tcSoftwareVersion?.name}`;
@@ -1034,6 +1096,7 @@ export class ItStandardsManagerComponent implements OnInit {
       softwareRelease.application = this.itStandardsForm.value?.itStandName;
     }
 
+    softwareRelease.application = softwareRelease.application.replace(/\s+/g, ' ').trim();
     return softwareRelease;
   }
 
@@ -1049,6 +1112,12 @@ export class ItStandardsManagerComponent implements OnInit {
             !this.itStandardsForm.value?.tcSoftwareVersion?.id;
   }
 
+  hasAllTechnoData(): boolean {
+    return this.itStandardsForm.value?.tcManufacturer?.name &&
+           this.itStandardsForm.value?.tcSoftwareProduct?.name &&
+           this.itStandardsForm.value?.tcSoftwareVersion?.name;
+  }
+
   getTitleName(): string {
     if(this.itStandard.SoftwareReleaseName) {
       return this.itStandard.SoftwareReleaseName;
@@ -1056,4 +1125,5 @@ export class ItStandardsManagerComponent implements OnInit {
       return this.itStandard.Name;
     }
   }
+
 }

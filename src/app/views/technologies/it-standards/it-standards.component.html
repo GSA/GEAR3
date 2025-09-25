@@ -1,6 +1,21 @@
 <div class="it-standards-container">
   <div class="it-standards-title-container">
     <h2>All GSA IT Standards</h2>
+    <div class="card">
+      <div class="card-header text-white bg-teal text-center d-flex align-items-center justify-content-between">
+        <!-- GEAR Manager Access -->
+        <a class="btn btn-sm btn-info text-white shadow d-flex align-items-center btn-border-white"
+          routerLink="/gear_manager" *ngIf="!sharedService.loggedIn" aria-label="GEAR Manager Login"
+          (click)="sharedService.setRedirectPath()">
+          <span class="mr-2">GEAR Manager Login</span><i class="fa fa-sign-in-alt fa-2x"></i>
+        </a>
+        <a class="btn btn-sm btn-danger text-white shadow d-flex align-items-center btn-border-white"
+          routerLink="/it_standards" *ngIf="sharedService.loggedIn" aria-label="GEAR Manager Logout"
+          (click)="sharedService.logoutManager()">
+          <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
+        </a>
+      </div>
+    </div>
     <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
       <span>
         <b>Details:</b> Left click on a row within the table to view additional details.
@@ -29,6 +44,7 @@
       <app-button [buttonText]="defExpanded ? 'View Less' : 'View More'" buttonStyle="link" (buttonClick)="onViewAll()"></app-button>
   </div>
   <div class="it-standards-data-container">
+    <app-button buttonText="Create New" (buttonClick)="onCreateNew()" *ngIf="showCreateButton()"></app-button>
     <app-filter-chips [chips]="filterChips" dropdownName="Deployment Types" (chipSelect)="onFilterChipSelect($event)"></app-filter-chips>
     <div *ngIf="filterTotals">
     <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)">
@@ -52,22 +68,6 @@
       </div>
     </app-table>
     </div>
-  </div>
-</div>
-
-<div class="card">
-  <div class="card-header text-white bg-teal text-center d-flex align-items-center justify-content-between">
-    <!-- GEAR Manager Access -->
-    <a class="btn btn-sm btn-info text-white shadow d-flex align-items-center btn-border-white"
-      routerLink="/gear_manager" *ngIf="!sharedService.loggedIn" aria-label="GEAR Manager Login"
-      (click)="sharedService.setRedirectPath()">
-      <span class="mr-2">GEAR Manager Login</span><i class="fa fa-sign-in-alt fa-2x"></i>
-    </a>
-    <a class="btn btn-sm btn-danger text-white shadow d-flex align-items-center btn-border-white"
-      routerLink="/it_standards" *ngIf="sharedService.loggedIn" aria-label="GEAR Manager Logout"
-      (click)="sharedService.logoutManager()">
-      <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
-    </a>
   </div>
 </div>
 

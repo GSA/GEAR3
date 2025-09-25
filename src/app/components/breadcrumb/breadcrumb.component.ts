@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -8,6 +8,8 @@ import { ActivatedRoute } from '@angular/router';
     standalone: false
 })
 export class BreadcrumbComponent {
+
+    @Input() showManagerLevel: boolean = false;
 
     public currentSubPath: string = '';
     private currentRoute: string[] = [];

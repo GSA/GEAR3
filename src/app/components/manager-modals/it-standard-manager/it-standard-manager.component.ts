@@ -15,17 +15,16 @@ import { AppBundle } from '@api/models/it-standards-app-bundle.model';
 declare var $: any;
 
 @Component({
-    selector: 'it-standard-manager',
-    templateUrl: './it-standard-manager.component.html',
-    styleUrls: ['./it-standard-manager.component.css'],
-    standalone: false
+  selector: 'it-standard-manager',
+  templateUrl: './it-standard-manager.component.html',
+  styleUrls: ['./it-standard-manager.component.css']
 })
 export class ItStandardManagerComponent implements OnInit {
 
   itStandardsForm: FormGroup = new FormGroup({
     tcManufacturer: new FormControl(null, [Validators.required]),
     tcSoftwareProduct: new FormControl(null, [Validators.required]),
-    tcSoftwareVersion: new FormControl(null, [Validators.required]),
+    tcSoftwareVersion: new FormControl(null),
     tcSoftwareRelease: new FormControl(),
     tcEndOfLifeDate: new FormControl(),
     itStandStatus: new FormControl(null, [Validators.required]),
@@ -126,6 +125,7 @@ export class ItStandardManagerComponent implements OnInit {
     this.apiService.getManufacturers().subscribe((data: any[]) => {
       this.apiService.getCustomManufacturers().subscribe((cData: any[]) => {
         this.manufacturers = [...data, ...cData];
+        console.log(this.manufacturers);
         this.manufacturersBuffer = this.manufacturers.slice(0, this.bufferSize);
         this.manufacturersLoading = false;
       });
@@ -304,10 +304,10 @@ export class ItStandardManagerComponent implements OnInit {
         tcManufacturer: {id: this.itStandard.Manufacturer, name: this.itStandard.ManufacturerName},
         tcSoftwareProduct: {id: this.itStandard.SoftwareProduct, name: this.itStandard.SoftwareProductName},
         tcSoftwareVersion: {id: this.itStandard.SoftwareVersion, name: this.itStandard.SoftwareVersionName},
-        tcSoftwareRelease: {id: this.itStandard.SoftwareRelease, name: this.itStandard.SoftwareReleaseName},
+        tcSoftwareRelease: {id: this.itStandard.SoftwareRelease, application: this.itStandard.SoftwareReleaseName},
         tcEndOfLifeDate: (this.itStandard.EndOfLifeDate ? formatDate(this.itStandard.EndOfLifeDate, 'MMMM dd, yyyy', 'en-US') : null),
         itStandStatus: this.sharedService.findInArray(this.statuses, 'Name', this.itStandard.Status),
-        itStandName: (!this.itStandard.OldName ? this.itStandard.SoftwareReleaseName : this.itStandard.OldName),
+        itStandName: (!this.itStandard.SoftwareReleaseName ? this.itStandard.OldName : this.itStandard.SoftwareReleaseName),
         itStandPOC: pocIDs,
         itStandDesc: this.itStandard.Description,
         itStandType: this.sharedService.findInArray(this.types, 'Name', this.itStandard.StandardType),
@@ -323,7 +323,7 @@ export class ItStandardManagerComponent implements OnInit {
         itStandDeployment: this.sharedService.findInArray(this.deploymentTypes, 'Name', this.itStandard.DeploymentType),
         itStandGoldImg: goldImg,
         itStandGoldComment: this.itStandard.Gold_Image_Comment,
-        itStandAprvExp: formatDate(this.aprvExpDate, 'yyyy-MM-dd', 'en-US'),
+        itStandAprvExp: formatDate(this.itStandard.ApprovalExpirationDate, 'yyyy-MM-dd', 'en-US'),
         itStandComments: this.itStandard.Comments,
         itStandRefDocs: this.itStandard.ReferenceDocument,
         itStandApprovedVersions: this.itStandard.ApprovedVersions,
@@ -334,32 +334,74 @@ export class ItStandardManagerComponent implements OnInit {
   };
 
   submitForm() {
-    if (this.itStandardsForm.valid) {
+    if(this.itStandardsForm.valid) {
       // Adjust MyView & Gold Image for saving
-      if (this.itStandardsForm.value.itStandMyView) this.itStandardsForm.value.itStandMyView = 'T';
-      else this.itStandardsForm.value.itStandMyView = 'F';
+      if(this.itStandardsForm.value.itStandMyView) {
+        this.itStandardsForm.value.itStandMyView = 'T';
+        this.itStandardsForm.patchValue({itStandMyView: 'T'});
+      } else {
+        this.itStandardsForm.value.itStandMyView = 'F';
+        this.itStandardsForm.patchValue({itStandMyView: 'F'});
+      }
+      if(this.itStandardsForm.value.itStandGoldImg) {
+        this.itStandardsForm.value.itStandGoldImg = 'T';
+        this.itStandardsForm.patchValue({itStandGoldImg: 'T'});
+      } else {
+        this.itStandardsForm.value.itStandGoldImg = 'F';
+        this.itStandardsForm.patchValue({itStandGoldImg: 'F'});
+      }
 
-      if (this.itStandardsForm.value.itStandGoldImg) this.itStandardsForm.value.itStandGoldImg = 'T';
-      else this.itStandardsForm.value.itStandGoldImg = 'F';
+      if(this.itStandardsForm.value.itStandFedramp) {
+        this.itStandardsForm.value.itStandFedramp = 'T';
+        this.itStandardsForm.patchValue({itStandFedramp: 'T'});
+      } else {
+        this.itStandardsForm.value.itStandFedramp = 'F';
+        this.itStandardsForm.patchValue({itStandFedramp: 'F'});
+      } 
 
-
-      if (this.itStandardsForm.value.itStandFedramp) this.itStandardsForm.value.itStandFedramp = 'T';
-      else this.itStandardsForm.value.itStandFedramp = 'F';
-
-      if (this.itStandardsForm.value.itStandOpenSource) this.itStandardsForm.value.itStandOpenSource = 'T';
-      else this.itStandardsForm.value.itStandOpenSource = 'F';
+      if(this.itStandardsForm.value.itStandOpenSource) {
+        this.itStandardsForm.value.itStandOpenSource = 'T';
+        this.itStandardsForm.patchValue({itStandOpenSource: 'T'});
+      } else { 
+        this.itStandardsForm.value.itStandOpenSource = 'F';
+        this.itStandardsForm.patchValue({itStandOpenSource: 'F'});
+      }
+       
 
       // Set Date from Date Picker
       if ($('#itStandAprvExp').data('datepicker')) {
         this.itStandardsForm.value.itStandAprvExp = $('#itStandAprvExp').data('datepicker').getFormattedDate('yyyy-mm-dd');
+        this.itStandardsForm.patchValue({itStandAprvExp: $('#itStandAprvExp').data('datepicker').getFormattedDate('yyyy-mm-dd')});
       }
 
       // Adjust for N/A text fields
-      if (!this.itStandardsForm.value.itStandVendorOrg) this.itStandardsForm.value.itStandVendorOrg = 'N/A';
-      if (!this.itStandardsForm.value.itStandGoldComment) this.itStandardsForm.value.itStandGoldComment = 'N/A';
-      if (!this.itStandardsForm.value.itStandComments) this.itStandardsForm.value.itStandComments = 'N/A';
-      if (!this.itStandardsForm.value.itStand508) this.itStandardsForm.value.itStand508 = '3';
-      if (!this.itStandardsForm.value.itStandAtteLink) this.itStandardsForm.value.itStandAtteLink = 'N/A';
+      if(!this.itStandardsForm.value.itStandVendorOrg || typeof(this.itStandardsForm.value.itStandVendorOrg) === 'undefined') {
+        this.itStandardsForm.value.itStandVendorOrg = 'N/A';
+        this.itStandardsForm.patchValue({itStandVendorOrg: 'N/A'});
+      }
+
+      if(!this.itStandardsForm.value.itStandGoldComment || typeof(this.itStandardsForm.value.itStandGoldComment) === 'undefined') {
+        this.itStandardsForm.value.itStandGoldComment = 'N/A';
+        this.itStandardsForm.patchValue({itStandGoldComment: 'N/A'});
+      } 
+
+      if(!this.itStandardsForm.value.itStandComments || typeof(this.itStandardsForm.value.itStandComments) === 'undefined') {
+        this.itStandardsForm.value.itStandComments = 'N/A';
+        this.itStandardsForm.patchValue({itStandComments: 'N/A'});
+      }
+
+      if(!this.itStandardsForm.value.itStand508 || typeof(this.itStandardsForm.value.itStand508) === 'undefined') {
+        this.itStandardsForm.value.itStand508 = '3';
+        this.itStandardsForm.patchValue({itStand508: '3'});
+      } else {
+        this.itStandardsForm.value.itStand508 = +this.itStandardsForm.value.itStand508;
+        this.itStandardsForm.patchValue({itStand508: +this.itStandardsForm.value.itStand508});
+      }
+
+      if(!this.itStandardsForm.value.itStandAtteLink || typeof(this.itStandardsForm.value.itStandAtteLink) === 'undefined') {
+        this.itStandardsForm.value.itStandAtteLink = 'N/A';
+        this.itStandardsForm.patchValue({itStandAtteLink: 'N/A'});
+      }
 
       // Escape strings
       if(this.itStandardsForm.value.itStandDesc) {
@@ -377,6 +419,22 @@ export class ItStandardManagerComponent implements OnInit {
       if(this.itStandardsForm.value.itStandRefDocs) {
         this.itStandardsForm.value.itStandRefDocs = this.escapeString(this.itStandardsForm.value.itStandRefDocs);
       }
+
+      // Status
+      this.itStandardsForm.value.itStandStatus = +this.itStandardsForm.value.itStandStatus;
+      this.itStandardsForm.patchValue({itStandStatus: +this.itStandardsForm.value.itStandStatus});
+
+      // Deployment
+      this.itStandardsForm.value.itStandDeployment = +this.itStandardsForm.value.itStandDeployment;
+      this.itStandardsForm.patchValue({itStandDeployment: +this.itStandardsForm.value.itStandDeployment});
+
+      // Type
+      this.itStandardsForm.value.itStandType = +this.itStandardsForm.value.itStandType;
+      this.itStandardsForm.patchValue({itStandType: +this.itStandardsForm.value.itStandType});
+
+      // AtteRequired
+      this.itStandardsForm.value.itStandReqAtte = +this.itStandardsForm.value.itStandReqAtte;
+      this.itStandardsForm.patchValue({itStandReqAtte: +this.itStandardsForm.value.itStandReqAtte});
       
       // Add username to payload
       this.itStandardsForm.value.auditUser = this.globals.authUser;
@@ -407,9 +465,11 @@ export class ItStandardManagerComponent implements OnInit {
       }
 
       // add Attestation Status to payload
-      if (this.itStandardsForm.value.itStandReqAtte && isNaN(this.itStandardsForm.value.itStandReqAtte)) {
-        this.itStandardsForm.value.itStandReqAtte = this.sharedService.findInArray(this.itStandReqAtteRefData, 'Name', this.itStandardsForm.value.itStandReqAtte, 'ID');
-      }
+      // if (this.itStandardsForm.value.itStandReqAtte) {
+      //   const foundAtte = this.sharedService.findInArray(this.itStandReqAtteRefData, 'Name', this.itStandardsForm.value.itStandReqAtte, 'ID');
+      //   this.itStandardsForm.value.itStandReqAtte = foundAtte;
+      //   this.itStandardsForm.patchValue({itStandReqAtte: foundAtte});
+      // }
 
       if(this.allAppBundleIds && this.allAppBundleIds.length > 0) {
         this.itStandardsForm.value.itStandMobileAppBundles = this.allAppBundleIds;
@@ -436,7 +496,11 @@ export class ItStandardManagerComponent implements OnInit {
       // if(this.hasCustomTechnoData()) {
       //   this.itStandardsForm.patchValue({tcSoftwareRelease: this.buildCustomRelease()});
       // }
+      this.itStandardsForm.value.tcSoftwareRelease = this.buildCustomRelease();
       this.itStandardsForm.patchValue({tcSoftwareRelease: this.buildCustomRelease()});
+
+      this.itStandardsForm.value.itStandName = this.itStandardsForm.value.itStandName.replace(/\s+/g, ' ').trim();
+      this.itStandardsForm.patchValue({itStandName: this.itStandardsForm.value.itStandName.replace(/\s+/g, ' ').trim()});
 
       // Send data to database
       if(this.createBool) {
@@ -685,23 +749,54 @@ export class ItStandardManagerComponent implements OnInit {
     this.itStandardsForm.patchValue({ tcEndOfLifeDate: null });
     this.itStandardsForm.get('tcSoftwareRelease')?.reset();
 
-    try {
-      if (softwareVersion) {
-          this.apiService.getSoftwareReleases(softwareVersion["id"]).subscribe((data: any[]) => {
-            this.apiService.getCustomSoftwareReleases(softwareVersion["id"]).subscribe((cData: any[]) => {
-              this.softwareReleases = [...data, ...cData];
-              this.softwareReleasesBuffer = this.softwareReleases.slice(0, this.bufferSize);
-              this.softwareReleasesLoading = false;
+    if(!this.hasAllTechnoData()) {
+      try {
+        if (softwareVersion) {
+            this.apiService.getSoftwareReleases(softwareVersion["id"]).subscribe((data: any[]) => {
+              this.apiService.getCustomSoftwareReleases(softwareVersion["id"]).subscribe((cData: any[]) => {
+                this.softwareReleases = [...data, ...cData];
+                this.softwareReleasesBuffer = this.softwareReleases.slice(0, this.bufferSize);
+                this.softwareReleasesLoading = false;
+              });
             });
-          });
-      } else {
+        } else {
+          this.softwareReleases = [];
+          this.softwareReleasesLoading = false;
+        }
+      } catch (error) {
         this.softwareReleases = [];
         this.softwareReleasesLoading = false;
+        this.itStandardsForm.value.tcSoftwareRelease = this.buildCustomRelease();
+        this.itStandardsForm.patchValue({tcSoftwareRelease: this.buildCustomRelease()});
       }
-    } catch (error) {
-      this.softwareReleases = [];
-      this.softwareReleasesLoading = false;
+    } else {
+      if (softwareVersion) {
+        this.softwareReleases = [];
+        this.softwareReleasesLoading = false;
+        this.itStandardsForm.value.tcSoftwareRelease = this.buildCustomRelease();
+        this.itStandardsForm.patchValue({tcSoftwareRelease: this.buildCustomRelease()});
+      }
     }
+
+    // try {
+    //   if (softwareVersion) {
+    //       this.apiService.getSoftwareReleases(softwareVersion["id"]).subscribe((data: any[]) => {
+    //         this.apiService.getCustomSoftwareReleases(softwareVersion["id"]).subscribe((cData: any[]) => {
+    //           this.softwareReleases = [...data, ...cData];
+    //           this.softwareReleasesBuffer = this.softwareReleases.slice(0, this.bufferSize);
+    //           this.softwareReleasesLoading = false;
+    //         });
+    //       });
+    //   } else {
+    //     this.softwareReleases = [];
+    //     this.softwareReleasesLoading = false;
+    //   }
+    // } catch (error) {
+    //   this.softwareReleases = [];
+    //   this.softwareReleasesLoading = false;
+    //   this.itStandardsForm.value.tcSoftwareRelease = this.buildCustomRelease();
+    //   this.itStandardsForm.patchValue({tcSoftwareRelease: this.buildCustomRelease()});
+    // }
   }
 
   // enable the software product field
@@ -949,30 +1044,37 @@ export class ItStandardManagerComponent implements OnInit {
 
   buildCustomRelease(): Object {
     let softwareRelease = {
-      name: ''
+      application: ''
     };
 
-    if(this.hasAllCustomTechnoData()) {
-      softwareRelease.name = `${this.itStandardsForm.value.tcManufacturer.name} 
-                ${this.itStandardsForm.value.tcSoftwareProduct.name} 
-                ${this.itStandardsForm.value.tcSoftwareVersion.name}`;
+    if(this.hasAllTechnoData()) {
+      softwareRelease.application = `${this.itStandardsForm.value?.tcManufacturer?.name} 
+                ${this.itStandardsForm.value?.tcSoftwareProduct?.name} 
+                ${this.itStandardsForm.value?.tcSoftwareVersion?.name}`;
     } else {
-      softwareRelease.name = this.itStandardsForm.value.itStandName;
+      softwareRelease.application = this.itStandardsForm.value?.itStandName;
     }
 
+    softwareRelease.application = softwareRelease.application.replace(/\s+/g, ' ').trim();
     return softwareRelease;
   }
 
   hasCustomTechnoData(): boolean {
-    return !this.itStandardsForm.value.tcManufacturer.id ||
-            !this.itStandardsForm.value.tcSoftwareProduct.id ||
-            !this.itStandardsForm.value.tcSoftwareVersion.id
+    return !this.itStandardsForm.value?.tcManufacturer?.id ||
+            !this.itStandardsForm.value?.tcSoftwareProduct?.id ||
+            !this.itStandardsForm.value?.tcSoftwareVersion?.id
   }
 
   hasAllCustomTechnoData(): boolean {
-    return !this.itStandardsForm.value.tcManufacturer.id &&
-            !this.itStandardsForm.value.tcSoftwareProduct.id &&
-            !this.itStandardsForm.value.tcSoftwareVersion.id;
+    return !this.itStandardsForm.value?.tcManufacturer?.id &&
+            !this.itStandardsForm.value?.tcSoftwareProduct?.id &&
+            !this.itStandardsForm.value?.tcSoftwareVersion?.id;
+  }
+
+  hasAllTechnoData(): boolean {
+    return this.itStandardsForm.value?.tcManufacturer?.name &&
+           this.itStandardsForm.value?.tcSoftwareProduct?.name &&
+           this.itStandardsForm.value?.tcSoftwareVersion?.name;
   }
 
   getTitleName(): string {
@@ -982,4 +1084,5 @@ export class ItStandardManagerComponent implements OnInit {
       return this.itStandard.Name;
     }
   }
+
 }
