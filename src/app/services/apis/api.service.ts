@@ -685,7 +685,7 @@ export class ApiService {
         )
       );
   }
-  public getOperatingSystems(): Observable<OperatingSystem[]> {
+  public getOperatingSystems(): Observable<any> {
     return this.http
       .get<OperatingSystem[]>(this.techUrl + '/operating_systems')
       .pipe(

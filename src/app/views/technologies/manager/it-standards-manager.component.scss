@@ -1,3 +1,30 @@
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+.it-standards-details-loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 2rem 2.25rem;
+    padding: 2rem 2.25rem;
+    background-color: #fff;
+
+    & .loader {
+        display: flex;
+        border: 4px solid var(--neutral-white-color);
+        border-top: 4px solid var(--primary-color);; /* Blue border on top */
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+      }
+}
+
+
+
 .it-standards-details-container {
     display: flex;
     flex-direction: column;
@@ -55,17 +82,39 @@
                 padding: 3.5rem 1.5rem;
                 display: flex;
                 flex-wrap: wrap;
-                width: 70%;
+                width: 100%;
 
                 @media (max-width: 1560px) {
                     width: 100%;
+                }
+
+                & .section-title-container {
+                    display: flex;
+                    margin-top: 3rem;
+
+                    &.no-margin-top {
+                        margin-top: 0;
+                    }
+            
+                    & .title {
+                        color: var(--neutral-black-color-dark);
+                        font-family: var(--primary-font);
+                        font-size: 1.5rem;
+                        font-weight: 500;
+                        line-height: normal;
+                    }
                 }
     
                 & .data {
                     display: flex;
                     flex-direction: column;
-                    flex: 50%;
+                    flex: 33%;
+                    padding-right: 1.5rem;
                     padding-bottom: 1.5rem;
+
+                    &:last-child {
+                        padding-right: none;
+                    }
     
                     & .data-label {
                         font-weight: bold;
@@ -91,17 +140,18 @@
             }
         }
 
-        & .edit-info-container {
+        & .bottom-info-bar {
             display: flex;
-            align-items: flex-end;
-            flex-direction: column;
-            gap: 1.5rem;
-            margin-top: 1.5rem;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
 
-            & .edit-info-button-wrapper {
+            & .checkbox-button-combo {
                 display: flex;
                 flex-direction: row;
-                gap: 1.5rem;
+                align-items: center;
+                justify-content: start;
+                gap: 1rem;
             }
         }
     }

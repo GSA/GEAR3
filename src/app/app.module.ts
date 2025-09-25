@@ -112,6 +112,7 @@ import { RecordsManagementDetailsComponent } from './views/systems/records-manag
 import { WebsitesDetailsComponent } from './views/systems/websites/details/websites-details.component';
 import { WebsiteServiceCategoryDetailsContentComponent } from './views/enterprise/website-service-category/website-service-category-details-content/website-service-category-details-content.component';
 import { providePrimeNG } from 'primeng/config';
+import { DatePickerModule } from 'primeng/datepicker';
 
 import LaraLightBlue from '@primeng/themes/lara';
 
@@ -200,7 +201,8 @@ import LaraLightBlue from '@primeng/themes/lara';
         SidebarModule,
         AccordionModule,
         TooltipModule,
-        OverlayPanelModule
+        OverlayPanelModule,
+        DatePickerModule
     ],
     providers: [
       Globals, provideHttpClient(withInterceptorsFromDi()),

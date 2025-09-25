@@ -11,6 +11,7 @@ import { TableService } from "@services/tables/table.service";
 import { OperatingSystem } from '@api/models/operating-systems.model';
 import { AppBundle } from '@api/models/it-standards-app-bundle.model';
 import { ActivatedRoute } from '@angular/router';
+import { forkJoin } from 'rxjs';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -131,32 +132,12 @@ export class ItStandardsManagerComponent implements OnInit {
       this.createBool = false;
       this.apiService.getOneITStandard(standardId).subscribe(s => {
         this.itStandard = s;
-        this.dataReady = true;
+        this.loadFormData();
       });
     } else {
       this.createBool = true;
-      this.dataReady = true;
+      this.loadFormData();
     }
-
-    // Populate Manufacturer Options
-    this.manufacturersLoading = true;
-    this.apiService.getManufacturers().subscribe((data: any[]) => {
-      this.apiService.getCustomManufacturers().subscribe((cData: any[]) => {
-        this.manufacturers = [...data, ...cData];
-        console.log(this.manufacturers);
-        this.manufacturersBuffer = this.manufacturers.slice(0, this.bufferSize);
-        this.manufacturersLoading = false;
-      });
-    });
-
-    // Populate Attestation Required Options
-    this.itStandReqAtteLoading = true;
-    this.apiService.getAttestationStatusTypes().subscribe((data: any[]) => {
-      data.forEach(item => item.ID = item.ID.toString())
-      this.itStandReqAtteRefData = data;
-      this.itStandReqAtteBuffer = this.itStandReqAtteRefData.slice(0, this.bufferSize);
-      this.itStandReqAtteLoading = false;
-    });
 
     this.disableSoftwareProduct();
     this.disableSoftwareVersion();
@@ -165,108 +146,156 @@ export class ItStandardsManagerComponent implements OnInit {
     // disable the End of Life Date field
     this.disableEndOfLifeDate();
 
-    // Populate Statuses
-    this.apiService.getITStandStatuses().subscribe((data: any[]) => { this.statuses = data });
+    // // Instantiate the date picker
+    // $('#itStandAprvExp').datepicker({
+    //   todayBtn: true,
+    //   clearBtn: true,
+    //   daysOfWeekHighlighted: "0,6",
+    //   todayHighlight: true,
+    //   toggleActive: true,
+    //   templates: {
+    //     leftArrow: '<i class="fas fa-long-arrow-alt-left"></i>',
+    //     rightArrow: '<i class="fas fa-long-arrow-alt-right"></i>'
+    //   }
+    // });
 
-    // Populate POC Options
-    this.pocsLoading = true;
-    this.apiService.getPOCs().subscribe((data: any[]) => {
-      this.POCs = data;
-      this.pocsBuffer = this.POCs.slice(0, this.bufferSize);
-      this.pocsLoading = false;
-    });
-
-    // Populate Standard Types
-    this.apiService.getITStandTypes().subscribe((data: any[]) => { this.types = data });
-
-    // Populate Categories
-    this.catsLoading = true;
-    this.apiService.getITStandCategories().subscribe((data: any[]) => {
-      this.categories = data;
-      this.catsBuffer = this.categories.slice(0, this.bufferSize);
-      this.catsLoading = false;
-    });
-
-    // Populate 508 Compliance Statuses
-    this.apiService.getITStand508Statuses().subscribe((data: any[]) => { this.compliance = data });
-
-    // Populate Deployment Types
-    this.apiService.getITStandDeploymentTypes().subscribe((data: any[]) => { this.deploymentTypes = data });
-
-    // Populate operating systems
-    this.apiService.getOperatingSystems().subscribe((data: any[]) => { this.operatingSystems = data });
-
-    // Instantiate the date picker
-    $('#itStandAprvExp').datepicker({
-      todayBtn: true,
-      clearBtn: true,
-      daysOfWeekHighlighted: "0,6",
-      todayHighlight: true,
-      toggleActive: true,
-      templates: {
-        leftArrow: '<i class="fas fa-long-arrow-alt-left"></i>',
-        rightArrow: '<i class="fas fa-long-arrow-alt-right"></i>'
-      }
-    });
-
-    // If the manager modal is exited, clear the create flag
-    $('#itStandardsManager').on('hidden.bs.modal', function (e) {
-      this.modalService.updateRecordCreation(false);
-      this.itStandCertify = false;
-      $("#itStandMngrTabs li:first-child a").tab('show');
-    }.bind(this));
+    // // If the manager modal is exited, clear the create flag
+    // $('#itStandardsManager').on('hidden.bs.modal', function (e) {
+    //   this.modalService.updateRecordCreation(false);
+    //   this.itStandCertify = false;
+    //   $("#itStandMngrTabs li:first-child a").tab('show');
+    // }.bind(this));
 
     // Reset Form Errors on any value update
     this.itStandardsForm.valueChanges.subscribe(change=>{  this.anyServerError = false; })
-    if(this.isDataLoaded()) {
-      this.setFormDefaults();
-    }
+
   }
 
-  public isDataLoaded(): boolean {
-    return this.dataReady && !this.manufacturersLoading && !this.itStandReqAtteLoading && !this.pocsLoading && !this.catsLoading;
+  public loadFormData(): void {
+    this.manufacturersLoading = true;
+    this.itStandReqAtteLoading = true;
+    this.pocsLoading = true;
+    this.catsLoading = true;
+    forkJoin([
+      this.apiService.getManufacturers(),
+      this.apiService.getCustomManufacturers(),
+      this.apiService.getAttestationStatusTypes(),
+      this.apiService.getITStandStatuses(),
+      this.apiService.getPOCs(),
+      this.apiService.getITStandTypes(),
+      this.apiService.getITStandCategories(),
+      this.apiService.getITStand508Statuses(),
+      this.apiService.getITStandDeploymentTypes(),
+      this.apiService.getOperatingSystems()
+    ]).subscribe(
+      ([
+        manufacturers,
+        customManufacturers,
+        attestationStatus,
+        statuses,
+        pocs,
+        types,
+        cats,
+        compliance,
+        deploymentTypes,
+        os
+      ]) => {
+        // manufactureres
+        this.manufacturers = [...manufacturers, ...customManufacturers];
+        this.manufacturersBuffer = this.manufacturers.slice(0, this.bufferSize);
+        this.manufacturersLoading = false;
+
+        // attestation status
+        attestationStatus.forEach(item => item.ID = item.ID.toString())
+        this.itStandReqAtteRefData = attestationStatus;
+        this.itStandReqAtteBuffer = this.itStandReqAtteRefData.slice(0, this.bufferSize);
+        this.itStandReqAtteLoading = false;
+
+        // statuses
+        this.statuses = statuses;
+
+        // pocs
+        this.POCs = pocs;
+        this.pocsBuffer = this.POCs.slice(0, this.bufferSize);
+        this.pocsLoading = false;
+
+        // types
+        this.types = types;
+
+        // categories
+        this.categories = cats;
+        this.catsBuffer = this.categories.slice(0, this.bufferSize);
+        this.catsLoading = false;
+
+        // 508 compliance
+        this.compliance = compliance;
+
+        // deployment types
+        this.deploymentTypes = deploymentTypes;
+
+        // os
+        this.operatingSystems = os;
+
+        this.dataReady = true;
+        this.setFormDefaults();
+      },
+      (error) => {
+        console.log('Failed to load form data', error);
+      }
+    );
   }
 
   public getBreadcrumbManagerType(): string {
-    if(this.itStandard && this.itStandard.ID) {
-      return 'Edit';
-    } else {
+    if(this.createBool) {
       return 'Create';
+    } else {
+      return 'Edit';
     }
   }
 
   public getBreadcrumbValue(): string {
-    if(this.itStandard && this.itStandard.ID) {
-      return `${!this.itStandard.SoftwareReleaseName ? this.itStandard.OldName : this.itStandard.SoftwareReleaseName}`;
-    } else {
+    if(this.createBool) {
       return 'New IT Standard';
+    } else {
+      return `${!this.itStandard.SoftwareReleaseName ? this.itStandard.OldName : this.itStandard.SoftwareReleaseName}`;
     }
+  }
+
+  public getDefaultDate(): Date {
+    const twoYearsLater = new Date();
+    twoYearsLater.setFullYear(twoYearsLater.getFullYear() + 2);
+    return twoYearsLater;
   }
 
   setFormDefaults(): void {
     // Only set status default for creating new record
-    const twoYearsLater = new Date();
-    twoYearsLater.setFullYear(twoYearsLater.getFullYear() + 2);
+    // const twoYearsLater = new Date();
+    // twoYearsLater.setFullYear(twoYearsLater.getFullYear() + 2);
 
     if (this.createBool) {
       this.itStandardsForm.reset();  // Clear any erroneous values if any
       // Set Approval Expiration Date on Date Picker to +2 years from current date
-      $('#itStandAprvExp').datepicker('setDate', twoYearsLater);
+      // $('#itStandAprvExp').datepicker('setDate', twoYearsLater);
+      // this.itStandardsForm.get('itStandAprvExp').setValue(this.getDefaultDate());
       this.itStandardsForm.patchValue({
         itStandStatus: 2,
-        itStandReqAtte: "1"
+        itStandReqAtte: "1",
+        itStandAprvExp: this.getDefaultDate()
       });
     } else {
-
-      // Set Approval Expiration Date on Date Picker
-      const datecheck = new Date();
-      if (this.itStandard.ApprovalExpirationDate !== null) {
-        this.aprvExpDate = new Date(this.itStandard.ApprovalExpirationDate);
-        $('#itStandAprvExp').datepicker('setDate', this.aprvExpDate);
-      } else {
-        this.aprvExpDate = twoYearsLater;
-        $('#itStandAprvExp').datepicker('setDate', twoYearsLater);
-      }
+      // this.itStandardsForm.value.itStandAprvExp = this.itStandard.ApprovalExpirationDate;
+      // this.itStandardsForm.setValue({
+      //   itStandAprvExp: this.itStandard.ApprovalExpirationDate
+      // });
+      // // Set Approval Expiration Date on Date Picker
+      // const datecheck = new Date();
+      // if (this.itStandard.ApprovalExpirationDate !== null) {
+      //   this.aprvExpDate =  
+      //   $('#itStandAprvExp').datepicker('setDate', this.aprvExpDate);
+      // } else {
+      //   this.aprvExpDate = twoYearsLater;
+      //   $('#itStandAprvExp').datepicker('setDate', twoYearsLater);
+      // }
 
       // Set End of Life Date on Date
       if (this.itStandard.EndOfLifeDate !== null) {
@@ -364,7 +393,7 @@ export class ItStandardsManagerComponent implements OnInit {
         itStandDeployment: this.sharedService.findInArray(this.deploymentTypes, 'Name', this.itStandard.DeploymentType),
         itStandGoldImg: goldImg,
         itStandGoldComment: this.itStandard.Gold_Image_Comment,
-        itStandAprvExp: formatDate(this.itStandard.ApprovalExpirationDate, 'yyyy-MM-dd', 'en-US'),
+        itStandAprvExp: new Date(this.itStandard.ApprovalExpirationDate),
         itStandComments: this.itStandard.Comments,
         itStandRefDocs: this.itStandard.ReferenceDocument,
         itStandApprovedVersions: this.itStandard.ApprovedVersions,
