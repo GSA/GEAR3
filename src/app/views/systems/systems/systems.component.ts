@@ -272,7 +272,7 @@ export class SystemsComponent implements OnInit {
 
   ngOnInit(): void {
     // // Set JWT when logged into GEAR Manager when returning from secureAuth
-    // this.sharedService.setJWTonLogIn();
+    this.sharedService.setJWTonLogIn();
 
     this.tableCols = this.defaultTableCols;
 
@@ -353,6 +353,10 @@ export class SystemsComponent implements OnInit {
   //       $('#sysViz').collapse('show');
   //     }
   // }
+
+  public isLoggedIn(): boolean {
+    return this.sharedService.loggedIn;
+  }
 
   getAriaLabel(data: { name: string, value: number }[]): string {
     const total = data.reduce((acc, cur) => acc + cur.value, 0);
