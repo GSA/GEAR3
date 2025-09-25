@@ -46,6 +46,8 @@ export class SystemsComponent implements OnInit {
   public systemsData: System[] = [];
   public systemsDataTabFilterted: System[] = [];
 
+  public daysDecommissioned: number = 0;
+
   constructor(
     private apiService: ApiService,
     private location: Location,
@@ -61,7 +63,7 @@ export class SystemsComponent implements OnInit {
 
   public onSelectTab(tabName: string): void {
     this.selectedTab = tabName;
-    this.systemsDataTabFilterted = this.systemsData;
+    this.systemsDataTabFilterted = [];
 
     if(this.selectedTab === 'All') {
       this.systemsDataTabFilterted = this.systemsData.filter(s => {
@@ -274,18 +276,36 @@ export class SystemsComponent implements OnInit {
     // // Set JWT when logged into GEAR Manager when returning from secureAuth
     this.sharedService.setJWTonLogIn();
 
-    this.tableCols = this.defaultTableCols;
+    // Check for tab parameter in route
+    this.route.queryParams.subscribe(params => {
+      if (params['tab']) {
+        this.selectedTab = params['tab'];
+      }
+      if(params['decommissionedWithinDays']) {
+        this.daysDecommissioned = +params['decommissionedWithinDays'];
+      }
+    });
 
     this.apiService.getSystems().subscribe(systems => {
       this.systemsData = systems;
 
-      systems.forEach(s => {
-        if(s.Status === 'Active' && s.BusApp === 'Yes') {
-          this.systemsDataTabFilterted.push(s);
-        }
-      });
-
-      this.tableService.updateReportTableData(this.systemsDataTabFilterted);
+      if(this.daysDecommissioned > 0) {
+        const now = new Date(); // Current date and time
+        const expiringWithin = new Date();
+        expiringWithin.setDate(now.getDate() + this.daysDecommissioned); // number of days set in the url
+        const expiringFiltered = [];
+        systems.forEach(s => {
+          let renewal = new Date(s.RenewalDate);
+          if(s.RenewalDate && (renewal >= now && renewal <= expiringWithin) && (s.Status === 'Inactive') && (s.BusApp === 'Yes')) {
+            expiringFiltered.push(s);
+          }
+        });
+        this.tableService.updateReportTableData(expiringFiltered);
+        return;
+      } { 
+        // Apply tab filter based on selectedTab
+        this.onSelectTab(this.selectedTab);;
+      }
     });
 
     this.apiService.getSystemsFilterTotals().subscribe(t => {

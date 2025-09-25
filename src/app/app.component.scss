@@ -1,16 +1,18 @@
 .site-container {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 100vh; // Use viewport height to maximize space
 
   & .main-container {
     display: flex;
     flex-direction: row;
+    flex: 1; // Take remaining space after header
   
     & .content-container {
       display: flex;
       flex-direction: column;
       width: 100%;
+      overflow-y: auto; // Allow scrolling if needed
     }
   }
 
@@ -18,6 +20,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    flex-shrink: 0; // Don't shrink footer
 
     & .footer-text {
       text-align: center;
@@ -179,3 +182,5 @@
 //   justify-content: space-between;
 //   height: 100%;
 // }
+
+

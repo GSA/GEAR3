@@ -45,6 +45,7 @@ import { TechAttributeDefinitions } from '@api/models/tech-attribute-definitions
 import { DataDictionary } from '@api/models/data-dictionary.model';
 import { OperatingSystem } from '@api/models/operating-systems.model';
 import { AppBundle } from '@api/models/it-standards-app-bundle.model';
+import { CloudAdoptionRate } from '@api/models/cloud-adoption-rate.model';
 
 @Injectable({
   providedIn: 'root',
@@ -100,6 +101,9 @@ export class ApiService {
 
   // Data Dictionary
   dataDictionaryUrl: string = this.sharedService.internalURLFmt('/api/data_dictionary');
+
+  // Cloud Adoption Rate
+  cloudAdoptionUrl: string = this.sharedService.internalURLFmt('/api/cloud_adoption_rate');
 
   constructor(
     private globals: Globals,
@@ -501,6 +505,30 @@ export class ApiService {
       map(t => t[0]),
       catchError(this.handleError<any>('GET Systems Filter Totals', []))
     );
+  }
+
+  public getDecommissionedSystemTotals(): Observable<any> {
+    return this.http
+    .get<any>(this.sysUrl + '/decommissioned_system_totals')
+    .pipe(
+      map(t => t[0]),
+      catchError(this.handleError<any>('GET Decommissioned System Totals', []))
+    );
+  }
+
+  public getRetiredStandardsTotals(): Observable<any> {
+    return this.http
+    .get<any>(this.techUrl + '/retired_standard_totals')
+    .pipe(
+      map(t => t[0]),
+      catchError(this.handleError<any>('GET Retired Standard Totals', []))
+    );
+  }
+
+  public getCloudAdoptionRate(): Observable<CloudAdoptionRate[]> {
+    return this.http
+      .get<CloudAdoptionRate[]>(this.cloudAdoptionUrl)
+      .pipe(catchError(this.handleError<CloudAdoptionRate[]>('GET Cloud Adoption Rate', [])));
   }
   public updateSystemCaps(id: number, data: {}): Observable<System[]> {
     if (this.globals.jwtToken) {

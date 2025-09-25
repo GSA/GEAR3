@@ -1,0 +1,71 @@
+<div class="card">
+  <div class="card-header text-danger bg-light text-center">
+    <h3 class="card-title col-12 mb-0 align-self-center">
+      <span>
+        <i class="fas fa-exclamation-triangle"></i>
+        Access Denied - GEAR Manager Portal</span>
+    </h3>
+  </div>
+
+  <div style="background-color:#fff9de;">
+    <h3 style="text-align: center; margin-top: 12px;">******WARNING******</h3>
+    <div class="container">
+      <p style="text-align: left;">
+        This is a U.S. General Services Administration Federal Government computer system that is "FOR OFFICIAL USE
+        ONLY."
+        This system is subject to monitoring. Therefore, no expectation of privacy is to be assumed.
+        Individuals found performing unauthorized activities may be subject to disciplinary action including criminal
+        prosecution.
+        This system contains Controlled Unclassified Information (CUI).
+        All individuals viewing, reproducing or disposing of this information are required to protect it
+        in accordance with 32 CFR Part 2002 and GSA Order CIO 2103.1 CUI Policy.
+      </p>
+    </div>
+  </div>
+
+  <div class="row card-body card-text justify-content-center">
+    <div class="col-2 text-center">
+      <div class="error-icon-container">
+        <i class="fas fa-lock error-icon"></i>
+      </div>
+    </div>
+
+    <div class="col-10 my-auto">
+      <div class="error-message">
+        <h3 class="text-danger mb-3">
+          <i class="fas fa-lock"></i>
+          Login Failed
+        </h3>
+        <p class="mb-3">
+          Your login attempt was unsuccessful. This could be due to:
+        </p>
+      </div>
+
+      <div class="help-section">
+        <p class="mb-3">
+          If you have a business need to edit/add data to the IT Standards list, please
+          <br>
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSdmvOEESbKRJ5z4GnOw9hMqWIAI8m5H8I0-tB4zU3mc3aeYPA/viewform?usp=sf_link"
+            class="text-info card-link" target="_blank" rel="noopener noreferrer">
+            request access to GEAR Manager
+          </a>
+        </p>
+        <p class="mb-3">
+          The GEAR Manager portal provides the ability for the EA Team and the CTO Office to edit and update mappings of
+          investments and IT Standards to systems to reflect in GEAR.
+        </p>
+      </div>
+
+      <div class="action-buttons mt-4">
+        <button class="btn btn-primary me-2" (click)="retryLogin()">
+          <i class="fas fa-redo"></i>
+          Try Again
+        </button>
+        <button class="btn btn-secondary" (click)="goHome()">
+          <i class="fas fa-home"></i>
+          Return to Home
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

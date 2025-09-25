@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener, AfterViewInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Column } from '@common/table-classes';
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
+import { Website } from '@api/models/websites.model';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'dashboard',
@@ -11,9 +13,42 @@ import { TableService } from '@services/tables/table.service';
     styleUrls: ['./dashboard.component.scss'],
     standalone: false
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public showTable = false;
+  private sidebarSubscription: Subscription;
+  private resizeObserver: ResizeObserver;
+
+  public chartView: [number, number] = [0, 400];
+  public barChartView: [number, number] = [0, 350];
+  public pieChartView: [number, number] = [0, 280];
+  
+  public colorScheme = {
+    domain: ['#1f77b4', '#17becf', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b']
+  };
+  public pieColorScheme = {
+    domain: ['#4CAF50', '#FF6B35']
+  };
+
+  public hostingPlatformsData: any[] = [];
+
+  public cloudBusinessSystemsData = [
+    { name: 'Cloud Based', value: 0 },
+    { name: 'Not Cloud Based', value: 0 }
+  ];
+
+  public totalBusinessSystems: number = 0;
+
+  public labelFormatting = (value: any): string => {
+    return value;
+  };
+
+  public xAxisTickFormatting = (value: string): string => {
+    if (value.length > 12) {
+      return value.substring(0, 12) + '...';
+    }
+    return value;
+  };
 
   public tableCols: Column[] = [
     {
@@ -66,20 +101,35 @@ export class DashboardComponent implements OnInit {
     }
   ];
 
+  public fismaExpiringThisQuarter: number = 0;
+  public fismaExpiringThisWeek: number = 0;
+
+  public decommissionedSystemsLast6Months: number = 0;
+  public decommissionedSystemsLast7Days: number = 0;
+
   public standardsExpiringThisQuarter: number = 0;
   public standardsExpiringThisWeek: number = 0;
 
-  public fismaExpiringThisQuarter: number = 0;
-  public fismaExpiringThisWeek: number = 0;
+  public retiredITStandardsLast6Months: number = 0;
+  public retiredITStandardsLast7Days: number = 0;
   
  constructor(
     private apiService: ApiService,
     private tableService: TableService,
     private sharedService: SharedService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) { }
 
   public ngOnInit(): void {
+    this.sidebarSubscription = this.sharedService.sidebarVisible.subscribe((isVisible: boolean) => {
+      setTimeout(() => {
+        this.updateChartViews();
+        this.updateResponsiveChartHeights();
+        this.cdr.detectChanges();
+      }, 200);
+    });
+
     this.apiService.getRecentITStandards(10).subscribe(standards => {
       this.tableService.updateReportTableData(standards);
       setTimeout(() => {
@@ -92,6 +142,173 @@ export class DashboardComponent implements OnInit {
 
     this.apiService.getFismaExpiringThisQuarter().subscribe(q => this.fismaExpiringThisQuarter = q);
     this.apiService.getFismaExpiringThisWeek().subscribe(w => this.fismaExpiringThisWeek = w);
+
+    this.apiService.getCloudAdoptionRate().subscribe(cloudData => {
+      if (cloudData && cloudData.length > 0) {
+        const latestData = cloudData[0];
+        this.cloudBusinessSystemsData = [
+          { name: 'Cloud Based', value: latestData.CloudBusSystemsCount },
+          { name: 'Not Cloud Based', value: latestData.BusSystemsCount - latestData.CloudBusSystemsCount }
+        ];
+        this.totalBusinessSystems = latestData.BusSystemsCount;
+      }
+    });
+
+    this.apiService.getDecommissionedSystemTotals().subscribe(totals => {
+      this.decommissionedSystemsLast6Months = totals[0].DecommissionedSystemsLastSixMonths;
+      this.decommissionedSystemsLast7Days = totals[0].DecommissionedSystemsLastWeek;
+    });
+
+    this.apiService.getRetiredStandardsTotals().subscribe(totals => {
+      this.retiredITStandardsLast6Months = totals[0].RetiredStandardsLastSixMonths;
+      this.retiredITStandardsLast7Days = totals[0].RetiredStandardsLastWeek;
+    });
+
+    this.loadHostingPlatformsData();
+
+    setTimeout(() => {
+      this.updateChartViews();
+      this.updateResponsiveChartHeights();
+    }, 100);
+  }
+
+  public ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.updateChartViews();
+      this.setupResizeObserver();
+      this.cdr.detectChanges();
+    }, 200);
+  }
+
+  public ngOnDestroy(): void {
+    if (this.sidebarSubscription) {
+      this.sidebarSubscription.unsubscribe();
+    }
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+    }
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    setTimeout(() => {
+      this.updateChartViews();
+      this.updateResponsiveChartHeights();
+    }, 100);
+  }
+
+  private loadHostingPlatformsData(): void {
+    this.apiService.getWebsites().subscribe(websites => {
+      const activeBusinessWebsites = websites.filter(website => 
+        website.production_status === 'production' && 
+        (website.type_of_site === 'Application' || website.type_of_site === 'Application Login')
+      );
+
+      const platformCounts: { [key: string]: number } = {};
+      
+      activeBusinessWebsites.forEach(website => {
+        if (website.hosting_platform) {
+          let platform = website.hosting_platform.trim();
+          if (platform === 'AWS (GovCloud)' || platform === 'AWS') {
+            platform = 'AWS';
+          }
+          
+          platformCounts[platform] = (platformCounts[platform] || 0) + 1;
+        }
+      });
+
+      const allPlatforms = Object.entries(platformCounts)
+        .map(([name, value]) => ({ name, value }));
+
+      const platformsWithMultipleSystems = allPlatforms.filter(item => item.value > 1);
+      const platformsWithSingleSystem = allPlatforms.filter(item => item.value === 1);
+
+      const finalData = [...platformsWithMultipleSystems];
+      
+      if (platformsWithSingleSystem.length > 0) {
+        const othersCount = platformsWithSingleSystem.length;
+        finalData.push({ name: 'Others', value: othersCount });
+      }
+
+      finalData.sort((a, b) => b.value - a.value);
+
+      this.hostingPlatformsData = [];
+      this.cdr.detectChanges();
+      
+      setTimeout(() => {
+        this.hostingPlatformsData = finalData;
+        this.updateChartViews();
+        this.cdr.detectChanges();
+      }, 100);
+    });
+  }
+
+  private setupResizeObserver(): void {
+    if (typeof ResizeObserver !== 'undefined') {
+      this.resizeObserver = new ResizeObserver(() => {
+        this.updateChartViews();
+      });
+
+      const barContainer = document.querySelector('.bar-chart-content');
+      const pieContainer = document.querySelector('.pie-chart-content');
+      
+      if (barContainer) {
+        this.resizeObserver.observe(barContainer);
+      }
+      if (pieContainer) {
+        this.resizeObserver.observe(pieContainer);
+      }
+    }
+  }
+
+  private updateResponsiveChartHeights(): void {
+    const screenWidth = window.innerWidth;
+    
+    if (screenWidth <= 1366 && screenWidth >= 992) {
+      this.pieChartView = [this.pieChartView[0], 220];
+      this.barChartView = [this.barChartView[0], 300];
+    } else {
+      this.pieChartView = [this.pieChartView[0], 280];
+      this.barChartView = [this.barChartView[0], 350];
+    }
+    
+    this.cdr.detectChanges();
+  }
+
+  private updateChartViews() {
+    setTimeout(() => {
+      const barContainer = document.querySelector('.bar-chart-content');
+      if (barContainer && barContainer.clientWidth > 0) {
+        const barWidth = barContainer.clientWidth;
+        const screenWidth = window.innerWidth;
+        let barHeight = 350;
+        
+        if (screenWidth <= 1366 && screenWidth >= 992) {
+          barHeight = 300;
+        }
+        
+        this.barChartView = [barWidth, barHeight];
+      } else {
+        this.barChartView = [600, 350];
+      }
+
+      const pieContainer = document.querySelector('.pie-chart-content');
+      if (pieContainer && pieContainer.clientWidth > 0) {
+        const pieWidth = pieContainer.clientWidth;
+        const screenWidth = window.innerWidth;
+        let pieHeight = 280;
+        
+        if (screenWidth <= 1366 && screenWidth >= 992) {
+          pieHeight = 220;
+        }
+        
+        this.pieChartView = [pieWidth, pieHeight];
+      } else {
+        this.pieChartView = [400, 280];
+      }
+
+      this.cdr.detectChanges();
+    }, 50);
   }
 
   public getExpiringDate(): string {
@@ -103,17 +320,57 @@ export class DashboardComponent implements OnInit {
 
     return `${day}th ${month}`;
   }
-  public navigateToFisma(): void {
-    this.router.navigate(['/FISMA']);
-  }
-   public navigateToFismaTabs(): void {
-    this.router.navigate(['/FISMA'], { queryParams: { tab: 'Retired' } });
+
+  public navigateToHostingPlatforms(): void {
+    this.router.navigate(['/systems']);
   }
 
-  public navigateToItStandards(): void {
+  public navigateToCloudSystems(): void {
+    this.router.navigate(['/systems']);
+  }
+
+  public navigateToCloudBasedSystems(): void {
+    this.router.navigate(['/systems'], { queryParams: { tab: 'Cloud Enabled' } });
+  }
+
+  public navigateToNonCloudBasedSystems(): void {
+    this.router.navigate(['/systems'], { queryParams: { tab: 'Inactive' } });
+  }
+
+  public onPieChartSelect(event: any): void {
+    if (event && event.name) {
+      if (event.name === 'Cloud Based') {
+        this.navigateToCloudBasedSystems();
+      } else if (event.name === 'Not Cloud Based') {
+        this.navigateToNonCloudBasedSystems();
+      }
+    }
+  }
+
+  public viewAllFisma(): void {
+    this.router.navigate(['/FISMA']);
+  }
+  public viewAllSystems(): void {
+    this.router.navigate(['/systems']);
+  }
+  public viewAllITStandards(): void {
     this.router.navigate(['/it_standards']);
   }
-  public navigateToItStandardTabs(): void {
-    this.router.navigate(['/it_standards'], { queryParams: { tab: 'Retired' } });
+
+  public viewExpiringFisma():void {
+    this.router.navigate(['/FISMA'], { queryParams: { expiringWithinDays: '7' } }); // expiring this week
+  }
+  public viewDecommissionedSystems(): void {
+    this.router.navigate(['/systems'], { queryParams: { decommissionedWithinDays: '7' } }); // decommissioned this week
+  }
+  public viewExpiringITStandards(): void {
+    this.router.navigate(['/it_standards'], { queryParams: { expiringWithinDays: '7' } }); // expiring this week
+  }
+  public viewRecentRetiredITStandards(): void {
+    this.router.navigate(['/it_standards'], { queryParams: { retiredWithinDays: '7' } }); // retired this week
+  }
+
+  public onTableRowClick(rowData: any): void {
+    this.router.navigate(['/it_standards', rowData.ID]);
   }
 }

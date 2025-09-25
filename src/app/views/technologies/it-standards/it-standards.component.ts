@@ -41,6 +41,9 @@ export class ItStandardsComponent implements OnInit {
   public filterChips: string[] = ['Mobile', 'Desktop', 'Server', 'SaaS', 'PaaS', 'Other'];
   private selectedChips: string[] = [];
 
+  public daysExpiring: number = 0;
+  public daysRetired: number = 0;
+
   constructor(
     private apiService: ApiService,
     private modalService: ModalsService,
@@ -131,6 +134,12 @@ export class ItStandardsComponent implements OnInit {
    this.route.queryParams.subscribe(params => {
       if (params['tab']) {
         this.selectedTab = params['tab'];
+      }
+      if(params['expiringWithinDays']) {
+        this.daysExpiring = +params['expiringWithinDays'];
+      }
+      if(params['retiredWithinDays']) {
+        this.daysRetired = +params['retiredWithinDays'];
       }
     });
     this.apiService.getDataDictionaryByReportName('IT Standards List').subscribe(defs => {
@@ -337,7 +346,38 @@ export class ItStandardsComponent implements OnInit {
       this.itStandardsData = i;
       this.itStandardsDataTabFilterted = i;
       this.itStandardsDataChipFilterted = i;
-      this.tableService.updateReportTableData(i);
+
+      if(this.daysExpiring > 0) {
+        const now = new Date(); // Current date and time
+        const expiringWithin = new Date();
+        expiringWithin.setDate(now.getDate() + this.daysExpiring); // number of days set in the url
+        const expiringFiltered = [];
+        i.forEach(x => {
+          let renewal = new Date(x.ApprovalExpirationDate);
+          if(x.ApprovalExpirationDate && (renewal >= now && renewal <= expiringWithin)) {
+            expiringFiltered.push(x);
+          }
+        });
+        this.tableService.updateReportTableData(expiringFiltered);
+        return;
+      } else if(this.daysRetired > 0) {
+        const now = new Date(); // Current date and time
+        const expiringWithin = new Date();
+        expiringWithin.setDate(now.getDate() + this.daysRetired); // number of days set in the url
+        const expiringFiltered = [];
+        i.forEach(x => {
+          let renewal = new Date(x.ApprovalExpirationDate);
+          if(x.ApprovalExpirationDate && (renewal >= now && renewal <= expiringWithin) && (x.Status === 'Retired')) {
+            expiringFiltered.push(x);
+          }
+        });
+        this.tableService.updateReportTableData(expiringFiltered);
+        return;
+      } {
+        this.tableService.updateReportTableData(i);
+      }
+
+      // this.tableService.updateReportTableData(i);
       
       if (this.selectedTab !== 'All') {
         this.onSelectTab(this.selectedTab);
