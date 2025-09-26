@@ -212,6 +212,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           if (platform === 'AWS (GovCloud)' || platform === 'AWS') {
             platform = 'AWS';
           }
+          // Normalize Cloud.gov variations to consistent case
+          if (platform.toLowerCase() === 'cloud.gov') {
+            platform = 'Cloud.gov';
+          }
           
           platformCounts[platform] = (platformCounts[platform] || 0) + 1;
         }
