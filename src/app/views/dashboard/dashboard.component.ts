@@ -198,17 +198,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private loadHostingPlatformsData(): void {
-    this.apiService.getWebsites().subscribe(websites => {
-      const activeBusinessWebsites = websites.filter(website => 
-        website.production_status === 'production' && 
-        (website.type_of_site === 'Application' || website.type_of_site === 'Application Login')
+    this.apiService.getSystems().subscribe(systems => {
+      const activeBusinessSystems = systems.filter(system => 
+        system.Status === 'Active' && system.BusApp === 'Yes'
       );
 
       const platformCounts: { [key: string]: number } = {};
       
-      activeBusinessWebsites.forEach(website => {
-        if (website.hosting_platform) {
-          let platform = website.hosting_platform.trim();
+      activeBusinessSystems.forEach(system => {
+        if (system.CSP) {
+          let platform = system.CSP.trim();
           if (platform === 'AWS (GovCloud)' || platform === 'AWS') {
             platform = 'AWS';
           }
@@ -224,13 +223,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       const allPlatforms = Object.entries(platformCounts)
         .map(([name, value]) => ({ name, value }));
 
-      const platformsWithMultipleSystems = allPlatforms.filter(item => item.value > 1);
-      const platformsWithSingleSystem = allPlatforms.filter(item => item.value === 1);
+      // Sort platforms by count
+      allPlatforms.sort((a, b) => b.value - a.value);
 
-      const finalData = [...platformsWithMultipleSystems];
+      // Show top 9 platforms individually, group the rest into "Others"
+      const topPlatforms = allPlatforms.slice(0, 9);
+      const remainingPlatforms = allPlatforms.slice(9);
       
-      if (platformsWithSingleSystem.length > 0) {
-        const othersCount = platformsWithSingleSystem.length;
+      const finalData = [...topPlatforms];
+      
+      if (remainingPlatforms.length > 0) {
+        const othersCount = remainingPlatforms.reduce((sum, platform) => sum + platform.value, 0);
         finalData.push({ name: 'Others', value: othersCount });
       }
 
