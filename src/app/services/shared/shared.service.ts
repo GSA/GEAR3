@@ -149,17 +149,14 @@ export class SharedService {
           this.globals.jwtToken = '';
           this.globals.authUser = '';
           this.globals.apiToken = '';
-          this.router.navigate(['/failed-login']);
         }
       } catch (error) {
         console.error('An error occurred while /verify response: ', error);
-        this.router.navigate(['/failed-login']);
         //console.log('Error Response: ', cookies); // debug
       }
     }
     , error => {
       console.error('An error occurred while verifying cookies', error);
-      this.router.navigate(['/failed-login']);
     });
   }
 
