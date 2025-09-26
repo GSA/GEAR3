@@ -57,6 +57,7 @@ import { SystemsDetailsComponent } from './views/systems/systems/details/systems
 import { TimeDetailsComponent } from './views/systems/time/details/time-details.component';
 import { RecordsManagementDetailsComponent } from './views/systems/records-management/details/records-management-details.component';
 import { WebsitesDetailsComponent } from './views/systems/websites/details/websites-details.component';
+import { ItStandardsManagerComponent } from './views/technologies/manager/it-standards-manager.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, title: 'Dashboard' },
@@ -188,6 +189,16 @@ const routes: Routes = [
     path: 'it_standards/:standardID',
     component: ItStandardsDetailsComponent,
     title: 'IT Standard',
+  },
+  {
+    path: 'it_standards_manager',
+    component: ItStandardsManagerComponent,
+    title: 'IT Standard Manager',
+  },
+  {
+    path: 'it_standards_manager/:standardID',
+    component: ItStandardsManagerComponent,
+    title: 'IT Standard Manager',
   },
   {
     path: 'it_standards/filtered/:deploymentType/:status',

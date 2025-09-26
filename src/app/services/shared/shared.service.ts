@@ -162,7 +162,6 @@ export class SharedService {
 
   //// Check if user is authenticated to GEAR Manager
   public get loggedIn(): boolean {
-
     if (this.globals.jwtToken === "" || this.globals.jwtToken === null ||
         this.globals.apiToken === "" || this.globals.apiToken === null || 
         this.globals.authUser === "" || this.globals.authUser === null) {
@@ -186,6 +185,7 @@ export class SharedService {
   //// Set Redirect Path to come back to page after GEAR Manager login
   public setRedirectPath(): void {
     localStorage.setItem('redirectPath', this.router.url);
+    this.router.navigate(['/gear_manager']);
   };
 
   //// Remove JWT and show log out banner when logging out of GEAR Manager

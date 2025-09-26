@@ -58,6 +58,11 @@ const runCloudAdoptionJob = async () => {
     AND \`ex:Cloud_Hosted\` = "Yes") 
 
     );
+
+    DELETE t1
+    FROM \`obj_cloud_adoption_rate\` t1
+    INNER JOIN \`obj_cloud_adoption_rate\` t2
+    WHERE DATE(t1.\`DTG\`) = DATE(t2.\`DTG\`) AND t1.\`Id\` > t2.\`Id\` AND DATE(t1.\`DTG\`) = CURDATE();
     `;
     await runQuery(clearQuery, []);
     jobLogger.log("Success: calculate cloud adoption and insert into obj_cloud_adoption_rate table.");
