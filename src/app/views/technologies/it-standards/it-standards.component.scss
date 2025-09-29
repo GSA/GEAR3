@@ -12,6 +12,12 @@
         h2 {
             margin-bottom: 0;
         }
+
+        & .it-standards-title-right-button-container {
+            display: flex;
+            flex-direction: row;
+            gap: 1rem;
+        }
     }
 
     & .it-standards-definition-container {

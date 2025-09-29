@@ -7,6 +7,12 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+
+        & .capabilities-title-right-button-container {
+            display: flex;
+            flex-direction: row;
+            gap: 1rem;
+        }
     }
 
     & .capabilities-definition-container {

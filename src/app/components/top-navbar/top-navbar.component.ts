@@ -111,14 +111,14 @@ export class TopNavbarComponent implements AfterViewInit {
       keyboardEvent = true;
     }
 
-    this.analyticsService.logTopbarNavEvent(route, keyboardEvent);
+    // this.analyticsService.logTopbarNavEvent(route, keyboardEvent);
 
     this.processTopNavLink();
   }
 
   public onLinkKeyboardDown(event: KeyboardEvent, route: string, changeRoute: boolean = true) {
     if(event.code === 'Space') {
-      this.analyticsService.logTopbarNavEvent(route, true);
+      // this.analyticsService.logTopbarNavEvent(route, true);
 
       if(changeRoute) {
         // Also navigate since space doesn't trigger routerLink

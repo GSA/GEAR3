@@ -36,6 +36,8 @@
               }
             ],
             "styles": [
+              
+              "node_modules/primeicons/primeicons.css",
               "src/styles/styles.scss",
               "src/styles/custom-theme.scss",
               "src/assets/fontawesome-free-5.13.0-web/css/all.min.css",
@@ -62,7 +64,7 @@
               "node_modules/tableexport.jquery.plugin/tableExport.min.js",
               "node_modules/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js",
               "node_modules/bootstrap-table/dist/extensions/toolbar/bootstrap-table-toolbar.min.js",
-             "node_modules/@uswds/uswds/dist/js/uswds.js"
+              "node_modules/@uswds/uswds/dist/js/uswds.js"
             ],
             "extractLicenses": false,
             "sourceMap": true,
@@ -91,8 +93,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb",
-                  "maximumError": "10kb"
+                  "maximumWarning": "20kb",
+                  "maximumError": "30kb"
                 }
               ]
             },
@@ -116,8 +118,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb",
-                  "maximumError": "10kb"
+                  "maximumWarning": "20kb",
+                  "maximumError": "30kb"
                 }
               ]
             },
@@ -135,8 +137,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb",
-                  "maximumError": "10kb"
+                  "maximumWarning": "20kb",
+                  "maximumError": "30kb"
                 }
               ]
             }

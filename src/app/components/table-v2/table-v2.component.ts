@@ -117,11 +117,20 @@ export class TableComponent implements OnInit, OnChanges {
   // }
 
   toggleVisible(e: any) {
-    this.tableCols.map(c => {
-      if(c.field === e.originalEvent.option.field) {
-        c.showColumn = e.originalEvent.selected;
+    // Clear the visible columns array first
+    this.visibleColumns = [];
+    
+    // Update the showColumn property for each column based on the selected items
+    this.tableCols.forEach(col => {
+      const isSelected = e.value.some((selectedCol: Column) => selectedCol.field === col.field);
+      col.showColumn = isSelected;
+      
+      if (isSelected) {
+        this.visibleColumns.push(col);
       }
     });
+
+    localStorage.setItem('visibleColumns', JSON.stringify(this.visibleColumns));
   }
 
   togglePagination() {
@@ -235,11 +244,8 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   generateColumns() {
-    this.tableCols.map(c => {
-      if(this.showColumn(c)) {
-        this.visibleColumns.push(c);
-      }
-    });
+    // Clear and rebuild visible columns based on showColumn property
+    this.visibleColumns = this.tableCols.filter(col => this.showColumn(col));
   }
 
   onRowSelect(e: TableRowSelectEvent) {

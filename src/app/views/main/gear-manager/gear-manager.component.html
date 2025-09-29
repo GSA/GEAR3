@@ -1,5 +1,5 @@
 <div class="card">
-  <div class="card-header text-info bg-silver text-center">
+  <div class="card-header text-white text-center" style="background-color: var(--primary-color);">
     <h3 class="card-title col-12 mb-0 align-self-center">
       <span>
         <i class="fas fa-user-cog"></i>
@@ -7,47 +7,84 @@
     </h3>
   </div>
 
-  <div style="background-color:#fff9de;">
-    <h3 style="text-align: center;">******WARNING******</h3>
+  <div style="background-color:#fff9de;" class="py-3">
     <div class="container">
-      <div class="col"></div>
-      <div class="col">
-        <p style="text-align: left;">
-          This is a U.S. General Services Administration Federal Government computer system that is "FOR OFFICIAL USE ONLY." 
-          This system is subject to monitoring. Therefore, no expectation of privacy is to be assumed. 
-          Individuals found performing unauthorized activities may be subject to disciplinary action including criminal prosecution.
-          This system contains Controlled Unclassified Information (CUI).  
-          All individuals viewing, reproducing or disposing of this information are required to protect it 
-          in accordance with 32 CFR Part 2002 and GSA Order CIO 2103.1 CUI Policy.
-        </p>
-      </div>
-      <div class="col"></div>
+      <h3 style="text-align: center;">******WARNING******</h3>
+      <p style="text-align: left;" class="mb-0">
+        This is a U.S. General Services Administration Federal Government computer system that is "FOR OFFICIAL USE
+        ONLY."
+        This system is subject to monitoring. Therefore, no expectation of privacy is to be assumed.
+        Individuals found performing unauthorized activities may be subject to disciplinary action including criminal
+        prosecution.
+        This system contains Controlled Unclassified Information (CUI).
+        All individuals viewing, reproducing or disposing of this information are required to protect it
+        in accordance with 32 CFR Part 2002 and GSA Order CIO 2103.1 CUI Policy.
+      </p>
     </div>
   </div>
-  
-  <div class="row card-body card-text justify-content-center">
+
+  <div class="row card-body card-text justify-content-center align-items-center" *ngIf="!isLoading">
     <div class="col-3">
-      <img
-        src="https://images.idgesg.net/images/article/2019/07/it-security_lock_cybersecurity_breach_alignment-100801286-large.jpg"
-        alt="">
+      <div class="security-icon-container">
+        <i class="fas fa-shield-alt fa-8x"></i>
+      </div>
     </div>
 
     <div class="col-4 my-auto">
-      <p>
-        If you have a business need to edit/add data to the IT Standards list, please 
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdmvOEESbKRJ5z4GnOw9hMqWIAI8m5H8I0-tB4zU3mc3aeYPA/viewform?usp=sf_link" 
-          class="text-info card-link">
-          request access to GEAR Manager
-        </a>
-      </p>
-      <p>
-        The GEAR Manager portal provides the ability for the EA Team and the CTO Office to edit and update mappings of
-        investments and IT Standards to systems to reflect in GEAR.
-      </p>
-      <p>If you've already been granted access,</p>
-      <h3><a href="/beginAuth" rel="noopener noreferrer" class="text-info card-link">Access
-          GEAR Manager</a>
-      </h3>
+      <!-- Error Message for Users Without Access -->
+      <!-- <div *ngIf="showError" class="alert alert-warning" role="alert">
+        <h4 class="alert-heading">
+          <i class="fas fa-exclamation-triangle"></i>
+          Access Denied
+        </h4>
+        <p>{{ errorMessage }}</p>
+        <hr>
+        <div class="d-flex flex-column">
+          <button class="btn btn-primary mb-2" (click)="requestAccess()">
+            <i class="fas fa-external-link-alt"></i>
+            Request Access to GEAR Manager
+          </button>
+          <button class="btn btn-secondary" (click)="retryAuthentication()">
+            <i class="fas fa-redo"></i>
+            Try Again
+          </button>
+        </div>
+      </div> -->
+
+      <!-- Content for Users With Access -->
+      <div class="access-granted-container">
+        <div class="alert alert-warning" role="alert">
+          <p>
+            The GEAR Manager portal provides the ability for the EA Team and the CTO Office to edit and update mappings
+            of
+            investments and IT Standards to systems to reflect in GEAR.
+          </p>
+          <hr>
+          <p>
+            If you have a business need to edit/add data to the IT Standards list, please
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSdmvOEESbKRJ5z4GnOw9hMqWIAI8m5H8I0-tB4zU3mc3aeYPA/viewform?usp=sf_link"
+              class="text-info card-link">
+              request access to GEAR Manager
+            </a>
+          </p>
+          <div class="d-flex flex-column">
+            <a href="/beginAuth" rel="noopener noreferrer" class="btn btn-primary">
+              <i class="fas fa-sign-in-alt"></i>
+              Access GEAR Manager
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+
+  <!-- Loading State -->
+  <!-- <div class="row card-body card-text justify-content-center" *ngIf="isLoading">
+    <div class="col-12 loading-container">
+      <div class="spinner-border text-info" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+      <p>Checking authentication status...</p>
+    </div>
+  </div> -->
 </div>
