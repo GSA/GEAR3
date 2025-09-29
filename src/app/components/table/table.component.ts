@@ -5,6 +5,7 @@ import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { ApiService } from '@services/apis/api.service';
 import { FilterMatchMode, SelectItem } from 'primeng/api';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -102,7 +103,7 @@ export class TableComponent implements OnInit, OnChanges {
 
   matchModeOptions: SelectItem[];
 
-  constructor(public sharedService: SharedService, public tableService: TableService, public apiService: ApiService) {
+  constructor(public sharedService: SharedService, public tableService: TableService, public apiService: ApiService, private router: Router) {
     this.setScreenHeight();
   }
 
@@ -288,7 +289,16 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   public onRowSelect(e: TableRowSelectEvent) {
-    this.rowClickEvent.emit(e.data);
+    if(this.tableType === 'globalSearch') {
+      this.navigateByType(e.data.GEAR_Type, e.data);
+      return;
+    } else if(this.tableType === 'accessForms') {
+      this.rowClickEvent.emit(e);
+      return;
+    } else {
+      this.navigateByType(this.tableType, e.data);
+      return;
+    }
   }
 
   // onRowSelect(e: TableRowSelectEvent) {
@@ -304,68 +314,48 @@ export class TableComponent implements OnInit, OnChanges {
   //   }
   // }
 
-  private tableRowClickSelection(type: string, data: any) {
+  private navigateByType(type: string, data: any) {
     switch (type) {
       case 'Investment':
-        this.tableService.globalSearchTableClick(data);
-        break;
       case 'investments':
-        this.tableService.investTableClick(data);
+        this.router.navigate(['/investments', data.ID]);
         break;
       case 'Capability':
-        this.tableService.globalSearchTableClick(data);
-        break;
       case 'capabilities':
-        this.tableService.capsTableClick(data);
-        break;
-      case 'websiteServiceCategory':
-        this.tableService.websiteServiceCategoryTableClick(data);
+        this.router.navigate(['/capabilities', data.ID]);
         break;
       case 'Organization':
-        this.tableService.globalSearchTableClick(data);
-        break;
       case 'organizations':
-        this.tableService.orgsTableClick(data);
+        this.router.navigate(['/organizations', data.ID]);
         break;
       case 'Website':
-        this.tableService.globalSearchTableClick(data);
-        break;
       case 'website':
-        this.tableService.websitesTableClick(data);
+        this.router.navigate(['/websites', data.website_id]);
         break;
       case 'records':
-        this.tableService.recordsTableClick(data);
+        this.router.navigate(['/records_mgmt', data.Rec_ID]);
         break;
-      case 'time':
-        this.apiService.getOneSys(data['System Id'])
-          .subscribe((data: any) => {
-            this.tableService.systemsTableClick(data[0]);
-          });
-
-        // Change URL to include ID
-        this.sharedService.addIDtoURL(data, 'System Id');
       case 'System':
-        this.tableService.globalSearchTableClick(data);
-        break;
       case 'systems':
-        this.tableService.systemsTableClick(data);
+      case 'time':
+        this.router.navigate(['/systems', data.ID || data['System Id']]);
         break;
       case 'FISMA':
-        this.tableService.globalSearchTableClick(data);
-        break;
       case 'fisma':
-        this.tableService.fismaTableClick(data);
+        this.router.navigate(['/FISMA', data.ID]);
         break;
       case 'fismaPoc':
         this.rowClickEvent.emit(data);
         break;
       case 'Technology':
-        this.tableService.globalSearchTableClick(data);
-        break;
       case 'itStandards':
-        this.tableService.itStandTableClick(data);
+        this.router.navigate(['/it_standards', data.ID]);
+        break;
+      case 'websiteServiceCategory':
+        this.router.navigate(['/website_service_category', data.website_service_category_id]);
+        break;
       default:
-        console.log('no type');
+        this.rowClickEvent.emit(data);
         break;
     }
   }

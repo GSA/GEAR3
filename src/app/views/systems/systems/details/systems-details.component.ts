@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { System } from '@api/models/systems.model';
 import { TIME } from '@api/models/systime.model';
 import { Column } from '@common/table-classes';
@@ -52,6 +52,7 @@ export class SystemsDetailsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private apiService: ApiService,
     private sharedService: SharedService,
     public tableService: TableService
@@ -62,7 +63,6 @@ export class SystemsDetailsComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       this.systemId = +params.get('sysID');
 
-      // Get system details
       this.apiService.getOneSys(this.systemId).subscribe(s => {
         this.detailsData = s;
         this.isDataReady = true;
@@ -151,4 +151,5 @@ export class SystemsDetailsComponent implements OnInit {
   public getPOCList(): string[] {
     return this.tableService.renderPOCInfoTable(this.detailsData.POC);
   }
+
 }

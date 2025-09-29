@@ -32,6 +32,7 @@ export class BreadcrumbComponent {
         } else if(this.currentSubPath === 'it_standards' || this.currentSubPath === 'it_standards_manager') {
             return 'Technologies';
         }
+        return '';
     }
 
     public getSubLevelRotueName(): string {

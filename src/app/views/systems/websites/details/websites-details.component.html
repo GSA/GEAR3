@@ -1,7 +1,7 @@
 <div class="websites-details-container" *ngIf="isDataReady">
     <div class="breadcrumb-container">
         <app-breadcrumb>
-            <span currentPageName>{{detailsData.domain}}</span>
+            <span currentPageName>{{detailsData?.domain}}</span>
         </app-breadcrumb>
     </div>
     <div class="title-container">
@@ -352,7 +352,7 @@
                     <div class="sub-content full-width">
                         <span class="sub-header">Related Systems</span>
                         <app-table [localTableData]="relatedSystemsData" [isLocal]="true" [tableCols]="relatedSystemsCols"
-                            [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                            [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="systems"></app-table>
                     </div>
                 </div>
             </div>
