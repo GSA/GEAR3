@@ -1,7 +1,6 @@
 <div class="dashboard-container">
     <h1 class="dashboard-title">Welcome to GEAR</h1>
     
-    <!-- Quick View Metrics Section -->
     <div class="dashboard-quick-view-container">
         <div class="dashboard-metrics-grid">
             <div class="dashboard-quick-view-item">
@@ -96,11 +95,9 @@
         </div>
     </div>
 
-    <!-- Charts Section -->
     <div class="dashboard-charts-container">
         <div class="dashboard-charts-grid">
-            <!-- Hosting Platforms Bar Chart -->
-            <div class="dashboard-chart-card bar-chart-card">
+            <div class="dashboard-chart-card bar-chart-card" [ngClass]="{'rotated-labels': shouldRotateLabels}">
                 <div class="dashboard-chart-header">
                     <h3 class="dashboard-card-title-text">Hosting Platforms</h3>
                     <a (click)="viewAllSystems()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
@@ -118,15 +115,14 @@
                         [showYAxisLabel]="true"
                         [xAxisLabel]="'Hosting Platforms'"
                         [yAxisLabel]="'# of Systems'"
-                        [rotateXAxisTicks]="false"
+                        [rotateXAxisTicks]="shouldRotateLabels"
                         [animations]="true"
-                        [barPadding]="20"
+                        [barPadding]="15"
                         [xAxisTickFormatting]="xAxisTickFormatting">
                     </ngx-charts-bar-vertical>
                 </div>
             </div>
 
-            <!-- Cloud Business Systems Donut Chart -->
             <div class="dashboard-chart-card pie-chart-card">
                 <div class="dashboard-chart-header">
                     <h3 class="dashboard-card-title-text">Business Systems</h3>
@@ -165,7 +161,6 @@
         </div>
     </div>
 
-    <!-- Recent Reports Section -->
     <div class="dashboard-recent-report-container">
         <div class="dashboard-recent-report-title">
             <span class="dashboard-card-title-text">Recent GSA IT Standards</span>
