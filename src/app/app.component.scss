@@ -6,10 +6,13 @@
   & .main-container {
     display: flex;
     flex-direction: row;
+    flex: 1; // Take remaining space after header
+  
     & .content-container {
       display: flex;
       flex-direction: column;
       width: 100%;
+      overflow-y: auto; // Allow scrolling if needed
     }
   }
 
@@ -40,7 +43,7 @@
 // .footer-container {
 //   display: flex;
 //   flex-direction: column;
-
+  
 //   & .footer-text {
 //     display: flex;
 //     justify-content: center;
@@ -136,35 +139,35 @@
 //         background-color: #214599;
 //     }
 //   }
-
+  
 //   &.business-systems {
 //       background-color: #ce4844;
 //       &:hover {
 //           background-color: #c9302c;
 //       }
 //   }
-
+  
 //   &.security {
 //       background-color: #aa6708;
 //       &:hover {
 //           background-color: #ffbe2e;
 //       }
 //   }
-
+  
 //   &.technologies {
 //       background-color: #008080;
 //       &:hover {
 //           background-color: #076464;
 //       }
 //   }
-
+  
 //   &.enterprise-architecture {
 //       background-color: #800080;
 //       &:hover {
 //           background-color: #4d024d;
 //       }
 //   }
-
+  
 //   &.additional-info {
 //       background-color: #027eb2;
 //       &:hover {
