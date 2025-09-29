@@ -8,33 +8,41 @@
         <span class="title">{{detailsData.Name}}</span>
     </div>
     <div class="content-container">
-        <div class="data-tab-container">
-            <span class="data-tab-text" [ngClass]="{'active' : isOverviewTabActive}" (click)="onTabClick('overview')">Overview</span>
-            <span class="data-tab-text" [ngClass]="{'active' : isRelatedOrganizationsTabActive}" (click)="onTabClick('related_organizations')" *ngIf="hasRelatedOrganizations">Related Organizations</span>
-            <span class="data-tab-text" [ngClass]="{'active' : isSupportingSystemsTabActive}" (click)="onTabClick('supporting_systems')">Supporting Systems</span>
-        </div>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link" [class.active]="isOverviewTabActive" (click)="onTabClick('overview', $event)" href="#overview">Overview</a>
+            </li>
+            <li class="nav-item" *ngIf="hasRelatedOrganizations">
+                <a class="nav-link" [class.active]="isRelatedOrganizationsTabActive" (click)="onTabClick('related_organizations', $event)" href="#related_organizations">Related Organizations</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" [class.active]="isSupportingSystemsTabActive" (click)="onTabClick('supporting_systems', $event)" href="#supporting_systems">Supporting Systems</a>
+            </li>
+        </ul>
         <div class="overview-container" *ngIf="isOverviewTabActive">
             <div class="overall-data-container">
                 <div class="main-data-container">
-                    <div class="data-full">
-                        <label class="data-label">
+                    <div class="data-wrapper">
+                        <div class="data-full">
+                            <label class="data-label">
+                                <span>
+                                    Description
+                                </span>
+                            </label>
                             <span>
-                                Description
+                                <span>{{detailsData.Description}}</span>
                             </span>
-                        </label>
-                        <span>
-                            <span>{{detailsData.Description}}</span>
-                        </span>
-                    </div>
-                    <div class="data-full">
-                        <label class="data-label">
+                        </div>
+                        <div class="data-full">
+                            <label class="data-label">
+                                <span>
+                                    Level
+                                </span>
+                            </label>
                             <span>
-                                Level
+                                <span>{{detailsData.Level}}</span>
                             </span>
-                        </label>
-                        <span>
-                            <span>{{detailsData.Level}}</span>
-                        </span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -42,14 +50,20 @@
         <div class="related-organizations-container" *ngIf="isRelatedOrganizationsTabActive">
             <div class="overall-data-container">
                 <div class="main-data-container">
-                    <app-table [tableCols]="relatedOrgsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                    <div class="sub-content full-width">
+                        <span class="sub-header">Related Organizations</span>
+                        <app-table [tableCols]="relatedOrgsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="supporting-systems-container" *ngIf="isSupportingSystemsTabActive">
             <div class="overall-data-container">
                 <div class="main-data-container">
-                    <app-table [tableCols]="supportingSystemsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                    <div class="sub-content full-width">
+                        <span class="sub-header">Supporting Systems</span>
+                        <app-table [tableCols]="supportingSystemsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                    </div>
                 </div>
             </div>
         </div>

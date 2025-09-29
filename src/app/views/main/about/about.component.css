@@ -14,3 +14,7 @@
     min-height: 100% !important;
     height: unset !important;
 }
+
+#aboutTabs{
+    margin-bottom: 2rem;
+}

@@ -1,9 +1,9 @@
 .websites-details-container {
   display: flex;
   flex-direction: column;
-  margin: 2rem 2.25rem;
-  padding: 2rem 2.25rem;
-  background-color: #fff;
+  
+  padding: 2rem 1.5rem;
+
 
   & .breadcrumb-container {
     display: flex;
@@ -27,44 +27,43 @@
     display: flex;
     flex-direction: column;
 
-    & .data-tab-container {
-      width: 100%;
-      padding-bottom: .7rem;
-      border-bottom: 1px solid #B2B2B2;
-
-      .data-tab-text {
-        padding: .75rem 1.5rem;
-        background-color: var(--neutral-white-color);
-        color: var(--neutral-black-color-dark);
-
-        &:hover {
-          cursor: pointer;
-        }
-
-        &.active {
-          background-color: var(--primary-color);
-          color: var(--neutral-white-color);
-        }
-      }
+    & .nav-tabs {
+      margin-bottom: 2rem;
     }
 
     & .overall-data-container {
       display: flex;
       flex-flow: row wrap;
 
+
       & .main-data-container {
-        padding: 3.5rem 1.5rem;
         display: flex;
         flex-wrap: wrap;
         width: 100%;
 
-        @media (max-width: 1560px) {
+        & .data-wrapper {
+          display: flex;
+          flex-wrap: wrap;
+          background-color: #fff;
+          box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.08);
+          border-radius: 4px;
+          padding: 1.5rem;
+          margin-bottom: 1.5rem;
           width: 100%;
         }
 
         & .sub-content {
           display: flex;
           flex-direction: column;
+          background-color: #fff;
+          box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.08);
+          border-radius: 4px;
+          padding: 1.5rem;
+          margin-bottom: 1.5rem;
+
+          &.full-width {
+            width: 100%;
+          }
 
           & .sub-header {
             color: var(--neutral-black-color-dark);
@@ -77,70 +76,17 @@
             padding-bottom: 10px;
           }
 
-          & .website-scan-image-container {
-            display: flex;
-            flex-direction: row;
-            gap: 1rem;
-            margin-bottom: 2rem;
-
-            &:first-child {
-              width: 80%;
-              height: 15%;
-            }
-
-            &:last-child {
-              width: 20%;
-            }
-          }
-
-          & .service-category-container {
-            padding-bottom: 2rem;
-
-            & .service-category-heading {
-              color: #352B2B;
-              font-size: 1rem;
-              font-style: normal;
-              font-weight: 500;
-              line-height: normal;
-            }
-
-            & .service-category-description {
-              padding-bottom: 1rem;
-            }
-          }
-
-          & .additional-info-container {
-            & .data {
-              display: flex;
-              flex-direction: column;
-              flex: 33%;
-              padding-bottom: 1.5rem;
-            }
-          }
-
           & table {
-
             & tr {
-              &:nth-of-type(even) {
-                background-color: #e9e9e9;
-              }
+              border-bottom: 1px solid #e0e0e0;
             }
-
             & th {
-              text-transform: capitalize;
-              padding: 1rem 8rem;
-
-              &:first-child {
-                padding-left: .5rem;
-              }
+              background-color: #f5f5f5;
+              font-weight: bold;
+              padding: 0.75rem;
             }
-
             & td {
-              padding: 1rem 8rem;
-
-              &:first-child {
-                padding-left: .5rem;
-              }
+              padding: 0.75rem;
             }
           }
         }
@@ -153,6 +99,7 @@
 
           &:last-child {
             flex: 66%;
+            padding: 0;
           }
 
           & .data-label {
@@ -213,6 +160,7 @@
               border-radius: 50px;
             }
           }
+
         }
 
         & .data-full {
@@ -223,6 +171,105 @@
 
           & .data-label {
             font-weight: bold;
+          }
+        }
+      }
+
+      & .sub-content {
+        display: flex;
+        flex-direction: column;
+        padding: 1.5rem;
+        background-color: #fff;
+        box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.08);
+        border-radius: 4px;
+
+        & .sub-header {
+          color: var(--neutral-black-color-dark);
+          font-family: var(--primary-font);
+          font-size: 1.5rem;
+          font-style: normal;
+          font-weight: 500;
+          line-height: normal;
+          display: block;
+          padding-bottom: 10px;
+        }
+
+        & .website-scan-image-container {
+          display: flex;
+          flex-direction: row;
+          gap: 1rem;
+          margin-bottom: 2rem;
+
+          &:first-child {
+            width: 80%;
+            height: 15%;
+          }
+
+          &:last-child {
+            width: 20%;
+          }
+        }
+
+        & .service-category-container {
+          padding-bottom: 2rem;
+
+          & .service-category-heading {
+            color: #352B2B;
+            font-size: 1rem;
+            font-style: normal;
+            font-weight: 500;
+            line-height: normal;
+          }
+
+          & .service-category-description {
+            padding-bottom: 1rem;
+          }
+        }
+
+        & .additional-info-container {
+          & .data {
+            display: flex;
+            flex-direction: column;
+            flex: 33%;
+            padding-bottom: 1.5rem;
+          }
+
+          .main-data-container {
+            box-shadow: none;
+            padding: 0;
+            margin: 0;
+
+            .data {
+              &:last-child {
+                padding: 0;
+              }
+            }
+          }
+        }
+
+        & table {
+
+          & tr {
+            &:nth-of-type(even) {
+              background-color: #e9e9e9;
+            }
+          }
+
+          & th {
+            text-transform: capitalize;
+            padding: 1rem 8rem;
+
+            &:first-child {
+              padding-left: .5rem;
+            }
+          }
+
+          & td {
+            padding: 1rem 8rem;
+
+            &:first-child {
+              padding-left: .5rem;
+            }
           }
         }
       }
@@ -265,6 +312,7 @@
     }
   }
 }
+
 
 /* Service Category Badges */
 span.pointer {

@@ -8,10 +8,14 @@
         <span class="title">{{detailsData.Name}}</span>
     </div>
     <div class="content-container">
-        <div class="data-tab-container">
-            <span class="data-tab-text" [ngClass]="{'active' : isOverviewTabActive}" (click)="onTabClick('overview')">Overview</span>
-            <span class="data-tab-text" [ngClass]="{'active' : isSystemsTabActive}" (click)="onTabClick('systems')" *ngIf="hasRelatedSystems">Systems using this standard</span>
-        </div>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link" [class.active]="isOverviewTabActive" (click)="onTabClick('overview', $event)" href="#overview">Overview</a>
+            </li>
+            <li class="nav-item" *ngIf="hasRelatedSystems">
+                <a class="nav-link" [class.active]="isSystemsTabActive" (click)="onTabClick('systems', $event)" href="#systems">Systems using this standard</a>
+            </li>
+        </ul>
         <div class="overview-container" *ngIf="isOverviewTabActive">
             <div class="overall-data-container">
                 <div class="main-data-container">
@@ -119,7 +123,7 @@
                         </label>
                         <span>{{detailsData.Description}}</span>
                     </div>
-                    <div class="data-full">
+                    <div class="data-full" style="padding-bottom: 0;">
                         <label class="data-label">
                             <span [title]="getTooltip('Comments')" role="tooltip">
                                 Comments

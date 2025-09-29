@@ -8,9 +8,13 @@
         <span class="title">{{detailsData.name}}</span>
     </div>
     <div class="content-container">
-        <div class="data-tab-container">
-            <span class="data-tab-text active">Overview</span>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" href="#overview">Overview</a>
+            </li>
+        </ul>
+        <div class="overview-container">
+            <website-service-category-details-content [data]="detailsData"></website-service-category-details-content>
         </div>
-        <website-service-category-details-content [data]="detailsData"></website-service-category-details-content>
     </div>
 </div>

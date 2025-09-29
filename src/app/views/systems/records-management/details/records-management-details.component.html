@@ -1,49 +1,53 @@
 <div class="records-management-details-container" *ngIf="isDataReady">
     <div class="breadcrumb-container">
-         <app-breadcrumb>
+        <app-breadcrumb>
             <span currentPageName>{{detailsData.Record_Item_Title}}</span>
-         </app-breadcrumb>
+        </app-breadcrumb>
     </div>
     <div class="title-container">
         <span class="title">{{detailsData.Record_Item_Title}}</span>
     </div>
     <div class="content-container">
-        <div class="data-tab-container">
-            <span class="data-tab-text active">Overview</span>
-        </div>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" href="#overview">Overview</a>
+            </li>
+        </ul>
         <div class="tab-container">
             <div class="overall-data-container">
                 <div class="main-data-container">
-                    <div class="data-full">
-                        <label class="data-label">
+                    <div class="data-holder">
+                        <div class="data-full">
+                            <label class="data-label">
+                                <span>
+                                    Description
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                            </label>
+                            <span>{{detailsData.Description}}</span>
+                        </div>
+                        <div class="data-full">
+                            <label class="data-label">
+                                <span>
+                                    Retention Instructions
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                            </label>
                             <span>
-                                Description
-                                <i class="fas fa-info-circle"></i>
+                                <span>{{detailsData.Retention_Instructions}}</span>
                             </span>
-                        </label>
-                        <span>{{detailsData.Description}}</span>
-                    </div>
-                    <div class="data"> 
-                        <label class="data-label">
+                        </div>
+                        <div class="data-full">
+                            <label class="data-label">
+                                <span>
+                                    Disposition Notes
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                            </label>
                             <span>
-                                Retention Instructions
-                                <i class="fas fa-info-circle"></i>
+                                <span>{{detailsData.Disposition_Notes}}</span>
                             </span>
-                        </label>
-                        <span>
-                            <span>{{detailsData.Retention_Instructions}}</span>
-                        </span>
-                    </div>
-                    <div class="data"> 
-                        <label class="data-label">
-                            <span>
-                                Disposition Notes
-                                <i class="fas fa-info-circle"></i>
-                            </span>
-                        </label>
-                        <span>
-                            <span>{{detailsData.Disposition_Notes}}</span>
-                        </span>
+                        </div>
                     </div>
 
                     <div class="sub-content">

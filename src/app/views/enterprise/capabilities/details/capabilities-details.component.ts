@@ -215,7 +215,8 @@ export class CapabilitiesDetailsComponent implements OnInit {
     });
   }
 
-  public onTabClick(tabName: string): void {
+  public onTabClick(tabName: string, event: Event): void {
+    event.preventDefault();
     switch (tabName) {
       case 'overview':
         this.isOverviewTabActive = true;
