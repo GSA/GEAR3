@@ -13,7 +13,7 @@
                     <span class="dashboard-quick-view-number">{{ fismaExpiringThisQuarter || 0 }}</span>
                 </div>
                 <span class="dashboard-quick-view-text">FISMA Expiring by {{ getExpiringDate() }}</span>
-                <div (click)="viewExpiringFisma()" class="dashboard-quick-view-expire-container" [ngClass]="{'neutral-message': (fismaExpiringThisWeek || 0) === 0}">
+                <div (click)="(fismaExpiringThisWeek || 0) > 0 ? viewExpiringFisma() : null" class="dashboard-quick-view-expire-container" [ngClass]="{'neutral-message': (fismaExpiringThisWeek || 0) === 0}">
                     <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle" *ngIf="(fismaExpiringThisWeek || 0) > 0"></i>
                     <span class="dashboard-quick-view-expire-text" [ngClass]="{'positive-expire-text' : fismaExpiringThisWeek > 0, 'neutral-text': (fismaExpiringThisWeek || 0) === 0}">
                         <span *ngIf="(fismaExpiringThisWeek || 0) > 0">{{ fismaExpiringThisWeek || 0 }} items expiring within 7 days</span>
@@ -30,7 +30,7 @@
                     <span class="dashboard-quick-view-number">{{ decommissionedSystemsLast6Months || 0 }}</span>
                 </div>
                 <span class="dashboard-quick-view-text">Decommissioned systems (Last 6 months)</span>
-                <div (click)="viewDecommissionedSystems()" class="dashboard-quick-view-expire-container" [ngClass]="{'neutral-message': (decommissionedSystemsLast7Days || 0) === 0}">
+                <div (click)="(decommissionedSystemsLast7Days || 0) > 0 ? viewDecommissionedSystems() : null" class="dashboard-quick-view-expire-container" [ngClass]="{'neutral-message': (decommissionedSystemsLast7Days || 0) === 0}">
                     <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle" *ngIf="(decommissionedSystemsLast7Days || 0) > 0"></i>
                     <span class="dashboard-quick-view-expire-text" [ngClass]="{'positive-expire-text' : decommissionedSystemsLast7Days > 0, 'neutral-text': (decommissionedSystemsLast7Days || 0) === 0}">
                         <span *ngIf="(decommissionedSystemsLast7Days || 0) > 0">{{ decommissionedSystemsLast7Days || 0 }} items decommissioned in last 7 days</span>
@@ -47,7 +47,7 @@
                     <span class="dashboard-quick-view-number">{{ standardsExpiringThisQuarter || 0 }}</span>
                 </div>
                 <span class="dashboard-quick-view-text">IT Standards Expiring by {{ getExpiringDate() }}</span>
-                <div (click)="viewExpiringITStandards()" class="dashboard-quick-view-expire-container" [ngClass]="{'neutral-message': (standardsExpiringThisWeek || 0) === 0}">
+                <div (click)="(standardsExpiringThisWeek || 0) > 0 ? viewExpiringITStandards() : null" class="dashboard-quick-view-expire-container" [ngClass]="{'neutral-message': (standardsExpiringThisWeek || 0) === 0}">
                     <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle" *ngIf="(standardsExpiringThisWeek || 0) > 0"></i>
                     <span class="dashboard-quick-view-expire-text" [ngClass]="{'positive-expire-text' : standardsExpiringThisWeek > 0, 'neutral-text': (standardsExpiringThisWeek || 0) === 0}">
                         <span *ngIf="(standardsExpiringThisWeek || 0) > 0">{{ standardsExpiringThisWeek || 0 }} items expiring within 7 days</span>
@@ -65,7 +65,7 @@
                     <span class="dashboard-quick-view-number">{{ retiredITStandardsLast6Months || 0 }}</span>
                 </div>
                 <span class="dashboard-quick-view-text">Retired IT standards (Last 6 months)</span>
-                <div (click)="viewRecentRetiredITStandards()" class="dashboard-quick-view-expire-container" [ngClass]="{'neutral-message': (retiredITStandardsLast7Days || 0) === 0}">
+                <div (click)="(retiredITStandardsLast7Days || 0) > 0 ? viewRecentRetiredITStandards() : null" class="dashboard-quick-view-expire-container" [ngClass]="{'neutral-message': (retiredITStandardsLast7Days || 0) === 0}">
                     <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle" *ngIf="(retiredITStandardsLast7Days || 0) > 0"></i>
                     <span class="dashboard-quick-view-expire-text" [ngClass]="{'positive-expire-text' : retiredITStandardsLast7Days > 0, 'neutral-text': (retiredITStandardsLast7Days || 0) === 0}">
                         <span *ngIf="(retiredITStandardsLast7Days || 0) > 0">{{ retiredITStandardsLast7Days || 0 }} items retired in last 7 days</span>

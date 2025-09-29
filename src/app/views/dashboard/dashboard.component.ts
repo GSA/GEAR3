@@ -199,55 +199,52 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private loadHostingPlatformsData(): void {
     this.apiService.getSystems().subscribe(systems => {
-      const activeBusinessSystems = systems.filter(system => 
-        system.Status === 'Active' && system.BusApp === 'Yes'
-      );
+      // Optimized: Single pass filtering and counting
+      const platformCounts = systems
+        .filter(system => system.Status === 'Active' && system.BusApp === 'Yes' && system.CSP)
+        .reduce((counts, system) => {
+          const platform = this.normalizePlatformName(system.CSP.trim());
+          counts[platform] = (counts[platform] || 0) + 1;
+          return counts;
+        }, {} as { [key: string]: number });
 
-      const platformCounts: { [key: string]: number } = {};
-      
-      activeBusinessSystems.forEach(system => {
-        if (system.CSP) {
-          let platform = system.CSP.trim();
-          if (platform === 'AWS (GovCloud)' || platform === 'AWS') {
-            platform = 'AWS';
+      // Optimized: Single pass to separate and calculate others
+      const { individualPlatforms, othersCount } = Object.entries(platformCounts)
+        .map(([name, value]) => ({ name, value }))
+        .sort((a, b) => b.value - a.value)
+        .reduce((acc, platform) => {
+          if (platform.value >= 3) {
+            acc.individualPlatforms.push(platform);
+          } else {
+            acc.othersCount += platform.value;
           }
-          // Normalize Cloud.gov variations to consistent case
-          if (platform.toLowerCase() === 'cloud.gov') {
-            platform = 'Cloud.gov';
-          }
-          
-          platformCounts[platform] = (platformCounts[platform] || 0) + 1;
-        }
-      });
+          return acc;
+        }, { individualPlatforms: [] as any[], othersCount: 0 });
 
-      const allPlatforms = Object.entries(platformCounts)
-        .map(([name, value]) => ({ name, value }));
-
-      // Sort platforms by count
-      allPlatforms.sort((a, b) => b.value - a.value);
-
-      // Show top 9 platforms individually, group the rest into "Others"
-      const topPlatforms = allPlatforms.slice(0, 9);
-      const remainingPlatforms = allPlatforms.slice(9);
-      
-      const finalData = [...topPlatforms];
-      
-      if (remainingPlatforms.length > 0) {
-        const othersCount = remainingPlatforms.reduce((sum, platform) => sum + platform.value, 0);
+      // Build final data
+      const finalData = [...individualPlatforms];
+      if (othersCount > 0) {
         finalData.push({ name: 'Others', value: othersCount });
       }
 
-      finalData.sort((a, b) => b.value - a.value);
-
-      this.hostingPlatformsData = [];
+      // Optimized: Single update with change detection
+      this.hostingPlatformsData = finalData;
+      this.updateChartViews();
       this.cdr.detectChanges();
-      
-      setTimeout(() => {
-        this.hostingPlatformsData = finalData;
-        this.updateChartViews();
-        this.cdr.detectChanges();
-      }, 100);
     });
+  }
+
+  private normalizePlatformName(platform: string): string {
+    // Optimized: Use switch for better performance
+    switch (platform) {
+      case 'AWS (GovCloud)':
+      case 'AWS':
+        return 'AWS';
+      case 'cloud.gov':
+        return 'Cloud.gov';
+      default:
+        return platform;
+    }
   }
 
   private setupResizeObserver(): void {
