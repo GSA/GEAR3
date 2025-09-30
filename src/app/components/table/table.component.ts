@@ -27,40 +27,21 @@ export class TableComponent implements OnInit, OnChanges {
 
   @Input() reportStyle: string = 'default';
 
-  // Website type for modal click fn
   @Input() tableType: string = '';
-
-  // The name of report for the export csv
   @Input() exportName: string = '';
-
-
-  // An optional function to use for exporting the data
-  // instead of the built in export function
   @Input() exportFunction: Function = null;
-
-  // Inputs for showing/hiding specific toolbar items
-  // as well as the entire toolbar itself
   @Input() showToolbar: boolean = true;
   @Input() showSearchbar: boolean = true;
   @Input() showShowHideColumnButton: boolean = true;
   @Input() showPaginationToggleButton: boolean = true;
   @Input() showExportButton: boolean = true;
   @Input() showFilterButton: boolean = true;
-
-  // Show/hide pagination
   @Input() showPagination: boolean = true;
-
-  // Default sort inputs order is either 1 or -1
-  // for ascending and descending respectively
   @Input() defaultSortField: string = '';
   @Input() defaultSortOrder: number = 1;
-
   @Input() preFilteredTableData: any[] = [];
-
-  // Filter event (some reports change available columns when filtered)
+  @Input() contextSystemName: string = '';
   @Output() filterEvent = new EventEmitter<string>();
-
-  // Row click event
   @Output() rowClickEvent = new EventEmitter<any>();
 
   @ViewChild(Table) private dt: Table;
@@ -136,31 +117,21 @@ export class TableComponent implements OnInit, OnChanges {
       this.originalTableData = [...this.localTableData];
     }
     
-    // Handle tableCols changes (e.g., when switching tabs)
     if (changes.tableCols && !changes.tableCols.firstChange) {
       this.initializeColumnVisibility();
     }
   }
 
   private initializeColumnVisibility() {
-    // Simply set visibleColumns to all columns that should be visible
     this.visibleColumns = this.tableCols.filter(col => col.showColumn !== false);
   }
 
 
-  // getTableData() {
-  //   if(this.preFilteredTableData && this.preFilteredTableData.length > 0) {
-  //     return this.preFilteredTableData;
-  //   }
-  //   return this.tableData;
-  // }
 
 
   toggleVisible(e: any) {
-    // Clear the visible columns array first
     this.visibleColumns = [];
     
-    // Update the showColumn property for each column based on the selected items
     this.tableCols.forEach(col => {
       const isSelected = e.value.some((selectedCol: Column) => selectedCol.field === col.field);
       col.showColumn = isSelected;
@@ -284,7 +255,6 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   generateColumns() {
-    // Clear and rebuild visible columns based on showColumn property
     this.visibleColumns = this.tableCols.filter(col => this.showColumn(col));
   }
 
@@ -301,71 +271,65 @@ export class TableComponent implements OnInit, OnChanges {
     }
   }
 
-  // onRowSelect(e: TableRowSelectEvent) {
-  //   if(this.tableType === 'globalSearch') {
-  //     this.tableRowClickSelection(e.data.GEAR_Type, e.data);
-  //     return;
-  //   } else if(this.tableType === 'accessForms') {
-  //     this.rowClickEvent.emit(e);
-  //     return;
-  //   } else {
-  //     this.tableRowClickSelection(this.tableType, e.data);
-  //     return;
-  //   }
-  // }
 
   private navigateByType(type: string, data: any) {
-    switch (type) {
-      case 'Investment':
-      case 'investments':
-        this.router.navigate(['/investments', data.ID]);
-        break;
-      case 'Capability':
-      case 'capabilities':
-        this.router.navigate(['/capabilities', data.ID]);
-        break;
-      case 'Organization':
-      case 'organizations':
-        this.router.navigate(['/organizations', data.ID]);
-        break;
-      case 'Website':
-      case 'website':
-        this.router.navigate(['/websites', data.website_id]);
-        break;
-      case 'records':
-        this.router.navigate(['/records_mgmt', data.Rec_ID]);
-        break;
-      case 'System':
-      case 'systems':
-      case 'time':
-        this.router.navigate(['/systems', data.ID || data['System Id']]);
-        break;
-      case 'FISMA':
-      case 'fisma':
-        this.router.navigate(['/FISMA', data.ID]);
-        break;
-      case 'fismaPoc':
-        this.rowClickEvent.emit(data);
-        break;
-      case 'Technology':
-      case 'itStandards':
-        this.router.navigate(['/it_standards', data.ID]);
-        break;
-      case 'websiteServiceCategory':
-        this.router.navigate(['/website_service_category', data.website_service_category_id]);
-        break;
-      default:
-        this.rowClickEvent.emit(data);
-        break;
+    const currentRoute = this.router.url;
+    const navigationMap = {
+      'Investment': { route: '/investments', id: 'ID', context: '/capabilities/' },
+      'investments': { route: '/investments', id: 'ID', context: '/capabilities/' },
+      'Capability': { route: '/capabilities', id: 'ID', context: '/systems/' },
+      'capabilities': { route: '/capabilities', id: 'ID', context: '/systems/' },
+      'Organization': { route: '/organizations', id: 'ID', context: '/capabilities/' },
+      'organizations': { route: '/organizations', id: 'ID', context: '/capabilities/' },
+      'Website': { route: '/websites', id: 'website_id', context: '/systems/' },
+      'website': { route: '/websites', id: 'website_id', context: '/systems/' },
+      'records': { route: '/records_mgmt', id: 'Rec_ID', context: '/systems/' },
+      'System': { route: '/systems', id: 'ID', context: '/it_standards/' },
+      'systems': { route: '/systems', id: 'ID', context: '/it_standards/' },
+      'time': { route: '/systems', id: 'ID', context: '/it_standards/' },
+      'Technology': { route: '/it_standards', id: 'ID', context: '/systems/' },
+      'itStandards': { route: '/it_standards', id: 'ID', context: '/systems/' }
+    };
+
+    const config = navigationMap[type];
+    if (config) {
+      if (currentRoute.includes(config.context) && !currentRoute.includes(config.route)) {
+        const sourceId = currentRoute.split(config.context)[1]?.split('/')[0];
+        const sourceType = config.context.includes('systems') ? 'fromSystem' : 
+                          config.context.includes('capabilities') ? 'fromCapability' : 'fromTechnology';
+        const sourceName = sourceType + 'Name';
+        const defaultName = config.context.includes('systems') ? 'System' : 
+                           config.context.includes('capabilities') ? 'Capability' : 'Technology';
+        
+        this.router.navigate([config.route, data[config.id]], {
+          queryParams: { [sourceType]: sourceId, [sourceName]: this.contextSystemName || defaultName }
+        });
+      } else {
+        this.router.navigate([config.route, data[config.id] || data['System Id']]);
+      }
+    } else {
+      switch (type) {
+        case 'FISMA':
+        case 'fisma':
+          this.router.navigate(['/FISMA', data.ID]);
+          break;
+        case 'fismaPoc':
+          this.rowClickEvent.emit(data);
+          break;
+        case 'websiteServiceCategory':
+          this.router.navigate(['/website_service_category', data.website_service_category_id]);
+          break;
+        default:
+          this.rowClickEvent.emit(data);
+          break;
+      }
     }
   }
 
   isFilterButtonActive(filterButton: string) {
-    //if(this.currentFilterButtons && this.currentFilterButtons.length > 0) {
     return this.currentFilterButtons.forEach(c => {
       return c === filterButton;
     });
-    //}
   }
 
   onTableSearch(keyword: string) {
@@ -411,4 +375,5 @@ export class TableComponent implements OnInit, OnChanges {
       this.originalTableData = [...this.tableData];
     }
   }
+
 }
