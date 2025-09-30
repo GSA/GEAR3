@@ -80,12 +80,18 @@ export class SystemsDetailsComponent implements OnInit {
         this.sysTechnologiesData = sysTech;
       });
 
-      this.apiService.getRecords().subscribe(sysRecords => {
-        this.sysRecordsData = sysRecords;
+      this.apiService.getSysRecords(this.systemId).subscribe((mappings: any[]) => {
+        this.apiService.getRecords().subscribe((records: any[]) => {
+          const recordIds = new Set(mappings.map(({ obj_records_Id }) => obj_records_Id));
+          this.sysRecordsData = records.filter(({ Rec_ID }) => recordIds.has(parseInt(Rec_ID)));
+        });
       });
 
-      this.apiService.getWebsites().subscribe(sysWeb => {
-        this.sysWebsitesData = sysWeb;
+      this.apiService.getSysWebsites(this.systemId).subscribe((mappings: any[]) => {
+        this.apiService.getWebsites().subscribe((websites: any[]) => {
+          const websiteIds = new Set(mappings.map(({ obj_websites_Id }) => obj_websites_Id));
+          this.sysWebsitesData = websites.filter(({ website_id }) => websiteIds.has(parseInt(website_id)));
+        });
       });
 
     });
