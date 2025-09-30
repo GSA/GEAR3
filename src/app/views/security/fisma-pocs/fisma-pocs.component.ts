@@ -84,6 +84,7 @@ export class FismaPocsComponent implements OnInit {
   ngOnInit(): void {
     this.apiService.getFISMA().subscribe(fisma => {
       this.tableDataOriginal = fisma;
+      this.filteredTableData = []; // Reset the array
       fisma.forEach(f => {
         if(f.Status === 'Active' && f.SystemLevel === 'System' && f.Reportable === 'Yes') {
           this.filteredTableData.push(f);
@@ -114,8 +115,24 @@ export class FismaPocsComponent implements OnInit {
   }
 
   pocFormatter(value) {
+    // Check if value exists and is not null/undefined
+    if (!value || value === null || value === undefined) {
+      return 'None Provided';
+    }
+
+    // Check if value is a string and contains the expected format
+    if (typeof value !== 'string' || !value.includes(':')) {
+      return 'None Provided';
+    }
+
     // remove beginning field type from poc info
     let pocsCleanedUp = value.split(':');
+    
+    // Check if we have the expected array structure
+    if (pocsCleanedUp.length < 2 || !pocsCleanedUp[1]) {
+      return 'None Provided';
+    }
+    
     // split poc groupings into array
     let pocs: string[] = pocsCleanedUp[1].split(';');
     // the final string that gets displayed
@@ -128,12 +145,12 @@ export class FismaPocsComponent implements OnInit {
 
     // iterate over all poc groupings
     pocs.map(p => {
-      if(p !== " ") {
+      if(p && p !== " " && p.trim() !== "") {
         // split the poc group into specific contact types
         let contactTypes = p.split(',');
-        let name = contactTypes[0];
-        let email = contactTypes[1];
-        let phone = contactTypes[2];
+        let name = contactTypes[0] ? contactTypes[0].trim() : '';
+        let email = contactTypes[1] ? contactTypes[1].trim() : '';
+        let phone = contactTypes[2] ? contactTypes[2].trim() : '';
 
         // temp display string
         let displayStr = '';
@@ -147,8 +164,10 @@ export class FismaPocsComponent implements OnInit {
           target="_blank" rel="noopener">${email}</a><br/>`;
         }
 
-        if(phone) {
+        if(phone && phone.length >= 11) {
           displayStr += `${phone.substring(0, 4)}-${phone.substring(4, 7)}-${phone.substring(7, 11)}<br/>`;
+        } else if(phone) {
+          displayStr += `${phone}<br/>`;
         }
 
         // append the temp display string to the final display string
