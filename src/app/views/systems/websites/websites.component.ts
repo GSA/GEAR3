@@ -258,6 +258,12 @@ export class WebsitesComponent implements OnInit {
     this.tableService.updateReportTableData(this.websitesTabFilterted);
   }
 
+  public onKeyUp(e: KeyboardEvent, tabName: string) {
+    if(e.key === ' ' || e.key === 'Enter') {
+      this.onSelectTab(tabName);
+    }
+  }
+
   public isTabSelected(tabName: string): boolean {
     return this.selectedTab === tabName;
   }

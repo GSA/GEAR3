@@ -5,7 +5,7 @@
     <div class="dashboard-quick-view-container">
         <div class="dashboard-metrics-grid">
             <div class="dashboard-quick-view-item">
-                <a (click)="viewAllFisma()" class="dashboard-view-all-link">View All</a>
+                <a href (click)="viewAllFisma()" class="dashboard-view-all-link">View All</a>
                 <div class="dashboard-header-row">
                     <div class="dashboard-icon-box">
                         <i class="dashboard-quick-view-icon fas fa-clipboard-list"></i>
@@ -19,7 +19,7 @@
                 </div>
             </div>
              <div class="dashboard-quick-view-item">
-                <a (click)="viewAllSystems()" class="dashboard-view-all-link">View All</a>
+                <a href (click)="viewAllSystems()" class="dashboard-view-all-link">View All</a>
                 <div class="dashboard-header-row">
                     <div class="dashboard-icon-box">
                         <i class="dashboard-quick-view-icon fas fa-server"></i>
@@ -33,7 +33,7 @@
                 </div>
             </div>
             <div class="dashboard-quick-view-item">
-                <a (click)="viewAllITStandards()" class="dashboard-view-all-link">View All</a>
+                <a href (click)="viewAllITStandards()" class="dashboard-view-all-link">View All</a>
                 <div class="dashboard-header-row">
                     <div class="dashboard-icon-box">
                         <i class="dashboard-quick-view-icon fas fa-desktop"></i>
@@ -44,11 +44,11 @@
                 <div (click)="viewExpiringITStandards()" class="dashboard-quick-view-expire-container">
                     <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle"></i>
                     <span class="dashboard-quick-view-expire-text" [ngClass]="{'positive-expire-text' : standardsExpiringThisWeek > 0}">{{ standardsExpiringThisWeek }} items expiring within 7 days</span>
-                </div>
+                </div> 
             </div>
            
             <div class="dashboard-quick-view-item">
-                <a (click)="viewAllITStandards()" class="dashboard-view-all-link">View All</a>
+                <a href (click)="viewAllITStandards()" class="dashboard-view-all-link">View All</a>
                 <div class="dashboard-header-row">
                     <div class="dashboard-icon-box">
                         <i class="dashboard-quick-view-icon fas fa-trash-alt"></i>
@@ -91,7 +91,7 @@
             <div class="dashboard-chart-card bar-chart-card">
                 <div class="dashboard-chart-header">
                     <h3 class="dashboard-card-title-text">Hosting Platforms</h3>
-                    <a (click)="viewAllSystems()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
+                    <a href (click)="viewAllSystems()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
                 </div>
                 <div class="dashboard-chart-content bar-chart-content">
                     <ngx-charts-bar-vertical
@@ -118,7 +118,7 @@
             <div class="dashboard-chart-card pie-chart-card">
                 <div class="dashboard-chart-header">
                     <h3 class="dashboard-card-title-text">Business Systems</h3>
-                    <a (click)="viewAllSystems()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
+                    <a href (click)="viewAllSystems()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
                 </div>
                 <div class="dashboard-chart-content pie-chart-content">
                     <ngx-charts-pie-chart
@@ -157,7 +157,7 @@
     <div class="dashboard-recent-report-container">
         <div class="dashboard-recent-report-title">
             <span class="dashboard-card-title-text">Recent GSA IT Standards</span>
-            <a (click)="viewAllITStandards()" class="dashboard-view-all-link normal">View All</a>
+            <a href (click)="viewAllITStandards()" class="dashboard-view-all-link normal">View All</a>
         </div>
         <app-table *ngIf="showTable" [tableCols]="tableCols" [showToolbar]="false" [showPagination]="false" reportStyle="neutral" (rowClickEvent)="onTableRowClick($event)">
         </app-table>

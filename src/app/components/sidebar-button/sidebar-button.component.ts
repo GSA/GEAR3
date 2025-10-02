@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { SidebarButtonChild } from '@common/sidebar-classes';
@@ -20,6 +20,8 @@ export class SidebarButtonComponent implements OnChanges {
 
     @Input() isButtonExpanded: boolean = false;
 
+    @Output() routeChange: EventEmitter<any> = new EventEmitter();
+
   
     constructor(
         private router: Router,
@@ -38,11 +40,22 @@ export class SidebarButtonComponent implements OnChanges {
     public onButtonClick(): void {
         if (this.hasChildren()) {
             // no toggle here anymore — parent handles it
-          } else if (this.buttonRoute && this.router.url !== this.buttonRoute) {
+        } else if (this.buttonRoute && this.router.url !== this.buttonRoute) {
             this.analyticsService.logClickEvent(this.buttonRoute);
             this.router.navigate([this.buttonRoute]);
-          }
-        
+        }
+    }
+
+    public onKeyUp(e: KeyboardEvent): void {
+        if(e.key === ' ' || e.key === 'Enter') {
+            this.onButtonClick();
+        }
+    }
+
+    public onChildKeyUp(e: KeyboardEvent, child: SidebarButtonChild): void {
+        if(e.key === ' ' || e.key === 'Enter') {
+            this.onChildButtonClick(child);
+        }
     }
 
     public onChildButtonClick(child: SidebarButtonChild): void {
@@ -53,6 +66,7 @@ export class SidebarButtonComponent implements OnChanges {
             this.analyticsService.logClickEvent(child.href);
             window.open(child.href, '_blank');
         }
+        this.routeChange.emit();
     }
 
     private hasChildren(): boolean {

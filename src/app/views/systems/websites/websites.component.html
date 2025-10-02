@@ -33,19 +33,19 @@
   <div class="websites-data-container">
     <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)">
       <div class="filter-tabs-container" filterTabs>
-        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')">
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')" (keyup)="onKeyUp($event, 'All')" tabindex="0">
           <span class="filter-tab-text">All</span>
           <span class="filter-tab-number first">{{filterTotals?.AllTotal}}</span>
         </div>
-        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Decommissioned')}" (click)="onSelectTab('Decommissioned')">
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Decommissioned')}" (click)="onSelectTab('Decommissioned')" (keyup)="onKeyUp($event, 'Decommissioned')" tabindex="0">
           <span class="filter-tab-text">Decommissioned</span>
           <span class="filter-tab-number second">{{filterTotals?.DecommissionedTotal}}</span>
         </div>
-        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Redirects')}" (click)="onSelectTab('Redirects')">
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Redirects')}" (click)="onSelectTab('Redirects')" (keyup)="onKeyUp($event, 'Redirects')" tabindex="0">
           <span class="filter-tab-text">Redirects</span>
           <span class="filter-tab-number third">{{filterTotals?.RedirectsTotal}}</span>
         </div>
-        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('External')}" (click)="onSelectTab('External')">
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('External')}" (click)="onSelectTab('External')" (keyup)="onKeyUp($event, 'External')" tabindex="0">
           <span class="filter-tab-text">External</span>
           <span class="filter-tab-number fourth">{{filterTotals?.ExternalTotal}}</span>
         </div>

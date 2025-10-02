@@ -93,6 +93,12 @@ export class ItStandardsComponent implements OnInit {
     }
   }
 
+  public onKeyUp(e: KeyboardEvent, tabName: string) {
+    if(e.key === ' ' || e.key === 'Enter') {
+      this.onSelectTab(tabName);
+    }
+  }
+
   public onFilterChipSelect(selectedChips: string[]): void {
     this.selectedChips = selectedChips;
     this.itStandardsDataChipFilterted = this.itStandardsDataTabFilterted;

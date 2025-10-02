@@ -11,6 +11,11 @@
             cursor: pointer;
         }
 
+        &:focus-visible, &:focus {
+            border-bottom: none;
+            border: 2px solid var(--primary-color);
+        }
+
         &.selected {
             border-bottom: 2px solid var(--primary-color);
 

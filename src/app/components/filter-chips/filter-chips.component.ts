@@ -26,9 +26,6 @@ export class FilterChipsComponent {
             this.dropdownOpen = false;
           }
         }
-        // if(e.target !== this.button.nativeElement && e.target !== this.menu.nativeElement){
-        //     this.dropdownOpen = false;
-        // }
       });
     }
 
