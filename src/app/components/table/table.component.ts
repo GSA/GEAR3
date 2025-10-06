@@ -27,21 +27,41 @@ export class TableComponent implements OnInit, OnChanges {
 
   @Input() reportStyle: string = 'default';
 
+  // Website type for modal click fn
   @Input() tableType: string = '';
+
+  // The name of report for the export csv
   @Input() exportName: string = '';
+
+
+  // An optional function to use for exporting the data
+  // instead of the built in export function
   @Input() exportFunction: Function = null;
+
+  // Inputs for showing/hiding specific toolbar items
+  // as well as the entire toolbar itself
   @Input() showToolbar: boolean = true;
   @Input() showSearchbar: boolean = true;
   @Input() showShowHideColumnButton: boolean = true;
   @Input() showPaginationToggleButton: boolean = true;
   @Input() showExportButton: boolean = true;
   @Input() showFilterButton: boolean = true;
+
+  // Show/hide pagination
   @Input() showPagination: boolean = true;
+
+  // Default sort inputs order is either 1 or -1
+  // for ascending and descending respectively
   @Input() defaultSortField: string = '';
   @Input() defaultSortOrder: number = 1;
+
   @Input() preFilteredTableData: any[] = [];
   @Input() contextSystemName: string = '';
+
+  // Filter event (some reports change available columns when filtered)
   @Output() filterEvent = new EventEmitter<string>();
+
+  // Row click event
   @Output() rowClickEvent = new EventEmitter<any>();
 
   @ViewChild(Table) private dt: Table;
@@ -117,12 +137,14 @@ export class TableComponent implements OnInit, OnChanges {
       this.originalTableData = [...this.localTableData];
     }
     
+    // Handle tableCols changes (e.g., when switching tabs)
     if (changes.tableCols && !changes.tableCols.firstChange) {
       this.initializeColumnVisibility();
     }
   }
 
   private initializeColumnVisibility() {
+    // Simply set visibleColumns to all columns that should be visible
     this.visibleColumns = this.tableCols.filter(col => col.showColumn !== false);
   }
 
@@ -130,8 +152,10 @@ export class TableComponent implements OnInit, OnChanges {
 
 
   toggleVisible(e: any) {
+    // Clear the visible columns array first
     this.visibleColumns = [];
     
+    // Update the showColumn property for each column based on the selected items
     this.tableCols.forEach(col => {
       const isSelected = e.value.some((selectedCol: Column) => selectedCol.field === col.field);
       col.showColumn = isSelected;
@@ -255,6 +279,7 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   generateColumns() {
+    // Clear and rebuild visible columns based on showColumn property
     this.visibleColumns = this.tableCols.filter(col => this.showColumn(col));
   }
 
@@ -327,9 +352,11 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   isFilterButtonActive(filterButton: string) {
+    //if(this.currentFilterButtons && this.currentFilterButtons.length > 0) {
     return this.currentFilterButtons.forEach(c => {
       return c === filterButton;
     });
+    //}
   }
 
   onTableSearch(keyword: string) {
