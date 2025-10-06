@@ -1,4 +1,12 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnChanges,
+  AfterViewInit,
+} from '@angular/core';
 import { Column } from '../../../common/table-classes';
 import { FilterMatchMode } from 'primeng/api';
 
@@ -12,10 +20,11 @@ export interface ColumnFilter {
   selector: 'table-column-filter-modal',
   templateUrl: './table-column-filter-modal.component.html',
   styleUrls: ['./table-column-filter-modal.component.scss'],
-  standalone: false
+  standalone: false,
 })
-export class TableColumnFilterModalComponent implements OnInit, OnChanges {
-
+export class TableColumnFilterModalComponent
+  implements OnInit, OnChanges, AfterViewInit
+{
   @Input() columns: Column[] = [];
   @Input() isVisible: boolean = false;
   @Input() existingFilters: any = {};
@@ -30,77 +39,94 @@ export class TableColumnFilterModalComponent implements OnInit, OnChanges {
     { label: 'Starts With', value: FilterMatchMode.STARTS_WITH },
     { label: 'Ends With', value: FilterMatchMode.ENDS_WITH },
     { label: 'Equals', value: FilterMatchMode.EQUALS },
-    { label: 'Not Equals', value: FilterMatchMode.NOT_EQUALS }
+    { label: 'Not Equals', value: FilterMatchMode.NOT_EQUALS },
   ];
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
     this.initializeFilters();
   }
 
+  ngAfterViewInit(): void {
+    if (this.isVisible) {
+      setTimeout(() => this.resetScrollPosition(), 100);
+    }
+  }
+
   ngOnChanges(): void {
     if (this.isVisible) {
-      // Multiple attempts to ensure scroll reset works
       this.resetScrollPosition();
-      setTimeout(() => this.resetScrollPosition(), 50);
+      requestAnimationFrame(() => this.resetScrollPosition());
       setTimeout(() => this.resetScrollPosition(), 100);
-      setTimeout(() => this.resetScrollPosition(), 200);
     }
-    
-    // Initialize filters with existing values if provided
+
     if (this.existingFilters && Object.keys(this.existingFilters).length > 0) {
       this.initializeFiltersWithExisting();
     }
   }
 
   private resetScrollPosition(): void {
-    // Target the modal dialog with scrollable class
-    const modalDialog = document.querySelector('.modal-dialog-scrollable');
+    const modal =
+      document.querySelector('.modal.show') ||
+      document.querySelector('.modal.fade.show') ||
+      document.querySelector('.modal');
+
+    if (!modal) return;
+
+    const scrollContainers = [
+      '.modal-dialog-scrollable',
+      '.modal-body',
+      '.modal-content',
+      '.modal-dialog',
+    ];
+
+    for (const selector of scrollContainers) {
+      const container = modal.querySelector(selector);
+      if (container) {
+        container.scrollTop = 0;
+      }
+    }
+
+    if (modal.scrollTop !== undefined) {
+      modal.scrollTop = 0;
+    }
+
+    const modalDialog = modal.querySelector('.modal-dialog');
     if (modalDialog) {
-      modalDialog.scrollTop = 0;
+      modalDialog.scrollIntoView({ behavior: 'instant', block: 'start' });
     }
-    
-    // Also try the modal body as fallback
-    const modalBody = document.querySelector('.modal-body');
-    if (modalBody) {
-      modalBody.scrollTop = 0;
-    }
-    
-    // Try to scroll the modal into view at the top
-    const modal = document.querySelector('.modal.show .modal-dialog');
-    if (modal) {
-      modal.scrollIntoView({ behavior: 'instant', block: 'start' });
-    }
+
+    window.scrollTo(0, 0);
   }
 
   private initializeFilters(): void {
-    this.columns.forEach(col => {
+    this.columns.forEach((col) => {
       if (col.field && col.showColumn !== false) {
         this.columnFilters[col.field] = {
           field: col.field,
           value: '',
-          matchMode: FilterMatchMode.CONTAINS
+          matchMode: FilterMatchMode.CONTAINS,
         };
       }
     });
   }
 
   private initializeFiltersWithExisting(): void {
-    this.columns.forEach(col => {
+    this.columns.forEach((col) => {
       if (col.field && col.showColumn !== false) {
         const existingFilter = this.existingFilters[col.field];
         if (existingFilter && existingFilter.length > 0) {
           this.columnFilters[col.field] = {
             field: col.field,
             value: existingFilter[0].value || '',
-            matchMode: existingFilter[0].matchMode || FilterMatchMode.CONTAINS
+            matchMode: existingFilter[0].matchMode || FilterMatchMode.CONTAINS,
           };
         } else {
           this.columnFilters[col.field] = {
             field: col.field,
             value: '',
-            matchMode: FilterMatchMode.CONTAINS
+            matchMode: FilterMatchMode.CONTAINS,
           };
         }
       }
@@ -108,8 +134,9 @@ export class TableColumnFilterModalComponent implements OnInit, OnChanges {
   }
 
   onSaveChanges(): void {
-    const activeFilters = Object.values(this.columnFilters)
-      .filter(filter => filter.value && filter.value.toString().trim() !== '');
+    const activeFilters = Object.values(this.columnFilters).filter(
+      (filter) => filter.value && filter.value.toString().trim() !== '',
+    );
     this.saveChanges.emit(activeFilters);
     this.closeModal.emit();
   }
@@ -125,7 +152,7 @@ export class TableColumnFilterModalComponent implements OnInit, OnChanges {
   }
 
   clearAllFilters(): void {
-    Object.keys(this.columnFilters).forEach(key => {
+    Object.keys(this.columnFilters).forEach((key) => {
       this.columnFilters[key].value = '';
     });
   }
@@ -137,23 +164,24 @@ export class TableColumnFilterModalComponent implements OnInit, OnChanges {
   }
 
   hasActiveFilters(): boolean {
-    return Object.values(this.columnFilters).some(filter => 
-      filter.value && filter.value.toString().trim() !== ''
+    return Object.values(this.columnFilters).some(
+      (filter) => filter.value && filter.value.toString().trim() !== '',
     );
   }
 
   getColumnLabel(field: string): string {
-    const column = this.columns.find(col => col.field === field);
+    const column = this.columns.find((col) => col.field === field);
     return column ? column.header : field;
   }
 
   getActiveFilters(): ColumnFilter[] {
-    return Object.values(this.columnFilters)
-      .filter(filter => filter.value && filter.value.toString().trim() !== '');
+    return Object.values(this.columnFilters).filter(
+      (filter) => filter.value && filter.value.toString().trim() !== '',
+    );
   }
 
   getMatchModeLabel(matchMode: FilterMatchMode): string {
-    const option = this.matchModeOptions.find(opt => opt.value === matchMode);
+    const option = this.matchModeOptions.find((opt) => opt.value === matchMode);
     return option ? option.label : 'Contains';
   }
 }
