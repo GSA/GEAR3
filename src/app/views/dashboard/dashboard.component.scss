@@ -1,142 +1,20 @@
-// Variables
-$primary-color: var(--primary-color);
-$neutral-black: var(-neutral-black-color-dark);
-$primary-font: var(--primary-font);
-$card-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
-$border-radius: 8px;
-$transition: all 0.3s ease;
-
-// Mixins
-@mixin card-style {
-  background-color: #fff;
-  box-shadow: $card-shadow;
-  border-radius: $border-radius;
-  padding: 1rem;
-  position: relative;
-}
-
-@mixin flex-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-@mixin flex-between {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-@mixin text-style($size: 1rem, $weight: 400, $color: $neutral-black) {
-  color: $color;
-  font-family: $primary-font;
-  font-size: $size;
-  font-style: normal;
-  font-weight: $weight;
-  line-height: normal;
-}
-
-@mixin link-style($color: $primary-color) {
-  color: $color;
-  font-family: $primary-font;
-  font-size: 0.875rem;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 1.25rem;
-  text-decoration-line: underline;
-  cursor: pointer;
-
-  &:hover {
-    text-decoration: none;
-  }
-}
-
-@mixin responsive-padding($desktop: 1rem, $laptop: 0.75rem) {
-  padding: $desktop;
-  
-  @media (max-width: 1366px) and (min-width: 1024px) {
-    padding: $laptop;
-  }
-}
-
-@mixin responsive-font($desktop: 1rem, $laptop: 0.875rem) {
-  font-size: $desktop;
-  
-  @media (max-width: 1366px) and (min-width: 1024px) {
-    font-size: $laptop;
-  }
-}
-
-// Standardized classes for consistent styling
-.dashboard-view-all-link {
-  position: absolute;
-  top: 1.3rem;
-  right: 0.75rem;
-  z-index: 1;
-  cursor: pointer;
-  @include link-style;
-  @include responsive-font(0.875rem, 0.8rem);
-
-  &.normal{
-    position: relative;
-    top: unset;
-  }
-
-  @media (max-width: 1366px) and (min-width: 1024px) {
-    top: 0.5rem;
-    right: 0.5rem;
-    font-size: 0.75rem;
-  }
-}
-
-.dashboard-card-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding-bottom: 1.5rem;
-
-  @media (max-width: 1366px) and (min-width: 1024px) {
-    padding-bottom: 1rem;
-  }
-
-  & .dashboard-quick-links-icon {
-    @include text-style(1.125rem, 600);
-    color: $neutral-black;
-
-    @media (max-width: 1366px) and (min-width: 1024px) {
-      font-size: 1rem;
-    }
-  }
-}
-
-.dashboard-card-title-text {
-  margin: 0;
-  text-transform: capitalize;
-  letter-spacing: 0.5px;
-  @include text-style(1.25rem, 700);
-  @include responsive-font(1.25rem, 1rem);
-}
-
 .dashboard-container {
   display: flex;
   flex-direction: column;
-  position: relative;
-  @include responsive-padding(1rem 1.5rem 1rem 1rem, 0.75rem 1rem 0.75rem 0.75rem);
+  padding: 2rem 1.5rem;
 
   & .dashboard-title {
+    margin-top: 0;
     margin-bottom: 1rem;
-    @include text-style(1.75rem, 600);
-    @include responsive-font(1.75rem, 1.5rem);
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--neutral-black-color-dark);
   }
 
   & .dashboard-quick-view-container {
     display: flex;
     justify-content: space-between;
     gap: 15px;
-
-    @media (max-width: 1366px) and (min-width: 992px) {
-      gap: 12px;
-    }
     
     @media (max-width: 992px) {
       flex-direction: column;
@@ -148,10 +26,6 @@ $transition: all 0.3s ease;
       grid-template-columns: 1fr 1fr;
       gap: 15px;
       width: 75%;
-
-      @media (max-width: 1366px) and (min-width: 992px) {
-        gap: 12px;
-      }
       
       @media (max-width: 992px) {
         width: 100%;
@@ -171,16 +45,16 @@ $transition: all 0.3s ease;
       flex-direction: column;
       gap: 0.25rem;
       align-items: flex-start;
-      @include card-style;
-      @include responsive-padding(1rem, 0.75rem);
-
-      @media (max-width: 1366px) and (min-width: 992px) {
-        gap: 0.2rem;
-      }
-
+      background-color: #fff;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+      border-radius: 8px;
+      padding: 1rem;
+      position: relative;
+      
       &.dashboard-quick-links-card {
         width: 25%;
         align-items: start;
+        min-height: 100%;
         
         @media (max-width: 992px) {
           width: 100%;
@@ -188,14 +62,11 @@ $transition: all 0.3s ease;
       }
 
       & .dashboard-header-row {
-        @include flex-center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         gap: 0.75rem;
         margin-bottom: 0.5rem;
-
-        @media (max-width: 1366px) and (min-width: 992px) {
-          gap: 0.5rem;
-          margin-bottom: 0.4rem;
-        }
       }
 
       & .dashboard-icon-box {
@@ -205,34 +76,32 @@ $transition: all 0.3s ease;
         width: 2rem;
         padding: 0.75rem 1rem;
         color: #B50909;
-        @include flex-center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         flex-shrink: 0;
 
-        @media (max-width: 1366px) and (min-width: 992px) {
-          height: 2.5rem;
-          width: 2.5rem;
-          padding: 0.5rem 0.75rem;
+        &.zero-value {
+          background: #E5E7EB;
+          color: #6B7280;
         }
 
         & .dashboard-quick-view-icon {
           width: 1.125rem;
           height: 1.125rem;
-
-          @media (max-width: 1366px) and (min-width: 992px) {
-            width: 1rem;
-            height: 1rem;
-          }
         }
       }
 
       & .dashboard-quick-view-number {
-        @include text-style(1.5rem, 600);
-        @include responsive-font(1.5rem, 1.25rem);
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--neutral-black-color-dark);
       }
 
       & .dashboard-quick-view-text {
-        @include text-style(0.875rem, 400);
-        @include responsive-font(0.875rem, 0.8rem);
+        font-size: 0.875rem;
+        font-weight: 400;
+        color: var(--neutral-black-color-dark);
       }
 
       & .dashboard-quick-view-expire-container {
@@ -242,14 +111,28 @@ $transition: all 0.3s ease;
         }
 
         & .dashboard-quick-view-expire-text {
-          @include text-style(0.875rem, 400, #D97706);
-          @include responsive-font(0.875rem, 0.8rem);
-          // text-decoration-line: underline;
+          font-size: 0.875rem;
+          font-weight: 400;
+          color: #D97706;
         }
 
         & .positive-expire-text {
           text-decoration-line: underline;
           cursor: pointer;
+        }
+
+        &.neutral-message {
+          margin: 0;
+          padding: 0;
+          
+          & .neutral-text {
+            font-size: 0.875rem;
+            font-weight: 400;
+            color: #6B7280;
+            line-height: 1.2;
+            margin: 0;
+            padding: 0;
+          }
         }
       }
 
@@ -258,52 +141,37 @@ $transition: all 0.3s ease;
         flex-direction: column;
         gap: 0.75rem;
 
-        @media (max-width: 1366px) and (min-width: 992px) {
-          gap: 0.5rem;
-        }
-
         & .dashboard-quick-links-link {
-          @include link-style;
-          text-decoration: none;
+          color: var(--primary-color);
+          font-size: 0.875rem;
+          font-weight: 500;
+          text-decoration: underline;
+          cursor: pointer;
           display: flex;
           flex-direction: row;
           align-items: start;
           gap: 0.5rem;
-          @include responsive-font(0.875rem, 0.8rem);
 
           &:hover {
             text-decoration: underline;
           }
 
           & .dashboard-quick-links-link-icon {
-            color: $primary-color;
+            color: var(--primary-color);
             font-size: 0.75rem;
-
-            &:hover {
-              text-decoration: underline;
-            }
           }
         }
       }
     }
   }
 
-  // Charts Section Styles
   & .dashboard-charts-container {
     margin-top: 1.5rem;
-
-    @media (max-width: 1366px) and (min-width: 992px) {
-      margin-top: 1rem;
-    }
 
     & .dashboard-charts-grid {
       display: grid;
       grid-template-columns: 74% 25%;
       gap: 15px;
-
-      @media (max-width: 1366px) and (min-width: 992px) {
-        gap: 12px;
-      }
       
       @media (max-width: 1200px) and (min-width: 992px) {
         grid-template-columns: 60% 40%;
@@ -311,8 +179,8 @@ $transition: all 0.3s ease;
       }
       
       @media (max-width: 992px) {
-        grid-template-columns: 50% 50%;
-        gap: 10px;
+        grid-template-columns: 100%;
+        gap: 15px;
       }
       
       @media (max-width: 776px) {
@@ -324,56 +192,89 @@ $transition: all 0.3s ease;
     & .dashboard-chart-card {
       overflow: visible;
       max-width: 100%;
-      @include card-style;
-      @include responsive-padding(1rem, 0.75rem);
+      background-color: #fff;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+      border-radius: 8px;
+      padding: 1rem;
+      position: relative;
+      width: 100%;
       
       &.pie-chart-card {
-        min-height: 360px;
+        min-height: 320px;
         
-        @media (max-width: 1366px) and (min-width: 992px) {
-          min-height: 320px;
+        @media (max-width: 1400px) {
+          min-height: 280px;
+        }
+        
+        @media (max-width: 992px) {
+          min-height: 260px;
+        }
+        
+        @media (max-width: 576px) {
+          min-height: 240px;
         }
       }
       
       &.bar-chart-card {
-        min-height: 400px;
+        min-height: 360px;
         
-        @media (max-width: 1366px) and (min-width: 992px) {
-          min-height: 350px;
+        @media (max-width: 1400px) {
+          min-height: 320px;
+        }
+        
+        @media (max-width: 992px) {
+          min-height: 300px;
+        }
+        
+        @media (max-width: 576px) {
+          min-height: 280px;
         }
       }
 
       & .dashboard-chart-header {
-        @include flex-between;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         margin-bottom: 1rem;
-
-        @media (max-width: 1366px) and (min-width: 992px) {
-          margin-bottom: 0.75rem;
-        }
       }
 
       & .dashboard-chart-content {
         position: relative;
-        height: 300px;
+        height: 280px;
         width: 100%;
         overflow: hidden;
         display: flex;
         justify-content: center;
         align-items: center;
-
-        @media (max-width: 1366px) and (min-width: 992px) {
-          height: 250px;
+        
+        @media (max-width: 1400px) {
+          height: 240px;
+        }
+        
+        @media (max-width: 992px) {
+          height: 220px;
+        }
+        
+        @media (max-width: 576px) {
+          height: 200px;
         }
       }
     }
 
-    // Bar Chart Specific Styling
     & .bar-chart-card {
       .bar-chart-content {
-        height: 350px;
+        height: 320px;
         
-        @media (max-width: 1366px) and (min-width: 992px) {
-          height: 300px;
+        @media (max-width: 1400px) {
+          height: 280px;
+        }
+        
+        @media (max-width: 992px) {
+          height: 260px;
+        }
+        
+        @media (max-width: 576px) {
+          height: 240px;
         }
 
         ::ng-deep ngx-charts-bar-vertical {
@@ -381,19 +282,76 @@ $transition: all 0.3s ease;
           height: 100% !important;
           max-width: 100% !important;
         }
+        
+        ::ng-deep .ngx-charts {
+          width: 100% !important;
+          height: 100% !important;
+        }
+        
+        ::ng-deep .ngx-charts-x-axis {
+          .tick {
+            text {
+              font-size: 11px;
+              font-weight: 500;
+              fill: #666;
+              
+              @media (max-width: 576px) {
+                font-size: 10px;
+              }
+            }
+          }
+        }
+        
+        ::ng-deep .ngx-charts-x-axis .tick text {
+          text-anchor: middle;
+          dominant-baseline: text-before-edge;
+        }
+        
+        ::ng-deep .ngx-charts {
+          .ngx-charts-outer {
+            margin-bottom: 10px;
+            
+            @media (max-width: 576px) {
+              margin-bottom: 8px;
+            }
+          }
+        }
+        
+        &.rotated-labels {
+          ::ng-deep .ngx-charts-x-axis .tick text {
+            transform: rotate(-45deg);
+            text-anchor: end;
+            dominant-baseline: text-before-edge;
+          }
+          
+          ::ng-deep .ngx-charts .ngx-charts-outer {
+            margin-bottom: 20px;
+            
+            @media (max-width: 576px) {
+              margin-bottom: 15px;
+            }
+          }
+        }
       }
     }
 
-    // Pie Chart Specific Styling
     & .pie-chart-card {
       .pie-chart-content {
-        height: 280px;
+        height: 240px;
         display: flex;
         justify-content: center;
         align-items: center;
         
-        @media (max-width: 1366px) and (min-width: 992px) {
+        @media (max-width: 1400px) {
           height: 220px;
+        }
+        
+        @media (max-width: 992px) {
+          height: 200px;
+        }
+        
+        @media (max-width: 576px) {
+          height: 180px;
         }
 
         ::ng-deep ngx-charts-pie-chart {
@@ -407,8 +365,12 @@ $transition: all 0.3s ease;
           width: 100% !important;
           height: 100% !important;
         }
+        
+        ::ng-deep .ngx-charts {
+          width: 100% !important;
+          height: 100% !important;
+        }
 
-        // Center text styling
         & .dashboard-chart-center-text {
           position: absolute;
           top: 50%;
@@ -427,31 +389,25 @@ $transition: all 0.3s ease;
             margin-bottom: 0.25rem;
             text-transform: none;
             letter-spacing: 0.2px;
-            @include text-style(0.75rem, 500);
-            @include responsive-font(0.75rem, 0.7rem);
+            font-size: 0.75rem;
+            font-weight: 500;
           }
 
           & .center-number {
             color: #000000;
             line-height: 1;
-            @include text-style(1.75rem, 700);
-            @include responsive-font(1.75rem, 1.5rem);
+            font-size: 1.75rem;
+            font-weight: 700;
           }
         }
       }
 
-      // Custom legend styling
       & .custom-legend {
         display: flex;
         justify-content: center;
         gap: 0.5rem;
         margin-top: 0.75rem;
         padding: 0.5rem 0;
-        
-        @media (max-width: 1366px) and (min-width: 1024px) {
-          margin-top: 0.5rem;
-          padding: 0.25rem 0;
-        }
 
         & .legend-item {
           display: flex;
@@ -474,8 +430,8 @@ $transition: all 0.3s ease;
 
           & .legend-text {
             color: #333;
-            @include text-style(0.875rem, 400);
-            @include responsive-font(0.875rem, 0.75rem);
+            font-size: 0.875rem;
+            font-weight: 400;
           }
         }
       }
@@ -485,45 +441,81 @@ $transition: all 0.3s ease;
   & .dashboard-recent-report-container {
     margin-top: 1.5rem;
 
-    @media (max-width: 1366px) and (min-width: 1024px) {
-      margin-top: 1rem;
-    }
-
     & .dashboard-recent-report-title {
-      @include flex-between;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 1rem;
       position: relative;
-
-      @media (max-width: 1366px) and (min-width: 1024px) {
-        margin-bottom: 0.75rem;
-      }
     }
 
     ::ng-deep {
       .p-datatable-wrapper {
         padding-top: 0;
-        @include responsive-padding(0.3rem, 0.2rem);
-
+        padding: 0.3rem;
       }
 
       .neutral.p-datatable .p-datatable-thead > tr > th {
-        @include responsive-padding(0.8rem, 1rem);
-        @include responsive-font(0.8rem, 0.65rem);
+        padding: 0.8rem 1rem;
+        font-size: 0.8rem;
       }
 
       .neutral.p-datatable .p-datatable-tbody > tr {
         cursor: pointer;
 
         & td {
-          @include responsive-padding(0.5rem 0.4rem, 0.4rem 0.3rem);
-          @include responsive-font(0.7rem, 0.65rem);
+          padding: 0.5rem 0.4rem;
+          font-size: 0.7rem;
         }
 
         &.p-datatable-tbody > tr:nth-of-type(odd) td {
-          @include responsive-padding(0.5rem 0.4rem, 0.4rem 0.3rem);
-          @include responsive-font(0.7rem, 0.65rem);
+          padding: 0.5rem 0.4rem;
+          font-size: 0.7rem;
         }
       }
     }
   }
+}
+
+.dashboard-view-all-link {
+  position: absolute;
+  top: 1.3rem;
+  right: 0.75rem;
+  z-index: 1;
+  cursor: pointer;
+  color: var(--primary-color);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: underline;
+
+  &.normal{
+    position: relative;
+    top: unset;
+  }
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.dashboard-card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 1rem;
+
+  & .dashboard-quick-links-icon {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--neutral-black-color-dark);
+  }
+}
+
+.dashboard-card-title-text {
+  margin: 0;
+  text-transform: capitalize;
+  letter-spacing: 0.5px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--neutral-black-color-dark);
 }
