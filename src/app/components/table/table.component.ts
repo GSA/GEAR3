@@ -1,6 +1,6 @@
 import { Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { Table, TableRowSelectEvent } from 'primeng/table';
-import { Column, ExportColumn, TwoDimArray, FilterButton } from '../../common/table-classes';
+import { Column, ExportColumn, TwoDimArray, FilterButton, ColumnFilter } from '../../common/table-classes';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { ApiService } from '@services/apis/api.service';
@@ -97,6 +97,7 @@ export class TableComponent implements OnInit, OnChanges {
   currentFilterButtons: string[] = [];
   screenHeight: string = '';
   showFilters: boolean = false;
+  showColumnFilterModal: boolean = false;
   first: number = 0;
   rows: number = 10;
 
@@ -147,7 +148,6 @@ export class TableComponent implements OnInit, OnChanges {
     // Simply set visibleColumns to all columns that should be visible
     this.visibleColumns = this.tableCols.filter(col => col.showColumn !== false);
   }
-
 
 
 
@@ -403,4 +403,55 @@ export class TableComponent implements OnInit, OnChanges {
     }
   }
 
+  openColumnFilterModal(): void {
+    this.showColumnFilterModal = true;
+  }
+
+  onColumnFilterSave(filters: ColumnFilter[]): void {
+    // Clear existing filters first
+    if (this.dt && this.dt.filters) {
+      this.dt.filters = {};
+    }
+    
+    // Apply new filters
+    if (filters && filters.length > 0) {
+      filters.forEach(filter => {
+        if (this.dt && this.dt.filters && filter.value && filter.value.toString().trim() !== '') {
+          this.dt.filters[filter.field] = [{ 
+            value: filter.value, 
+            matchMode: filter.matchMode, 
+            operator: 'and' 
+          }];
+        }
+      });
+    }
+    
+    // Force table to refresh and apply filters
+    if (this.dt) {
+      // Trigger filter refresh
+      this.dt._filter();
+      // Reset pagination to first page
+      this.dt.first = 0;
+      this.first = 0;
+    }
+    
+    this.showColumnFilterModal = false;
+  }
+
+  onColumnFilterCancel(): void {
+    this.showColumnFilterModal = false;
+  }
+
+  onColumnFilterClose(): void {
+    this.showColumnFilterModal = false;
+  }
+
+  clearAllColumnFilters(): void {
+    if (this.dt && this.dt.filters) {
+      this.dt.filters = {};
+      this.dt._filter();
+      this.dt.first = 0;
+      this.first = 0;
+    }
+  }
 }
