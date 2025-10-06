@@ -50,15 +50,15 @@ export class TableColumnFilterModalComponent
 
   ngAfterViewInit(): void {
     if (this.isVisible) {
-      setTimeout(() => this.resetScrollPosition(), 100);
+      // Use requestAnimationFrame for smooth, immediate execution
+      requestAnimationFrame(() => this.resetScrollPosition());
     }
   }
 
   ngOnChanges(): void {
     if (this.isVisible) {
-      this.resetScrollPosition();
+      // Reset scroll position immediately without delays
       requestAnimationFrame(() => this.resetScrollPosition());
-      setTimeout(() => this.resetScrollPosition(), 100);
     }
 
     if (this.existingFilters && Object.keys(this.existingFilters).length > 0) {
