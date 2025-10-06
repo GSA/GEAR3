@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DataDictionary } from '@api/models/data-dictionary.model';
 import { AppBundle } from '@api/models/it-standards-app-bundle.model';
 import { ITStandards } from '@api/models/it-standards.model';
@@ -175,7 +175,8 @@ export class ItStandardsDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private apiService: ApiService,
     private sharedService: SharedService,
-    private tableService: TableService
+    private tableService: TableService,
+    private router: Router
   ) {
   }
 
@@ -307,7 +308,8 @@ export class ItStandardsDetailsComponent implements OnInit {
     return this.detailsData.Status === this.STATUS_STATES.approved;
   }
 
-  public onTabClick(tabName: string): void {
+  public onTabClick(tabName: string, event: Event): void {
+    event.preventDefault();
     switch (tabName) {
       case 'overview':
         this.isOverviewTabActive = true;
@@ -320,6 +322,14 @@ export class ItStandardsDetailsComponent implements OnInit {
       default:
         break;
     }
+  }
+
+  public editITStandard(): void {
+    this.router.navigate(['it_standards_manager', this.detailsData.ID]);
+  }
+
+  public isLoggedIn(): boolean {
+    return this.sharedService.loggedIn;
   }
 
 }

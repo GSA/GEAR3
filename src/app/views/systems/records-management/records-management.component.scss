@@ -1,12 +1,18 @@
 .records-management-container {
     display: flex;
     flex-direction: column;
-    padding: 2rem 2.5rem 2.25rem 2rem;
+    padding: 2rem 1.5rem;
 
     & .records-management-title-container {
         display: flex;
         justify-content: space-between;
         align-items: center;
+
+        & .records-management-title-right-button-container {
+            display: flex;
+            flex-direction: row;
+            gap: 1rem;
+        }
     }
 
     & .records-management-data-container {

@@ -8,24 +8,31 @@
         <span class="title">{{detailsData.Name}}</span>
     </div>
     <div class="content-container">
-        <div class="data-tab-container">
-            <span class="data-tab-text" [ngClass]="{'active' : isOverviewTabActive}" (click)="onTabClick('overview')">Overview</span>
-            <span class="data-tab-text" [ngClass]="{'active' : isBudgetYearTabActive}" (click)="onTabClick('budget_year')">Budget Year</span>
-            <span class="data-tab-text" [ngClass]="{'active' : isRelatedSystemsTabActive}" (click)="onTabClick('related_systems')" *ngIf="hasRelatedSystems">Related Systems</span>
-        </div>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link" [class.active]="isOverviewTabActive" (click)="onTabClick('overview', $event)" href="#overview">Overview</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" [class.active]="isBudgetYearTabActive" (click)="onTabClick('budget_year', $event)" href="#budget_year">Budget Year</a>
+            </li>
+            <li class="nav-item" *ngIf="hasRelatedSystems">
+                <a class="nav-link" [class.active]="isRelatedSystemsTabActive" (click)="onTabClick('related_systems', $event)" href="#related_systems">Related Systems</a>
+            </li>
+        </ul>
         <div class="overview-container" *ngIf="isOverviewTabActive">
             <div class="overall-data-container">
                 <div class="main-data-container">
-                    <div class="data-full">
-                        <label class="data-label">
+                    <div class="data-wrapper">
+                        <div class="data-full">
+                            <label class="data-label">
+                                <span>
+                                    Description
+                                </span>
+                            </label>
                             <span>
-                                Description
+                                <span>{{detailsData.Description}}</span>
                             </span>
-                        </label>
-                        <span>
-                            <span>{{detailsData.Description}}</span>
-                        </span>
-                    </div>
+                        </div>
                     <div class="data">
                         <label class="data-label">
                             <span>
@@ -147,23 +154,25 @@
                             <span>{{detailsData.Status}}</span>
                         </span>
                     </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="budget-year-container" *ngIf="isBudgetYearTabActive">
             <div class="overall-data-container">
                 <div class="main-data-container">
-                    <div class="data">
-                        <label class="data-label">
+                    <div class="data-wrapper">
+                        <div class="data">
+                            <label class="data-label">
+                                <span>
+                                    <i class="fas fa-calendar"></i>
+                                    Budget Year
+                                </span>
+                            </label>
                             <span>
-                                <i class="fas fa-calendar"></i>
-                                Budget Year
+                                <span>{{detailsData.Budget_Year}}</span>
                             </span>
-                        </label>
-                        <span>
-                            <span>{{detailsData.Budget_Year}}</span>
-                        </span>
-                    </div>
+                        </div>
                     <div class="data">
                         <label class="data-label">
                             <span>
@@ -224,13 +233,17 @@
                             <span>{{detailsData.OnM_Budget_Auth_BY}}</span>
                         </span>
                     </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="related-systems-container" *ngIf="isRelatedSystemsTabActive">
             <div class="overall-data-container">
                 <div class="main-data-container">
-                    <app-table [tableCols]="relatedSystemsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                    <div class="sub-content full-width">
+                        <span class="sub-header">Related Systems</span>
+                        <app-table [tableCols]="relatedSystemsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                    </div>
                 </div>
             </div>
         </div>

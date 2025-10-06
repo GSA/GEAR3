@@ -1,0 +1,158 @@
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+.it-standards-details-loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 2rem 2.25rem;
+    padding: 2rem 2.25rem;
+    background-color: #fff;
+
+    & .loader {
+        display: flex;
+        border: 4px solid var(--neutral-white-color);
+        border-top: 4px solid var(--primary-color);; /* Blue border on top */
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+      }
+}
+
+
+
+.it-standards-details-container {
+    display: flex;
+    flex-direction: column;
+    margin: 2rem 2.25rem;
+    padding: 2rem 2.25rem;
+    background-color: #fff;
+
+    & .breadcrumb-container {
+        display: flex;
+        padding-bottom: 2rem;
+    }
+
+    & .title-container {
+        display: flex;
+        padding-bottom: 1.5rem;
+
+        & .title {
+            color: var(--neutral-black-color-dark);
+            font-family: var(--primary-font);
+            font-size: 2rem;
+            font-weight: 500;
+            line-height: normal;
+        }
+    }
+
+    & .content-container {
+        display: flex;
+        flex-direction: column;
+
+        & .data-tab-container {
+            width: 100%;
+            padding-bottom: .7rem;
+            border-bottom: 1px solid #B2B2B2;
+
+            .data-tab-text {
+                padding: .75rem 1.5rem;
+                background-color: var(--neutral-white-color);
+                color: var(--neutral-black-color-dark);
+
+                &:hover {
+                    cursor: pointer;
+                }
+
+                &.active {
+                    background-color: var(--primary-color);
+                    color: var(--neutral-white-color);
+                }
+            }
+        }
+
+        & .overall-data-container {
+            display: flex;
+            flex-flow: row wrap;
+            & .main-data-container {
+                padding: 3.5rem 1.5rem;
+                display: flex;
+                flex-wrap: wrap;
+                width: 100%;
+
+                @media (max-width: 1560px) {
+                    width: 100%;
+                }
+
+                & .section-title-container {
+                    display: flex;
+                    margin-top: 3rem;
+
+                    &.no-margin-top {
+                        margin-top: 0;
+                    }
+            
+                    & .title {
+                        color: var(--neutral-black-color-dark);
+                        font-family: var(--primary-font);
+                        font-size: 1.5rem;
+                        font-weight: 500;
+                        line-height: normal;
+                    }
+                }
+    
+                & .data {
+                    display: flex;
+                    flex-direction: column;
+                    flex: 33%;
+                    padding-right: 1.5rem;
+                    padding-bottom: 1.5rem;
+
+                    &:last-child {
+                        padding-right: none;
+                    }
+    
+                    & .data-label {
+                        font-weight: bold;
+                    }
+
+                    & .data-icon-container {
+                        display: flex;
+                        align-items: center;
+                        gap: .5rem;
+                    }
+                }
+    
+                & .data-full {
+                    display: flex;
+                    flex-direction: column;
+                    flex: 100%;
+                    padding-bottom: 1.5rem;
+    
+                    & .data-label {
+                        font-weight: bold;
+                    }
+                }
+            }
+        }
+
+        & .bottom-info-bar {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+
+            & .checkbox-button-combo {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: start;
+                gap: 1rem;
+            }
+        }
+    }
+}

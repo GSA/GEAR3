@@ -8,51 +8,55 @@
         <span class="title">{{detailsData.DisplayName}}</span>
     </div>
     <div class="content-container">
-        <div class="data-tab-container">
-            <span class="data-tab-text active">Overview</span>
-        </div>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" href="#overview">Overview</a>
+            </li>
+        </ul>
         <div class="overview-container">
             <div class="overall-data-container">
                 <div class="main-data-container">
-                    <div class="data">
-                        <label class="data-label">
+                    <div class="data-wrapper">
+                        <div class="data">
+                            <label class="data-label">
+                                <span>
+                                    Display Name
+                                </span>
+                            </label>
                             <span>
-                                Display Name
+                                <span>{{detailsData.DisplayName}}</span>
                             </span>
-                        </label>
-                        <span>
-                            <span>{{detailsData.DisplayName}}</span>
-                        </span>
-                    </div>
-                    <div class="data">
-                        <label class="data-label">
+                        </div>
+                        <div class="data">
+                            <label class="data-label">
+                                <span>
+                                    SSO Name
+                                </span>
+                            </label>
                             <span>
-                                SSO Name
+                                <span>{{detailsData.SSOName}}</span>
                             </span>
-                        </label>
-                        <span>
-                            <span>{{detailsData.SSOName}}</span>
-                        </span>
-                    </div>
-                    <div class="data">
-                        <label class="data-label">
+                        </div>
+                        <div class="data">
+                            <label class="data-label">
+                                <span>
+                                    Two Letter Org
+                                </span>
+                            </label>
                             <span>
-                                Two Letter Org
+                                <span>{{detailsData.TwoLetterOrgName}}</span>
                             </span>
-                        </label>
-                        <span>
-                            <span>{{detailsData.TwoLetterOrgName}}</span>
-                        </span>
-                    </div>
-                    <div class="data">
-                        <label class="data-label">
+                        </div>
+                        <div class="data">
+                            <label class="data-label">
+                                <span>
+                                    Parent Organization
+                                </span>
+                            </label>
                             <span>
-                                Parent Organization
+                                <span>{{detailsData.Parent}}</span>
                             </span>
-                        </label>
-                        <span>
-                            <span>{{detailsData.Parent}}</span>
-                        </span>
+                        </div>
                     </div>
                 </div>
             </div>
