@@ -9,10 +9,7 @@ import { Title } from '@angular/platform-browser';
 
 import { ITStandards } from '@api/models/it-standards.model';
 import { DataDictionary } from '@api/models/data-dictionary.model';
-import { take } from 'rxjs/operators';
-import { HttpParams } from '@angular/common/http';
-import { FilterButton, Column, TwoDimArray } from '@common/table-classes';
-import { timeHours } from 'd3';
+import { Column } from '@common/table-classes';
 
 // Declare jQuery symbol
 // declare var $: any;
