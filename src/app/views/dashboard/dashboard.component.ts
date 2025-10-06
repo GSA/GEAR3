@@ -23,6 +23,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   public chartView: [number, number] = [0, 400];
   public barChartView: [number, number] = [0, 350];
   public pieChartView: [number, number] = [0, 280];
+  public shouldRotateLabels: boolean = false;
   
   public colorScheme = {
     domain: ['#1f77b4', '#17becf', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b']
@@ -45,11 +46,39 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   public xAxisTickFormatting = (value: string): string => {
-    if (value.length > 12) {
-      return value.substring(0, 12) + '...';
-    }
-    return value;
+    const screenWidth = window.innerWidth;
+    const maxLength = screenWidth <= 576 ? 8 : screenWidth <= 992 ? 10 : 12;
+    return value.length > maxLength ? value.substring(0, maxLength) + '...' : value;
   };
+
+  private checkIfLabelsShouldRotate(): void {
+    if (!this.hostingPlatformsData?.length) {
+      this.shouldRotateLabels = false;
+      return;
+    }
+
+    const container = document.querySelector('.bar-chart-content');
+    if (!container) {
+      this.shouldRotateLabels = false;
+      return;
+    }
+
+    const screenWidth = window.innerWidth;
+    if (screenWidth >= 1200) {
+      this.shouldRotateLabels = false;
+      return;
+    }
+    
+    const containerWidth = container.clientWidth;
+    const dataCount = this.hostingPlatformsData.length;
+    const availableSpacePerLabel = containerWidth / dataCount;
+    const longestLabel = Math.max(...this.hostingPlatformsData.map(item => item.name.length));
+    const charWidth = screenWidth <= 576 ? 8 : screenWidth <= 992 ? 9 : 10;
+    const estimatedLabelWidth = longestLabel * charWidth;
+    
+    this.shouldRotateLabels = estimatedLabelWidth > (availableSpacePerLabel - 20) || 
+                              (dataCount > 6 && screenWidth <= 992);
+  }
 
   public tableCols: Column[] = [
     {
@@ -139,11 +168,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }, 0);
     });
 
-    this.apiService.getITStandardsExpiringThisQuarter().subscribe(q => this.standardsExpiringThisQuarter = q);
-    this.apiService.getITStandardsExpiringThisWeek().subscribe(w => this.standardsExpiringThisWeek = w);
+    this.apiService.getITStandardsExpiringThisQuarter().subscribe(q => this.standardsExpiringThisQuarter = q || 0);
+    this.apiService.getITStandardsExpiringThisWeek().subscribe(w => this.standardsExpiringThisWeek = w || 0);
 
-    this.apiService.getFismaExpiringThisQuarter().subscribe(q => this.fismaExpiringThisQuarter = q);
-    this.apiService.getFismaExpiringThisWeek().subscribe(w => this.fismaExpiringThisWeek = w);
+    this.apiService.getFismaExpiringThisQuarter().subscribe(q => this.fismaExpiringThisQuarter = q || 0);
+    this.apiService.getFismaExpiringThisWeek().subscribe(w => this.fismaExpiringThisWeek = w || 0);
 
     this.apiService.getCloudAdoptionRate().subscribe(cloudData => {
       if (cloudData && cloudData.length > 0) {
@@ -152,18 +181,18 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           { name: 'Cloud Based', value: latestData.CloudBusSystemsCount },
           { name: 'Not Cloud Based', value: latestData.BusSystemsCount - latestData.CloudBusSystemsCount }
         ];
-        this.totalBusinessSystems = latestData.BusSystemsCount;
+        this.totalBusinessSystems = latestData.BusSystemsCount || 0;
       }
     });
 
     this.apiService.getDecommissionedSystemTotals().subscribe(totals => {
-      this.decommissionedSystemsLast6Months = totals.DecommissionedSystemsLastSixMonths;
-      this.decommissionedSystemsLast7Days = totals.DecommissionedSystemsLastWeek;
+      this.decommissionedSystemsLast6Months = totals[0]?.DecommissionedSystemsLastSixMonths || 0;
+      this.decommissionedSystemsLast7Days = totals[0]?.DecommissionedSystemsLastWeek || 0;
     });
 
     this.apiService.getRetiredStandardsTotals().subscribe(totals => {
-      this.retiredITStandardsLast6Months = totals.RetiredStandardsLastSixMonths;
-      this.retiredITStandardsLast7Days = totals.RetiredStandardsLastWeek;
+      this.retiredITStandardsLast6Months = totals[0]?.RetiredStandardsLastSixMonths || 0;
+      this.retiredITStandardsLast7Days = totals[0]?.RetiredStandardsLastWeek || 0;
     });
 
     this.loadHostingPlatformsData();
@@ -200,49 +229,48 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private loadHostingPlatformsData(): void {
-    this.apiService.getWebsites().subscribe(websites => {
-      const activeBusinessWebsites = websites.filter(website => 
-        website.production_status === 'production' && 
-        (website.type_of_site === 'Application' || website.type_of_site === 'Application Login')
-      );
+    this.apiService.getSystems().subscribe(systems => {
+      const platformCounts = systems
+        .filter(system => system.Status === 'Active' && system.BusApp === 'Yes' && system.CSP)
+        .reduce((counts, system) => {
+          const platform = this.normalizePlatformName(system.CSP.trim());
+          counts[platform] = (counts[platform] || 0) + 1;
+          return counts;
+        }, {} as { [key: string]: number });
 
-      const platformCounts: { [key: string]: number } = {};
-      
-      activeBusinessWebsites.forEach(website => {
-        if (website.hosting_platform) {
-          let platform = website.hosting_platform.trim();
-          if (platform === 'AWS (GovCloud)' || platform === 'AWS') {
-            platform = 'AWS';
+      const { individualPlatforms, othersCount } = Object.entries(platformCounts)
+        .map(([name, value]) => ({ name, value }))
+        .sort((a, b) => b.value - a.value)
+        .reduce((acc, platform) => {
+          if (platform.value >= 3) {
+            acc.individualPlatforms.push(platform);
+          } else {
+            acc.othersCount += platform.value;
           }
-          
-          platformCounts[platform] = (platformCounts[platform] || 0) + 1;
-        }
-      });
+          return acc;
+        }, { individualPlatforms: [] as any[], othersCount: 0 });
 
-      const allPlatforms = Object.entries(platformCounts)
-        .map(([name, value]) => ({ name, value }));
-
-      const platformsWithMultipleSystems = allPlatforms.filter(item => item.value > 1);
-      const platformsWithSingleSystem = allPlatforms.filter(item => item.value === 1);
-
-      const finalData = [...platformsWithMultipleSystems];
-      
-      if (platformsWithSingleSystem.length > 0) {
-        const othersCount = platformsWithSingleSystem.length;
+      const finalData = [...individualPlatforms];
+      if (othersCount > 0) {
         finalData.push({ name: 'Others', value: othersCount });
       }
 
-      finalData.sort((a, b) => b.value - a.value);
-
-      this.hostingPlatformsData = [];
+      this.hostingPlatformsData = finalData;
+      this.updateChartViews();
       this.cdr.detectChanges();
-      
-      setTimeout(() => {
-        this.hostingPlatformsData = finalData;
-        this.updateChartViews();
-        this.cdr.detectChanges();
-      }, 100);
     });
+  }
+
+  private normalizePlatformName(platform: string): string {
+    switch (platform) {
+      case 'AWS (GovCloud)':
+      case 'AWS':
+        return 'AWS';
+      case 'cloud.gov':
+        return 'Cloud.gov';
+      default:
+        return platform;
+    }
   }
 
   private setupResizeObserver(): void {
@@ -279,15 +307,20 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private updateChartViews() {
     setTimeout(() => {
+      this.checkIfLabelsShouldRotate();
+      
       const barContainer = document.querySelector('.bar-chart-content');
-      if (barContainer && barContainer.clientWidth > 0) {
+      if (barContainer?.clientWidth > 0) {
         const barWidth = barContainer.clientWidth;
         const screenWidth = window.innerWidth;
-        let barHeight = 350;
         
-        if (screenWidth <= 1366 && screenWidth >= 992) {
-          barHeight = 300;
-        }
+        const heights = this.shouldRotateLabels 
+          ? { 576: 240, 992: 260, 1400: 280, default: 320 }
+          : { 576: 240, 992: 260, 1400: 280, default: 320 };
+        
+        const barHeight = screenWidth <= 576 ? heights[576] :
+                          screenWidth <= 992 ? heights[992] :
+                          screenWidth <= 1400 ? heights[1400] : heights.default;
         
         this.barChartView = [barWidth, barHeight];
       } else {
@@ -295,15 +328,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
 
       const pieContainer = document.querySelector('.pie-chart-content');
-      if (pieContainer && pieContainer.clientWidth > 0) {
+      if (pieContainer?.clientWidth > 0) {
         const pieWidth = pieContainer.clientWidth;
         const screenWidth = window.innerWidth;
-        let pieHeight = 280;
-        
-        if (screenWidth <= 1366 && screenWidth >= 992) {
-          pieHeight = 220;
-        }
-        
+        const pieHeight = screenWidth <= 576 ? 180 :
+                          screenWidth <= 992 ? 200 :
+                          screenWidth <= 1400 ? 220 : 240;
         this.pieChartView = [pieWidth, pieHeight];
       } else {
         this.pieChartView = [400, 280];
@@ -321,6 +351,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const month = threeMonthsFromNow.toLocaleString('default', { month: 'long' });
 
     return `${day}th ${month}`;
+  }
+
+  public navigateToHostingPlatforms(): void {
+    this.router.navigate(['/systems']);
+  }
+
+  public navigateToCloudSystems(): void {
+    this.router.navigate(['/systems']);
   }
 
   public navigateToCloudBasedSystems(): void {
@@ -358,19 +396,19 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public viewExpiringFisma():void {
     this.analyticsService.logClickEvent('/FISMA', 'Dashboard FISMA expiring this week');
-    this.router.navigate(['/FISMA'], { queryParams: { expiringWithinDays: '7' } }); // expiring this week
+    this.router.navigate(['/FISMA'], { queryParams: { expiringWithinDays: '7' } });
   }
   public viewDecommissionedSystems(): void {
     this.analyticsService.logClickEvent('/systems', 'Dashboard decommissioned systems this week');
-    this.router.navigate(['/systems'], { queryParams: { decommissionedWithinDays: '7' } }); // decommissioned this week
+    this.router.navigate(['/systems'], { queryParams: { decommissionedWithinDays: '7' } });
   }
   public viewExpiringITStandards(): void {
     this.analyticsService.logClickEvent('/it_standards', 'Dashboard IT standards expiring this week');
-    this.router.navigate(['/it_standards'], { queryParams: { expiringWithinDays: '7' } }); // expiring this week
+    this.router.navigate(['/it_standards'], { queryParams: { expiringWithinDays: '7' } });
   }
   public viewRecentRetiredITStandards(): void {
     this.analyticsService.logClickEvent('/it_standards', 'Dashboard IT standards retired in past week');
-    this.router.navigate(['/it_standards'], { queryParams: { retiredWithinDays: '7' } }); // retired this week
+    this.router.navigate(['/it_standards'], { queryParams: { retiredWithinDays: '7' } });
   }
 
   public onTableRowClick(rowData: any): void {
