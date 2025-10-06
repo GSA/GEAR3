@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { System } from '@api/models/systems.model';
 import { TIME } from '@api/models/systime.model';
 import { Column } from '@common/table-classes';
@@ -52,6 +52,7 @@ export class SystemsDetailsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private apiService: ApiService,
     private sharedService: SharedService,
     public tableService: TableService
@@ -62,7 +63,6 @@ export class SystemsDetailsComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       this.systemId = +params.get('sysID');
 
-      // Get system details
       this.apiService.getOneSys(this.systemId).subscribe(s => {
         this.detailsData = s;
         this.isDataReady = true;
@@ -80,12 +80,18 @@ export class SystemsDetailsComponent implements OnInit {
         this.sysTechnologiesData = sysTech;
       });
 
-      this.apiService.getRecords().subscribe(sysRecords => {
-        this.sysRecordsData = sysRecords;
+      this.apiService.getSysRecords(this.systemId).subscribe((mappings: any[]) => {
+        this.apiService.getRecords().subscribe((records: any[]) => {
+          const recordIds = new Set(mappings.map(({ obj_records_Id }) => obj_records_Id));
+          this.sysRecordsData = records.filter(({ Rec_ID }) => recordIds.has(parseInt(Rec_ID)));
+        });
       });
 
-      this.apiService.getWebsites().subscribe(sysWeb => {
-        this.sysWebsitesData = sysWeb;
+      this.apiService.getSysWebsites(this.systemId).subscribe((mappings: any[]) => {
+        this.apiService.getWebsites().subscribe((websites: any[]) => {
+          const websiteIds = new Set(mappings.map(({ obj_websites_Id }) => obj_websites_Id));
+          this.sysWebsitesData = websites.filter(({ website_id }) => websiteIds.has(parseInt(website_id)));
+        });
       });
 
     });
@@ -151,4 +157,5 @@ export class SystemsDetailsComponent implements OnInit {
   public getPOCList(): string[] {
     return this.tableService.renderPOCInfoTable(this.detailsData.POC);
   }
+
 }
