@@ -5,6 +5,7 @@ import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { ApiService } from '@services/apis/api.service';
 import { FilterMatchMode, SelectItem } from 'primeng/api';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -55,6 +56,7 @@ export class TableComponent implements OnInit, OnChanges {
   @Input() defaultSortOrder: number = 1;
 
   @Input() preFilteredTableData: any[] = [];
+  @Input() contextSystemName: string = '';
 
   // Filter event (some reports change available columns when filtered)
   @Output() filterEvent = new EventEmitter<string>();
@@ -103,7 +105,7 @@ export class TableComponent implements OnInit, OnChanges {
 
   matchModeOptions: SelectItem[];
 
-  constructor(public sharedService: SharedService, public tableService: TableService, public apiService: ApiService) {
+  constructor(public sharedService: SharedService, public tableService: TableService, public apiService: ApiService, private router: Router) {
     this.setScreenHeight();
   }
 
@@ -148,12 +150,6 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
 
-  // getTableData() {
-  //   if(this.preFilteredTableData && this.preFilteredTableData.length > 0) {
-  //     return this.preFilteredTableData;
-  //   }
-  //   return this.tableData;
-  // }
 
   toggleVisible(e: any) {
     // Clear the visible columns array first
@@ -288,85 +284,70 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   public onRowSelect(e: TableRowSelectEvent) {
-    this.rowClickEvent.emit(e.data);
+    if(this.tableType === 'globalSearch') {
+      this.navigateByType(e.data.GEAR_Type, e.data);
+      return;
+    } else if(this.tableType === 'accessForms') {
+      this.rowClickEvent.emit(e);
+      return;
+    } else {
+      this.navigateByType(this.tableType, e.data);
+      return;
+    }
   }
 
-  // onRowSelect(e: TableRowSelectEvent) {
-  //   if(this.tableType === 'globalSearch') {
-  //     this.tableRowClickSelection(e.data.GEAR_Type, e.data);
-  //     return;
-  //   } else if(this.tableType === 'accessForms') {
-  //     this.rowClickEvent.emit(e);
-  //     return;
-  //   } else {
-  //     this.tableRowClickSelection(this.tableType, e.data);
-  //     return;
-  //   }
-  // }
 
-  private tableRowClickSelection(type: string, data: any) {
-    switch (type) {
-      case 'Investment':
-        this.tableService.globalSearchTableClick(data);
-        break;
-      case 'investments':
-        this.tableService.investTableClick(data);
-        break;
-      case 'Capability':
-        this.tableService.globalSearchTableClick(data);
-        break;
-      case 'capabilities':
-        this.tableService.capsTableClick(data);
-        break;
-      case 'websiteServiceCategory':
-        this.tableService.websiteServiceCategoryTableClick(data);
-        break;
-      case 'Organization':
-        this.tableService.globalSearchTableClick(data);
-        break;
-      case 'organizations':
-        this.tableService.orgsTableClick(data);
-        break;
-      case 'Website':
-        this.tableService.globalSearchTableClick(data);
-        break;
-      case 'website':
-        this.tableService.websitesTableClick(data);
-        break;
-      case 'records':
-        this.tableService.recordsTableClick(data);
-        break;
-      case 'time':
-        this.apiService.getOneSys(data['System Id'])
-          .subscribe((data: any) => {
-            this.tableService.systemsTableClick(data[0]);
-          });
+  private navigateByType(type: string, data: any) {
+    const currentRoute = this.router.url;
+    const navigationMap = {
+      'Investment': { route: '/investments', id: 'ID', context: '/capabilities/' },
+      'investments': { route: '/investments', id: 'ID', context: '/capabilities/' },
+      'Capability': { route: '/capabilities', id: 'ID', context: '/systems/' },
+      'capabilities': { route: '/capabilities', id: 'ID', context: '/systems/' },
+      'Organization': { route: '/organizations', id: 'ID', context: '/capabilities/' },
+      'organizations': { route: '/organizations', id: 'ID', context: '/capabilities/' },
+      'Website': { route: '/websites', id: 'website_id', context: '/systems/' },
+      'website': { route: '/websites', id: 'website_id', context: '/systems/' },
+      'records': { route: '/records_mgmt', id: 'Rec_ID', context: '/systems/' },
+      'System': { route: '/systems', id: 'ID', context: '/it_standards/' },
+      'systems': { route: '/systems', id: 'ID', context: '/it_standards/' },
+      'time': { route: '/systems', id: 'ID', context: '/it_standards/' },
+      'Technology': { route: '/it_standards', id: 'ID', context: '/systems/' },
+      'itStandards': { route: '/it_standards', id: 'ID', context: '/systems/' }
+    };
 
-        // Change URL to include ID
-        this.sharedService.addIDtoURL(data, 'System Id');
-      case 'System':
-        this.tableService.globalSearchTableClick(data);
-        break;
-      case 'systems':
-        this.tableService.systemsTableClick(data);
-        break;
-      case 'FISMA':
-        this.tableService.globalSearchTableClick(data);
-        break;
-      case 'fisma':
-        this.tableService.fismaTableClick(data);
-        break;
-      case 'fismaPoc':
-        this.rowClickEvent.emit(data);
-        break;
-      case 'Technology':
-        this.tableService.globalSearchTableClick(data);
-        break;
-      case 'itStandards':
-        this.tableService.itStandTableClick(data);
-      default:
-        console.log('no type');
-        break;
+    const config = navigationMap[type];
+    if (config) {
+      if (currentRoute.includes(config.context) && !currentRoute.includes(config.route)) {
+        const sourceId = currentRoute.split(config.context)[1]?.split('/')[0];
+        const sourceType = config.context.includes('systems') ? 'fromSystem' : 
+                          config.context.includes('capabilities') ? 'fromCapability' : 'fromTechnology';
+        const sourceName = sourceType + 'Name';
+        const defaultName = config.context.includes('systems') ? 'System' : 
+                           config.context.includes('capabilities') ? 'Capability' : 'Technology';
+        
+        this.router.navigate([config.route, data[config.id]], {
+          queryParams: { [sourceType]: sourceId, [sourceName]: this.contextSystemName || defaultName }
+        });
+      } else {
+        this.router.navigate([config.route, data[config.id] || data['System Id']]);
+      }
+    } else {
+      switch (type) {
+        case 'FISMA':
+        case 'fisma':
+          this.router.navigate(['/FISMA', data.ID]);
+          break;
+        case 'fismaPoc':
+          this.rowClickEvent.emit(data);
+          break;
+        case 'websiteServiceCategory':
+          this.router.navigate(['/website_service_category', data.website_service_category_id]);
+          break;
+        default:
+          this.rowClickEvent.emit(data);
+          break;
+      }
     }
   }
 
