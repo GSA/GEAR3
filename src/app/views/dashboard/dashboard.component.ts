@@ -381,6 +381,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  public onBarChartSelect(event: any): void {
+    if (event && event.name) {
+      this.analyticsService.logClickEvent('/systems', `Dashboard hosting platforms chart - ${event.name}`);
+      this.router.navigate(['/systems'], { queryParams: { hostingPlatform: event.name } });
+    }
+  }
+
   public viewAllFisma(): void {
     this.analyticsService.logClickEvent('/FISMA', 'Dashboard view all FISMA');
     this.router.navigate(['/FISMA']);

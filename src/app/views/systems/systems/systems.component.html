@@ -60,6 +60,10 @@
           <span class="filter-tab-text">Inactive</span>
           <span class="filter-tab-number fourth">{{filterTotals?.InactiveTotal}}</span>
         </div>
+        <div class="filter-tab" *ngIf="selectedHostingPlatform" [ngClass]="{'selected': isTabSelected('Hosting Platform: ' + selectedHostingPlatform)}" (click)="onSelectTab('Hosting Platform: ' + selectedHostingPlatform)">
+          <span class="filter-tab-text">Hosting Platform: {{selectedHostingPlatform}}</span>
+          <span class="filter-tab-number fifth">{{getHostingPlatformCount()}}</span>
+        </div>
       </div>
     </app-table>
   </div>

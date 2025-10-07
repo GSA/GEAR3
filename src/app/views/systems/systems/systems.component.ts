@@ -47,6 +47,8 @@ export class SystemsComponent implements OnInit {
   public systemsDataTabFilterted: System[] = [];
 
   public daysDecommissioned: number = 0;
+  public hostingPlatformFilter: string = '';
+  public selectedHostingPlatform: string = '';
 
   constructor(
     private apiService: ApiService,
@@ -85,12 +87,70 @@ export class SystemsComponent implements OnInit {
         return s.Status === 'Inactive' && s.BusApp === 'Yes';
       });
       this.tableCols = this.inactiveColumnDefs;
+    } else if (this.selectedTab.startsWith('Hosting Platform:')) {
+      // Handle hosting platform filtering
+      const platform = this.selectedTab.replace('Hosting Platform: ', '');
+      
+      this.systemsDataTabFilterted = this.filterSystemsByHostingPlatform(platform);
+      this.tableCols = this.defaultTableCols;
     }
     this.tableService.updateReportTableData(this.systemsDataTabFilterted);
   }
 
   public isTabSelected(tabName: string): boolean {
+    if (this.selectedTab.startsWith('Hosting Platform:')) {
+      return tabName === this.selectedTab;
+    }
     return this.selectedTab === tabName;
+  }
+
+  private getDashboardNormalizedPlatform(platform: string): string {
+    // Match the dashboard's normalization logic
+    switch (platform) {
+      case 'AWS (GovCloud)':
+      case 'AWS':
+        return 'AWS';
+      case 'cloud.gov':
+        return 'Cloud.gov';
+      default:
+        return platform;
+    }
+  }
+
+  private calculatePlatformCounts(): { [key: string]: number } {
+    return this.systemsData
+      .filter(system => system.Status === 'Active' && system.BusApp === 'Yes' && system.CSP)
+      .reduce((counts, system) => {
+        const platform = this.getDashboardNormalizedPlatform(system.CSP.trim());
+        counts[platform] = (counts[platform] || 0) + 1;
+        return counts;
+      }, {} as { [key: string]: number });
+  }
+
+  private filterSystemsByHostingPlatform(platform: string): System[] {
+    if (platform === 'Others' || platform === 'Other') {
+      const platformCounts = this.calculatePlatformCounts();
+      const smallPlatforms = Object.entries(platformCounts)
+        .filter(([name, value]) => value < 3)
+        .map(([name, value]) => name);
+
+      return this.systemsData.filter(s => {
+        if (!s.CSP) return false;
+        const normalizedPlatform = this.getDashboardNormalizedPlatform(s.CSP.trim());
+        return smallPlatforms.includes(normalizedPlatform) && s.Status === 'Active' && s.BusApp === 'Yes';
+      });
+    } else {
+      return this.systemsData.filter(s => {
+        if (!s.CSP) return false;
+        const normalizedPlatform = this.sharedService.normalizePlatformName(s.CSP.trim());
+        return normalizedPlatform === platform && s.Status === 'Active' && s.BusApp === 'Yes';
+      });
+    }
+  }
+
+  public getHostingPlatformCount(): number {
+    if (!this.selectedHostingPlatform || !this.systemsData) return 0;
+    return this.filterSystemsByHostingPlatform(this.selectedHostingPlatform).length;
   }
 
   defaultTableCols: Column[] = [
@@ -104,7 +164,6 @@ export class SystemsComponent implements OnInit {
       field: 'DisplayName',
       header: 'Alias / Acronym',
       isSortable: true,
-       showColumn: false,
     },
     {
       field: 'Name',
@@ -153,7 +212,7 @@ export class SystemsComponent implements OnInit {
       field: 'CSP',
       header: 'Hosting Provider',
       isSortable: true,
-      showColumn: false,
+      showColumn: true,
     },
     {
       field: 'CloudYN',
@@ -248,7 +307,7 @@ export class SystemsComponent implements OnInit {
       field: 'CSP',
       header: 'Cloud Server Provider',
       isSortable: true,
-      showColumn: false,
+      showColumn: true,
     },
     {
       field: 'CloudYN',
@@ -290,6 +349,11 @@ export class SystemsComponent implements OnInit {
       if(params['decommissionedWithinDays']) {
         this.daysDecommissioned = +params['decommissionedWithinDays'];
       }
+      if(params['hostingPlatform']) {
+        this.hostingPlatformFilter = params['hostingPlatform'];
+        this.selectedHostingPlatform = params['hostingPlatform'];
+        this.selectedTab = `Hosting Platform: ${params['hostingPlatform']}`;
+      }
       
       // Apply filters after parameters are set
       this.applyFilters();
@@ -297,6 +361,7 @@ export class SystemsComponent implements OnInit {
 
     this.apiService.getSystems().subscribe(systems => {
       this.systemsData = systems;
+      
       
       // Calculate "Not Cloud Based" count
       const notCloudBasedCount = systems.filter(s => 

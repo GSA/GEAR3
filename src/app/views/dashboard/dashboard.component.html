@@ -118,7 +118,8 @@
                         [rotateXAxisTicks]="shouldRotateLabels"
                         [animations]="true"
                         [barPadding]="15"
-                        [xAxisTickFormatting]="xAxisTickFormatting">
+                        [xAxisTickFormatting]="xAxisTickFormatting"
+                        (select)="onBarChartSelect($event)">
                     </ngx-charts-bar-vertical>
                 </div>
             </div>
