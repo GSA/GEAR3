@@ -4,11 +4,12 @@
 
 
 
-.p-multiselect-option.p-multiselect-option-selected{
-background-color: transparent !important;
-color: unset;
+.p-multiselect-option.p-multiselect-option-selected {
+  background-color: transparent !important;
+  color: unset;
 }
-.p-checkbox{
+
+.p-checkbox {
   border: 1px solid #fff;
   height: unset;
   border-radius: 4px;
@@ -20,20 +21,26 @@ color: unset;
   box-shadow: 0 0 0 0.2rem rgba(0, 94, 162, 0.25) !important;
 }
 
-body{
+body {
   background-color: #F9F9F9 !important;
 }
+
 /* You can add global styles to this file, and also import other style files */
 
 /* Underline H4 Headers, email links, card links for easy distinction */
 
-h4, a.email, a.link, .card-link {
+h4,
+a.email,
+a.link,
+.card-link {
   text-decoration: underline;
 }
 
 /* Bold has got to be bolder than what the theme gives */
 
-b, strong, .font-weight-bold {
+b,
+strong,
+.font-weight-bold {
   font-weight: 900 !important;
   color: #1a1a1a !important;
 }
@@ -72,7 +79,13 @@ b, strong, .font-weight-bold {
 }
 
 @media (max-width: 1856px) {
-  .navbar-expand-xl2>.container, .navbar-expand-xl2>.container-fluid, .navbar-expand-xl2>.container-sm, .navbar-expand-xl2>.container-md, .navbar-expand-xl2>.container-lg, .navbar-expand-xl2>.container-xl {
+
+  .navbar-expand-xl2>.container,
+  .navbar-expand-xl2>.container-fluid,
+  .navbar-expand-xl2>.container-sm,
+  .navbar-expand-xl2>.container-md,
+  .navbar-expand-xl2>.container-lg,
+  .navbar-expand-xl2>.container-xl {
     padding-right: 0;
     padding-left: 0;
   }
@@ -88,23 +101,33 @@ b, strong, .font-weight-bold {
     -ms-flex-pack: start;
     justify-content: flex-start;
   }
+
   .navbar-expand-xl2 .navbar-nav {
     -webkit-box-orient: horizontal;
     -webkit-box-direction: normal;
     -ms-flex-direction: row;
     flex-direction: row;
   }
+
   .navbar-expand-xl2 .navbar-nav .dropdown-menu {
     position: absolute;
   }
+
   .navbar-expand-xl2 .navbar-nav .nav-link {
     padding-right: 0.5rem;
     padding-left: 0.5rem;
   }
-  .navbar-expand-xl2>.container, .navbar-expand-xl2>.container-fluid, .navbar-expand-xl2>.container-sm, .navbar-expand-xl2>.container-md, .navbar-expand-xl2>.container-lg, .navbar-expand-xl2>.container-xl {
+
+  .navbar-expand-xl2>.container,
+  .navbar-expand-xl2>.container-fluid,
+  .navbar-expand-xl2>.container-sm,
+  .navbar-expand-xl2>.container-md,
+  .navbar-expand-xl2>.container-lg,
+  .navbar-expand-xl2>.container-xl {
     -ms-flex-wrap: nowrap;
     flex-wrap: nowrap;
   }
+
   .navbar-expand-xl2 .navbar-collapse {
     display: -webkit-box !important;
     display: -ms-flexbox !important;
@@ -112,6 +135,7 @@ b, strong, .font-weight-bold {
     -ms-flex-preferred-size: auto;
     flex-basis: auto;
   }
+
   .navbar-expand-xl2 .navbar-toggler {
     display: none;
   }
@@ -123,7 +147,8 @@ b, strong, .font-weight-bold {
   border-bottom: 2px solid rgba(26, 26, 26, 0.5) !important;
 }
 
-.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+.nav-tabs .nav-link.active,
+.nav-tabs .nav-item.show .nav-link {
   border-color: rgba(26, 26, 26, 0.5) rgba(26, 26, 26, 0.5) rgba(26, 26, 26, 0.5) !important;
 }
 
@@ -216,7 +241,10 @@ td.pointer {
   background-color: #2b60de !important;
 }
 
-a.bg-royal-blue:hover, a.bg-royal-blue:focus, button.bg-royal-blue:hover, button.bg-royal-blue:focus {
+a.bg-royal-blue:hover,
+a.bg-royal-blue:focus,
+button.bg-royal-blue:hover,
+button.bg-royal-blue:focus {
   background-color: #214599 !important;
 }
 
@@ -231,23 +259,29 @@ a.bg-royal-blue:hover, a.bg-royal-blue:focus, button.bg-royal-blue:hover, button
   border-color: #2b60de;
 }
 
-.btn-outline-royal-blue:focus, .btn-outline-royal-blue.focus {
+.btn-outline-royal-blue:focus,
+.btn-outline-royal-blue.focus {
   -webkit-box-shadow: 0 0 0 0.2rem rgba(43, 96, 222, 0.5);
   box-shadow: 0 0 0 0.2rem rgba(43, 96, 222, 0.5);
 }
 
-.btn-outline-royal-blue.disabled, .btn-outline-royal-blue:disabled {
+.btn-outline-royal-blue.disabled,
+.btn-outline-royal-blue:disabled {
   color: #2b60de;
   background-color: transparent;
 }
 
-.btn-outline-royal-blue:not(:disabled):not(.disabled):active, .btn-outline-royal-blue:not(:disabled):not(.disabled).active, .show>.btn-outline-royal-blue.dropdown-toggle {
+.btn-outline-royal-blue:not(:disabled):not(.disabled):active,
+.btn-outline-royal-blue:not(:disabled):not(.disabled).active,
+.show>.btn-outline-royal-blue.dropdown-toggle {
   color: #fff;
   background-color: #2b60de;
   border-color: #2b60de;
 }
 
-.btn-outline-royal-blue:not(:disabled):not(.disabled):active:focus, .btn-outline-royal-blue:not(:disabled):not(.disabled).active:focus, .show>.btn-outline-royal-blue.dropdown-toggle:focus {
+.btn-outline-royal-blue:not(:disabled):not(.disabled):active:focus,
+.btn-outline-royal-blue:not(:disabled):not(.disabled).active:focus,
+.show>.btn-outline-royal-blue.dropdown-toggle:focus {
   -webkit-box-shadow: 0 0 0 0.2rem rgba(43, 96, 222, 0.5);
   box-shadow: 0 0 0 0.2rem rgba(43, 96, 222, 0.5);
 }
@@ -260,7 +294,10 @@ a.bg-royal-blue:hover, a.bg-royal-blue:focus, button.bg-royal-blue:hover, button
   background-color: #008080 !important;
 }
 
-a.bg-teal:hover, a.bg-teal:focus, button.bg-teal:hover, button.bg-teal:focus {
+a.bg-teal:hover,
+a.bg-teal:focus,
+button.bg-teal:hover,
+button.bg-teal:focus {
   background-color: #076464 !important;
 }
 
@@ -268,7 +305,10 @@ a.bg-teal:hover, a.bg-teal:focus, button.bg-teal:hover, button.bg-teal:focus {
   background-color: #800080 !important;
 }
 
-a.bg-purple:hover, a.bg-purple:focus, button.bg-purple:hover, button.bg-purple:focus {
+a.bg-purple:hover,
+a.bg-purple:focus,
+button.bg-purple:hover,
+button.bg-purple:focus {
   background-color: #800080 !important;
 }
 
@@ -304,7 +344,8 @@ a.position-absolute.float-right {
 
 /* Date Picker Calendar Adjustments */
 
-.datepicker-inline, .table-condensed {
+.datepicker-inline,
+.table-condensed {
   width: 100% !important;
 }
 
@@ -328,8 +369,15 @@ a.position-absolute.float-right {
   display: block !important;
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
 .description-wrap {
   overflow: hidden;
@@ -382,7 +430,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .it-standard-manager-app-bundle-item {
   display: block;
   margin-bottom: 1em;
-  font-weight: bold;;
+  font-weight: bold;
+  ;
 }
 
 .it-standard-manager-app-bundle-clear-icon {
@@ -407,16 +456,25 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .btn-border-white {
   border: 1px solid #fff !important;
 }
-.p-multiselect-dropdown{
-color: #fff;}
 
-button svg{
+.p-multiselect-dropdown {
+  color: #fff;
+}
+
+button svg {
   margin: 0 !important;
 }
-.nav-item{
+
+.nav-item {
   margin-right: 0.5rem !important;
 }
-.p-overlay{
-z-index: 99999999;
+
+.p-overlay {
+  z-index: 99999999;
+  left: unset !important;
+  right: 0;
 }
 
+.p-tooltip {
+  width: max-content !important;
+}

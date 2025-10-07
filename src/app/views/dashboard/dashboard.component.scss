@@ -170,8 +170,9 @@
 
     & .dashboard-charts-grid {
       display: grid;
-      grid-template-columns: 74% 25%;
+      grid-template-columns: calc(75% - 15px) 25%;
       gap: 15px;
+      
       
       @media (max-width: 1200px) and (min-width: 992px) {
         grid-template-columns: 60% 40%;
