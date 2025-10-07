@@ -75,6 +75,11 @@ export class SystemsComponent implements OnInit {
         return s.Status === 'Active' && s.BusApp === 'Yes' && s.CloudYN === 'Yes';
       });
       this.tableCols = this.defaultTableCols;
+    } else if (this.selectedTab === 'Not Cloud Based') {
+      this.systemsDataTabFilterted = this.systemsData.filter(s => {
+        return s.Status === 'Active' && s.BusApp === 'Yes' && s.CloudYN === 'No';
+      });
+      this.tableCols = this.defaultTableCols;
     } else if (this.selectedTab === 'Inactive') {
       this.systemsDataTabFilterted = this.systemsData.filter(s => {
         return s.Status === 'Inactive' && s.BusApp === 'Yes';
@@ -99,6 +104,7 @@ export class SystemsComponent implements OnInit {
       field: 'DisplayName',
       header: 'Alias / Acronym',
       isSortable: true,
+       showColumn: false,
     },
     {
       field: 'Name',
@@ -153,7 +159,7 @@ export class SystemsComponent implements OnInit {
       field: 'CloudYN',
       header: 'Cloud Hosted?',
       isSortable: true,
-      showColumn: false,
+      showColumn: true,
     },
     {
       field: 'ServiceType',
@@ -284,32 +290,40 @@ export class SystemsComponent implements OnInit {
       if(params['decommissionedWithinDays']) {
         this.daysDecommissioned = +params['decommissionedWithinDays'];
       }
+      
+      // Apply filters after parameters are set
+      this.applyFilters();
     });
 
     this.apiService.getSystems().subscribe(systems => {
       this.systemsData = systems;
-
-      if(this.daysDecommissioned > 0) {
-        const now = new Date(); // Current date and time
-        const expiringWithin = new Date();
-        expiringWithin.setDate(now.getDate() + this.daysDecommissioned); // number of days set in the url
-        const expiringFiltered = [];
-        systems.forEach(s => {
-          let renewal = new Date(s.RenewalDate);
-          if(s.RenewalDate && (renewal >= now && renewal <= expiringWithin) && (s.Status === 'Inactive') && (s.BusApp === 'Yes')) {
-            expiringFiltered.push(s);
-          }
-        });
-        this.tableService.updateReportTableData(expiringFiltered);
-        return;
-      } { 
-        // Apply tab filter based on selectedTab
-        this.onSelectTab(this.selectedTab);;
+      
+      // Calculate "Not Cloud Based" count
+      const notCloudBasedCount = systems.filter(s => 
+        s.Status === 'Active' && s.BusApp === 'Yes' && s.CloudYN === 'No'
+      ).length;
+      
+      // Update filter totals with the calculated count
+      if (this.filterTotals) {
+        this.filterTotals.NotCloudBasedTotal = notCloudBasedCount;
+      } else {
+        // If filter totals not loaded yet, create a temporary object
+        this.filterTotals = { NotCloudBasedTotal: notCloudBasedCount };
       }
+      
+      this.applyFilters();
     });
 
     this.apiService.getSystemsFilterTotals().subscribe(t => {
       this.filterTotals = t;
+      
+      // Calculate "Not Cloud Based" count if systems data is already loaded
+      if (this.systemsData && this.systemsData.length > 0) {
+        const notCloudBasedCount = this.systemsData.filter(s => 
+          s.Status === 'Active' && s.BusApp === 'Yes' && s.CloudYN === 'No'
+        ).length;
+        this.filterTotals.NotCloudBasedTotal = notCloudBasedCount;
+      }
     });
 
     // Get System data for visuals
@@ -417,4 +431,28 @@ export class SystemsComponent implements OnInit {
   this.tableService.updateReportTableData(this.systemsDataTabFilterted);
   this.sharedService.enableStickyHeader("systemTable");
 }
+
+  private applyFilters(): void {
+    if (!this.systemsData || this.systemsData.length === 0) {
+      return;
+    }
+
+    if(this.daysDecommissioned > 0) {
+      const now = new Date(); // Current date and time
+      const expiringWithin = new Date();
+      expiringWithin.setDate(now.getDate() + this.daysDecommissioned); // number of days set in the url
+      const expiringFiltered = [];
+      this.systemsData.forEach(s => {
+        let renewal = new Date(s.RenewalDate);
+        if(s.RenewalDate && (renewal >= now && renewal <= expiringWithin) && (s.Status === 'Inactive') && (s.BusApp === 'Yes')) {
+          expiringFiltered.push(s);
+        }
+      });
+      this.tableService.updateReportTableData(expiringFiltered);
+      return;
+    } else { 
+      // Apply tab filter based on selectedTab
+      this.onSelectTab(this.selectedTab);
+    }
+  }
 }
