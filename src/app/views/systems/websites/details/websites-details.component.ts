@@ -86,32 +86,33 @@ export class WebsitesDetailsComponent implements OnInit {
   }
 
   public inProduction(): boolean {
-    return this.detailsData.production_status === 'production';
+    return this.detailsData?.production_status === 'production';
   }
 
   public hasScanDate(): boolean {
-    return this.websiteScan.scan_date !== '';
+    return this.websiteScan && this.websiteScan.scan_date !== '';
   }
 
   public hasImages(): boolean {
-    return (this.websiteScan.desktop_img_file_name !== '' || this.websiteScan.desktop_img_file_name !== null)
-     || (this.websiteScan.mobile_img_file_name !== '' || this.websiteScan.mobile_img_file_name !== null);
+    return this.websiteScan && 
+           ((this.websiteScan.desktop_img_file_name !== '' && this.websiteScan.desktop_img_file_name !== null)
+            || (this.websiteScan.mobile_img_file_name !== '' && this.websiteScan.mobile_img_file_name !== null));
   }
 
   public getDesktopImg(): string {
-    return this.IMG_PREFIX + this.websiteScan.desktop_img_file_name;
+    return this.websiteScan ? this.IMG_PREFIX + this.websiteScan.desktop_img_file_name : '';
   }
 
   public getDesktopImgAltText(): string {
-    return 'Desktop screenshot of ' + this.detailsData.domain;
+    return 'Desktop screenshot of ' + (this.detailsData?.domain || 'website');
   }
 
   public getMobileImg(): string {
-    return this.IMG_PREFIX + this.websiteScan.mobile_img_file_name;
+    return this.websiteScan ? this.IMG_PREFIX + this.websiteScan.mobile_img_file_name : '';
   }
 
   public getMobileImgAltText(): string {
-    return 'Mobile screenshot of ' + this.detailsData.domain;
+    return 'Mobile screenshot of ' + (this.detailsData?.domain || 'website');
   }
 
   public hasServiceCategories(): boolean {

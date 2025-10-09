@@ -25,3 +25,9 @@ export interface FilterOption {
   value: any,
   matchMode?: string
 }
+
+export interface ColumnFilter {
+  field: string;
+  value: any;
+  matchMode: string;
+}

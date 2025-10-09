@@ -275,7 +275,7 @@
         <div class="systems-container" *ngIf="isSystemsTabActive">
             <div class="overall-data-container">
                 <div class="main-data-container">
-                    <app-table [tableCols]="relatedSystemsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                    <app-table [tableCols]="relatedSystemsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="systems" [contextSystemName]="detailsData?.Name"></app-table>
                 </div>
             </div>
         </div>
