@@ -367,8 +367,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public navigateToNonCloudBasedSystems(): void {
-    this.analyticsService.logClickEvent('/systems?tab=Inactive', 'Dashboard business systems graph');
-    this.router.navigate(['/systems'], { queryParams: { tab: 'Inactive' } });
+    this.analyticsService.logClickEvent('/systems?tab=NotCloudBased', 'Dashboard cloud adoption graph');
+    this.router.navigate(['/systems'], { queryParams: { tab: 'Not Cloud Based' } });
   }
 
   public onPieChartSelect(event: any): void {
@@ -378,6 +378,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       } else if (event.name === 'Not Cloud Based') {
         this.navigateToNonCloudBasedSystems();
       }
+    }
+  }
+
+  public onBarChartSelect(event: any): void {
+    if (event && event.name) {
+      this.analyticsService.logClickEvent('/systems', `Dashboard hosting platforms chart - ${event.name}`);
+      this.router.navigate(['/systems'], { queryParams: { hostingPlatform: event.name } });
     }
   }
 

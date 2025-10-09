@@ -52,9 +52,17 @@
           <span class="filter-tab-text">Cloud Enabled</span>
           <span class="filter-tab-number second">{{filterTotals?.CloudEnabledTotal}}</span>
         </div>
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Not Cloud Based')}" (click)="onSelectTab('Not Cloud Based')">
+          <span class="filter-tab-text">Not Cloud Based</span>
+          <span class="filter-tab-number third">{{filterTotals?.NotCloudBasedTotal}}</span>
+        </div>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Inactive')}" (click)="onSelectTab('Inactive')">
           <span class="filter-tab-text">Inactive</span>
-          <span class="filter-tab-number third">{{filterTotals?.InactiveTotal}}</span>
+          <span class="filter-tab-number fourth">{{filterTotals?.InactiveTotal}}</span>
+        </div>
+        <div class="filter-tab" *ngIf="selectedHostingPlatform" [ngClass]="{'selected': isTabSelected('Hosting Platform: ' + selectedHostingPlatform)}" (click)="onSelectTab('Hosting Platform: ' + selectedHostingPlatform)">
+          <span class="filter-tab-text">Hosting Platform: {{selectedHostingPlatform}}</span>
+          <span class="filter-tab-number fifth">{{getHostingPlatformCount()}}</span>
         </div>
       </div>
     </app-table>

@@ -460,4 +460,54 @@ export class SharedService {
   public disableStickyHeader(tableComponentId: string) {
     $('#'+tableComponentId).floatThead('destroy');
   }
+
+  public normalizePlatformName(platform: string): string {
+    if (!platform) return platform;
+    
+    const normalized = platform.trim();
+    const lower = normalized.toLowerCase();
+    
+    // Handle chart labels that come from the dashboard
+    if (lower === 'gsa') {
+      return 'GSA';
+    } else if (lower === 'gsa saleforce' || lower === 'gsa salesforce') {
+      return 'GSA Salesforce';
+    } else if (lower === 'fcs') {
+      return 'FCS';
+    } else if (lower === 'aws') {
+      return 'AWS';
+    } else if (lower === 'cloud.gov') {
+      return 'Cloud.gov';
+    } else if (lower === '~fedramp aws east/west') {
+      return '~FedRAMP AWS East/West';
+    } else if (lower === 'usda disc') {
+      return 'USDA DISC';
+    } else if (lower === 'google apps premier') {
+      return 'Google Apps Premier';
+    } else if (lower === 'other') {
+      return 'Other';
+    }
+    
+    // Handle database CSP values that need to be matched to chart labels
+    if (lower.includes('gsa') && (lower.includes('salesforce') || lower.includes('sf'))) {
+      return 'GSA Salesforce';
+    } else if (lower.includes('gsa')) {
+      return 'GSA';
+    } else if (lower.includes('fcs')) {
+      return 'FCS';
+    } else if (lower.includes('aws') || lower.includes('amazon')) {
+      return 'AWS';
+    } else if (lower.includes('cloud.gov') || lower.includes('cloud gov')) {
+      return 'Cloud.gov';
+    } else if (lower.includes('fedramp') || lower.includes('fedramp aws')) {
+      return '~FedRAMP AWS East/West';
+    } else if (lower.includes('usda') || lower.includes('disc')) {
+      return 'USDA DISC';
+    } else if (lower.includes('google apps') || lower.includes('google apps premier')) {
+      return 'Google Apps Premier';
+    }
+    
+    // Everything else should be "Other" - be very inclusive
+    return 'Other';
+  }
 }
