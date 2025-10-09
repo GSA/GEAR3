@@ -47,23 +47,23 @@
   <div class="it-investments-data-container">
     <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)">
       <div class="filter-tabs-container" filterTabs>
-        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')">
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')" (keyup)="onKeyUp($event, 'All')" tabindex="0">
           <span class="filter-tab-text">All</span>
           <span class="filter-tab-number first">{{filterTotals?.AllTotal}}</span>
         </div>
-        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Current Year')}" (click)="onSelectTab('Current Year')">
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Current Year')}" (click)="onSelectTab('Current Year')" (keyup)="onKeyUp($event, 'Current Year')" tabindex="0">
           <span class="filter-tab-text">Current Year</span>
           <span class="filter-tab-number second">{{filterTotals?.AllTotal}}</span>
         </div>
-        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Previous Year')}" (click)="onSelectTab('Previous Year')">
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Previous Year')}" (click)="onSelectTab('Previous Year')" (keyup)="onKeyUp($event, 'Previous Year')" tabindex="0">
           <span class="filter-tab-text">Previous Year</span>
           <span class="filter-tab-number third">{{filterTotals?.AllTotal}}</span>
         </div>
-        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Budget Year')}" (click)="onSelectTab('Budget Year')">
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Budget Year')}" (click)="onSelectTab('Budget Year')" (keyup)="onKeyUp($event, 'Budget Year')" tabindex="0">
           <span class="filter-tab-text">Budget Year</span>
           <span class="filter-tab-number fourth">{{filterTotals?.AllTotal}}</span>
         </div>
-        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Eliminated')}" (click)="onSelectTab('Eliminated')">
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Eliminated')}" (click)="onSelectTab('Eliminated')" (keyup)="onKeyUp($event, 'Eliminated')" tabindex="0">
           <span class="filter-tab-text">Eliminated</span>
           <span class="filter-tab-number first">{{filterTotals?.EliminatedTotal}}</span>
         </div>

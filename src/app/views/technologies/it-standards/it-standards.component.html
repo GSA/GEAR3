@@ -36,26 +36,26 @@
   <div class="it-standards-data-container">
     <app-filter-chips [chips]="filterChips" dropdownName="Deployment Types" (chipSelect)="onFilterChipSelect($event)"></app-filter-chips>
     <div *ngIf="filterTotals">
-    <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)">
-      <div class="filter-tabs-container" filterTabs>
-        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')">
-          <span class="filter-tab-text">All</span>
-          <span class="filter-tab-number first">{{filterTotals.AllTotal}}</span>
+      <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)">
+        <div class="filter-tabs-container" filterTabs>
+          <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')" (keyup)="onKeyUp($event, 'All')" tabindex="0">
+            <span class="filter-tab-text">All</span>
+            <span class="filter-tab-number first">{{filterTotals.AllTotal}}</span>
+          </div>
+          <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Approved')}" (click)="onSelectTab('Approved')" (keyup)="onKeyUp($event, 'Approved')" tabindex="0">
+            <span class="filter-tab-text">Approved</span>
+            <span class="filter-tab-number second">{{filterTotals.ApprovedTotal}}</span>
+          </div>
+          <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Denied')}" (click)="onSelectTab('Denied')" (keyup)="onKeyUp($event, 'Denied')" tabindex="0">
+            <span class="filter-tab-text">Denied</span>
+            <span class="filter-tab-number third">{{filterTotals.DeniedTotal}}</span>
+          </div>
+          <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Retired')}" (click)="onSelectTab('Retired')" (keyup)="onKeyUp($event, 'Retired')" tabindex="0">
+            <span class="filter-tab-text">Retired</span>
+            <span class="filter-tab-number fourth">{{filterTotals.RetiredTotal}}</span>
+          </div>
         </div>
-        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Approved')}" (click)="onSelectTab('Approved')">
-          <span class="filter-tab-text">Approved</span>
-          <span class="filter-tab-number second">{{filterTotals.ApprovedTotal}}</span>
-        </div>
-        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Denied')}" (click)="onSelectTab('Denied')">
-          <span class="filter-tab-text">Denied</span>
-          <span class="filter-tab-number third">{{filterTotals.DeniedTotal}}</span>
-        </div>
-        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Retired')}" (click)="onSelectTab('Retired')">
-          <span class="filter-tab-text">Retired</span>
-          <span class="filter-tab-number fourth">{{filterTotals.RetiredTotal}}</span>
-        </div>
-      </div>
-    </app-table>
+      </app-table>
     </div>
   </div>
 </div>

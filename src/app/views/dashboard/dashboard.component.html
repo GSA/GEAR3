@@ -4,7 +4,7 @@
     <div class="dashboard-quick-view-container">
         <div class="dashboard-metrics-grid">
             <div class="dashboard-quick-view-item">
-                <a (click)="viewAllFisma()" class="dashboard-view-all-link">View All</a>
+                <a (click)="viewAllFisma()" class="dashboard-view-all-link" tabindex="0" (keydown.enter)="viewAllFisma()" (keydown.space)="viewAllFisma()">View All</a>
                 <div class="dashboard-header-row">
                     <div class="dashboard-icon-box" [ngClass]="{'zero-value': (fismaExpiringThisQuarter || 0) === 0}">
                         <i class="dashboard-quick-view-icon fas fa-shield-alt"></i>
@@ -12,16 +12,16 @@
                     <span class="dashboard-quick-view-number">{{ fismaExpiringThisQuarter || 0 }}</span>
                 </div>
                 <span class="dashboard-quick-view-text">FISMA Expiring by {{ getExpiringDate() }}</span>
-                <div (click)="(fismaExpiringThisWeek || 0) > 0 ? viewExpiringFisma() : null" class="dashboard-quick-view-expire-container" [ngClass]="{'neutral-message': (fismaExpiringThisWeek || 0) === 0}">
+                <div class="dashboard-quick-view-expire-container" [ngClass]="{'neutral-message': (fismaExpiringThisWeek || 0) === 0}">
                     <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle" *ngIf="(fismaExpiringThisWeek || 0) > 0"></i>
                     <span class="dashboard-quick-view-expire-text" [ngClass]="{'positive-expire-text' : fismaExpiringThisWeek > 0, 'neutral-text': (fismaExpiringThisWeek || 0) === 0}">
-                        <span *ngIf="(fismaExpiringThisWeek || 0) > 0">{{ fismaExpiringThisWeek || 0 }} items expiring within 7 days</span>
+                        <span *ngIf="(fismaExpiringThisWeek || 0) > 0" tabindex="0" (keydown.enter)="viewExpiringFisma()" (keydown.space)="viewExpiringFisma()">{{ fismaExpiringThisWeek || 0 }} items expiring within 7 days</span>
                         <span *ngIf="(fismaExpiringThisWeek || 0) === 0">No items expiring within 7 days</span>
                     </span>
                 </div>
             </div>
              <div class="dashboard-quick-view-item">
-                <a (click)="viewAllSystems()" class="dashboard-view-all-link">View All</a>
+                <a (click)="viewAllSystems()" class="dashboard-view-all-link" tabindex="0" (keydown.enter)="viewAllSystems()" (keydown.space)="viewAllSystems()">View All</a>
                 <div class="dashboard-header-row">
                     <div class="dashboard-icon-box" [ngClass]="{'zero-value': (decommissionedSystemsLast6Months || 0) === 0}">
                         <i class="dashboard-quick-view-icon fas fa-laptop"></i>
@@ -29,16 +29,16 @@
                     <span class="dashboard-quick-view-number">{{ decommissionedSystemsLast6Months || 0 }}</span>
                 </div>
                 <span class="dashboard-quick-view-text">Decommissioned systems (Last 6 months)</span>
-                <div (click)="(decommissionedSystemsLast7Days || 0) > 0 ? viewDecommissionedSystems() : null" class="dashboard-quick-view-expire-container" [ngClass]="{'neutral-message': (decommissionedSystemsLast7Days || 0) === 0}">
+                <div class="dashboard-quick-view-expire-container" [ngClass]="{'neutral-message': (decommissionedSystemsLast7Days || 0) === 0}">
                     <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle" *ngIf="(decommissionedSystemsLast7Days || 0) > 0"></i>
                     <span class="dashboard-quick-view-expire-text" [ngClass]="{'positive-expire-text' : decommissionedSystemsLast7Days > 0, 'neutral-text': (decommissionedSystemsLast7Days || 0) === 0}">
-                        <span *ngIf="(decommissionedSystemsLast7Days || 0) > 0">{{ decommissionedSystemsLast7Days || 0 }} items decommissioned in last 7 days</span>
+                        <span *ngIf="(decommissionedSystemsLast7Days || 0) > 0" tabindex="0" (keydown.enter)="viewDecommissionedSystems()" (keydown.space)="viewDecommissionedSystems()">{{ decommissionedSystemsLast7Days || 0 }} items decommissioned in last 7 days</span>
                         <span *ngIf="(decommissionedSystemsLast7Days || 0) === 0">No items decommissioned in last 7 days</span>
                     </span>
                 </div>
             </div>
             <div class="dashboard-quick-view-item">
-                <a (click)="viewAllITStandards()" class="dashboard-view-all-link">View All</a>
+                <a (click)="viewAllITStandards()" class="dashboard-view-all-link" tabindex="0" (keydown.enter)="viewAllITStandards()" (keydown.space)="viewAllITStandards()">View All</a>
                 <div class="dashboard-header-row">
                     <div class="dashboard-icon-box" [ngClass]="{'zero-value': (standardsExpiringThisQuarter || 0) === 0}">
                         <i class="dashboard-quick-view-icon fas fa-microchip"></i>
@@ -46,17 +46,17 @@
                     <span class="dashboard-quick-view-number">{{ standardsExpiringThisQuarter || 0 }}</span>
                 </div>
                 <span class="dashboard-quick-view-text">IT Standards Expiring by {{ getExpiringDate() }}</span>
-                <div (click)="(standardsExpiringThisWeek || 0) > 0 ? viewExpiringITStandards() : null" class="dashboard-quick-view-expire-container" [ngClass]="{'neutral-message': (standardsExpiringThisWeek || 0) === 0}">
+                <div class="dashboard-quick-view-expire-container" [ngClass]="{'neutral-message': (standardsExpiringThisWeek || 0) === 0}">
                     <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle" *ngIf="(standardsExpiringThisWeek || 0) > 0"></i>
                     <span class="dashboard-quick-view-expire-text" [ngClass]="{'positive-expire-text' : standardsExpiringThisWeek > 0, 'neutral-text': (standardsExpiringThisWeek || 0) === 0}">
-                        <span *ngIf="(standardsExpiringThisWeek || 0) > 0">{{ standardsExpiringThisWeek || 0 }} items expiring within 7 days</span>
+                        <span *ngIf="(standardsExpiringThisWeek || 0) > 0" tabindex="0" (keydown.enter)="viewExpiringITStandards()" (keydown.space)="viewExpiringITStandards()">{{ standardsExpiringThisWeek || 0 }} items expiring within 7 days</span>
                         <span *ngIf="(standardsExpiringThisWeek || 0) === 0">No items expiring within 7 days</span>
                     </span>
                 </div>
             </div>
            
             <div class="dashboard-quick-view-item">
-                <a (click)="viewAllITStandards()" class="dashboard-view-all-link">View All</a>
+                <a (click)="viewAllITStandards()" class="dashboard-view-all-link" tabindex="0" (keydown.enter)="viewAllITStandards()" (keydown.space)="viewAllITStandards()">View All</a>
                 <div class="dashboard-header-row">
                     <div class="dashboard-icon-box" [ngClass]="{'zero-value': (retiredITStandardsLast6Months || 0) === 0}">
                         <i class="dashboard-quick-view-icon fas fa-microchip"></i>
@@ -64,10 +64,10 @@
                     <span class="dashboard-quick-view-number">{{ retiredITStandardsLast6Months || 0 }}</span>
                 </div>
                 <span class="dashboard-quick-view-text">Retired IT standards (Last 6 months)</span>
-                <div (click)="(retiredITStandardsLast7Days || 0) > 0 ? viewRecentRetiredITStandards() : null" class="dashboard-quick-view-expire-container" [ngClass]="{'neutral-message': (retiredITStandardsLast7Days || 0) === 0}">
+                <div class="dashboard-quick-view-expire-container" [ngClass]="{'neutral-message': (retiredITStandardsLast7Days || 0) === 0}">
                     <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle" *ngIf="(retiredITStandardsLast7Days || 0) > 0"></i>
                     <span class="dashboard-quick-view-expire-text" [ngClass]="{'positive-expire-text' : retiredITStandardsLast7Days > 0, 'neutral-text': (retiredITStandardsLast7Days || 0) === 0}">
-                        <span *ngIf="(retiredITStandardsLast7Days || 0) > 0">{{ retiredITStandardsLast7Days || 0 }} items retired in last 7 days</span>
+                        <span *ngIf="(retiredITStandardsLast7Days || 0) > 0" tabindex="0" (keydown.enter)="viewRecentRetiredITStandards()" (keydown.space)="viewRecentRetiredITStandards()">{{ retiredITStandardsLast7Days || 0 }} items retired in last 7 days</span>
                         <span *ngIf="(retiredITStandardsLast7Days || 0) === 0">No items retired in last 7 days</span>
                     </span>
                 </div>
@@ -100,7 +100,7 @@
             <div class="dashboard-chart-card bar-chart-card" [ngClass]="{'rotated-labels': shouldRotateLabels}">
                 <div class="dashboard-chart-header">
                     <h3 class="dashboard-card-title-text">Hosting Platforms</h3>
-                    <a (click)="viewAllSystems()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
+                    <a (click)="viewAllSystems()" class="dashboard-view-all-link" style="cursor: pointer;" tabindex="0" (keydown.enter)="viewAllSystems()" (keydown.space)="viewAllSystems()">View All</a>
                 </div>
                 <div class="dashboard-chart-content bar-chart-content">
                     <ngx-charts-bar-vertical
@@ -126,7 +126,7 @@
             <div class="dashboard-chart-card pie-chart-card">
                 <div class="dashboard-chart-header">
                     <h3 class="dashboard-card-title-text">Business Systems</h3>
-                    <a (click)="viewAllSystems()" class="dashboard-view-all-link" style="cursor: pointer;">View All</a>
+                    <a (click)="viewAllSystems()" class="dashboard-view-all-link" style="cursor: pointer;" tabindex="0" (keydown.enter)="viewAllSystems()" (keydown.space)="viewAllSystems()">View All</a>
                 </div>
                 <div class="dashboard-chart-content pie-chart-content">
                     <ngx-charts-pie-chart
@@ -164,7 +164,7 @@
     <div class="dashboard-recent-report-container">
         <div class="dashboard-recent-report-title">
             <span class="dashboard-card-title-text">Recent GSA IT Standards</span>
-            <a (click)="viewAllITStandards()" class="dashboard-view-all-link normal">View All</a>
+            <a (click)="viewAllITStandards()" class="dashboard-view-all-link normal" tabindex="0" (keydown.enter)="viewAllITStandards()" (keydown.space)="viewAllITStandards()">View All</a>
         </div>
         <app-table *ngIf="showTable" [tableCols]="tableCols" [showToolbar]="false" [showPagination]="false" reportStyle="neutral" (rowClickEvent)="onTableRowClick($event)">
         </app-table>

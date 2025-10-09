@@ -81,6 +81,12 @@ export class InvestmentsComponent implements OnInit {
     }
     this.tableService.updateReportTableData(this.itInvesmentsDataTabFilterted);
   }
+  
+  public onKeyUp(e: KeyboardEvent, tabName: string) {
+    if(e.key === ' ' || e.key === 'Enter') {
+      this.onSelectTab(tabName);
+    }
+  }
 
   public isTabSelected(tabName: string): boolean {
     return this.selectedTab === tabName;

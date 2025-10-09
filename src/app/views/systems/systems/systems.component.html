@@ -43,16 +43,16 @@
     <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"
       (rowClickEvent)="onRowClick($event)">
       <div class="filter-tabs-container" filterTabs>
-        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')">
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')" (keyup)="onKeyUp($event, 'All')" tabindex="0">
           <span class="filter-tab-text">All</span>
           <span class="filter-tab-number first">{{filterTotals?.AllTotal}}</span>
         </div>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Cloud Enabled')}"
-          (click)="onSelectTab('Cloud Enabled')">
+          (click)="onSelectTab('Cloud Enabled')" (keyup)="onKeyUp($event, 'Cloud Enabled')" tabindex="0">
           <span class="filter-tab-text">Cloud Enabled</span>
           <span class="filter-tab-number second">{{filterTotals?.CloudEnabledTotal}}</span>
         </div>
-        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Inactive')}" (click)="onSelectTab('Inactive')">
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Inactive')}" (click)="onSelectTab('Inactive')" (keyup)="onKeyUp($event, 'Inactive')" tabindex="0">
           <span class="filter-tab-text">Inactive</span>
           <span class="filter-tab-number third">{{filterTotals?.InactiveTotal}}</span>
         </div>
