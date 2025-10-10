@@ -9,7 +9,10 @@
     border-radius: 1rem;
     position: sticky;
     top: 0;
-    height: 100vh;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    
 
     & .sidebar-toggle-icon {
         position: absolute;
@@ -66,7 +69,7 @@
         flex-direction: column;
         gap: .25rem;
         padding: 0 0.7rem;
-        height: 490px;
+        flex: 1;
         overflow: auto;
 
         & .sidebar-button-divider {
