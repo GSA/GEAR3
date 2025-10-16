@@ -937,12 +937,12 @@ export class ApiService {
       );
   }
 
-  public getAttestationStatusTypes(): Observable<AttestationStatus[]> {
+  public getAttestationStatusTypes(): Observable<any[]> {
     return this.http
-      .get<AttestationStatus[]>(this.techUrl + '/attestation_status_types')
+      .get<any[]>(this.techUrl + '/attestation_status_types')
       .pipe(
         catchError(
-          this.handleError<AttestationStatus[]>('GET Tech Catalog Attestation Status Types', [])
+          this.handleError<any[]>('GET Tech Catalog Attestation Status Types', [])
         )
       );
   }

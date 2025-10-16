@@ -1,22 +1,28 @@
 <div class="it-standards-container">
   <div class="it-standards-title-container">
     <h2>All GSA IT Standards</h2>
-    <app-button buttonText="Create New" (buttonClick)="onCreateNew()" *ngIf="isLoggedIn()"></app-button>
+    @if (isLoggedIn()) {
+      <app-button buttonText="Create New" (buttonClick)="onCreateNew()"></app-button>
+    }
     <div class="it-standards-title-right-button-container">
-      <app-button buttonText="GEAR Manager Login" (buttonClick)="sharedService.setRedirectPath()" *ngIf="!isLoggedIn()"></app-button>
-      <app-button buttonText="Logout" buttonStyle="error" (buttonClick)="sharedService.logoutManager()" *ngIf="isLoggedIn()"></app-button>
+      @if (!isLoggedIn()) {
+        <app-button buttonText="GEAR Manager Login" (buttonClick)="sharedService.setRedirectPath()"></app-button>
+      }
+      @if (isLoggedIn()) {
+        <app-button buttonText="Logout" buttonStyle="error" (buttonClick)="sharedService.logoutManager()"></app-button>
+      }
       <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
         <span>
           <b>Details:</b> Left click on a row within the table to view additional details.
           <br><br>
           <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
           <br><br>
-          <b>Export:</b> Export data by clicking on the <i class='fas fa-download'></i> icon and selecting the format that meets 
+          <b>Export:</b> Export data by clicking on the <i class='fas fa-download'></i> icon and selecting the format that meets
           your needs.
           <br><br>
-          <b>Search:</b> Perform a filtered search across all fields in the displayed data. Hit the 'Enter' button on your 
-          keyboard to execute. Click the <i class='far fa-trash-alt'></i> icon to clear the search box. 
-          Search within specific columns by clicking on the <i class='fas fa-angle-down'></i> icon. 
+          <b>Search:</b> Perform a filtered search across all fields in the displayed data. Hit the 'Enter' button on your
+          keyboard to execute. Click the <i class='far fa-trash-alt'></i> icon to clear the search box.
+          Search within specific columns by clicking on the <i class='fas fa-angle-down'></i> icon.
           <br><br>
           <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
           <i class='fas fa-caret-square-down'></i> icon to display everything on one page.
@@ -25,40 +31,42 @@
     </div>
   </div>
   <div class="it-standards-definition-container">
-    <p class="it-standards-definition-text" [ngClass]="{'expanded' : defExpanded}">The IT Standards inventory is the official GSA repository of software products/versions. 
-      This inventory can be used to determine which software has been reviewed and approved, ensuring that users are only requesting 
-      and using software that has been approved by IT Security. The Chief Technology Office (CTO) is responsible for managing 
-      the process and ensuring IT Standards are reviewed for use within GSA. 
-      For more information, please see the 
+    <p class="it-standards-definition-text" [ngClass]="{'expanded' : defExpanded}">The IT Standards inventory is the official GSA repository of software products/versions.
+      This inventory can be used to determine which software has been reviewed and approved, ensuring that users are only requesting
+      and using software that has been approved by IT Security. The Chief Technology Office (CTO) is responsible for managing
+      the process and ensuring IT Standards are reviewed for use within GSA.
+      For more information, please see the
       <a href='https://sites.google.com/a/gsa.gov/it_standards/it-standards' target='_blank' rel='noopener'>IT Standards site</a></p>
       <app-button [buttonText]="defExpanded ? 'View Less' : 'View More'" buttonStyle="link" (buttonClick)="onViewAll()"></app-button>
-  </div>
-  <div class="it-standards-data-container">
-    <app-filter-chips [chips]="filterChips" dropdownName="Deployment Types" (chipSelect)="onFilterChipSelect($event)"></app-filter-chips>
-    <div *ngIf="filterTotals">
-      <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)">
-        <div class="filter-tabs-container" filterTabs>
-          <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')" (keyup)="onKeyUp($event, 'All')" tabindex="0">
-            <span class="filter-tab-text">All</span>
-            <span class="filter-tab-number first">{{filterTotals.AllTotal}}</span>
-          </div>
-          <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Approved')}" (click)="onSelectTab('Approved')" (keyup)="onKeyUp($event, 'Approved')" tabindex="0">
-            <span class="filter-tab-text">Approved</span>
-            <span class="filter-tab-number second">{{filterTotals.ApprovedTotal}}</span>
-          </div>
-          <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Denied')}" (click)="onSelectTab('Denied')" (keyup)="onKeyUp($event, 'Denied')" tabindex="0">
-            <span class="filter-tab-text">Denied</span>
-            <span class="filter-tab-number third">{{filterTotals.DeniedTotal}}</span>
-          </div>
-          <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Retired')}" (click)="onSelectTab('Retired')" (keyup)="onKeyUp($event, 'Retired')" tabindex="0">
-            <span class="filter-tab-text">Retired</span>
-            <span class="filter-tab-number fourth">{{filterTotals.RetiredTotal}}</span>
-          </div>
+    </div>
+    <div class="it-standards-data-container">
+      <app-filter-chips [chips]="filterChips" dropdownName="Deployment Types" (chipSelect)="onFilterChipSelect($event)"></app-filter-chips>
+      @if (filterTotals) {
+        <div>
+          <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)">
+            <div class="filter-tabs-container" filterTabs>
+              <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')" (keyup)="onKeyUp($event, 'All')" tabindex="0">
+                <span class="filter-tab-text">All</span>
+                <span class="filter-tab-number first">{{filterTotals.AllTotal}}</span>
+              </div>
+              <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Approved')}" (click)="onSelectTab('Approved')" (keyup)="onKeyUp($event, 'Approved')" tabindex="0">
+                <span class="filter-tab-text">Approved</span>
+                <span class="filter-tab-number second">{{filterTotals.ApprovedTotal}}</span>
+              </div>
+              <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Denied')}" (click)="onSelectTab('Denied')" (keyup)="onKeyUp($event, 'Denied')" tabindex="0">
+                <span class="filter-tab-text">Denied</span>
+                <span class="filter-tab-number third">{{filterTotals.DeniedTotal}}</span>
+              </div>
+              <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Retired')}" (click)="onSelectTab('Retired')" (keyup)="onKeyUp($event, 'Retired')" tabindex="0">
+                <span class="filter-tab-text">Retired</span>
+                <span class="filter-tab-number fourth">{{filterTotals.RetiredTotal}}</span>
+              </div>
+            </div>
+          </app-table>
         </div>
-      </app-table>
+      }
     </div>
   </div>
-</div>
 
 
 
@@ -67,75 +75,75 @@
 
 
 
-<!-- <div class="card">
+  <!-- <div class="card">
   <div class="card-header text-white bg-teal text-center d-flex align-items-center justify-content-between"> -->
     <!-- GEAR Manager Access -->
     <!-- <a class="btn btn-sm btn-info text-white shadow d-flex align-items-center btn-border-white"
-      routerLink="/gear_manager" *ngIf="!sharedService.loggedIn" aria-label="GEAR Manager Login"
-      (click)="sharedService.setRedirectPath()">
-      <span class="mr-2">GEAR Manager Login</span><i class="fa fa-sign-in-alt fa-2x"></i>
-    </a>
-    <a class="btn btn-sm btn-danger text-white shadow d-flex align-items-center btn-border-white"
-      routerLink="/it_standards" *ngIf="sharedService.loggedIn" aria-label="GEAR Manager Logout"
-      (click)="sharedService.logoutManager()">
-      <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
-    </a> -->
+    routerLink="/gear_manager" *ngIf="!sharedService.loggedIn" aria-label="GEAR Manager Login"
+    (click)="sharedService.setRedirectPath()">
+    <span class="mr-2">GEAR Manager Login</span><i class="fa fa-sign-in-alt fa-2x"></i>
+  </a>
+  <a class="btn btn-sm btn-danger text-white shadow d-flex align-items-center btn-border-white"
+    routerLink="/it_standards" *ngIf="sharedService.loggedIn" aria-label="GEAR Manager Logout"
+    (click)="sharedService.logoutManager()">
+    <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
+  </a> -->
 
-    <!-- Title -->
-    <!-- <h3 class="card-title mb-0">
-      <span>
-        <i class="fas fa-microchip mr-2"></i>
-        <span [hidden]="filteredTable">All GSA </span>
-        <span [hidden]="!filteredTable" [innerHTML]="filterTitle"></span>
-        IT Standards
-      </span>
-    </h3> -->
-    
-    <!-- Help Button -->
-    <!-- <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
-      <span>
-        <b>Details:</b> Left click on a row within the table to view additional details.
-        <br><br>
-        <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
-        <br><br>
-        <b>Export:</b> Export data by clicking on the <i class='fas fa-download'></i> icon and selecting the format that meets 
-        your needs.
-        <br><br>
-        <b>Search:</b> Perform a filtered search across all fields in the displayed data. Hit the 'Enter' button on your 
-        keyboard to execute. Click the <i class='far fa-trash-alt'></i> icon to clear the search box. 
-        Search within specific columns by clicking on the <i class='fas fa-angle-down'></i> icon. 
-        <br><br>
-        <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
-        <i class='fas fa-caret-square-down'></i> icon to display everything on one page.
-      </span>
-    </app-button-overlay-panel>
-  </div>
+  <!-- Title -->
+  <!-- <h3 class="card-title mb-0">
+  <span>
+    <i class="fas fa-microchip mr-2"></i>
+    <span [hidden]="filteredTable">All GSA </span>
+    <span [hidden]="!filteredTable" [innerHTML]="filterTitle"></span>
+    IT Standards
+  </span>
+</h3> -->
 
-  <div class="card-body card-text justify-content-center">
-    <div class="row w-100"> -->
-      <!-- Add Button -->
-      <!-- <button role="button" name="addITStandBttn" aria-label="Add IT Standard" class="btn bg-teal text-white position-absolute ml-3"
-        (click)="createITStand()" [hidden]="!sharedService.loggedIn">
-        <i class="fas fa-plus"></i>
-      </button>
-    </div>
-     -->
-    <!-- Main Table -->
-    <!-- <ng-container *ngIf="dataReady">
-      <app-table [tableCols]="tableCols" exportName="IT Standards" reportStyle="technologies" tableType="itStandards"> -->
-        <!-- IT-Standard Filter Buttons -->
-        <!-- <app-filter-buttons filterBtns [filterButtons]="filterButtons" [preloadedFilterButtons]="preloadedFilterButtons" (filterClick)="onFilterClick($event)" (filterResetClick)="onFilterResetClick()"></app-filter-buttons> -->
-        <!-- IT-Standard Definition Popover -->
-        <!-- <app-button-overlay-panel definitionBtn buttonText="IT-Standards definition">
-          <span>The IT Standards inventory is the official GSA repository of software products/versions. 
-            This inventory can be used to determine which software has been reviewed and approved, ensuring that users are only requesting 
-            and using software that has been approved by IT Security. The Chief Technology Office (CTO) is responsible for managing 
-            the process and ensuring IT Standards are reviewed for use within GSA. 
-            For more information, please see the 
-            <a href='https://sites.google.com/a/gsa.gov/it_standards/it-standards' target='_blank' rel='noopener'>IT Standards site</a>
-          </span>
-        </app-button-overlay-panel>
-      </app-table>
-    </ng-container>
-  </div>
+<!-- Help Button -->
+<!-- <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
+<span>
+  <b>Details:</b> Left click on a row within the table to view additional details.
+  <br><br>
+  <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
+  <br><br>
+  <b>Export:</b> Export data by clicking on the <i class='fas fa-download'></i> icon and selecting the format that meets
+  your needs.
+  <br><br>
+  <b>Search:</b> Perform a filtered search across all fields in the displayed data. Hit the 'Enter' button on your
+  keyboard to execute. Click the <i class='far fa-trash-alt'></i> icon to clear the search box.
+  Search within specific columns by clicking on the <i class='fas fa-angle-down'></i> icon.
+  <br><br>
+  <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
+  <i class='fas fa-caret-square-down'></i> icon to display everything on one page.
+</span>
+</app-button-overlay-panel>
+</div>
+
+<div class="card-body card-text justify-content-center">
+  <div class="row w-100"> -->
+    <!-- Add Button -->
+    <!-- <button role="button" name="addITStandBttn" aria-label="Add IT Standard" class="btn bg-teal text-white position-absolute ml-3"
+    (click)="createITStand()" [hidden]="!sharedService.loggedIn">
+    <i class="fas fa-plus"></i>
+  </button>
+</div>
+-->
+<!-- Main Table -->
+<!-- <ng-container *ngIf="dataReady">
+<app-table [tableCols]="tableCols" exportName="IT Standards" reportStyle="technologies" tableType="itStandards"> -->
+  <!-- IT-Standard Filter Buttons -->
+  <!-- <app-filter-buttons filterBtns [filterButtons]="filterButtons" [preloadedFilterButtons]="preloadedFilterButtons" (filterClick)="onFilterClick($event)" (filterResetClick)="onFilterResetClick()"></app-filter-buttons> -->
+  <!-- IT-Standard Definition Popover -->
+  <!-- <app-button-overlay-panel definitionBtn buttonText="IT-Standards definition">
+  <span>The IT Standards inventory is the official GSA repository of software products/versions.
+    This inventory can be used to determine which software has been reviewed and approved, ensuring that users are only requesting
+    and using software that has been approved by IT Security. The Chief Technology Office (CTO) is responsible for managing
+    the process and ensuring IT Standards are reviewed for use within GSA.
+    For more information, please see the
+    <a href='https://sites.google.com/a/gsa.gov/it_standards/it-standards' target='_blank' rel='noopener'>IT Standards site</a>
+  </span>
+</app-button-overlay-panel>
+</app-table>
+</ng-container>
+</div>
 </div> -->

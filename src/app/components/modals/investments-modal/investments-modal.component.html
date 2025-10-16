@@ -6,7 +6,7 @@
   role="dialog"
   aria-labelledby="investTitle"
   aria-hidden="true"
->
+  >
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
     <div class="modal-content">
       <div class="modal-header bg-success">
@@ -17,7 +17,7 @@
           aria-label="Previous"
           (click)="tableService.previousModalRoute('investDetail')"
           [hidden]="!modalService.checkModalRoutes()"
-        >
+          >
           <i class="fas fa-arrow-circle-left fa-lg fa-fw"></i>
         </a>
         <h5 class="modal-title text-white" id="investTitle">
@@ -35,100 +35,102 @@
           <li class="nav-item">
             <a class="nav-link active" data-bs-toggle="tab" href="#investOverview">
               Overview</a
-            >
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#budgetYear">
-              Budget Year</a
-            >
-          </li>
-          
-          <li class="nav-item" *ngIf="showRelatedSystemsTab()">
-            <a class="nav-link" data-bs-toggle="tab" href="#investRelatedSys">
-              Related Systems</a
-            >
-          </li>
-        </ul>
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="tab" href="#budgetYear">
+                Budget Year</a
+                >
+              </li>
 
-        <!-- Tab Panes -->
-        <div class="tab-content mt-3">
-          <div class="tab-pane fade show active" id="investOverview">
-            <h4>Description</h4>
-            <p>{{ investment.Description }}</p>
-            <br />
+              @if (showRelatedSystemsTab()) {
+                <li class="nav-item">
+                  <a class="nav-link" data-bs-toggle="tab" href="#investRelatedSys">
+                    Related Systems</a
+                    >
+                  </li>
+                }
+              </ul>
 
-            <table
-              id="investDetailTable"
-              class="table table-borderless table-striped table-dark rounded-lg w-75 mx-auto"
-            >
-              <thead class="bg-success">
-                <tr>
-                  <th>
-                    <h5>Attribute</h5>
-                  </th>
-                  <th>
-                    <h5>Value</h5>
-                  </th>
-                </tr>
-              </thead>
+              <!-- Tab Panes -->
+              <div class="tab-content mt-3">
+                <div class="tab-pane fade show active" id="investOverview">
+                  <h4>Description</h4>
+                  <p>{{ investment.Description }}</p>
+                  <br />
 
-              <tbody>
-                <tr>
-                  <td><i class="far fa-calendar"></i>Budget Year</td>
-                  <td>{{ investment.Budget_Year }}</td>
-                </tr>
-                <tr>
-                  <td><i class="far fa-calendar-plus"></i>Start Year</td>
-                  <td>{{ investment.Start_Year }}</td>
-                </tr>
-                <tr>
-                  <td><i class="far fa-calendar-minus"></i>End Year</td>
-                  <td>{{ investment.End_Year }}</td>
-                </tr>
-                <tr>
-                  <td>
-                    <i class="fas fa-cloud"></i>Cloud Alternatives Evaluation
-                  </td>
-                  <td>{{ investment.Cloud_Alt }}</td>
-                </tr>
-                <tr>
-                  <td><i class="far fa-comments"></i>Comments</td>
-                  <td>{{ investment.Comments }}</td>
-                </tr>
-                <tr>
-                  <td><i class="fa fa-user"></i>Investment Manager</td>
-                  <td>
-                    <a
-                      class="email text-white"
+                  <table
+                    id="investDetailTable"
+                    class="table table-borderless table-striped table-dark rounded-lg w-75 mx-auto"
+                    >
+                    <thead class="bg-success">
+                      <tr>
+                        <th>
+                          <h5>Attribute</h5>
+                        </th>
+                        <th>
+                          <h5>Value</h5>
+                        </th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <tr>
+                        <td><i class="far fa-calendar"></i>Budget Year</td>
+                        <td>{{ investment.Budget_Year }}</td>
+                      </tr>
+                      <tr>
+                        <td><i class="far fa-calendar-plus"></i>Start Year</td>
+                        <td>{{ investment.Start_Year }}</td>
+                      </tr>
+                      <tr>
+                        <td><i class="far fa-calendar-minus"></i>End Year</td>
+                        <td>{{ investment.End_Year }}</td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <i class="fas fa-cloud"></i>Cloud Alternatives Evaluation
+                        </td>
+                        <td>{{ investment.Cloud_Alt }}</td>
+                      </tr>
+                      <tr>
+                        <td><i class="far fa-comments"></i>Comments</td>
+                        <td>{{ investment.Comments }}</td>
+                      </tr>
+                      <tr>
+                        <td><i class="fa fa-user"></i>Investment Manager</td>
+                        <td>
+                          <a
+                            class="email text-white"
                       href="https://mail.google.com/mail/?view=cm&fs=1&to={{
                         investment.InvManagerEmail
                       }}"
-                      target="_blank"
-                      rel="noopener"
-                      >{{ investment.InvManager }}</a
-                    >
-                    <div [hidden]="investment.InvManager">None Provided</div>
-                  </td>
-                </tr>
-                <tr>
-                  <td><i class="fa fa-folder"></i>Investment Type</td>
-                  <td>{{ investment.Type }}</td>
-                </tr>
-                <tr>
-                  <td><i class="fa fa-tag"></i>Investment UII</td>
-                  <td>{{ investment.UII }}</td>
-                </tr>
-                <tr>
-                  <td>
-                    <i class="far fa-folder-open"></i>Part of IT Portfolio
-                  </td>
-                  <td>{{ investment.IT_Portfolio }}</td>
-                </tr>
-                <tr>
-                  <td><i class="fa fa-th"></i>Primary Service Area</td>
-                  <td
-                    *ngIf="investment.PSA; else psaElse"
-                    class="btn-outline-info pointer"
+                            target="_blank"
+                            rel="noopener"
+                            >{{ investment.InvManager }}</a
+                            >
+                            <div [hidden]="investment.InvManager">None Provided</div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><i class="fa fa-folder"></i>Investment Type</td>
+                          <td>{{ investment.Type }}</td>
+                        </tr>
+                        <tr>
+                          <td><i class="fa fa-tag"></i>Investment UII</td>
+                          <td>{{ investment.UII }}</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <i class="far fa-folder-open"></i>Part of IT Portfolio
+                          </td>
+                          <td>{{ investment.IT_Portfolio }}</td>
+                        </tr>
+                        <tr>
+                          <td><i class="fa fa-th"></i>Primary Service Area</td>
+                          @if (investment.PSA) {
+                            <td
+                              class="btn-outline-info pointer"
                     (click)="
                       tableService.openRelated(
                         '#investDetail',
@@ -136,85 +138,85 @@
                         'capability-name'
                       )
                     "
-                  >
-                    {{ investment.PSA }}
-                  </td>
-                  <ng-template #psaElse>
-                    <td>None Designated</td>
-                  </ng-template>
-                </tr>
-                <tr>
-                  <td><i class="fas fa-info-circle"></i>Status</td>
-                  <td>{{ investment.Status }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <!-- End of Overview Pane -->
-          <div class="tab-pane fade" id="budgetYear">
-            <h4>Budget Year</h4>
-            <br />
+                              >
+                              {{ investment.PSA }}
+                            </td>
+                          } @else {
+                            <td>None Designated</td>
+                          }
+                        </tr>
+                        <tr>
+                          <td><i class="fas fa-info-circle"></i>Status</td>
+                          <td>{{ investment.Status }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <!-- End of Overview Pane -->
+                  <div class="tab-pane fade" id="budgetYear">
+                    <h4>Budget Year</h4>
+                    <br />
 
-            <table
-              id="budgetYearTable"
-              class="table table-borderless table-striped table-dark rounded-lg w-75 mx-auto"
-            >
-              <thead class="bg-success">
-                <tr>
-                  <th class="col-sm-5">
-                    <h5>Attribute</h5>
-                  </th>
-                  <th class="col-sm-5">
-                    <h5>Value</h5>
-                  </th>
-                </tr>
-              </thead>
+                    <table
+                      id="budgetYearTable"
+                      class="table table-borderless table-striped table-dark rounded-lg w-75 mx-auto"
+                      >
+                      <thead class="bg-success">
+                        <tr>
+                          <th class="col-sm-5">
+                            <h5>Attribute</h5>
+                          </th>
+                          <th class="col-sm-5">
+                            <h5>Value</h5>
+                          </th>
+                        </tr>
+                      </thead>
 
-              <tbody>
-                <tr>
-                  <td><i class="far fa-calendar"></i>Budget Year</td>
-                  <td>{{ investment.Budget_Year }}</td>
-                </tr>
-                <tr>
-                  <td>Total IT Spending ($ M)r</td>
-                  <td>{{ investment.Total_Spend_BY }}</td>
-                </tr>
-                <tr>
-                  <td>DME Contributions ($ M)</td>
-                  <td>{{ investment.DME_Contributions_BY }}</td>
-                </tr>
-                <tr>
-                  <td>DME Budget Authority Agency Funding ($ M)</td>
-                  <td>{{ investment.DME_Budget_Auth_BY }}</td>
-                </tr>
-                <tr>
-                  <td>O&M Agency Funding ($ M)</td>
-                  <td>{{ investment.OnM_Agency_Fund_BY }}</td>
-                </tr>
-                <tr>
-                  <td>O&M Contributions ($ M)</td>
-                  <td>{{ investment.OnM_Contributions_BY }}</td>
-                </tr>
-                <tr>
-                  <td>O&M Budget Authority Agency Funding ($ M)</td>
-                  <td>{{ investment.OnM_Budget_Auth_BY }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <!-- End of Budget Year Pane -->
+                      <tbody>
+                        <tr>
+                          <td><i class="far fa-calendar"></i>Budget Year</td>
+                          <td>{{ investment.Budget_Year }}</td>
+                        </tr>
+                        <tr>
+                          <td>Total IT Spending ($ M)r</td>
+                          <td>{{ investment.Total_Spend_BY }}</td>
+                        </tr>
+                        <tr>
+                          <td>DME Contributions ($ M)</td>
+                          <td>{{ investment.DME_Contributions_BY }}</td>
+                        </tr>
+                        <tr>
+                          <td>DME Budget Authority Agency Funding ($ M)</td>
+                          <td>{{ investment.DME_Budget_Auth_BY }}</td>
+                        </tr>
+                        <tr>
+                          <td>O&M Agency Funding ($ M)</td>
+                          <td>{{ investment.OnM_Agency_Fund_BY }}</td>
+                        </tr>
+                        <tr>
+                          <td>O&M Contributions ($ M)</td>
+                          <td>{{ investment.OnM_Contributions_BY }}</td>
+                        </tr>
+                        <tr>
+                          <td>O&M Budget Authority Agency Funding ($ M)</td>
+                          <td>{{ investment.OnM_Budget_Auth_BY }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <!-- End of Budget Year Pane -->
 
-          <div class="tab-pane fade" id="investRelatedSys">
-            <table id="investRelSysTable"></table>
+                  <div class="tab-pane fade" id="investRelatedSys">
+                    <table id="investRelSysTable"></table>
+                  </div>
+                </div>
+              </div>
+
+              <div class="modal-footer">
+                <p class="font-weight-bold font-italic">
+                  Last Updated: {{ investment.Updated_Date | date : "MMM. dd, yyyy" }}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-
-      <div class="modal-footer">
-        <p class="font-weight-bold font-italic">
-          Last Updated: {{ investment.Updated_Date | date : "MMM. dd, yyyy" }}
-        </p>
-      </div>
-    </div>
-  </div>
-</div>

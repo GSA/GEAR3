@@ -6,7 +6,7 @@
   role="dialog"
   aria-labelledby="systemTitle"
   aria-hidden="true"
->
+  >
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
     <div class="modal-content">
       <div class="modal-header bg-danger">
@@ -17,7 +17,7 @@
           aria-label="Previous"
           (click)="tableService.previousModalRoute('systemDetail')"
           [hidden]="!modalService.checkModalRoutes()"
-        >
+          >
           <i class="fas fa-arrow-circle-left fa-lg fa-fw"></i>
         </a>
         <h5 class="modal-title text-white" id="systemTitle">
@@ -35,348 +35,359 @@
           <li class="nav-item">
             <a class="nav-link active" data-bs-toggle="tab" href="#systemOverview">
               Overview</a
-            >
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#businessRelated">
-              Business</a
-            >
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#technicalRelated">
-              Technical</a
-            >
-          </li>
-          <li class="nav-item" *ngIf="showInvestmentsTab()">
-            <a class="nav-link" data-bs-toggle="tab" href="#relatedInvestments">
-              Investments</a
-            >
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#relatedRecords">
-              Records</a
-            >
-          </li>
-          <li class="nav-item" *ngIf="showWebsitesTab()">
-            <a class="nav-link" data-bs-toggle="tab" href="#relatedWebsites">
-              Websites</a
-            >
-          </li>
-          <li class="nav-item" [hidden]="system.SystemLevel != 'System'">
-            <a class="nav-link" data-bs-toggle="tab" href="#systemSubs">
-              Subsystems</a
-            >
-          </li>
-          <!-- <li class="nav-item" [hidden]="!interfaces.length">
-            <a class="nav-link" data-bs-toggle="tab" href="#systemDataFlow">
-              Data Flow</a></li> -->
-        </ul>
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="tab" href="#businessRelated">
+                Business</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#technicalRelated">
+                  Technical</a
+                  >
+                </li>
+                @if (showInvestmentsTab()) {
+                  <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#relatedInvestments">
+                      Investments</a
+                      >
+                    </li>
+                  }
+                  <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#relatedRecords">
+                      Records</a
+                      >
+                    </li>
+                    @if (showWebsitesTab()) {
+                      <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#relatedWebsites">
+                          Websites</a
+                          >
+                        </li>
+                      }
+                      <li class="nav-item" [hidden]="system.SystemLevel != 'System'">
+                        <a class="nav-link" data-bs-toggle="tab" href="#systemSubs">
+                          Subsystems</a
+                          >
+                        </li>
+                        <!-- <li class="nav-item" [hidden]="!interfaces.length">
+                        <a class="nav-link" data-bs-toggle="tab" href="#systemDataFlow">
+                        Data Flow</a></li> -->
+                      </ul>
 
-        <!-- Tab Panes -->
-        <div class="tab-content mt-3">
-          <div class="tab-pane fade show active" id="systemOverview">
-            <div class="row mb-2">
-              <div class="col">
-                <h4>Alias/Acronym</h4>
-                <p>{{ system.DisplayName }}</p>
-              </div>
+                      <!-- Tab Panes -->
+                      <div class="tab-content mt-3">
+                        <div class="tab-pane fade show active" id="systemOverview">
+                          <div class="row mb-2">
+                            <div class="col">
+                              <h4>Alias/Acronym</h4>
+                              <p>{{ system.DisplayName }}</p>
+                            </div>
 
-              <div class="col">
-                <h4>Status</h4>
-                <p>{{ system.Status }}</p>
-              </div>
+                            <div class="col">
+                              <h4>Status</h4>
+                              <p>{{ system.Status }}</p>
+                            </div>
 
-              <div class="col">
-                <h4>System Level</h4>
-                <p>{{ system.SystemLevel }}</p>
-              </div>
-            </div>
+                            <div class="col">
+                              <h4>System Level</h4>
+                              <p>{{ system.SystemLevel }}</p>
+                            </div>
+                          </div>
 
-            <div *ngIf="system.TIME_URL">
-              <a class="btn btn-sm btn-success btn-link text-white mb-4" 
-              [href]="system.TIME_URL"
-              target="_blank"
-              rel="noopener">
-                Complete your system's 
-                <b class="text-white font-weight-bold">
-                  TIME lifecycle questionnaire</b>
-                  for FY25
-                </a>
-            </div>
+                          @if (system.TIME_URL) {
+                            <div>
+                              <a class="btn btn-sm btn-success btn-link text-white mb-4"
+                                [href]="system.TIME_URL"
+                                target="_blank"
+                                rel="noopener">
+                                Complete your system's
+                                <b class="text-white font-weight-bold">
+                                TIME lifecycle questionnaire</b>
+                                for FY25
+                              </a>
+                            </div>
+                          }
 
-            <h4>Description</h4>
-            <p>{{ system.Description }}</p>
-            <br /><br />
+                          <h4>Description</h4>
+                          <p>{{ system.Description }}</p>
+                          <br /><br />
 
-            <h4>Related Artifacts</h4>
-            <ul
+                          <h4>Related Artifacts</h4>
+                          <ul
               [innerHTML]="
                 tableService.renderRelArtifacts(system.RelatedArtifacts)
               "
-            ></ul>
-            <p [hidden]="system.RelatedArtifacts">None</p>
-          </div>
-          <!-- End of Overview Tab Pane -->
+                          ></ul>
+                          <p [hidden]="system.RelatedArtifacts">None</p>
+                        </div>
+                        <!-- End of Overview Tab Pane -->
 
-          <div class="container-fluid tab-pane fade show" id="businessRelated">
-            <div class="row">
-              <div class="col-5">
-                <h4 class="text-center">Business Overview</h4>
-                <br />
+                        <div class="container-fluid tab-pane fade show" id="businessRelated">
+                          <div class="row">
+                            <div class="col-5">
+                              <h4 class="text-center">Business Overview</h4>
+                              <br />
 
-                <table
-                  id="systemBusinessTable"
-                  class="table table-borderless table-striped table-dark rounded-lg"
-                >
-                  <thead class="bg-danger">
-                    <tr>
-                      <th>
-                        <h5>Attribute</h5>
-                      </th>
-                      <th>
-                        <h5>Value</h5>
-                      </th>
-                    </tr>
-                  </thead>
+                              <table
+                                id="systemBusinessTable"
+                                class="table table-borderless table-striped table-dark rounded-lg"
+                                >
+                                <thead class="bg-danger">
+                                  <tr>
+                                    <th>
+                                      <h5>Attribute</h5>
+                                    </th>
+                                    <th>
+                                      <h5>Value</h5>
+                                    </th>
+                                  </tr>
+                                </thead>
 
-                  <tbody>
-                    <tr>
-                      <td><i class="far fa-calendar-check"></i>ATO Date</td>
-                      <td>{{ system.ATODate | date : "MMMM d, y":"UTC" }}</td>
-                    </tr>
-                    <tr>
-                      <td><i class="far fa-folder-open"></i>ATO Type</td>
-                      <td>{{ system.ATOType }}</td>
-                    </tr>
-                    <tr>
-                      <td><i class="fa fa-sitemap"></i>Business Org</td>
-                      <td>
-                        {{ system.BusOrg }}
-                        <div [hidden]="system.BusOrg">None Designated</div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><i class="fa fa-bookmark"></i>CUI</td>
-                      <td>{{ system.CUI }}</td>
-                    </tr>
-                    <tr *ngIf="system.InactiveDate">
-                      <td><i class="fa fa-calendar-alt"></i>Inactive Date</td>
-                      <td>{{ system.InactiveDate | date : "MMMM d, y":"UTC" }}</td>
-                    </tr>
-                    <!-- <tr>
-                      <td><i class="fas fa-money-bill-wave"></i>Investment</td>
-                      <td *ngIf="system.Investment; else investElse" class="btn-outline-success pointer"
-                      (click)="tableService.openRelated(system.InvestmentID, 'investment')">{{ system.Investment }}</td>
-                      <ng-template #investElse>
-                        <td>None Designated</td>
-                      </ng-template>
-                    </tr> -->
-                    <tr *ngIf="system.RenewalDate">
-                      <td><i class="fas fa-calendar-day"></i>Renewal Date</td>
-                      <td>{{ system.RenewalDate | date : "MMMM d, y":"UTC" }}</td>
-                    </tr>
-                    <tr>
-                      <td><i class="fa fa-sitemap"></i>Responsible IT Org</td>
-                      <td>
-                        {{ system.RespOrg }}
-                        <div [hidden]="system.RespOrg">None Designated</div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><i class="fa fa-certificate"></i>Cloud Service Type</td>
-                      <td>{{ system.ServiceType }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <!-- End of Overview Table -->
+                                <tbody>
+                                  <tr>
+                                    <td><i class="far fa-calendar-check"></i>ATO Date</td>
+                                    <td>{{ system.ATODate | date : "MMMM d, y":"UTC" }}</td>
+                                  </tr>
+                                  <tr>
+                                    <td><i class="far fa-folder-open"></i>ATO Type</td>
+                                    <td>{{ system.ATOType }}</td>
+                                  </tr>
+                                  <tr>
+                                    <td><i class="fa fa-sitemap"></i>Business Org</td>
+                                    <td>
+                                      {{ system.BusOrg }}
+                                      <div [hidden]="system.BusOrg">None Designated</div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td><i class="fa fa-bookmark"></i>CUI</td>
+                                    <td>{{ system.CUI }}</td>
+                                  </tr>
+                                  @if (system.InactiveDate) {
+                                    <tr>
+                                      <td><i class="fa fa-calendar-alt"></i>Inactive Date</td>
+                                      <td>{{ system.InactiveDate | date : "MMMM d, y":"UTC" }}</td>
+                                    </tr>
+                                  }
+                                  <!-- <tr>
+                                  <td><i class="fas fa-money-bill-wave"></i>Investment</td>
+                                  <td *ngIf="system.Investment; else investElse" class="btn-outline-success pointer"
+                                  (click)="tableService.openRelated(system.InvestmentID, 'investment')">{{ system.Investment }}</td>
+                                  <ng-template #investElse>
+                                    <td>None Designated</td>
+                                  </ng-template>
+                                </tr> -->
+                                @if (system.RenewalDate) {
+                                  <tr>
+                                    <td><i class="fas fa-calendar-day"></i>Renewal Date</td>
+                                    <td>{{ system.RenewalDate | date : "MMMM d, y":"UTC" }}</td>
+                                  </tr>
+                                }
+                                <tr>
+                                  <td><i class="fa fa-sitemap"></i>Responsible IT Org</td>
+                                  <td>
+                                    {{ system.RespOrg }}
+                                    <div [hidden]="system.RespOrg">None Designated</div>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td><i class="fa fa-certificate"></i>Cloud Service Type</td>
+                                  <td>{{ system.ServiceType }}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                          <!-- End of Overview Table -->
 
-              <!-- Points of Contact Table -->
-              <div class="col-7">
-                <h4 class="text-center">Points of Contact</h4>
-                <br />
+                          <!-- Points of Contact Table -->
+                          <div class="col-7">
+                            <h4 class="text-center">Points of Contact</h4>
+                            <br />
 
-                <table
-                  id="fismaPOCTable"
-                  class="table table-striped table-dark rounded-lg"
-                >
-                  <thead class="bg-danger">
-                    <tr>
-                      <th>
-                        <h5>Role</h5>
-                      </th>
-                      <th>
-                        <h5>Name</h5>
-                      </th>
-                      <th>
-                        <h5>Email</h5>
-                      </th>
-                    </tr>
-                  </thead>
+                            <table
+                              id="fismaPOCTable"
+                              class="table table-striped table-dark rounded-lg"
+                              >
+                              <thead class="bg-danger">
+                                <tr>
+                                  <th>
+                                    <h5>Role</h5>
+                                  </th>
+                                  <th>
+                                    <h5>Name</h5>
+                                  </th>
+                                  <th>
+                                    <h5>Email</h5>
+                                  </th>
+                                </tr>
+                              </thead>
 
-                  <tbody>
-                    <tr *ngFor="let pocp of tableService.renderPOCInfoTable(system.POC)">
-                      <td> {{ pocp.type }} </td>
-                      <td> {{ pocp.name }} </td>
-                      <td> 
-                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{pocp.email}}" target="_blank" rel="noopener">{{ pocp.email }}</a> 
-                      </td>
-                      
-                    </tr>
-                </tbody>
-                </table>
-              </div>
-            </div>
-            <!-- End of Points of Contact Table -->
+                              <tbody>
+                                @for (pocp of tableService.renderPOCInfoTable(system.POC); track pocp) {
+                                  <tr>
+                                    <td> {{ pocp.type }} </td>
+                                    <td> {{ pocp.name }} </td>
+                                    <td>
+                                      <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{pocp.email}}" target="_blank" rel="noopener">{{ pocp.email }}</a>
+                                    </td>
+                                  </tr>
+                                }
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        <!-- End of Points of Contact Table -->
 
-            <div class="row justify-content-center">
-              <!-- System TIME Report -->
-              <div class="col-12">
-                <div class="text-center mt-3">
-                  <h4>System TIME Report</h4>
-                  <!-- TIME Definitions Link -->
-                  <a
-                    type="button"
-                    class="btn btn-sm btn-info text-white"
-                    [routerLink]="['/about', 'sysRat']"
-                    target="_blank"
-                    >TIME Value Definitions</a
-                  >
+                        <div class="row justify-content-center">
+                          <!-- System TIME Report -->
+                          <div class="col-12">
+                            <div class="text-center mt-3">
+                              <h4>System TIME Report</h4>
+                              <!-- TIME Definitions Link -->
+                              <a
+                                type="button"
+                                class="btn btn-sm btn-info text-white"
+                                [routerLink]="['/about', 'sysRat']"
+                                target="_blank"
+                                >TIME Value Definitions</a
+                                >
+                              </div>
+
+                              <table id="sysTimeTable"></table>
+                            </div>
+                            <br />
+
+                            <!-- Related Business Capabilities Table -->
+                            <div>
+                              <h4 class="text-center mt-3">Related Business Capabilities</h4>
+                              <table id="systemCapTable"></table>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- End of Business Tab Pane -->
+
+                        <div class="tab-pane fade" id="technicalRelated">
+                          <h4 class="text-center">Technical Overview</h4>
+                          <br />
+
+                          <table
+                            id="techAttrTable"
+                            class="table table-borderless table-striped table-dark rounded-lg w-50 mx-auto"
+                            >
+                            <thead class="bg-danger">
+                              <tr>
+                                <th>
+                                  <h5>Attribute</h5>
+                                </th>
+                                <th>
+                                  <h5>Value</h5>
+                                </th>
+                              </tr>
+                            </thead>
+
+                            <tbody>
+                              <tr>
+                                <td><i class="fa fa-cloud"></i>Cloud Enabled?</td>
+                                <td>{{ system.CloudYN }}</td>
+                              </tr>
+                              <tr [hidden]="!system.CSP">
+                                <td><i class="fa fa-building"></i>Hosting Provider</td>
+                                <td>{{ system.CSP }}</td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <i class="fa fa-bookmark"></i>Complete FISMA Assessment for
+                                  Current FY
+                                </td>
+                                <td>{{ system.ComplFISMA }}</td>
+                              </tr>
+                              <tr>
+                                <td><i class="fas fa-layer-group"></i>FIPS Impact Level</td>
+                                <td>{{ system.FIPS_Impact_Level }}</td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <i class="far fa-handshake"></i>Gov't-Wide Shared Service
+                                </td>
+                                <td>{{ system.SharedService }}</td>
+                              </tr>
+                              <tr>
+                                <td><i class="fa fa-tag"></i>FISMA System Identifier</td>
+                                <td>{{ system.FISMASystemIdentifier }}</td>
+                              </tr>
+                              <tr>
+                                <td><i class="far fa-address-card"></i>PII Indicator</td>
+                                <td>{{ system.PII }}</td>
+                              </tr>
+                              <tr>
+                                <td><i class="fa fa-server"></i>Service Type</td>
+                                <td>{{ system.ServiceType }}</td>
+                              </tr>
+                              <!-- <tr>
+                              <td><i class="fa fa-server"></i>Parent System</td>
+                              <td *ngIf="system.ParentSystem; else systemElse" class="btn-outline-danger pointer"
+                              (click)="openRelated(system.ParentSystemID, 'parent')">{{ system.ParentSystem }}</td>
+                              <ng-template #systemElse>
+                                <td>None Designated</td>
+                              </ng-template>
+                            </tr> -->
+                          </tbody>
+                        </table>
+                        <br />
+
+                        <!-- Related Technologies Table -->
+                        <div>
+                          <h4 class="text-center">Related Technology</h4>
+                          <table id="systemTechTable"></table>
+                        </div>
+                      </div>
+                      <!-- End of Technology Tab Pane -->
+
+                      <div class="tab-pane fade" id="relatedInvestments">
+                        <table id="systemInvestTable"></table>
+                      </div>
+
+                      <!-- Related Records Pane -->
+
+                      <div class="tab-pane fade" id="relatedRecords">
+                        <table id="systemRecTable"></table>
+                      </div>
+                      <!-- End of Related Records Pane -->
+
+                      <!-- Related Websites Pane -->
+
+                      <div class="tab-pane fade" id="relatedWebsites">
+                        <table id="systemWebsitesTable"></table>
+                      </div>
+                      <!-- End of Related Websites Pane -->
+
+                      <div class="tab-pane fade" id="systemSubs">
+                        <table id="subSysTable"></table>
+                      </div>
+                      <!-- End of Sub Systems Pane -->
+
+                      <div class="tab-pane fade" id="systemDataFlow">
+                        <!-- Data Flow Sankey Diagram -->
+                        <!-- <div id="dataFlowChart" class="text-center"></div> -->
+                      </div>
+                      <!-- End of Data Flow Tab Pane -->
+                    </div>
+                    <!-- End of Tab Panes -->
+                  </div>
+                  <!-- End of Modal Body -->
+
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      [hidden]="!sharedService.loggedIn"
+                      class="btn btn-info text-white"
+                      (click)="systemEdit()"
+                      >
+                      Edit This Item
+                    </button>
+                  </div>
                 </div>
-
-                <table id="sysTimeTable"></table>
-              </div>
-              <br />
-
-              <!-- Related Business Capabilities Table -->
-              <div>
-                <h4 class="text-center mt-3">Related Business Capabilities</h4>
-                <table id="systemCapTable"></table>
               </div>
             </div>
-          </div>
-          <!-- End of Business Tab Pane -->
-
-          <div class="tab-pane fade" id="technicalRelated">
-            <h4 class="text-center">Technical Overview</h4>
-            <br />
-
-            <table
-              id="techAttrTable"
-              class="table table-borderless table-striped table-dark rounded-lg w-50 mx-auto"
-            >
-              <thead class="bg-danger">
-                <tr>
-                  <th>
-                    <h5>Attribute</h5>
-                  </th>
-                  <th>
-                    <h5>Value</h5>
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody>
-                <tr>
-                  <td><i class="fa fa-cloud"></i>Cloud Enabled?</td>
-                  <td>{{ system.CloudYN }}</td>
-                </tr>
-                <tr [hidden]="!system.CSP">
-                  <td><i class="fa fa-building"></i>Hosting Provider</td>
-                  <td>{{ system.CSP }}</td>
-                </tr>
-                <tr>
-                  <td>
-                    <i class="fa fa-bookmark"></i>Complete FISMA Assessment for
-                    Current FY
-                  </td>
-                  <td>{{ system.ComplFISMA }}</td>
-                </tr>
-                <tr>
-                  <td><i class="fas fa-layer-group"></i>FIPS Impact Level</td>
-                  <td>{{ system.FIPS_Impact_Level }}</td>
-                </tr>
-                <tr>
-                  <td>
-                    <i class="far fa-handshake"></i>Gov't-Wide Shared Service
-                  </td>
-                  <td>{{ system.SharedService }}</td>
-                </tr>
-                <tr>
-                  <td><i class="fa fa-tag"></i>FISMA System Identifier</td>
-                  <td>{{ system.FISMASystemIdentifier }}</td>
-                </tr>
-                <tr>
-                  <td><i class="far fa-address-card"></i>PII Indicator</td>
-                  <td>{{ system.PII }}</td>
-                </tr>
-                <tr>
-                  <td><i class="fa fa-server"></i>Service Type</td>
-                  <td>{{ system.ServiceType }}</td>
-                </tr>
-                <!-- <tr>
-                  <td><i class="fa fa-server"></i>Parent System</td>
-                  <td *ngIf="system.ParentSystem; else systemElse" class="btn-outline-danger pointer"
-                    (click)="openRelated(system.ParentSystemID, 'parent')">{{ system.ParentSystem }}</td>
-                  <ng-template #systemElse>
-                    <td>None Designated</td>
-                  </ng-template>
-                </tr> -->
-              </tbody>
-            </table>
-            <br />
-
-            <!-- Related Technologies Table -->
-            <div>
-              <h4 class="text-center">Related Technology</h4>
-              <table id="systemTechTable"></table>
-            </div>
-          </div>
-          <!-- End of Technology Tab Pane -->
-
-          <div class="tab-pane fade" id="relatedInvestments">
-            <table id="systemInvestTable"></table>
-          </div>
-
-          <!-- Related Records Pane -->
-
-          <div class="tab-pane fade" id="relatedRecords">
-            <table id="systemRecTable"></table>
-          </div>
-          <!-- End of Related Records Pane -->
-
-          <!-- Related Websites Pane -->
-
-          <div class="tab-pane fade" id="relatedWebsites">
-            <table id="systemWebsitesTable"></table>
-          </div>
-          <!-- End of Related Websites Pane -->
-
-          <div class="tab-pane fade" id="systemSubs">
-            <table id="subSysTable"></table>
-          </div>
-          <!-- End of Sub Systems Pane -->
-
-          <div class="tab-pane fade" id="systemDataFlow">
-            <!-- Data Flow Sankey Diagram -->
-            <!-- <div id="dataFlowChart" class="text-center"></div> -->
-          </div>
-          <!-- End of Data Flow Tab Pane -->
-        </div>
-        <!-- End of Tab Panes -->
-      </div>
-      <!-- End of Modal Body -->
-
-      <div class="modal-footer">
-        <button
-          type="button"
-          [hidden]="!sharedService.loggedIn"
-          class="btn btn-info text-white"
-          (click)="systemEdit()"
-        >
-          Edit This Item
-        </button>
-      </div>
-    </div>
-  </div>
-</div>

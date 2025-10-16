@@ -2,19 +2,23 @@
   <div class="records-management-title-container">
     <h2>Record Retention Schedules</h2>
     <div class="records-management-title-right-button-container">
-      <app-button buttonText="GEAR Manager Login" (buttonClick)="sharedService.setRedirectPath()" *ngIf="!isLoggedIn()"></app-button>
-      <app-button buttonText="Logout" buttonStyle="error" (buttonClick)="sharedService.logoutManager()" *ngIf="isLoggedIn()"></app-button>
+      @if (!isLoggedIn()) {
+        <app-button buttonText="GEAR Manager Login" (buttonClick)="sharedService.setRedirectPath()"></app-button>
+      }
+      @if (isLoggedIn()) {
+        <app-button buttonText="Logout" buttonStyle="error" (buttonClick)="sharedService.logoutManager()"></app-button>
+      }
       <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
         <b>Details:</b> Left click on a row within the table to view additional details.
         <br><br>
         <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
         <br><br>
-        <b>Export:</b> Export data by clicking on the <i class='fas fa-download'></i> icon and selecting the format that meets 
+        <b>Export:</b> Export data by clicking on the <i class='fas fa-download'></i> icon and selecting the format that meets
         your needs.
         <br><br>
-        <b>Search:</b> Perform a filtered search across all fields in the displayed data. Hit the 'Enter' button on your 
-        keyboard to execute. Click the <i class='far fa-trash-alt'></i> icon to clear the search box. 
-        Search within specific columns by clicking on the <i class='fas fa-angle-down'></i> icon. 
+        <b>Search:</b> Perform a filtered search across all fields in the displayed data. Hit the 'Enter' button on your
+        keyboard to execute. Click the <i class='far fa-trash-alt'></i> icon to clear the search box.
+        Search within specific columns by clicking on the <i class='fas fa-angle-down'></i> icon.
         <br><br>
         <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
         <i class='fas fa-caret-square-down'></i> icon to display everything on one page.
@@ -28,44 +32,44 @@
 
 
 <!-- <div class="card">
-  <div class="card-header text-white bg-danger text-center d-flex align-items-center justify-content-between"> -->
-    <!-- GEAR Manager Access -->
-    <!-- <a class="btn btn-sm btn-info text-white shadow d-flex align-items-center btn-border-white"
-      routerLink="/gear_manager" *ngIf="!sharedService.loggedIn" aria-label="GEAR Manager Login" (click)="sharedService.setRedirectPath()">
-      <span class="mr-2">GEAR Manager Login</span><i class="fa fa-sign-in-alt fa-2x"></i>
-    </a>
-    <a class="btn btn-sm btn-danger text-white shadow d-flex align-items-center btn-border-white"
-      routerLink="/records_mgmt" *ngIf="sharedService.loggedIn" aria-label="GEAR Manager Logout" (click)="sharedService.logoutManager()">
-      <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
-    </a>
+<div class="card-header text-white bg-danger text-center d-flex align-items-center justify-content-between"> -->
+  <!-- GEAR Manager Access -->
+  <!-- <a class="btn btn-sm btn-info text-white shadow d-flex align-items-center btn-border-white"
+  routerLink="/gear_manager" *ngIf="!sharedService.loggedIn" aria-label="GEAR Manager Login" (click)="sharedService.setRedirectPath()">
+  <span class="mr-2">GEAR Manager Login</span><i class="fa fa-sign-in-alt fa-2x"></i>
+</a>
+<a class="btn btn-sm btn-danger text-white shadow d-flex align-items-center btn-border-white"
+  routerLink="/records_mgmt" *ngIf="sharedService.loggedIn" aria-label="GEAR Manager Logout" (click)="sharedService.logoutManager()">
+  <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
+</a>
 
-    <h3 class="card-title mb-0">
-      <span>
-        <i class="far fa-folder-open mr-2"></i>
-        Record Retention Schedules
-      </span>
-    </h3>
-     -->
-    <!-- Help Button -->
-    <!-- <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
-      <b>Details:</b> Left click on a row within the table to view additional details.
-      <br><br>
-      <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
-      <br><br>
-      <b>Export:</b> Export data by clicking on the <i class='fas fa-download'></i> icon and selecting the format that meets 
-      your needs.
-      <br><br>
-      <b>Search:</b> Perform a filtered search across all fields in the displayed data. Hit the 'Enter' button on your 
-      keyboard to execute. Click the <i class='far fa-trash-alt'></i> icon to clear the search box. 
-      Search within specific columns by clicking on the <i class='fas fa-angle-down'></i> icon. 
-      <br><br>
-      <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
-      <i class='fas fa-caret-square-down'></i> icon to display everything on one page.
-    </app-button-overlay-panel>
-  </div>
+<h3 class="card-title mb-0">
+  <span>
+    <i class="far fa-folder-open mr-2"></i>
+    Record Retention Schedules
+  </span>
+</h3>
+-->
+<!-- Help Button -->
+<!-- <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
+<b>Details:</b> Left click on a row within the table to view additional details.
+<br><br>
+<b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
+<br><br>
+<b>Export:</b> Export data by clicking on the <i class='fas fa-download'></i> icon and selecting the format that meets
+your needs.
+<br><br>
+<b>Search:</b> Perform a filtered search across all fields in the displayed data. Hit the 'Enter' button on your
+keyboard to execute. Click the <i class='far fa-trash-alt'></i> icon to clear the search box.
+Search within specific columns by clicking on the <i class='fas fa-angle-down'></i> icon.
+<br><br>
+<b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
+<i class='fas fa-caret-square-down'></i> icon to display everything on one page.
+</app-button-overlay-panel>
+</div>
 
-  <div class="card-body card-text"> -->
-    <!-- Main Table -->
-    <!-- <app-table [tableCols]="tableCols" exportName="Records Managment" reportStyle="business-systems" tableType="records"></app-table>
-  </div>
+<div class="card-body card-text"> -->
+  <!-- Main Table -->
+  <!-- <app-table [tableCols]="tableCols" exportName="Records Managment" reportStyle="business-systems" tableType="records"></app-table>
+</div>
 </div> -->
