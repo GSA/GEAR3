@@ -19,7 +19,7 @@
             <div class="alert alert-info">
               <i class="fas fa-info-circle"></i>
               Set filters for each column to narrow down your table data. Leave fields empty to show all values.
-              
+
             </div>
           </div>
         </div>
@@ -45,69 +45,79 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let column of columns" [hidden]="column.showColumn === false">
-                    <td>
-                      <label class="form-label">
-                        {{ getColumnLabel(column.field) }}
-                      </label>
-                    </td>
-                    <td>
-                      <select class="form-select form-select-sm" [ngModel]="columnFilters[column.field]?.matchMode"
-                        (ngModelChange)="columnFilters[column.field].matchMode = $event">
-                        <option *ngFor="let option of matchModeOptions" [value]="option.value">
-                          {{ option.label }}
-                        </option>
-                      </select>
-                    </td>
-                    <td>
-                      <input type="text" class="form-control form-control-sm"
-                        [ngModel]="columnFilters[column.field]?.value"
-                        (ngModelChange)="columnFilters[column.field].value = $event"
-                        [placeholder]="'Filter ' + getColumnLabel(column.field)"
-                        [attr.aria-label]="'Filter ' + getColumnLabel(column.field)" />
-                    </td>
-                    <td class="text-center">
-                      <button type="button" class="btn btn-sm btn-danger text-white shadow btn-border-white"
-                        (click)="clearColumnFilter(column.field)" [disabled]="!columnFilters[column.field]?.value"
-                        title="Clear this filter">
-                        <i class="fas fa-times"></i>
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+                  @for (column of columns; track column) {
+                    <tr [hidden]="column.showColumn === false">
+                      <td>
+                        <label class="form-label">
+                          {{ getColumnLabel(column.field) }}
+                        </label>
+                      </td>
+                      <td>
+                        <select class="form-select form-select-sm" [ngModel]="columnFilters[column.field]?.matchMode"
+                          (ngModelChange)="columnFilters[column.field].matchMode = $event">
+                          @for (option of matchModeOptions; track option) {
+                            <option [value]="option.value">
+                              {{ option.label }}
+                            </option>
+                          }
+                        </select>
+                      </td>
+                      <td>
+                        <input type="text" class="form-control form-control-sm"
+                          [ngModel]="columnFilters[column.field]?.value"
+                          (ngModelChange)="columnFilters[column.field].value = $event"
+                          [placeholder]="'Filter ' + getColumnLabel(column.field)"
+                          [attr.aria-label]="'Filter ' + getColumnLabel(column.field)" />
+                        </td>
+                        <td class="text-center">
+                          <button type="button" class="btn btn-sm btn-danger text-white shadow btn-border-white"
+                            (click)="clearColumnFilter(column.field)" [disabled]="!columnFilters[column.field]?.value"
+                            title="Clear this filter">
+                            <i class="fas fa-times"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="row mt-3" *ngIf="hasActiveFilters()">
-          <div class="col-12">
-            <div class="alert alert-warning">
-              <i class="fas fa-exclamation-triangle"></i>&nbsp;
-              <strong>Active Filters:</strong>
-              <span *ngFor="let filter of getActiveFilters(); let i = index">
-                <span *ngIf="i > 0">, </span>
-                <strong>{{ getColumnLabel(filter.field) }}</strong>
-                {{ getMatchModeLabel(filter.matchMode) }}
-                "{{ filter.value }}"
-              </span>
+          @if (hasActiveFilters()) {
+            <div class="row mt-3">
+              <div class="col-12">
+                <div class="alert alert-warning">
+                  <i class="fas fa-exclamation-triangle"></i>&nbsp;
+                  <strong>Active Filters:</strong>
+                  @for (filter of getActiveFilters(); track filter; let i = $index) {
+                    <span>
+                      @if (i > 0) {
+                        <span>, </span>
+                      }
+                      <strong>{{ getColumnLabel(filter.field) }}</strong>
+                      {{ getMatchModeLabel(filter.matchMode) }}
+                      "{{ filter.value }}"
+                    </span>
+                  }
+                </div>
+              </div>
             </div>
-          </div>
+          }
         </div>
-      </div>
 
-      <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary btn-sm me-2" (click)="onCancelChanges()">
-          <i class="fas fa-times"></i> Cancel
-        </button>
-        <p-button label="Save Changes" icon="fas fa-save" severity="primary" size="small"
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary btn-sm me-2" (click)="onCancelChanges()">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+          <p-button label="Save Changes" icon="fas fa-save" severity="primary" size="small"
           (onClick)="onSaveChanges()"></p-button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- Modal backdrop -->
-<div class="modal-backdrop fade" [class.show]="isVisible" [style.display]="isVisible ? 'block' : 'none'"
-  (click)="onCloseModal()">
-</div>
+  <!-- Modal backdrop -->
+  <div class="modal-backdrop fade" [class.show]="isVisible" [style.display]="isVisible ? 'block' : 'none'"
+    (click)="onCloseModal()">
+  </div>

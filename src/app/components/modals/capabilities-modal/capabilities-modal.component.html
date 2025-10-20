@@ -6,7 +6,7 @@
   role="dialog"
   aria-labelledby="capabilityTitle"
   aria-hidden="true"
->
+  >
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
     <div class="modal-content">
       <div class="modal-header bg-royal-blue">
@@ -17,7 +17,7 @@
           tabindex="0"
           (click)="tableService.previousModalRoute('capabilityDetail')"
           [hidden]="!modalService.checkModalRoutes()"
-        >
+          >
           <i class="fas fa-arrow-circle-left fa-lg fa-fw"></i>
         </a>
         <h5 class="modal-title text-white" id="capabilityTitle">
@@ -35,54 +35,58 @@
           <li class="nav-item">
             <a class="nav-link active" data-bs-toggle="tab" href="#capOverview">
               Overview</a
-            >
-          </li>
-          <li class="nav-item" *ngIf="showRelatedOrgsTab()">
-            <a class="nav-link" data-bs-toggle="tab" href="#capRelOrgs">
-              Related Organizations</a
-            >
-          </li>
-          <li class="nav-item" *ngIf="showSupportingSystemsTab()">
-            <a class="nav-link" data-bs-toggle="tab" href="#capSupportSystems">
-              Supporting Systems</a
-            >
-          </li>
-        </ul>
+              >
+            </li>
+            @if (showRelatedOrgsTab()) {
+              <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#capRelOrgs">
+                  Related Organizations</a
+                  >
+                </li>
+              }
+              @if (showSupportingSystemsTab()) {
+                <li class="nav-item">
+                  <a class="nav-link" data-bs-toggle="tab" href="#capSupportSystems">
+                    Supporting Systems</a
+                    >
+                  </li>
+                }
+              </ul>
 
-        <!-- Tab Panes -->
-        <div class="tab-content mt-3">
-          <div class="tab-pane fade show active" id="capOverview">
-            <h4>Description</h4>
-            <p>{{ capability.Description }}</p>
-            <br /><br />
+              <!-- Tab Panes -->
+              <div class="tab-content mt-3">
+                <div class="tab-pane fade show active" id="capOverview">
+                  <h4>Description</h4>
+                  <p>{{ capability.Description }}</p>
+                  <br /><br />
 
-            <h4>Level</h4>
-            <p>{{ capability.Level }}</p>
+                  <h4>Level</h4>
+                  <p>{{ capability.Level }}</p>
+                </div>
+                <!-- End of Overview Pane -->
+
+                <div class="tab-pane fade" id="capRelOrgs">
+                  <table id="capRelOrgsTable"></table>
+                </div>
+                <!-- End of Related Orgs Pane -->
+
+                <div class="tab-pane fade" id="capSupportSystems">
+                  <table id="capSupportSysTable"></table>
+                </div>
+                <!-- End of Support Systems Pane -->
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button
+                type="button"
+                [hidden]="!sharedService.loggedIn"
+                class="btn btn-info text-white"
+                (click)="capabilityEdit()"
+                >
+                Edit This Item
+              </button>
+            </div>
           </div>
-          <!-- End of Overview Pane -->
-
-          <div class="tab-pane fade" id="capRelOrgs">
-            <table id="capRelOrgsTable"></table>
-          </div>
-          <!-- End of Related Orgs Pane -->
-
-          <div class="tab-pane fade" id="capSupportSystems">
-            <table id="capSupportSysTable"></table>
-          </div>
-          <!-- End of Support Systems Pane -->
         </div>
       </div>
-
-      <div class="modal-footer">
-        <button
-          type="button"
-          [hidden]="!sharedService.loggedIn"
-          class="btn btn-info text-white"
-          (click)="capabilityEdit()"
-        >
-          Edit This Item
-        </button>
-      </div>
-    </div>
-  </div>
-</div>

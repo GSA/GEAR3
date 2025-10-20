@@ -3,15 +3,15 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { PdfViewerModule } from 'ng2-pdf-viewer'; // PDF Viewer
 import { NgxChartsModule } from '@swimlane/ngx-charts'; // Visualizations
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { SidebarModule } from 'primeng/sidebar';
+import { DrawerModule } from 'primeng/drawer';
 
 // Components
 import { TopNavbarComponent } from './components/top-navbar/top-navbar.component';
@@ -96,7 +96,6 @@ import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { FilterButtonsComponent } from './components/filter-buttons/filter-buttons.component';
 import { TooltipModule } from 'primeng/tooltip';
-import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { ButtonOverlayPanelComponent } from './components/button-overlay-panel/button-overlay-panel.component';
 import { SidebarV2Component } from './components/sidebar-v2/sidebar-v2.component';
 import { TopbarComponent } from './components/topbar/topbar.component';
@@ -118,7 +117,8 @@ import { providePrimeNG } from 'primeng/config';
 import { DatePickerModule } from 'primeng/datepicker';
 import { PopoverModule } from 'primeng/popover';
 
-import Lara from '@primeng/themes/lara';
+import Lara from '@primeuix/themes/lara';
+import { CommonModule } from '@angular/common';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -191,9 +191,14 @@ import Lara from '@primeng/themes/lara';
         FilterChipsComponent,
         BreadcrumbComponent
     ],
-    bootstrap: [AppComponent], imports: [AppRoutingModule,
-        BrowserAnimationsModule,
+    bootstrap: [
+      AppComponent
+    ],
+    imports: [
+        AppRoutingModule,
         BrowserModule,
+        BrowserAnimationsModule,
+        CommonModule,
         FormsModule,
         NgSelectModule,
         NgxChartsModule,
@@ -205,10 +210,9 @@ import Lara from '@primeng/themes/lara';
         IconFieldModule,
         InputIconModule,
         InputTextModule,
-        SidebarModule,
+        DrawerModule,
         AccordionModule,
         TooltipModule,
-        OverlayPanelModule,
         DatePickerModule,
         PopoverModule
     ],

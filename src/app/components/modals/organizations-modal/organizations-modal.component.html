@@ -6,7 +6,7 @@
   role="dialog"
   aria-labelledby="orgTitle"
   aria-hidden="true"
->
+  >
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
     <div class="modal-content">
       <div class="modal-header bg-royal-blue">
@@ -17,7 +17,7 @@
           aria-label="Previous"
           (click)="tableService.previousModalRoute('organizationDetail')"
           [hidden]="!modalService.checkModalRoutes()"
-        >
+          >
           <i class="fas fa-arrow-circle-left fa-lg fa-fw"></i>
         </a>
         <h5 class="modal-title text-white" id="orgTitle">
@@ -35,61 +35,65 @@
           <li class="nav-item">
             <a class="nav-link active" data-bs-toggle="tab" href="#orgOverview">
               Overview</a
-            >
-          </li>
-          <li class="nav-item" *ngIf="showRelatedCapsTab()">
-            <a class="nav-link" data-bs-toggle="tab" href="#orgCaps">
-              Related Capabilities</a
-            >
-          </li>
-          <li class="nav-item" *ngIf="showOrgSystemsTab()">
-            <a class="nav-link" data-bs-toggle="tab" href="#orgSys">
-              Organizational Systems</a
-            >
-          </li>
-        </ul>
+              >
+            </li>
+            @if (showRelatedCapsTab()) {
+              <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#orgCaps">
+                  Related Capabilities</a
+                  >
+                </li>
+              }
+              @if (showOrgSystemsTab()) {
+                <li class="nav-item">
+                  <a class="nav-link" data-bs-toggle="tab" href="#orgSys">
+                    Organizational Systems</a
+                    >
+                  </li>
+                }
+              </ul>
 
-        <!-- Tab Panes -->
-        <div class="tab-content mt-3">
-          <div class="tab-pane fade show active" id="orgOverview">
-            <div class="row">
-              <div class="col-3">
-                <h4>Display Name</h4>
-                <p>{{ org.DisplayName }}</p>
-              </div>
+              <!-- Tab Panes -->
+              <div class="tab-content mt-3">
+                <div class="tab-pane fade show active" id="orgOverview">
+                  <div class="row">
+                    <div class="col-3">
+                      <h4>Display Name</h4>
+                      <p>{{ org.DisplayName }}</p>
+                    </div>
 
-              <div class="col-3" [hidden]="!org.SSOName">
-                <h4>SSO Name</h4>
-                <p>{{ org.SSOName }}</p>
-              </div>
+                    <div class="col-3" [hidden]="!org.SSOName">
+                      <h4>SSO Name</h4>
+                      <p>{{ org.SSOName }}</p>
+                    </div>
 
-              <div class="col-3" [hidden]="!org.TwoLetterOrgName">
-                <h4>Two Letter Org</h4>
-                <p>{{ org.TwoLetterOrgName }} ({{ org.TwoLetterOrgSymbol }})</p>
-              </div>
+                    <div class="col-3" [hidden]="!org.TwoLetterOrgName">
+                      <h4>Two Letter Org</h4>
+                      <p>{{ org.TwoLetterOrgName }} ({{ org.TwoLetterOrgSymbol }})</p>
+                    </div>
 
-              <div class="col-3">
-                <h4>Parent Organization</h4>
-                {{ org.Parent }}
-                <p [hidden]="org.Parent">None</p>
+                    <div class="col-3">
+                      <h4>Parent Organization</h4>
+                      {{ org.Parent }}
+                      <p [hidden]="org.Parent">None</p>
+                    </div>
+                  </div>
+                </div>
+                <!-- End of Overview Pane -->
+
+                <div class="tab-pane fade" id="orgCaps">
+                  <table id="orgCapsTable"></table>
+                </div>
+                <!-- End of Related Capabilities Pane -->
+
+                <div class="tab-pane fade" id="orgSys">
+                  <table id="orgSysTable"></table>
+                </div>
+                <!-- End of Supporting Systems Pane -->
               </div>
             </div>
-          </div>
-          <!-- End of Overview Pane -->
 
-          <div class="tab-pane fade" id="orgCaps">
-            <table id="orgCapsTable"></table>
+            <div class="modal-footer"></div>
           </div>
-          <!-- End of Related Capabilities Pane -->
-
-          <div class="tab-pane fade" id="orgSys">
-            <table id="orgSysTable"></table>
-          </div>
-          <!-- End of Supporting Systems Pane -->
         </div>
       </div>
-
-      <div class="modal-footer"></div>
-    </div>
-  </div>
-</div>

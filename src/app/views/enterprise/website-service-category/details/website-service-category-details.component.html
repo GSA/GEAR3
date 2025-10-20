@@ -1,20 +1,22 @@
-<div class="website-service-category-details-container" *ngIf="isDataReady">
+@if (isDataReady) {
+  <div class="website-service-category-details-container">
     <div class="breadcrumb-container">
-         <app-breadcrumb>
-            <span currentPageName>{{detailsData.name}}</span>
-         </app-breadcrumb>
+      <app-breadcrumb>
+        <span currentPageName>{{detailsData.name}}</span>
+      </app-breadcrumb>
     </div>
     <div class="title-container">
-        <span class="title">{{detailsData.name}}</span>
+      <span class="title">{{detailsData.name}}</span>
     </div>
     <div class="content-container">
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a class="nav-link active" href="#overview">Overview</a>
-            </li>
-        </ul>
-        <div class="overview-container">
-            <website-service-category-details-content [data]="detailsData"></website-service-category-details-content>
-        </div>
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" href="#overview">Overview</a>
+        </li>
+      </ul>
+      <div class="overview-container">
+        <website-service-category-details-content [data]="detailsData"></website-service-category-details-content>
+      </div>
     </div>
-</div>
+  </div>
+}

@@ -154,7 +154,7 @@ export class SystemsDetailsComponent implements OnInit {
     return this.tableService.renderRelArtifacts(this.detailsData.RelatedArtifacts);
   }
 
-  public getPOCList(): string[] {
+  public getPOCList(): any[] {
     return this.tableService.renderPOCInfoTable(this.detailsData.POC);
   }
 

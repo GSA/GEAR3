@@ -1,65 +1,67 @@
-<div class="organization-details-container" *ngIf="isDataReady">
+@if (isDataReady) {
+  <div class="organization-details-container">
     <div class="breadcrumb-container">
-         <app-breadcrumb>
-            <span currentPageName>{{detailsData.DisplayName}}</span>
-         </app-breadcrumb>
+      <app-breadcrumb>
+        <span currentPageName>{{detailsData.DisplayName}}</span>
+      </app-breadcrumb>
     </div>
     <div class="title-container">
-        <span class="title">{{detailsData.DisplayName}}</span>
+      <span class="title">{{detailsData.DisplayName}}</span>
     </div>
     <div class="content-container">
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a class="nav-link active" href="#overview">Overview</a>
-            </li>
-        </ul>
-        <div class="overview-container">
-            <div class="overall-data-container">
-                <div class="main-data-container">
-                    <div class="data-wrapper">
-                        <div class="data">
-                            <label class="data-label">
-                                <span>
-                                    Display Name
-                                </span>
-                            </label>
-                            <span>
-                                <span>{{detailsData.DisplayName}}</span>
-                            </span>
-                        </div>
-                        <div class="data">
-                            <label class="data-label">
-                                <span>
-                                    SSO Name
-                                </span>
-                            </label>
-                            <span>
-                                <span>{{detailsData.SSOName}}</span>
-                            </span>
-                        </div>
-                        <div class="data">
-                            <label class="data-label">
-                                <span>
-                                    Two Letter Org
-                                </span>
-                            </label>
-                            <span>
-                                <span>{{detailsData.TwoLetterOrgName}}</span>
-                            </span>
-                        </div>
-                        <div class="data">
-                            <label class="data-label">
-                                <span>
-                                    Parent Organization
-                                </span>
-                            </label>
-                            <span>
-                                <span>{{detailsData.Parent}}</span>
-                            </span>
-                        </div>
-                    </div>
-                </div>
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" href="#overview">Overview</a>
+        </li>
+      </ul>
+      <div class="overview-container">
+        <div class="overall-data-container">
+          <div class="main-data-container">
+            <div class="data-wrapper">
+              <div class="data">
+                <label class="data-label">
+                  <span>
+                    Display Name
+                  </span>
+                </label>
+                <span>
+                  <span>{{detailsData.DisplayName}}</span>
+                </span>
+              </div>
+              <div class="data">
+                <label class="data-label">
+                  <span>
+                    SSO Name
+                  </span>
+                </label>
+                <span>
+                  <span>{{detailsData.SSOName}}</span>
+                </span>
+              </div>
+              <div class="data">
+                <label class="data-label">
+                  <span>
+                    Two Letter Org
+                  </span>
+                </label>
+                <span>
+                  <span>{{detailsData.TwoLetterOrgName}}</span>
+                </span>
+              </div>
+              <div class="data">
+                <label class="data-label">
+                  <span>
+                    Parent Organization
+                  </span>
+                </label>
+                <span>
+                  <span>{{detailsData.Parent}}</span>
+                </span>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-</div>
+  </div>
+}

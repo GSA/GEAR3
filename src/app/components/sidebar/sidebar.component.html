@@ -1,14 +1,20 @@
-<p-sidebar [(visible)]="isSidebarVisible" transitionOptions="150ms cubic-bezier(0, 0, 0, 1)" (mouseleave)="closeSidebar()">
+<p-drawer [(visible)]="isSidebarVisible" transitionOptions="150ms cubic-bezier(0, 0, 0, 1)" (mouseleave)="closeSidebar()">
   <ng-template pTemplate="headless">
     <div class="sidebar-content-wrapper">
     <p-accordion>
       <div class="sidebar-link it-strategy">
-        <p-accordionTab>
-          <ng-template pTemplate="icon"></ng-template>
+        <p-accordion-panel>
+          <p-accordion-header>
+            <ng-template #toggleIcon>
+              <span>IT Strategy</span>
+              <i class="fas fa-puzzle-piece fa-lg fa-fw"></i>
+            </ng-template>
+          </p-accordion-header>
+          <!-- <ng-template pTemplate="icon"></ng-template>
           <ng-template pTemplate="header">
               <span>IT Strategy</span>
               <i class="fas fa-puzzle-piece fa-lg fa-fw"></i>
-          </ng-template>
+          </ng-template> -->
           <ng-template pTemplate="content">
             <a class="sidebar-sublink" routerLink="/strategic_framework" (click)="onClickNavigate($event, '/strategic_framework')" (keydown)="onKeyboardNavigate($event, '/strategic_framework')">IT Strategic Framework</a>
             <a class="sidebar-sublink" routerLink="/investments" (click)="onClickNavigate($event, '/investments')" (keydown)="onKeyboardNavigate($event, '/investments')">IT Investments</a>
@@ -20,15 +26,21 @@
               target="_blank"
               rel="noopener">IT Policies <i class="fas fa-external-link-alt"></i></a>
           </ng-template>
-        </p-accordionTab>
+        </p-accordion-panel>
     </div>
     <div class="sidebar-link gsa-enterprise">
-      <p-accordionTab>
-        <ng-template pTemplate="icon"></ng-template>
+      <p-accordion-panel>
+        <p-accordion-header>
+          <ng-template #toggleIcon>
+            <span>GSA Enterprise</span>
+            <i class="fas fa-sitemap fa-lg fa-fw"></i>
+          </ng-template>
+        </p-accordion-header>
+        <!-- <ng-template pTemplate="icon"></ng-template>
         <ng-template pTemplate="header">
           <span>GSA Enterprise</span>
           <i class="fas fa-sitemap fa-lg fa-fw"></i>
-        </ng-template>
+        </ng-template> -->
         <ng-template pTemplate="content">
           <a class="sidebar-sublink" routerLink="/capabilities_model" (click)="onClickNavigate($event, '/capabilities_model')" (keydown)="onKeyboardNavigate($event, '/capabilities_model')">Business Capability Model</a>
           <a class="sidebar-sublink" routerLink="/capabilities" (click)="onClickNavigate($event, '/capabilities')" (keydown)="onKeyboardNavigate($event, '/capabilities')">Business Capability List</a>
@@ -36,43 +48,61 @@
           <a class="sidebar-sublink" routerLink="/organizations" (click)="onClickNavigate($event, '/organizations')" (keydown)="onKeyboardNavigate($event, '/organizations')">Organization List</a>
           <a class="sidebar-sublink" routerLink="/website_service_category" (click)="onClickNavigate($event, '/website_service_category')" (keydown)="onKeyboardNavigate($event, '/website_service_category')">Website Service Category List</a>
         </ng-template>
-      </p-accordionTab>
+      </p-accordion-panel>
     </div>
     <div class="sidebar-link business-systems">
-      <p-accordionTab>
-        <ng-template pTemplate="icon"></ng-template>
+      <p-accordion-panel>
+        <p-accordion-header>
+          <ng-template #toggleIcon>
+            <span>Business Systems</span>
+            <i class="fas fa-laptop fa-lg fa-fw"></i>
+          </ng-template>
+        </p-accordion-header>
+        <!-- <ng-template pTemplate="icon"></ng-template>
         <ng-template pTemplate="header">
           <span>Business Systems</span>
           <i class="fas fa-laptop fa-lg fa-fw"></i>
-        </ng-template>
+        </ng-template> -->
         <ng-template pTemplate="content">
           <a class="sidebar-sublink" routerLink="/systems" (click)="onClickNavigate($event, '/systems')" (keydown)="onKeyboardNavigate($event, '/systems')">Business Systems & Subsystems</a>
           <a class="sidebar-sublink" routerLink="/systems_TIME" (click)="onClickNavigate($event, '/systems_TIME')" (keydown)="onKeyboardNavigate($event, '/systems_TIME')">TIME Report</a>
           <a class="sidebar-sublink" routerLink="/records_mgmt" (click)="onClickNavigate($event, '/records_mgmt')" (keydown)="onKeyboardNavigate($event, '/records_mgmt')">Records Management</a>
           <a class="sidebar-sublink" routerLink="/websites" (click)="onClickNavigate($event, '/websites')" (keydown)="onKeyboardNavigate($event, '/websites')">GSA Websites</a>
         </ng-template>
-      </p-accordionTab>
+      </p-accordion-panel>
     </div>
     <div class="sidebar-link security">
-      <p-accordionTab>
-        <ng-template pTemplate="icon"></ng-template>
+      <p-accordion-panel>
+        <p-accordion-header>
+          <ng-template #toggleIcon>
+            <span>Security</span>
+            <i class="fas fa-shield-alt fa-lg fa-fw"></i>
+          </ng-template>
+        </p-accordion-header>
+        <!-- <ng-template pTemplate="icon"></ng-template>
         <ng-template pTemplate="header">
           <span>Security</span>
           <i class="fas fa-shield-alt fa-lg fa-fw"></i>
-        </ng-template>
+        </ng-template> -->
         <ng-template pTemplate="content">
           <a class="sidebar-sublink" routerLink="/FISMA" (click)="onClickNavigate($event, '/FISMA')" (keydown)="onKeyboardNavigate($event, '/FISMA')">FISMA Systems Inventory</a>
           <a class="sidebar-sublink" routerLink="/FISMA_POC" (click)="onClickNavigate($event, '/FISMA_POC')" (keydown)="onKeyboardNavigate($event, '/FISMA_POC')">FISMA System POCs</a>
         </ng-template>
-      </p-accordionTab>
+      </p-accordion-panel>
     </div>
     <div class="sidebar-link technologies">
-      <p-accordionTab>
-        <ng-template pTemplate="icon"></ng-template>
+      <p-accordion-panel>
+        <p-accordion-header>
+          <ng-template #toggleIcon>
+            <span>Technologies</span>
+            <i class="fas fa-microchip fa-lg fa-fw"></i>
+          </ng-template>
+        </p-accordion-header>
+        <!-- <ng-template pTemplate="icon"></ng-template>
         <ng-template pTemplate="header">
           <span>Technologies</span>
           <i class="fas fa-microchip fa-lg fa-fw"></i>
-        </ng-template>
+        </ng-template> -->
         <ng-template pTemplate="content">
           <a class="sidebar-sublink" routerLink="/it_standards" (click)="onClickNavigate($event, '/it_standards')" (keydown)="onKeyboardNavigate($event, '/it_standards')">IT Standards List</a>
           <a 
@@ -83,28 +113,40 @@
             target="_blank"
             rel="noopener">IT Standards Approval Process <i class="fas fa-external-link-alt"></i></a>
         </ng-template>
-      </p-accordionTab>
+      </p-accordion-panel>
     </div>
     <div class="sidebar-link enterprise-architecture">
-      <p-accordionTab>
-        <ng-template pTemplate="icon"></ng-template>
+      <p-accordion-panel>
+        <p-accordion-header>
+          <ng-template #toggleIcon>
+            <span>Enterprise Architecture</span>
+            <i class="fas fa-network-wired fa-lg fa-fw"></i>
+          </ng-template>
+        </p-accordion-header>
+        <!-- <ng-template pTemplate="icon"></ng-template>
         <ng-template pTemplate="header">
           <span>Enterprise Architecture</span>
           <i class="fas fa-network-wired fa-lg fa-fw"></i>
-        </ng-template>
+        </ng-template> -->
         <ng-template pTemplate="content">
           <a class="sidebar-sublink" routerLink="/gear_model" (click)="onClickNavigate($event, '/gear_model')" (keydown)="onKeyboardNavigate($event, '/gear_model')">GEAR Model Diagram</a>
         </ng-template>
-      </p-accordionTab>
+      </p-accordion-panel>
     </div>
     <br>
     <div class="sidebar-link additional-info">
-      <p-accordionTab>
-        <ng-template pTemplate="icon"></ng-template>
+      <p-accordion-panel>
+        <p-accordion-header>
+          <ng-template #toggleIcon>
+            <span>Additional Information</span>
+            <i class="fab fa-wpforms fa-lg fa-fw fa-fw"></i>
+          </ng-template>
+        </p-accordion-header>
+        <!-- <ng-template pTemplate="icon"></ng-template>
         <ng-template pTemplate="header">
           <span>Additional Information</span>
           <i class="fab fa-wpforms fa-lg fa-fw fa-fw"></i>
-        </ng-template>
+        </ng-template> -->
         <ng-template pTemplate="content">
           <a class="sidebar-sublink" routerLink="/forms" (click)="onClickNavigate($event, '/forms')" (keydown)="onKeyboardNavigate($event, '/forms')">Access Forms</a>
           <a class="sidebar-sublink" routerLink="/glossary" (click)="onClickNavigate($event, '/glossary')" (keydown)="onKeyboardNavigate($event, '/glossary')">Glossary</a>
@@ -117,9 +159,9 @@
             target="_blank"
             rel="noopener">API Documentation <i class="fas fa-external-link-alt"></i></a>
         </ng-template>
-      </p-accordionTab>
+      </p-accordion-panel>
     </div>
   </p-accordion>
 </div>
   </ng-template>
-</p-sidebar>
+</p-drawer>

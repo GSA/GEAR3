@@ -1,15 +1,23 @@
-<span class="breadcrumb-text" *ngIf="getTopLevelRotueName()">{{getTopLevelRotueName()}}</span>
-<span class="breadcrumb-separator" *ngIf="getTopLevelRotueName()">></span>
-<span class="breadcrumb-text" *ngIf="getSubLevelRotueName()">
+@if (getTopLevelRotueName()) {
+  <span class="breadcrumb-text">{{getTopLevelRotueName()}}</span>
+}
+@if (getTopLevelRotueName()) {
+  <span class="breadcrumb-separator">></span>
+}
+@if (getSubLevelRotueName()) {
+  <span class="breadcrumb-text">
     <a [routerLink]="getBackRouteWithParams()">{{getSubLevelRotueName()}}</a>
-</span>
-<span class="breadcrumb-separator" *ngIf="getSubLevelRotueName()">></span>
-<ng-container *ngIf="showManagerLevel">
-    <span class="breadcrumb-text">
-        <ng-content select="[managerType]"></ng-content>
-    </span>
-    <span class="breadcrumb-separator">></span>
-</ng-container>
+  </span>
+}
+@if (getSubLevelRotueName()) {
+  <span class="breadcrumb-separator">></span>
+}
+@if (showManagerLevel) {
+  <span class="breadcrumb-text">
+    <ng-content select="[managerType]"></ng-content>
+  </span>
+  <span class="breadcrumb-separator">></span>
+}
 <span class="breadcrumb-text">
-    <ng-content select="[currentPageName]"></ng-content>
+  <ng-content select="[currentPageName]"></ng-content>
 </span>
