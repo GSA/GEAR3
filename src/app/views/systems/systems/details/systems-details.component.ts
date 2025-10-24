@@ -158,4 +158,19 @@ export class SystemsDetailsComponent implements OnInit {
     return this.tableService.renderPOCInfoTable(this.detailsData.POC);
   }
 
+  public getTimeQuestionnaireButtonText(): string {
+    const currentMonth = new Date().getMonth() + 1;
+    let fyYear = '';
+    if(currentMonth >= 10) {
+      fyYear = (new Date().getFullYear() + 1).toString().slice(-2);
+    } else {
+      fyYear = (new Date().getFullYear()).toString().slice(-2);
+    }
+    return `Complete your system's TIME lifecycle questionnaire for FY${fyYear}`;
+  }
+
+  public onTimeButtonClick(): void {
+    window.open('https://docs.google.com/spreadsheets/d/14D4wNsgoHHFzUONv7gF0kyMIQCT-aL9iOzhzAiIcvpc/edit?usp=drivesdk', '_blank');
+  }
+
 }
