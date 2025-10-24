@@ -26,6 +26,9 @@
           <a class="nav-link" [class.active]="isWebsitesTabActive" (click)="onTabClick('websites', $event)" href="#websites">Websites</a>
         </li>
       </ul>
+      <div class="time-questionnaire-button-container">
+        <app-button [buttonText]="getTimeQuestionnaireButtonText()" buttonStyle="success" (buttonClick)="onTimeButtonClick()"></app-button>
+      </div>
       @if (isOverviewTabActive) {
         <div class="tab-container">
           <div class="overall-data-container">

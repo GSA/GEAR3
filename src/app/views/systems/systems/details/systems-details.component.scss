@@ -27,8 +27,12 @@
         display: flex;
         flex-direction: column;
 
+        & .time-questionnaire-button-container {
+            margin-bottom: 1rem;
+        }
+
         & .nav-tabs {
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
         }
 
         & .overall-data-container {
