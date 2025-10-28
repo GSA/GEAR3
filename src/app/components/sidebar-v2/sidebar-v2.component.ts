@@ -12,7 +12,7 @@ export class SidebarV2Component {
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     if (event.key === ' ') {
-      event.preventDefault();
+      document.body.style.overflow = 'hidden';
     }
   }
 
