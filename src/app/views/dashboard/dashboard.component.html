@@ -18,7 +18,7 @@
           }
           <span class="dashboard-quick-view-expire-text" [ngClass]="{'positive-expire-text' : fismaExpiringThisWeek > 0, 'neutral-text': (fismaExpiringThisWeek || 0) === 0}">
             @if ((fismaExpiringThisWeek || 0) > 0) {
-              <span tabindex="0" (keydown.enter)="viewExpiringFisma()" (keydown.space)="viewExpiringFisma()">{{ fismaExpiringThisWeek || 0 }} items expiring within 7 days</span>
+              <span tabindex="0" (click)="viewExpiringFisma()" (keydown.enter)="viewExpiringFisma()" (keydown.space)="viewExpiringFisma()">{{ fismaExpiringThisWeek || 0 }} items expiring within 7 days</span>
             }
             @if ((fismaExpiringThisWeek || 0) === 0) {
               <span>No items expiring within 7 days</span>
@@ -41,7 +41,7 @@
           }
           <span class="dashboard-quick-view-expire-text" [ngClass]="{'positive-expire-text' : decommissionedSystemsLast7Days > 0, 'neutral-text': (decommissionedSystemsLast7Days || 0) === 0}">
             @if ((decommissionedSystemsLast7Days || 0) > 0) {
-              <span tabindex="0" (keydown.enter)="viewDecommissionedSystems()" (keydown.space)="viewDecommissionedSystems()">{{ decommissionedSystemsLast7Days || 0 }} items decommissioned in last 7 days</span>
+              <span tabindex="0" (click)="viewDecommissionedSystems()" (keydown.enter)="viewDecommissionedSystems()" (keydown.space)="viewDecommissionedSystems()">{{ decommissionedSystemsLast7Days || 0 }} items decommissioned in last 7 days</span>
             }
             @if ((decommissionedSystemsLast7Days || 0) === 0) {
               <span>No items decommissioned in last 7 days</span>
@@ -64,7 +64,7 @@
           }
           <span class="dashboard-quick-view-expire-text" [ngClass]="{'positive-expire-text' : standardsExpiringThisWeek > 0, 'neutral-text': (standardsExpiringThisWeek || 0) === 0}">
             @if ((standardsExpiringThisWeek || 0) > 0) {
-              <span tabindex="0" (keydown.enter)="viewExpiringITStandards()" (keydown.space)="viewExpiringITStandards()">{{ standardsExpiringThisWeek || 0 }} items expiring within 7 days</span>
+              <span tabindex="0" (click)="viewExpiringITStandards()" (keydown.enter)="viewExpiringITStandards()" (keydown.space)="viewExpiringITStandards()">{{ standardsExpiringThisWeek || 0 }} items expiring within 7 days</span>
             }
             @if ((standardsExpiringThisWeek || 0) === 0) {
               <span>No items expiring within 7 days</span>
@@ -88,7 +88,7 @@
           }
           <span class="dashboard-quick-view-expire-text" [ngClass]="{'positive-expire-text' : retiredITStandardsLast7Days > 0, 'neutral-text': (retiredITStandardsLast7Days || 0) === 0}">
             @if ((retiredITStandardsLast7Days || 0) > 0) {
-              <span tabindex="0" (keydown.enter)="viewRecentRetiredITStandards()" (keydown.space)="viewRecentRetiredITStandards()">{{ retiredITStandardsLast7Days || 0 }} items retired in last 7 days</span>
+              <span tabindex="0" (click)="viewRecentRetiredITStandards()" (keydown.enter)="viewRecentRetiredITStandards()" (keydown.space)="viewRecentRetiredITStandards()">{{ retiredITStandardsLast7Days || 0 }} items retired in last 7 days</span>
             }
             @if ((retiredITStandardsLast7Days || 0) === 0) {
               <span>No items retired in last 7 days</span>
@@ -149,7 +149,7 @@
 
       <div class="dashboard-chart-card pie-chart-card">
         <div class="dashboard-chart-header">
-          <h3 class="dashboard-card-title-text">Business Systems</h3>
+          <h3 class="dashboard-card-title-text">Cloud Adoption</h3>
           <a (click)="viewAllSystems()" class="dashboard-view-all-link" style="cursor: pointer;" tabindex="0" (keydown.enter)="viewAllSystems()" (keydown.space)="viewAllSystems()">View All</a>
         </div>
         <div class="dashboard-chart-content pie-chart-content">

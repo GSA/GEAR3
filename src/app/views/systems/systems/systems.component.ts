@@ -40,13 +40,15 @@ export class SystemsComponent implements OnInit {
   };
 
   public tableCols: Column[] = [];
-  public selectedTab: string = 'All';
+  public selectedTab: string = '';
   public filterTotals: any = null;
 
   public systemsData: System[] = [];
   public systemsDataTabFilterted: System[] = [];
 
   public daysDecommissioned: number = 0;
+
+  public cloudBasedFilterValue = null;
 
   constructor(
     private apiService: ApiService,
@@ -290,6 +292,9 @@ export class SystemsComponent implements OnInit {
       if(params['decommissionedWithinDays']) {
         this.daysDecommissioned = +params['decommissionedWithinDays'];
       }
+      if(params['cloudBased']) {
+        this.cloudBasedFilterValue = params['cloudBased'];
+      }
     });
 
     this.apiService.getSystems().subscribe(systems => {
@@ -308,7 +313,15 @@ export class SystemsComponent implements OnInit {
         });
         this.tableService.updateReportTableData(expiringFiltered);
         return;
-      } { 
+      } else if (this.cloudBasedFilterValue) {
+        const notCloudBasedFiltered = [];
+        systems.forEach(s => {
+          if(s.CloudYN.toLocaleLowerCase() === this.cloudBasedFilterValue.toLocaleLowerCase()) {
+            notCloudBasedFiltered.push(s);
+          }
+        });
+        this.tableService.updateReportTableData(notCloudBasedFiltered);
+      } else { 
         // Apply tab filter based on selectedTab
         this.onSelectTab(this.selectedTab);;
       }
