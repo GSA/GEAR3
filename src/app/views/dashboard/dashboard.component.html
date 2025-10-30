@@ -35,16 +35,16 @@
           <span class="dashboard-quick-view-number">{{ decommissionedSystemsLast6Months || 0 }}</span>
         </div>
         <span class="dashboard-quick-view-text">Decommissioned systems (Last 6 months)</span>
-        <div class="dashboard-quick-view-expire-container" [ngClass]="{'neutral-message': (decommissionedSystemsLast7Days || 0) === 0}">
-          @if ((decommissionedSystemsLast7Days || 0) > 0) {
+        <div class="dashboard-quick-view-expire-container" [ngClass]="{'neutral-message': (decommissionedSystemsLastMonth || 0) === 0}">
+          @if ((decommissionedSystemsLastMonth || 0) > 0) {
             <i class="dashboard-quick-view-expire-icon fas fa-exclamation-triangle"></i>
           }
-          <span class="dashboard-quick-view-expire-text" [ngClass]="{'positive-expire-text' : decommissionedSystemsLast7Days > 0, 'neutral-text': (decommissionedSystemsLast7Days || 0) === 0}">
-            @if ((decommissionedSystemsLast7Days || 0) > 0) {
-              <span tabindex="0" (click)="viewDecommissionedSystems()" (keydown.enter)="viewDecommissionedSystems()" (keydown.space)="viewDecommissionedSystems()">{{ decommissionedSystemsLast7Days || 0 }} items decommissioned in last 7 days</span>
+          <span class="dashboard-quick-view-expire-text" [ngClass]="{'positive-expire-text' : decommissionedSystemsLastMonth > 0, 'neutral-text': (decommissionedSystemsLastMonth || 0) === 0}">
+            @if ((decommissionedSystemsLastMonth || 0) > 0) {
+              <span tabindex="0" (click)="viewDecommissionedSystems()" (keydown.enter)="viewDecommissionedSystems()" (keydown.space)="viewDecommissionedSystems()">{{ decommissionedSystemsLastMonth || 0 }} items decommissioned in last month</span>
             }
-            @if ((decommissionedSystemsLast7Days || 0) === 0) {
-              <span>No items decommissioned in last 7 days</span>
+            @if ((decommissionedSystemsLastMonth || 0) === 0) {
+              <span>No items decommissioned in last month</span>
             }
           </span>
         </div>
@@ -142,7 +142,8 @@
             [rotateXAxisTicks]="shouldRotateLabels"
             [animations]="true"
             [barPadding]="15"
-            [xAxisTickFormatting]="xAxisTickFormatting">
+            [xAxisTickFormatting]="xAxisTickFormatting"
+            (select)="onBarChartClick($event.name)">
           </ngx-charts-bar-vertical>
         </div>
       </div>
@@ -190,9 +191,7 @@
       <span class="dashboard-card-title-text">Recent GSA IT Standards</span>
       <a (click)="viewAllITStandards()" class="dashboard-view-all-link normal" tabindex="0" (keydown.enter)="viewAllITStandards()" (keydown.space)="viewAllITStandards()">View All</a>
     </div>
-    @if (showTable) {
-      <app-table [tableCols]="tableCols" [showToolbar]="false" [showPagination]="false" reportStyle="neutral" (rowClickEvent)="onTableRowClick($event)">
-      </app-table>
-    }
+    <app-table [tableCols]="tableCols" [showToolbar]="false" [showPagination]="false" reportStyle="neutral" (rowClickEvent)="onTableRowClick($event)">
+    </app-table>
   </div>
 </div>

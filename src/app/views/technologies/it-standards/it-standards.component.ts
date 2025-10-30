@@ -352,8 +352,10 @@ export class ItStandardsComponent implements OnInit {
 
       if(this.daysExpiring > 0) {
         const now = new Date(); // Current date and time
+        now.setUTCHours(0, 0, 0, 0);
         const expiringWithin = new Date();
         expiringWithin.setDate(now.getDate() + this.daysExpiring); // number of days set in the url
+        expiringWithin.setUTCHours(0, 0, 0, 0);
         const expiringFiltered = [];
         i.forEach(x => {
           let renewal = new Date(x.ApprovalExpirationDate);
@@ -365,8 +367,10 @@ export class ItStandardsComponent implements OnInit {
         return;
       } else if(this.daysRetired > 0) {
         const now = new Date(); // Current date and time
+        now.setUTCHours(0, 0, 0, 0);
         const expiringWithin = new Date();
         expiringWithin.setDate(now.getDate() + this.daysRetired); // number of days set in the url
+        expiringWithin.setUTCHours(0, 0, 0, 0);
         const expiringFiltered = [];
         i.forEach(x => {
           let renewal = new Date(x.ApprovalExpirationDate);

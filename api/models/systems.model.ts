@@ -11,6 +11,7 @@ export class System {
   public BusApp: string;
   public ATODate: Date;
   public ATOType: Date;
+  public ATOExpirationDate: Date;
   public RenewalDate: Date;
   public ComplFISMA: string;
   public PII: string;

@@ -1,4 +1,5 @@
 SELECT COUNT(*) AS Total
 FROM obj_fisma_archer AS fisma
-WHERE fisma.`ex:Renewal_Date` BETWEEN now() AND DATE_ADD(now(), INTERVAL 3 MONTH)
-AND fisma.`ex:Renewal_Date` IS NOT NULL;
+WHERE fisma.`ex:ATO_Expiration_Date` >= CURDATE() AND fisma.`ex:ATO_Expiration_Date` <= DATE_ADD(CURDATE(), INTERVAL 3 MONTH)
+    AND fisma.`ex:SystemLevel` = 'System'
+    AND (fisma.`ex:Status` = 'Active' OR fisma.`ex:Status` = 'Pending');

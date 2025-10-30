@@ -15,6 +15,7 @@ SELECT
   systems.`ex:BusinessApplication`						          AS BusApp,
   systems.`ex:ATOIATO_Date`                           	AS ATODate,
   systems.`ex:ATO_Type`                               	AS ATOType,
+  systems.`ex:ATO_Expiration_Date`                      AS ATOExpirationDate,
   systems.`ex:Renewal_Date`                           	AS RenewalDate,
   systems.`ex:Complete_ASsessment_For_Current_FY_Text`	AS ComplFISMA,
   systems.`ex:PII`                                     	AS PII,

@@ -9,6 +9,7 @@ SELECT
   archer.`ex:FIPS_Impact_Level`                      	AS FIPS_Impact_Level,
   archer.`ex:ATOIATO_Date`                           	AS ATODate,
   archer.`ex:ATO_Type`                               	AS ATOType,
+  archer.`ex:ATO_Expiration_Date`                     AS ATOExpirationDate,
   archer.`ex:Renewal_Date`                           	AS RenewalDate,
   archer.`ex:Complete_ASsessment_For_Current_FY_Text`	AS ComplFISMA,
   archer.`ex:PII`                                     AS PII,

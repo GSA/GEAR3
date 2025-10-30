@@ -46,9 +46,10 @@ export class SystemsComponent implements OnInit {
   public systemsData: System[] = [];
   public systemsDataTabFilterted: System[] = [];
 
-  public daysDecommissioned: number = 0;
-
+  // custom filter queryParams values
+  public monthsDecommissioned: number = 0;
   public cloudBasedFilterValue = null;
+  public cspName: string = '';
 
   constructor(
     private apiService: ApiService,
@@ -289,38 +290,64 @@ export class SystemsComponent implements OnInit {
       if (params['tab']) {
         this.selectedTab = params['tab'];
       }
-      if(params['decommissionedWithinDays']) {
-        this.daysDecommissioned = +params['decommissionedWithinDays'];
+      if(params['decommissionedWithinMonths']) {
+        this.monthsDecommissioned = +params['decommissionedWithinMonths'];
       }
       if(params['cloudBased']) {
         this.cloudBasedFilterValue = params['cloudBased'];
+      }
+      if(params['systemCSP']) {
+        this.cspName = params['systemCSP'];
       }
     });
 
     this.apiService.getSystems().subscribe(systems => {
       this.systemsData = systems;
 
-      if(this.daysDecommissioned > 0) {
+      if(this.monthsDecommissioned > 0) {
         const now = new Date(); // Current date and time
-        const expiringWithin = new Date();
-        expiringWithin.setDate(now.getDate() + this.daysDecommissioned); // number of days set in the url
+        now.setUTCHours(0, 0, 0, 0);
+        const decommWithin = new Date();
+        decommWithin.setMonth(now.getMonth() - this.monthsDecommissioned); // number of months set in the url
+        decommWithin.setUTCHours(0, 0, 0, 0);
         const expiringFiltered = [];
         systems.forEach(s => {
-          let renewal = new Date(s.RenewalDate);
-          if(s.RenewalDate && (renewal >= now && renewal <= expiringWithin) && (s.Status === 'Inactive') && (s.BusApp === 'Yes')) {
+          let expDate = new Date(s.ATOExpirationDate);
+          if(s.ATOExpirationDate && (expDate <= now && expDate >= decommWithin) && (s.Status === 'Inactive')) {
             expiringFiltered.push(s);
           }
         });
+        this.tableCols = this.defaultTableCols;
         this.tableService.updateReportTableData(expiringFiltered);
-        return;
       } else if (this.cloudBasedFilterValue) {
         const notCloudBasedFiltered = [];
         systems.forEach(s => {
-          if(s.CloudYN.toLocaleLowerCase() === this.cloudBasedFilterValue.toLocaleLowerCase()) {
-            notCloudBasedFiltered.push(s);
+          if(s.CloudYN){ 
+            if((s.CloudYN.toLocaleLowerCase() === this.cloudBasedFilterValue.toLocaleLowerCase()) && s.Status == 'Active' && s.BusApp == 'Yes') {
+              notCloudBasedFiltered.push(s);
+            }
           }
         });
+        this.tableCols = this.defaultTableCols;
         this.tableService.updateReportTableData(notCloudBasedFiltered);
+      } else if (this.cspName) {
+        const cspFiltered = [];
+        systems.forEach(s => {
+          if(s.CSP) {
+            if(this.cspName.toLocaleLowerCase() === 'aws') {
+              if((s.CSP.toLocaleLowerCase() === 'aws (govcloud)' ||
+                 s.CSP.toLocaleLowerCase() === 'aws' ||
+                 s.CSP.toLocaleLowerCase() === 'fedramp aws east/west') &&
+                 s.Status == 'Active' && s.BusApp == 'Yes') {
+                cspFiltered.push(s);
+              }
+            } else if(s.CSP.toLocaleLowerCase() === this.cspName.toLocaleLowerCase() && s.Status == 'Active' && s.BusApp == 'Yes') {
+              cspFiltered.push(s);
+            }
+          }
+        });
+        this.tableCols = this.defaultTableCols;
+        this.tableService.updateReportTableData(cspFiltered);
       } else { 
         // Apply tab filter based on selectedTab
         this.onSelectTab(this.selectedTab);;
