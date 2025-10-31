@@ -119,6 +119,7 @@ import { PopoverModule } from 'primeng/popover';
 
 import Lara from '@primeuix/themes/lara';
 import { CommonModule } from '@angular/common';
+import { FismaDetailsComponent } from './views/security/fisma/details/fisma-details.component';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -163,10 +164,11 @@ import { CommonModule } from '@angular/common';
         WebsitesModalComponent,
         WebsiteManagerComponent,
         FismaComponent,
+        FismaDetailsComponent,
         FismaModalComponent,
         TableColumnFilterModalComponent,
         FismaPocsComponent,
-    FismaPocsDetailsComponent,
+        FismaPocsDetailsComponent,
         ItStandardsComponent,
         ItStandardsModalComponent,
         ItStandardsDetailsComponent,
