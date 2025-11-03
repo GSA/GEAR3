@@ -1,0 +1,305 @@
+@if (isDataReady) {
+  <div class="fisma-pocs-details-container">
+    <div class="breadcrumb-container">
+      <app-breadcrumb>
+        <span currentPageName>{{detailsData.Name}}</span>
+      </app-breadcrumb>
+    </div>
+    <div class="title-container">
+      <span class="title">{{detailsData.Name}}</span>
+    </div>
+    <div class="content-container">
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="isOverviewTabActive" (click)="onTabClick('overview', $event)" href="#overview">Overview</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="isPocTabActive" (click)="onTabClick('poc', $event)" href="#poc">Points of Contact</a>
+        </li>
+      </ul>
+      @if (isOverviewTabActive) {
+        <div class="overview-container">
+          <div class="overall-data-container">
+            <div class="main-data-container">
+              <div class="data">
+                <label class="data-label">
+                  <span> Status <i class="fas fa-info-circle"></i>
+                </span>
+              </label>
+              <span>
+                <span [ngClass]="getStatusClass(detailsData.Status)">{{detailsData.Status}}</span>
+              </span>
+            </div>
+            <div class="data">
+              <label class="data-label">
+                <span>
+                  <i class="fas fa-shield-alt"></i> FIPS Impact Level </span>
+                </label>
+                <span>{{detailsData.FIPS_Impact_Level}}</span>
+              </div>
+              <div class="data">
+                <label class="data-label">
+                  <span>
+                    <i class="fas fa-calendar-alt"></i> ATO Date </span>
+                  </label>
+                  <span>{{detailsData.ATODate | date : "longDate"}}</span>
+                </div>
+                <div class="data">
+                  <label class="data-label">
+                    <span>
+                      <i class="fas fa-calendar-check"></i> Renewal Date </span>
+                    </label>
+                    <span>{{detailsData.RenewalDate | date : "longDate"}}</span>
+                  </div>
+                  <div class="data">
+                    <label class="data-label">
+                      <span>
+                        <i class="fas fa-check-circle"></i> FISMA Compliant </span>
+                      </label>
+                      <span>{{detailsData.ComplFISMA}}</span>
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span>
+                          <i class="fas fa-user-shield"></i> PII </span>
+                        </label>
+                        <span>{{detailsData.PII}}</span>
+                      </div>
+                      <div class="data">
+                        <label class="data-label">
+                          <span>
+                            <i class="fas fa-lock"></i> CUI </span>
+                          </label>
+                          <span>{{detailsData.CUI}}</span>
+                        </div>
+                        <div class="data-full">
+                          <label class="data-label">
+                            <span> Description <i class="fas fa-info-circle"></i>
+                          </span>
+                        </label>
+                        <span>{{detailsData.Description}}</span>
+                      </div>
+                    </div>
+                    <div class="sub-data-container">
+                      <table>
+                        <tr>
+                          <th>Attribute</th>
+                          <th>Value</th>
+                        </tr>
+                        @if (isFieldPopulated(detailsData.SystemLevel)) {
+                          <tr>
+                            <td>
+                              <span> System Level <i class="fas fa-info-circle"></i>
+                            </span>
+                          </td>
+                          <td>{{detailsData.SystemLevel}}</td>
+                        </tr>
+                      }
+                      @if (isFieldPopulated(detailsData.SharedService)) {
+                        <tr>
+                          <td>
+                            <span> Shared Service <i class="fas fa-info-circle"></i>
+                          </span>
+                        </td>
+                        <td>{{detailsData.SharedService}}</td>
+                      </tr>
+                    }
+                    @if (isFieldPopulated(detailsData.RespOrg)) {
+                      <tr>
+                        <td>
+                          <span> Responsible Organization <i class="fas fa-info-circle"></i>
+                        </span>
+                      </td>
+                      <td>{{detailsData.RespOrg}}</td>
+                    </tr>
+                  }
+                  @if (isFieldPopulated(detailsData.BusOrg)) {
+                    <tr>
+                      <td>
+                        <span> Business Organization <i class="fas fa-info-circle"></i>
+                      </span>
+                    </td>
+                    <td>{{detailsData.BusOrg}}</td>
+                  </tr>
+                }
+                @if (isFieldPopulated(detailsData.FISMASystemIdentifier)) {
+                  <tr>
+                    <td>
+                      <span> FISMA System Identifier <i class="fas fa-info-circle"></i>
+                    </span>
+                  </td>
+                  <td>{{detailsData.FISMASystemIdentifier}}</td>
+                </tr>
+              }
+              @if (isFieldPopulated(detailsData.ATOType)) {
+                <tr>
+                  <td>
+                    <span> ATO Type <i class="fas fa-info-circle"></i>
+                  </span>
+                </td>
+                <td>{{detailsData.ATOType}}</td>
+              </tr>
+            }
+            @if (isFieldPopulated(detailsData.CloudYN)) {
+              <tr>
+                <td>
+                  <span> Cloud Hosted <i class="fas fa-info-circle"></i>
+                </span>
+              </td>
+              <td>{{detailsData.CloudYN}}</td>
+            </tr>
+          }
+          @if (isFieldPopulated(detailsData.CSP)) {
+            <tr>
+              <td>
+                <span> Hosting Provider <i class="fas fa-info-circle"></i>
+              </span>
+            </td>
+            <td>{{detailsData.CSP}}</td>
+          </tr>
+        }
+        @if (isFieldPopulated(detailsData.ServiceType)) {
+          <tr>
+            <td>
+              <span> Service Type <i class="fas fa-info-circle"></i>
+            </span>
+          </td>
+          <td>{{detailsData.ServiceType}}</td>
+        </tr>
+      }
+      @if (isFieldPopulated(detailsData.FedContractorLoc)) {
+        <tr>
+          <td>
+            <span> Fed/Contractor Location <i class="fas fa-info-circle"></i>
+          </span>
+        </td>
+        <td>{{detailsData.FedContractorLoc}}</td>
+      </tr>
+    }
+    @if (isFieldPopulated(detailsData.Reportable)) {
+      <tr>
+        <td>
+          <span> Reportable <i class="fas fa-info-circle"></i>
+        </span>
+      </td>
+      <td>{{detailsData.Reportable}}</td>
+    </tr>
+  }
+  @if (isFieldPopulated(detailsData.ParentName)) {
+    <tr>
+      <td>
+        <span> Parent System <i class="fas fa-info-circle"></i>
+      </span>
+    </td>
+    <td>{{detailsData.ParentName}}</td>
+  </tr>
+}
+@if (isFieldPopulated(detailsData.SubSystem_Tag)) {
+  <tr>
+    <td>
+      <span> Sub System Tag <i class="fas fa-info-circle"></i>
+    </span>
+  </td>
+  <td>{{detailsData.SubSystem_Tag}}</td>
+</tr>
+}
+@if (isFieldPopulated(detailsData.InactiveDate)) {
+  <tr>
+    <td>
+      <span> Inactive Date <i class="fas fa-info-circle"></i>
+    </span>
+  </td>
+  <td>{{detailsData.InactiveDate | date : "longDate"}}</td>
+</tr>
+}
+</table>
+</div>
+</div>
+<div class="edit-info-container">
+  <app-button [buttonText]="getShowAllFieldsButtonText()" buttonStyle="outline" (buttonClick)="toggleShowAllFields()"></app-button>
+</div>
+</div>
+}
+@if (isPocTabActive) {
+  <div class="overview-container">
+    <div class="overall-data-container poc-full-width">
+      <div class="main-data-container poc-main-data">
+        <div class="data">
+          <label class="data-label">
+            <span>
+              Authorizing Official
+              <i class="fas fa-info-circle"></i>
+            </span>
+          </label>
+          <span [innerHTML]="pocFormatter(detailsData.AO)"></span>
+        </div>
+        <div class="data">
+          <label class="data-label">
+            <span>
+              System Owner
+              <i class="fas fa-info-circle"></i>
+            </span>
+          </label>
+          <span [innerHTML]="pocFormatter(detailsData.SO)"></span>
+        </div>
+        <div class="data">
+          <label class="data-label">
+            <span>
+              ISSM
+              <i class="fas fa-info-circle"></i>
+            </span>
+          </label>
+          <span [innerHTML]="pocFormatter(detailsData.ISSM)"></span>
+        </div>
+        <div class="data">
+          <label class="data-label">
+            <span>
+              ISSO
+              <i class="fas fa-info-circle"></i>
+            </span>
+          </label>
+          <span [innerHTML]="pocFormatter(detailsData.ISSO)"></span>
+        </div>
+        <div class="data">
+          <label class="data-label">
+            <span>
+              Contracting Officer
+              <i class="fas fa-info-circle"></i>
+            </span>
+          </label>
+          <span [innerHTML]="pocFormatter(detailsData.CO)"></span>
+        </div>
+        <div class="data">
+          <label class="data-label">
+            <span>
+              Contracting Officer Representative
+              <i class="fas fa-info-circle"></i>
+            </span>
+          </label>
+          <span [innerHTML]="pocFormatter(detailsData.COR)"></span>
+        </div>
+        <div class="data">
+          <label class="data-label">
+            <span>
+              Business POC
+              <i class="fas fa-info-circle"></i>
+            </span>
+          </label>
+          <span [innerHTML]="pocFormatter(detailsData.BusPOC)"></span>
+        </div>
+        <div class="data">
+          <label class="data-label">
+            <span>
+              Technical POC
+              <i class="fas fa-info-circle"></i>
+            </span>
+          </label>
+          <span [innerHTML]="pocFormatter(detailsData.TechPOC)"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+</div>
+</div>
+}

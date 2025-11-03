@@ -58,6 +58,7 @@ import { TimeDetailsComponent } from './views/systems/time/details/time-details.
 import { RecordsManagementDetailsComponent } from './views/systems/records-management/details/records-management-details.component';
 import { WebsitesDetailsComponent } from './views/systems/websites/details/websites-details.component';
 import { ItStandardsManagerComponent } from './views/technologies/manager/it-standards-manager.component';
+import { FismaDetailsComponent } from './views/security/fisma/details/fisma-details.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, title: 'Dashboard' },
@@ -168,7 +169,7 @@ const routes: Routes = [
   },
 
   { path: 'FISMA', component: FismaComponent, title: 'FISMA Systems' },
-  { path: 'FISMA/:fismaID', component: FismaComponent, title: 'FISMA System' },
+  { path: 'FISMA/:fismaID', component: FismaDetailsComponent, title: 'FISMA System' },
   {
     path: 'FISMA_POC',
     component: FismaPocsComponent,

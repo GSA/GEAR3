@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
@@ -32,7 +32,8 @@ export class FismaComponent implements OnInit {
     private route: ActivatedRoute,
     private sharedService: SharedService,
     private tableService: TableService,
-    private titleService: Title
+    private titleService: Title,
+    private router: Router
   ) {
     this.modalService.currentFismaSys.subscribe((row) => (this.row = row));
   }
@@ -243,6 +244,10 @@ export class FismaComponent implements OnInit {
 
   public isTabSelected(tabName: string): boolean {
     return this.selectedTab === tabName;
+  }
+
+  public onRowClick(e: any) {
+    this.router.navigate(['FISMA', e.ID]);
   }
 
   // onFilterClick(filterButtons: FilterButton[]) {

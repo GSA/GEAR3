@@ -25,7 +25,7 @@
         (<a href='https://csrc.nist.gov/projects/risk-management/fisma-background' target='_blank' rel='noopener'>Link</a>)</p>
   </div>
   <div class="fisma-inventory-data-container">
-    <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral">
+    <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)">
       <div class="filter-tabs-container" filterTabs>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')" (keyup)="onKeyUp($event, 'All')" tabindex="0">
           <span class="filter-tab-text">All</span>
