@@ -16,7 +16,6 @@ import { AnalyticsService } from '@services/analytics/analytics.service';
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  public showTable = false;
   private sidebarSubscription: Subscription;
   private resizeObserver: ResizeObserver;
 
@@ -135,7 +134,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   public fismaExpiringThisWeek: number = 0;
 
   public decommissionedSystemsLast6Months: number = 0;
-  public decommissionedSystemsLast7Days: number = 0;
+  public decommissionedSystemsLastMonth: number = 0;
 
   public standardsExpiringThisQuarter: number = 0;
   public standardsExpiringThisWeek: number = 0;
@@ -153,19 +152,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   public ngOnInit(): void {
-    this.sidebarSubscription = this.sharedService.sidebarVisible.subscribe((isVisible: boolean) => {
-      setTimeout(() => {
-        this.updateChartViews();
-        this.updateResponsiveChartHeights();
-        this.cdr.detectChanges();
-      }, 200);
-    });
+    // this.sidebarSubscription = this.sharedService.sidebarVisible.subscribe((isVisible: boolean) => {
+      // setTimeout(() => {
+      //   this.updateChartViews();
+      //   this.updateResponsiveChartHeights();
+      //   this.cdr.detectChanges();
+      // }, 200);
+    // });
 
     this.apiService.getRecentITStandards(10).subscribe(standards => {
-      this.tableService.updateReportTableData(standards);
-      setTimeout(() => {
-        this.showTable = true;
-      }, 0);
+    this.tableService.updateReportTableData(standards);
     });
 
     this.apiService.getITStandardsExpiringThisQuarter().subscribe(q => this.standardsExpiringThisQuarter = q || 0);
@@ -186,8 +182,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.apiService.getDecommissionedSystemTotals().subscribe(totals => {
-      this.decommissionedSystemsLast6Months = totals[0]?.DecommissionedSystemsLastSixMonths || 0;
-      this.decommissionedSystemsLast7Days = totals[0]?.DecommissionedSystemsLastWeek || 0;
+      this.decommissionedSystemsLast6Months = totals?.DecommissionedSystemsLastSixMonths || 0;
+      this.decommissionedSystemsLastMonth = totals?.DecommissionedSystemsLastMonth || 0;
     });
 
     this.apiService.getRetiredStandardsTotals().subscribe(totals => {
@@ -265,6 +261,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     switch (platform) {
       case 'AWS (GovCloud)':
       case 'AWS':
+      case 'FedRAMP AWS East/West':
         return 'AWS';
       case 'cloud.gov':
         return 'Cloud.gov';
@@ -368,7 +365,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public navigateToNonCloudBasedSystems(): void {
     this.analyticsService.logClickEvent('/systems?tab=Inactive', 'Dashboard business systems graph');
-    this.router.navigate(['/systems'], { queryParams: { tab: 'Inactive' } });
+    this.router.navigate(['/systems'], { queryParams: { cloudBased: 'no' } });
   }
 
   public onPieChartSelect(event: any): void {
@@ -400,7 +397,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   public viewDecommissionedSystems(): void {
     this.analyticsService.logClickEvent('/systems', 'Dashboard decommissioned systems this week');
-    this.router.navigate(['/systems'], { queryParams: { decommissionedWithinDays: '7' } });
+    this.router.navigate(['/systems'], { queryParams: { decommissionedWithinMonths: '1' } });
   }
   public viewExpiringITStandards(): void {
     this.analyticsService.logClickEvent('/it_standards', 'Dashboard IT standards expiring this week');
@@ -413,5 +410,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public onTableRowClick(rowData: any): void {
     this.router.navigate(['/it_standards', rowData.ID]);
+  }
+
+  public onBarChartClick(barName: string): void {
+    if(barName !== 'Others'){
+      this.router.navigate(['/systems'], {queryParams: { systemCSP: barName } });
+    } 
   }
 }

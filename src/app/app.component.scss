@@ -12,6 +12,10 @@
       display: flex;
       flex-direction: column;
       width: 100%;
+
+      @media (max-width: 1727px) {
+        width: 95%;
+      }
     }
   }
 

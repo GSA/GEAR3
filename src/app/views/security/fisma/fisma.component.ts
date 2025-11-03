@@ -175,12 +175,14 @@ export class FismaComponent implements OnInit {
 
         if(this.daysExpiring > 0) {
           const now = new Date(); // Current date and time
+          now.setUTCHours(0, 0, 0, 0);
           const expiringWithin = new Date();
           expiringWithin.setDate(now.getDate() + this.daysExpiring); // number of days set in the url
+          expiringWithin.setUTCHours(0, 0, 0, 0);
           const expiringFiltered = [];
           fisma.forEach(f => {
-            let renewal = new Date(f.RenewalDate);
-            if(f.RenewalDate && (renewal >= now && renewal <= expiringWithin)) {
+            let renewal = new Date(f.ATOExpirationDate);
+            if(f.ATOExpirationDate && (renewal >= now && renewal <= expiringWithin)) {
               expiringFiltered.push(f);
             }
           });
