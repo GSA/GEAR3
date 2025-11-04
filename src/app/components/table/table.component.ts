@@ -1,5 +1,5 @@
-import { Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { Table, TableRowSelectEvent } from 'primeng/table';
+import { Component, EventEmitter, HostListener, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Table, TableLazyLoadEvent, TableRowSelectEvent } from 'primeng/table';
 import { Column, ExportColumn, TwoDimArray, FilterButton, ColumnFilter } from '../../common/table-classes';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
@@ -15,7 +15,7 @@ import { Router } from '@angular/router';
     standalone: false
 })
 
-export class TableComponent implements OnInit, OnChanges {
+export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() tableCols: Column[] = [];
 
@@ -57,6 +57,8 @@ export class TableComponent implements OnInit, OnChanges {
 
   @Input() preFilteredTableData: any[] = [];
   @Input() contextSystemName: string = '';
+
+  @Input() defaultPaginationNumber: number = 50;
 
   // Filter event (some reports change available columns when filtered)
   @Output() filterEvent = new EventEmitter<string>();
@@ -125,8 +127,10 @@ export class TableComponent implements OnInit, OnChanges {
       this.originalTableData = [...this.localTableData];
     } else {
       this.tableService.reportTableData$.subscribe(d => {
-        this.tableData = d;
-        this.originalTableData = [...d];
+        if(d) {
+          this.tableData = d;
+          this.originalTableData = [...d];
+        }
       });
     }
     
@@ -144,12 +148,14 @@ export class TableComponent implements OnInit, OnChanges {
     }
   }
 
+  ngOnDestroy(): void {
+    this.tableService.updateReportTableData(null);
+  }
+
   private initializeColumnVisibility() {
     // Simply set visibleColumns to all columns that should be visible
     this.visibleColumns = this.tableCols.filter(col => col.showColumn !== false);
   }
-
-
 
   toggleVisible(e: any) {
     // Clear the visible columns array first

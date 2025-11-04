@@ -350,7 +350,8 @@ export class SystemsComponent implements OnInit {
         this.tableService.updateReportTableData(cspFiltered);
       } else { 
         // Apply tab filter based on selectedTab
-        this.onSelectTab(this.selectedTab);;
+        this.selectedTab = 'All';
+        this.onSelectTab(this.selectedTab);
       }
     });
 

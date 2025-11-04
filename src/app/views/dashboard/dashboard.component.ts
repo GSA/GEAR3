@@ -4,7 +4,6 @@ import { Column } from '@common/table-classes';
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
-import { Website } from '@api/models/websites.model';
 import { Subscription } from 'rxjs';
 import { AnalyticsService } from '@services/analytics/analytics.service';
 
@@ -161,7 +160,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     // });
 
     this.apiService.getRecentITStandards(10).subscribe(standards => {
-    this.tableService.updateReportTableData(standards);
+      this.tableService.updateReportTableData(standards);
     });
 
     this.apiService.getITStandardsExpiringThisQuarter().subscribe(q => this.standardsExpiringThisQuarter = q || 0);
@@ -200,11 +199,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public ngAfterViewInit(): void {
-    setTimeout(() => {
+    //setTimeout(() => {
       this.updateChartViews();
       this.setupResizeObserver();
       this.cdr.detectChanges();
-    }, 200);
+    //}, 200);
   }
 
   public ngOnDestroy(): void {
@@ -218,10 +217,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @HostListener('window:resize')
   onResize() {
-    setTimeout(() => {
+    //setTimeout(() => {
       this.updateChartViews();
       this.updateResponsiveChartHeights();
-    }, 100);
+    //}, 100);
   }
 
   private loadHostingPlatformsData(): void {
@@ -303,7 +302,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private updateChartViews() {
-    setTimeout(() => {
+    //setTimeout(() => {
       this.checkIfLabelsShouldRotate();
       
       const barContainer = document.querySelector('.bar-chart-content');
@@ -337,7 +336,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
 
       this.cdr.detectChanges();
-    }, 50);
+    //}, 50);
   }
 
   public getExpiringDate(): string {
@@ -416,5 +415,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     if(barName !== 'Others'){
       this.router.navigate(['/systems'], {queryParams: { systemCSP: barName } });
     } 
+
   }
 }
