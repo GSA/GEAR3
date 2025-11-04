@@ -191,7 +191,7 @@
       <span class="dashboard-card-title-text">Recent GSA IT Standards</span>
       <a (click)="viewAllITStandards()" class="dashboard-view-all-link normal" tabindex="0" (keydown.enter)="viewAllITStandards()" (keydown.space)="viewAllITStandards()">View All</a>
     </div>
-    <app-table [tableCols]="tableCols" [showToolbar]="false" [showPagination]="false" reportStyle="neutral" (rowClickEvent)="onTableRowClick($event)">
+    <app-table [tableCols]="tableCols" [showToolbar]="false" [showPagination]="false" reportStyle="neutral" [defaultPaginationNumber]="10" (rowClickEvent)="onTableRowClick($event)">
     </app-table>
   </div>
 </div>

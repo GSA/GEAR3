@@ -13,7 +13,7 @@
     [columns]="tableCols"
     [value]="tableData"
     [rowsPerPageOptions]="[10, 25, 50, 100, 200]"
-    [rows]="10"
+    [rows]="defaultPaginationNumber"
     [first]="first"
     [paginator]="showPagination"
     [scrollable]="true"
@@ -30,7 +30,7 @@
     (onPage)="pageChange($event)"
     (onRowSelect)="onRowSelect($event)">
 
-    <ng-template pTemplate="caption">
+    <ng-template #caption>
       <div class="caption-container">
         <ng-content select="[filterTabs]"></ng-content>
         <div class="caption-toolbar-container">
@@ -74,7 +74,7 @@
       </ng-template>
 
       <!-- Table header -->
-      <ng-template pTemplate="header" let-columns>
+      <ng-template #header let-columns>
         <!-- Headings -->
         <tr>
           @for (col of columns; track col) {
@@ -115,7 +115,7 @@
           }
         </ng-template>
         <!-- Table body -->
-        <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <ng-template #body let-rowData let-columns="columns">
           <tr [pSelectableRow]="rowData">
             @for (col of columns; track col) {
               @if (showColumn(col)) {
@@ -131,7 +131,7 @@
             }
           </tr>
         </ng-template>
-        <ng-template pTemplate="emptymessage" let-columns>
+        <ng-template #emptymessage let-columns>
           <tr>
             <td [attr.colspan]="columns.length">
               <div class="d-flex justify-content-center">
@@ -141,7 +141,7 @@
           </tr>
         </ng-template>
       </p-table>
-
+</div>
       <table-column-filter-modal
         [columns]="tableCols"
         [isVisible]="showColumnFilterModal"

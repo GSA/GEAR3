@@ -364,7 +364,6 @@ export class ItStandardsComponent implements OnInit {
           }
         });
         this.tableService.updateReportTableData(expiringFiltered);
-        return;
       } else if(this.daysRetired > 0) {
         const now = new Date(); // Current date and time
         now.setUTCHours(0, 0, 0, 0);
@@ -379,8 +378,7 @@ export class ItStandardsComponent implements OnInit {
           }
         });
         this.tableService.updateReportTableData(expiringFiltered);
-        return;
-      } {
+      } else {
         this.tableService.updateReportTableData(i);
       }
 
