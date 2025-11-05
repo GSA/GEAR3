@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -7,17 +7,28 @@ import { ActivatedRoute } from '@angular/router';
     styleUrls: ['./breadcrumb.component.scss'],
     standalone: false
 })
-export class BreadcrumbComponent {
+export class BreadcrumbComponent implements OnInit {
 
     @Input() showManagerLevel: boolean = false;
 
     public currentSubPath: string = '';
+    public fromSearchKw: string = '';
+
     private currentRoute: string[] = [];
 
-  
     constructor(private route: ActivatedRoute) {
         this.currentRoute = this.route.snapshot.url.map(segment => segment.path);
         this.currentSubPath = this.currentRoute[0];
+    }
+
+    public ngOnInit(): void {
+        this.route.queryParams.subscribe(params => {
+            this.fromSearchKw = params['search'];
+        });
+    }
+
+    public isFromSearch(): boolean {
+        return this.fromSearchKw && this.fromSearchKw.length > 0
     }
 
     public getTopLevelRotueName(): string {
@@ -128,5 +139,9 @@ export class BreadcrumbComponent {
         };
         
         return routeMap[this.currentSubPath as keyof typeof routeMap] || ['/' + this.getBackRoute()];
+    }
+
+    public getGlobalSearchBack(): string {
+        return `/search/${this.fromSearchKw}`;
     }
 }
