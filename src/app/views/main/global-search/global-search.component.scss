@@ -1,0 +1,28 @@
+.global-search-container {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 1.5rem;
+
+    & .global-search-title-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+
+        h2 {
+            margin-bottom: 0;
+        }
+
+        & .global-search-title-right-button-container {
+            display: flex;
+            flex-direction: row;
+            gap: 1rem;
+        }
+    }
+
+    & .global-search-data-container {
+        display: flex;
+        flex-direction: column;
+        padding: 1rem 0;
+    }
+}

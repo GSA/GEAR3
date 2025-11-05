@@ -291,7 +291,8 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
   public onRowSelect(e: TableRowSelectEvent) {
     if(this.tableType === 'globalSearch') {
-      this.navigateByType(e.data.GEAR_Type, e.data);
+      this.rowClickEvent.emit(e);
+      // this.navigateByType(e.data.GEAR_Type, e.data);
       return;
     } else if(this.tableType === 'accessForms') {
       this.rowClickEvent.emit(e);
