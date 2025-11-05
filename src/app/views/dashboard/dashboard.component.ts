@@ -186,8 +186,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.apiService.getRetiredStandardsTotals().subscribe(totals => {
-      this.retiredITStandardsLast6Months = totals[0]?.RetiredStandardsLastSixMonths || 0;
-      this.retiredITStandardsLast7Days = totals[0]?.RetiredStandardsLastWeek || 0;
+      this.retiredITStandardsLast6Months = totals.RetiredStandardsLastSixMonths || 0;
+      this.retiredITStandardsLast7Days = totals.RetiredStandardsLastWeek || 0;
     });
 
     this.loadHostingPlatformsData();
