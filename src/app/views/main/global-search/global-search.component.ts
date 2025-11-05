@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Column } from '@common/table-classes';
 import { AnalyticsService } from '@services/analytics/analytics.service';
 import { ApiService } from '@services/apis/api.service';
@@ -10,7 +10,7 @@ import { TableService } from '@services/tables/table.service';
 @Component({
     selector: 'global-search',
     templateUrl: './global-search.component.html',
-    styleUrls: ['./global-search.component.css'],
+    styleUrls: ['./global-search.component.scss'],
     standalone: false
 })
 export class GlobalSearchComponent implements OnInit {
@@ -23,6 +23,7 @@ export class GlobalSearchComponent implements OnInit {
     private sharedService: SharedService,
     private tableService: TableService,
     private route: ActivatedRoute,
+    private router: Router,
     private apiService: ApiService,
     private analyticsService: AnalyticsService
   ) { }
@@ -77,6 +78,35 @@ export class GlobalSearchComponent implements OnInit {
         this.analyticsService.logSearchEvent(kw);
       }
     });
+  }
+
+  public onRowClick(e: any): void {
+    const data = e.data;
+    switch (data.GEAR_Type) {
+      case 'System':
+        this.router.navigate(['/systems/', data.Id]);
+        break;
+      case 'FISMA':
+        this.router.navigate(['/FISMA/', data.Id]);
+        break;
+      case 'Technology':
+        this.router.navigate(['/it_standards/', data.Id]);
+        break;
+      case 'Capability':
+        this.router.navigate(['/capabilities/', data.Id]);
+        break;
+      case 'Organization':
+        this.router.navigate(['/organizations/', data.Id]);
+        break;
+      case 'Investment':
+        this.router.navigate(['/investments/', data.Id]);
+        break;
+      case 'Website':
+        this.router.navigate(['/websites/', data.Id]);
+        break;
+      default:
+        break;
+    }
   }
 
   private sortBySearchTerm(arr, searchTerm, key) {
