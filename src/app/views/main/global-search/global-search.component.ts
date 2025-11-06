@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Column } from '@common/table-classes';
 import { AnalyticsService } from '@services/analytics/analytics.service';
 import { ApiService } from '@services/apis/api.service';
@@ -10,12 +10,12 @@ import { TableService } from '@services/tables/table.service';
 @Component({
     selector: 'global-search',
     templateUrl: './global-search.component.html',
-    styleUrls: ['./global-search.component.css'],
+    styleUrls: ['./global-search.component.scss'],
     standalone: false
 })
 export class GlobalSearchComponent implements OnInit {
 
-  public searchKW;
+  public searchKW: string = '';
   tableData: any[] = [];
   tableDataOriginal: any[] = [];
 
@@ -23,6 +23,7 @@ export class GlobalSearchComponent implements OnInit {
     private sharedService: SharedService,
     private tableService: TableService,
     private route: ActivatedRoute,
+    private router: Router,
     private apiService: ApiService,
     private analyticsService: AnalyticsService
   ) { }
@@ -66,17 +67,46 @@ export class GlobalSearchComponent implements OnInit {
       }
 
       if(params && params['keyword']) {
-        let kw = params['keyword'];
-        this.apiService.getGlobalSearchResults(kw).subscribe(s => {
-          let sorted = this.sortBySearchTerm(s, kw, 'Name');
+        this.searchKW = params['keyword'];
+        this.apiService.getGlobalSearchResults(this.searchKW).subscribe(s => {
+          let sorted = this.sortBySearchTerm(s, this.searchKW, 'Name');
           this.tableService.updateReportTableData(sorted);
           this.tableData = sorted;
           this.tableDataOriginal = sorted;
         });
         // Log GA4 event
-        this.analyticsService.logSearchEvent(kw);
+        this.analyticsService.logSearchEvent(this.searchKW);
       }
     });
+  }
+
+  public onRowClick(e: any): void {
+    const data = e.data;
+    switch (data.GEAR_Type) {
+      case 'System':
+        this.router.navigate(['/systems/', data.Id], { queryParams: { search: this.searchKW } });
+        break;
+      case 'FISMA':
+        this.router.navigate(['/FISMA/', data.Id], { queryParams: { search: this.searchKW } });
+        break;
+      case 'Technology':
+        this.router.navigate(['/it_standards/', data.Id], { queryParams: { search: this.searchKW } });
+        break;
+      case 'Capability':
+        this.router.navigate(['/capabilities/', data.Id], { queryParams: { search: this.searchKW } });
+        break;
+      case 'Organization':
+        this.router.navigate(['/organizations/', data.Id], { queryParams: { search: this.searchKW } });
+        break;
+      case 'Investment':
+        this.router.navigate(['/investments/', data.Id], { queryParams: { search: this.searchKW } });
+        break;
+      case 'Website':
+        this.router.navigate(['/websites/', data.Id], { queryParams: { search: this.searchKW } });
+        break;
+      default:
+        break;
+    }
   }
 
   private sortBySearchTerm(arr, searchTerm, key) {

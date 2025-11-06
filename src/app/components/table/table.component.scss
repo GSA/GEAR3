@@ -289,9 +289,9 @@
                 width: fit-content;
             }
 
-            & .table-status-badge-red {
-                background-color: #db64644d;
-                color: #ea0000;
+            & .table-status-badge-yellow {
+                background: rgba(255, 140, 4, 0.30);
+                color: #FF5E04;
                 font-size: 12px;
                 font-style: normal;
                 font-weight: 400;
@@ -304,9 +304,9 @@
                 width: fit-content;
             }
 
-            & .table-status-badge-yellow {
-                background: rgba(255, 140, 4, 0.30);
-                color: #FF5E04;
+            & .table-status-badge-red {
+                background-color: #db64644d;
+                color: #ea0000;
                 font-size: 12px;
                 font-style: normal;
                 font-weight: 400;
@@ -369,7 +369,6 @@
                     border-radius: .25rem;
                     display: flex;
                     justify-content: center;
-                    width: fit-content;
                 }
             }
         }

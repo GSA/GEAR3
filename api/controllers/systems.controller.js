@@ -13,10 +13,17 @@ exports.findAll = (req, res) => {
 };
 
 exports.findOne = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
-    ` WHERE systems.\`ex:GEAR_ID\` = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`;
+  let id = req.params.id.trim();
+  if(/^\d+$/.test(id)) {
+    var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
+    ` WHERE systems.\`ex:GEAR_ID\` = ${id} GROUP BY systems.\`ex:GEAR_ID\`;`;
 
-  res = ctrl.sendQuery(query, 'individual System/Subsystem', res);
+    res = ctrl.sendQuery(query, 'individual System/Subsystem', res);
+  } else {
+    res.status(500).json({
+      message: "Error: Invalid ID",
+    });
+  }
 };
 
 exports.findSubsystems = (req, res) => {
@@ -133,13 +140,21 @@ exports.findRecords = (req, res) => {
 };
 
 exports.findWebsites = (req, res) => {
-  var query = `SELECT * FROM gear_schema.zk_systems_subsystems_websites   AS websites_mapping
-      LEFT JOIN obj_fisma_archer                                      AS systems       ON websites_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
-      WHERE systems.\`ex:GEAR_ID\` = ${req.params.id}
+  let id = req.params.id.trim();
+  if(/^\d+$/.test(id)) {
+    var query = `SELECT *
+                 FROM gear_schema.zk_systems_subsystems_websites AS websites_mapping
+                 LEFT JOIN obj_fisma_archer AS systems
+                 ON websites_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
+                 WHERE systems.\`ex:GEAR_ID\` = ${id}
+                 GROUP BY websites_mapping.obj_websites_Id;`;
 
-    GROUP BY websites_mapping.obj_websites_Id;`;
-
-  res = ctrl.sendQuery(query, 'related websites for system', res);
+    res = ctrl.sendQuery(query, 'related websites for system', res);
+  } else {
+    res.status(500).json({
+      message: "Error: Invalid ID",
+    });
+  }
 };
 
 

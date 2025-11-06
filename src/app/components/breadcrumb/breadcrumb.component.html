@@ -1,22 +1,26 @@
-@if (getTopLevelRotueName()) {
-  <span class="breadcrumb-text">{{getTopLevelRotueName()}}</span>
-}
-@if (getTopLevelRotueName()) {
-  <span class="breadcrumb-separator">></span>
-}
-@if (getSubLevelRotueName()) {
+@if (isFromSearch()) {
   <span class="breadcrumb-text">
-    <a [routerLink]="getBackRouteWithParams()">{{getSubLevelRotueName()}}</a>
-  </span>
-}
-@if (getSubLevelRotueName()) {
-  <span class="breadcrumb-separator">></span>
-}
-@if (showManagerLevel) {
-  <span class="breadcrumb-text">
-    <ng-content select="[managerType]"></ng-content>
+    <a [routerLink]="getGlobalSearchBack()">Global Search</a>
   </span>
   <span class="breadcrumb-separator">></span>
+} 
+@else {
+  @if (getTopLevelRotueName()) {
+    <span class="breadcrumb-text">{{getTopLevelRotueName()}}</span>
+    <span class="breadcrumb-separator">></span>
+  }
+  @if (getSubLevelRotueName()) {
+    <span class="breadcrumb-text">
+      <a [routerLink]="getBackRouteWithParams()">{{getSubLevelRotueName()}}</a>
+    </span>
+    <span class="breadcrumb-separator">></span>
+  }
+  @if (showManagerLevel) {
+    <span class="breadcrumb-text">
+      <ng-content select="[managerType]"></ng-content>
+    </span>
+    <span class="breadcrumb-separator">></span>
+  }
 }
 <span class="breadcrumb-text">
   <ng-content select="[currentPageName]"></ng-content>

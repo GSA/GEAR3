@@ -1,35 +1,29 @@
-<div class="card bg-light">
-  <div class="row card-header text-center d-flex align-items-center justify-content-between">
-    <div></div>
-    <h3 class="card-title mb-0">
-      <span>
-        <i class="fas fa-search"></i>
-        Global Search Results
-      </span>
-    </h3>
-    <!-- Help Button -->
-    <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
-      <b>Details:</b> Left click on a row within the table to view additional details.
-        <br><br>
-        <b>Status:</b> The Status column shows approval status for systems, FISMA systems, websites, and IT standards. 
-        Green badges indicate approved/active status, while red badges indicate other statuses. 
-        Business capabilities and organizations do not have status fields.
-        <br><br>
-        <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
-        <br><br>
-        <b>Export:</b> Export data by clicking on the <i class='fas fa-download'></i> icon and selecting the format that meets 
-        your needs.
-        <br><br>
-        <b>Search:</b> Perform a filtered search across all fields in the displayed data. Hit the 'Enter' button on your 
-        keyboard to execute. Click the <i class='far fa-trash-alt'></i> icon to clear the search box. Search within specific 
-        columns by clicking on the <i class='fas fa-angle-down'></i> icon. 
-        <br><br>
-        <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
-        <i class='fas fa-caret-square-down'></i> icon to display everything on one page.
-    </app-button-overlay-panel>
+<div class="global-search-container">
+  <div class="global-search-title-container">
+    <h2>Global Search Results</h2>
+    <div class="global-search-title-right-button-container">
+      <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
+        <b>Details:</b> Left click on a row within the table to view additional details.
+          <br><br>
+          <b>Status:</b> The Status column shows approval status for systems, FISMA systems, websites, and IT standards. 
+          Green badges indicate approved/active status, while red badges indicate other statuses. 
+          Business capabilities and organizations do not have status fields.
+          <br><br>
+          <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
+          <br><br>
+          <b>Export:</b> Export data by clicking on the <i class='fas fa-download'></i> icon and selecting the format that meets 
+          your needs.
+          <br><br>
+          <b>Search:</b> Perform a filtered search across all fields in the displayed data. Hit the 'Enter' button on your 
+          keyboard to execute. Click the <i class='far fa-trash-alt'></i> icon to clear the search box. Search within specific 
+          columns by clicking on the <i class='fas fa-angle-down'></i> icon. 
+          <br><br>
+          <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
+          <i class='fas fa-caret-square-down'></i> icon to display everything on one page.
+      </app-button-overlay-panel>
+    </div>
   </div>
-
-  <div>
-    <!-- <app-table [tableCols]="tableCols" reportStyle="default" exportName="Global Search" tableType="globalSearch" defaultSortField="Name"></app-table> -->
-    <app-table [tableCols]="tableCols" reportStyle="neutral" exportName="Global Search" tableType="globalSearch"></app-table>
+  <div class="global-search-data-container">
+    <app-table [tableCols]="tableCols" reportStyle="neutral" exportName="Global Search" tableType="globalSearch" (rowClickEvent)="onRowClick($event)"></app-table>
   </div>
+</div>

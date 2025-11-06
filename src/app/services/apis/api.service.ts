@@ -815,7 +815,7 @@ export class ApiService {
     return this.http
       .get<any>(this.techUrl + '/expiring_quarter')
       .pipe(
-        map(r => r[0].Total),
+        map(r => r[0][0].Total),
         catchError(this.handleError<any>(`GET IT Standards expiring this quarter`)));
   }
 
@@ -823,7 +823,7 @@ export class ApiService {
     return this.http
       .get<any>(this.techUrl + '/expiring_week')
       .pipe(
-        map(r => r[0].Total),
+        map(r => r[0][0].Total),
         catchError(this.handleError<any>(`GET IT Standards expiring this week`)));
   }
 

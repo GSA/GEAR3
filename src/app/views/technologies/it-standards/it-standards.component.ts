@@ -374,13 +374,13 @@ export class ItStandardsComponent implements OnInit {
       } else if(this.daysRetired > 0) {
         const now = new Date(); // Current date and time
         now.setUTCHours(0, 0, 0, 0);
-        const expiringWithin = new Date();
-        expiringWithin.setDate(now.getDate() + this.daysRetired); // number of days set in the url
-        expiringWithin.setUTCHours(0, 0, 0, 0);
+        const expiredWithin = new Date();
+        expiredWithin.setDate(now.getDate() - this.daysRetired); // number of days set in the url
+        expiredWithin.setUTCHours(0, 0, 0, 0);
         const expiringFiltered = [];
         i.forEach(x => {
           let renewal = new Date(x.ApprovalExpirationDate);
-          if(x.ApprovalExpirationDate && (renewal >= now && renewal <= expiringWithin) && (x.Status === 'Retired')) {
+          if(x.ApprovalExpirationDate && (renewal <= now && renewal >= expiredWithin) && (x.Status === 'Retired')) {
             expiringFiltered.push(x);
           }
         });
