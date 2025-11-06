@@ -31,7 +31,11 @@
                   </span>
                 </label>
                 <span>
-                  <span [ngClass]="getStatusClass(detailsData.Status)">{{detailsData.Status}}</span>
+                  @if (isApprovedWithConditions()) {
+                    <span class="status-yellow">Approved with conditions</span>
+                  } @else {
+                    <span [ngClass]="getStatusClass(detailsData.Status)">{{detailsData.Status}}</span>
+                  }
                 </span>
               </div>
               <div class="data">
@@ -120,6 +124,15 @@
                   <i [ngClass]="getDeploymentTypeIcon(detailsData.DeploymentType)"></i>
                   {{detailsData.DeploymentType}}
                 </span>
+              </div>
+              <div class="data-full">
+                <label class="data-label">
+                  <span [title]="getTooltip('ConditionsRestrictions')" role="tooltip">
+                    Conditions/Restrictions
+                    <i class="fas fa-info-circle"></i>
+                  </span>
+                </label>
+                <span [ngClass]="getConditionsRestrictionsClass()">{{detailsData.ConditionsRestrictions}}</span>
               </div>
               <div class="data-full">
                 <label class="data-label">

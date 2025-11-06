@@ -126,6 +126,15 @@
                     & .data-label {
                         font-weight: bold;
                     }
+
+                    & .condition-restriction {
+                        padding: .5rem;
+                        border-radius: 4px;
+                        color: rgb(32, 31, 24);
+                        background-color: #ffe292;
+                        display: inline-block;
+                        font-weight: bold;
+                    }
                 }
             }
 

@@ -18,7 +18,7 @@ SELECT
   tech.Reference_Documents                        AS ReferenceDocument,
   tech.CreateDTG,
   tech.ChangeDTG,
-
+  tech.Conditions_Restrictions                    AS ConditionsRestrictions,
   tech.manufacturer                               AS Manufacturer,
   tech.softwareProduct                            AS SoftwareProduct,
   tech.softwareVersion                            AS SoftwareVersion,
