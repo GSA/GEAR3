@@ -53,7 +53,8 @@ export class ItStandardsManagerComponent implements OnInit {
     itStandRefDocs: new FormControl(),
     itStandApprovedVersions: new FormControl(),
     itStandOperatingSystems: new FormControl(),
-    itStandMobileAppBundles: new FormControl()
+    itStandMobileAppBundles: new FormControl(),
+    itStandConditionsRestrictions: new FormControl()
   });
 
   itStandard = <any>{};
@@ -379,7 +380,8 @@ export class ItStandardsManagerComponent implements OnInit {
         itStandComments: this.itStandard.Comments,
         itStandRefDocs: this.itStandard.ReferenceDocument,
         itStandApprovedVersions: this.itStandard.ApprovedVersions,
-        itStandOperatingSystems: selectedOSList.map(o => this.sharedService.findInArray(this.operatingSystems, 'Name', o))
+        itStandOperatingSystems: selectedOSList.map(o => this.sharedService.findInArray(this.operatingSystems, 'Name', o)),
+        itStandConditionsRestrictions: this.itStandard.ConditionsRestrictions
       });
       this.changeDeploymentType();
     }
@@ -481,6 +483,9 @@ export class ItStandardsManagerComponent implements OnInit {
       }  
       if(this.itStandardsForm.value.itStandRefDocs) {
         this.itStandardsForm.value.itStandRefDocs = this.escapeString(this.itStandardsForm.value.itStandRefDocs);
+      }
+      if(this.itStandardsForm.value.ConditionsRestrictions) {
+        this.itStandardsForm.value.ConditionsRestrictions = this.escapeString(this.itStandardsForm.value.ConditionsRestrictions);
       }
 
       // Status

@@ -308,6 +308,14 @@ export class ItStandardsDetailsComponent implements OnInit {
     return this.detailsData.Status === this.STATUS_STATES.approved;
   }
 
+  public getConditionsRestrictionsClass(): string {
+    if(this.detailsData.ConditionsRestrictions && this.detailsData.ConditionsRestrictions.length > 0) {
+      return 'condition-restriction';
+    } else {
+      return '';
+    }
+  }
+
   public onTabClick(tabName: string, event: Event): void {
     event.preventDefault();
     switch (tabName) {
@@ -330,6 +338,10 @@ export class ItStandardsDetailsComponent implements OnInit {
 
   public isLoggedIn(): boolean {
     return this.sharedService.loggedIn;
+  }
+
+  public isApprovedWithConditions(): boolean {
+    return this.detailsData.Status === 'Approved' && (this.detailsData.ConditionsRestrictions && this.detailsData.ConditionsRestrictions.length > 0);
   }
 
 }

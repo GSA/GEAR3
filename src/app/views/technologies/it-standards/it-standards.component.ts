@@ -339,6 +339,13 @@ export class ItStandardsComponent implements OnInit {
         showColumn: false,
         formatter: this.sharedService.csvFormatter,
         titleTooltip: this.getTooltip('App Bundle Ids')
+      },
+      {
+        field: 'ConditionsRestrictions',
+        header: 'Conditions/Restrictions',
+        isSortable: false,
+        showColumn: false,
+        titleTooltip: this.getTooltip('ConditionsRestrictions')
       }];
     });
 
@@ -346,9 +353,9 @@ export class ItStandardsComponent implements OnInit {
     this.sharedService.setJWTonLogIn();
 
   this.apiService.getITStandards().subscribe(i => {
-      this.itStandardsData = i;
-      this.itStandardsDataTabFilterted = i;
-      this.itStandardsDataChipFilterted = i;
+      this.itStandardsData = this.setCondtionStatus(i);
+      this.itStandardsDataTabFilterted = this.setCondtionStatus(i);
+      this.itStandardsDataChipFilterted = this.setCondtionStatus(i);
 
       if(this.daysExpiring > 0) {
         const now = new Date(); // Current date and time
@@ -470,4 +477,13 @@ export class ItStandardsComponent implements OnInit {
   //   this.tableData = this.tableDataOriginal;
   //   this.tableService.updateReportTableData(this.tableDataOriginal);
   // }
+
+  private setCondtionStatus(itStandards: ITStandards[]): ITStandards[] {
+    itStandards.forEach(i => {
+      if(i.ConditionsRestrictions && i.ConditionsRestrictions.length > 0) {
+        i.Status = 'Approved with conditions';
+      }
+    });
+    return itStandards;
+  }
 }

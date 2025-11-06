@@ -40,4 +40,5 @@ export class ITStandards {
   public DateCreated: Date = null;
   public ComplianceStatus: string = null;
   public ChangeDTG: Date = null;
+  public ConditionsRestrictions: string = null;
 }

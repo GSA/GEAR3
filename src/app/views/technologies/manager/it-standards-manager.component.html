@@ -405,6 +405,11 @@
                                           placeholder="Enter a Link to Doc or Folder for Reference" [value]="itStandard.ReferenceDocuments">
                                         </div>
                                         <div class="data-full">
+                                          <label for="itStandConditionsRestrictions" class="data-label">Conditions/Restrictions</label>
+                                          <textarea type="text" class="form-control" id="itStandConditionsRestrictions" formControlName="itStandConditionsRestrictions"
+                                          placeholder="Enter any condtions or restrictions" rows="3" [value]="itStandard.ConditionsRestrictions"></textarea>
+                                        </div>
+                                        <div class="data-full">
                                           <label for="itStandDesc" class="data-label">Description</label>
                                           <textarea type="text" class="form-control" id="itStandDesc" formControlName="itStandDesc"
                                           placeholder="Enter a Description" rows="3" [value]="itStandard.Description"></textarea>

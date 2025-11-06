@@ -470,6 +470,7 @@ function updateData(techId, data) {
   data.itStandGoldComment = ctrl.setNullEmptyTextHandler(data.itStandGoldComment);
   data.itStandRITM = ctrl.setNullEmptyTextHandler(data.itStandRITM);
   data.itStandComments = ctrl.setNullEmptyTextHandler(data.itStandComments);
+  data.itStandConditionsRestrictions = ctrl.setNullEmptyTextHandler(data.itStandConditionsRestrictions);
 
   data.tcEndOfLifeDate = ctrl.setNullEmptyTextHandler(data.tcEndOfLifeDate);
 
@@ -496,7 +497,8 @@ function updateData(techId, data) {
             Reference_documents               = ${data.itStandRefDocs},
             ChangeAudit                       = '${data.auditUser}',
             ChangeDTG                         = NOW(),
-            endOfLifeDate                     = ${endOfLifeDateFragment}
+            endOfLifeDate                     = ${endOfLifeDateFragment},
+            Conditions_Restrictions           = ${data.itStandConditionsRestrictions}
           WHERE Id = ${techId};`;
 }
 
@@ -519,6 +521,7 @@ function saveData(data) {
   data.itStandGoldComment = ctrl.setNullEmptyTextHandler(data.itStandGoldComment);
   data.itStandRITM = ctrl.setNullEmptyTextHandler(data.itStandRITM);
   data.itStandComments = ctrl.setNullEmptyTextHandler(data.itStandComments);
+  data.itStandConditionsRestrictions = ctrl.setNullEmptyTextHandler(data.itStandConditionsRestrictions);
 
   return `INSERT INTO obj_technology(
             obj_technology_status_Id,
@@ -540,7 +543,8 @@ function saveData(data) {
             RITM,
             Comments,
             Reference_documents,
-            endOfLifeDate
+            endOfLifeDate,
+            Conditions_Restrictions
           ) VALUES (
            ${data.itStandStatus},
            '${keyname}',
@@ -561,7 +565,8 @@ function saveData(data) {
            ${data.itStandRITM},
            ${data.itStandComments},
            ${data.itStandRefDocs},
-           ${endOfLifeDateFragment}
+           ${endOfLifeDateFragment},
+           ${data.itStandConditionsRestrictions}
           );`;
 }
 
