@@ -170,7 +170,7 @@ export class SystemsDetailsComponent implements OnInit {
   }
 
   public onTimeButtonClick(): void {
-    window.open('https://docs.google.com/spreadsheets/d/14D4wNsgoHHFzUONv7gF0kyMIQCT-aL9iOzhzAiIcvpc/edit?usp=drivesdk', '_blank');
+    window.open(this.detailsData.TIME_URL, '_blank');
   }
 
 }
