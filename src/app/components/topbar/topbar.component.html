@@ -1,4 +1,10 @@
 <div class="topbar-container">
+  <div class="topbar-logo-container">
+    <a [routerLink]="'/'" class="topbar-logo-link">
+      <i class="topbar-logo fas fa-cogs fa-w-20 fa-lg"></i>
+      <span class="topbar-logo-text">GSA EA ANALYTICS & REPORTING (GEAR)</span>
+    </a>
+  </div>
   <div class="topbar-info-container">
     @if (!isProd()) {
       <span class="topbar-info-env-mode">- {{ envName }} Environment</span>

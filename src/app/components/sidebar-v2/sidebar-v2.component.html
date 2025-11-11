@@ -1,22 +1,6 @@
 <div class="sidebar-container" [ngClass]="{'expanded' : isSidebarExpanded}" (mouseenter)="toggleSidebar()"
-  (mouseleave)="toggleSidebar()" (focus)="toggleSidebar()" tabindex="1" id="sidebar">
-  <!-- <div *ngIf="isSidebarExpanded">
-  <i class="sidebar-toggle-icon fas fa-chevron-left"></i>
-</div>
-<div *ngIf="!isSidebarExpanded">
-  <i class="sidebar-toggle-icon fas fa-chevron-right"></i>
-</div> -->
-<div>
-  <i class="sidebar-toggle-icon fas fa-chevron-right"></i>
-</div>
-<div class="sidebar-logo">
-  <a [routerLink]="'/'" class="sidebar-logo-link">
-    <i class="fas fa-cogs fa-w-20 fa-lg"></i>
-    @if (isSidebarExpanded) {
-      <span>GSA EA ANALYTICS & REPORTING (GEAR)</span>
-    }
-  </a>
-</div>
+  (mouseleave)="toggleSidebar()" (focus)="toggleSidebar()" tabindex="1" id="sidebar" [class.expanded]="isSidebarExpanded">
+  
 <div class="sidebar-button-container">
   <app-sidebar-button buttonText="Dashboard"
     buttonIcon="fas fa-th-large"
