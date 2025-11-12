@@ -18,6 +18,9 @@ router.route('/get/:id/systems/')
 router.route('/latest')
   .get(itsCtrl.findLatest);
 
+router.route('/recent')
+  .get(itsCtrl.updatedWithinWeek);
+
 router.route('/update/:id')
   .put(itsCtrl.update);
 
