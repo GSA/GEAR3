@@ -39,6 +39,15 @@ exports.findLatest = (req, res) => {
   res = ctrl.sendQuery(query, 'latest individual IT Standard', res); //removed sendQuery_cowboy reference
 };
 
+exports.updatedWithinWeek = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
+    ` WHERE tech.ChangeDTG >= (CURDATE() - INTERVAL 7 DAY)
+      GROUP BY tech.Id
+      ORDER BY tech.ChangeDTG DESC;`;
+
+  res = ctrl.sendQuery(query, 'IT standard with change date in the last 7 days', res); 
+};
+
 exports.findSystems = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
     ` LEFT JOIN zk_systems_subsystems_technology_xml AS mappings ON systems.\`ex:GEAR_ID\` = mappings.\`ex:obj_systems_subsystems_Id\`
