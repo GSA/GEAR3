@@ -576,6 +576,10 @@ export class ApiService {
     return this.http
       .get<ITStandards[]>(this.techUrl + '/latest');
   }
+  public getRecentITStand(): Observable<ITStandards[]> {
+    return this.http
+      .get<ITStandards[]>(this.techUrl + '/recent');
+  }
   // public getITStandApps(id: number): Observable<Application[]> {
   //   return this.http.get<Application[]>(this.investUrl + '/get/' + String(id) + '/applications').pipe(
   //     catchError(this.handleError<Application[]>('GET IT Standard Related Applications', []))
