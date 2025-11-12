@@ -4,9 +4,35 @@
     align-items: center;
     height: 84px;
     width: 100%;
-    padding: 1rem 2.5rem;
+    padding: 1rem 1.5rem;
     background: var(--neutral-white-color);
     box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.08);
+
+    & .topbar-logo-container {
+
+        & .topbar-logo-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            a{
+                text-decoration: none;
+            }
+
+            & svg {
+                height: 2rem;
+                width: 2rem;
+            }
+
+            & .topbar-logo-text {
+                color: var(--neutral-black-color-dark);
+                font-family: var(--primary-font);
+                font-size: 1rem;
+                font-style: normal;
+                font-weight: 500;
+            }
+        }
+    }
 
     & .topbar-info-container {
         display: flex;

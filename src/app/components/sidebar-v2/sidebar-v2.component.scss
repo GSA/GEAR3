@@ -5,27 +5,14 @@
     height: 100%;
     width: var(--closed-sidebar-width);
     background-color: var(--neutral-white-color);
-    transition: 150ms cubic-bezier(0, 0, 0, 1);
-    border-radius: 1rem;
+    transition: width 0.25s ease-in-out;
     position: sticky;
     top: 0;
     height: 100vh;
 
-    & .sidebar-toggle-icon {
-        position: absolute;
-        left: var(--closed-sidebar-width);
-        top: 30px;
-        border-radius: 99px;
-        border: 1px solid #E2E8F0;
-        background: #FFF;
-        padding: 4px;
-        height: 1.5rem;
-        width: 1.5rem;
-    }
-
     &.expanded {
         width: var(--open-sidebar-width);
-        transition: 150ms cubic-bezier(0, 0, 0, 1);
+        transition: width 0.25s ease-in-out;
 
         & .sidebar-toggle-icon {
             left: var(--open-sidebar-width);
@@ -34,8 +21,6 @@
     }
 
     & .sidebar-logo {
-       
-
         a{
             text-decoration: none;
             padding: 1.5rem;
@@ -66,7 +51,6 @@
         flex-direction: column;
         gap: .25rem;
         padding: 0 0.7rem;
-        height: 490px;
         overflow: auto;
 
         & .sidebar-button-divider {

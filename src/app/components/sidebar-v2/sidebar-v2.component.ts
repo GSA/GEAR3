@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component } from '@angular/core';
 import { SidebarButtonChild } from '@common/sidebar-classes';
 
 @Component({
@@ -9,16 +9,8 @@ import { SidebarButtonChild } from '@common/sidebar-classes';
 })
 export class SidebarV2Component {
 
-  // @HostListener('document:keydown', ['$event'])
-  // handleKeyboardEvent(event: KeyboardEvent) {
-  //   if (event.key === ' ') {
-  //     document.body.style.overflow = 'hidden';
-  //   }
-  // }
-
   public isSidebarExpanded: boolean = false;
   public activeMenu: string | null = null;
-
 
   public itStrategyChildren: SidebarButtonChild[] = [
     { text: 'IT Strategic Framework', route: '/strategic_framework' },
