@@ -14,6 +14,7 @@ import { Title } from '@angular/platform-browser';
 declare var $: any;
 
 @Component({
+standalone: false,
   selector: 'time',
   templateUrl: './time.component.html',
   styleUrls: ['./time.component.css'],

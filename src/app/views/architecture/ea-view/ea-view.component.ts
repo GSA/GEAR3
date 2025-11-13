@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
+standalone: false,
   selector: 'ea-view',
   templateUrl: './ea-view.component.html',
   styleUrls: ['./ea-view.component.css']

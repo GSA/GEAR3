@@ -10,6 +10,7 @@ declare var $: any;
 declare var gtag: Function;
 
 @Component({
+standalone: false,
   selector: 'global-search',
   templateUrl: './global-search.component.html',
   styleUrls: ['./global-search.component.css']

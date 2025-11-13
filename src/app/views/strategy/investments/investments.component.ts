@@ -14,6 +14,7 @@ import { Investment } from '@api/models/investments.model';
 declare var $: any;
 
 @Component({
+standalone: false,
   selector: 'investments',
   templateUrl: './investments.component.html',
   styleUrls: ['./investments.component.css'],

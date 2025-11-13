@@ -15,6 +15,7 @@ import { AppBundle } from '@api/models/it-standards-app-bundle.model';
 declare var $: any;
 
 @Component({
+standalone: false,
   selector: 'it-standard-manager',
   templateUrl: './it-standard-manager.component.html',
   styleUrls: ['./it-standard-manager.component.css']

@@ -7,7 +7,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { SidebarModule } from 'ng-sidebar-v3'; // Sidebar Module
+import { SidebarModule } from 'ng-sidebar-v4'; // Sidebar Module
 import { PdfViewerModule } from 'ng2-pdf-viewer'; // PDF Viewer
 import { NgxChartsModule } from '@swimlane/ngx-charts'; // Visualizations
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -79,63 +79,78 @@ import { BannerComponent } from './components/banner/banner.component';
 
 // PrimeNG Modules
 import { MultiSelectModule } from 'primeng/multiselect';
+import { providePrimeNG } from 'primeng/config';
 
-@NgModule({ declarations: [
-        AppComponent,
-        TopNavbarComponent,
-        SidenavComponent,
-        HomeComponent,
-        GlobalSearchComponent,
-        AboutComponent,
-        AssistTechComponent,
-        FormsComponent,
-        GlossaryComponent,
-        GearManagerComponent,
-        FrameworkComponent,
-        InvestmentsComponent,
-        InvestmentsModalComponent,
-        CapabilitiesModelComponent,
-        CapabilitiesComponent,
-        CapabilitiesModalComponent,
-        CapabilityManagerComponent,
-        OrganizationsChartComponent,
-        OrganizationsComponent,
-        OrganizationsModalComponent,
-        WebsiteServiceCategoryComponent,
-        WebsiteServiceCategoryModalComponent,
-        SystemsComponent,
-        SystemsModalComponent,
-        SystemManagerComponent,
-        TimeComponent,
-        RecordsManagementComponent,
-        RecordsModalComponent,
-        RecordManagerComponent,
-        WebsitesComponent,
-        WebsitesModalComponent,
-        WebsiteManagerComponent,
-        FismaComponent,
-        FismaModalComponent,
-        FismaPocsComponent,
-        ItStandardsComponent,
-        ItStandardsModalComponent,
-        ItStandardManagerComponent,
-        //ArtifactsComponent,
-        EAViewComponent,
-        GearModelComponent,
-        YesNoPipe,
-        SkipFocusPiechartDirective,
-        BannerComponent,
-    ],
-    bootstrap: [AppComponent], imports: [AppRoutingModule,
-        BrowserAnimationsModule,
-        BrowserModule,
-        FormsModule,
-        NgSelectModule,
-        NgxChartsModule,
-        PdfViewerModule,
-        ReactiveFormsModule,
-        MultiSelectModule,
-        SidebarModule.forRoot()], providers: [Globals, provideHttpClient(withInterceptorsFromDi())] })
+import { CommonModule } from '@angular/common';
+
+@NgModule({ 
+  declarations: [
+    AppComponent,
+    TopNavbarComponent,
+    SidenavComponent,
+    HomeComponent,
+    GlobalSearchComponent,
+    AboutComponent,
+    AssistTechComponent,
+    FormsComponent,
+    GlossaryComponent,
+    GearManagerComponent,
+    FrameworkComponent,
+    InvestmentsComponent,
+    InvestmentsModalComponent,
+    CapabilitiesModelComponent,
+    CapabilitiesComponent,
+    CapabilitiesModalComponent,
+    CapabilityManagerComponent,
+    OrganizationsChartComponent,
+    OrganizationsComponent,
+    OrganizationsModalComponent,
+    WebsiteServiceCategoryComponent,
+    WebsiteServiceCategoryModalComponent,
+    SystemsComponent,
+    SystemsModalComponent,
+    SystemManagerComponent,
+    TimeComponent,
+    RecordsManagementComponent,
+    RecordsModalComponent,
+    RecordManagerComponent,
+    WebsitesComponent,
+    WebsitesModalComponent,
+    WebsiteManagerComponent,
+    FismaComponent,
+    FismaModalComponent,
+    FismaPocsComponent,
+    ItStandardsComponent,
+    ItStandardsModalComponent,
+    ItStandardManagerComponent,
+    //ArtifactsComponent,
+    EAViewComponent,
+    GearModelComponent,
+    YesNoPipe,
+    BannerComponent,
+  ],
+  bootstrap: [
+    AppComponent
+  ], 
+  imports: [
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    BrowserModule,
+    CommonModule,
+    FormsModule,
+    NgSelectModule,
+    NgxChartsModule,
+    PdfViewerModule,
+    ReactiveFormsModule,
+    MultiSelectModule,
+    SkipFocusPiechartDirective,
+    SidebarModule.forRoot()],
+  providers: [
+    Globals,
+    provideHttpClient(withInterceptorsFromDi()),
+    providePrimeNG()
+  ]
+})
 export class AppModule {
   constructor() {}
 }

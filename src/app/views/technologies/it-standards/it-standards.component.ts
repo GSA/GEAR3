@@ -17,6 +17,7 @@ import { HttpParams } from '@angular/common/http';
 declare var $: any;
 
 @Component({
+standalone: false,
   selector: 'it-standards',
   templateUrl: './it-standards.component.html',
   styleUrls: ['./it-standards.component.css'],

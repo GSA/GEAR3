@@ -12,6 +12,7 @@ import { TableService } from "@services/tables/table.service";
 declare var $: any;
 
 @Component({
+standalone: false,
   selector: 'capability-manager',
   templateUrl: './capability-manager.component.html',
   styleUrls: ['./capability-manager.component.css']

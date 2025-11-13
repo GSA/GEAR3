@@ -7,6 +7,7 @@ import { TableService } from '@services/tables/table.service';
 declare var $: any;
 
 @Component({
+standalone: false,
   selector: 'glossary',
   templateUrl: './glossary.component.html',
   styleUrls: ['./glossary.component.css']

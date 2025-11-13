@@ -10,6 +10,7 @@ import { TableService } from '@services/tables/table.service';
 declare var $: any;
 
 @Component({
+standalone: false,
   selector: 'capabilities-modal',
   templateUrl: './capabilities-modal.component.html',
   styleUrls: ['./capabilities-modal.component.css']

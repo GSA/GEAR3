@@ -10,6 +10,7 @@ import { TableService } from '@services/tables/table.service';
 declare var $: any;
 
 @Component({
+standalone: false,
   selector: 'fisma-modal',
   templateUrl: './fisma-modal.component.html',
   styleUrls: ['./fisma-modal.component.css']

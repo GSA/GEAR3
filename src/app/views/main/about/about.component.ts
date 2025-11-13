@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 declare var $: any;
 
 @Component({
+standalone: false,
   selector: 'about',
   templateUrl: './about.component.html',
   styleUrls: ['./about.component.css']

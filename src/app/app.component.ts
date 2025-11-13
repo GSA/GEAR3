@@ -7,6 +7,7 @@ declare var $: any;
 declare var gtag: Function;
 
 @Component({
+  standalone: false,
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']

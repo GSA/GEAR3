@@ -12,6 +12,7 @@ import { TableService } from "@services/tables/table.service";
 declare var $: any;
 
 @Component({
+standalone: false,
   selector: 'record-manager',
   templateUrl: './record-manager.component.html',
   styleUrls: ['./record-manager.component.css']

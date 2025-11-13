@@ -14,6 +14,7 @@ import { trigger, state, style, animate, transition } from '@angular/animations'
 declare var $: any;
 
 @Component({
+standalone: false,
   selector: 'records-management',
   templateUrl: './records-management.component.html',
   styleUrls: ['./records-management.component.css'],

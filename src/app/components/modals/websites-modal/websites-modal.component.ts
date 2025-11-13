@@ -14,6 +14,7 @@ import { WebsiteServiceCategory } from '@api/models/website-service-category.mod
 declare var $: any;
 
 @Component({
+standalone: false,
   selector: 'websites-modal',
   templateUrl: './websites-modal.component.html',
   styleUrls: ['./websites-modal.component.css'],
