@@ -11,6 +11,7 @@ import { Title } from '@angular/platform-browser';
 declare var $: any;
 
 @Component({
+standalone: false,
   selector: 'fisma-pocs',
   templateUrl: './fisma-pocs.component.html',
   styleUrls: ['./fisma-pocs.component.css'],

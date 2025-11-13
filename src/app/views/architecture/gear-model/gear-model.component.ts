@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
+standalone: false,
   selector: 'gear-model',
   templateUrl: './gear-model.component.html',
   styleUrls: ['./gear-model.component.css']

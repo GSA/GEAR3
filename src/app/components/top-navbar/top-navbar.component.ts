@@ -8,6 +8,7 @@ import { SharedService } from '@services/shared/shared.service';
 declare var $: any;
 
 @Component({
+standalone: false,
   selector: 'top-navbar',
   templateUrl: './top-navbar.component.html',
   styleUrls: ['./top-navbar.component.css'],

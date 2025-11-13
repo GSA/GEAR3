@@ -12,6 +12,7 @@ import { TableService } from "@services/tables/table.service";
 declare var $: any;
 
 @Component({
+standalone: false,
   selector: 'system-manager',
   templateUrl: './system-manager.component.html',
   styleUrls: ['./system-manager.component.css']

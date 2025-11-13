@@ -5,6 +5,7 @@ import { SharedService } from '@services/shared/shared.service';
 declare var $: any;
 
 @Component({
+standalone: false,
   selector: 'sidenav',
   templateUrl: './sidenav.component.html',
   styleUrls: ['./sidenav.component.css']

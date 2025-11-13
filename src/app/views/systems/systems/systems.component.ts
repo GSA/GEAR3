@@ -18,6 +18,7 @@ import * as d3Sankey from 'd3-sankey';
 declare var $: any;
 
 @Component({
+standalone: false,
   selector: 'systems',
   templateUrl: './systems.component.html',
   styleUrls: ['./systems.component.css'],

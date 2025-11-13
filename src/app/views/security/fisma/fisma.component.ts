@@ -12,6 +12,7 @@ import { Title } from '@angular/platform-browser';
 declare var $: any;
 
 @Component({
+standalone: false,
   selector: 'fisma',
   templateUrl: './fisma.component.html',
   styleUrls: ['./fisma.component.css'],

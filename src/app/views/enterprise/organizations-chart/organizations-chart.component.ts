@@ -20,6 +20,7 @@ interface OrgTree {
 }
 
 @Component({
+standalone: false,
   selector: 'organizations-chart',
   templateUrl: './organizations-chart.component.html',
   styleUrls: ['./organizations-chart.component.css'],

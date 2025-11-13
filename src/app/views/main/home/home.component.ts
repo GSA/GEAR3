@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { SharedService } from "@services/shared/shared.service";
 
 @Component({
+standalone: false,
   selector: 'home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']

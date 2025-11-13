@@ -12,6 +12,7 @@ import { Title } from '@angular/platform-browser';
 declare var $: any;
 
 @Component({
+standalone: false,
   selector: 'websites',
   templateUrl: './websites.component.html',
   styleUrls: ['./websites.component.css'],

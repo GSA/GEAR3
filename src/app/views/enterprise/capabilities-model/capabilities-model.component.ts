@@ -21,6 +21,7 @@ interface CapTree {
 }
 
 @Component({
+standalone: false,
   selector: 'capabilities-model',
   templateUrl: './capabilities-model.component.html',
   styleUrls: ['./capabilities-model.component.css'],
