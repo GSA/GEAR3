@@ -238,14 +238,6 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     this.updateOriginalData();
   }
 
-  onExportData() {
-    if (this.exportFunction) {
-      this.dt.exportFunction();
-    } else {
-      this.dt.exportCSV();
-    }
-  }
-
   applyFilteredStyle(filter: string) {
     if (this.currentFilterButton === filter) {
       return 'filtered';
@@ -459,6 +451,39 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
       this.dt._filter();
       this.dt.first = 0;
       this.first = 0;
+    }
+  }
+
+  exportSanitizedData() {
+    if(this.exportFunction) {
+      this.dt.exportFunction();
+    } else {
+      const sanitizedData = JSON.parse(JSON.stringify(this.tableData));
+
+      for (const row of sanitizedData) {
+        for (const key in row) {
+          if (Object.prototype.hasOwnProperty.call(row, key)) {
+            row[key] = this.escapeCsvField(row[key]);
+          }
+        }
+      }
+      let options = { 
+        selectionOnly: false,
+        data: sanitizedData
+       };
+      this.dt.exportCSV(options);
+    }
+  }
+
+  escapeCsvField(field) {
+    const stringField = String(field); 
+  
+    const escapedField = stringField.replace(/"/g, '""');
+  
+    if (escapedField.includes(',') || escapedField.includes('\n') || escapedField.includes('"')) {
+      return `"${escapedField}"`;
+    } else {
+      return escapedField;
     }
   }
 }

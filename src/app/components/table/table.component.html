@@ -18,10 +18,8 @@
     [paginator]="showPagination"
     [scrollable]="true"
     [scrollHeight]="screenHeight"
-    [exportHeader]="'customExportHeader'"
     [exportFilename]="getExportFilename()"
     [styleClass]="reportStyle + ' p-datatable-gridlines'"
-    [exportFunction]="exportFunction"
     [sortOrder]="defaultSortOrder"
     [sortField]="defaultSortField"
     selectionMode="single"
@@ -62,7 +60,7 @@
                   </p-multiSelect>
                 }
                 @if (showExportButton) {
-                  <p-button icon="fa fa-download" pTooltip="Export table data" severity="primary" (click)="onExportData()" ariaLabel="Export Data" />
+                  <p-button icon="fa fa-download" pTooltip="Export table data" severity="primary" (click)="exportSanitizedData()" ariaLabel="Export Data" />
                 }
                 @if (showFilterButton) {
                   <p-button icon="fa fa-filter" pTooltip="Column filters" severity="primary" (click)="openColumnFilterModal()" ariaLabel="Column Filters" />
