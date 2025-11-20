@@ -3,6 +3,10 @@
   flex-direction: column;
   padding: 2rem 1.5rem;
 
+  @media (max-width: 887px) {
+    width: 90%;
+  }
+
   & .dashboard-title {
     margin-top: 0;
     margin-bottom: 1rem;
@@ -11,141 +15,228 @@
     color: var(--neutral-black-color-dark);
   }
 
+
   & .dashboard-quick-view-container {
     display: flex;
-    justify-content: space-between;
-    gap: 15px;
-    
-    @media (max-width: 992px) {
-      flex-direction: column;
-      gap: 15px;
-    }
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 20px;
 
-    & .dashboard-metrics-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      width: 75%;
-      
-      @media (max-width: 992px) {
-        width: 100%;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-      }
-      
-      @media (max-width: 776px) {
-        grid-template-columns: 1fr;
-        gap: 10px;
-      }
-    }
-
-    & .dashboard-quick-view-item {
-      width: 100%;
+    & .quick-view-grid-container {
       display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-      align-items: flex-start;
+      flex-wrap: wrap; /* Allows items to wrap to the next line */
+      justify-content: space-around; /* Distributes items and space evenly */
+      gap: 20px; /* Adds space between items */
+      flex: 1 1 65%;
+
+      & .quick-view-item {
+        display: flex;
+        flex: 1 1 calc(50% - 20px); /* 50% width minus gap for 2 columns */
+        min-width: 250px; /* Minimum width before wrapping */
+        flex-direction: column;
+        background-color: #fff;
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+        border-radius: 8px;
+        padding: 1rem;
+  
+        @media (max-width: 1092px) {
+          flex: 1 1 100%; /* Full width on small screens */
+        }
+
+        & .item-header {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          margin-bottom: 1rem;
+
+          & .number-icon-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            & .icon-container {
+              background: #F4E3DB;
+              border-radius: 2.5rem;
+              height: 2rem;
+              width: 2rem;
+              padding: 0.75rem 1rem;
+              color: #B50909;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              flex-shrink: 0;
+  
+              & .quick-view-icon {
+                width: 1.125rem;
+                height: 1.125rem;
+  
+                &.zero-value {
+                  background: #E5E7EB;
+                  color: #6B7280;
+                }
+              }
+            }
+
+            & .quick-view-number {
+              font-size: 1.5rem;
+              font-weight: 600;
+              color: var(--neutral-black-color-dark);
+            }
+          }
+          
+          & .view-all-link {
+            color: var(--primary-color);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: underline;
+            cursor: pointer;
+            display: flex;
+            flex-direction: row;
+            align-items: start;
+            gap: 0.5rem;
+  
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+
+        & .quick-view-text {
+          font-size: 0.875rem;
+          font-weight: 400;
+          color: var(--neutral-black-color-dark);
+        }
+
+        
+        & .quick-view-expiring-text-container {
+          & .expire-icon {
+            color: #D97706;
+            padding-right: 0.25rem;
+          }
+  
+          & .expire-text {
+            font-size: 0.875rem;
+            font-weight: 400;
+            color: #D97706;
+  
+            & a {
+              color: #D97706;
+            }
+          }
+  
+          & .positive-expire-text {
+            text-decoration-line: underline;
+            cursor: pointer;
+          }
+  
+          &.neutral-message {
+            margin: 0;
+            padding: 0;
+            
+            & .neutral-text {
+              font-size: 0.875rem;
+              font-weight: 400;
+              color: #6B7280;
+              line-height: 1.2;
+              margin: 0;
+              padding: 0;
+            }
+          }
+        }
+      }
+
+    }
+
+    & .quick-view-full-container {
+      display: flex;
+      flex-wrap: wrap;
+      flex: 1 1 15%;
+
+      @media (max-width: 1148px) {
+        //margin-top: 20px;
+      }
+
+      & .quick-view-item {
+        flex: 1 1 100%;
+        min-width: 250px; /* Minimum width before wrapping */
+        flex-direction: column;
+        align-items: flex-start;
+        background-color: #fff;
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+        border-radius: 8px;
+        padding: 1rem;
+
+        & .item-header {
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-start;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 1rem;
+        }
+
+        & .item-body {
+          display: flex;
+          flex-direction: column;
+          align-items: start;
+          gap: .5rem;
+
+          & a {
+            color: var(--primary-color);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: underline;
+            cursor: pointer;
+  
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  & .dashboard-chart-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 20px;
+    margin-top: 20px;
+
+    & .bar-chart-item {
+      flex: 1 1 calc(65% - 20px); /* 50% width minus gap for 2 columns */
+      min-width: 250px; /* Minimum width before wrapping */
+      text-align: center;
+      box-sizing: border-box; /* Include padding and border in the element's total width and height */
       background-color: #fff;
       box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
       border-radius: 8px;
       padding: 1rem;
-      position: relative;
-      
-      &.dashboard-quick-links-card {
-        width: 25%;
-        align-items: start;
-        min-height: 100%;
-        
-        @media (max-width: 992px) {
-          width: 100%;
-        }
+
+      @media (max-width: 1092px) {
+        flex: 1 1 100%; /* Full width on small screens */
       }
 
-      & .dashboard-header-row {
+      & .item-header {
         display: flex;
+        flex-direction: row;
+        justify-content: space-between;
         align-items: center;
-        justify-content: center;
-        gap: 0.75rem;
-        margin-bottom: 0.5rem;
-      }
+        margin-bottom: 1rem;
 
-      & .dashboard-icon-box {
-        background: #F4E3DB;
-        border-radius: 2.5rem;
-        height: 2rem;
-        width: 2rem;
-        padding: 0.75rem 1rem;
-        color: #B50909;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-
-        &.zero-value {
-          background: #E5E7EB;
-          color: #6B7280;
-        }
-
-        & .dashboard-quick-view-icon {
-          width: 1.125rem;
-          height: 1.125rem;
-        }
-      }
-
-      & .dashboard-quick-view-number {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: var(--neutral-black-color-dark);
-      }
-
-      & .dashboard-quick-view-text {
-        font-size: 0.875rem;
-        font-weight: 400;
-        color: var(--neutral-black-color-dark);
-      }
-
-      & .dashboard-quick-view-expire-container {
-        & .dashboard-quick-view-expire-icon {
-          color: #D97706;
-          padding-right: 0.25rem;
-        }
-
-        & .dashboard-quick-view-expire-text {
-          font-size: 0.875rem;
-          font-weight: 400;
-          color: #D97706;
-
-          & a {
-            color: #D97706;
-          }
-        }
-
-        & .positive-expire-text {
-          text-decoration-line: underline;
-          cursor: pointer;
-        }
-
-        &.neutral-message {
+        & .header-text {
           margin: 0;
-          padding: 0;
-          
-          & .neutral-text {
-            font-size: 0.875rem;
-            font-weight: 400;
-            color: #6B7280;
-            line-height: 1.2;
-            margin: 0;
-            padding: 0;
-          }
+          text-transform: capitalize;
+          letter-spacing: 0.5px;
+          font-size: 1.25rem;
+          font-weight: 700;
+          color: var(--neutral-black-color-dark);
         }
-      }
 
-      & .dashboard-quick-links-link-container {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-
-        & .dashboard-quick-links-link {
+        & .view-all-link {
           color: var(--primary-color);
           font-size: 0.875rem;
           font-weight: 500;
@@ -159,234 +250,82 @@
           &:hover {
             text-decoration: underline;
           }
+        }
+      }
 
-          & .dashboard-quick-links-link-icon {
-            color: var(--primary-color);
-            font-size: 0.75rem;
+      &.rotated-labels {
+        ::ng-deep .ngx-charts-x-axis .tick text {
+          transform: rotate(-45deg);
+          text-anchor: end;
+          dominant-baseline: text-before-edge;
+        }
+        
+        ::ng-deep .ngx-charts .ngx-charts-outer {
+          margin-bottom: 20px;
+          
+          @media (max-width: 576px) {
+            margin-bottom: 15px;
           }
         }
       }
     }
-  }
 
-  & .dashboard-charts-container {
-    margin-top: 1.5rem;
-
-    & .dashboard-charts-grid {
-      display: grid;
-      grid-template-columns: 74% 25%;
-      gap: 15px;
-      
-      @media (max-width: 1200px) and (min-width: 992px) {
-        grid-template-columns: 60% 40%;
-        gap: 10px;
-      }
-      
-      @media (max-width: 992px) {
-        grid-template-columns: 100%;
-        gap: 15px;
-      }
-      
-      @media (max-width: 776px) {
-        grid-template-columns: 100%;
-        gap: 15px;
-      }
-    }
-
-    & .dashboard-chart-card {
-      overflow: visible;
-      max-width: 100%;
+    & .pie-chart-item {
+      flex: 1 1 calc(15% - 20px); /* 50% width minus gap for 2 columns */
+      min-width: 250px; /* Minimum width before wrapping */
+      text-align: center;
+      box-sizing: border-box; /* Include padding and border in the element's total width and height */
       background-color: #fff;
       box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
       border-radius: 8px;
       padding: 1rem;
-      position: relative;
-      width: 100%;
-      
-      &.pie-chart-card {
-        min-height: 320px;
-        
-        @media (max-width: 1400px) {
-          min-height: 280px;
-        }
-        
-        @media (max-width: 992px) {
-          min-height: 260px;
-        }
-        
-        @media (max-width: 576px) {
-          min-height: 240px;
-        }
-      }
-      
-      &.bar-chart-card {
-        min-height: 360px;
-        
-        @media (max-width: 1400px) {
-          min-height: 320px;
-        }
-        
-        @media (max-width: 992px) {
-          min-height: 300px;
-        }
-        
-        @media (max-width: 576px) {
-          min-height: 280px;
-        }
+
+      @media (max-width: 1092px) {
+        flex: 1 1 100%; /* Full width on small screens */
       }
 
-      & .dashboard-chart-header {
+      & .item-header {
         display: flex;
+        flex-direction: row;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 1rem;
+
+        & .header-text {
+          margin: 0;
+          text-transform: capitalize;
+          letter-spacing: 0.5px;
+          font-size: 1.25rem;
+          font-weight: 700;
+          color: var(--neutral-black-color-dark);
+        }
+
+        & .view-all-link {
+          color: var(--primary-color);
+          font-size: 0.875rem;
+          font-weight: 500;
+          text-decoration: underline;
+          cursor: pointer;
+          display: flex;
+          flex-direction: row;
+          align-items: start;
+          gap: 0.5rem;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
       }
 
-      & .dashboard-chart-content {
+      & .pie-chart-content {
         position: relative;
-        height: 280px;
-        width: 100%;
-        overflow: hidden;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        
-        @media (max-width: 1400px) {
-          height: 240px;
-        }
-        
-        @media (max-width: 992px) {
-          height: 220px;
-        }
-        
-        @media (max-width: 576px) {
-          height: 200px;
-        }
-      }
-    }
-
-    & .bar-chart-card {
-      .bar-chart-content {
-        height: 320px;
-        
-        @media (max-width: 1400px) {
-          height: 280px;
-        }
-        
-        @media (max-width: 992px) {
-          height: 260px;
-        }
-        
-        @media (max-width: 576px) {
-          height: 240px;
-        }
-
-        ::ng-deep ngx-charts-bar-vertical {
-          width: 100% !important;
-          height: 100% !important;
-          max-width: 100% !important;
-        }
-        
-        ::ng-deep .ngx-charts {
-          width: 100% !important;
-          height: 100% !important;
-        }
-        
-        ::ng-deep .ngx-charts-x-axis {
-          .tick {
-            text {
-              font-size: 11px;
-              font-weight: 500;
-              fill: #666;
-              
-              @media (max-width: 576px) {
-                font-size: 10px;
-              }
-            }
-          }
-        }
-        
-        ::ng-deep .ngx-charts-x-axis .tick text {
-          text-anchor: middle;
-          dominant-baseline: text-before-edge;
-        }
-        
-        ::ng-deep .ngx-charts {
-          .ngx-charts-outer {
-            margin-bottom: 10px;
-            
-            @media (max-width: 576px) {
-              margin-bottom: 8px;
-            }
-          }
-        }
-        
-        &.rotated-labels {
-          ::ng-deep .ngx-charts-x-axis .tick text {
-            transform: rotate(-45deg);
-            text-anchor: end;
-            dominant-baseline: text-before-edge;
-          }
-          
-          ::ng-deep .ngx-charts .ngx-charts-outer {
-            margin-bottom: 20px;
-            
-            @media (max-width: 576px) {
-              margin-bottom: 15px;
-            }
-          }
-        }
-      }
-    }
-
-    & .pie-chart-card {
-      .pie-chart-content {
-        height: 240px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        
-        @media (max-width: 1400px) {
-          height: 220px;
-        }
-        
-        @media (max-width: 992px) {
-          height: 200px;
-        }
-        
-        @media (max-width: 576px) {
-          height: 180px;
-        }
-
-        ::ng-deep ngx-charts-pie-chart {
-          width: 100% !important;
-          height: 100% !important;
-          margin: 0 auto;
-          display: block !important;
-        }
-
-        ::ng-deep .ngx-charts-pie-chart {
-          width: 100% !important;
-          height: 100% !important;
-        }
-        
-        ::ng-deep .ngx-charts {
-          width: 100% !important;
-          height: 100% !important;
-        }
-
-        & .dashboard-chart-center-text {
+        & .pie-chart-center-text {
           position: absolute;
           top: 50%;
           left: 50%;
-          transform: translate(-50%, -50%);
           text-align: center;
-          z-index: 10;
-          pointer-events: none;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
+          line-height: 0.5;
+          transform: translate(-50%, -50%);
 
           & .center-title {
             color: #666666;
