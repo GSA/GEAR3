@@ -26,6 +26,7 @@ export class ItStandardsManagerComponent implements OnInit {
 
 
   itStandardsForm: FormGroup = new FormGroup({
+    auditUser: new FormControl(null),
     tcManufacturer: new FormControl(null, [Validators.required]),
     tcSoftwareProduct: new FormControl(null, [Validators.required]),
     tcSoftwareVersion: new FormControl(null),
@@ -506,6 +507,7 @@ export class ItStandardsManagerComponent implements OnInit {
       
       // Add username to payload
       this.itStandardsForm.value.auditUser = this.globals.authUser;
+      this.itStandardsForm.patchValue({auditUser: this.globals.authUser});
 
       // add ManufacturerName to payload
       if (this.itStandardsForm.value.tcManufacturer) {
