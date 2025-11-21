@@ -4,7 +4,7 @@ import { Column } from '@common/table-classes';
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
-import { Subscription } from 'rxjs';
+import { forkJoin } from 'rxjs';
 import { AnalyticsService } from '@services/analytics/analytics.service';
 
 @Component({
@@ -15,7 +15,8 @@ import { AnalyticsService } from '@services/analytics/analytics.service';
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  private sidebarSubscription: Subscription;
+  public isDataReady: boolean = false;
+
   private resizeObserver: ResizeObserver;
 
   public chartView: [number, number] = [0, 400];
@@ -151,23 +152,39 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   public ngOnInit(): void {
-    // this.sidebarSubscription = this.sharedService.sidebarVisible.subscribe((isVisible: boolean) => {
-      // setTimeout(() => {
-      //   this.updateChartViews();
-      //   this.updateResponsiveChartHeights();
-      //   this.cdr.detectChanges();
-      // }, 200);
-    // });
+    forkJoin([
+      this.apiService.getITStandardsExpiringThisQuarter(),
+      this.apiService.getITStandardsExpiringThisWeek(),
+      this.apiService.getFismaExpiringThisQuarter(),
+      this.apiService.getFismaExpiringThisWeek(),
+      this.apiService.getDecommissionedSystemTotals(),
+      this.apiService.getRetiredStandardsTotals(),
+    ]).subscribe(
+      ([
+        standardsExpiringQuarter,
+        standardsExpiringWeek,
+        fismaExpiringQuarter,
+        fismaExpiringWeek,
+        decommissionedSystemTotals,
+        RetiredStandardTotals
+      ]) => {
+        this.standardsExpiringThisQuarter = standardsExpiringQuarter || 0;
+        this.standardsExpiringThisWeek = standardsExpiringWeek || 0;
+        this.fismaExpiringThisQuarter = fismaExpiringQuarter || 0;
+        this.fismaExpiringThisWeek = fismaExpiringWeek || 0;
+
+        this.decommissionedSystemsLast6Months = decommissionedSystemTotals?.DecommissionedSystemsLastSixMonths || 0;
+        this.decommissionedSystemsLastMonth = decommissionedSystemTotals?.DecommissionedSystemsLastMonth || 0;
+        this.retiredITStandardsLast6Months = RetiredStandardTotals?.RetiredStandardsLastSixMonths || 0;
+        this.retiredITStandardsLast7Days = RetiredStandardTotals?.RetiredStandardsLastWeek || 0;
+
+        this.isDataReady = true;
+      }
+    );
 
     this.apiService.getRecentITStandards(10).subscribe(standards => {
       this.tableService.updateReportTableData(standards);
     });
-
-    this.apiService.getITStandardsExpiringThisQuarter().subscribe(q => this.standardsExpiringThisQuarter = q || 0);
-    this.apiService.getITStandardsExpiringThisWeek().subscribe(w => this.standardsExpiringThisWeek = w || 0);
-
-    this.apiService.getFismaExpiringThisQuarter().subscribe(q => this.fismaExpiringThisQuarter = q || 0);
-    this.apiService.getFismaExpiringThisWeek().subscribe(w => this.fismaExpiringThisWeek = w || 0);
 
     this.apiService.getCloudAdoptionRate().subscribe(cloudData => {
       if (cloudData && cloudData.length > 0) {
@@ -180,36 +197,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    this.apiService.getDecommissionedSystemTotals().subscribe(totals => {
-      this.decommissionedSystemsLast6Months = totals?.DecommissionedSystemsLastSixMonths || 0;
-      this.decommissionedSystemsLastMonth = totals?.DecommissionedSystemsLastMonth || 0;
-    });
-
-    this.apiService.getRetiredStandardsTotals().subscribe(totals => {
-      this.retiredITStandardsLast6Months = totals.RetiredStandardsLastSixMonths || 0;
-      this.retiredITStandardsLast7Days = totals.RetiredStandardsLastWeek || 0;
-    });
-
     this.loadHostingPlatformsData();
-
-    setTimeout(() => {
-      this.updateChartViews();
-      this.updateResponsiveChartHeights();
-    }, 100);
   }
 
   public ngAfterViewInit(): void {
-    //setTimeout(() => {
-      this.updateChartViews();
-      this.setupResizeObserver();
-      this.cdr.detectChanges();
-    //}, 200);
+    this.updateChartViews();
+    this.setupResizeObserver();
+    this.cdr.detectChanges();
   }
 
   public ngOnDestroy(): void {
-    if (this.sidebarSubscription) {
-      this.sidebarSubscription.unsubscribe();
-    }
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
     }
@@ -217,14 +214,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @HostListener('window:resize')
   onResize() {
-    //setTimeout(() => {
-      this.updateChartViews();
-      this.updateResponsiveChartHeights();
-    //}, 100);
+    this.updateChartViews();
+    this.updateResponsiveChartHeights();
   }
 
   private loadHostingPlatformsData(): void {
-    this.apiService.getSystems().subscribe(systems => {
+   this.apiService.getSystems().subscribe(systems => {
       const platformCounts = systems
         .filter(system => system.Status === 'Active' && system.BusApp === 'Yes' && system.CSP)
         .reduce((counts, system) => {
@@ -235,8 +230,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
       const { individualPlatforms, othersCount } = Object.entries(platformCounts)
         .map(([name, value]) => ({ name, value }))
-        .sort((a, b) => b.value - a.value)
-        .reduce((acc, platform) => {
+        .sort((a: any, b: any) => b.value - a.value)
+        .reduce((acc, platform: any) => {
           if (platform.value >= 3) {
             acc.individualPlatforms.push(platform);
           } else {
@@ -253,7 +248,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.hostingPlatformsData = finalData;
       this.updateChartViews();
       this.cdr.detectChanges();
-    });
+   });
   }
 
   private normalizePlatformName(platform: string): string {
@@ -302,41 +297,39 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private updateChartViews() {
-    //setTimeout(() => {
-      this.checkIfLabelsShouldRotate();
+    this.checkIfLabelsShouldRotate();
+    
+    const barContainer = document.querySelector('.bar-chart-content');
+    if (barContainer?.clientWidth > 0) {
+      const barWidth = barContainer.clientWidth;
+      const screenWidth = window.innerWidth;
       
-      const barContainer = document.querySelector('.bar-chart-content');
-      if (barContainer?.clientWidth > 0) {
-        const barWidth = barContainer.clientWidth;
-        const screenWidth = window.innerWidth;
-        
-        const heights = this.shouldRotateLabels 
-          ? { 576: 240, 992: 260, 1400: 280, default: 320 }
-          : { 576: 240, 992: 260, 1400: 280, default: 320 };
-        
-        const barHeight = screenWidth <= 576 ? heights[576] :
-                          screenWidth <= 992 ? heights[992] :
-                          screenWidth <= 1400 ? heights[1400] : heights.default;
-        
-        this.barChartView = [barWidth, barHeight];
-      } else {
-        this.barChartView = [600, 350];
-      }
+      const heights = this.shouldRotateLabels 
+        ? { 576: 240, 992: 260, 1400: 280, default: 320 }
+        : { 576: 240, 992: 260, 1400: 280, default: 320 };
+      
+      const barHeight = screenWidth <= 576 ? heights[576] :
+                        screenWidth <= 992 ? heights[992] :
+                        screenWidth <= 1400 ? heights[1400] : heights.default;
+      
+      this.barChartView = [barWidth, barHeight];
+    } else {
+      this.barChartView = [600, 350];
+    }
 
-      const pieContainer = document.querySelector('.pie-chart-content');
-      if (pieContainer?.clientWidth > 0) {
-        const pieWidth = pieContainer.clientWidth;
-        const screenWidth = window.innerWidth;
-        const pieHeight = screenWidth <= 576 ? 180 :
-                          screenWidth <= 992 ? 200 :
-                          screenWidth <= 1400 ? 220 : 240;
-        this.pieChartView = [pieWidth, pieHeight];
-      } else {
-        this.pieChartView = [400, 280];
-      }
+    const pieContainer = document.querySelector('.pie-chart-content');
+    if (pieContainer?.clientWidth > 0) {
+      const pieWidth = pieContainer.clientWidth;
+      const screenWidth = window.innerWidth;
+      const pieHeight = screenWidth <= 576 ? 180 :
+                        screenWidth <= 992 ? 200 :
+                        screenWidth <= 1400 ? 220 : 240;
+      this.pieChartView = [pieWidth, pieHeight];
+    } else {
+      this.pieChartView = [400, 280];
+    }
 
-      this.cdr.detectChanges();
-    //}, 50);
+    this.cdr.detectChanges();
   }
 
   public getExpiringDate(): string {
