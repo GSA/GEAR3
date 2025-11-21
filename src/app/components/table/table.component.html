@@ -52,6 +52,7 @@
                     (onChange)="toggleVisible($event)"
                     optionLabel="header"
                     pTooltip="Add/Remove Columns"
+                    tooltipPosition="left"
                     [showToggleAll]="false"
                     ariaLabel="Toggle Columns">
                     <ng-template pTemplate="selectedItems">
@@ -60,10 +61,10 @@
                   </p-multiSelect>
                 }
                 @if (showExportButton) {
-                  <p-button icon="fa fa-download" pTooltip="Export table data" severity="primary" (click)="exportSanitizedData()" ariaLabel="Export Data" />
+                  <p-button icon="fa fa-download" pTooltip="Export table data" tooltipPosition="left" severity="primary" (click)="exportSanitizedData()" ariaLabel="Export Data" />
                 }
                 @if (showFilterButton) {
-                  <p-button icon="fa fa-filter" pTooltip="Column filters" severity="primary" (click)="openColumnFilterModal()" ariaLabel="Column Filters" />
+                  <p-button icon="fa fa-filter" pTooltip="Column filters" tooltipPosition="left" severity="primary" (click)="openColumnFilterModal()" ariaLabel="Column Filters" />
                 }
               </div>
             }
