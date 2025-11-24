@@ -175,12 +175,14 @@
                   <tr>
                     <th>Role</th>
                     <th>Name</th>
+                    <th>Org</th>
                     <th>Email</th>
                   </tr>
-                  @for (poc of getPOCList(); track poc) {
+                  @for (poc of splitPOCs; track poc) {
                     <tr>
                       <td> {{ poc.type }} </td>
                       <td> {{ poc.name }} </td>
+                      <td [title]="poc.orgName"> {{ poc.orgCode }} </td>
                       <td>
                         <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{poc.email}}" target="_blank" rel="noopener">{{ poc.email }}</a>
                       </td>

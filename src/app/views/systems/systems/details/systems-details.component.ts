@@ -15,6 +15,7 @@ import { Capability } from '@api/models/capabilities.model';
 import { ITStandards } from '@api/models/it-standards.model';
 import { Record } from '@api/models/records.model';
 import { Website } from '@api/models/websites.model';
+import { forkJoin } from 'rxjs';
 
 @Component({
     selector: 'systems-details',
@@ -50,6 +51,8 @@ export class SystemsDetailsComponent implements OnInit {
   public recordsCols: Column[] = RecordsColumns;
   public websiteCols: Column[] = WebsitesColumns;
 
+  public splitPOCs: any = {};
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -63,36 +66,78 @@ export class SystemsDetailsComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       this.systemId = +params.get('sysID');
 
-      this.apiService.getOneSys(this.systemId).subscribe(s => {
-        this.detailsData = s;
-        this.isDataReady = true;
-      });
+      forkJoin([
+        this.apiService.getOneSys(this.systemId),
+        this.apiService.getPOCsBySystemId(this.systemId),
+        this.apiService.getSysTIME(this.systemId),
+        this.apiService.getSysCapabilities(this.systemId),
+        this.apiService.getSysITStandards(this.systemId),
+        this.apiService.getSysRecords(this.systemId),
+        this.apiService.getRecords(),
+        this.apiService.getSysWebsites(this.systemId),
+        this.apiService.getWebsites()
+      ]).subscribe(
+        ([
+          system,
+          systemPOCs,
+          systemTIME,
+          systemCapabilities,
+          systemITStandard,
+          systemRecords,
+          records,
+          systemWebsites,
+          websites
+        ]) => {
+          this.detailsData = system;
 
-      this.apiService.getSysTIME(this.systemId).subscribe(sysTime => {
-        this.systemTimeData = sysTime;
-      });
 
-      this.apiService.getSysCapabilities(this.systemId).subscribe(sysCaps => {
-        this.sysCapabilitiesData = sysCaps
-      });
 
-      this.apiService.getSysITStandards(this.systemId).subscribe(sysTech => {
-        this.sysTechnologiesData = sysTech;
-      });
 
-      this.apiService.getSysRecords(this.systemId).subscribe((mappings: any[]) => {
-        this.apiService.getRecords().subscribe((records: any[]) => {
-          const recordIds = new Set(mappings.map(({ obj_records_Id }) => obj_records_Id));
-          this.sysRecordsData = records.filter(({ Rec_ID }) => recordIds.has(parseInt(Rec_ID)));
-        });
-      });
+          this.systemTimeData = systemTIME;
+          this.sysCapabilitiesData = systemCapabilities;
+          this.sysTechnologiesData = systemITStandard;
 
-      this.apiService.getSysWebsites(this.systemId).subscribe((mappings: any[]) => {
-        this.apiService.getWebsites().subscribe((websites: any[]) => {
-          const websiteIds = new Set(mappings.map(({ obj_websites_Id }) => obj_websites_Id));
+          const recordIds = new Set(systemRecords.map(({ obj_records_Id }) => obj_records_Id));
+          this.sysRecordsData = records.filter(({ Rec_ID }) => recordIds.has(Rec_ID));
+
+          const websiteIds = new Set(systemWebsites.map(({ obj_websites_Id }) => obj_websites_Id));
           this.sysWebsitesData = websites.filter(({ website_id }) => websiteIds.has(parseInt(website_id)));
+
+          this.splitPOCs = this.splitPOCInfo(this.detailsData.POC);
+
+          this.isDataReady = true;
         });
-      });
+
+      // this.apiService.getOneSys(this.systemId).subscribe(s => {
+      //   this.detailsData = s;
+      //   this.isDataReady = true;
+      // });
+
+      // this.apiService.getSysTIME(this.systemId).subscribe(sysTime => {
+      //   this.systemTimeData = sysTime;
+      // });
+
+      // this.apiService.getSysCapabilities(this.systemId).subscribe(sysCaps => {
+      //   this.sysCapabilitiesData = sysCaps
+      // });
+
+      // this.apiService.getSysITStandards(this.systemId).subscribe(sysTech => {
+      //   this.sysTechnologiesData = sysTech;
+      // });
+
+      // this.apiService.getSysRecords(this.systemId).subscribe((mappings: any[]) => {
+      //   this.apiService.getRecords().subscribe((records: any[]) => {
+      //     const recordIds = new Set(mappings.map(({ obj_records_Id }) => obj_records_Id));
+      //     this.sysRecordsData = records.filter(({ Rec_ID }) => recordIds.has(parseInt(Rec_ID)));
+      //   });
+      // });
+
+      // this.apiService.getSysWebsites(this.systemId).subscribe((mappings: any[]) => {
+      //   this.apiService.getWebsites().subscribe((websites: any[]) => {
+      //     const websiteIds = new Set(mappings.map(({ obj_websites_Id }) => obj_websites_Id));
+      //     this.sysWebsitesData = websites.filter(({ website_id }) => websiteIds.has(parseInt(website_id)));
+      //   });
+      // });
 
     });
   }
@@ -154,9 +199,9 @@ export class SystemsDetailsComponent implements OnInit {
     return this.tableService.renderRelArtifacts(this.detailsData.RelatedArtifacts);
   }
 
-  public getPOCList(): any[] {
-    return this.tableService.renderPOCInfoTable(this.detailsData.POC);
-  }
+  // public getPOCList(): any[] {
+  //   return this.tableService.renderPOCInfoTable(this.detailsData.POC);
+  // }
 
   public getTimeQuestionnaireButtonText(): string {
     const currentMonth = new Date().getMonth() + 1;
@@ -171,6 +216,58 @@ export class SystemsDetailsComponent implements OnInit {
 
   public onTimeButtonClick(): void {
     window.open(this.detailsData.TIME_URL, '_blank');
+  }
+
+  private splitPOCInfo(p) {
+    let poc = null;
+    let poc1 = null;
+    let pocs = [];
+
+    if (p) {
+      poc1 = p.split('*');
+      poc1 = poc1.map((poctype, tmpObj) => {
+        poctype = poctype.split(':');
+        poc = poctype[1].split('; ');
+        for (var i = 0; i < poc.length; i++) {
+          var pieces = poc[i].split(',');
+          tmpObj = null;
+          let orgCode = '';
+          let orgName = '';
+          if (pieces[0] !== ''){
+            //if(pieces[1] !== '') {
+              this.apiService.getPOCOrgByEmail(pieces[1]).subscribe(pocOrg => {
+                orgCode = pocOrg[0].OrgSymbol;
+                orgName = pocOrg[0].DisplayName;
+
+                tmpObj = {
+                  type: poctype[0],
+                  name: pieces[0],
+                  phone: pieces[2],
+                  email: pieces[1],
+                  orgCode: orgCode,
+                  orgName: orgName
+                };
+                pocs.push(tmpObj);
+              });
+            // } else {
+            //   tmpObj = {
+            //     type: poctype[0],
+            //     name: pieces[0],
+            //     phone: pieces[2],
+            //     email: pieces[1],
+            //     orgCode: orgCode,
+            //     orgName: orgName
+            //   };
+            // }
+          }
+          
+        }
+      });
+    }
+
+    return pocs.filter(function (el) {
+      return el != null;
+    });
   }
 
 }

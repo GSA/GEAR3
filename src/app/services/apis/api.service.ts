@@ -344,6 +344,12 @@ export class ApiService {
       .pipe(catchError(this.handleError<POC[]>('GET POC', [])));
   }
 
+  public getPOCOrgByEmail(email: string): Observable<Organization> {
+    return this.http
+      .get<Organization>(this.pocUrl + '/get/pocOrg/' + email)
+      .pipe(catchError(this.handleError<Organization>('GET POC Org By Email', null)));
+  }
+
   //// Records Management
   public getRecords(): Observable<Record[]> {
     return this.http
@@ -481,6 +487,14 @@ export class ApiService {
         map(s => s[0]),
         catchError(this.handleError<System[]>('GET System')));
   }
+
+  public getPOCsBySystemId(systemId: number): Observable<any[]> {
+    return this.http
+      .get<any[]>(this.sysUrl + '/get/pocBySystemId/' + String(systemId))
+      .pipe(catchError(this.handleError<any[]>('GET POC by system Id', [])));
+  }
+
+
   // public getChildSubSys(id: number): Observable<System[]> {
   //   return this.http.get<System[]>(this.sysUrl + '/get/' + String(id) + '/systems').pipe(
   //     catchError(this.handleError<System[]>('GET System Child Sub-Systems', []))

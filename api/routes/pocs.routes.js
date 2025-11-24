@@ -9,4 +9,7 @@ router.route('/')
 router.route('/get/:id')
   .get(pocCtrl.findOne);
 
+router.route('/get/pocOrg/:email')
+  .get(pocCtrl.getPOCOrgByEmail);
+
 module.exports = router;
