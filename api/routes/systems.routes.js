@@ -45,4 +45,7 @@ router.route('/filter_totals')
 router.route('/decommissioned_system_totals')
   .get(sysCtrl.getDecommissionedSystemTotals);
 
+router.route('/get/pocBySystemId/:systemId')
+  .get(sysCtrl.getPOCsBySystemId);
+
 module.exports = router;

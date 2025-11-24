@@ -225,3 +225,61 @@ exports.getDecommissionedSystemTotals = (req, res) => {
 
   res = ctrl.sendQuery(query, `Systems decommissioned totals`, res);
 };
+
+exports.getPOCsBySystemId = (req, res) => {
+  var systemId = req.params.systemId;
+  var query = `
+  SELECT
+    sys.ex:Authorizing_Official_Full_Name              AS AOName,
+    sys.ex:Authorizing_Official_Email                  AS AOEmail,
+    sys.ex:Authorizing_Official_Phone                  AS AOPhone,
+    sys.ex:System_Owner_Full_Name                      AS SOName,
+    sys.ex:System_Owner_eMail                          AS SOEmail,
+    sys.ex:System_Owner_Phone                          AS SOPhone,
+    sys.ex:ISSM_Full_Name                              AS ISSMName,
+    sys.ex:ISSM_Email                                  AS ISSMEmail,
+    sys.ex:ISSM_Phone                                  AS ISSMPhone,
+    sys.ex:ISSO_1_Full_Name                            AS ISSO1Name,
+    sys.ex:ISSO_1_Email                                AS ISSO1Email,
+    sys.ex:ISSO_1_Phone                                AS ISSO1Phone,
+    sys.ex:ISSO_2_Full_Name                            AS ISSO2Name,
+    sys.ex:ISSO_2_Email                                AS ISSO2Email,
+    sys.ex:ISSO_2_Phone                                AS ISSO2Phone,
+    sys.ex:ISSO_3_Full_Name                            AS ISSO3Name,
+    sys.ex:ISSO_3_Email                                AS ISSO3Email,
+    sys.ex:ISSO_3_Phone                                AS ISSO3Phon,
+    sys.ex:ISSO_4_Full_Name                            AS ISSO4Name,
+    sys.ex:ISSO_4_Email                                AS ISSO4Email,
+    sys.ex:ISSO_4_Phone                                AS ISSO4Phone,
+    sys.ex:Contracting_Officer_1_Full_Name             AS CO1Name,
+    sys.ex:Contracting_Officer_1_eMail                 AS CO1Email,
+    sys.ex:Contracting_Officer_1_Phone                 AS CO1Phone,
+    sys.ex:Contracting_Officer_2_Full_Name             AS CO2Name,
+    sys.ex:Contracting_Officer_2_eMail                 AS CO2Email,
+    sys.ex:Contracting_Officer_2_Phone                 AS CO2Phone,
+    sys.ex:ContractingOfficer_Representative1_Name     AS COR1Name,
+    sys.ex:ContractingOfficer_Representative1_eMail    AS COR1Email,
+    sys.ex:ContractingOfficer_Representative1_Phone    AS COR1Phone,
+    sys.ex:ContractingOfficer_Representative2_Name     AS COR2Name,
+    sys.ex:ContractingOfficer_Representative2_eMail    AS COR2Email,
+    sys.ex:ContractingOfficer_Representative2_Phone    AS COR2Phone,
+    sys.ex:BPOC_1__Full_Name                           AS BPOC1Name,
+    sys.ex:BPOC_1__Email                               AS BPOC1Email,
+    sys.ex:BPOC_1_Phone                                AS BPOC1Phone,
+    sys.ex:BPOC_2__Full_Name                           AS BPOC2Name,
+    sys.ex:BPOC_2__Email                               AS BPOC2Email,
+    sys.ex:BPOC_2_Phone                                AS BPOC2Phone,
+    sys.ex:TPOC_1__Full_Name                           AS TPOC1Name,
+    sys.ex:TPOC_1__Email                               AS TPOC1Email,
+    sys.ex:TPOC_1_Phone                                AS TPOC1Phone,
+    sys.ex:TPOC_2__Full_Name                           AS TPOC2Name,
+    sys.ex:TPOC_2__Email                               AS TPOC2Email,
+    sys.ex:TPOC_2_Phone                                AS TPOC2Phone,
+    sys.ex:Data_Steward_Full_Name                      AS DSName,
+    sys.ex:Data_Steward_Email                          AS DSEmail
+  FROM obj_fisma_archer             AS sys
+  WHERE sys.ex:GEAR_ID = ${systemId};
+`;
+
+  res = ctrl.sendQuery(query, `POCs by SystemId`, res);
+};
