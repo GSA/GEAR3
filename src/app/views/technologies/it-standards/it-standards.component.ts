@@ -223,7 +223,7 @@ export class ItStandardsComponent implements OnInit {
         formatter: this.sharedService.dateFormatter,
        titleTooltip: this.getTooltip('Software End of Life Date')
       }, {
-        field: 'OldName',
+        field: 'AlsoKnownAs',
         header: 'Also Known As',
         isSortable: true,
         showColumn: false,

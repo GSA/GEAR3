@@ -41,4 +41,5 @@ export class ITStandards {
   public ComplianceStatus: string = null;
   public ChangeDTG: Date = null;
   public ConditionsRestrictions: string = null;
+  public AlsoKnownAs: string = null;
 }

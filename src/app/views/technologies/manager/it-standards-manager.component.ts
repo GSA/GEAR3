@@ -55,7 +55,8 @@ export class ItStandardsManagerComponent implements OnInit {
     itStandApprovedVersions: new FormControl(),
     itStandOperatingSystems: new FormControl(),
     itStandMobileAppBundles: new FormControl(),
-    itStandConditionsRestrictions: new FormControl()
+    itStandConditionsRestrictions: new FormControl(),
+    itStandAlsoKnownAs: new FormControl()
   });
 
   itStandard = <any>{};
@@ -382,7 +383,8 @@ export class ItStandardsManagerComponent implements OnInit {
         itStandRefDocs: this.itStandard.ReferenceDocument,
         itStandApprovedVersions: this.itStandard.ApprovedVersions,
         itStandOperatingSystems: selectedOSList.map(o => this.sharedService.findInArray(this.operatingSystems, 'Name', o)),
-        itStandConditionsRestrictions: this.itStandard.ConditionsRestrictions
+        itStandConditionsRestrictions: this.itStandard.ConditionsRestrictions,
+        itStandAlsoKnownAs: this.itStandard.AlsoKnownAs
       });
       this.changeDeploymentType();
     }
@@ -571,6 +573,9 @@ export class ItStandardsManagerComponent implements OnInit {
 
       this.itStandardsForm.value.itStandName = this.itStandardsForm.value.itStandName.replace(/\s+/g, ' ').trim();
       this.itStandardsForm.patchValue({itStandName: this.itStandardsForm.value.itStandName.replace(/\s+/g, ' ').trim()});
+
+      this.itStandardsForm.value.itStandAlsoKnownAs = this.itStandardsForm.value.itStandAlsoKnownAs.replace(/\s+/g, ' ').trim();
+      this.itStandardsForm.patchValue({itStandAlsoKnownAs: this.itStandardsForm.value.itStandAlsoKnownAs.replace(/\s+/g, ' ').trim()});
 
       // Send data to database
       if(this.createBool) {
