@@ -68,7 +68,7 @@ export class SidebarV2Component {
   }
 
   public onRouteChange(): void {
-    this.isSidebarExpanded = false;
+    // this.isSidebarExpanded = false;
   }
   
 }
