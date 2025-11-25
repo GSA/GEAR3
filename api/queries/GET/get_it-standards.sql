@@ -3,6 +3,7 @@ SELECT
   -- tech.Keyname                          AS Name,
   IFNULL(tech.softwareReleaseName, tech.Keyname)  AS Name,
   tech.Description,
+  tech.AlsoKnownAs                                AS AlsoKnownAs,
   tech.Approved_Status_Expiration_Date            AS ApprovalExpirationDate,
   tech.Vendor_Standard_Organization,
   tech.Available_through_Myview,

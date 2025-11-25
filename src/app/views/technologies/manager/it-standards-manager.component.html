@@ -165,12 +165,12 @@
                   }
                 </div>
                 <div class="data">
-                  <label for="itStandName" class="data-label">Also Known As</label>
-                  <input type="text" class="form-control" id="itStandName"
-                    formControlName="itStandName" placeholder="Not Applicable" [value]="itStandard.OldName" >
-                    @if (modalService.fieldValidCheck(itStandardsForm, 'itStandName')) {
+                  <label for="itStandAlsoKnownAs" class="data-label">Also Known As</label>
+                  <input type="text" class="form-control" id="itStandAlsoKnownAs"
+                    formControlName="itStandAlsoKnownAs" placeholder="Not Applicable" [value]="itStandard.OldName" >
+                    @if (modalService.fieldValidCheck(itStandardsForm, 'itStandAlsoKnownAs')) {
                       <div>
-                        @if (itStandardsForm.controls['itStandName'].errors.required) {
+                        @if (itStandardsForm.controls['itStandAlsoKnownAs'].errors.required) {
                           <div class="invalid-feedback">
                             Also Known As is Required
                           </div>

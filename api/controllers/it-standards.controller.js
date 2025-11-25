@@ -480,6 +480,7 @@ function updateData(techId, data) {
   data.itStandRITM = ctrl.setNullEmptyTextHandler(data.itStandRITM);
   data.itStandComments = ctrl.setNullEmptyTextHandler(data.itStandComments);
   data.itStandConditionsRestrictions = ctrl.setNullEmptyTextHandler(data.itStandConditionsRestrictions);
+  data.itStandAlsoKnownAs = ctrl.setNullEmptyTextHandler(data.itStandAlsoKnownAs);
 
   data.tcEndOfLifeDate = ctrl.setNullEmptyTextHandler(data.tcEndOfLifeDate);
 
@@ -507,7 +508,8 @@ function updateData(techId, data) {
             ChangeAudit                       = '${data.auditUser}',
             ChangeDTG                         = NOW(),
             endOfLifeDate                     = ${endOfLifeDateFragment},
-            Conditions_Restrictions           = ${data.itStandConditionsRestrictions}
+            Conditions_Restrictions           = ${data.itStandConditionsRestrictions},
+            AlsoKnownAs                       = ${data.itStandAlsoKnownAs}
           WHERE Id = ${techId};`;
 }
 
@@ -531,6 +533,7 @@ function saveData(data) {
   data.itStandRITM = ctrl.setNullEmptyTextHandler(data.itStandRITM);
   data.itStandComments = ctrl.setNullEmptyTextHandler(data.itStandComments);
   data.itStandConditionsRestrictions = ctrl.setNullEmptyTextHandler(data.itStandConditionsRestrictions);
+  data.itStandAlsoKnownAs = ctrl.setNullEmptyTextHandler(data.itStandAlsoKnownAs);
 
   return `INSERT INTO obj_technology(
             obj_technology_status_Id,
@@ -553,7 +556,8 @@ function saveData(data) {
             Comments,
             Reference_documents,
             endOfLifeDate,
-            Conditions_Restrictions
+            Conditions_Restrictions,
+            AlsoKnownAs
           ) VALUES (
            ${data.itStandStatus},
            '${keyname}',
@@ -575,7 +579,8 @@ function saveData(data) {
            ${data.itStandComments},
            ${data.itStandRefDocs},
            ${endOfLifeDateFragment},
-           ${data.itStandConditionsRestrictions}
+           ${data.itStandConditionsRestrictions},
+           ${data.itStandAlsoKnownAs}
           );`;
 }
 
