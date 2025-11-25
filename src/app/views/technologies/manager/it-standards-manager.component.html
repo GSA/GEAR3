@@ -436,7 +436,7 @@
                                     <label class="custom-control-label" for="itStandCertifyCheck">
                                       <span class="text-danger">*</span> I certify all data is correct and up-to-date
                                     </label>
-                                    <app-button buttonText="Save" (buttonClick)="submitForm()" [disabled]="!(itStandCertify && itStandardsForm.valid) || anyServerError"></app-button>
+                                    <app-button buttonText="Save" (buttonClick)="submitForm()" [disabled]="!(itStandCertify && itStandardsForm.valid && itStandardsForm.touched) || anyServerError"></app-button>
                                   </div>
                                 </div>
                               </div>
