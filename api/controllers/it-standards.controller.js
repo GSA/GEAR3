@@ -144,13 +144,13 @@ exports.create = (req, res) => {
 };
 
 exports.createAdvanced = (req, res) => {
+  let data = req.body;
+  let techId = req.params.id;
+  let query = '';
+
   ctrl.getApiToken (req, res)
   .then((response) => {
     if (response === 1) {
-      let data = req.body;
-      let techId = req.params.id;
-      let query = '';
-
       // Update Technopedia Fields
       query += saveCustomManufacturer(techId, data.tcManufacturer);
       query += saveCustomSoftwareProduct(techId, data.tcSoftwareProduct, data.tcManufacturer);
@@ -437,13 +437,13 @@ function generateKeyname(data) {
     (data.tcSoftwareRelease && data.tcSoftwareRelease.application === 'null') || 
     (data.tcSoftwareRelease && data.tcSoftwareRelease.application === 'NULL')
  ) {
-    if(!data.itStandName) {
+    if(!data.itStandAlsoKnownAs) {
       res.status(500).json({
         message: "IT Standards name missing from API payload."
       });
       return;
     } else {
-      keyname = data.itStandName;
+      keyname = data.itStandAlsoKnownAs;
     }
   } else {
     keyname = data.tcSoftwareRelease.application;
@@ -557,7 +557,11 @@ function saveData(data) {
             Reference_documents,
             endOfLifeDate,
             Conditions_Restrictions,
-            AlsoKnownAs
+            AlsoKnownAs,
+            CreateAudit,
+            CreateDTG,
+            ChangeAudit,
+            ChangeDTG
           ) VALUES (
            ${data.itStandStatus},
            '${keyname}',
@@ -580,7 +584,11 @@ function saveData(data) {
            ${data.itStandRefDocs},
            ${endOfLifeDateFragment},
            ${data.itStandConditionsRestrictions},
-           ${data.itStandAlsoKnownAs}
+           ${data.itStandAlsoKnownAs},
+           '${data.auditUser}',
+           NOW(),
+           '${data.auditUser}',
+           NOW()
           );`;
 }
 

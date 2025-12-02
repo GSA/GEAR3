@@ -11,7 +11,7 @@ import { TableService } from "@services/tables/table.service";
 import { OperatingSystem } from '@api/models/operating-systems.model';
 import { AppBundle } from '@api/models/it-standards-app-bundle.model';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { forkJoin, switchMap } from 'rxjs';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -29,11 +29,10 @@ export class ItStandardsManagerComponent implements OnInit {
     auditUser: new FormControl(null),
     tcManufacturer: new FormControl(null, [Validators.required]),
     tcSoftwareProduct: new FormControl(null, [Validators.required]),
-    tcSoftwareVersion: new FormControl(null),
+    tcSoftwareVersion: new FormControl(null, Validators.required),
     tcSoftwareRelease: new FormControl(),
     tcEndOfLifeDate: new FormControl(),
     itStandStatus: new FormControl(null, [Validators.required]),
-    itStandName: new FormControl(null, [Validators.required]),
     itStandPOC: new FormControl(null, [Validators.required]),
     itStandDesc: new FormControl(),
     itStandType: new FormControl(null, [Validators.required]),
@@ -261,7 +260,7 @@ export class ItStandardsManagerComponent implements OnInit {
     if(this.createBool) {
       return 'New IT Standard';
     } else {
-      return `${!this.itStandard.SoftwareReleaseName ? this.itStandard.OldName : this.itStandard.SoftwareReleaseName}`;
+      return `${!this.itStandard.SoftwareReleaseName ? this.itStandard.AlsoKnownAs : this.itStandard.SoftwareReleaseName}`;
     }
   }
 
@@ -362,7 +361,6 @@ export class ItStandardsManagerComponent implements OnInit {
         tcSoftwareRelease: {id: this.itStandard.SoftwareRelease, application: this.itStandard.SoftwareReleaseName},
         tcEndOfLifeDate: (this.itStandard.EndOfLifeDate ? formatDate(this.itStandard.EndOfLifeDate, 'MMMM dd, yyyy', 'en-US') : null),
         itStandStatus: this.sharedService.findInArray(this.statuses, 'Name', this.itStandard.Status),
-        itStandName: (!this.itStandard.SoftwareReleaseName ? this.itStandard.OldName : this.itStandard.SoftwareReleaseName),
         itStandPOC: pocIDs,
         itStandDesc: this.itStandard.Description,
         itStandType: this.sharedService.findInArray(this.types, 'Name', this.itStandard.StandardType),
@@ -571,44 +569,35 @@ export class ItStandardsManagerComponent implements OnInit {
       this.itStandardsForm.value.tcSoftwareRelease = this.buildCustomRelease();
       this.itStandardsForm.patchValue({tcSoftwareRelease: this.buildCustomRelease()});
 
-      this.itStandardsForm.value.itStandName = this.itStandardsForm.value.itStandName.replace(/\s+/g, ' ').trim();
-      this.itStandardsForm.patchValue({itStandName: this.itStandardsForm.value.itStandName.replace(/\s+/g, ' ').trim()});
-
-      this.itStandardsForm.value.itStandAlsoKnownAs = this.itStandardsForm.value.itStandAlsoKnownAs.replace(/\s+/g, ' ').trim();
-      this.itStandardsForm.patchValue({itStandAlsoKnownAs: this.itStandardsForm.value.itStandAlsoKnownAs.replace(/\s+/g, ' ').trim()});
+      this.itStandardsForm.value.itStandAlsoKnownAs = this.itStandardsForm?.value?.itStandAlsoKnownAs?.replace(/\s+/g, ' ').trim();
+      this.itStandardsForm.patchValue({itStandAlsoKnownAs: this.itStandardsForm?.value?.itStandAlsoKnownAs?.replace(/\s+/g, ' ').trim()});
 
       // Send data to database
       if(this.createBool) {
-
-        this.apiService.createITStandard(this.itStandardsForm.value).toPromise().then(() => { 
-          this.apiService.getLatestITStand().toPromise().then(initialCreateData => {
-            this.apiService.createITStandardAdvanced(initialCreateData[0].ID, this.itStandardsForm.value).toPromise().then(() => {
-              this.apiService.getOneITStandard(initialCreateData[0].ID).toPromise().then(finalCreateData => {
-                this.itStandDetailRefresh(finalCreateData[0]);
-              },
-              (error) => {
-                this.handleError("Save IT Standard", error);
-              });
-            },
-            (error) => {
-              this.handleError("Get Latest IT Standard Initial", error);
-            });
-          },
-          (error) => {
-            this.handleError("Save IT Standard Advanced", error);
-          });
-        },
-        (error) => {
-          this.handleError("Get Latest IT Standard Final", error);
+        let newId = null;
+        this.apiService.createITStandard(this.itStandardsForm.value).pipe(
+          switchMap(() => {
+            return this.apiService.getLatestITStand();
+          }),
+          switchMap(latest => {
+            newId = latest[0].ID;
+            return this.apiService.createITStandardAdvanced(newId, this.itStandardsForm.value);
+          }),
+          switchMap(() => {
+            return this.apiService.getOneITStandard(newId);
+          })
+        ).subscribe(result => {
+          this.itStandDetailRefresh(result);
         });
       } else {
-        this.apiService.updateITStandard(this.itStandard.ID, this.itStandardsForm.value).toPromise().then(() => {
-          this.apiService.getOneITStandard(this.itStandard.ID).toPromise().then(data => {
-            this.itStandDetailRefresh(data[0]);
-          });
+        this.apiService.updateITStandard(this.itStandard.ID, this.itStandardsForm.value).pipe(
+          switchMap(() => {
+            return this.apiService.getOneITStandard(this.itStandard.ID);
+          })
+        ).subscribe(result => {
+          this.itStandDetailRefresh(result);
         });
       }
-      // this.modalService.updateRecordCreation(false);  // Reset Creation flag
     }
   }
 
@@ -624,7 +613,7 @@ export class ItStandardsManagerComponent implements OnInit {
     this.initalAppBundleIds = [];
     this.currentAppBundleId = '';
 
-    this.router.navigate([`/it_standards/${this.itStandard.ID}`]);
+    this.router.navigate([`/it_standards/${data.ID}`]);
 
     // Refresh Table
     // $('#itStandardsTable').bootstrapTable('refresh');
@@ -635,24 +624,9 @@ export class ItStandardsManagerComponent implements OnInit {
     // $('#itStandardDetail').modal('show');
   }
 
-  hasValue(data : any) {
-    // check if the tcManufacturer has a value?
-    if (this.itStandardsForm.value[data]) {
-      // check if the itstandname is not null
-      if (this.itStandardsForm.value.itStandName) {
-        return false;
-      } else {
-        return true;
-      }
-    } else {
-      return false;
-    }
-  }
-
   // handles the software release change event
   softwareReleaseChange(data: any) {
     this.setApprovalExpirationDate(data);
-    this.itStandardsForm.patchValue({itStandName: data.application});
   }
 
   // handles the endOfLifeDate change event
@@ -940,13 +914,13 @@ export class ItStandardsManagerComponent implements OnInit {
 
   cleanup() {
     this.itStandardsForm = new FormGroup({
-      tcManufacturer: new FormControl(null),
-      tcSoftwareProduct: new FormControl(null),
-      tcSoftwareVersion: new FormControl(null),
+      auditUser: new FormControl(null),
+      tcManufacturer: new FormControl(null, [Validators.required]),
+      tcSoftwareProduct: new FormControl(null, [Validators.required]),
+      tcSoftwareVersion: new FormControl(null, Validators.required),
       tcSoftwareRelease: new FormControl(),
       tcEndOfLifeDate: new FormControl(),
       itStandStatus: new FormControl(null, [Validators.required]),
-      itStandName: new FormControl(null, [Validators.required]),
       itStandPOC: new FormControl(null, [Validators.required]),
       itStandDesc: new FormControl(),
       itStandType: new FormControl(null, [Validators.required]),
@@ -967,7 +941,9 @@ export class ItStandardsManagerComponent implements OnInit {
       itStandRefDocs: new FormControl(),
       itStandApprovedVersions: new FormControl(),
       itStandOperatingSystems: new FormControl(),
-      itStandMobileAppBundles: new FormControl()
+      itStandMobileAppBundles: new FormControl(),
+      itStandConditionsRestrictions: new FormControl(),
+      itStandAlsoKnownAs: new FormControl()
     });
     this.itStandard = {};
     this.createBool = false;
@@ -1158,8 +1134,7 @@ export class ItStandardsManagerComponent implements OnInit {
     if(this.itStandard.SoftwareReleaseName) {
       return this.itStandard.SoftwareReleaseName;
     } else {
-      return this.itStandard.Name;
+      return this.itStandard.AlsoKnownAs;
     }
   }
-
 }
