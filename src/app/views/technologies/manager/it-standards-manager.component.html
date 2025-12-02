@@ -12,7 +12,7 @@
       </app-breadcrumb>
     </div>
     <div class="title-container">
-      <span class="title">{{(!itStandard.SoftwareReleaseName ? itStandard.OldName : itStandard.SoftwareReleaseName)}}</span>
+      <span class="title">{{(!itStandard.SoftwareReleaseName ? itStandard.AlsoKnownAs : itStandard.SoftwareReleaseName)}}</span>
     </div>
     <div class="content-container">
       <div class="data-tab-container">
@@ -91,7 +91,7 @@
                   }
                 </div>
                 <div class="data">
-                  <label for="tcSoftwareVersion" class="data-label">Software Version</label>
+                  <label for="tcSoftwareVersion" class="data-label">Software Version<span class="text-danger">*</span></label>
                   <ng-select id="tcSoftwareVersion" formControlName="tcSoftwareVersion"
                     [addTag]="true"
                     [items]="softwareVersions"
@@ -167,7 +167,7 @@
                 <div class="data">
                   <label for="itStandAlsoKnownAs" class="data-label">Also Known As</label>
                   <input type="text" class="form-control" id="itStandAlsoKnownAs"
-                    formControlName="itStandAlsoKnownAs" placeholder="Not Applicable" [value]="itStandard.OldName" >
+                    formControlName="itStandAlsoKnownAs" placeholder="Not Applicable" [value]="itStandard.AlsoKnownAs" >
                     @if (modalService.fieldValidCheck(itStandardsForm, 'itStandAlsoKnownAs')) {
                       <div>
                         @if (itStandardsForm.controls['itStandAlsoKnownAs'].errors.required) {
