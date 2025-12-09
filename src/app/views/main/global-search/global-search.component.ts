@@ -93,7 +93,7 @@ export class GlobalSearchComponent implements OnInit {
       if(params && params['keyword']) {
         $('#globalSearchTable').bootstrapTable('destroy');
         let kw = params['keyword'];
-        this.tableOptions.url = this.apiService.globalSearchUrl + kw;
+        this.tableOptions.url = this.apiService.globalSearchUrl + encodeURI(kw);
         this.tableOptions.exportOptions.fileName = this.sharedService.fileNameFmt('GEAR_Global_Search-' + kw);
         $('#globalSearchTable').bootstrapTable($.extend(this.tableOptions, {
           columns: this.columnDefs,

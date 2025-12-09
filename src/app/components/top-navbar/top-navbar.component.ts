@@ -72,7 +72,7 @@ export class TopNavbarComponent implements AfterViewInit {
 
   globalSearch(event) {
     if (event.key === 'Enter' || event.type === 'click') {
-      this.router.navigate([`/search/${this.searchKW}`]);
+      this.router.navigate([`/search/${this.searchKW.replace(/'/g, "\\'")}`]);
     }
   }
 
