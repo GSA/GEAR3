@@ -26,7 +26,7 @@ export class TopbarComponent {
   public globalSearch(event) {
     if (event.key === 'Enter' || event.type === 'click') {
       this.analyticsService.logSearchEvent(this.searchKW);
-      this.router.navigate([`/search/${this.searchKW}`]);
+      this.router.navigate([`/search/${this.searchKW.replace(/'/g, "\\'")}`]);
     }
   }
 

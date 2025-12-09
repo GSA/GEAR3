@@ -68,7 +68,7 @@ export class GlobalSearchComponent implements OnInit {
 
       if(params && params['keyword']) {
         this.searchKW = params['keyword'];
-        this.apiService.getGlobalSearchResults(this.searchKW).subscribe(s => {
+        this.apiService.getGlobalSearchResults(encodeURI(this.searchKW)).subscribe(s => {
           let sorted = this.sortBySearchTerm(s, this.searchKW, 'Name');
           this.tableService.updateReportTableData(sorted);
           this.tableData = sorted;
