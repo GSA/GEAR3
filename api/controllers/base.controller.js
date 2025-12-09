@@ -123,7 +123,7 @@ exports.setEmptyTextFieldHandler = (content) => {
 
 exports.setNullEmptyTextHandler = (content) => {
   if(!content || content === 'NULL' || content === 'null') return null;
-  else return `"${content.replace(/"/g, '\\"')}"`;
+  else return `"${content.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}"`;
   //`"${content}"`;
 }
 
