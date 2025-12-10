@@ -122,7 +122,7 @@ exports.setEmptyTextFieldHandler = (content) => {
 
 exports.setNullEmptyTextHandler = (content) => {
   if(!content || content === 'NULL' || content === 'null') return null;
-  else return `"${content.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+  else return `"${content.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}"`;
 }
 
 const msgLog = (message, logger) => {
