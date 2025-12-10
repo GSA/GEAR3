@@ -22,9 +22,11 @@
         <li class="nav-item">
           <a class="nav-link" [class.active]="isRecordsTabActive" (click)="onTabClick('records', $event)" href="#records">Records</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" [class.active]="isWebsitesTabActive" (click)="onTabClick('websites', $event)" href="#websites">Websites</a>
-        </li>
+        @if(sysWebsitesData && sysWebsitesData.length > 0){
+          <li class="nav-item">
+            <a class="nav-link" [class.active]="isWebsitesTabActive" (click)="onTabClick('websites', $event)" href="#websites">Websites</a>
+          </li>
+        }
       </ul>
       <div class="time-questionnaire-button-container">
         <app-button [buttonText]="getTimeQuestionnaireButtonText()" buttonStyle="success" (buttonClick)="onTimeButtonClick()"></app-button>
@@ -189,12 +191,12 @@
                 </table>
               </div>
               <div class="sub-content full-width">
-                <span class="sub-header">System Time Report</span>
-                <app-table [localTableData]="systemTimeData" [isLocal]="true" [tableCols]="systemTimeCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
-              </div>
-              <div class="sub-content full-width">
                 <span class="sub-header">Related Business Capabilities</span>
                 <app-table [localTableData]="sysCapabilitiesData" [isLocal]="true" [tableCols]="relatedCapabilitiesCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="capabilities" [contextSystemName]="detailsData?.Name"></app-table>
+              </div>
+              <div class="sub-content full-width">
+                <span class="sub-header">System Time Report</span>
+                <app-table [localTableData]="systemTimeData" [isLocal]="true" [tableCols]="systemTimeCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
               </div>
             </div>
           </div>
@@ -308,7 +310,11 @@
             <div class="main-data-container">
               <div class="sub-content full-width">
                 <span class="sub-header">Related Records</span>
-                <app-table [localTableData]="sysRecordsData" [isLocal]="true" [tableCols]="recordsCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="records" [contextSystemName]="detailsData?.Name"></app-table>
+                @if(sysRecordsData && sysRecordsData.length > 0) {
+                  <app-table [localTableData]="sysRecordsData" [isLocal]="true" [tableCols]="recordsCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="records" [contextSystemName]="detailsData?.Name"></app-table>
+                } @else {
+                  <span>Contact Records Management (records@gsa.gov) for a more detailed analysis of records associated with this system.</span>
+                }
               </div>
             </div>
           </div>
