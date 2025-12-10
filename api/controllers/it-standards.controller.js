@@ -315,19 +315,19 @@ function saveCustomManufacturer(techId, manufacturer) {
                     obj_technology
                   SET
                     manufacturer = '${manufacturer.id}',
-                    manufacturerName = '${manufacturer.name}'
+                    manufacturerName = '${manufacturer.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
                   WHERE
                     Id = ${techId};`;
   } else {
     let guid = Guid.create().toString();
     queryString += `INSERT INTO obj_manufacturer
                       (id, name, createdDate)
-                    VALUES ('${guid}', '${manufacturer.name}', NOW());`;
+                    VALUES ('${guid}', '${manufacturer.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}', NOW());`;
     queryString += `UPDATE 
                       obj_technology
                     SET
                       manufacturer = '${guid}',
-                      manufacturerName = '${manufacturer.name}'
+                      manufacturerName = '${manufacturer.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
                     WHERE
                       Id = ${techId};`;
   }
@@ -343,19 +343,19 @@ function saveCustomSoftwareProduct(techId, softwareProduct, manufacturer) {
                     obj_technology
                   SET
                     softwareProduct = '${softwareProduct.id}',
-                    softwareProductName = '${softwareProduct.name}'
+                    softwareProductName = '${softwareProduct.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
                   WHERE
                     Id = ${techId};`;
   } else {
     let guid = Guid.create().toString();
     queryString += `INSERT INTO obj_software_product
                       (id, name, createdDate, manufacturer_id)
-                    VALUES ('${guid}', '${softwareProduct.name}', NOW(), '${manufacturer.id}');`;
+                    VALUES ('${guid}', '${softwareProduct.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}', NOW(), '${manufacturer.id}');`;
     queryString += `UPDATE 
                       obj_technology
                     SET
                       softwareProduct = '${guid}',
-                      softwareProductName = '${softwareProduct.name}'
+                      softwareProductName = '${softwareProduct.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
                     WHERE
                       Id = ${techId};`;
   }
@@ -371,19 +371,19 @@ function saveCustomSoftwareVersion(techId, softwareVersion, softwareProduct) {
                     obj_technology
                   SET
                     softwareVersion = '${softwareVersion.id}',
-                    softwareVersionName = '${softwareVersion.name}'
+                    softwareVersionName = '${softwareVersion.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
                   WHERE
                     Id = ${techId};`;
   } else {
     let guid = Guid.create().toString();
     queryString += `INSERT INTO obj_software_version
                       (id, name, createdDate, software_product_id)
-                    VALUES ('${guid}', '${softwareVersion.name}', NOW(), '${softwareProduct.id}');`;
+                    VALUES ('${guid}', '${softwareVersion.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}', NOW(), '${softwareProduct.id}');`;
     queryString += `UPDATE 
                       obj_technology
                     SET
                       softwareVersion = '${guid}',
-                      softwareVersionName = '${softwareVersion.name}'
+                      softwareVersionName = '${softwareVersion.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
                     WHERE
                       Id = ${techId};`;
   }
@@ -399,19 +399,19 @@ function saveCustomSoftwareRelease(techId, softwareRelease, softwareVersion) {
                     obj_technology
                   SET
                     softwareRelease = '${softwareRelease.id}',
-                    softwareReleaseName = '${softwareRelease.application}'
+                    softwareReleaseName = '${softwareRelease.application.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
                   WHERE
                     Id = ${techId};`;
   } else if(softwareRelease && !softwareRelease.id) {
     let guid = Guid.create().toString();
     queryString += `INSERT INTO obj_software_release
                       (id, name, createdDate, software_version_id)
-                    VALUES ('${guid}', '${softwareRelease.application}', NOW(), '${softwareVersion.id}');`;
+                    VALUES ('${guid}', '${softwareRelease.application.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}', NOW(), '${softwareVersion.id}');`;
     queryString += `UPDATE 
                       obj_technology
                     SET
                       softwareRelease = '${guid}',
-                      softwareReleaseName = '${softwareRelease.application}'
+                      softwareReleaseName = '${softwareRelease.application.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
                     WHERE
                       Id = ${techId};`;
   }
@@ -424,7 +424,7 @@ function updateITStandardRelease(techId, softwareRelease) {
   queryString = `UPDATE 
                   obj_technology
                 SET
-                  softwareReleaseName = '${softwareRelease.application}'
+                  softwareReleaseName = '${softwareRelease.application.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
                 WHERE
                   Id = ${techId};`;
   return queryString;
@@ -448,7 +448,7 @@ function generateKeyname(data) {
   } else {
     keyname = data.tcSoftwareRelease.application;
   }
-  keyname = keyname.replace(/\s+/g, ' ').trim();
+  keyname = keyname.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'").trim();
   return keyname;
 }
 
