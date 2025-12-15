@@ -3,7 +3,11 @@
   flex-direction: column;
   height: 100%;
   min-height: 0;
-  width: 94vw;
+  width: 92vw;
+
+  @media (max-width: 1550px) {
+    width: 90vw;
+  }
   
   .p-datatable {
     flex: 1;
