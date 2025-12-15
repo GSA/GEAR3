@@ -41,8 +41,7 @@ export class GlobalSearchComponent implements OnInit {
       field: 'Description',
       header: 'Description',
       isSortable: true,
-      class: 'text-truncate',
-      formatter: this.sharedService.formatDescription,
+      formatter: this.sharedService.formatDescriptionLite,
     },
     {
       field: 'Status',
