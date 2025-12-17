@@ -14,4 +14,5 @@ export class Record {
   public PII: string;
   public CUI: string;
   public FY_Retention_Years: string;
+  public obj_records_Id: number;
 }

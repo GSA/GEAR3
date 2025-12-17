@@ -25,4 +25,5 @@ export class Website {
   public required_links: string;
   public target_decommission_date: string;
   public sitemap_url: string;
+  public obj_websites_Id: number;
 }

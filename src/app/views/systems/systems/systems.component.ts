@@ -10,6 +10,7 @@ import { Title } from '@angular/platform-browser';
 
 import { System } from '@api/models/systems.model';
 import { Column, FilterButton, TwoDimArray } from '../../../common/table-classes';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 
 // Declare D3 & Sankey library
 // declare var d3: any;
@@ -50,6 +51,10 @@ export class SystemsComponent implements OnInit {
   public monthsDecommissioned: number = 0;
   public cloudBasedFilterValue = null;
   public cspName: string = '';
+
+  public attributeDefs: DataDictionary[] = [];
+  public  defaultTableCols: Column[] = [];
+  public inactiveColumnDefs: Column[] = [];
 
   constructor(
     private apiService: ApiService,
@@ -97,190 +102,6 @@ export class SystemsComponent implements OnInit {
     return this.selectedTab === tabName;
   }
 
-  defaultTableCols: Column[] = [
-    {
-      field: 'ID',
-      header: 'ID',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'DisplayName',
-      header: 'Alias / Acronym',
-      isSortable: true,
-    },
-    {
-      field: 'Name',
-      header: 'System Name',
-      isSortable: true,
-    },
-    {
-      field: 'Description',
-      header: 'Description',
-      isSortable: true,
-      showColumn: true,
-      formatter: this.sharedService.formatDescriptionShorter
-    },
-    {
-      field: 'SystemLevel',
-      header: 'System Level',
-      isSortable: true,
-    },
-    {
-      field: 'Status',
-      header: 'Status',
-      isSortable: true,
-    },
-    {
-      field: 'RespOrg',
-      header: 'Responsible Org',
-      isSortable: true,
-    },
-    {
-      field: 'BusOrgSymbolAndName',
-      header: 'SSO/CXO',
-      isSortable: true,
-    },
-    {
-      field: 'BusOrg',
-      header: 'Business Org',
-      isSortable: true,
-    },
-    {
-      field: 'ParentName',
-      header: 'Parent System',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'CSP',
-      header: 'Hosting Provider',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'CloudYN',
-      header: 'Cloud Hosted?',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'ServiceType',
-      header: 'Cloud Service Type',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'AO',
-      header: 'Authorizing Official',
-      isSortable: true,
-      showColumn: false,
-      formatter: this.sharedService.pocStringNameFormatter,
-    },
-    {
-      field: 'SO',
-      header: 'System Owner',
-      isSortable: true,
-      showColumn: false,
-      formatter: this.sharedService.pocStringNameFormatter,
-    },
-    {
-      field: 'BusPOC',
-      header: 'Business POC',
-      isSortable: true,
-      showColumn: false,
-      formatter: this.sharedService.pocStringNameFormatter,
-    },
-    {
-      field: 'TechPOC',
-      header: 'Technical POC',
-      isSortable: true,
-      showColumn: false,
-      formatter: this.sharedService.pocStringNameFormatter,
-    },
-    {
-      field: 'DataSteward',
-      header: 'Data Steward',
-      isSortable: true,
-      showColumn: false,
-      formatter: this.sharedService.pocStringNameFormatter,
-    },
-    {
-      field: 'FISMASystemIdentifier',
-      header: 'FISMA System Identifier',
-      isSortable: true,
-      showColumn: false
-    },
-  ];
-
-  // Inactive Column Defs
-  inactiveColumnDefs: Column[] = [
-    {
-      field: 'Name',
-      header: 'System Name',
-      isSortable: true,
-    },
-    {
-      field: 'Description',
-      header: 'Description',
-      isSortable: true,
-      showColumn: true,
-      formatter: this.sharedService.formatDescription
-    },
-    {
-      field: 'SystemLevel',
-      header: 'System Level',
-      isSortable: true,
-    },
-    {
-      field: 'Status',
-      header: 'Status',
-      isSortable: true,
-    },
-    {
-      field: 'RespOrg',
-      header: 'Responsible Org',
-      isSortable: true,
-    },
-    {
-      field: 'BusOrg',
-      header: 'Business Org',
-      isSortable: true,
-    },
-    {
-      field: 'CSP',
-      header: 'Cloud Server Provider',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'CloudYN',
-      header: 'Cloud Hosted?',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'AO',
-      header: 'Authorizing Official',
-      isSortable: true,
-      showColumn: false,
-      formatter: this.sharedService.pocStringNameFormatter,
-    },
-    {
-      field: 'SO',
-      header: 'System Owner',
-      isSortable: true,
-      showColumn: false,
-      formatter: this.sharedService.pocStringNameFormatter,
-    },
-    {
-      field: 'InactiveDate',
-      header: 'Inactive Date',
-      isSortable: true,
-      formatter: this.sharedService.dateFormatter,
-    },
-  ];
-
   ngOnInit(): void {
     // // Set JWT when logged into GEAR Manager when returning from secureAuth
     this.sharedService.setJWTonLogIn();
@@ -299,6 +120,224 @@ export class SystemsComponent implements OnInit {
       if(params['systemCSP']) {
         this.cspName = params['systemCSP'];
       }
+    });
+
+    this.apiService.getDataDictionaryByReportName('Business Systems').subscribe(defs => {
+      this.attributeDefs = defs;
+
+      this.defaultTableCols = [
+        {
+          field: 'ID',
+          header: 'ID',
+          isSortable: true,
+          showColumn: false,
+          titleTooltip: this.getTooltip('ID')
+        },
+        {
+          field: 'DisplayName',
+          header: 'Alias / Acronym',
+          isSortable: true,
+          titleTooltip: this.getTooltip('Alias/Acronym')
+        },
+        {
+          field: 'Name',
+          header: 'System Name',
+          isSortable: true,
+          titleTooltip: this.getTooltip('System Name')
+        },
+        {
+          field: 'Description',
+          header: 'Description',
+          isSortable: true,
+          showColumn: true,
+          formatter: this.sharedService.formatDescriptionShorter,
+          titleTooltip: this.getTooltip('Description')
+        },
+        {
+          field: 'SystemLevel',
+          header: 'System Level',
+          isSortable: true,
+          titleTooltip: this.getTooltip('System Level')
+        },
+        {
+          field: 'Status',
+          header: 'Status',
+          isSortable: true,
+          titleTooltip: this.getTooltip('Status')
+        },
+        {
+          field: 'RespOrg',
+          header: 'Responsible Org',
+          isSortable: true,
+          titleTooltip: this.getTooltip('Responsible IT Org')
+        },
+        {
+          field: 'BusOrgSymbolAndName',
+          header: 'SSO/CXO',
+          isSortable: true,
+          titleTooltip: this.getTooltip('SSO/CXO')
+        },
+        {
+          field: 'BusOrg',
+          header: 'Business Org',
+          isSortable: true,
+          titleTooltip: this.getTooltip('Business Org')
+        },
+        {
+          field: 'ParentName',
+          header: 'Parent System',
+          isSortable: true,
+          showColumn: false,
+          titleTooltip: this.getTooltip('Parent System')
+        },
+        {
+          field: 'CSP',
+          header: 'Hosting Provider',
+          isSortable: true,
+          showColumn: false,
+          titleTooltip: this.getTooltip('Hosting Provider')
+        },
+        {
+          field: 'CloudYN',
+          header: 'Cloud Hosted?',
+          isSortable: true,
+          showColumn: false,
+          titleTooltip: this.getTooltip('Cloud Hosted?')
+        },
+        {
+          field: 'ServiceType',
+          header: 'Cloud Service Type',
+          isSortable: true,
+          showColumn: false,
+          titleTooltip: this.getTooltip('Cloud Service Type')
+        },
+        {
+          field: 'AO',
+          header: 'Authorizing Official',
+          isSortable: true,
+          showColumn: false,
+          formatter: this.sharedService.pocStringNameFormatter,
+          titleTooltip: this.getTooltip('Authorizing Official')
+        },
+        {
+          field: 'SO',
+          header: 'System Owner',
+          isSortable: true,
+          showColumn: false,
+          formatter: this.sharedService.pocStringNameFormatter,
+          titleTooltip: this.getTooltip('System Owner')
+        },
+        {
+          field: 'BusPOC',
+          header: 'Business POC',
+          isSortable: true,
+          showColumn: false,
+          formatter: this.sharedService.pocStringNameFormatter,
+          titleTooltip: this.getTooltip('Business POC')
+        },
+        {
+          field: 'TechPOC',
+          header: 'Technical POC',
+          isSortable: true,
+          showColumn: false,
+          formatter: this.sharedService.pocStringNameFormatter,
+          titleTooltip: this.getTooltip('Technical POC')
+        },
+        {
+          field: 'DataSteward',
+          header: 'Data Steward',
+          isSortable: true,
+          showColumn: false,
+          formatter: this.sharedService.pocStringNameFormatter,
+          titleTooltip: this.getTooltip('Data Steward')
+        },
+        {
+          field: 'FISMASystemIdentifier',
+          header: 'FISMA System Identifier',
+          isSortable: true,
+          showColumn: false,
+          titleTooltip: this.getTooltip('FISMA System Identifier')
+        },
+      ];
+    
+      // Inactive Column Defs
+      this.inactiveColumnDefs = [
+        {
+          field: 'Name',
+          header: 'System Name',
+          isSortable: true,
+          titleTooltip: this.getTooltip('System Name')
+        },
+        {
+          field: 'Description',
+          header: 'Description',
+          isSortable: true,
+          showColumn: true,
+          formatter: this.sharedService.formatDescription,
+          titleTooltip: this.getTooltip('Description')
+        },
+        {
+          field: 'SystemLevel',
+          header: 'System Level',
+          isSortable: true,
+          titleTooltip: this.getTooltip('System Level')
+        },
+        {
+          field: 'Status',
+          header: 'Status',
+          isSortable: true,
+          titleTooltip: this.getTooltip('Status')
+        },
+        {
+          field: 'RespOrg',
+          header: 'Responsible Org',
+          isSortable: true,
+          titleTooltip: this.getTooltip('Responsible IT Org')
+        },
+        {
+          field: 'BusOrg',
+          header: 'Business Org',
+          isSortable: true,
+          titleTooltip: this.getTooltip('Business Org')
+        },
+        {
+          field: 'CSP',
+          header: 'Cloud Server Provider',
+          isSortable: true,
+          showColumn: false,
+          titleTooltip: this.getTooltip('Hosting Provider')
+        },
+        {
+          field: 'CloudYN',
+          header: 'Cloud Hosted?',
+          isSortable: true,
+          showColumn: false,
+          titleTooltip: this.getTooltip('	Cloud Hosted?')
+        },
+        {
+          field: 'AO',
+          header: 'Authorizing Official',
+          isSortable: true,
+          showColumn: false,
+          formatter: this.sharedService.pocStringNameFormatter,
+          titleTooltip: this.getTooltip('	Authorizing Official')
+        },
+        {
+          field: 'SO',
+          header: 'System Owner',
+          isSortable: true,
+          showColumn: false,
+          formatter: this.sharedService.pocStringNameFormatter,
+          titleTooltip: this.getTooltip('System Owner')
+        },
+        {
+          field: 'InactiveDate',
+          header: 'Inactive Date',
+          isSortable: true,
+          formatter: this.sharedService.dateFormatter,
+          titleTooltip: this.getTooltip('Inactive Date')
+        },
+      ];
     });
 
     this.apiService.getSystems().subscribe(systems => {
@@ -463,5 +502,13 @@ export class SystemsComponent implements OnInit {
   this.systemsDataTabFilterted = filtered;
   this.tableService.updateReportTableData(this.systemsDataTabFilterted);
   this.sharedService.enableStickyHeader("systemTable");
-}
+  }
+
+  getTooltip (name: string): string {
+    const def = this.attributeDefs.find(def => def.Term === name);
+    if(def){
+      return def.TermDefinition;
+    }
+    return '';
+  }
 }
