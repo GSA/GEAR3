@@ -1,0 +1,29 @@
+.feedback-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
+    width: 90vw;
+
+    & .feedback-title {
+        display: flex;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: bold;
+    }
+
+    & .feedback-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 1rem;
+
+        & a {
+            color: var(--primary-color);
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    }
+}

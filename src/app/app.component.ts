@@ -84,30 +84,34 @@ export class AppComponent implements OnInit {
   // }
 
   showPopup(url, title, w, h) {
-    this.analyticsService.logClickEvent('Give Feedback');
+    // Only for stage
+    this.router.navigate(['/feedback']);
 
-    const dualScreenLeft = window.screenLeft !==  undefined ? window.screenLeft : window.screenX;
-    const dualScreenTop = window.screenTop !==  undefined   ? window.screenTop  : window.screenY;
+    // Uncomment this for prod
+    // this.analyticsService.logClickEvent('Give Feedback');
 
-    const width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
-    const height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
+    // const dualScreenLeft = window.screenLeft !==  undefined ? window.screenLeft : window.screenX;
+    // const dualScreenTop = window.screenTop !==  undefined   ? window.screenTop  : window.screenY;
 
-    const systemZoom = width / window.screen.availWidth;
-    const left = (width - w) / 2 / systemZoom + dualScreenLeft;
-    const top = (height - h) / 2 / systemZoom + dualScreenTop;
-    const popupWindow = window.open(url, title, 
-      `
-      scrollbars=yes,
-      width=${w / systemZoom}, 
-      height=${h / systemZoom}, 
-      top=${top}, 
-      left=${left}
-      `
-    );
+    // const width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
+    // const height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
 
-    if (window.focus) {
-     popupWindow.focus();
-    } 
+    // const systemZoom = width / window.screen.availWidth;
+    // const left = (width - w) / 2 / systemZoom + dualScreenLeft;
+    // const top = (height - h) / 2 / systemZoom + dualScreenTop;
+    // const popupWindow = window.open(url, title, 
+    //   `
+    //   scrollbars=yes,
+    //   width=${w / systemZoom}, 
+    //   height=${h / systemZoom}, 
+    //   top=${top}, 
+    //   left=${left}
+    //   `
+    // );
+
+    // if (window.focus) {
+    //  popupWindow.focus();
+    // } 
  }
 
 }

@@ -120,6 +120,7 @@ import { PopoverModule } from 'primeng/popover';
 import Lara from '@primeuix/themes/lara';
 import { CommonModule } from '@angular/common';
 import { FismaDetailsComponent } from './views/security/fisma/details/fisma-details.component';
+import { FeedbackComponent } from './views/main/feedback/feedback.component';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -191,7 +192,8 @@ import { FismaDetailsComponent } from './views/security/fisma/details/fisma-deta
         ButtonComponent,
         DashboardComponent,
         FilterChipsComponent,
-        BreadcrumbComponent
+        BreadcrumbComponent,
+        FeedbackComponent
     ],
     bootstrap: [
       AppComponent
