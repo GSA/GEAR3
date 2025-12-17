@@ -38,7 +38,7 @@
               <div class="data-wrapper">
                 <div class="data">
                   <label class="data-label">
-                    <span>
+                    <span [title]="getTooltip('Alias/Acronym')" role="tooltip">
                       Alias/Acronym
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -49,7 +49,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span>
+                    <span [title]="getTooltip('Status')" role="tooltip">
                       Status
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -60,7 +60,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span>
+                    <span [title]="getTooltip('System Level')" role="tooltip">
                       System Level
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -71,7 +71,7 @@
                 </div>
                 <div class="data-full">
                   <label class="data-label">
-                    <span>
+                    <span [title]="getTooltip('Description')" role="tooltip">
                       Description
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -80,7 +80,7 @@
                 </div>
                 <div class="data-full">
                   <label class="data-label">
-                    <span>
+                    <span [title]="getTooltip('Related Artifacts')" role="tooltip">
                       Related Artifacts
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -106,7 +106,7 @@
               <div class="data-wrapper">
                 <div class="data">
                   <label class="data-label">
-                    <span>
+                    <span [title]="getTooltip('ATO Date')" role="tooltip">
                       ATO Date
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -117,7 +117,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span>
+                    <span [title]="getTooltip('ATO Type')" role="tooltip">
                       ATO Type
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -128,7 +128,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span>
+                    <span [title]="getTooltip('Business Org')" role="tooltip">
                       Business Org
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -139,7 +139,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span>
+                    <span [title]="getTooltip('CUI')" role="tooltip">
                       CUI
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -150,7 +150,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span>
+                    <span [title]="getTooltip('Responsible IT Org')" role="tooltip">
                       Responsible IT Org
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -161,7 +161,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span>
+                    <span [title]="getTooltip('Cloud Service Type')" role="tooltip">
                       Cloud Service Type
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -179,10 +179,20 @@
                     <th>Name</th>
                     <th>Email</th>
                   </tr>
-                  @for (poc of getPOCList(); track poc) {
+                  <!-- @for (poc of getPOCList(); track poc) {
                     <tr>
                       <td> {{ poc.type }} </td>
                       <td> {{ poc.name }} </td>
+                      <td>
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{poc.email}}" target="_blank" rel="noopener">{{ poc.email }}</a>
+                      </td>
+                    </tr>
+                  } -->
+                  @for (poc of splitPOCs; track poc) {
+                    <tr>
+                      <td> {{ poc.type }} </td>
+                      <td> {{ poc.name }} </td>
+                      <!-- <td [title]="poc.orgName"> {{ poc.orgCode }} </td> -->
                       <td>
                         <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{poc.email}}" target="_blank" rel="noopener">{{ poc.email }}</a>
                       </td>
@@ -209,7 +219,7 @@
               <div class="data-wrapper">
                 <div class="data">
                   <label class="data-label">
-                    <span>
+                    <span [title]="getTooltip('Cloud Hosted?')" role="tooltip">
                       Cloud Enabled?
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -220,7 +230,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span>
+                    <span [title]="getTooltip('Hosting Provider')" role="tooltip">
                       Hosting Provider
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -231,7 +241,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span>
+                    <span [title]="getTooltip('Complete FISMA Assessment for Current FY')" role="tooltip">
                       Complete FISMA Assessment for Current FY
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -242,7 +252,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span>
+                    <span [title]="getTooltip('FIPS Impact Level')" role="tooltip">
                       FIPS Impact Level
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -253,7 +263,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span>
+                    <span [title]="getTooltip('Gov\'t-Wide Shared Service')" role="tooltip">
                       Gov't-Wide Shared Service
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -264,7 +274,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span>
+                    <span [title]="getTooltip('FISMA System Identifier')" role="tooltip">
                       FISMA System Identifier
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -275,7 +285,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span>
+                    <span [title]="getTooltip('Cloud Service Type')" role="tooltip">
                       Service Type
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -286,7 +296,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span>
+                    <span [title]="getTooltip('PII Indicator')" role="tooltip">
                       PII Indicator
                       <i class="fas fa-info-circle"></i>
                     </span>

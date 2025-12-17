@@ -15,6 +15,8 @@ import { Capability } from '@api/models/capabilities.model';
 import { ITStandards } from '@api/models/it-standards.model';
 import { Record } from '@api/models/records.model';
 import { Website } from '@api/models/websites.model';
+import { DataDictionary } from '@api/models/data-dictionary.model';
+import { forkJoin } from 'rxjs';
 
 @Component({
     selector: 'systems-details',
@@ -50,6 +52,10 @@ export class SystemsDetailsComponent implements OnInit {
   public recordsCols: Column[] = RecordsColumns;
   public websiteCols: Column[] = WebsitesColumns;
 
+  public attrDefinitions = <DataDictionary[]>[];
+
+  public splitPOCs: any = {};
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -63,36 +69,83 @@ export class SystemsDetailsComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       this.systemId = +params.get('sysID');
 
-      this.apiService.getOneSys(this.systemId).subscribe(s => {
-        this.detailsData = s;
-        this.isDataReady = true;
-      });
+      forkJoin([
+        this.apiService.getDataDictionaryByReportName('Business Systems'),
+        this.apiService.getOneSys(this.systemId),
+        this.apiService.getSysTIME(this.systemId),
+        this.apiService.getSysCapabilities(this.systemId),
+        this.apiService.getSysITStandards(this.systemId),
+        this.apiService.getSysRecords(this.systemId),
+        this.apiService.getSysWebsites(this.systemId),
+        this.apiService.getRecords(),
+        this.apiService.getWebsites()
+      ]).subscribe({
+        next: ([
+          dataDictionaryBS,
+          systemDetails,
+          systemTIME,
+          systemCapabilities,
+          systemITStandards,
+          systemRecords,
+          systemWebsites,
+          records,
+          websites
+        ]) => {
+          this.attrDefinitions = dataDictionaryBS;
+          this.detailsData = systemDetails;
+          this.systemTimeData = systemTIME;
+          this.sysCapabilitiesData = systemCapabilities;
+          this.sysTechnologiesData = systemITStandards;
 
-      this.apiService.getSysTIME(this.systemId).subscribe(sysTime => {
-        this.systemTimeData = sysTime;
-      });
+          const recordIds = new Set(systemRecords.map(({ obj_records_Id }) => obj_records_Id));
+          this.sysRecordsData = records.filter(({ Rec_ID }) => recordIds.has(Rec_ID));
 
-      this.apiService.getSysCapabilities(this.systemId).subscribe(sysCaps => {
-        this.sysCapabilitiesData = sysCaps
-      });
-
-      this.apiService.getSysITStandards(this.systemId).subscribe(sysTech => {
-        this.sysTechnologiesData = sysTech;
-      });
-
-      this.apiService.getSysRecords(this.systemId).subscribe((mappings: any[]) => {
-        this.apiService.getRecords().subscribe((records: any[]) => {
-          const recordIds = new Set(mappings.map(({ obj_records_Id }) => obj_records_Id));
-          this.sysRecordsData = records.filter(({ Rec_ID }) => recordIds.has(parseInt(Rec_ID)));
-        });
-      });
-
-      this.apiService.getSysWebsites(this.systemId).subscribe((mappings: any[]) => {
-        this.apiService.getWebsites().subscribe((websites: any[]) => {
-          const websiteIds = new Set(mappings.map(({ obj_websites_Id }) => obj_websites_Id));
+          const websiteIds = new Set(systemWebsites.map(({ obj_websites_Id }) => obj_websites_Id));
           this.sysWebsitesData = websites.filter(({ website_id }) => websiteIds.has(parseInt(website_id)));
-        });
+          
+          this.splitPOCs = this.splitPOCInfo(this.detailsData.POC);
+        },
+        error: (err) => console.log('Failed to load page data', err),
+        complete: () => this.isDataReady = true
       });
+
+
+
+
+      // this.apiService.getDataDictionaryByReportName('Business Systems').subscribe(defs => {
+      //   this.attrDefinitions = defs;
+      // });
+
+      // this.apiService.getOneSys(this.systemId).subscribe(s => {
+      //   this.detailsData = s;
+      //   this.isDataReady = true;
+      // });
+
+      // this.apiService.getSysTIME(this.systemId).subscribe(sysTime => {
+      //   this.systemTimeData = sysTime;
+      // });
+
+      // this.apiService.getSysCapabilities(this.systemId).subscribe(sysCaps => {
+      //   this.sysCapabilitiesData = sysCaps
+      // });
+
+      // this.apiService.getSysITStandards(this.systemId).subscribe(sysTech => {
+      //   this.sysTechnologiesData = sysTech;
+      // });
+
+      // this.apiService.getSysRecords(this.systemId).subscribe((mappings: any[]) => {
+      //   this.apiService.getRecords().subscribe((records: any[]) => {
+      //     const recordIds = new Set(mappings.map(({ obj_records_Id }) => obj_records_Id));
+      //     this.sysRecordsData = records.filter(({ Rec_ID }) => recordIds.has(parseInt(Rec_ID)));
+      //   });
+      // });
+
+      // this.apiService.getSysWebsites(this.systemId).subscribe((mappings: any[]) => {
+      //   this.apiService.getWebsites().subscribe((websites: any[]) => {
+      //     const websiteIds = new Set(mappings.map(({ obj_websites_Id }) => obj_websites_Id));
+      //     this.sysWebsitesData = websites.filter(({ website_id }) => websiteIds.has(parseInt(website_id)));
+      //   });
+      // });
 
     });
   }
@@ -173,4 +226,40 @@ export class SystemsDetailsComponent implements OnInit {
     window.open(this.detailsData.TIME_URL, '_blank');
   }
 
+  public getTooltip (name: string): string {
+    const def = this.attrDefinitions.find(def => def.Term === name);
+    if(def){
+      return def.TermDefinition;
+    }
+    return '';
+  }
+
+  private splitPOCInfo(p) {
+    let poc = null;
+    let poc1 = null;
+    let pocs = [];
+
+    if (p) {
+      poc1 = p.split('*');
+      poc1 = poc1.map((poctype, tmpObj) => {
+        poctype = poctype.split(':');
+        poc = poctype[1].split('; ');
+        for (var i = 0; i < poc.length; i++) {
+          var pieces = poc[i].split(',');
+          tmpObj = null;
+          if (pieces[0] !== ''){
+                tmpObj = {
+                  type: poctype[0],
+                  name: pieces[0],
+                  phone: pieces[2],
+                  email: pieces[1]
+                };
+                pocs.push(tmpObj);
+          }
+          
+        }
+      });
+    }
+    return pocs;
+  }
 }

@@ -145,6 +145,7 @@ export class ItStandardsComponent implements OnInit {
         this.daysRetired = +params['retiredWithinDays'];
       }
     });
+    
     this.apiService.getDataDictionaryByReportName('IT Standards List').subscribe(defs => {
       this.attrDefinitions = defs
 
