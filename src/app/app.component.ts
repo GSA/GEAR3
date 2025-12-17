@@ -35,12 +35,12 @@ export class AppComponent implements OnInit {
     let mainElem: HTMLElement = document.getElementById('mainModule');
     let topNavElem: HTMLElement = document.getElementById('topNav');
     let appBannerElem: HTMLElement = document.getElementById('appBanner');
-    mainElem.style['padding-top'] = `${topNavElem.offsetHeight + appBannerElem.offsetHeight}px`;
+    // mainElem.style['padding-top'] = `${topNavElem.offsetHeight + appBannerElem.offsetHeight}px`;
 
     // SideNavbar Offset
-    let footerElem: HTMLElement = document.getElementById('footer');
-    let sideNavElem: any = document.getElementsByTagName('ng-sidebar-container')[0];
-    sideNavElem.style['height'] = `${window.innerHeight - topNavElem.offsetHeight - footerElem.offsetHeight}px`;
+    // let footerElem: HTMLElement = document.getElementById('footer');
+    // let sideNavElem: any = document.getElementsByTagName('ng-sidebar-container')[0];
+    // sideNavElem.style['height'] = `${window.innerHeight - topNavElem.offsetHeight - footerElem.offsetHeight}px`;
   }
 
   showPopup(url, title, w, h) {
