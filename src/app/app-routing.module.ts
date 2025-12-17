@@ -59,6 +59,7 @@ import { RecordsManagementDetailsComponent } from './views/systems/records-manag
 import { WebsitesDetailsComponent } from './views/systems/websites/details/websites-details.component';
 import { ItStandardsManagerComponent } from './views/technologies/manager/it-standards-manager.component';
 import { FismaDetailsComponent } from './views/security/fisma/details/fisma-details.component';
+import { FeedbackComponent } from './views/main/feedback/feedback.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, title: 'Dashboard' },
@@ -245,6 +246,12 @@ const routes: Routes = [
     path: 'data_dictionary',
     component: DataDictionaryComponent,
     title: 'Data Dictionary',
+  },
+
+  {
+    path: 'feedback',
+    component: FeedbackComponent,
+    title: 'Feedback',
   },
   
   {
