@@ -321,7 +321,12 @@
               }
               <app-button [buttonText]="getShowAllFieldsButtonText()" buttonStyle="outline" (buttonClick)="toggleShowAllFields()"></app-button>
             </div>
-            Last Updated: {{detailsData.ChangeDTG | date: 'full'}}
+            <span>
+              <span class="date-label">Last Updated:</span> {{detailsData.ChangeDTG | date: 'full'}}
+            </span>
+            <span>
+              <span class="date-label">Created:</span> {{detailsData.CreateDTG | date: 'full'}}
+            </span>
           </div>
         </div>
       }

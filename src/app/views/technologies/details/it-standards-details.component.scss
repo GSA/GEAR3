@@ -194,6 +194,15 @@
                 flex-direction: row;
                 gap: 1.5rem;
             }
+
+            & span {
+                font-style: italic;
+
+                & .date-label {
+                    font-weight: 800;
+                    font-style: normal;
+                }
+            }
         }
     }
 
