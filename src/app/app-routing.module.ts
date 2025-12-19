@@ -60,6 +60,7 @@ import { WebsitesDetailsComponent } from './views/systems/websites/details/websi
 import { ItStandardsManagerComponent } from './views/technologies/manager/it-standards-manager.component';
 import { FismaDetailsComponent } from './views/security/fisma/details/fisma-details.component';
 import { FeedbackComponent } from './views/main/feedback/feedback.component';
+import { CapabilityManagerComponent } from './views/enterprise/capabilities/manager/capability-manager.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, title: 'Dashboard' },
@@ -108,6 +109,11 @@ const routes: Routes = [
     path: 'capabilities/:capID',
     component: CapabilitiesDetailsComponent,
     title: 'Capabilities',
+  },
+  {
+    path: 'capabilities_manager/:capId',
+    component: CapabilityManagerComponent,
+    title: 'Capabilities Manager',
   },
   {
     path: 'org_chart',

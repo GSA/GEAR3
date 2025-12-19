@@ -35,7 +35,7 @@ import { InvestmentsModalComponent } from './components/modals/investments-modal
 import { CapabilitiesModelComponent } from './views/enterprise/capabilities-model/capabilities-model.component';
 import { CapabilitiesComponent } from './views/enterprise/capabilities/capabilities.component';
 import { CapabilitiesModalComponent } from './components/modals/capabilities-modal/capabilities-modal.component';
-import { CapabilityManagerComponent } from './components/manager-modals/capability-manager/capability-manager.component';
+import { CapabilityManagerComponent } from './views/enterprise/capabilities/manager/capability-manager.component';
 
 import { OrganizationsChartComponent } from './views/enterprise/organizations-chart/organizations-chart.component';
 import { OrganizationsComponent } from './views/enterprise/organizations/organizations.component';
