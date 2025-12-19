@@ -136,6 +136,7 @@ export class TimeComponent implements OnInit {
   ngOnInit(): void {
     this.apiService.getTIME().subscribe(t => {
       this.tableService.updateReportTableData(t);
+      this.tableService.updateReportTableDataReadyStatus(true);
       this.tableData = t;
       this.tableDataOriginal = t;
     });

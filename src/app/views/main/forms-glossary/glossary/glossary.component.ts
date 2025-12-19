@@ -39,5 +39,6 @@ export class GlossaryComponent implements OnInit {
     this.tableDataOriginal = JSON.parse(rawData).default;
     this.tableData = JSON.parse(rawData).default;
     this.tableService.updateReportTableData(JSON.parse(rawData).default);
+    this.tableService.updateReportTableDataReadyStatus(true);
   }
 }

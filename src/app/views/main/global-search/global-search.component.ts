@@ -70,6 +70,7 @@ export class GlobalSearchComponent implements OnInit {
         this.apiService.getGlobalSearchResults(encodeURI(this.searchKW.replace(/\\/g, "\\\\").replace(/'/g, "\\'"))).subscribe(s => {
           let sorted = this.sortBySearchTerm(s, this.searchKW, 'Name');
           this.tableService.updateReportTableData(sorted);
+          this.tableService.updateReportTableDataReadyStatus(true);
           this.tableData = sorted;
           this.tableDataOriginal = sorted;
         });

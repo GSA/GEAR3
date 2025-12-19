@@ -188,9 +188,11 @@ export class FismaComponent implements OnInit {
             }
           });
           this.tableService.updateReportTableData(expiringFiltered);
+          this.tableService.updateReportTableDataReadyStatus(true);
           return;
         } else {
           this.tableService.updateReportTableData(this.fismaTabFilterted);
+          this.tableService.updateReportTableDataReadyStatus(true);
         }
       });
       
@@ -234,6 +236,7 @@ export class FismaComponent implements OnInit {
       });
     }
     this.tableService.updateReportTableData(this.fismaTabFilterted);
+    this.tableService.updateReportTableDataReadyStatus(true);
   }
 
   public onKeyUp(e: KeyboardEvent, tabName: string) {

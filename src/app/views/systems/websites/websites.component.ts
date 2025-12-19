@@ -191,6 +191,7 @@ export class WebsitesComponent implements OnInit {
         }
       });
       this.tableService.updateReportTableData(this.websitesTabFilterted);
+      this.tableService.updateReportTableDataReadyStatus(true);
       
     });
 
@@ -256,6 +257,7 @@ export class WebsitesComponent implements OnInit {
       });
     }
     this.tableService.updateReportTableData(this.websitesTabFilterted);
+    this.tableService.updateReportTableDataReadyStatus(true);
   }
 
   public onKeyUp(e: KeyboardEvent, tabName: string) {
