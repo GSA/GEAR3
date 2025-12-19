@@ -195,6 +195,7 @@ export class ItStandardsDetailsComponent implements OnInit {
           if(this.relatedSystems.length > 0) {
             this.hasRelatedSystems = true;
             this.tableService.updateReportTableData(this.relatedSystems);
+            this.tableService.updateReportTableDataReadyStatus(true);
           }
         });
       });

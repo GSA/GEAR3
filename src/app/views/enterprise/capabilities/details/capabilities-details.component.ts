@@ -228,12 +228,14 @@ export class CapabilitiesDetailsComponent implements OnInit {
         this.isRelatedOrganizationsTabActive = true;
         this.isSupportingSystemsTabActive = false;
         this.tableService.updateReportTableData(this.relatedOrganization);
+        this.tableService.updateReportTableDataReadyStatus(true);
         break;
       case 'supporting_systems':
         this.isOverviewTabActive = false;
         this.isRelatedOrganizationsTabActive = false;
         this.isSupportingSystemsTabActive = true;
         this.tableService.updateReportTableData(this.supportingSystems);
+        this.tableService.updateReportTableDataReadyStatus(true);
         break;
       default:
         break;

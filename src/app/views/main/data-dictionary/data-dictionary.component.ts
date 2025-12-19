@@ -70,6 +70,7 @@ export class DataDictionaryComponent implements OnInit {
       this.tableDataOriginal = defs;
       this.tableData = defs;
       this.tableService.updateReportTableData(defs);
+      this.tableService.updateReportTableDataReadyStatus(true);
     });
   }
 }

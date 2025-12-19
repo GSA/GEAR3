@@ -74,6 +74,7 @@ export class CapabilitiesComponent implements OnInit {
 
     this.apiService.getCapabilities().subscribe(c => {
       this.tableService.updateReportTableData(c);
+      this.tableService.updateReportTableDataReadyStatus(true);
       this.tableData = c;
       this.tableDataOriginal = c;
     });

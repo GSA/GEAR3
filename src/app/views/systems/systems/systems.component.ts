@@ -90,6 +90,7 @@ export class SystemsComponent implements OnInit {
       this.tableCols = this.inactiveColumnDefs;
     }
     this.tableService.updateReportTableData(this.systemsDataTabFilterted);
+    this.tableService.updateReportTableDataReadyStatus(true);
   }
 
   public onKeyUp(e: KeyboardEvent, tabName: string) {
@@ -358,6 +359,7 @@ export class SystemsComponent implements OnInit {
         });
         this.tableCols = this.defaultTableCols;
         this.tableService.updateReportTableData(expiringFiltered);
+        this.tableService.updateReportTableDataReadyStatus(true);
       } else if (this.cloudBasedFilterValue) {
         const notCloudBasedFiltered = [];
         systems.forEach(s => {
@@ -369,6 +371,7 @@ export class SystemsComponent implements OnInit {
         });
         this.tableCols = this.defaultTableCols;
         this.tableService.updateReportTableData(notCloudBasedFiltered);
+        this.tableService.updateReportTableDataReadyStatus(true);
       } else if (this.cspName) {
         const cspFiltered = [];
         systems.forEach(s => {
@@ -387,6 +390,7 @@ export class SystemsComponent implements OnInit {
         });
         this.tableCols = this.defaultTableCols;
         this.tableService.updateReportTableData(cspFiltered);
+        this.tableService.updateReportTableDataReadyStatus(true);
       } else { 
         // Apply tab filter based on selectedTab
         this.selectedTab = 'All';
@@ -501,6 +505,7 @@ export class SystemsComponent implements OnInit {
 
   this.systemsDataTabFilterted = filtered;
   this.tableService.updateReportTableData(this.systemsDataTabFilterted);
+  this.tableService.updateReportTableDataReadyStatus(true);
   this.sharedService.enableStickyHeader("systemTable");
   }
 
