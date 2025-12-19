@@ -60,6 +60,8 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() defaultPaginationNumber: number = 50;
 
+  @Input() isLoadingData: boolean = false;
+
   // Filter event (some reports change available columns when filtered)
   @Output() filterEvent = new EventEmitter<string>();
 
