@@ -43,7 +43,7 @@
       <app-filter-chips [chips]="filterChips" dropdownName="Deployment Types" (chipSelect)="onFilterChipSelect($event)"></app-filter-chips>
       @if (filterTotals) {
         <div>
-          <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)">
+          <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" [isLoadingData]="isDataReady" (rowClickEvent)="onRowClick($event)">
             <div class="filter-tabs-container" filterTabs>
               <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')" (keyup)="onKeyUp($event, 'All')" tabindex="0">
                 <span class="filter-tab-text">All</span>

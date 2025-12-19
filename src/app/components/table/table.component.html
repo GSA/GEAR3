@@ -1,151 +1,158 @@
-<div class="table-responsive-container">
-  <div class="d-flex justify-content-between">
-    <div></div>
-    <div>
-      <ng-content select="[filterBtns]"></ng-content>
+@if (isLoadingData) {
+  <div class="table-responsive-container">
+    <div class="d-flex justify-content-between">
+      <div></div>
+      <div>
+        <ng-content select="[filterBtns]"></ng-content>
+      </div>
+      <div>
+        <ng-content select="[definitionBtn]"></ng-content>
+      </div>
     </div>
-    <div>
-      <ng-content select="[definitionBtn]"></ng-content>
-    </div>
-  </div>
 
-  <p-table #dt
-    [columns]="tableCols"
-    [value]="tableData"
-    [rowsPerPageOptions]="[10, 25, 50, 100, 200]"
-    [rows]="defaultPaginationNumber"
-    [first]="first"
-    [paginator]="showPagination"
-    [scrollable]="true"
-    [scrollHeight]="screenHeight"
-    [exportFilename]="getExportFilename()"
-    [styleClass]="reportStyle + ' p-datatable-gridlines'"
-    [sortOrder]="defaultSortOrder"
-    [sortField]="defaultSortField"
-    selectionMode="single"
-    [showCurrentPageReport]="true"
-    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-    (onPage)="pageChange($event)"
-    (onRowSelect)="onRowSelect($event)">
+    <p-table #dt
+      [columns]="tableCols"
+      [value]="tableData"
+      [rowsPerPageOptions]="[10, 25, 50, 100, 200]"
+      [rows]="defaultPaginationNumber"
+      [first]="first"
+      [paginator]="showPagination"
+      [scrollable]="true"
+      [scrollHeight]="screenHeight"
+      [exportFilename]="getExportFilename()"
+      [styleClass]="reportStyle + ' p-datatable-gridlines'"
+      [sortOrder]="defaultSortOrder"
+      [sortField]="defaultSortField"
+      selectionMode="single"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+      (onPage)="pageChange($event)"
+      (onRowSelect)="onRowSelect($event)">
 
-    <ng-template #caption>
-      <div class="caption-container">
-        <ng-content select="[filterTabs]"></ng-content>
-        <div class="caption-toolbar-container">
-          @if (showToolbar) {
-            <div class="table-toolbar-container">
-              @if (showSearchbar) {
-                <p-iconField iconPosition="left">
-                  <p-inputIcon styleClass="fa fa-search" />
-                  <input
-                    pInputText
-                    type="text"
-                    (input)="onTableSearch($event.target.value)"
-                    placeholder="Search keyword"
-                    aria-label="Table Search" />
-                  </p-iconField>
-                }
-                @if (showShowHideColumnButton) {
-                  <p-multiSelect
-                    [options]="tableCols"
-                    [(ngModel)]="visibleColumns"
-                    (onChange)="toggleVisible($event)"
-                    optionLabel="header"
-                    pTooltip="Add/Remove Columns"
-                    tooltipPosition="left"
-                    [showToggleAll]="false"
-                    ariaLabel="Toggle Columns">
-                    <ng-template pTemplate="selectedItems">
-                      <i class="fa fa-th-list"></i>
-                    </ng-template>
-                  </p-multiSelect>
-                }
-                @if (showExportButton) {
-                  <p-button icon="fa fa-download" pTooltip="Export table data" tooltipPosition="left" severity="primary" (click)="exportSanitizedData()" ariaLabel="Export Data" />
-                }
-                @if (showFilterButton) {
-                  <p-button icon="fa fa-filter" pTooltip="Column filters" tooltipPosition="left" severity="primary" (click)="openColumnFilterModal()" ariaLabel="Column Filters" />
-                }
-              </div>
-            }
-          </div>
-        </div>
-      </ng-template>
-
-      <!-- Table header -->
-      <ng-template #header let-columns>
-        <!-- Headings -->
-        <tr>
-          @for (col of columns; track col) {
-            @if (showColumn(col)) {
-              <th [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.isSortable ? true : false">
-                <div class="d-flex align-items-center table-heading">
-                  @if (!col.titleTooltip) {
-                    <span >{{ col.header }}</span>
+      <ng-template #caption>
+        <div class="caption-container">
+          <ng-content select="[filterTabs]"></ng-content>
+          <div class="caption-toolbar-container">
+            @if (showToolbar) {
+              <div class="table-toolbar-container">
+                @if (showSearchbar) {
+                  <p-iconField iconPosition="left">
+                    <p-inputIcon styleClass="fa fa-search" />
+                    <input
+                      pInputText
+                      type="text"
+                      (input)="onTableSearch($event.target.value)"
+                      placeholder="Search keyword"
+                      aria-label="Table Search" />
+                    </p-iconField>
                   }
-                  @if (col.titleTooltip) {
-                    <span [title]="col.titleTooltip">{{ col.header }}</span>
+                  @if (showShowHideColumnButton) {
+                    <p-multiSelect
+                      [options]="tableCols"
+                      [(ngModel)]="visibleColumns"
+                      (onChange)="toggleVisible($event)"
+                      optionLabel="header"
+                      pTooltip="Add/Remove Columns"
+                      tooltipPosition="left"
+                      [showToggleAll]="false"
+                      ariaLabel="Toggle Columns">
+                      <ng-template pTemplate="selectedItems">
+                        <i class="fa fa-th-list"></i>
+                      </ng-template>
+                    </p-multiSelect>
                   }
-                  <!-- <span *ngIf="showFilters"><p-columnFilter type="text" [field]="col.field" display="menu" /></span> -->
-                  @if (col.isSortable) {
-                    <p-sortIcon [field]="col.field"></p-sortIcon>
+                  @if (showExportButton) {
+                    <p-button icon="fa fa-download" pTooltip="Export table data" tooltipPosition="left" severity="primary" (click)="exportSanitizedData()" ariaLabel="Export Data" />
+                  }
+                  @if (showFilterButton) {
+                    <p-button icon="fa fa-filter" pTooltip="Column filters" tooltipPosition="left" severity="primary" (click)="openColumnFilterModal()" ariaLabel="Column Filters" />
                   }
                 </div>
-              </th>
-            }
-          }
-        </tr>
-        @if (showFilters) {
+              }
+            </div>
+          </div>
+        </ng-template>
+
+        <!-- Table header -->
+        <ng-template #header let-columns>
+          <!-- Headings -->
           <tr>
             @for (col of columns; track col) {
               @if (showColumn(col)) {
-                <th>
-                  <p-columnFilter
-                    type="text"
-                    [field]="col.field"
-                    [matchModeOptions]="matchModeOptions"
-                    [matchMode]="'contains'"
-                    [placeholder]="'Filter by ' + col.header"
-                    [ariaLabel]="'Filter ' + col.header" />
-                  </th>
+                <th [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.isSortable ? true : false">
+                  <div class="d-flex align-items-center table-heading">
+                    @if (!col.titleTooltip) {
+                      <span >{{ col.header }}</span>
+                    }
+                    @if (col.titleTooltip) {
+                      <span [title]="col.titleTooltip">{{ col.header }}</span>
+                    }
+                    <!-- <span *ngIf="showFilters"><p-columnFilter type="text" [field]="col.field" display="menu" /></span> -->
+                    @if (col.isSortable) {
+                      <p-sortIcon [field]="col.field"></p-sortIcon>
+                    }
+                  </div>
+                </th>
+              }
+            }
+          </tr>
+          @if (showFilters) {
+            <tr>
+              @for (col of columns; track col) {
+                @if (showColumn(col)) {
+                  <th>
+                    <p-columnFilter
+                      type="text"
+                      [field]="col.field"
+                      [matchModeOptions]="matchModeOptions"
+                      [matchMode]="'contains'"
+                      [placeholder]="'Filter by ' + col.header"
+                      [ariaLabel]="'Filter ' + col.header" />
+                    </th>
+                  }
+                }
+              </tr>
+            }
+          </ng-template>
+          <!-- Table body -->
+          <ng-template #body let-rowData let-columns="columns">
+            <tr [pSelectableRow]="rowData">
+              @for (col of columns; track col) {
+                @if (showColumn(col)) {
+                  <td>
+                    @if (!col.formatter) {
+                      <span [ngClass]="col.class">{{ rowData[col.field] }}</span>
+                    }
+                    @if (col.formatter) {
+                      <span [ngClass]="col.class" [innerHTML]="col.formatter(rowData[col.field])"></span>
+                    }
+                  </td>
                 }
               }
             </tr>
-          }
-        </ng-template>
-        <!-- Table body -->
-        <ng-template #body let-rowData let-columns="columns">
-          <tr [pSelectableRow]="rowData">
-            @for (col of columns; track col) {
-              @if (showColumn(col)) {
-                <td>
-                  @if (!col.formatter) {
-                    <span [ngClass]="col.class">{{ rowData[col.field] }}</span>
-                  }
-                  @if (col.formatter) {
-                    <span [ngClass]="col.class" [innerHTML]="col.formatter(rowData[col.field])"></span>
-                  }
-                </td>
-              }
-            }
-          </tr>
-        </ng-template>
-        <ng-template #emptymessage let-columns>
-          <tr>
-            <td [attr.colspan]="columns.length">
-              <div class="d-flex justify-content-center">
-                <span>No records found!</span>
-              </div>
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
-</div>
-      <table-column-filter-modal
-        [columns]="tableCols"
-        [isVisible]="showColumnFilterModal"
-        [existingFilters]="dt?.filters || {}"
-        (saveChanges)="onColumnFilterSave($event)"
-        (cancelChanges)="onColumnFilterCancel()"
-        (closeModal)="onColumnFilterClose()">
-      </table-column-filter-modal>
+          </ng-template>
+          <ng-template #emptymessage let-columns>
+            <tr>
+              <td [attr.colspan]="columns.length">
+                <div class="d-flex justify-content-center">
+                  <span>No records found!</span>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+  </div>
+  <table-column-filter-modal
+    [columns]="tableCols"
+    [isVisible]="showColumnFilterModal"
+    [existingFilters]="dt?.filters || {}"
+    (saveChanges)="onColumnFilterSave($event)"
+    (cancelChanges)="onColumnFilterCancel()"
+    (closeModal)="onColumnFilterClose()">
+  </table-column-filter-modal>
+} @else {
+  <div class="table-loading-container">
+    Loading Data
+    <div class="loader"></div>
+  </div>
+}

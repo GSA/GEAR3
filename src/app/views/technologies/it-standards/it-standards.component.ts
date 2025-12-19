@@ -41,6 +41,8 @@ export class ItStandardsComponent implements OnInit {
   public daysExpiring: number = 0;
   public daysRetired: number = 0;
 
+  public isDataReady: boolean = false;
+
   constructor(
     private apiService: ApiService,
     private modalService: ModalsService,
@@ -386,8 +388,10 @@ export class ItStandardsComponent implements OnInit {
           }
         });
         this.tableService.updateReportTableData(expiringFiltered);
+        this.isDataReady = true;
       } else {
         this.tableService.updateReportTableData(i);
+        this.isDataReady = true;
       }
 
       // this.tableService.updateReportTableData(i);
