@@ -42,4 +42,5 @@ export class ITStandards {
   public ChangeDTG: Date = null;
   public ConditionsRestrictions: string = null;
   public AlsoKnownAs: string = null;
+  public CreateDTG: Date = null;
 }
