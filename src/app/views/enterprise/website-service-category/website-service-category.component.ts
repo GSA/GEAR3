@@ -59,6 +59,7 @@ export class WebsiteServiceCategoryComponent implements OnInit {
   ngOnInit(): void {
     this.apiService.getWebsiteServiceCategory().subscribe(w => {
       this.tableService.updateReportTableData(w);
+      this.tableService.updateReportTableDataReadyStatus(true);
       this.tableData = w;
       this.tableDataOriginal = w;
     });

@@ -92,6 +92,7 @@ export class FismaPocsComponent implements OnInit {
       });
       this.tableData = this.filteredTableData;
       this.tableService.updateReportTableData(this.tableData);
+      this.tableService.updateReportTableDataReadyStatus(true);
     });
 
     // Method to open details modal when referenced directly via URL

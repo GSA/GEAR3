@@ -107,6 +107,8 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
   matchModeOptions: SelectItem[];
 
+  isDataReady: boolean = false;
+
   constructor(public sharedService: SharedService, public tableService: TableService, public apiService: ApiService, private router: Router) {
     this.setScreenHeight();
   }
@@ -125,6 +127,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     if (this.isLocal) {
       this.tableData = this.localTableData;
       this.originalTableData = [...this.localTableData];
+      this.isDataReady = true;
     } else {
       this.tableService.reportTableData$.subscribe(d => {
         if(d) {
@@ -132,6 +135,9 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
           this.originalTableData = [...d];
         }
       });
+      this.tableService.reportTableDataReady$.subscribe(r => {
+        this.isDataReady = r;
+      })
     }
     
     this.initializeColumnVisibility();
@@ -150,6 +156,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy(): void {
     this.tableService.updateReportTableData(null);
+    this.tableService.updateReportTableDataReadyStatus(false);
   }
 
   private initializeColumnVisibility() {

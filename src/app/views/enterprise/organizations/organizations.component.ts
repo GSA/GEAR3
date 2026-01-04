@@ -62,6 +62,7 @@ export class OrganizationsComponent implements OnInit {
   ngOnInit(): void {
     this.apiService.getOrganizations().subscribe(o => {
       this.tableService.updateReportTableData(o);
+      this.tableService.updateReportTableDataReadyStatus(true);
       this.tableData = o;
       this.tableDataOriginal = o;
     });

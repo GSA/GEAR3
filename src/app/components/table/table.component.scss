@@ -1,3 +1,28 @@
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+.table-loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 2rem 2.25rem;
+    padding: 2rem 2.25rem;
+    background-color: #fff;
+
+    & .loader {
+        display: flex;
+        border: 4px solid var(--neutral-white-color);
+        border-top: 4px solid var(--primary-color);; /* Blue border on top */
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+      }
+}
+
 .table-responsive-container {
   display: flex;
   flex-direction: column;
@@ -280,8 +305,8 @@
             font-size: 12px;
 
             & .table-status-badge-green {
-                background: rgba(0, 128, 0, 0.30);
-                color: #008000;
+                background: #EEF6EE;
+                color: #006100;
                 font-size: 12px;
                 font-style: normal;
                 font-weight: 400;
@@ -295,8 +320,8 @@
             }
 
             & .table-status-badge-yellow {
-                background: rgba(255, 140, 4, 0.30);
-                color: #FF5E04;
+                background: #FFEFD6;
+                color: #943600;
                 font-size: 12px;
                 font-style: normal;
                 font-weight: 400;
@@ -310,7 +335,7 @@
             }
 
             & .table-status-badge-red {
-                background-color: #db64644d;
+                background-color: #FAEAEA;
                 color: #ea0000;
                 font-size: 12px;
                 font-style: normal;
@@ -334,8 +359,8 @@
                 font-size: 12px;
 
                 & .table-status-badge-green {
-                    background: rgba(0, 128, 0, 0.30);
-                    color: #008000;
+                    background: #EEF6EE;
+                    color: #006100;
                     font-size: 12px;
                     font-style: normal;
                     font-weight: 400;
@@ -349,8 +374,8 @@
                 }
 
                 & .table-status-badge-yellow {
-                    background: rgba(255, 140, 4, 0.30);
-                    color: #FF5E04;
+                    background: #FFEFD6;
+                    color: #943600;
                     font-size: 12px;
                     font-style: normal;
                     font-weight: 400;
@@ -363,7 +388,7 @@
                 }
 
                 & .table-status-badge-red {
-                    background-color: #db64644d;
+                    background-color: #FAEAEA;
                     color: #ea0000;
                     font-size: 12px;
                     font-style: normal;

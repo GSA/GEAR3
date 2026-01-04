@@ -35,6 +35,9 @@ export class TableService {
   private reportTableDataSubject = new BehaviorSubject<any>([]);
   reportTableData$ = this.reportTableDataSubject.asObservable();
 
+  private reportTableDataReadySubject = new BehaviorSubject<boolean>(false);
+  reportTableDataReady$ = this.reportTableDataReadySubject.asObservable();
+
   // Systems Related Table Options
   public relSysTableOptions: {} = this.createTableOptions({
     advancedSearch: true,
@@ -768,6 +771,10 @@ export class TableService {
   // Call this to update the report table data
   public updateReportTableData(data: any) {
     this.reportTableDataSubject.next(data); 
+  }
+
+  public updateReportTableDataReadyStatus(isReady: boolean) {
+    this.reportTableDataReadySubject.next(isReady);
   }
 
   public filterButtonClick(filterButtons: FilterButton[], data: any): void {

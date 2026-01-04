@@ -133,6 +133,7 @@ export class RecordsManagementComponent implements OnInit {
 
     this.apiService.getRecords().subscribe(r => {
       this.tableService.updateReportTableData(r);
+      this.tableService.updateReportTableDataReadyStatus(true);
       this.tableData = r;
       this.tableDataOriginal = r;
     });

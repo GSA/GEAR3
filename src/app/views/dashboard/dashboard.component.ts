@@ -184,6 +184,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.apiService.getRecentITStandards(10).subscribe(standards => {
       this.tableService.updateReportTableData(standards);
+      this.tableService.updateReportTableDataReadyStatus(true);
     });
 
     this.apiService.getCloudAdoptionRate().subscribe(cloudData => {

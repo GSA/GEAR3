@@ -80,6 +80,7 @@ export class InvestmentsComponent implements OnInit {
       this.tableCols = this.defaultCols;
     }
     this.tableService.updateReportTableData(this.itInvesmentsDataTabFilterted);
+    this.tableService.updateReportTableDataReadyStatus(true);
   }
   
   public onKeyUp(e: KeyboardEvent, tabName: string) {
@@ -316,6 +317,7 @@ export class InvestmentsComponent implements OnInit {
 
     this.apiService.getInvestments().subscribe(i => {
       this.tableService.updateReportTableData(i);
+      this.tableService.updateReportTableDataReadyStatus(true);
       this.itInvestmentsData = i;
       this.itInvesmentsDataTabFilterted = i;
     });

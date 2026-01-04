@@ -41,6 +41,8 @@ export class ItStandardsComponent implements OnInit {
   public daysExpiring: number = 0;
   public daysRetired: number = 0;
 
+  public isDataReady: boolean = false;
+
   constructor(
     private apiService: ApiService,
     private modalService: ModalsService,
@@ -74,6 +76,7 @@ export class ItStandardsComponent implements OnInit {
         this.onFilterChipSelect(this.selectedChips);
       } else {
         this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
+        this.tableService.updateReportTableDataReadyStatus(true);
       }
     } else {
       if(this.hasSelectedChips()) {
@@ -86,6 +89,7 @@ export class ItStandardsComponent implements OnInit {
           return x.Status === tabName;
         });
         this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
+        this.tableService.updateReportTableDataReadyStatus(true);
       }
     }
   }
@@ -104,6 +108,7 @@ export class ItStandardsComponent implements OnInit {
         return selectedChips.includes(f.DeploymentType);
       });
       this.tableService.updateReportTableData(this.itStandardsDataChipFilterted);
+      this.tableService.updateReportTableDataReadyStatus(true);
     } else {
       this.itStandardsDataChipFilterted = this.itStandardsDataTabFilterted;
       this.onSelectTab(this.selectedTab);
@@ -372,6 +377,7 @@ export class ItStandardsComponent implements OnInit {
           }
         });
         this.tableService.updateReportTableData(expiringFiltered);
+        this.tableService.updateReportTableDataReadyStatus(true);
       } else if(this.daysRetired > 0) {
         const now = new Date(); // Current date and time
         now.setUTCHours(0, 0, 0, 0);
@@ -386,8 +392,10 @@ export class ItStandardsComponent implements OnInit {
           }
         });
         this.tableService.updateReportTableData(expiringFiltered);
+        this.tableService.updateReportTableDataReadyStatus(true);
       } else {
         this.tableService.updateReportTableData(i);
+        this.tableService.updateReportTableDataReadyStatus(true);
       }
 
       // this.tableService.updateReportTableData(i);
