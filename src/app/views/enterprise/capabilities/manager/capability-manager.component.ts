@@ -14,7 +14,7 @@ declare var $: any;
 @Component({
     selector: 'capability-manager',
     templateUrl: './capability-manager.component.html',
-    styleUrls: ['./capability-manager.component.css'],
+    styleUrls: ['./capability-manager.component.scss'],
     standalone: false
 })
 export class CapabilityManagerComponent implements OnInit {

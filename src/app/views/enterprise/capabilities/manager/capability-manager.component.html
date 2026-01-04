@@ -1,4 +1,26 @@
-<div class="modal-dialog modal-dialog-scrollable modal-xl">
+
+<div class="capability-manager-container">
+  <div class="breadcrumb-container">
+    <app-breadcrumb>
+      <span currentPageName>{{detailsData.Name}}</span>
+    </app-breadcrumb>
+  </div>
+  <div class="title-container">
+    <span class="title">{{detailsData.Name}}</span>
+  </div>
+  <div class="content-container">
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link active">Organization Mapping</a>
+      </li>
+    </ul>
+</div>
+
+
+
+
+
+<!-- <div class="modal-dialog modal-dialog-scrollable modal-xl">
   <div class="modal-content">
     <div class="modal-header bg-info">
       <h5 class="modal-title text-white" id="capabilityMngrTitle">
@@ -12,17 +34,17 @@
       </button>
     </div>
 
-    <div class="modal-body">
+    <div class="modal-body"> -->
       <!-- Tabs -->
-      <ul id="capabilityMngrTabs" class="nav nav-tabs">
+      <!-- <ul id="capabilityMngrTabs" class="nav nav-tabs">
         <li class="nav-item">
           <a class="nav-link active" data-bs-toggle="tab" href="#capabilityMngrOrg">
           Organization Mapping</a>
         </li>
-      </ul>
+      </ul> -->
 
       <!-- Tab Panes -->
-      <form [formGroup]="capabilityForm" class="container">
+      <!-- <form [formGroup]="capabilityForm" class="container">
         <div class="tab-content mt-3">
           <div class="tab-pane fade show active" id="capabilityMngrOrg">
             <h4>Related Orgs</h4>
@@ -54,10 +76,10 @@
                     </select>
                   </div>
                 </div>
-              </div>
+              </div> -->
               <!-- End of Orgs Mapping Pane -->
 
-            </div>
+            <!-- </div>
           </form>
         </div>
 
@@ -75,4 +97,4 @@
         </div>
 
       </div>
-    </div>
+    </div> -->
