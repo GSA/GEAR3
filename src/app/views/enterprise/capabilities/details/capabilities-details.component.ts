@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Capability } from '@api/models/capabilities.model';
 import { Investment } from '@api/models/investments.model';
 import { Organization } from '@api/models/organizations.model';
@@ -183,7 +183,8 @@ export class CapabilitiesDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private apiService: ApiService,
     private sharedService: SharedService,
-    private tableService: TableService
+    private tableService: TableService,
+    private router: Router
   ) {
   }
 
@@ -238,6 +239,14 @@ export class CapabilitiesDetailsComponent implements OnInit {
       default:
         break;
     }
+  }
+
+  public editCapability(): void {
+    this.router.navigate(['capabilities_manager', this.detailsData.ID]);
+  }
+
+  public isLoggedIn(): boolean {
+    return this.sharedService.loggedIn;
   }
 
 }
