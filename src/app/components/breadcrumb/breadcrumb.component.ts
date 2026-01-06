@@ -84,6 +84,8 @@ export class BreadcrumbComponent implements OnInit {
                 return 'IT Investments List';
             case 'capabilities':
                 return 'Business Capabilities List';
+            case 'capabilities_manager':
+                return 'Business Capabilities List';
             case 'organizations':
                 return 'Organizations List';
             case 'website_service_category':
