@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
@@ -21,7 +21,8 @@ export class RecordsManagementDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private apiService: ApiService,
     private sharedService: SharedService,
-    public tableService: TableService
+    public tableService: TableService,
+    public router: Router
   ) {
   }
 
@@ -36,5 +37,13 @@ export class RecordsManagementDetailsComponent implements OnInit {
       });
 
     });
+  }
+
+  public editRecord(): void {
+    this.router.navigate(['records_mgmt_manager', this.detailsData.Rec_ID]);
+  }
+
+  public isLoggedIn(): boolean {
+    return this.sharedService.loggedIn;
   }
 }

@@ -105,6 +105,9 @@
           </div>
         </div>
       </div>
+      @if (isLoggedIn()) {
+        <app-button [buttonText]="'Edit'" buttonStyle="outline" (buttonClick)="editRecord()"></app-button>
+      }
     </div>
   </div>
 }

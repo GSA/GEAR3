@@ -342,6 +342,9 @@
           </div>
         </div>
       }
+      @if (isLoggedIn()) {
+        <app-button [buttonText]="'Edit'" buttonStyle="outline" (buttonClick)="editSystem()"></app-button>
+      }
     </div>
   </div>
 }

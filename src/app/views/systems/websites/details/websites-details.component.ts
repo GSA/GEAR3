@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { System } from '@api/models/systems.model';
 import { Column } from '@common/table-classes';
 import { ApiService } from '@services/apis/api.service';
@@ -10,6 +10,7 @@ import { WebsiteServiceCategory } from '@api/models/website-service-category.mod
 import { RelatedWebsitesColumns } from '@common/table-columns/related-websites';
 import { of } from 'rxjs';
 import { RelatedSystemsCols } from '@common/table-columns/related-systems';
+import { SharedService } from '@services/shared/shared.service';
 
 @Component({
     selector: 'websites-details',
@@ -39,7 +40,9 @@ export class WebsitesDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private apiService: ApiService,
-    public tableService: TableService
+    public tableService: TableService,
+    public sharedService: SharedService,
+    public router: Router
   ) {
   }
 
@@ -117,5 +120,13 @@ export class WebsitesDetailsComponent implements OnInit {
 
   public hasServiceCategories(): boolean {
     return this.websiteServiceCategories && this.websiteServiceCategories.length > 0;
+  }
+
+  public editWebsite(): void {
+    this.router.navigate(['websites_manager', this.detailsData.website_id]);
+  }
+
+  public isLoggedIn(): boolean {
+    return this.sharedService.loggedIn;
   }
 }

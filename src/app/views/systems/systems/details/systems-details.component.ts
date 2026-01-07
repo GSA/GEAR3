@@ -234,6 +234,14 @@ export class SystemsDetailsComponent implements OnInit {
     return '';
   }
 
+    public editSystem(): void {
+    this.router.navigate(['systems_manager', this.detailsData.ID]);
+  }
+
+  public isLoggedIn(): boolean {
+    return this.sharedService.loggedIn;
+  }
+
   private splitPOCInfo(p) {
     let poc = null;
     let poc1 = null;

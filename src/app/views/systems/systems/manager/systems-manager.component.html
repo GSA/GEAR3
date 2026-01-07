@@ -1,0 +1,202 @@
+
+@if(isDataReady) {
+  <div class="capability-manager-container">
+    <div class="breadcrumb-container">
+      <app-breadcrumb>
+        <span currentPageName>{{detailsData.Name}}</span>
+      </app-breadcrumb>
+    </div>
+    <div class="title-container">
+      <span class="title">{{detailsData.Name}}</span>
+    </div>
+    <div class="content-container">
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="isBusCapTabActive" (click)="onTabClick('buscap', $event)" href="#buscap">Business Capability Mapping</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="isInvestmentsTabActive" (click)="onTabClick('investments', $event)" href="#investments">Investments Mapping</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="isStandardTabActive" (click)="onTabClick('standard', $event)" href="#standard">IT Standards Mapping</a>
+        </li>
+      </ul>
+        <form [formGroup]="systemForm" class="cap-form">
+          @if(isBusCapTabActive) {
+            <div class="pool-side">
+              <label for="busCapPool">Business Capabilities Pool</label>
+              <select class="form-control" id="busCapPool" size="27" multiple>
+                @for (cap of notSelectedCaps; track cap) {
+                  <option [value]="cap.ID">{{ cap.Name }} ({{ cap.ReferenceNum }})</option>
+                }
+              </select>
+            </div>
+            <div class="middle-side">
+              <button class="btn btn-success w-100 mb-5"
+                    (click)="poolSelectedMove('#busCapPool', selectedCapsIDs, 'select')">Move
+                    to<br>Selected <i class="fas fa-arrow-right fa-lg"></i></button>
+                    <button class="btn btn-warning w-100"
+                      (click)="poolSelectedMove('#busCapSelect', selectedCapsIDs, 'deselect')"><i
+                      class="fas fa-arrow-left fa-lg"></i> Move to<br>Un-Selected</button>
+            </div>
+            <div class="selected-side">
+              <label for="busCapSelect">Selected</label>
+              <select class="form-control" id="busCapSelect" size="27" multiple>
+                @for (cap of capRelations; track cap) {
+                  <option [value]="cap.ID">{{ cap.Name }} ({{ cap.ReferenceNum }})</option>
+                }
+              </select>
+            </div>
+          }
+          @if(isInvestmentsTabActive) {
+            <div class="pool-side">
+              <label for="sysInvestPool">Investments Pool</label>
+                      <select class="form-control" id="sysInvestPool" size="27" multiple>
+                        @for (investment of notSelectedInvest; track investment) {
+                          <option [value]="investment.ID">{{ investment.Name }}</option>
+                        }
+                      </select>
+            </div>
+            <div class="middle-side">
+              <button class="btn btn-success w-100 mb-5"
+                        (click)="poolSelectedMove('#sysInvestPool', selectedInvestIDs, 'select')">Move
+                        to<br>Selected <i class="fas fa-arrow-right fa-lg"></i></button>
+                        <button class="btn btn-warning w-100"
+                          (click)="poolSelectedMove('#sysInvestSelect', selectedInvestIDs, 'deselect')"><i
+                          class="fas fa-arrow-left fa-lg"></i> Move to<br>Un-Selected</button>
+            </div>
+            <div class="selected-side">
+              <label for="sysInvestSelect">Selected</label>
+                          <select class="form-control" id="sysInvestSelect" size="27" multiple>
+                            @for (investment of investRelations; track investment) {
+                              <option [value]="investment.ID">{{ investment.Name }}</option>
+                            }
+                          </select>
+            </div>
+          }
+          @if(isStandardTabActive) {
+            <div class="pool-side">
+              <label for="sysITStandPool">IT Standards Pool</label>
+                          <select class="form-control" id="sysITStandPool" size="27" multiple>
+                            @for (tech of notSelectedTech; track tech) {
+                              <option [value]="tech.ID">{{ tech.Name }} ({{ tech.Category }})</option>
+                            }
+                          </select>
+            </div>
+            <div class="middle-side">
+              <button class="btn btn-success w-100 mb-5"
+                            (click)="poolSelectedMove('#sysITStandPool', selectedTechIDs, 'select')">Move
+                            to<br>Selected <i class="fas fa-arrow-right fa-lg"></i></button>
+                            <button class="btn btn-warning w-100"
+                              (click)="poolSelectedMove('#sysITStandSelect', selectedTechIDs, 'deselect')"><i
+                              class="fas fa-arrow-left fa-lg"></i> Move to<br>Un-Selected</button>
+            </div>
+            <div class="selected-side">
+              <label for="sysITStandSelect">Selected</label>
+                              <select class="form-control" id="sysITStandSelect" size="27" multiple>
+                                @for (tech of techRelations; track tech) {
+                                  <option [value]="tech.ID">{{ tech.Name }} ({{ tech.Category }})</option>
+                                }
+                              </select>
+            </div>
+          }
+        </form>
+      </div>
+      <div class="cap-footer">
+        <div class="text-danger">* Required</div>
+        <div class="cap-footer-buttons">
+          <div class="custom-control custom-checkbox text-right">
+            <input type="checkbox" class="custom-control-input" id="systemCertifyCheck" [(ngModel)]="systemCertify">
+                      <label class="custom-control-label" for="systemCertifyCheck">
+                        <span class="text-danger">*</span>
+                        I certify all data is correct and up-to-date
+                      </label>
+                    </div>
+                    <button type="submit" form="systemForm" class="btn btn-info text-white" (click)="submitForm()"
+                    [disabled]="!(systemCertify && systemForm.valid)">Save</button>
+        </div>
+      </div>
+  </div>
+}
+
+
+
+
+<!-- <div class="modal-dialog modal-dialog-scrollable modal-xl">
+  <div class="modal-content">
+    <div class="modal-header bg-info">
+      <h5 class="modal-title text-white" id="capabilityMngrTitle">
+        <i class="fas fa-project-diagram"></i>
+        @if (capability.Name) {
+          <span> {{ capability.Name }} - <span class="text-primary">**EDITING**</span></span>
+        }
+      </h5>
+      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div class="modal-body"> -->
+      <!-- Tabs -->
+      <!-- <ul id="capabilityMngrTabs" class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" data-bs-toggle="tab" href="#capabilityMngrOrg">
+          Organization Mapping</a>
+        </li>
+      </ul> -->
+
+      <!-- Tab Panes -->
+      <!-- <form [formGroup]="capabilityForm" class="container">
+        <div class="tab-content mt-3">
+          <div class="tab-pane fade show active" id="capabilityMngrOrg">
+            <h4>Related Orgs</h4>
+            <div class="row">
+              <div class="form-group col-5">
+                <label for="orgPool">Organizations Pool</label>
+                <select class="form-control" id="orgPool" size="27" multiple>
+                  @for (org of notSelectedOrgs; track org) {
+                    <option [value]="org.ID">{{ org.Name }} ({{ org.Symbol }})</option>
+                  }
+                </select>
+              </div>
+
+              <div class="col-2 my-auto">
+                <button class="btn btn-success w-100 mb-5"
+                  (click)="poolSelectedMove('#orgPool', selectedOrgsIDs, 'select')">Move
+                  to<br>Selected <i class="fas fa-arrow-right fa-lg"></i></button>
+                  <button class="btn btn-warning w-100"
+                    (click)="poolSelectedMove('#orgSelect', selectedOrgsIDs, 'deselect')"><i
+                    class="fas fa-arrow-left fa-lg"></i> Move to<br>Un-Selected</button>
+                  </div>
+
+                  <div class="form-group col-5">
+                    <label for="orgSelect">Selected</label>
+                    <select class="form-control" id="orgSelect" size="27" multiple>
+                      @for (org of orgRelations; track org) {
+                        <option [value]="org.ID">{{ org.Name }} ({{ org.Symbol }})</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+              </div> -->
+              <!-- End of Orgs Mapping Pane -->
+
+            <!-- </div>
+          </form>
+        </div>
+
+        <div class="modal-footer">
+          <div class="text-danger mr-auto">* Required</div>
+          <div class="col-md-3 pl-0 ml-0 custom-control custom-checkbox text-right">
+            <input type="checkbox" class="custom-control-input" id="capabilityCertifyCheck" [(ngModel)]="capabilityCertify">
+            <label class="custom-control-label" for="capabilityCertifyCheck">
+              <span class="text-danger">*</span>
+              I certify all data is correct and up-to-date
+            </label>
+          </div>
+          <button type="submit" form="capabilityForm" class="btn btn-info text-white" (click)="submitForm()"
+          [disabled]="!(capabilityCertify && capabilityForm.valid)">Save</button>
+        </div>
+
+      </div>
+    </div> -->

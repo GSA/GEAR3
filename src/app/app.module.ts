@@ -47,14 +47,11 @@ import { WebsiteServiceCategoryModalComponent } from './components/modals/websit
 //// Systems
 import { SystemsComponent } from './views/systems/systems/systems.component';
 import { SystemsModalComponent } from './components/modals/systems-modal/systems-modal.component';
-import { SystemManagerComponent } from './components/manager-modals/system-manager/system-manager.component';
 import { TimeComponent } from './views/systems/time/time.component';
 import { RecordsManagementComponent } from './views/systems/records-management/records-management.component';
 import { RecordsModalComponent } from './components/modals/records-modal/records-modal.component';
-import { RecordManagerComponent } from './components/manager-modals/record-manager/record-manager.component';
 import { WebsitesComponent } from './views/systems/websites/websites.component';
 import { WebsitesModalComponent } from './components/modals/websites-modal/websites-modal.component';
-import { WebsiteManagerComponent } from './components/manager-modals/website-manager/website-manager.component';
 
 //// Security
 import { FismaComponent } from './views/security/fisma/fisma.component';
@@ -121,6 +118,9 @@ import Lara from '@primeuix/themes/lara';
 import { CommonModule } from '@angular/common';
 import { FismaDetailsComponent } from './views/security/fisma/details/fisma-details.component';
 import { FeedbackComponent } from './views/main/feedback/feedback.component';
+import { SystemsManagerComponent } from './views/systems/systems/manager/systems-manager.component';
+import { RecordsManagementManagerComponent } from './views/systems/records-management/manager/records-management-manager.component';
+import { WebsitesManagerComponent } from './views/systems/websites/manager/websites-manager.component';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -153,17 +153,17 @@ import { FeedbackComponent } from './views/main/feedback/feedback.component';
         SystemsComponent,
         SystemsDetailsComponent,
         SystemsModalComponent,
-        SystemManagerComponent,
+        SystemsManagerComponent,
         TimeComponent,
         TimeDetailsComponent,
         RecordsManagementComponent,
         RecordsManagementDetailsComponent,
         RecordsModalComponent,
-        RecordManagerComponent,
+        RecordsManagementManagerComponent,
         WebsitesComponent,
         WebsitesDetailsComponent,
         WebsitesModalComponent,
-        WebsiteManagerComponent,
+        WebsitesManagerComponent,
         FismaComponent,
         FismaDetailsComponent,
         FismaModalComponent,
