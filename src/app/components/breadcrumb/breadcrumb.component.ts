@@ -36,12 +36,16 @@ export class BreadcrumbComponent implements OnInit {
         const defaultSections = {
             'investments': 'IT Strategy',
             'capabilities': 'GSA Enterprise',
+            'capabilities_manager': 'GSA Enterprise',
             'organizations': 'GSA Enterprise', 
             'website_service_category': 'GSA Enterprise',
             'systems': 'Business Systems',
+            'systems_manager': 'Business Systems',
             'systems_TIME': 'Business Systems',
             'records_mgmt': 'Business Systems',
+            'records_mgmt_manager': 'Business Systems',
             'websites': 'Business Systems',
+            'websites_manager': 'Business Systems',
             'FISMA': 'Security',
             'FISMA_POC': 'Security',
             'it_standards': 'Technologies',
@@ -67,7 +71,7 @@ export class BreadcrumbComponent implements OnInit {
             'systems': { fromTechnology: 'fromTechnologyName', fromCapability: 'fromCapabilityName', default: 'IT Standards List' },
             'websites': { fromSystem: 'fromSystemName', default: 'Business Systems & Subsystems List' },
             'records_mgmt': { fromSystem: 'fromSystemName', default: 'Business Systems & Subsystems List' },
-            'investments': { fromCapability: 'fromCapabilityName', default: 'Business Capabilities List' }
+            'investments': { fromCapability: 'fromCapabilityName', default: 'Business Capabilities List' },
         };
         
         const context = contextMap[this.currentSubPath as keyof typeof contextMap];
@@ -84,17 +88,25 @@ export class BreadcrumbComponent implements OnInit {
                 return 'IT Investments List';
             case 'capabilities':
                 return 'Business Capabilities List';
+            case 'capabilities_manager':
+                return 'Business Capabilities List';
             case 'organizations':
                 return 'Organizations List';
             case 'website_service_category':
                 return 'Website Service Categories List';
             case 'systems':
                 return 'Business Systems & Subsystems List';
+            case 'systems_manager':
+                return 'Business Systems & Subsystems List';
             case 'systems_TIME':
                 return 'Systems TIME Report List';
             case 'records_mgmt':
                 return 'Record Retention Schedules List';
+            case 'records_mgmt_manager':
+                return 'Record Retention Schedules List';
             case 'websites':
+                return 'Websites List';
+            case 'websites_manager':
                 return 'Websites List';
             case 'FISMA':
                 return 'FISMA Systems Inventory List';
@@ -115,10 +127,14 @@ export class BreadcrumbComponent implements OnInit {
             'it_standards_manager': 'it_standards',
             'it_standards': queryParams['fromSystem'] ? 'systems' : null,
             'capabilities': queryParams['fromSystem'] ? 'systems' : null,
+            'capabilities_manager': 'capabilities',
             'organizations': queryParams['fromCapability'] ? 'capabilities' : null,
             'systems': queryParams['fromTechnology'] ? 'it_standards' : queryParams['fromCapability'] ? 'capabilities' : null,
+            'systems_manager': 'systems',
             'websites': queryParams['fromSystem'] ? 'systems' : null,
+            'websites_manager': 'websites',
             'records_mgmt': queryParams['fromSystem'] ? 'systems' : null,
+            'records_mgmt_manager': 'records_mgmt',
             'investments': queryParams['fromCapability'] ? 'capabilities' : null
         };
         
@@ -134,6 +150,10 @@ export class BreadcrumbComponent implements OnInit {
             'systems': queryParams['fromTechnology'] ? ['/it_standards', queryParams['fromTechnology']] : 
                      queryParams['fromCapability'] ? ['/capabilities', queryParams['fromCapability']] : null,
             'websites': queryParams['fromSystem'] ? ['/systems', queryParams['fromSystem']] : null,
+            'websites_manager': null,
+            'records_mgmt_manager': null,
+            'systems_manager': null,
+            'capabilities_manager': null,
             'records_mgmt': queryParams['fromSystem'] ? ['/systems', queryParams['fromSystem']] : null,
             'investments': queryParams['fromCapability'] ? ['/capabilities', queryParams['fromCapability']] : null
         };

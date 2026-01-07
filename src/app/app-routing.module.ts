@@ -60,6 +60,10 @@ import { WebsitesDetailsComponent } from './views/systems/websites/details/websi
 import { ItStandardsManagerComponent } from './views/technologies/manager/it-standards-manager.component';
 import { FismaDetailsComponent } from './views/security/fisma/details/fisma-details.component';
 import { FeedbackComponent } from './views/main/feedback/feedback.component';
+import { CapabilityManagerComponent } from './views/enterprise/capabilities/manager/capability-manager.component';
+import { RecordsManagementManagerComponent } from './views/systems/records-management/manager/records-management-manager.component';
+import { WebsitesManagerComponent } from './views/systems/websites/manager/websites-manager.component';
+import { SystemsManagerComponent } from './views/systems/systems/manager/systems-manager.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, title: 'Dashboard' },
@@ -110,6 +114,11 @@ const routes: Routes = [
     title: 'Capabilities',
   },
   {
+    path: 'capabilities_manager/:capId',
+    component: CapabilityManagerComponent,
+    title: 'Capabilities Manager',
+  },
+  {
     path: 'org_chart',
     component: OrganizationsChartComponent,
     title: 'Org Chart',
@@ -142,6 +151,7 @@ const routes: Routes = [
 
   { path: 'systems', component: SystemsComponent, title: 'Systems' },
   { path: 'systems/:sysID', component: SystemsDetailsComponent, title: 'System' },
+  { path: 'systems_manager/:sysID', component: SystemsManagerComponent, title: 'System Manager' },
   {
     path: 'systems_TIME',
     component: TimeComponent,
@@ -162,13 +172,22 @@ const routes: Routes = [
     component: RecordsManagementDetailsComponent,
     title: 'Records Management',
   },
+  {
+    path: 'records_mgmt_manager/:recID',
+    component: RecordsManagementManagerComponent,
+    title: 'Records Management Manager',
+  },
   { path: 'websites', component: WebsitesComponent, title: 'Websites' },
   {
     path: 'websites/:websiteID',
     component: WebsitesDetailsComponent,
     title: 'Website',
   },
-
+  {
+    path: 'websites_manager/:websiteID',
+    component: WebsitesManagerComponent,
+    title: 'Website Manager',
+  },
   { path: 'FISMA', component: FismaComponent, title: 'FISMA Systems' },
   { path: 'FISMA/:fismaID', component: FismaDetailsComponent, title: 'FISMA System' },
   {
