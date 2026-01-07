@@ -54,9 +54,8 @@ export class WebsitesManagerComponent implements OnInit {
 
       this.apiService.getOneWebsite(this.websiteId).subscribe(web => {
         this.detailsData = web;
+        this.setFormDefaults();
       });
-
-      this.setFormDefaults();
     });
     // Emit setFormDefaults for when edit button is pressed
     // if (this.sharedService.capabilityFormSub == undefined) {

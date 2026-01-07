@@ -2,8 +2,9 @@
 @if(isDataReady) {
   <div class="capability-manager-container">
     <div class="breadcrumb-container">
-      <app-breadcrumb>
+      <app-breadcrumb [showManagerLevel]="true">
         <span currentPageName>{{detailsData.Record_Item_Title}}</span>
+        <span managerType>Records Management Manager</span>
       </app-breadcrumb>
     </div>
     <div class="title-container">

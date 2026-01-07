@@ -53,9 +53,8 @@ export class CapabilityManagerComponent implements OnInit {
 
       this.apiService.getOneCap(this.capabilityId).subscribe(cap => {
         this.detailsData = cap;
+        this.setFormDefaults();
       });
-
-      this.setFormDefaults();
     });
     // Emit setFormDefaults for when edit button is pressed
     // if (this.sharedService.capabilityFormSub == undefined) {

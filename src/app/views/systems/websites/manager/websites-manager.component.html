@@ -2,8 +2,9 @@
 @if(isDataReady) {
   <div class="capability-manager-container">
     <div class="breadcrumb-container">
-      <app-breadcrumb>
+      <app-breadcrumb [showManagerLevel]="true">
         <span currentPageName>{{detailsData.domain}}</span>
+        <span managerType>Websites Manager</span>
       </app-breadcrumb>
     </div>
     <div class="title-container">

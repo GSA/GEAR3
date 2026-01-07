@@ -70,9 +70,8 @@ export class SystemsManagerComponent implements OnInit {
 
       this.apiService.getOneSys(this.systemId).subscribe(sys => {
         this.detailsData = sys;
+        this.setFormDefaults();
       });
-
-      this.setFormDefaults();
     });
     // Emit setFormDefaults for when edit button is pressed
     // if (this.sharedService.capabilityFormSub == undefined) {

@@ -54,9 +54,8 @@ export class RecordsManagementManagerComponent implements OnInit {
 
       this.apiService.getOneRecord(this.recordId).subscribe(rec => {
         this.detailsData = rec;
+        this.setFormDefaults();
       });
-
-      this.setFormDefaults();
     });
     // Emit setFormDefaults for when edit button is pressed
     // if (this.sharedService.capabilityFormSub == undefined) {
