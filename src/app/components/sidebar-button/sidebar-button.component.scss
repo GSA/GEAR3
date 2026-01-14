@@ -29,6 +29,8 @@
     transform: scaleY(0);    
     transform-origin: top;
     transition: transform 0.2s ease-in-out;
+    z-index: 999;
+    background-color: white;
 
     &.expanded {
         transform: scaleY(1);
@@ -36,7 +38,8 @@
     }
 
     & .sidebar-button-child {
-        background: #b1b1b114;
+        // background: #b1b1b114;
+        background-color: white;
         color: var(--neutral-black-color-dark);
         gap: 5px;
         padding: 12px 0 12px 57px;
