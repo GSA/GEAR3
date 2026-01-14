@@ -1,0 +1,41 @@
+import { Component, Input, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Service_Category } from '@api/models/service-category.model';
+import { WebsiteServiceCategory } from '@api/models/website-service-category.model';
+import { Website } from '@api/models/websites.model';
+import { Column } from '@common/table-classes';
+import { RelatedWebsitesColumns } from '@common/table-columns/related-websites';
+import { ApiService } from '@services/apis/api.service';
+import { TableService } from '@services/tables/table.service';
+
+@Component({
+    selector: 'website-service-category-details-content-lite',
+    templateUrl: './website-service-category-details-content.component.html',
+    styleUrls: ['./website-service-category-details-content.component.scss'],
+    standalone: false
+})
+export class WebsiteServiceCategoryDetailsContentLiteComponent implements OnInit {
+
+  @Input() data: WebsiteServiceCategory;
+  @Input() showToolbar: boolean = true;
+  @Input() showPagination: boolean = true;
+  public relatedWebsites: Website[] = [];
+
+  public relatedWebsitesTableCols: Column[] = RelatedWebsitesColumns;
+
+  public isDataReady: boolean = false;
+
+  constructor(
+    private route: ActivatedRoute,
+    private apiService: ApiService,
+    private tableService: TableService
+  ) {
+  }
+
+  public ngOnInit(): void {
+    this.apiService.getWebsiteServiceCategoryRelatedWebsites(this.data.website_service_category_id).subscribe(r => {
+      this.relatedWebsites = r;
+      this.isDataReady = true;
+    });
+  }
+}

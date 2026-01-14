@@ -1,9 +1,8 @@
 .websites-details-container {
   display: flex;
   flex-direction: column;
-  
   padding: 2rem 1.5rem;
-
+  width: 94vw;
 
   & .breadcrumb-container {
     display: flex;
@@ -60,6 +59,7 @@
           border-radius: 4px;
           padding: 1.5rem;
           margin-bottom: 1.5rem;
+          width: 94vw;
 
           &.full-width {
             width: 100%;
@@ -202,15 +202,21 @@
           flex-direction: row;
           gap: 1rem;
           margin-bottom: 2rem;
+          width: 94vw;
 
           &:first-child {
-            width: 80%;
-            height: 15%;
+            width: 60%;
+            height: 12%;
           }
 
           &:last-child {
             width: 20%;
           }
+        }
+
+        & .p-accordion {
+          width: 88vw;
+          display: inline-block;
         }
 
         & .service-category-container {

@@ -121,6 +121,7 @@ import { FeedbackComponent } from './views/main/feedback/feedback.component';
 import { SystemsManagerComponent } from './views/systems/systems/manager/systems-manager.component';
 import { RecordsManagementManagerComponent } from './views/systems/records-management/manager/records-management-manager.component';
 import { WebsitesManagerComponent } from './views/systems/websites/manager/websites-manager.component';
+import { WebsiteServiceCategoryDetailsContentLiteComponent } from './views/systems/websites/website-service-category-details-content/website-service-category-details-content.component';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -164,6 +165,7 @@ import { WebsitesManagerComponent } from './views/systems/websites/manager/websi
         WebsitesDetailsComponent,
         WebsitesModalComponent,
         WebsitesManagerComponent,
+        WebsiteServiceCategoryDetailsContentLiteComponent,
         FismaComponent,
         FismaDetailsComponent,
         FismaModalComponent,

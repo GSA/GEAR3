@@ -8,7 +8,7 @@ import { Website } from '@api/models/websites.model';
 import { WebsiteScan } from '@api/models/website-scan.model';
 import { WebsiteServiceCategory } from '@api/models/website-service-category.model';
 import { RelatedWebsitesColumns } from '@common/table-columns/related-websites';
-import { of } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { RelatedSystemsCols } from '@common/table-columns/related-systems';
 import { SharedService } from '@services/shared/shared.service';
 
@@ -35,6 +35,8 @@ export class WebsitesDetailsComponent implements OnInit {
   public relatedSystemsCols: Column[] = RelatedSystemsCols;
   public relatedSystemsData: System[] = [];
 
+  public relatedWebsitesCols: Column[] = RelatedWebsitesColumns;
+
   private IMG_PREFIX: string = '../../../../../assets/website-screenshots/';
 
   constructor(
@@ -50,25 +52,46 @@ export class WebsitesDetailsComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       this.websiteId = +params.get('websiteID');
 
+      forkJoin([
+        this.apiService.getOneWebsite(this.websiteId),
+        this.apiService.getWebsiteScans(this.websiteId),
+        this.apiService.getWebsiteServiceCategories(this.websiteId),
+        this.apiService.getWebsiteSys(this.websiteId)
+      ]).subscribe({
+        next: ([
+          website,
+          websiteScans,
+          websiteServiceCategories,
+          websiteSystems
+        ]) => {
+          this.detailsData = website;
+          this.websiteScan = websiteScans[0];
+          this.websiteServiceCategories = websiteServiceCategories;
+          this.relatedSystemsData = websiteSystems;      
+        },
+        error: (err) => console.log('Failed to load page data', err),
+        complete: () => this.isDataReady = true,
+      });
+
       // Get system details
-      this.apiService.getOneWebsite(this.websiteId).subscribe(w => {
-        this.detailsData = w;
+      // this.apiService.getOneWebsite(this.websiteId).subscribe(w => {
+      //   this.detailsData = w;
 
 
-        this.apiService.getWebsiteScans(this.websiteId).subscribe(ws => {
-          this.websiteScan = ws[0];
-        });
+      //   this.apiService.getWebsiteScans(this.websiteId).subscribe(ws => {
+      //     this.websiteScan = ws[0];
+      //   });
 
-        this.apiService.getWebsiteServiceCategories(this.websiteId).subscribe((wsc: WebsiteServiceCategory[]) => {
-          this.websiteServiceCategories = wsc;
-          this.isDataReady = true;
-        });
+      //   this.apiService.getWebsiteServiceCategories(this.websiteId).subscribe((wsc: WebsiteServiceCategory[]) => {
+      //     this.websiteServiceCategories = wsc;
+      //     this.isDataReady = true;
+      //   });
         
-      });
+      // });
 
-      this.apiService.getWebsiteSys(this.websiteId).subscribe(sys => {
-        this.relatedSystemsData = sys;
-      });
+      // this.apiService.getWebsiteSys(this.websiteId).subscribe(sys => {
+      //   this.relatedSystemsData = sys;
+      // });
     });
   }
 
