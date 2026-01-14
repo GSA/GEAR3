@@ -49,11 +49,12 @@
                 padding: 1.5rem;
                 display: flex;
                 flex-wrap: wrap;
-                flex: 0 0 calc(60% - 15px);
-                max-width: calc(60% - 15px);
+                flex: 0 0 calc(50% - 15px);
+                max-width: calc(50% - 15px);
                 background-color: #fff;
                 box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.08);
                 border-radius: 4px;
+                height: 100%;
 
                 @media (max-width: 1200px) {
                     max-width: 100%;
@@ -154,8 +155,8 @@
 
             & .sub-data-container {
                 padding: 1.5rem;
-                flex: 0 0 calc(40% - 15px);
-                max-width: calc(40% - 15px);
+                flex: 0 0 calc(50% - 15px);
+                max-width: calc(50% - 15px);
                 background-color: #fff;
                 box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.08);
                 border-radius: 4px;
@@ -182,7 +183,7 @@
                 }
 
                 & th {
-                    width: 70%;
+                    width: 55%;
                     padding: .625rem;
                 }
 
