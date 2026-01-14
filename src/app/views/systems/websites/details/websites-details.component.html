@@ -63,32 +63,213 @@
                     </span>
                   }
                 </div>
+                <div class="data">
+                  @if (hasImages()) {
+                    <div class="website-scan-image-container">
+                      <img [src]="getDesktopImg()" [alt]="getDesktopImgAltText()" class=" shadow" />
+                      <img [src]="getMobileImg()" [alt]="getMobileImgAltText()" class=" shadow" />
+                    </div>
+                  }
+                </div>
               </div>
             </div>
             <div class="sub-content">
-              @if (hasImages()) {
-                <div class="website-scan-image-container">
-                  <img [src]="getDesktopImg()" [alt]="getDesktopImgAltText()" class=" shadow" />
-                  <img [src]="getMobileImg()" [alt]="getMobileImgAltText()" class=" shadow" />
-                </div>
-              }
               @if (hasServiceCategories()) {
                 <div class="service-category-container">
                   <p-accordion>
                     @for (sc of websiteServiceCategories; track sc; let i = $index) {
-                      <p-accordion-panel>
+                      <p-accordion-panel [value]="$index">
                         <p-accordion-header>
                           {{sc.name}}
                         </p-accordion-header>
                         <p-accordion-content>
-                          <website-service-category-details-content [data]="sc" [showToolbar]="false"
-                          [showPagination]="false"></website-service-category-details-content>
+                          <website-service-category-details-content-lite [data]="sc"></website-service-category-details-content-lite>
                         </p-accordion-content>
                       </p-accordion-panel>
                     }
                   </p-accordion>
                 </div>
               }
+              <div class="additional-info-container">
+                <div class="main-data-container">
+                  <div class="data">
+                    <label class="data-label">
+                      <span>
+                        Office
+                        <i class="fas fa-info-circle"></i>
+                      </span>
+                    </label>
+                    <span>
+                      <span>{{detailsData.office}}</span>
+                    </span>
+                  </div>
+                  <div class="data">
+                    <label class="data-label">
+                      <span>
+                        Sub Office
+                        <i class="fas fa-info-circle"></i>
+                      </span>
+                    </label>
+                    <span>
+                      <span>{{detailsData.sub_office}}</span>
+                    </span>
+                  </div>
+                  <div class="data">
+                    <label class="data-label">
+                      <span>
+                        Website Manager
+                        <i class="fas fa-info-circle"></i>
+                      </span>
+                    </label>
+                    <span>
+                      <span>{{detailsData.site_owner_email}}</span>
+                    </span>
+                  </div>
+                  <div class="data">
+                    <label class="data-label">
+                      <span>
+                        Contact Email
+                        <i class="fas fa-info-circle"></i>
+                      </span>
+                    </label>
+                    <span>
+                      <span>{{detailsData.contact_email}}</span>
+                    </span>
+                  </div>
+                  <div class="data">
+                    <label class="data-label">
+                      <span>
+                        Redirect URL
+                        <i class="fas fa-info-circle"></i>
+                      </span>
+                    </label>
+                    <span>
+                      <span>{{detailsData.redirects_to}}</span>
+                    </span>
+                  </div>
+                  <div class="data">
+                    <label class="data-label">
+                      <span>
+                        Required By Law/Policy
+                        <i class="fas fa-info-circle"></i>
+                      </span>
+                    </label>
+                    <span>
+                      <span>{{detailsData.required_by_law_or_policy}}</span>
+                    </span>
+                  </div>
+                  <div class="data">
+                    <label class="data-label">
+                      <span>
+                        DAP Enabled
+                        <i class="fas fa-info-circle"></i>
+                      </span>
+                    </label>
+                    <span>
+                      <span>{{detailsData.has_dap}}</span>
+                    </span>
+                  </div>
+                  <div class="data">
+                    <label class="data-label">
+                      <span>
+                        Current USWDS Score
+                        <i class="fas fa-info-circle"></i>
+                      </span>
+                    </label>
+                    <span>
+                      <span>{{detailsData.uswds}}</span>
+                    </span>
+                  </div>
+                  <div class="data">
+                    <label class="data-label">
+                      <span>
+                        Mobile Friendly?
+                        <i class="fas fa-info-circle"></i>
+                      </span>
+                    </label>
+                    <span>
+                      <span>{{detailsData.mobile_friendly}}</span>
+                    </span>
+                  </div>
+                  <div class="data">
+                    <label class="data-label">
+                      <span>
+                        Has Search?
+                        <i class="fas fa-info-circle"></i>
+                      </span>
+                    </label>
+                    <span>
+                      <span>{{detailsData.has_search}}</span>
+                    </span>
+                  </div>
+                  <div class="data">
+                    <label class="data-label">
+                      <span>
+                        HTTPS Enabled
+                        <i class="fas fa-info-circle"></i>
+                      </span>
+                    </label>
+                    <span>
+                      <span>{{detailsData.https}}</span>
+                    </span>
+                  </div>
+                  <div class="data">
+                    <label class="data-label">
+                      <span>
+                        Hosting Platform
+                        <i class="fas fa-info-circle"></i>
+                      </span>
+                    </label>
+                    <span>
+                      <span>{{detailsData.hosting_platform}}</span>
+                    </span>
+                  </div>
+                  <div class="data">
+                    <label class="data-label">
+                      <span>
+                        Content Management Platform
+                        <i class="fas fa-info-circle"></i>
+                      </span>
+                    </label>
+                    <span>
+                      <span>{{detailsData.cms_platform}}</span>
+                    </span>
+                  </div>
+                  <div class="data">
+                    <label class="data-label">
+                      <span>
+                        Repository URL
+                        <i class="fas fa-info-circle"></i>
+                      </span>
+                    </label>
+                    <span>
+                      <span>{{detailsData.repository_url}}</span>
+                    </span>
+                  </div>
+                  <div class="data">
+                    <label class="data-label">
+                      <span>
+                        Target Decommission Date
+                        <i class="fas fa-info-circle"></i>
+                      </span>
+                    </label>
+                    <span>
+                      <span>{{detailsData.target_decommission_date | date:'shortDate'}}</span>
+                    </span>
+                  </div>
+                  <div class="data">
+                    <label class="data-label">
+                      <span>
+                        Sitemap URL
+                        <i class="fas fa-info-circle"></i>
+                      </span>
+                    </label>
+                    <span>
+                      <span>{{detailsData.sitemap_url}}</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
               <div class="chart-container">
                 <h4>EDX Compiled Indicator</h4>
                 <div class="row mb-3">
@@ -175,186 +356,6 @@
                                     <span class="legend six"></span>USWDS
                                   </div>
                                 </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="additional-info-container">
-                            <div class="main-data-container">
-                              <div class="data">
-                                <label class="data-label">
-                                  <span>
-                                    Office
-                                    <i class="fas fa-info-circle"></i>
-                                  </span>
-                                </label>
-                                <span>
-                                  <span>{{detailsData.office}}</span>
-                                </span>
-                              </div>
-                              <div class="data">
-                                <label class="data-label">
-                                  <span>
-                                    Sub Office
-                                    <i class="fas fa-info-circle"></i>
-                                  </span>
-                                </label>
-                                <span>
-                                  <span>{{detailsData.sub_office}}</span>
-                                </span>
-                              </div>
-                              <div class="data">
-                                <label class="data-label">
-                                  <span>
-                                    Website Manager
-                                    <i class="fas fa-info-circle"></i>
-                                  </span>
-                                </label>
-                                <span>
-                                  <span>{{detailsData.site_owner_email}}</span>
-                                </span>
-                              </div>
-                              <div class="data">
-                                <label class="data-label">
-                                  <span>
-                                    Contact Email
-                                    <i class="fas fa-info-circle"></i>
-                                  </span>
-                                </label>
-                                <span>
-                                  <span>{{detailsData.contact_email}}</span>
-                                </span>
-                              </div>
-                              <div class="data">
-                                <label class="data-label">
-                                  <span>
-                                    Redirect URL
-                                    <i class="fas fa-info-circle"></i>
-                                  </span>
-                                </label>
-                                <span>
-                                  <span>{{detailsData.redirects_to}}</span>
-                                </span>
-                              </div>
-                              <div class="data">
-                                <label class="data-label">
-                                  <span>
-                                    Required By Law/Policy
-                                    <i class="fas fa-info-circle"></i>
-                                  </span>
-                                </label>
-                                <span>
-                                  <span>{{detailsData.required_by_law_or_policy}}</span>
-                                </span>
-                              </div>
-                              <div class="data">
-                                <label class="data-label">
-                                  <span>
-                                    DAP Enabled
-                                    <i class="fas fa-info-circle"></i>
-                                  </span>
-                                </label>
-                                <span>
-                                  <span>{{detailsData.has_dap}}</span>
-                                </span>
-                              </div>
-                              <div class="data">
-                                <label class="data-label">
-                                  <span>
-                                    Current USWDS Score
-                                    <i class="fas fa-info-circle"></i>
-                                  </span>
-                                </label>
-                                <span>
-                                  <span>{{detailsData.uswds}}</span>
-                                </span>
-                              </div>
-                              <div class="data">
-                                <label class="data-label">
-                                  <span>
-                                    Mobile Friendly?
-                                    <i class="fas fa-info-circle"></i>
-                                  </span>
-                                </label>
-                                <span>
-                                  <span>{{detailsData.mobile_friendly}}</span>
-                                </span>
-                              </div>
-                              <div class="data">
-                                <label class="data-label">
-                                  <span>
-                                    Has Search?
-                                    <i class="fas fa-info-circle"></i>
-                                  </span>
-                                </label>
-                                <span>
-                                  <span>{{detailsData.has_search}}</span>
-                                </span>
-                              </div>
-                              <div class="data">
-                                <label class="data-label">
-                                  <span>
-                                    HTTPS Enabled
-                                    <i class="fas fa-info-circle"></i>
-                                  </span>
-                                </label>
-                                <span>
-                                  <span>{{detailsData.https}}</span>
-                                </span>
-                              </div>
-                              <div class="data">
-                                <label class="data-label">
-                                  <span>
-                                    Hosting Platform
-                                    <i class="fas fa-info-circle"></i>
-                                  </span>
-                                </label>
-                                <span>
-                                  <span>{{detailsData.hosting_platform}}</span>
-                                </span>
-                              </div>
-                              <div class="data">
-                                <label class="data-label">
-                                  <span>
-                                    Content Management Platform
-                                    <i class="fas fa-info-circle"></i>
-                                  </span>
-                                </label>
-                                <span>
-                                  <span>{{detailsData.cms_platform}}</span>
-                                </span>
-                              </div>
-                              <div class="data">
-                                <label class="data-label">
-                                  <span>
-                                    Repository URL
-                                    <i class="fas fa-info-circle"></i>
-                                  </span>
-                                </label>
-                                <span>
-                                  <span>{{detailsData.repository_url}}</span>
-                                </span>
-                              </div>
-                              <div class="data">
-                                <label class="data-label">
-                                  <span>
-                                    Target Decommission Date
-                                    <i class="fas fa-info-circle"></i>
-                                  </span>
-                                </label>
-                                <span>
-                                  <span>{{detailsData.target_decommission_date | date:'shortDate'}}</span>
-                                </span>
-                              </div>
-                              <div class="data">
-                                <label class="data-label">
-                                  <span>
-                                    Sitemap URL
-                                    <i class="fas fa-info-circle"></i>
-                                  </span>
-                                </label>
-                                <span>
-                                  <span>{{detailsData.sitemap_url}}</span>
-                                </span>
                               </div>
                             </div>
                           </div>
