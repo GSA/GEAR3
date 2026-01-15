@@ -22,59 +22,59 @@
           <div class="overall-data-container">
             <div class="main-data-container">
               <div class="data-wrapper">
-                <div class="data">
-                  <label class="data-label">
+                  <div class="data">
+                    <label class="data-label">
+                      <span>
+                        Status
+                        <i class="fas fa-info-circle"></i>
+                      </span>
+                    </label>
                     <span>
-                      Status
-                      <i class="fas fa-info-circle"></i>
+                      <span>{{detailsData.production_status}}</span>
                     </span>
-                  </label>
-                  <span>
-                    <span>{{detailsData.production_status}}</span>
-                  </span>
-                </div>
-                <div class="data">
-                  <label class="data-label">
+                  </div>
+                  <div class="data">
+                    <label class="data-label">
+                      <span>
+                        Type of Site
+                        <i class="fas fa-info-circle"></i>
+                      </span>
+                    </label>
                     <span>
-                      Type of Site
-                      <i class="fas fa-info-circle"></i>
+                      <span>{{detailsData.type_of_site}}</span>
                     </span>
-                  </label>
-                  <span>
-                    <span>{{detailsData.type_of_site}}</span>
-                  </span>
+                  </div>
+                  <div class="data">
+                    <label class="data-label">
+                      <span>
+                        Recent Screenshots
+                        <i class="fas fa-info-circle"></i>
+                      </span>
+                    </label>
+                    @if (!inProduction()) {
+                      <span class="alert alert-warning" role="alert">
+                        Websites that are not in a production status or are
+                        considered infrastructure do not contain screenshots
+                      </span>
+                    }
+                    @if (hasScanDate()) {
+                      <span>
+                        <span>{{websiteScan.scan_date | date : "mediumDate"}}</span>
+                      </span>
+                    }
+                  </div>
                 </div>
-                <div class="data">
-                  <label class="data-label">
-                    <span>
-                      Recent Screenshots
-                      <i class="fas fa-info-circle"></i>
-                    </span>
-                  </label>
-                  @if (!inProduction()) {
-                    <span class="alert alert-warning" role="alert">
-                      Websites that are not in a production status or are
-                      considered infrastructure do not contain screenshots
-                    </span>
-                  }
-                  @if (hasScanDate()) {
-                    <span>
-                      <span>{{websiteScan.scan_date | date : "mediumDate"}}</span>
-                    </span>
-                  }
-                </div>
-                <div class="data">
-                  @if (hasImages()) {
-                    <div class="website-scan-image-container">
-                      <img [src]="getDesktopImg()" [alt]="getDesktopImgAltText()" class=" shadow" />
-                      <img [src]="getMobileImg()" [alt]="getMobileImgAltText()" class=" shadow" />
-                    </div>
-                  }
-                </div>
-              </div>
+                @if (hasImages()) {
+                  <div class="website-scan-image-container">
+                    <img [src]="getDesktopImg()" [alt]="getDesktopImgAltText()" class="shadow image-one" />
+                    <img [src]="getMobileImg()" [alt]="getMobileImgAltText()" class="shadow image-two" />
+                  </div>
+                }
+
             </div>
             <div class="sub-content">
               @if (hasServiceCategories()) {
+                <h4>Service Categories</h4>
                 <div class="service-category-container">
                   <p-accordion>
                     @for (sc of websiteServiceCategories; track sc; let i = $index) {
@@ -92,181 +92,184 @@
               }
               <div class="additional-info-container">
                 <div class="main-data-container">
-                  <div class="data">
-                    <label class="data-label">
+                  <h4>Additional Information</h4>
+                  <div class="data-wrapper">
+                    <div class="data">
+                      <label class="data-label">
+                        <span>
+                          Office
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
                       <span>
-                        Office
-                        <i class="fas fa-info-circle"></i>
+                        <span>{{detailsData.office || 'N/A'}}</span>
                       </span>
-                    </label>
-                    <span>
-                      <span>{{detailsData.office}}</span>
-                    </span>
-                  </div>
-                  <div class="data">
-                    <label class="data-label">
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span>
+                          Sub Office
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
                       <span>
-                        Sub Office
-                        <i class="fas fa-info-circle"></i>
+                        <span>{{detailsData.sub_office || 'N/A'}}</span>
                       </span>
-                    </label>
-                    <span>
-                      <span>{{detailsData.sub_office}}</span>
-                    </span>
-                  </div>
-                  <div class="data">
-                    <label class="data-label">
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span>
+                          Website Manager
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
                       <span>
-                        Website Manager
-                        <i class="fas fa-info-circle"></i>
+                        <span>{{detailsData.site_owner_email || 'N/A'}}</span>
                       </span>
-                    </label>
-                    <span>
-                      <span>{{detailsData.site_owner_email}}</span>
-                    </span>
-                  </div>
-                  <div class="data">
-                    <label class="data-label">
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span>
+                          Contact Email
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
                       <span>
-                        Contact Email
-                        <i class="fas fa-info-circle"></i>
+                        <span>{{detailsData.contact_email || 'N/A'}}</span>
                       </span>
-                    </label>
-                    <span>
-                      <span>{{detailsData.contact_email}}</span>
-                    </span>
-                  </div>
-                  <div class="data">
-                    <label class="data-label">
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span>
+                          Redirect URL
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
                       <span>
-                        Redirect URL
-                        <i class="fas fa-info-circle"></i>
+                        <span>{{detailsData.redirects_to || 'N/A'}}</span>
                       </span>
-                    </label>
-                    <span>
-                      <span>{{detailsData.redirects_to}}</span>
-                    </span>
-                  </div>
-                  <div class="data">
-                    <label class="data-label">
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span>
+                          Required By Law/Policy
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
                       <span>
-                        Required By Law/Policy
-                        <i class="fas fa-info-circle"></i>
+                        <span>{{detailsData.required_by_law_or_policy || 'N/A'}}</span>
                       </span>
-                    </label>
-                    <span>
-                      <span>{{detailsData.required_by_law_or_policy}}</span>
-                    </span>
-                  </div>
-                  <div class="data">
-                    <label class="data-label">
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span>
+                          DAP Enabled
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
                       <span>
-                        DAP Enabled
-                        <i class="fas fa-info-circle"></i>
+                        <span>{{detailsData.has_dap || 'N/A'}}</span>
                       </span>
-                    </label>
-                    <span>
-                      <span>{{detailsData.has_dap}}</span>
-                    </span>
-                  </div>
-                  <div class="data">
-                    <label class="data-label">
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span>
+                          Current USWDS Score
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
                       <span>
-                        Current USWDS Score
-                        <i class="fas fa-info-circle"></i>
+                        <span>{{detailsData.uswds || 'N/A'}}</span>
                       </span>
-                    </label>
-                    <span>
-                      <span>{{detailsData.uswds}}</span>
-                    </span>
-                  </div>
-                  <div class="data">
-                    <label class="data-label">
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span>
+                          Mobile Friendly?
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
                       <span>
-                        Mobile Friendly?
-                        <i class="fas fa-info-circle"></i>
+                        <span>{{detailsData.mobile_friendly || 'N/A'}}</span>
                       </span>
-                    </label>
-                    <span>
-                      <span>{{detailsData.mobile_friendly}}</span>
-                    </span>
-                  </div>
-                  <div class="data">
-                    <label class="data-label">
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span>
+                          Has Search?
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
                       <span>
-                        Has Search?
-                        <i class="fas fa-info-circle"></i>
+                        <span>{{detailsData.has_search || 'N/A'}}</span>
                       </span>
-                    </label>
-                    <span>
-                      <span>{{detailsData.has_search}}</span>
-                    </span>
-                  </div>
-                  <div class="data">
-                    <label class="data-label">
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span>
+                          HTTPS Enabled
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
                       <span>
-                        HTTPS Enabled
-                        <i class="fas fa-info-circle"></i>
+                        <span>{{detailsData.https || 'N/A'}}</span>
                       </span>
-                    </label>
-                    <span>
-                      <span>{{detailsData.https}}</span>
-                    </span>
-                  </div>
-                  <div class="data">
-                    <label class="data-label">
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span>
+                          Hosting Platform
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
                       <span>
-                        Hosting Platform
-                        <i class="fas fa-info-circle"></i>
+                        <span>{{detailsData.hosting_platform || 'N/A'}}</span>
                       </span>
-                    </label>
-                    <span>
-                      <span>{{detailsData.hosting_platform}}</span>
-                    </span>
-                  </div>
-                  <div class="data">
-                    <label class="data-label">
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span>
+                          Content Management Platform
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
                       <span>
-                        Content Management Platform
-                        <i class="fas fa-info-circle"></i>
+                        <span>{{detailsData.cms_platform || 'N/A'}}</span>
                       </span>
-                    </label>
-                    <span>
-                      <span>{{detailsData.cms_platform}}</span>
-                    </span>
-                  </div>
-                  <div class="data">
-                    <label class="data-label">
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span>
+                          Repository URL
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
                       <span>
-                        Repository URL
-                        <i class="fas fa-info-circle"></i>
+                        <span>{{detailsData.repository_url || 'N/A'}}</span>
                       </span>
-                    </label>
-                    <span>
-                      <span>{{detailsData.repository_url}}</span>
-                    </span>
-                  </div>
-                  <div class="data">
-                    <label class="data-label">
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span>
+                          Target Decommission Date
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
                       <span>
-                        Target Decommission Date
-                        <i class="fas fa-info-circle"></i>
+                        <span>{{(detailsData.target_decommission_date | date:'shortDate') || 'N/A'}}</span>
                       </span>
-                    </label>
-                    <span>
-                      <span>{{detailsData.target_decommission_date | date:'shortDate'}}</span>
-                    </span>
-                  </div>
-                  <div class="data">
-                    <label class="data-label">
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span>
+                          Sitemap URL
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
                       <span>
-                        Sitemap URL
-                        <i class="fas fa-info-circle"></i>
+                        <span>{{detailsData.sitemap_url || 'N/A'}}</span>
                       </span>
-                    </label>
-                    <span>
-                      <span>{{detailsData.sitemap_url}}</span>
-                    </span>
+                    </div>
                   </div>
                 </div>
               </div>
