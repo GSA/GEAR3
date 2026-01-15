@@ -1,13 +1,13 @@
 .fisma-inventory-container {
     display: flex;
     flex-direction: column;
-    padding: 2rem 1.5rem;
+    padding: 1rem 1.5rem;
 
     & .fisma-inventory-title-container {
         display: flex;
         justify-content: space-between;
         align-items: center;
-          margin-bottom: 1rem;
+          margin-bottom: .5rem;
 
         h2{
             margin-bottom: 0;
@@ -36,6 +36,6 @@
     & .fisma-inventory-data-container {
         display: flex;
         flex-direction: column;
-        padding: 1.5rem 0;
+        padding: 1rem 0;
     }
 }

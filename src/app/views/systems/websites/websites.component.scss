@@ -1,14 +1,14 @@
 .websites-container {
     display: flex;
     flex-direction: column;
-    padding: 2rem 1.5rem;
+    padding: 1rem 1.5rem;
     width: 94vw;
 
     & .websites-title-container {
         display: flex;
         justify-content: space-between;
         align-items: center;
-         margin-bottom: 2rem;
+         margin-bottom: 1rem;
 
         h2{
             margin-bottom: 0;
@@ -31,6 +31,7 @@
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;  
             overflow: hidden;
+            margin-bottom: .5rem;
 
             &.expanded {
                 -webkit-line-clamp: none;
@@ -42,6 +43,6 @@
     & .websites-data-container {
         display: flex;
         flex-direction: column;
-        padding: 1.5rem 0;
+        padding: 1rem 0;
     }
 }

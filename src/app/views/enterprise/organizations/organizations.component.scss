@@ -1,7 +1,7 @@
 .organizations-container {
     display: flex;
     flex-direction: column;
-    padding: 2rem 1.5rem;
+    padding: 1rem 1.5rem;
     width: 94vw;
 
     & .organizations-title-container {
@@ -13,6 +13,6 @@
     & .organizations-data-container {
         display: flex;
         flex-direction: column;
-        padding: 1.5rem;
+        padding: 1rem;
     }
 }
