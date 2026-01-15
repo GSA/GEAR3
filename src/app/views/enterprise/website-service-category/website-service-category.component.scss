@@ -1,7 +1,7 @@
 .website-categories-container {
     display: flex;
     flex-direction: column;
-    padding: 2rem 1.5rem;
+    padding: 1rem 1.5rem;
 
     & .website-categories-title-container {
         display: flex;
@@ -36,6 +36,6 @@
     & .website-categories-data-container {
         display: flex;
         flex-direction: column;
-        padding: 1.5rem 0;
+        padding: 1rem 0;
     }
 }

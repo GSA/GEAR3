@@ -1,7 +1,7 @@
 .it-investments-container {
     display: flex;
     flex-direction: column;
-    padding: 2rem 1.5rem;
+    padding: 1rem 1.5rem;
 
     & .it-investments-title-container {
         display: flex;
@@ -24,7 +24,7 @@
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;  
             overflow: hidden;
-             margin-bottom: 5px;
+            margin-bottom: .5rem;
 
             &.expanded {
                 -webkit-line-clamp: none;
@@ -44,6 +44,6 @@
     & .it-investments-data-container {
         display: flex;
         flex-direction: column;
-        padding: 1.5rem 0;
+        padding: 1rem 0;
     }
 }

@@ -1,7 +1,7 @@
 .systems-container {
     display: flex;
     flex-direction: column;
-    padding: 2rem 1.5rem;
+    padding: 1rem 1.5rem;
 
     & .systems-title-container {
         display: flex;
@@ -51,6 +51,6 @@
     & .systems-data-container {
         display: flex;
         flex-direction: column;
-        padding: 1.5rem 0;
+        padding: .5rem 0;
     }
 }
