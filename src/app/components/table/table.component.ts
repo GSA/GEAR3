@@ -83,11 +83,11 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private adjustTableHeight() {
-    setTimeout(() => {
+    //setTimeout(() => {
       if (this.dt) {
         this.dt.resetScrollTop();
       }
-    }, 100);
+    //}, 100);
   }
 
   tableData: any[] = [];
