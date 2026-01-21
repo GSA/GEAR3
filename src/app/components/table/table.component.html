@@ -41,7 +41,7 @@
                     <input
                       pInputText
                       type="text"
-                      (input)="onTableSearch($event.target.value)"
+                      [formControl]="tableSearchControl"
                       placeholder="Search keyword"
                       aria-label="Table Search" />
                     </p-iconField>
