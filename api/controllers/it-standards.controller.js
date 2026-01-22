@@ -654,6 +654,11 @@ exports.getFilterTotals = (req, res) => {
                 COUNT(CASE WHEN obj_technology_status.Keyname = 'Retired' ${filterQueryFull} THEN 1
                   ELSE NULL
                 END) AS RetiredTotal,
+                COUNT(CASE WHEN (obj_technology_status.Keyname != 'Approved' 
+                            AND obj_technology_status.Keyname != 'Denied' 
+                            AND obj_technology_status.Keyname != 'Retired') ${filterQueryFull} THEN 1
+                     ELSE NULL
+              END) AS OtherTotal,
                 COUNT(${allQuery}) AS AllTotal
               FROM obj_technology AS tech
               LEFT JOIN obj_technology_status   ON tech.obj_technology_status_Id = obj_technology_status.Id

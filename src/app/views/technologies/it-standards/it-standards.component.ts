@@ -78,6 +78,19 @@ export class ItStandardsComponent implements OnInit {
         this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
         this.tableService.updateReportTableDataReadyStatus(true);
       }
+    } else if (this.selectedTab === 'Other') {
+      if(this.hasSelectedChips()) {
+        this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
+          return x.Status !== 'Approved' && x.Status !== 'Denied' && x.Status !== 'Retired';
+        });
+        this.onFilterChipSelect(this.selectedChips);
+      } else {
+        this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
+          return x.Status !== 'Approved' && x.Status !== 'Denied' && x.Status !== 'Retired' && x.Status !== 'Approved with conditions';
+        });
+        this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
+        this.tableService.updateReportTableDataReadyStatus(true);
+      }
     } else {
       if(this.hasSelectedChips()) {
         this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
