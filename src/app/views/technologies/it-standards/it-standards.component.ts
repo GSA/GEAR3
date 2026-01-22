@@ -78,6 +78,19 @@ export class ItStandardsComponent implements OnInit {
         this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
         this.tableService.updateReportTableDataReadyStatus(true);
       }
+    } else if (this.selectedTab === 'Other') {
+      if(this.hasSelectedChips()) {
+        this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
+          return x.Status !== 'Approved' && x.Status !== 'Denied' && x.Status !== 'Retired';
+        });
+        this.onFilterChipSelect(this.selectedChips);
+      } else {
+        this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
+          return x.Status !== 'Approved' && x.Status !== 'Denied' && x.Status !== 'Retired' && x.Status !== 'Approved with conditions';
+        });
+        this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
+        this.tableService.updateReportTableDataReadyStatus(true);
+      }
     } else {
       if(this.hasSelectedChips()) {
         this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
@@ -372,6 +385,7 @@ export class ItStandardsComponent implements OnInit {
         const expiringFiltered = [];
         i.forEach(x => {
           let renewal = new Date(x.ApprovalExpirationDate);
+          renewal.setUTCHours(0, 0, 0, 0);
           if(x.ApprovalExpirationDate && (renewal >= now && renewal <= expiringWithin)) {
             expiringFiltered.push(x);
           }
@@ -387,6 +401,7 @@ export class ItStandardsComponent implements OnInit {
         const expiringFiltered = [];
         i.forEach(x => {
           let renewal = new Date(x.ApprovalExpirationDate);
+          renewal.setUTCHours(0, 0, 0, 0);
           if(x.ApprovalExpirationDate && (renewal <= now && renewal >= expiredWithin) && (x.Status === 'Retired')) {
             expiringFiltered.push(x);
           }

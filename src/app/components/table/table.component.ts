@@ -6,6 +6,8 @@ import { TableService } from '@services/tables/table.service';
 import { ApiService } from '@services/apis/api.service';
 import { FilterMatchMode, SelectItem } from 'primeng/api';
 import { Router } from '@angular/router';
+import { FormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
 
 
 @Component({
@@ -83,11 +85,11 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private adjustTableHeight() {
-    setTimeout(() => {
+    //setTimeout(() => {
       if (this.dt) {
         this.dt.resetScrollTop();
       }
-    }, 100);
+    //}, 100);
   }
 
   tableData: any[] = [];
@@ -109,11 +111,22 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
   isDataReady: boolean = false;
 
+  tableSearchControl = new FormControl('');
+  private tableSearchSubscription?: Subscription;
+
   constructor(public sharedService: SharedService, public tableService: TableService, public apiService: ApiService, private router: Router) {
     this.setScreenHeight();
   }
 
   ngOnInit(): void {
+    this.tableSearchSubscription = this.tableSearchControl.valueChanges
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged()
+      )
+      .subscribe((searchValue: string) => {
+        this.onTableSearch(searchValue);
+      })
 
     this.matchModeOptions = [
       { label: 'Contains', value: FilterMatchMode.CONTAINS },
@@ -157,6 +170,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   ngOnDestroy(): void {
     this.tableService.updateReportTableData(null);
     this.tableService.updateReportTableDataReadyStatus(false);
+    this.tableSearchSubscription.unsubscribe();
   }
 
   private initializeColumnVisibility() {
