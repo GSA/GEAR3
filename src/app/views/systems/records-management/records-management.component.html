@@ -26,7 +26,7 @@
     </div>
   </div>
   <div class="records-management-data-container">
-    <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)"></app-table>
+    <app-table visibleColumnStorageKey="records-management-report" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)"></app-table>
   </div>
 </div>
 
@@ -70,6 +70,6 @@ Search within specific columns by clicking on the <i class='fas fa-angle-down'><
 
 <div class="card-body card-text"> -->
   <!-- Main Table -->
-  <!-- <app-table [tableCols]="tableCols" exportName="Records Managment" reportStyle="business-systems" tableType="records"></app-table>
+  <!-- <app-table visibleColumnStorageKey="" [tableCols]="tableCols" exportName="Records Managment" reportStyle="business-systems" tableType="records"></app-table>
 </div>
 </div> -->

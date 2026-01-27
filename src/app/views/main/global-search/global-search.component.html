@@ -24,6 +24,6 @@
     </div>
   </div>
   <div class="global-search-data-container">
-    <app-table [tableCols]="tableCols" reportStyle="neutral" exportName="Global Search" tableType="globalSearch" (rowClickEvent)="onRowClick($event)"></app-table>
+    <app-table visibleColumnStorageKey="global-search" [tableCols]="tableCols" reportStyle="neutral" exportName="Global Search" tableType="globalSearch" (rowClickEvent)="onRowClick($event)"></app-table>
   </div>
 </div>

@@ -187,11 +187,11 @@
               </div>
               <div class="sub-content full-width">
                 <span class="sub-header">System Time Report</span>
-                <app-table [localTableData]="systemTimeData" [isLocal]="true" [tableCols]="systemTimeCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                <app-table visibleColumnStorageKey="time-system-time" [localTableData]="systemTimeData" [isLocal]="true" [tableCols]="systemTimeCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
               </div>
               <div class="sub-content full-width">
                 <span class="sub-header">Related Business Capabilities</span>
-                <app-table [localTableData]="sysCapabilitiesData" [isLocal]="true" [tableCols]="relatedCapabilitiesCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                <app-table visibleColumnStorageKey="time-related-business-capabilities" [localTableData]="sysCapabilitiesData" [isLocal]="true" [tableCols]="relatedCapabilitiesCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
               </div>
             </div>
           </div>
@@ -293,7 +293,7 @@
               </div>
               <div class="sub-content full-width">
                 <span class="sub-header">Related Technology</span>
-                <app-table [localTableData]="sysTechnologiesData" [isLocal]="true" [tableCols]="relatedTechnologyCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                <app-table visibleColumnStorageKey="time-related-technology" [localTableData]="sysTechnologiesData" [isLocal]="true" [tableCols]="relatedTechnologyCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
               </div>
             </div>
           </div>
@@ -305,7 +305,7 @@
             <div class="main-data-container">
               <div class="sub-content full-width">
                 <span class="sub-header">Related Records</span>
-                <app-table [localTableData]="sysRecordsData" [isLocal]="true" [tableCols]="recordsCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                <app-table visibleColumnStorageKey="time-related-records" [localTableData]="sysRecordsData" [isLocal]="true" [tableCols]="recordsCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
               </div>
             </div>
           </div>
@@ -317,7 +317,7 @@
             <div class="main-data-container">
               <div class="sub-content full-width">
                 <span class="sub-header">Related Websites</span>
-                <app-table [localTableData]="sysWebsitesData" [isLocal]="true" [tableCols]="websiteCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                <app-table visibleColumnStorageKey="time-related-websites" [localTableData]="sysWebsitesData" [isLocal]="true" [tableCols]="websiteCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
               </div>
             </div>
           </div>

@@ -36,7 +36,7 @@
       <app-button [buttonText]="defExpanded ? 'View Less' : 'View More'" buttonStyle="link" (buttonClick)="onViewAll()"></app-button>
     </div>
     <div class="capabilities-data-container">
-      <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)"></app-table>
+      <app-table visibleColumnStorageKey="capabilities-report" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)"></app-table>
     </div>
   </div>
 
@@ -95,6 +95,6 @@
   (<a href='https://obamawhitehouse.archives.gov/sites/default/files/omb/assets/egov_docs/fea_v2.pdf' target='_blank' rel='noopener'>FEAF pg 30</a>)
 </app-button-overlay-panel>  -->
 <!-- Main Table -->
-<!-- <app-table [tableCols]="tableCols" exportName="Capabilities" reportStyle="gsa-enterprise" tableType="capabilities"></app-table>
+<!-- <app-table visibleColumnStorageKey="" [tableCols]="tableCols" exportName="Capabilities" reportStyle="gsa-enterprise" tableType="capabilities"></app-table>
 </div>
 </div> -->

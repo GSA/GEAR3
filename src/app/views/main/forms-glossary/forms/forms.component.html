@@ -14,7 +14,7 @@
     </app-button-overlay-panel>
   </div>
   <div class="access-forms-data-container">
-    <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+    <app-table visibleColumnStorageKey="forms-report" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
   </div>
 </div>
 
@@ -44,7 +44,7 @@
   <div class="card-body card-text">
     <div>
       <h3>Form Links</h3>
-      <app-table [tableCols]="tableCols" exportName="Form Links" tableType="accessForms" reportStyle="additional-info" (rowClickEvent)="onRowClick($event)"></app-table>
+      <app-table visibleColumnStorageKey="" [tableCols]="tableCols" exportName="Form Links" tableType="accessForms" reportStyle="additional-info" (rowClickEvent)="onRowClick($event)"></app-table>
     </div>
   </div>
 </div> -->

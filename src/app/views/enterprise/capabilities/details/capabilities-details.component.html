@@ -58,7 +58,7 @@
             <div class="main-data-container">
               <div class="sub-content full-width">
                 <span class="sub-header">Related Organizations</span>
-                <app-table [tableCols]="relatedOrgsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="organizations" [contextSystemName]="detailsData?.Name"></app-table>
+                <app-table visibleColumnStorageKey="capbilities-related-orgs" [tableCols]="relatedOrgsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="organizations" [contextSystemName]="detailsData?.Name"></app-table>
               </div>
             </div>
           </div>
@@ -70,7 +70,7 @@
             <div class="main-data-container">
               <div class="sub-content full-width">
                 <span class="sub-header">Supporting Systems</span>
-                <app-table [tableCols]="supportingSystemsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="systems" [contextSystemName]="detailsData?.Name"></app-table>
+                <app-table visibleColumnStorageKey="capabilities-supporting-systems" [tableCols]="supportingSystemsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="systems" [contextSystemName]="detailsData?.Name"></app-table>
               </div>
             </div>
           </div>
