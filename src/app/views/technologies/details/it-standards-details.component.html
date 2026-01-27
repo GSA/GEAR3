@@ -6,7 +6,10 @@
       </app-breadcrumb>
     </div>
     <div class="title-container">
-      <span class="title">{{detailsData.Name}}</span>
+      <span class="title" [title]="getTooltip('IT Standard Name')" role="tooltip">
+        {{detailsData.Name}}
+        <i class="fas fa-info-circle"></i>
+      </span>
     </div>
     <div class="content-container">
       <ul class="nav nav-tabs">

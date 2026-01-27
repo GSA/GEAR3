@@ -125,6 +125,9 @@
 
     .button-dropdown-container {
         display: flex;
+        position: fixed;
+        width: 100%;
+        z-index: 999;
 
         .button-dropdown-menu {
             list-style: none;

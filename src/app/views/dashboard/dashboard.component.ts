@@ -19,6 +19,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private resizeObserver: ResizeObserver;
 
+  public readonly recentITStandardAmount: number = 10;
+
   public chartView: [number, number] = [0, 400];
   public barChartView: [number, number] = [0, 350];
   public pieChartView: [number, number] = [0, 280];
@@ -182,7 +184,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     );
 
-    this.apiService.getRecentITStandards(10).subscribe(standards => {
+    this.apiService.getRecentITStandards(this.recentITStandardAmount).subscribe(standards => {
       this.tableService.updateReportTableData(standards);
       this.tableService.updateReportTableDataReadyStatus(true);
     });

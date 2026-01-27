@@ -42,7 +42,7 @@
           </div>
           <a (click)="viewAllSystems()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllSystems()" (keydown.space)="viewAllSystems()">View All</a>
         </div>
-        <span class="quick-view-text">Decommissioned systems (Last 6 months)</span>
+        <span class="quick-view-text">Decommissioned Systems (Last 6 months)</span>
         <div class="quick-view-expiring-text-container" [ngClass]="{'neutral-message': (decommissionedSystemsLastMonth || 0) === 0}">
           @if ((decommissionedSystemsLastMonth || 0) > 0) {
             <i class="expire-icon fas fa-exclamation-triangle"></i>
@@ -94,7 +94,7 @@
           </div>
           <a (click)="viewAllITStandards()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllITStandards()" (keydown.space)="viewAllITStandards()">View All</a>
         </div>
-        <span class="quick-view-text">Retired IT standards (Last 6 months)</span>
+        <span class="quick-view-text">Retired IT Standards (Last 6 months)</span>
         <div class="quick-view-expiring-text-container" [ngClass]="{'neutral-message': (retiredITStandardsLast7Days || 0) === 0}">
           @if ((retiredITStandardsLast7Days || 0) > 0) {
             <i class="expire-icon fas fa-exclamation-triangle"></i>
@@ -194,7 +194,7 @@
 
   <div class="dashboard-recent-report-container">
     <div class="dashboard-recent-report-title">
-      <span class="dashboard-card-title-text">Recent GSA IT Standards</span>
+      <span class="dashboard-card-title-text">{{recentITStandardAmount}} Most Recent GSA IT Standards</span>
       <a (click)="viewAllITStandards()" class="dashboard-view-all-link normal" tabindex="0" (keydown.enter)="viewAllITStandards()" (keydown.space)="viewAllITStandards()">View All</a>
     </div>
     <app-table [tableCols]="tableCols" [showToolbar]="false" [showPagination]="false" reportStyle="neutral" [defaultPaginationNumber]="10" (rowClickEvent)="onTableRowClick($event)">

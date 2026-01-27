@@ -1,5 +1,5 @@
 <div class="button-container">
-  <button class="button" [ngClass]="buttonStyle" (click)="onButtonClick()" [disabled]="disabled">
+  <button class="button" [ngClass]="buttonStyle" (click)="onButtonClick($event)" [disabled]="disabled">
     @if (isButtonDropdown()) {
       <i class="fas fa-chevron-down"></i>
     }
