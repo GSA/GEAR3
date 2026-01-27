@@ -18,7 +18,7 @@
     </app-button-overlay-panel>
   </div>
   <div class="organizations-data-container">
-    <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)"></app-table>
+    <app-table visibleColumnStorageKey="organizations-report" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)"></app-table>
   </div>
 </div>
 
@@ -53,6 +53,6 @@
 
   <div class="card-body card-text"> -->
     <!-- Main Table -->
-    <!-- <app-table [tableCols]="tableCols" exportName="Organizations" reportStyle="gsa-enterprise" tableType="organizations"></app-table>
+    <!-- <app-table visibleColumnStorageKey="" [tableCols]="tableCols" exportName="Organizations" reportStyle="gsa-enterprise" tableType="organizations"></app-table>
   </div>
 </div> -->

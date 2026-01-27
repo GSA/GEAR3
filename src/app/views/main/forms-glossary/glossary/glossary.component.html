@@ -12,7 +12,7 @@
     </app-button-overlay-panel>
   </div>
   <div class="glossary-data-container">
-    <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+    <app-table visibleColumnStorageKey="glossary-report" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
   </div>
 </div>
 
@@ -40,7 +40,7 @@
   <div class="card-body card-text">
     <div>
       <h3>Glossary</h3>
-      <app-table [tableCols]="tableCols" exportName="Glossary" reportStyle="additional-info"></app-table>
+      <app-table visibleColumnStorageKey="" [tableCols]="tableCols" exportName="Glossary" reportStyle="additional-info"></app-table>
     </div>
   </div>
 </div> -->

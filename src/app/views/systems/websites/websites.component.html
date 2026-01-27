@@ -35,7 +35,7 @@
       <app-button [buttonText]="defExpanded ? 'View Less' : 'View More'" buttonStyle="link" (buttonClick)="onViewAll()"></app-button>
     </div>
     <div class="websites-data-container">
-      <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)">
+      <app-table visibleColumnStorageKey="websites-report" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)">
         <div class="filter-tabs-container" filterTabs>
           <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')" (keyup)="onKeyUp($event, 'All')" tabindex="0">
             <span class="filter-tab-text">All</span>
@@ -109,7 +109,7 @@
 </div>
 <div class="card-body card-text"> -->
   <!-- Main Table -->
-  <!-- <app-table [tableCols]="tableCols" exportName="Websites" reportStyle="business-systems" tableType="website">
+  <!-- <app-table visibleColumnStorageKey="" [tableCols]="tableCols" exportName="Websites" reportStyle="business-systems" tableType="website">
   <app-filter-buttons filterBtns [filterButtons]="filterButtons" [singleFilterOnly]="true" (filterClick)="onFilterClick($event)" (filterResetClick)="onFilterResetClick()"></app-filter-buttons> -->
   <!-- Website Definition Popover -->
   <!-- <app-button-overlay-panel definitionBtn buttonText="Website definition">

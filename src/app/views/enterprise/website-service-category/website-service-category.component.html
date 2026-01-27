@@ -25,7 +25,7 @@
       <app-button [buttonText]="defExpanded ? 'View Less' : 'View More'" buttonStyle="link" (buttonClick)="onViewAll()"></app-button>
   </div>
   <div class="website-categories-data-container">
-    <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)"></app-table>
+    <app-table visibleColumnStorageKey="websites-website-categories" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)"></app-table>
   </div>
 </div>
 
@@ -62,7 +62,7 @@
     <!-- Main Table -->
     <!-- <div class="row">
       <div class="col-12">
-        <app-table [tableCols]="tableCols" exportName="Website Service Category" reportStyle="gsa-enterprise" tableType="websiteServiceCategory"> -->
+        <app-table visibleColumnStorageKey="" [tableCols]="tableCols" exportName="Website Service Category" reportStyle="gsa-enterprise" tableType="websiteServiceCategory"> -->
           <!-- Service Category Definition Popover -->
           <!-- <app-button-overlay-panel definitionBtn buttonText="Website Service Category Definition">
             Website Service Categories draw connections between sites that serve similar themes. For instance, GSA supports both travel policy 

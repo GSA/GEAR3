@@ -44,7 +44,7 @@
       </div>
     </div>
     <div class="systems-data-container">
-      <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"
+      <app-table visibleColumnStorageKey="systems-report" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"
         (rowClickEvent)="onRowClick($event)">
         <div class="filter-tabs-container" filterTabs>
           <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')" (keyup)="onKeyUp($event, 'All')" tabindex="0">
@@ -141,7 +141,7 @@
 </div> -->
 
 <!-- Main Table -->
-<!-- <app-table [tableCols]="tableCols" defaultSortField="Name" exportName="Systems" reportStyle="business-systems" tableType="systems">
+<!-- <app-table visibleColumnStorageKey="" [tableCols]="tableCols" defaultSortField="Name" exportName="Systems" reportStyle="business-systems" tableType="systems">
 <app-filter-buttons filterBtns [filterButtons]="filterButtons" [singleFilterOnly]="true" (filterClick)="onFilterClick($event)" (filterResetClick)="onFilterResetClick()"></app-filter-buttons> -->
 <!-- System/Sub-System Definition Popover -->
 <!-- <app-button-overlay-panel definitionBtn buttonText="Business System Definition">

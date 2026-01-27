@@ -45,7 +45,7 @@
     </div>
   </div>
   <div class="it-investments-data-container">
-    <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)">
+    <app-table visibleColumnStorageKey="investment-report" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)">
       <div class="filter-tabs-container" filterTabs>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')" (keyup)="onKeyUp($event, 'All')" tabindex="0">
           <span class="filter-tab-text">All</span>
@@ -134,7 +134,7 @@
      -->
     <!-- Main Table -->
     <!-- <ng-container *ngIf="dataReady">
-      <app-table [tableCols]="tableCols" exportName="IT Standards" reportStyle="technologies" tableType="itStandards"> -->
+      <app-table visibleColumnStorageKey="" [tableCols]="tableCols" exportName="IT Standards" reportStyle="technologies" tableType="itStandards"> -->
         <!-- IT-Standard Filter Buttons -->
         <!-- <app-filter-buttons filterBtns [filterButtons]="filterButtons" [preloadedFilterButtons]="preloadedFilterButtons" (filterClick)="onFilterClick($event)" (filterResetClick)="onFilterResetClick()"></app-filter-buttons> -->
         <!-- IT-Standard Definition Popover -->
@@ -209,7 +209,7 @@
     </div> -->
 
     <!-- Main Table -->
-    <!-- <app-table [tableCols]="tableCols" exportName="Investments" reportStyle="it-strategy" tableType="investments">
+    <!-- <app-table visibleColumnStorageKey="" [tableCols]="tableCols" exportName="Investments" reportStyle="it-strategy" tableType="investments">
       <app-filter-buttons filterBtns [filterButtons]="filterButtons" [singleFilterOnly]="true" (filterClick)="onFilterClick($event)" (filterResetClick)="onFilterResetClick()"></app-filter-buttons> -->
         <!-- Investment Definition Popover -->
         <!-- <app-button-overlay-panel definitionBtn buttonText="Investment Definition">

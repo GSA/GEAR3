@@ -62,6 +62,8 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() defaultPaginationNumber: number = 50;
 
+  @Input() visibleColumnStorageKey: string = '';
+
   // Filter event (some reports change available columns when filtered)
   @Output() filterEvent = new EventEmitter<string>();
 
@@ -160,11 +162,33 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     if (changes.localTableData && this.isLocal) {
       this.originalTableData = [...this.localTableData];
     }
-    
-    // Handle tableCols changes (e.g., when switching tabs)
-    if (changes.tableCols && !changes.tableCols.firstChange) {
+
+    if(localStorage.getItem(this.visibleColumnStorageKey)) {
+      const savedCols = JSON.parse(localStorage.getItem(this.visibleColumnStorageKey));
+
+      const statusMap = new Map();
+      savedCols.forEach(item => {
+          statusMap.set(item.field, true); 
+      });
+
+      this.tableCols.forEach(item1 => {
+          if (statusMap.has(item1.field)) {
+              item1.showColumn = true;
+          } else {
+            item1.showColumn = false;
+          }
+      });
+      this.initializeColumnVisibility();
+    } else {
       this.initializeColumnVisibility();
     }
+    
+    // Handle tableCols changes (e.g., when switching tabs)
+    // if (changes.tableCols && !changes.tableCols.firstChange) {
+
+    // } else {
+      
+    // }
   }
 
   ngOnDestroy(): void {
@@ -192,7 +216,10 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
       }
     });
 
-    localStorage.setItem('visibleColumns', JSON.stringify(this.visibleColumns));
+    if(this.visibleColumnStorageKey) {
+      localStorage.setItem(this.visibleColumnStorageKey, JSON.stringify(this.visibleColumns));
+      // localStorage.setItem(this.visibleColumnStorageKey, JSON.stringify(this.tableCols));
+    }
   }
 
   togglePagination() {

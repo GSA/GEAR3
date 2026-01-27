@@ -44,7 +44,7 @@
     <app-button buttonText="Please complete your system's TIME Questionnaire" (buttonClick)="onQuestionaireClick()"></app-button>
   </div>
   <div class="time-data-container">
-    <app-table [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)"></app-table>
+    <app-table visibleColumnStorageKey="time-report" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)"></app-table>
   </div>
 
 
@@ -111,6 +111,6 @@ TIME Value Definitions</a>
 </div> -->
 
 <!-- Main Table -->
-<!-- <app-table [tableCols]="tableCols" exportName="TIME" reportStyle="business-systems" tableType="time"></app-table>
+<!-- <app-table visibleColumnStorageKey="" [tableCols]="tableCols" exportName="TIME" reportStyle="business-systems" tableType="time"></app-table>
 </div>
 </div> -->
