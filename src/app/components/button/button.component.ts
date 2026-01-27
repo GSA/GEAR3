@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, HostListener } from '@angular/core';
 
 @Component({
     selector: 'app-button',
@@ -17,6 +17,10 @@ export class ButtonComponent {
     @Output() buttonClick: EventEmitter<any> = new EventEmitter();
 
     public isDropdownOpen: boolean = false;
+
+    @HostListener('document:click', ['$event']) onDocumentClick() {
+        this.isDropdownOpen = false;
+      }
   
     constructor() {
     }
@@ -25,7 +29,8 @@ export class ButtonComponent {
         return this.buttonType && this.buttonType === 'dropdown';
     }
 
-    public onButtonClick(): void {
+    public onButtonClick(e: Event): void {
+        e.stopPropagation();
         if(this.isButtonDropdown()) {
             this.isDropdownOpen = !this.isDropdownOpen;
         } else {

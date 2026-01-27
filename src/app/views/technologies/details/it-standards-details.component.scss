@@ -20,6 +20,13 @@
             font-size: 2rem;
             font-weight: 500;
             line-height: normal;
+
+            & svg{
+                height: 1rem;
+                width: 1rem;
+                bottom: 15px;
+                position: relative;
+            }
         }
     }
 
