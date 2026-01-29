@@ -69,6 +69,11 @@
                     <img [src]="getDesktopImg()" [alt]="getDesktopImgAltText()" class="shadow image-one" />
                     <img [src]="getMobileImg()" [alt]="getMobileImgAltText()" class="shadow image-two" />
                   </div>
+                } @else {
+                  <div class="website-scan-image-container">
+                    <img src="../../../../../assets/website-screenshots/desktop.png" alt="no desktop screenshot found" class="shadow image-one" />
+                    <img src="../../../../../assets/website-screenshots/mobile.png" alt="no mobile screenshot found" class="shadow image-two" />
+                  </div>
                 }
 
             </div>
