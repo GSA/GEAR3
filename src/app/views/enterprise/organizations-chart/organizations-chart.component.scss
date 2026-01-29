@@ -1,64 +1,57 @@
-#capDetail {
+#orgDetail {
   visibility: hidden;
   opacity: 0;
+  height: auto;
   position: fixed;
+  top: 10;
   z-index: 100;
   -moz-transition: all 0.3s linear;
   -webkit-transition: all 0.3s linear;
   transition: all 0.3s linear;
 }
 
-#capDetailLink, #capDetailClose {
+#orgExtLink, #orgDetailLink, #orgDetailClose {
   cursor: pointer;
 }
 
-#capSearchField {
+#orgSearchField {
   height: 48px;
   border: 3px solid black;
 }
 
 /* Keeping this here in case the detail pane gets larger and needs to move */
-/* #busCapGraph {
+/* #orgChart {
   z-index: 1;
   -moz-transition: all 0.3s linear;
   -webkit-transition: all 0.3s linear;
   transition: all 0.3s linear;
 } */
 
-.custom-hover-cursor {
-  cursor: pointer;
-}
-
-.grabbing {
-  cursor: grabbing !important; /* Change cursor to grab hand */
-  user-select: none; /* Prevent text selection */
-}
-
-.capabilities-container {
+.org-container {
   display: flex;
   flex-direction: column;
   padding: 1rem 1.5rem;
   width: 94vw;
   overflow: auto;
 
-  & .capabilities-title-container {
+  & .org-title-container {
       display: flex;
       justify-content: space-between;
       align-items: center;
 
-      & .capabilities-title-right-button-container {
+      & .org-title-right-button-container {
           display: flex;
           flex-direction: row;
           gap: 1rem;
       }
   }
 
-  & .capabilities-definition-container {
+  & .org-definition-container {
       padding: 1rem;
        background-color: #fff;
        border-radius: 0.3rem;
 
-      & .capabilities-definition-text {
+      & .org-definition-text {
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;  
@@ -72,7 +65,7 @@
       }
   }
 
-  & .capabilities-data-container {
+  & .org-data-container {
       display: flex;
       flex-direction: column;
       padding: .5rem;

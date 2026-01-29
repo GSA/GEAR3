@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
@@ -33,6 +33,7 @@ export class CapabilitiesModelComponent implements OnInit {
   private rootCap: string = 'Manage GSA';
   private capTree: any = {};
   public highlightColor: string = '#ff4136';
+  public defExpanded: boolean = false;
 
   // Variables to store mouse position and dragging status
   private dragging = false;
@@ -59,7 +60,8 @@ export class CapabilitiesModelComponent implements OnInit {
     private sharedService: SharedService,
     private tableService: TableService,
     private titleService: Title,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -217,7 +219,7 @@ export class CapabilitiesModelComponent implements OnInit {
 
     // Set margins
     const element = this.graphContainer.nativeElement;
-    var width = 1750 - element.offsetWidth - margin.left - margin.right;
+    var width = 3250 - element.offsetWidth - margin.left - margin.right;
     var height = 1200 - element.offsetHeight - margin.top - margin.bottom;
 
     // Set tree mapping object
@@ -433,9 +435,10 @@ export class CapabilitiesModelComponent implements OnInit {
             // Grab data for selected node
             this.apiService
               .getOneCap(this.selectedCap.identity)
-              .subscribe((data: any[]) => {
-                  var capData = data[0];
-                  this.tableService.capsTableClick(capData);
+              .subscribe((data: any) => {
+                  // var capData = data[0];
+                  // this.tableService.capsTableClick(capData);
+                  this.router.navigate(['capabilities', data.ID]);
                 }
               )
           }
@@ -682,5 +685,9 @@ export class CapabilitiesModelComponent implements OnInit {
     dragEnd(event): void {
       this.dragging = false;
       d3.select(this.elementRef.nativeElement).select('#capDetail').classed('grabbing', false);
+    }
+
+    public onViewAll(): void {
+      this.defExpanded = !this.defExpanded;
     }
 }

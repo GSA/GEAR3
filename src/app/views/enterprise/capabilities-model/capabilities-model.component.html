@@ -1,16 +1,9 @@
-<div class="card">
-  <div class="row card-header text-white bg-royal-blue text-center">
-    <h3 class="card-title col-12 mb-0">
-      <span>
-        <i class="fas fa-project-diagram"></i>
-        GSA Capabilities Model
-      </span>
-    </h3>
-    <!-- Help Button -->
-    <a tabindex="0"
-    class="btn btn-sm btn-info text-white shadow help-btn d-flex align-items-center justify-content-center"
-      role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="auto" data-bs-html="true"
-      title="Help Using this Table" data-bs-content="<b>Hover:</b> Hover over a circle next to an capabilities to see its description.
+<div class="capabilities-container">
+  <div class="capabilities-title-container">
+    <h2>GSA Capabilities Model</h2>
+    <div class="capabilities-title-right-button-container">
+      <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
+        <b>Hover:</b> Hover over a circle next to an capabilities to see its description.
         In the pop-up window, click the <i class='far fa-file-alt'></i> icon to see additional information about the capabilities
         or click the <i class='fa fa-times'></i> icon to close the window.
         <br><br>
@@ -19,27 +12,22 @@
         <br><br>
         <b>Search:</b> The search box below can search for any of the capabilities display names and expand the chart to the nodes that match.
         Enter your desired term into the search bar and press <i>Enter</i>. You will get an alert if no matching term is found.
-        Click the <i class='far fa-trash-alt fa-lg'></i> icon to clear the search box and reset the chart.">
-      <span class="mr-2">More Help</span><i class="far fa-question-circle fa-2x"></i>
-    </a>
-  </div>
-
-  <div class="row card-body bg-light card-text">
-    <div>
-      <!-- Business Capability Definition Popover -->
-      <a tabindex="0" class="btn btn-sm btn-info text-white" role="button"
-        data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="auto" data-bs-html="true" title=""
-        data-bs-content="A classification taxonomy used to describe the business
-        functions and services at GSA. By describing GSA using standard business functions 
-        rather than an organizational view, this taxonomy promotes collaboration, shared services, 
-        and solution reuse in agency IT portfolios and inter-agency Lines of Business. While this taxonomy 
-        provides a standardized way of classifying government functions, its true value is realized when 
-        it is effectively used in business analysis, design, and decision support that help to improve the performance of GSA. 
-        (<a href='https://obamawhitehouse.archives.gov/sites/default/files/omb/assets/egov_docs/fea_v2.pdf' target='_blank' rel='noopener'>FEAF pg 30</a>)">
-        Business Capability Definition
-      </a>
+        Click the <i class='far fa-trash-alt fa-lg'></i> icon to clear the search box and reset the chart. Click on the
+        <i class='fas fa-caret-square-down'></i> icon to display everything on one page.
+      </app-button-overlay-panel>
     </div>
-
+  </div>
+  <div class="capabilities-definition-container">
+    <p class="capabilities-definition-text" [ngClass]="{'expanded' : defExpanded}">A classification taxonomy used to describe the business
+      functions and services at GSA. By describing GSA using standard business functions 
+      rather than an organizational view, this taxonomy promotes collaboration, shared services, 
+      and solution reuse in agency IT portfolios and inter-agency Lines of Business. While this taxonomy 
+      provides a standardized way of classifying government functions, its true value is realized when 
+      it is effectively used in business analysis, design, and decision support that help to improve the performance of GSA. 
+      (<a href='https://obamawhitehouse.archives.gov/sites/default/files/omb/assets/egov_docs/fea_v2.pdf' target='_blank' rel='noopener'>FEAF pg 30</a>)
+      <app-button [buttonText]="defExpanded ? 'View Less' : 'View More'" buttonStyle="link" (buttonClick)="onViewAll()"></app-button>
+    </div>
+    <div class="capabilities-data-container">
     <!-- Detail Card -->
     <div id="capDetail" class="card col-6 h-30">
       <div id="capDetailheader" class="row card-header bg-royal-blue text-white my-auto">
@@ -70,6 +58,81 @@
 
     <!-- Business Capability Graph -->
     <div #busCapGraph id="busCapGraph"></div>
+    </div>
+  </div>
+
+<!-- <div class="card">
+  <div class="row card-header text-white bg-royal-blue text-center">
+    <h3 class="card-title col-12 mb-0">
+      <span>
+        <i class="fas fa-project-diagram"></i>
+        GSA Capabilities Model
+      </span>
+    </h3> -->
+    <!-- Help Button -->
+    <!--<a tabindex="0"
+    class="btn btn-sm btn-info text-white shadow help-btn d-flex align-items-center justify-content-center"
+      role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="auto" data-bs-html="true"
+      title="Help Using this Table" data-bs-content="<b>Hover:</b> Hover over a circle next to an capabilities to see its description.
+        In the pop-up window, click the <i class='far fa-file-alt'></i> icon to see additional information about the capabilities
+        or click the <i class='fa fa-times'></i> icon to close the window.
+        <br><br>
+        <b>Click:</b> Left click on the circle next to an capabilities to see the next level of the capabilities.
+        (Not all capabilities have another level).
+        <br><br>
+        <b>Search:</b> The search box below can search for any of the capabilities display names and expand the chart to the nodes that match.
+        Enter your desired term into the search bar and press <i>Enter</i>. You will get an alert if no matching term is found.
+        Click the <i class='far fa-trash-alt fa-lg'></i> icon to clear the search box and reset the chart.">
+      <span class="mr-2">More Help</span><i class="far fa-question-circle fa-2x"></i>
+    </a>
+  </div>
+
+  <div class="row card-body bg-light card-text">
+    <div> -->
+      <!-- Business Capability Definition Popover -->
+      <!--<a tabindex="0" class="btn btn-sm btn-info text-white" role="button"
+        data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="auto" data-bs-html="true" title=""
+        data-bs-content="A classification taxonomy used to describe the business
+        functions and services at GSA. By describing GSA using standard business functions 
+        rather than an organizational view, this taxonomy promotes collaboration, shared services, 
+        and solution reuse in agency IT portfolios and inter-agency Lines of Business. While this taxonomy 
+        provides a standardized way of classifying government functions, its true value is realized when 
+        it is effectively used in business analysis, design, and decision support that help to improve the performance of GSA. 
+        (<a href='https://obamawhitehouse.archives.gov/sites/default/files/omb/assets/egov_docs/fea_v2.pdf' target='_blank' rel='noopener'>FEAF pg 30</a>)">
+        Business Capability Definition
+      </a>
+    </div> -->
+
+    <!-- Detail Card -->
+    <!-- <div id="capDetail" class="card col-6 h-30">
+      <div id="capDetailheader" class="row card-header bg-royal-blue text-white my-auto">
+        <h4 id="capName" class="text-white custom-hover-cursor"></h4>
+        <div class="ml-auto">
+          <span id="capDetailLink" class="far fa-file-alt fa-lg" data-bs-toggle="tooltip"
+            title="Click to view capability details"></span>
+          <span id="capDetailClose" class="fa fa-times fa-lg ml-3" data-bs-toggle="tooltip" title="Close this box"></span>
+        </div>
+      </div>
+      <div class="row card-body overflow-auto">
+        <h5>Capability Level: <span id="capLevel"></span></h5>
+        <br>
+        <span id="capDetailbody"></span>
+      </div>
+    </div> -->
+
+    <!-- Graph Searchbar -->
+    <!-- <div class="input-group col-4 ml-auto">
+      <input [(ngModel)]="searchKey" type="text" class="form-control" placeholder="Search Capability Names"
+        id="capSearchField" (keydown)="search($event)" />
+      <div class="input-group-btn">
+        <button aria-label="ClearSearch" class="btn btn-primary" (click)="clearSearch(); searchKey = '';">
+          <i class="far fa-trash-alt fa-lg"></i>
+        </button>
+      </div>
+    </div> -->
+
+    <!-- Business Capability Graph -->
+    <!-- <div #busCapGraph id="busCapGraph"></div>
 
   </div>
-</div>
+</div> -->
