@@ -352,8 +352,8 @@ export class SystemsComponent implements OnInit {
         decommWithin.setUTCHours(0, 0, 0, 0);
         const expiringFiltered = [];
         systems.forEach(s => {
-          let expDate = new Date(s.ATOExpirationDate);
-          if(s.ATOExpirationDate && (expDate <= now && expDate >= decommWithin) && (s.Status === 'Inactive')) {
+          let expDate = new Date(s.InactiveDate);
+          if(s.InactiveDate && (expDate <= now && expDate >= decommWithin) && (s.Status === 'Inactive' && s.BusApp === 'Yes')) {
             expiringFiltered.push(s);
           }
         });
