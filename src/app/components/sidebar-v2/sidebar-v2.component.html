@@ -6,6 +6,8 @@
     buttonIcon="fas fa-th-large"
     buttonRoute="/"
     [isSidebarExpanded]="isSidebarExpanded"
+    (keyup)="onKeyUp($event, 'dashboard')"
+    (click)="onMenuToggle('dashboard')"
   (routeChange)="onRouteChange()"></app-sidebar-button>
 
   <app-sidebar-button buttonText="IT Strategy"

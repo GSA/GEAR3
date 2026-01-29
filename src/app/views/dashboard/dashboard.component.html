@@ -16,7 +16,7 @@
           </div>
           <a (click)="viewAllFisma()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllFisma()" (keydown.space)="viewAllFisma()">View All</a>
         </div>
-        <span class="quick-view-text">FISMA Expiring by {{ getExpiringDate() }}</span>
+        <span class="quick-view-text">FISMA Systems Expiring by {{ getExpiringDate() }}</span>
         <div class="quick-view-expiring-text-container" [ngClass]="{'neutral-message': (fismaExpiringThisWeek || 0) === 0}">
           @if ((fismaExpiringThisWeek || 0) > 0) {
             <i class="expire-icon fas fa-exclamation-triangle"></i>
@@ -42,7 +42,7 @@
           </div>
           <a (click)="viewAllSystems()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllSystems()" (keydown.space)="viewAllSystems()">View All</a>
         </div>
-        <span class="quick-view-text">Decommissioned Systems (Last 6 months)</span>
+        <span class="quick-view-text">Decommissioned Business Systems/Subsystems (Last 6 months)</span>
         <div class="quick-view-expiring-text-container" [ngClass]="{'neutral-message': (decommissionedSystemsLastMonth || 0) === 0}">
           @if ((decommissionedSystemsLastMonth || 0) > 0) {
             <i class="expire-icon fas fa-exclamation-triangle"></i>
