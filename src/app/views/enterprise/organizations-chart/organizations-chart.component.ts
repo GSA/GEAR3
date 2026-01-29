@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
@@ -19,7 +19,7 @@ interface OrgTree {
 @Component({
     selector: 'organizations-chart',
     templateUrl: './organizations-chart.component.html',
-    styleUrls: ['./organizations-chart.component.css'],
+    styleUrls: ['./organizations-chart.component.scss'],
     standalone: false
 })
 export class OrganizationsChartComponent implements OnInit {
@@ -39,13 +39,16 @@ export class OrganizationsChartComponent implements OnInit {
   public searchKey: string;
   private finalSearchPath;
 
+  public defExpanded: boolean = false;
+
   constructor(
     private apiService: ApiService,
     private modalService: ModalsService,
     private route: ActivatedRoute,
     private sharedService: SharedService,
     private tableService: TableService,
-    private titleService: Title
+    private titleService: Title,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -173,7 +176,7 @@ export class OrganizationsChartComponent implements OnInit {
 
     // Set margins
     const element = this.graphContainer.nativeElement;
-    var width = 1750 - element.offsetWidth - margin.left - margin.right;
+    var width = 3250 - element.offsetWidth - margin.left - margin.right;
     var height = 1200 - element.offsetHeight - margin.top - margin.bottom;
 
     // Set tree mapping object
@@ -396,9 +399,9 @@ export class OrganizationsChartComponent implements OnInit {
               // Grab data for selected node
               this.apiService
                 .getOneOrg(this.selectedOrg.srcElement.__data__.data.identity)
-                .subscribe((data: any[]) => {
-                  var orgData = data[0];
-                  this.tableService.orgsTableClick(orgData);
+                .subscribe((data: any) => {
+                  // this.tableService.orgsTableClick(data);
+                  this.router.navigate(['organizations', data.ID])
                 });
             }.bind(this)
           );
@@ -594,5 +597,9 @@ export class OrganizationsChartComponent implements OnInit {
     // Only show first level children and render
     this.root.children.forEach(this.collapse);
     this.update(null, this.root);
+  }
+
+  public onViewAll(): void {
+    this.defExpanded = !this.defExpanded;
   }
 }
