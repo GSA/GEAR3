@@ -401,7 +401,7 @@ export class OrganizationsChartComponent implements OnInit {
                 .getOneOrg(this.selectedOrg.srcElement.__data__.data.identity)
                 .subscribe((data: any) => {
                   // this.tableService.orgsTableClick(data);
-                  this.router.navigate(['organizations', data.ID])
+                  this.router.navigate(['organizations', data.ID], { queryParams: { fromOrgChart: 'GSA Organizations Chart' } });
                 });
             }.bind(this)
           );

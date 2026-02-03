@@ -438,7 +438,7 @@ export class CapabilitiesModelComponent implements OnInit {
               .subscribe((data: any) => {
                   // var capData = data[0];
                   // this.tableService.capsTableClick(capData);
-                  this.router.navigate(['capabilities', data.ID]);
+                  this.router.navigate(['capabilities', data.ID], { queryParams: { fromCapModel: 'Business Capabilities Model' } });
                 }
               )
           }

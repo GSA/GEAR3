@@ -66,8 +66,8 @@ export class BreadcrumbComponent implements OnInit {
         const queryParams = this.route.snapshot.queryParams;
         const contextMap = {
             'it_standards': { fromSystem: 'fromSystemName', default: 'Business Systems & Subsystems List' },
-            'capabilities': { fromSystem: 'fromSystemName', default: 'Business Systems & Subsystems List' },
-            'organizations': { fromCapability: 'fromCapabilityName', default: 'Business Capabilities List' },
+            'capabilities': { fromCapModel: 'fromCapModel', fromSystem: 'fromSystemName', default: 'Business Systems & Subsystems List' },
+            'organizations': { fromOrgChart: 'fromOrgChart', fromCapability: 'fromCapabilityName', default: 'Business Capabilities List' },
             'systems': { fromTechnology: 'fromTechnologyName', fromCapability: 'fromCapabilityName', default: 'IT Standards List' },
             'websites': { fromSystem: 'fromSystemName', default: 'Business Systems & Subsystems List' },
             'records_mgmt': { fromSystem: 'fromSystemName', default: 'Business Systems & Subsystems List' },
@@ -126,9 +126,9 @@ export class BreadcrumbComponent implements OnInit {
         const backRouteMap = {
             'it_standards_manager': 'it_standards',
             'it_standards': queryParams['fromSystem'] ? 'systems' : null,
-            'capabilities': queryParams['fromSystem'] ? 'systems' : null,
+            'capabilities': queryParams['fromSystem'] ? 'systems' : queryParams['fromCapModel'] ? 'capabilities_model' : null,
             'capabilities_manager': 'capabilities',
-            'organizations': queryParams['fromCapability'] ? 'capabilities' : null,
+            'organizations': queryParams['fromCapability'] ? 'capabilities' : queryParams['fromOrgChart'] ? 'org_chart' : null,
             'systems': queryParams['fromTechnology'] ? 'it_standards' : queryParams['fromCapability'] ? 'capabilities' : null,
             'systems_manager': 'systems',
             'websites': queryParams['fromSystem'] ? 'systems' : null,
