@@ -14,7 +14,21 @@ exports.searchAll = (req, res) => {
       FROM
         gear_schema.obj_fisma_archer AS systems
       WHERE
-        systems.\`ex:SystemLevel\` = 'SubSystem'
+        systems.\`ex:SystemLevel\` = 'SubSystem' AND 
+        systems.\`ex:BusinessApplication\` = 'Yes'
+      UNION SELECT
+        fisma_subsystems.\`ex:GEAR_ID\` AS \`Id\`,
+        fisma_subsystems.\`ex:System_Name\` AS \`Name\`,
+        fisma_subsystems.\`ex:Description\` AS \`Description\`,
+        fisma_subsystems.\`ex:Status\` AS \`Status\`,
+        'FISMA' AS \`GEAR_Type\`,
+        'FISMA Subsystems Report' AS \`GEAR_Type_Display\`,
+        '{}' AS \`Other\`
+      FROM
+        gear_schema.obj_fisma_archer AS fisma_subsystems
+      WHERE
+        fisma_subsystems.\`ex:SystemLevel\` = 'SubSystem' AND 
+        fisma_subsystems.\`ex:BusinessApplication\` = 'No'
       UNION SELECT
         fisma.\`ex:GEAR_ID\` AS \`Id\`,
         fisma.\`ex:System_Name\` AS \`Name\`,
