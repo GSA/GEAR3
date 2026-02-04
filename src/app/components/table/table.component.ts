@@ -5,9 +5,10 @@ import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { ApiService } from '@services/apis/api.service';
 import { FilterMatchMode, SelectItem } from 'primeng/api';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
+import { Location } from '@angular/common';
 
 
 @Component({
@@ -116,7 +117,16 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   tableSearchControl = new FormControl('');
   private tableSearchSubscription?: Subscription;
 
-  constructor(public sharedService: SharedService, public tableService: TableService, public apiService: ApiService, private router: Router) {
+  private tabelSearchString: string = '';
+
+  constructor(
+    private sharedService: SharedService,
+    private tableService: TableService,
+    private apiService: ApiService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private location: Location
+  ) {
     this.setScreenHeight();
   }
 
@@ -151,7 +161,17 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
         }
       });
       this.tableService.reportTableDataReady$.subscribe(r => {
-        this.isDataReady = r;
+        this.route.queryParams.subscribe(p => {
+          this.tabelSearchString = p['tableSearchTerm'];
+          if(this.tabelSearchString) {
+            this.tableSearchControl.patchValue(this.tabelSearchString, {emitEvent: true});
+            this.onTableSearch(this.tabelSearchString);
+            this.isDataReady = r;
+          } else {
+            this.isDataReady = r;
+          }
+        });
+
       })
     }
     
@@ -330,6 +350,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public onRowSelect(e: TableRowSelectEvent) {
+    e.data.tableSearchString = this.tabelSearchString;
     if(this.tableType === 'globalSearch') {
       this.rowClickEvent.emit(e);
       // this.navigateByType(e.data.GEAR_Type, e.data);
@@ -440,6 +461,16 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
       .map(ranked => ranked.item);
     
     this.tableData = rankedData;
+    this.tabelSearchString = searchTerm;
+
+    // this.location.replaceState(this.router.url, `tableSearchTerm=${searchTerm}`);
+
+    // this.router.navigate([], {
+    //   relativeTo: this.route,
+    //   queryParams: { tableSearchTerm: searchTerm },
+    //   queryParamsHandling: 'merge',
+    //   skipLocationChange: true // The URL in the browser won't change
+    // });
   }
 
   private updateOriginalData() {

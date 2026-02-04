@@ -489,7 +489,10 @@ export class ItStandardsComponent implements OnInit {
   }
 
   public onRowClick(e: any) {
-    this.router.navigate(['it_standards', e.ID]);
+    const searchTerm: string = e.tableSearchString || '';
+    this.router.navigate(['/it_standards', e.ID], {
+        queryParams: { tableSearchTerm: searchTerm }
+    });
   }
 
   // onFilterClick(filterButtons: FilterButton[]) {

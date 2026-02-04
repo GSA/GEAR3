@@ -250,7 +250,10 @@ export class FismaComponent implements OnInit {
   }
 
   public onRowClick(e: any) {
-    this.router.navigate(['FISMA', e.ID]);
+    const searchTerm: string = e.tableSearchString || '';
+    this.router.navigate(['/FISMA', e.ID], {
+        queryParams: { tableSearchTerm: searchTerm }
+    });
   }
 
   // onFilterClick(filterButtons: FilterButton[]) {

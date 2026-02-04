@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
     selector: 'app-breadcrumb',
@@ -13,10 +13,14 @@ export class BreadcrumbComponent implements OnInit {
 
     public currentSubPath: string = '';
     public fromSearchKw: string = '';
+    public tableSearchTerm: string = '';
 
     private currentRoute: string[] = [];
 
-    constructor(private route: ActivatedRoute) {
+    constructor(
+        private route: ActivatedRoute,
+        private router: Router
+    ) {
         this.currentRoute = this.route.snapshot.url.map(segment => segment.path);
         this.currentSubPath = this.currentRoute[0];
     }
@@ -24,6 +28,7 @@ export class BreadcrumbComponent implements OnInit {
     public ngOnInit(): void {
         this.route.queryParams.subscribe(params => {
             this.fromSearchKw = params['search'];
+            this.tableSearchTerm = params['tableSearchTerm'];
         });
     }
 
@@ -137,7 +142,6 @@ export class BreadcrumbComponent implements OnInit {
             'records_mgmt_manager': 'records_mgmt',
             'investments': queryParams['fromCapability'] ? 'capabilities' : null
         };
-        
         return backRouteMap[this.currentSubPath as keyof typeof backRouteMap] || this.currentSubPath;
     }
 
@@ -157,11 +161,24 @@ export class BreadcrumbComponent implements OnInit {
             'records_mgmt': queryParams['fromSystem'] ? ['/systems', queryParams['fromSystem']] : null,
             'investments': queryParams['fromCapability'] ? ['/capabilities', queryParams['fromCapability']] : null
         };
-        
         return routeMap[this.currentSubPath as keyof typeof routeMap] || ['/' + this.getBackRoute()];
     }
 
     public getGlobalSearchBack(): string {
         return `/search/${this.fromSearchKw}`;
+    }
+
+    public onBackClick(): void {
+        const route = this.getBackRouteWithParams();
+        this.router.navigate([route], {
+            queryParams: { tableSearchTerm: this.tableSearchTerm }
+        });
+    }
+
+    public onGlobalBackClick(): void {
+        const route = this.getGlobalSearchBack();
+        this.router.navigate([route], {
+            queryParams: { tableSearchTerm: this.tableSearchTerm }
+        });
     }
 }

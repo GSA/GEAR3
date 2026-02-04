@@ -402,7 +402,10 @@ export class InvestmentsComponent implements OnInit {
   }
 
   public onRowClick(e: any) {
-    this.router.navigate(['investments', e.ID]);
+    const searchTerm: string = e.tableSearchString || '';
+    this.router.navigate(['/investments', e.ID], {
+        queryParams: { tableSearchTerm: searchTerm }
+    });
   }
 
   // onSelect(chartData): void {

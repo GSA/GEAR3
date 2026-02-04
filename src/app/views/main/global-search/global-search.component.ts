@@ -82,27 +82,63 @@ export class GlobalSearchComponent implements OnInit {
 
   public onRowClick(e: any): void {
     const data = e.data;
+    const searchTerm: string = data.tableSearchString || '';
     switch (data.GEAR_Type) {
       case 'System':
-        this.router.navigate(['/systems/', data.Id], { queryParams: { search: this.searchKW } });
+        this.router.navigate(['/systems/', data.Id], { 
+          queryParams: { 
+            search: this.searchKW,
+            tableSearchTerm: searchTerm
+          } 
+        });
         break;
       case 'FISMA':
-        this.router.navigate(['/FISMA/', data.Id], { queryParams: { search: this.searchKW } });
+        this.router.navigate(['/FISMA/', data.Id], {
+           queryParams: { 
+            search: this.searchKW,
+            tableSearchTerm: searchTerm
+           }
+        });
         break;
       case 'Technology':
-        this.router.navigate(['/it_standards/', data.Id], { queryParams: { search: this.searchKW } });
+        this.router.navigate(['/it_standards/', data.Id], {
+           queryParams: { 
+            search: this.searchKW,
+            tableSearchTerm: searchTerm
+           }
+        });
         break;
       case 'Capability':
-        this.router.navigate(['/capabilities/', data.Id], { queryParams: { search: this.searchKW } });
+        this.router.navigate(['/capabilities/', data.Id], {
+          queryParams: { 
+            search: this.searchKW,
+            tableSearchTerm: searchTerm
+           } 
+        });
         break;
       case 'Organization':
-        this.router.navigate(['/organizations/', data.Id], { queryParams: { search: this.searchKW } });
+        this.router.navigate(['/organizations/', data.Id], {
+          queryParams: { 
+            search: this.searchKW,
+            tableSearchTerm: searchTerm
+           } 
+        });
         break;
       case 'Investment':
-        this.router.navigate(['/investments/', data.Id], { queryParams: { search: this.searchKW } });
+        this.router.navigate(['/investments/', data.Id], { 
+          queryParams: { 
+            search: this.searchKW,
+            tableSearchTerm: searchTerm
+           }
+        });
         break;
       case 'Website':
-        this.router.navigate(['/websites/', data.Id], { queryParams: { search: this.searchKW } });
+        this.router.navigate(['/websites/', data.Id], { 
+          queryParams: { 
+            search: this.searchKW,
+            tableSearchTerm: searchTerm
+           } 
+        });
         break;
       default:
         break;

@@ -82,6 +82,9 @@ export class OrganizationsComponent implements OnInit {
   }
 
   public onRowClick(e: any) {
-    this.router.navigate(['organizations', e.ID]);
+    const searchTerm: string = e.tableSearchString || '';
+    this.router.navigate(['/organizations', e.ID], {
+        queryParams: { tableSearchTerm: searchTerm }
+    });
   }
 }

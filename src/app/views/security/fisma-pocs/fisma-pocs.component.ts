@@ -112,7 +112,10 @@ export class FismaPocsComponent implements OnInit {
   }
 
   public onRowClick(e: any) {
-    this.router.navigate(['FISMA_POC', e.ID]);
+    const searchTerm: string = e.tableSearchString || '';
+    this.router.navigate(['/FISMA_POC', e.ID], {
+        queryParams: { tableSearchTerm: searchTerm }
+    });
   }
 
   pocFormatter(value) {
