@@ -249,6 +249,9 @@ export class RecordsManagementComponent implements OnInit {
   }
 
   public onRowClick(e: any) {
-    this.router.navigate(['records_mgmt', e.Rec_ID]);
+    const searchTerm: string = e.tableSearchString || '';
+    this.router.navigate(['/records_mgmt', e.Rec_ID], {
+        queryParams: { tableSearchTerm: searchTerm }
+    });
   }
 }

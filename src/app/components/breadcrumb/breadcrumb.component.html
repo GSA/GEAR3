@@ -1,6 +1,6 @@
 @if (isFromSearch()) {
   <span class="breadcrumb-text">
-    <a [routerLink]="getGlobalSearchBack()">Global Search</a>
+    <a (click)="onGlobalBackClick()">Global Search</a>
   </span>
   <span class="breadcrumb-separator">></span>
 } 
@@ -11,7 +11,7 @@
   }
   @if (getSubLevelRotueName()) {
     <span class="breadcrumb-text">
-      <a [routerLink]="getBackRouteWithParams()">{{getSubLevelRotueName()}}</a>
+      <a (click)="onBackClick()">{{getSubLevelRotueName()}}</a>
     </span>
     <span class="breadcrumb-separator">></span>
   }

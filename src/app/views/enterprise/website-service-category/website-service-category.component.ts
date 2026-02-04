@@ -85,6 +85,9 @@ export class WebsiteServiceCategoryComponent implements OnInit {
   }
 
   public onRowClick(e: any) {
-    this.router.navigate(['website_service_category', e.website_service_category_id]);
+    const searchTerm: string = e.tableSearchString || '';
+    this.router.navigate(['/website_service_category', e.website_service_category_id], {
+        queryParams: { tableSearchTerm: searchTerm }
+    });
   }
 }

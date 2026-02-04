@@ -271,7 +271,10 @@ export class WebsitesComponent implements OnInit {
   }
 
   public onRowClick(e: any) {
-    this.router.navigate(['websites', e.website_id]);
+    const searchTerm: string = e.tableSearchString || '';
+    this.router.navigate(['/websites', e.website_id], {
+        queryParams: { tableSearchTerm: searchTerm }
+    });
   }
 
 }

@@ -211,6 +211,9 @@ export class TimeComponent implements OnInit {
   }
 
   public onRowClick(e: any) {
-    this.router.navigate(['systems_TIME', e['System Id']]);
+    const searchTerm: string = e.tableSearchString || '';
+    this.router.navigate(['/systems_TIME', e['System Id']], {
+        queryParams: { tableSearchTerm: searchTerm }
+    });
   }
 }
