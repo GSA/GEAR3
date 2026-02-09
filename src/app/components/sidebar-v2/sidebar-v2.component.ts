@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, HostListener } from '@angular/core';
 import { SidebarButtonChild } from '@common/sidebar-classes';
 
 @Component({
@@ -11,6 +11,13 @@ export class SidebarV2Component {
 
   public isSidebarExpanded: boolean = false;
   public activeMenu: string | null = null;
+
+  @HostListener('document:mousemove', ['$event'])
+  onMouseMove(event: MouseEvent) {
+    if(!this.eRef.nativeElement.contains(event.target)) {
+      this.isSidebarExpanded = false;
+    }
+  }
 
   public itStrategyChildren: SidebarButtonChild[] = [
     { text: 'IT Strategic Framework', route: '/strategic_framework' },
@@ -50,7 +57,7 @@ export class SidebarV2Component {
     { text: 'Systems Rationalization', route: '/about/sysRat' }
   ];
   
-  constructor() {
+  constructor(private eRef: ElementRef) {
   }
 
   public toggleSidebar(): void {

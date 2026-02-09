@@ -1,13 +1,30 @@
+// .site-container {
+//   display: flex;
+//   flex-direction: column;
+
+//   & .content-container {
+//     display: flex;
+//     flex-direction: row;
+//     height: 100%;
+//   }
+// }
+
 .site-container {
   display: flex;
   flex-direction: column;
 
-  & .content-container {
+  & .full-content-container {
     display: flex;
     flex-direction: row;
     height: 100%;
+
+    & .content-container {
+      display: flex;
+      flex-direction: column;
+    }
   }
 }
+
 
 .vertical-center {
   z-index: 100;
