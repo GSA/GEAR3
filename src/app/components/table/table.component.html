@@ -79,7 +79,7 @@
           <tr>
             @for (col of columns; track col) {
               @if (showColumn(col)) {
-                <th [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.isSortable ? true : false">
+                <th [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.isSortable ? true : false" [class]="col.class">
                   <div class="d-flex align-items-center table-heading">
                     @if (!col.titleTooltip) {
                       <span >{{ col.header }}</span>

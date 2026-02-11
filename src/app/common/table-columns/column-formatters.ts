@@ -20,6 +20,11 @@ export function formatDescription(value: any) {
     else return '<span class="description-wrap">' + value + "</span>";
 };
 
+export function formatDescriptionLite(value: any) {
+    if (!value) return '-';
+    else return '<span class="description-wrap-lite">' + value + "</span>";
+};
+
 export function pocStringNameFormatter(value: any) {
     let names = [];
     let pocs = value.split(':')[1];  // Retrieve POC after colon

@@ -106,13 +106,13 @@
               <div class="data-wrapper">
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('ATO Date')" role="tooltip">
-                      ATO Date
+                    <span [title]="getTooltip('Business Org')" role="tooltip">
+                      Business Org
                       <i class="fas fa-info-circle"></i>
                     </span>
                   </label>
                   <span>
-                    <span>{{detailsData.ATODate | date: 'longDate'}}</span>
+                    <span>{{detailsData.BusOrg}}</span>
                   </span>
                 </div>
                 <div class="data">
@@ -124,17 +124,6 @@
                   </label>
                   <span>
                     <span>{{detailsData.ATOType}}</span>
-                  </span>
-                </div>
-                <div class="data">
-                  <label class="data-label">
-                    <span [title]="getTooltip('Business Org')" role="tooltip">
-                      Business Org
-                      <i class="fas fa-info-circle"></i>
-                    </span>
-                  </label>
-                  <span>
-                    <span>{{detailsData.BusOrg}}</span>
                   </span>
                 </div>
                 <div class="data">
@@ -161,6 +150,18 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
+                    <span [title]="getTooltip('ATO Date')" role="tooltip">
+                      ATO Date
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>
+                    <span>{{detailsData.ATODate | date: 'longDate'}}</span>
+                  </span>
+                </div>
+                <div class="data"></div>
+                <div class="data">
+                  <label class="data-label">
                     <span [title]="getTooltip('Cloud Service Type')" role="tooltip">
                       Cloud Service Type
                       <i class="fas fa-info-circle"></i>
@@ -168,6 +169,17 @@
                   </label>
                   <span>
                     <span>{{detailsData.ServiceType}}</span>
+                  </span>
+                </div>
+                <div class="data">
+                  <label class="data-label">
+                    <span [title]="getTooltip('Renewal Date')" role="tooltip">
+                      Renewal Date
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>
+                    <span>{{(detailsData.RenewalDate | date: 'longDate') || 'N/A'}}</span>
                   </span>
                 </div>
               </div>
