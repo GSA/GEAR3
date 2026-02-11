@@ -1,10 +1,12 @@
 import { Column } from "@common/table-classes";
+import { formatDescriptionLite } from "./column-formatters";
 
 export const RelatedCapabilitiesColumns: Column[] = [
     {
         field: 'ReferenceNum',
         header: 'Ref Id',
-        isSortable: true
+        isSortable: true,
+        class: 'w-15'
       }, {
         field: 'Name',
         header: 'Capability Name',
@@ -14,7 +16,7 @@ export const RelatedCapabilitiesColumns: Column[] = [
         header: 'Description',
         isSortable: true,
         showColumn: false,
-        class: 'text-truncate'
+        formatter: formatDescriptionLite,
       }, {
         field: 'Level',
         header: 'Level',
