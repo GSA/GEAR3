@@ -7,6 +7,7 @@ import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
 import { Column } from '../../../common/table-classes';
 import { Organization } from '@api/models/organizations.model';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 
 @Component({
     selector: 'organizations',
@@ -16,6 +17,8 @@ import { Organization } from '@api/models/organizations.model';
 })
 export class OrganizationsComponent implements OnInit {
   row: Object = <any>{};
+
+  public attrDefinitions: DataDictionary[] = [];
 
   constructor(
     private apiService: ApiService,
@@ -60,6 +63,10 @@ export class OrganizationsComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    this.apiService.getDataDictionaryByReportName('Organization').subscribe(defs => {
+      this.attrDefinitions = defs
+    });
+
     this.apiService.getOrganizations().subscribe(o => {
       this.tableService.updateReportTableData(o);
       this.tableService.updateReportTableDataReadyStatus(true);

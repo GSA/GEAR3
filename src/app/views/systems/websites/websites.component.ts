@@ -10,6 +10,7 @@ import { Title } from '@angular/platform-browser';
 
 import { FilterButton, Column, TwoDimArray } from '../../../common/table-classes';
 import { Website } from '@api/models/websites.model';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 
 @Component({
     selector: 'websites',
@@ -23,6 +24,7 @@ export class WebsitesComponent implements OnInit {
   public filterTotals: any = null;
   public websitesData: Website[] = [];
   public websitesTabFilterted: Website[] = [];
+  public attrDefinitions: DataDictionary[] = [];
 
   constructor(
     private apiService: ApiService,
@@ -58,124 +60,149 @@ export class WebsitesComponent implements OnInit {
   //   ]
   // ];
 
-  public tableCols: Column[] = [
-    {
-      field: 'domain',
-      header: 'Domain',
-      isSortable: true,
-    },
-    {
-      field: 'office',
-      header: 'Office',
-      isSortable: true,
-    },
-    {
-      field: 'site_owner_email',
-      header: 'Website Manager',
-      isSortable: true,
-    },
-    {
-      field: 'contact_email',
-      header: 'Contact Email',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'production_status',
-      header: 'Status',
-      isSortable: true,
-    },
-    {
-      field: 'redirects_to',
-      header: 'Redirect URL',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'required_by_law_or_policy',
-      header: 'Required by Law/Policy?',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'has_dap',
-      header: 'DAP Enabled',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'https',
-      header: 'HTTPS Enabled',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'mobile_friendly',
-      header: 'Mobile Friendly?',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'has_search',
-      header: 'Has Search?',
-      isSortable: true,
-    },
-    {
-      field: 'repository_url',
-      header: 'Repository URL',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'hosting_platform',
-      header: 'Hosting Platform',
-      isSortable: true,
-    },
-    {
-      field: 'cms_platform',
-      header: 'Content Management Platform',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'sub_office',
-      header: 'Sub-office',
-      isSortable: false,
-      showColumn: false,
-      class: 'text-truncate',
-    },
-    {
-      field: 'type_of_site',
-      header: 'Type of Site',
-      isSortable: true,
-      showColumn: true,
-      class: 'text-truncate',
-    },
-    {
-      field: 'digital_brand_category',
-      header: 'Digital Brand Category',
-      isSortable: true,
-      showColumn: false,
-      formatter: this.sharedService.formatDescription
-    },
-    {
-      field: 'target_decommission_date',
-      header: 'Target Decommission Date',
-      isSortable: true,
-      showColumn: false,
-      formatter: this.sharedService.utcDateFormatter
-    },
-    {
-      field: 'sitemap_url',
-      header: 'Sitemap URL',
-      isSortable: false,
-      showColumn: false
-    },
-];
+  public tableCols: Column[] = [];
 
   ngOnInit(): void {
     // Set JWT when logged into GEAR Manager when returning from secureAuth
     this.sharedService.setJWTonLogIn();
+
+    this.apiService.getDataDictionaryByReportName('GSA Websites').subscribe(defs => {
+      this.attrDefinitions = defs
+
+        this.tableCols = [
+          {
+            field: 'domain',
+            header: 'Domain',
+            isSortable: true,
+            titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Domain')
+          },
+          {
+            field: 'office',
+            header: 'Office',
+            isSortable: true,
+            titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Office')
+          },
+          {
+            field: 'site_owner_email',
+            header: 'Website Manager',
+            isSortable: true,
+            titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Website Manager')
+          },
+          {
+            field: 'contact_email',
+            header: 'Contact Email',
+            isSortable: true,
+            showColumn: false,
+            titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Contact Email')
+          },
+          {
+            field: 'production_status',
+            header: 'Status',
+            isSortable: true,
+            titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Status')
+          },
+          {
+            field: 'redirects_to',
+            header: 'Redirect URL',
+            isSortable: true,
+            showColumn: false,
+            titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Redirect URL')
+          },
+          {
+            field: 'required_by_law_or_policy',
+            header: 'Required by Law/Policy?',
+            isSortable: true,
+            showColumn: false,
+            titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Required by Law/Policy?')
+          },
+          {
+            field: 'has_dap',
+            header: 'DAP Enabled',
+            isSortable: true,
+            showColumn: false,
+            titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'DAP Enabled')
+          },
+          {
+            field: 'https',
+            header: 'HTTPS Enabled',
+            isSortable: true,
+            showColumn: false,
+            titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'HTTPS Enabled')
+          },
+          {
+            field: 'mobile_friendly',
+            header: 'Mobile Friendly?',
+            isSortable: true,
+            showColumn: false,
+            titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Mobile Friendly?')
+          },
+          {
+            field: 'has_search',
+            header: 'Has Search?',
+            isSortable: true,
+            titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Has Search?')
+          },
+          {
+            field: 'repository_url',
+            header: 'Repository URL',
+            isSortable: true,
+            showColumn: false,
+            titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Repository URL')
+          },
+          {
+            field: 'hosting_platform',
+            header: 'Hosting Platform',
+            isSortable: true,
+            titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Hosting Platform')
+          },
+          {
+            field: 'cms_platform',
+            header: 'Content Management Platform',
+            isSortable: true,
+            showColumn: false,
+            titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Content Management Platform')
+          },
+          {
+            field: 'sub_office',
+            header: 'Sub-office',
+            isSortable: false,
+            showColumn: false,
+            class: 'text-truncate',
+            titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Sub-office')
+          },
+          {
+            field: 'type_of_site',
+            header: 'Type of Site',
+            isSortable: true,
+            showColumn: true,
+            class: 'text-truncate',
+            titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Type of Site')
+          },
+          {
+            field: 'digital_brand_category',
+            header: 'Digital Brand Category',
+            isSortable: true,
+            showColumn: false,
+            formatter: this.sharedService.formatDescription,
+            titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Digital Brand Category')
+          },
+          {
+            field: 'target_decommission_date',
+            header: 'Target Decommission Date',
+            isSortable: true,
+            showColumn: false,
+            formatter: this.sharedService.utcDateFormatter,
+            titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Target Decommission Date')
+          },
+          {
+            field: 'sitemap_url',
+            header: 'Sitemap URL',
+            isSortable: false,
+            showColumn: false,
+            titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Sitemap URL')
+          },
+      ];
+    });
 
     this.apiService.getWebsites().subscribe(websites => {
       this.websitesData = websites;

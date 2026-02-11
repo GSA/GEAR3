@@ -26,7 +26,7 @@
     </div>
   </div>
   <div class="records-management-data-container">
-    <app-table visibleColumnStorageKey="records-management-report" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)"></app-table>
+    <app-table visibleColumnStorageKey="records-management-report" [tableCols]="tableCols" [attrDefs]="attrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)"></app-table>
   </div>
 </div>
 

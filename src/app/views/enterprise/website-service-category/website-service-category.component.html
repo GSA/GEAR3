@@ -25,7 +25,7 @@
       <app-button [buttonText]="defExpanded ? 'View Less' : 'View More'" buttonStyle="link" (buttonClick)="onViewAll()"></app-button>
   </div>
   <div class="website-categories-data-container">
-    <app-table visibleColumnStorageKey="websites-website-categories" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)"></app-table>
+    <app-table visibleColumnStorageKey="websites-website-categories" [tableCols]="tableCols" [attrDefs]="attrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)"></app-table>
   </div>
 </div>
 

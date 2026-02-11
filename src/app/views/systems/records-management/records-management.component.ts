@@ -10,6 +10,7 @@ import { trigger, state, style, animate, transition } from '@angular/animations'
 
 import { Column } from '../../../common/table-classes';
 import { Record } from '@api/models/records.model';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 
 @Component({
     selector: 'records-management',
@@ -25,6 +26,8 @@ import { Record } from '@api/models/records.model';
     standalone: false
 })
 export class RecordsManagementComponent implements OnInit {
+  public attrDefinitions: DataDictionary[] = [];
+
   updateAllInfoData: any = "";
 
   isLoading: boolean = false;
@@ -78,7 +81,7 @@ export class RecordsManagementComponent implements OnInit {
       header: 'Retention Instructions',
       isSortable: false,
       showColumn: false,
-      class: 'text-truncate',
+      formatter: this.sharedService.formatDescription
     },
     {
       field: 'Legal_Disposition_Authority',
@@ -102,7 +105,7 @@ export class RecordsManagementComponent implements OnInit {
       header: 'Disposition Notes',
       isSortable: false,
       showColumn: false,
-      class: 'text-truncate',
+      formatter: this.sharedService.formatDescription
     },
     {
       field: 'FP_Category',
@@ -130,6 +133,10 @@ export class RecordsManagementComponent implements OnInit {
   ngOnInit(): void {
     // Set JWT when logged into GEAR Manager when returning from secureAuth
     this.sharedService.setJWTonLogIn();
+
+    this.apiService.getDataDictionaryByReportName('Records Management').subscribe(defs => {
+      this.attrDefinitions = defs
+    });
 
     this.apiService.getRecords().subscribe(r => {
       this.tableService.updateReportTableData(r);

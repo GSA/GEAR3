@@ -9,6 +9,7 @@ import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
 import { Column } from '../../../common/table-classes';
 import { Capability } from '@api/models/capabilities.model';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 
 @Component({
     selector: 'capabilities',
@@ -18,6 +19,8 @@ import { Capability } from '@api/models/capabilities.model';
 })
 export class CapabilitiesComponent implements OnInit {
   public defExpanded: boolean = false;
+
+  public attrDefinitions: DataDictionary[] = [];
 
   row: Object = <any>{};
   ssoTable: boolean = false;
@@ -71,6 +74,10 @@ export class CapabilitiesComponent implements OnInit {
   ngOnInit(): void {
     // Set JWT when logged into GEAR Manager when returning from secureAuth
     this.sharedService.setJWTonLogIn();
+
+    this.apiService.getDataDictionaryByReportName('Business Capabilities').subscribe(defs => {
+      this.attrDefinitions = defs
+    });
 
     this.apiService.getCapabilities().subscribe(c => {
       this.tableService.updateReportTableData(c);

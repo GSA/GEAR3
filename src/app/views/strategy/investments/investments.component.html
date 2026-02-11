@@ -46,7 +46,7 @@
     </div>
   </div>
   <div class="it-investments-data-container">
-    <app-table visibleColumnStorageKey="investment-report" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)">
+    <app-table visibleColumnStorageKey="investment-report" [attrDefs]="attrDefinitions" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)">
       <div class="filter-tabs-container" filterTabs>
         <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')" (keyup)="onKeyUp($event, 'All')" tabindex="0">
           <span class="filter-tab-text">All</span>

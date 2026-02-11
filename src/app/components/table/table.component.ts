@@ -9,6 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
 import { Location } from '@angular/common';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 
 
 @Component({
@@ -64,6 +65,8 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   @Input() defaultPaginationNumber: number = 50;
 
   @Input() visibleColumnStorageKey: string = '';
+
+  @Input() attrDefs: DataDictionary[] = [];
 
   // Filter event (some reports change available columns when filtered)
   @Output() filterEvent = new EventEmitter<string>();
@@ -564,5 +567,13 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     } else {
       return escapedField;
     }
+  }
+
+  public getTooltip (name: string): string {
+    const def = this.attrDefs.find(def => def.Term === name);
+    if(def){
+      return def.TermDefinition;
+    }
+    return '';
   }
 }

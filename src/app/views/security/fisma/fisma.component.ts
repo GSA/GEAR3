@@ -8,6 +8,7 @@ import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
 import { FilterButton, Column, TwoDimArray } from '../../../common/table-classes';
 import { FISMA } from '@api/models/fisma.model';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 
 @Component({
     selector: 'fisma',
@@ -22,6 +23,8 @@ export class FismaComponent implements OnInit {
   public fismaTabFilterted: FISMA[] = [];
 
   public daysExpiring: number = 0;
+
+  public attrDefinitions: DataDictionary[] = [];
 
   row: Object = <any>{};
   // retiredTable: boolean = false;
@@ -165,6 +168,10 @@ export class FismaComponent implements OnInit {
       if(params['expiringWithinDays']) {
         this.daysExpiring = +params['expiringWithinDays'];
       }
+    });
+
+    this.apiService.getDataDictionaryByReportName('FISMA Systems Inventory').subscribe(defs => {
+      this.attrDefinitions = defs
     });
 
     this.apiService.getFISMA().subscribe(fisma => {

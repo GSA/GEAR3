@@ -9,6 +9,7 @@ import jwtDecode from 'jwt-decode';
 import { HttpClient } from '@angular/common/http';
 import { set } from 'd3';
 import { BehaviorSubject } from 'rxjs';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -460,5 +461,13 @@ export class SharedService {
 
   public disableStickyHeader(tableComponentId: string) {
     $('#'+tableComponentId).floatThead('destroy');
+  }
+
+  public getTooltip (attrDefinitions: DataDictionary[], name: string): string {
+    const def = attrDefinitions.find(def => def.Term === name);
+    if(def){
+      return def.TermDefinition;
+    }
+    return '';
   }
 }

@@ -12,6 +12,7 @@ import { Title } from '@angular/platform-browser';
 
 import { Column } from '../../../common/table-classes';
 import { TIME } from '@api/models/systime.model';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 
 @Component({
     selector: 'time',
@@ -20,6 +21,8 @@ import { TIME } from '@api/models/systime.model';
     standalone: false
 })
 export class TimeComponent implements OnInit {
+  public attrDefinitions: DataDictionary[] = [];
+
   row: Object = <any>{};
 
   vizData: any[] = [];
@@ -134,6 +137,10 @@ export class TimeComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    this.apiService.getDataDictionaryByReportName('TIME Report').subscribe(defs => {
+      this.attrDefinitions = defs
+    });
+
     this.apiService.getTIME().subscribe(t => {
       this.tableService.updateReportTableData(t);
       this.tableService.updateReportTableDataReadyStatus(true);
