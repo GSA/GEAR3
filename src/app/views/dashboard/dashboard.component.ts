@@ -6,6 +6,7 @@ import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { forkJoin } from 'rxjs';
 import { AnalyticsService } from '@services/analytics/analytics.service';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 
 @Component({
     selector: 'dashboard',
@@ -20,6 +21,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private resizeObserver: ResizeObserver;
 
   public readonly recentITStandardAmount: number = 10;
+
+  public attrDefinitions: DataDictionary[] = [];
 
   public chartView: [number, number] = [0, 400];
   public barChartView: [number, number] = [0, 350];
@@ -161,6 +164,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.apiService.getFismaExpiringThisWeek(),
       this.apiService.getDecommissionedSystemTotals(),
       this.apiService.getRetiredStandardsTotals(),
+      this.apiService.getDataDictionaryByReportName('IT Standards List')
     ]).subscribe(
       ([
         standardsExpiringQuarter,
@@ -168,7 +172,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         fismaExpiringQuarter,
         fismaExpiringWeek,
         decommissionedSystemTotals,
-        RetiredStandardTotals
+        RetiredStandardTotals,
+        definitions
       ]) => {
         this.standardsExpiringThisQuarter = standardsExpiringQuarter || 0;
         this.standardsExpiringThisWeek = standardsExpiringWeek || 0;
@@ -179,6 +184,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.decommissionedSystemsLastMonth = decommissionedSystemTotals?.DecommissionedSystemsLastMonth || 0;
         this.retiredITStandardsLast6Months = RetiredStandardTotals?.RetiredStandardsLastSixMonths || 0;
         this.retiredITStandardsLast7Days = RetiredStandardTotals?.RetiredStandardsLastWeek || 0;
+
+        this.attrDefinitions = definitions;
 
         this.isDataReady = true;
       }

@@ -18,7 +18,7 @@
     </app-button-overlay-panel>
   </div>
   <div class="organizations-data-container">
-    <app-table visibleColumnStorageKey="organizations-report" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)"></app-table>
+    <app-table visibleColumnStorageKey="organizations-report" [tableCols]="tableCols" [attrDefs]="attrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)"></app-table>
   </div>
 </div>
 

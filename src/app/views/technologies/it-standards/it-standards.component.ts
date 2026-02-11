@@ -173,128 +173,128 @@ export class ItStandardsComponent implements OnInit {
         header: 'ID',
         isSortable: true,
         showColumn: false,
-        titleTooltip: this.getTooltip('ID')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'ID')
       }, {
         field: 'Name',
         header: 'IT Standard Name',
         isSortable: true,
         showColumn: true,
-        titleTooltip: this.getTooltip('IT Standard Name')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'IT Standard Name')
       },
       {
         field: 'ApprovedVersions',
         header: 'Approved Versions',
         isSortable: false,
         showColumn: true,
-        titleTooltip: this.getTooltip('Approved Versions')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Approved Versions')
       }, {
         field: 'Manufacturer',
         header: 'Manufacturer ID',
         isSortable: true,
         showColumn: false,
-        titleTooltip: this.getTooltip('Manufacturer ID')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Manufacturer ID')
       }, {
         field: 'ManufacturerName',
         header: 'Manufacturer',
         isSortable: true,
-        titleTooltip: this.getTooltip('Manufacturer Name')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Manufacturer Name')
       }, {
         field: 'SoftwareProduct',
         header: 'Product ID',
         isSortable: true,
         showColumn: false,
-        titleTooltip: this.getTooltip('Software Product ID')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Software Product ID')
       }, {
         field: 'SoftwareProductName',
         header: 'Product',
         isSortable: true,
         showColumn: false,
-        titleTooltip: this.getTooltip('Software Product Name')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Software Product Name')
       }, {
         field: 'SoftwareVersion',
         header: 'Version ID',
         isSortable: true,
         showColumn: false,
-        titleTooltip: this.getTooltip('Software Version ID')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Software Version ID')
       }, {
         field: 'SoftwareVersionName',
         header: 'Version',
         isSortable: true,
         showColumn: false,
-        titleTooltip: this.getTooltip('Software Version Name')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Software Version Name')
       }, {
         field: 'SoftwareRelease',
         header: 'Release ID',
         isSortable: true,
         showColumn: false,
-        titleTooltip: this.getTooltip('Software Release ID')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Software Release ID')
       }, {
         field: 'SoftwareReleaseName',
         header: 'Release',
         isSortable: true,
         showColumn: false,
-        titleTooltip: this.getTooltip('Software Release Name')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Software Release Name')
       }, {
         field: 'EndOfLifeDate',
         header: 'Vendor End of Life Date',
         isSortable: true,
         showColumn: false,
         formatter: this.sharedService.dateFormatter,
-       titleTooltip: this.getTooltip('Software End of Life Date')
+       titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Software End of Life Date')
       }, {
         field: 'AlsoKnownAs',
         header: 'Also Known As',
         isSortable: true,
         showColumn: false,
-        titleTooltip: this.getTooltip('Previously Known As')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Previously Known As')
       }, {
         field: 'Description',
         header: 'Description',
         isSortable: true,
         showColumn: true,
         formatter: this.sharedService.formatDescriptionLite,
-        titleTooltip: this.getTooltip('Description')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Description')
       }, {
         field: 'Category',
         header: 'Category',
         isSortable: true,
-        titleTooltip: this.getTooltip('Category')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Category')
       }, {
         field: 'Status',
         header: 'Status',
         isSortable: true,
         formatter: this.sharedService.formatStatus,
-        titleTooltip: this.getTooltip('Status')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Status')
       }, {
         field: 'StandardType',
         header: 'Standard Type',
         isSortable: true,
         showColumn: false,
-        titleTooltip: this.getTooltip('Standard Type')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Standard Type')
       }, {
         field: 'DeploymentType',
         header: 'Deployment Type',
         isSortable: true,
         formatter: this.sharedService.formatDeploymentType,
-        titleTooltip: this.getTooltip('Deployment Type')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Deployment Type')
       }, {
         field: 'ComplianceStatus',
         header: '508 Compliance',
         isSortable: true,
         showColumn: false,
-        titleTooltip: this.getTooltip('508 Compliance')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, '508 Compliance')
       }, {
         field: 'POC',
         header: 'POC',
         isSortable: true,
         showColumn: false,
-        titleTooltip: this.getTooltip('POC')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'POC')
       }, {
         field: 'POCorg',
         header: 'POC Org',
         isSortable: true,
         showColumn: false,
-        titleTooltip: this.getTooltip('POC Org')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'POC Org')
       },
       {
         field: 'Comments',
@@ -302,46 +302,46 @@ export class ItStandardsComponent implements OnInit {
         isSortable: true,
         showColumn: false,
         formatter: this.sharedService.formatDescription,
-        titleTooltip: this.getTooltip('Comments')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Comments')
       }, {
         field: 'attestation_required',
         header: 'Attestation Required',
         isSortable: true,
         showColumn: false,
-        titleTooltip: this.getTooltip('Attestation Required')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Attestation Required')
       }, {
         field: 'attestation_link',
         header: 'Attestation Link',
         isSortable: true,
         showColumn: false,
-        titleTooltip: this.getTooltip('Attestation Link')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Attestation Link')
       }, {
         field: 'fedramp',
         header: 'FedRAMP',
         isSortable: true,
         showColumn: false,
         formatter: this.YesNo,
-        titleTooltip: this.getTooltip('FedRAMP')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'FedRAMP')
       }, {
         field: 'open_source',
         header: 'Open Source',
         isSortable: true,
         showColumn: false,
         formatter: this.YesNo,
-        titleTooltip: this.getTooltip('Open Source')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Open Source')
       },{
         field: 'RITM',
         header: 'Requested Item (RITM)',
         isSortable: true,
         showColumn: false,
-        titleTooltip: this.getTooltip('Requested Item (RITM)')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Requested Item (RITM)')
       }, {
         field: 'ApprovalExpirationDate',
         header: 'Approval Expires',
         isSortable: true,
         showColumn: true,
         formatter: this.sharedService.dateFormatter,
-        titleTooltip: this.getTooltip('Approval Expiration Date')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Approval Expiration Date')
       },
       {
         field: 'OperatingSystems',
@@ -349,7 +349,7 @@ export class ItStandardsComponent implements OnInit {
         isSortable: false,
         showColumn: false,
         formatter: this.sharedService.csvFormatter,
-        titleTooltip: this.getTooltip('Operating Systems')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Operating Systems')
       },
       {
         field: 'AppBundleIds',
@@ -357,14 +357,14 @@ export class ItStandardsComponent implements OnInit {
         isSortable: false,
         showColumn: false,
         formatter: this.sharedService.csvFormatter,
-        titleTooltip: this.getTooltip('App Bundle Ids')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'App Bundle Ids')
       },
       {
         field: 'ConditionsRestrictions',
         header: 'Conditions/Restrictions',
         isSortable: false,
         showColumn: false,
-        titleTooltip: this.getTooltip('ConditionsRestrictions')
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'ConditionsRestrictions')
       }];
     });
 
@@ -480,13 +480,13 @@ export class ItStandardsComponent implements OnInit {
   //   $('#divRelease').addClass("disabledDivRelease");
   // }
 
-  getTooltip (name: string): string {
-    const def = this.attrDefinitions.find(def => def.Term === name);
-    if(def){
-      return def.TermDefinition;
-    }
-    return '';
-  }
+  // getTooltip (name: string): string {
+  //   const def = this.attrDefinitions.find(def => def.Term === name);
+  //   if(def){
+  //     return def.TermDefinition;
+  //   }
+  //   return '';
+  // }
 
   public onRowClick(e: any) {
     const searchTerm: string = e.tableSearchString || '';

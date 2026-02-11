@@ -9,6 +9,7 @@ import { Title } from '@angular/platform-browser';
 
 import { Investment } from '@api/models/investments.model';
 import { FilterButton, Column, TwoDimArray } from '../../../common/table-classes';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 
 // Declare jQuery symbol
 // declare var $: any;
@@ -28,6 +29,8 @@ export class InvestmentsComponent implements OnInit {
 
   public itInvestmentsData: Investment[] = [];
   public itInvesmentsDataTabFilterted: Investment[] = [];
+
+  public attrDefinitions: DataDictionary[] = [];
 
   // row: Object = <any>{};
   // filteredTable: boolean = false;
@@ -93,89 +96,7 @@ export class InvestmentsComponent implements OnInit {
     return this.selectedTab === tabName;
   }
 
-  defaultCols: Column[] = [
-    {
-      field: 'Name',
-      header: 'Investment Name',
-      isSortable: true,
-    },
-    {
-      field: 'Description',
-      header: 'Description',
-      isSortable: true,
-      showColumn: true,
-      formatter: this.sharedService.formatDescription
-    },
-    {
-      field: 'Type',
-      header: 'Type',
-      isSortable: true,
-    },
-    {
-      field: 'IT_Portfolio',
-      header: 'Part of IT Portfolio',
-      isSortable: true,
-    },
-    {
-      field: 'Budget_Year',
-      header: 'Budget Year',
-      isSortable: true,
-    },
-    {
-      field: 'InvManager',
-      header: 'Investment Manager',
-      isSortable: true,
-      formatter: this.sharedService.noneProvidedFormatter,
-    },
-    {
-      field: 'Status',
-      header: 'Status',
-      isSortable: true,
-    },
-    {
-      field: 'Start_Year',
-      header: 'Start Year',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'End_Year',
-      header: 'End Year',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'PSA',
-      header: 'Primary Service Area',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'Cloud_Alt',
-      header: 'Cloud Alt. Evaluation',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'Comments',
-      header: 'Comments',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'UII',
-      header: 'Investment UII',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'Updated_Date',
-      header: 'Updated Date',
-      isSortable: true,
-      showColumn: false,
-      formatter: this.sharedService.dateFormatter,
-    },
-  ];
+  defaultCols: Column[] = [];
 
   // Previous Year Investments Table Columns
   PYcolumnDefs: Column[] = [
@@ -313,7 +234,97 @@ export class InvestmentsComponent implements OnInit {
     //   $('[data-bs-toggle="popover"]').popover();
     // });
 
-    this.tableCols = this.defaultCols;
+    this.apiService.getDataDictionaryByReportName('IT Investments').subscribe(defs => {
+      this.attrDefinitions = defs
+
+      this.defaultCols = [
+        {
+          field: 'Name',
+          header: 'Investment Name',
+          isSortable: true,
+        },
+        {
+          field: 'Description',
+          header: 'Description',
+          isSortable: true,
+          showColumn: true,
+          formatter: this.sharedService.formatDescription
+        },
+        {
+          field: 'Type',
+          header: 'Type',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Investment Type')
+        },
+        {
+          field: 'IT_Portfolio',
+          header: 'Part of IT Portfolio',
+          isSortable: true,
+        },
+        {
+          field: 'Budget_Year',
+          header: 'Budget Year',
+          isSortable: true,
+        },
+        {
+          field: 'InvManager',
+          header: 'Investment Manager',
+          isSortable: true,
+          formatter: this.sharedService.noneProvidedFormatter,
+        },
+        {
+          field: 'Status',
+          header: 'Status',
+          isSortable: true,
+        },
+        {
+          field: 'Start_Year',
+          header: 'Start Year',
+          isSortable: true,
+          showColumn: false,
+        },
+        {
+          field: 'End_Year',
+          header: 'End Year',
+          isSortable: true,
+          showColumn: false,
+        },
+        {
+          field: 'PSA',
+          header: 'Primary Service Area',
+          isSortable: true,
+          showColumn: false,
+        },
+        {
+          field: 'Cloud_Alt',
+          header: 'Cloud Alt. Evaluation',
+          isSortable: true,
+          showColumn: false,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Cloud Alternatives Evaluation')
+        },
+        {
+          field: 'Comments',
+          header: 'Comments',
+          isSortable: true,
+          showColumn: false,
+        },
+        {
+          field: 'UII',
+          header: 'Investment UII',
+          isSortable: true,
+          showColumn: false,
+        },
+        {
+          field: 'Updated_Date',
+          header: 'Updated Date',
+          isSortable: true,
+          showColumn: false,
+          formatter: this.sharedService.dateFormatter,
+        },
+      ];
+
+      this.tableCols = this.defaultCols;
+    });
 
     this.apiService.getInvestments().subscribe(i => {
       this.tableService.updateReportTableData(i);

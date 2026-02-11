@@ -8,6 +8,7 @@ import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
 import { Column } from '../../../common/table-classes';
 import { Service_Category } from '@api/models/service-category.model';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 
 @Component({
     selector: 'website-service-category',
@@ -17,6 +18,8 @@ import { Service_Category } from '@api/models/service-category.model';
 })
 export class WebsiteServiceCategoryComponent implements OnInit {
   public defExpanded: boolean = false;
+
+  public attrDefinitions: DataDictionary[] = [];
 
   row: Object = <any>{};
 
@@ -57,6 +60,10 @@ export class WebsiteServiceCategoryComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    this.apiService.getDataDictionaryByReportName('Website Service Categories').subscribe(defs => {
+      this.attrDefinitions = defs
+    });
+
     this.apiService.getWebsiteServiceCategory().subscribe(w => {
       this.tableService.updateReportTableData(w);
       this.tableService.updateReportTableDataReadyStatus(true);

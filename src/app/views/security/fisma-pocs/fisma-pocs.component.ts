@@ -7,6 +7,7 @@ import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
 import { Column } from '../../../common/table-classes';
 import { FISMA } from '@api/models/fisma.model';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 
 @Component({
     selector: 'fisma-pocs',
@@ -16,6 +17,8 @@ import { FISMA } from '@api/models/fisma.model';
 })
 export class FismaPocsComponent implements OnInit {
   row: Object = <any>{};
+
+  public attrDefinitions: DataDictionary[] = [];
 
   constructor(
     private apiService: ApiService,
@@ -82,6 +85,10 @@ export class FismaPocsComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    this.apiService.getDataDictionaryByReportName('FISMA System POCs').subscribe(defs => {
+      this.attrDefinitions = defs
+    });
+
     this.apiService.getFISMA().subscribe(fisma => {
       this.tableDataOriginal = fisma;
       this.filteredTableData = []; // Reset the array

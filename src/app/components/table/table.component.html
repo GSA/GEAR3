@@ -82,8 +82,9 @@
                 <th [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.isSortable ? true : false" [class]="col.class">
                   <div class="d-flex align-items-center table-heading">
                     @if (!col.titleTooltip) {
-                      <span >{{ col.header }}</span>
+                      <span [title]="getTooltip(col.header)" >{{ col.header }}</span>
                     }
+                    <!-- Table tooltip override for definitions that don't match the col.header property -->
                     @if (col.titleTooltip) {
                       <span [title]="col.titleTooltip">{{ col.header }}</span>
                     }
