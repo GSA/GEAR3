@@ -99,134 +99,13 @@ export class InvestmentsComponent implements OnInit {
   defaultCols: Column[] = [];
 
   // Previous Year Investments Table Columns
-  PYcolumnDefs: Column[] = [
-    {
-      field: 'UII',
-      header: 'Investment UII',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'Name',
-      header: 'Investment Name',
-      isSortable: true,
-    },
-    {
-      field: 'Total_Spend_PY',
-      header: 'Total IT Spending ($ M): PY',
-      isSortable: true,
-    },
-    {
-      field: 'DME_Agency_Fund_PY',
-      header: 'DME Agency Funding ($ M): PY',
-      isSortable: true,
-    },
-    {
-      field: 'DME_Contributions_PY',
-      header: 'DME Contributions ($ M): PY',
-      isSortable: true,
-    },
-    {
-      field: 'OnM_Agency_Fund_PY',
-      header: 'O&M Agency Funding ($ M): PY',
-      isSortable: true,
-    },
-    {
-      field: 'OnM_Contributions_PY',
-      header: 'O&M Contributions ($ M): PY',
-      isSortable: true,
-    },
-  ];
+  PYcolumnDefs: Column[] = [];
 
   // Current Year Investments Table Columns
-  CYcolumnDefs: Column[] = [
-    {
-      field: 'UII',
-      header: 'Investment UII',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'Name',
-      header: 'Investment Name',
-      isSortable: true,
-    },
-    {
-      field: 'Total_Spend_CY',
-      header: 'Total IT Spending ($ M): CY',
-      isSortable: true,
-    },
-    {
-      field: 'DME_Agency_Fund_CY',
-      header: 'DME Agency Funding ($ M): CY',
-      isSortable: true,
-    },
-    {
-      field: 'DME_Contributions_CY',
-      header: 'DME Contributions ($ M): CY',
-      isSortable: true,
-    },
-    {
-      field: 'OnM_Agency_Fund_CY',
-      header: 'O&M Agency Funding ($ M): CY',
-      isSortable: true,
-    },
-    {
-      field: 'OnM_Contributions_CY',
-      header: 'O&M Contributions ($ M): CY',
-      isSortable: true,
-    },
-  ];
+  CYcolumnDefs: Column[] = [];
 
   // Budget Year Investments Table Columns
-  BYcolumnDefs: Column[] = [
-    {
-      field: 'UII',
-      header: 'Investment UII',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'Name',
-      header: 'Investment Name',
-      isSortable: true,
-    },
-    {
-      field: 'Total_Spend_BY',
-      header: 'Total IT Spending ($ M): BY',
-      isSortable: true,
-    },
-    {
-      field: 'DME_Agency_Fund_BY',
-      header: 'DME Agency Funding ($ M): BY',
-      isSortable: true,
-    },
-    {
-      field: 'DME_Contributions_BY',
-      header: 'DME Contributions ($ M): BY',
-      isSortable: true,
-    },
-    {
-      field: 'DME_Budget_Auth_BY',
-      header: 'DME Budget Authority Agency Funding ($ M): BY',
-      isSortable: true,
-    },
-    {
-      field: 'OnM_Agency_Fund_BY',
-      header: 'O&M Agency Funding ($ M): BY',
-      isSortable: true,
-    },
-    {
-      field: 'OnM_Contributions_BY',
-      header: 'O&M Contributions ($ M): BY',
-      isSortable: true,
-    },
-    {
-      field: 'OnM_Budget_Auth_BY',
-      header: 'O&M Budget Authority Agency Funding ($ M): BY',
-      isSortable: true,
-    },
-  ];
+  BYcolumnDefs: Column[] = [];
 
   ngOnInit(): void {
     // // Enable popovers
@@ -320,6 +199,150 @@ export class InvestmentsComponent implements OnInit {
           isSortable: true,
           showColumn: false,
           formatter: this.sharedService.dateFormatter,
+        },
+      ];
+
+      this.PYcolumnDefs = [
+        {
+          field: 'UII',
+          header: 'Investment UII',
+          isSortable: true,
+          showColumn: false,
+        },
+        {
+          field: 'Name',
+          header: 'Investment Name',
+          isSortable: true,
+        },
+        {
+          field: 'Total_Spend_PY',
+          header: 'Total IT Spending ($ M): PY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Total IT Spending (PY) ($ M)')
+        },
+        {
+          field: 'DME_Agency_Fund_PY',
+          header: 'DME Agency Funding ($ M): PY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'DME PY Agency Funding ($ M)')
+        },
+        {
+          field: 'DME_Contributions_PY',
+          header: 'DME Contributions ($ M): PY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'DME PY Contributions ($ M)')
+        },
+        {
+          field: 'OnM_Agency_Fund_PY',
+          header: 'O&M Agency Funding ($ M): PY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'O&M PY Agency Funding ($ M)')
+        },
+        {
+          field: 'OnM_Contributions_PY',
+          header: 'O&M Contributions ($ M): PY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'O&M PY Contributions ($ M)')
+        },
+      ];
+
+      this.CYcolumnDefs = [
+        {
+          field: 'UII',
+          header: 'Investment UII',
+          isSortable: true,
+          showColumn: false,
+        },
+        {
+          field: 'Name',
+          header: 'Investment Name',
+          isSortable: true,
+        },
+        {
+          field: 'Total_Spend_CY',
+          header: 'Total IT Spending ($ M): CY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Total IT Spending (CY) ($ M)')
+        },
+        {
+          field: 'DME_Agency_Fund_CY',
+          header: 'DME Agency Funding ($ M): CY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'DME CY Agency Funding ($ M)')
+        },
+        {
+          field: 'DME_Contributions_CY',
+          header: 'DME Contributions ($ M): CY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'DME CY Contributions ($ M)')
+        },
+        {
+          field: 'OnM_Agency_Fund_CY',
+          header: 'O&M Agency Funding ($ M): CY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'O&M CY Agency Funding ($ M)')
+        },
+        {
+          field: 'OnM_Contributions_CY',
+          header: 'O&M Contributions ($ M): CY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'O&M CY Contributions ($ M)')
+        },
+      ];
+
+      this.BYcolumnDefs = [
+        {
+          field: 'UII',
+          header: 'Investment UII',
+          isSortable: true,
+          showColumn: false,
+        },
+        {
+          field: 'Name',
+          header: 'Investment Name',
+          isSortable: true,
+        },
+        {
+          field: 'Total_Spend_BY',
+          header: 'Total IT Spending ($ M): BY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Total IT Spending (BY) ($ M)')
+        },
+        {
+          field: 'DME_Agency_Fund_BY',
+          header: 'DME Agency Funding ($ M): BY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'DME BY Agency Funding ($ M)')
+        },
+        {
+          field: 'DME_Contributions_BY',
+          header: 'DME Contributions ($ M): BY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'DME BY Contributions ($ M)')
+        },
+        {
+          field: 'DME_Budget_Auth_BY',
+          header: 'DME Budget Authority Agency Funding ($ M): BY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'DME BY Budget Authority Agency Funding ($ M)')
+        },
+        {
+          field: 'OnM_Agency_Fund_BY',
+          header: 'O&M Agency Funding ($ M): BY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'O&M BY Agency Funding ($ M)')
+        },
+        {
+          field: 'OnM_Contributions_BY',
+          header: 'O&M Contributions ($ M): BY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'O&M BY Contributions ($ M)')
+        },
+        {
+          field: 'OnM_Budget_Auth_BY',
+          header: 'O&M Budget Authority Agency Funding ($ M): BY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'DME BY Budget Authority Agency Funding ($ M)')
         },
       ];
 
