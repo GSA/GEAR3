@@ -63,6 +63,8 @@ export class TableColumnFilterModalComponent
 
     if (this.existingFilters && Object.keys(this.existingFilters).length > 0) {
       this.initializeFiltersWithExisting();
+    } else {
+      this.initializeFilters();
     }
   }
 
