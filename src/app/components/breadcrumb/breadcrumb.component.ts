@@ -149,8 +149,8 @@ export class BreadcrumbComponent implements OnInit {
         const queryParams = this.route.snapshot.queryParams;
         const routeMap = {
             'it_standards': queryParams['fromSystem'] ? ['/systems', queryParams['fromSystem']] : null,
-            'capabilities': queryParams['fromSystem'] ? ['/systems', queryParams['fromSystem']] : null,
-            'organizations': queryParams['fromCapability'] ? ['/capabilities', queryParams['fromCapability']] : null,
+            'capabilities': queryParams['fromSystem'] ? ['/systems', queryParams['fromSystem']] : queryParams['fromCapModel'] ? 'capabilities_model' : null,
+            'organizations': queryParams['fromCapability'] ? ['/capabilities', queryParams['fromCapability']] : queryParams['fromOrgChart'] ? 'org_chart': null,
             'systems': queryParams['fromTechnology'] ? ['/it_standards', queryParams['fromTechnology']] : 
                      queryParams['fromCapability'] ? ['/capabilities', queryParams['fromCapability']] : null,
             'websites': queryParams['fromSystem'] ? ['/systems', queryParams['fromSystem']] : null,
