@@ -229,7 +229,7 @@ import { WebsiteServiceCategoryDetailsContentLiteComponent } from './views/syste
           preset: Lara,
           options: {
             prefix: 'p',
-            darkModeSelector: 'system',
+            darkModeSelector: false,
             cssLayer: {
               name: 'primeng',
               order: 'tailwind-base, primeng, tailwind-utilities'
