@@ -43,3 +43,14 @@
   text-decoration: underline;
   cursor: pointer;
 }
+
+.maintenance-banner {
+  background-color: #f88d8d;
+  display: flex;
+  justify-content: center;
+  padding: 0.25rem 0;
+}
+
+.maintenance-banner span {
+font-weight: bold;
+}
