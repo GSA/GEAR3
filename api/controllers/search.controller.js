@@ -3,7 +3,6 @@ const ctrl = require('./base.controller');
 // Need to update this to a view in the database for gear_schema like cowboy_ods once everything is transitioned over to the new schema
 exports.searchAll = (req, res) => {
   var searchKW = decodeURIComponent(req.params.kw);
-  console.log(searchKW);
   var query = `SELECT * FROM
       (SELECT
         systems.\`ex:GEAR_ID\` AS \`Id\`,
