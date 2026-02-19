@@ -86,7 +86,7 @@ LOAD EXPRESSJS MIDDLEWARE
 const app = express()
   .use(cors())
   .use(bodyParser.json({ limit: '50mb' }))
-  .use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
+  .use(bodyParser.urlencoded({ limit: '50mb', extended: false }))
   .use(passport.initialize())
   .use(express.static(path.join(__dirname, 'public', 'browser')))
   .enable('trust proxy');  // For expressJS to know we're behind a proxy when deployed

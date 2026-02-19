@@ -1033,7 +1033,7 @@ export class ApiService {
 
   public getGlobalSearchResults(kw: string): Observable<any[]> {
     return this.http
-      .get<any[]>(this.globalSearchUrl + kw)
+      .get<any[]>(this.globalSearchUrl + encodeURIComponent(kw))
       .pipe(catchError(this.handleError<any[]>('GET Global Search Results', [])));
   }
 
