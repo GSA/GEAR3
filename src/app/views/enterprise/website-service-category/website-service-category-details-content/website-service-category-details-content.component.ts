@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Service_Category } from '@api/models/service-category.model';
 import { WebsiteServiceCategory } from '@api/models/website-service-category.model';
 import { Website } from '@api/models/websites.model';
@@ -28,7 +28,8 @@ export class WebsiteServiceCategoryDetailsContentComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private apiService: ApiService,
-    private tableService: TableService
+    private tableService: TableService,
+    private router: Router
   ) {
   }
 
@@ -36,6 +37,17 @@ export class WebsiteServiceCategoryDetailsContentComponent implements OnInit {
     this.apiService.getWebsiteServiceCategoryRelatedWebsites(this.data.website_service_category_id).subscribe(r => {
       this.relatedWebsites = r;
       this.isDataReady = true;
+    });
+  }
+
+  public onRowClick(e: any) {
+    const searchTerm: string = e.tableSearchString || '';
+    this.router.navigate(['/websites', e.website_id], {
+        queryParams: { 
+          tableSearchTerm: searchTerm,
+          fromWSC: this.data.website_service_category_id,
+          fromWSCName: this.data.name
+         }
     });
   }
 }
