@@ -46,6 +46,7 @@ import { DataDictionary } from '@api/models/data-dictionary.model';
 import { OperatingSystem } from '@api/models/operating-systems.model';
 import { AppBundle } from '@api/models/it-standards-app-bundle.model';
 import { CloudAdoptionRate } from '@api/models/cloud-adoption-rate.model';
+import { TRM } from '@api/models/trm.model';
 
 @Injectable({
   providedIn: 'root',
@@ -104,6 +105,9 @@ export class ApiService {
 
   // Cloud Adoption Rate
   cloudAdoptionUrl: string = this.sharedService.internalURLFmt('/api/cloud_adoption_rate');
+
+  // TRM
+  trmUrl: string = this.sharedService.internalURLFmt('/api/trm');
 
   constructor(
     private globals: Globals,
@@ -1021,6 +1025,13 @@ export class ApiService {
     return this.http
       .get<DataDictionary[]>(this.dataDictionaryUrl + '/get/' + encodeURIComponent(reportName))
       .pipe(catchError(this.handleError<DataDictionary[]>('GET Data Dictionary By Report Name', [])));
+  }
+
+  //// TRM
+  public getTRM(): Observable<TRM[]> {
+    return this.http
+      .get<TRM[]>(this.trmUrl)
+      .pipe(catchError(this.handleError<TRM[]>('GET TRMs', [])));
   }
 
   //// Error Handler for calls

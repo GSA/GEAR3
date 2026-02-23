@@ -122,6 +122,9 @@ import { SystemsManagerComponent } from './views/systems/systems/manager/systems
 import { RecordsManagementManagerComponent } from './views/systems/records-management/manager/records-management-manager.component';
 import { WebsitesManagerComponent } from './views/systems/websites/manager/websites-manager.component';
 import { WebsiteServiceCategoryDetailsContentLiteComponent } from './views/systems/websites/website-service-category-details-content/website-service-category-details-content.component';
+import { TechCategoriesComponent } from './views/technologies/tech-categories/tech-categories.component';
+import { TechCategoriesDetailsComponent } from './views/technologies/tech-categories/details/tech-categories-details.component';
+import { TechCategoriesModelComponent } from './views/technologies/tech-categories-model/tech-categories-model.component';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -195,7 +198,10 @@ import { WebsiteServiceCategoryDetailsContentLiteComponent } from './views/syste
         DashboardComponent,
         FilterChipsComponent,
         BreadcrumbComponent,
-        FeedbackComponent
+        FeedbackComponent,
+        TechCategoriesComponent,
+        TechCategoriesDetailsComponent,
+        TechCategoriesModelComponent
     ],
     bootstrap: [
       AppComponent

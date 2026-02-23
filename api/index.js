@@ -23,6 +23,7 @@ const websites = require(routesPath + "websites.routes");
 const techAttributeDefinitions = require(routesPath + "tech-attribute-definitions.routes");
 const dataDictionary = require(routesPath + "data-dictionary.routes");
 const cloudAdoptionRate = require(routesPath + "cloud-adoption-rate.routes");
+const trm = require(routesPath + "trm.routes");
 
 const router = express.Router();
 let limiter = rateLimit({
@@ -50,5 +51,6 @@ router.use("/websites", websites);
 router.use("/attribute_definitions", techAttributeDefinitions);
 router.use("/data_dictionary", dataDictionary);
 router.use("/cloud_adoption_rate", cloudAdoptionRate);
+router.use("/trm", trm);
 
 module.exports = router;
