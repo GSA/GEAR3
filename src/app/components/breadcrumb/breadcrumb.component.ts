@@ -74,7 +74,7 @@ export class BreadcrumbComponent implements OnInit {
             'capabilities': { fromCapModel: 'fromCapModel', fromSystem: 'fromSystemName', default: 'Business Systems & Subsystems List' },
             'organizations': { fromOrgChart: 'fromOrgChart', fromCapability: 'fromCapabilityName', default: 'Business Capabilities List' },
             'systems': { fromTechnology: 'fromTechnologyName', fromCapability: 'fromCapabilityName', default: 'IT Standards List' },
-            'websites': { fromSystem: 'fromSystemName', default: 'Business Systems & Subsystems List' },
+            'websites': { fromSystem: 'fromSystemName', fromWSCName: 'fromWSCName', default: 'Business Systems & Subsystems List' },
             'records_mgmt': { fromSystem: 'fromSystemName', default: 'Business Systems & Subsystems List' },
             'investments': { fromCapability: 'fromCapabilityName', default: 'Business Capabilities List' },
         };
@@ -136,7 +136,7 @@ export class BreadcrumbComponent implements OnInit {
             'organizations': queryParams['fromCapability'] ? 'capabilities' : queryParams['fromOrgChart'] ? 'org_chart' : null,
             'systems': queryParams['fromTechnology'] ? 'it_standards' : queryParams['fromCapability'] ? 'capabilities' : null,
             'systems_manager': 'systems',
-            'websites': queryParams['fromSystem'] ? 'systems' : null,
+            'websites': queryParams['fromSystem'] ? 'systems' : queryParams['fromWSC'] ? 'website_service_category/' + queryParams['fromWSC'] + '' :  null,
             'websites_manager': 'websites',
             'records_mgmt': queryParams['fromSystem'] ? 'systems' : null,
             'records_mgmt_manager': 'records_mgmt',
@@ -153,7 +153,7 @@ export class BreadcrumbComponent implements OnInit {
             'organizations': queryParams['fromCapability'] ? ['/capabilities', queryParams['fromCapability']] : queryParams['fromOrgChart'] ? 'org_chart': null,
             'systems': queryParams['fromTechnology'] ? ['/it_standards', queryParams['fromTechnology']] : 
                      queryParams['fromCapability'] ? ['/capabilities', queryParams['fromCapability']] : null,
-            'websites': queryParams['fromSystem'] ? ['/systems', queryParams['fromSystem']] : null,
+            'websites': queryParams['fromSystem'] ? ['/systems', queryParams['fromSystem']] : queryParams['fromWSC'] ? 'website_service_category/' + queryParams['fromWSC'] + '' : null,
             'websites_manager': null,
             'records_mgmt_manager': null,
             'systems_manager': null,
