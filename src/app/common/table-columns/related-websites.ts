@@ -4,7 +4,8 @@ export const RelatedWebsitesColumns: Column[] = [
   {
     field: 'website_id',
     header: 'Website Id',
-    isSortable: true
+    isSortable: true,
+    class: 'w-11'
   },
   {
     field: 'domain',
