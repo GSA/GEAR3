@@ -1,4 +1,4 @@
-.capability-details-container {
+.trm-details-container {
     display: flex;
     flex-direction: column;
     width: 94vw;
@@ -48,6 +48,23 @@
                     padding: 1.5rem;
                     margin-bottom: 1.5rem;
                     width: 100%;
+                }
+
+                & .data {
+                    display: flex;
+                    flex-direction: column;
+                    flex: 50%;
+                    padding-bottom: 1.5rem;
+
+                    & .data-label {
+                        font-weight: bold;
+                    }
+
+                    & .data-icon-container {
+                        display: flex;
+                        align-items: center;
+                        gap: .5rem;
+                    }
                 }
 
                 & .data-full {

@@ -125,6 +125,7 @@ import { WebsiteServiceCategoryDetailsContentLiteComponent } from './views/syste
 import { TechCategoriesComponent } from './views/technologies/tech-categories/tech-categories.component';
 import { TechCategoriesDetailsComponent } from './views/technologies/tech-categories/details/tech-categories-details.component';
 import { TechCategoriesModelComponent } from './views/technologies/tech-categories-model/tech-categories-model.component';
+import { PreviousRouteService } from '@services/previous-route/previous-route.service';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -230,6 +231,7 @@ import { TechCategoriesModelComponent } from './views/technologies/tech-categori
     ],
     providers: [
       Globals, provideHttpClient(withInterceptorsFromDi()),
+      PreviousRouteService,
       providePrimeNG({
         theme: {
           preset: Lara,

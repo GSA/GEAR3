@@ -1,5 +1,5 @@
 @if (isDataReady) {
-  <div class="capability-details-container">
+  <div class="trm-details-container">
     <div class="breadcrumb-container">
       <app-breadcrumb>
         <span currentPageName>{{detailsData.Name}}</span>
@@ -9,76 +9,84 @@
       <span class="title">{{detailsData.Name}}</span>
     </div>
     <div class="content-container">
-      <ul class="nav nav-tabs">
-        <li class="nav-item">
-          <a class="nav-link" [class.active]="isOverviewTabActive" (click)="onTabClick('overview', $event)" href="#overview">Overview</a>
-        </li>
-        @if (hasRelatedOrganizations) {
-          <li class="nav-item">
-            <a class="nav-link" [class.active]="isRelatedOrganizationsTabActive" (click)="onTabClick('related_organizations', $event)" href="#related_organizations">Related Organizations</a>
-          </li>
+      <div class="overview-container">
+        <div class="overall-data-container">
+          <div class="main-data-container">
+            <div class="data-wrapper">
+              <div class="data">
+                <label class="data-label">
+                  <span>
+                    Area
+                  </span>
+                </label>
+                <span>
+                  <span>{{detailsData.Area || 'N/A'}}</span>
+                </span>
+              </div>
+              <div class="data">
+                <label class="data-label">
+                  <span>
+                    Domain
+                  </span>
+                </label>
+                <span>
+                  <span>{{detailsData.Domain || 'N/A'}}</span>
+                </span>
+              </div>
+              <div class="data">
+                <label class="data-label">
+                  <span>
+                    Level
+                  </span>
+                </label>
+                <span>
+                  <span>{{detailsData.Level || 'N/A'}}</span>
+                </span>
+              </div>
+              <div class="data">
+                <label class="data-label">
+                  <span>
+                    Type
+                  </span>
+                </label>
+                <span>
+                  <span>{{detailsData.Type || 'N/A'}}</span>
+                </span>
+              </div>
+              <div class="data">
+                <label class="data-label">
+                  <span>
+                    FEA Code
+                  </span>
+                </label>
+                <span>
+                  <span>{{detailsData.FEACode || 'N/A'}}</span>
+                </span>
+              </div>
+              <div class="data-full">
+                <label class="data-label">
+                  <span>
+                    Description
+                  </span>
+                </label>
+                <span>
+                  <span>{{detailsData.Description || 'N/A'}}</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        @if(hasRelatedTech()) {
+          <div class="overall-data-container">
+            <div class="main-data-container">
+              <div class="sub-content full-width">
+                <span class="sub-header">Associated IT Standards</span>
+                <app-table visibleColumnStorageKey="tech-categories-related-tech" [localTableData]="relatedITStandards" [isLocal]="true" [tableCols]="relatedITStandardsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="technology" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRowClick($event)"></app-table>
+              </div>
+            </div>
+          </div>
         }
-        <li class="nav-item">
-          <a class="nav-link" [class.active]="isSupportingSystemsTabActive" (click)="onTabClick('supporting_systems', $event)" href="#supporting_systems">Supporting Systems</a>
-        </li>
-      </ul>
-      @if (isOverviewTabActive) {
-        <div class="overview-container">
-          <div class="overall-data-container">
-            <div class="main-data-container">
-              <div class="data-wrapper">
-                <div class="data-full">
-                  <label class="data-label">
-                    <span>
-                      Description
-                    </span>
-                  </label>
-                  <span>
-                    <span>{{detailsData.Description}}</span>
-                  </span>
-                </div>
-                <div class="data-full">
-                  <label class="data-label">
-                    <span>
-                      Level
-                    </span>
-                  </label>
-                  <span>
-                    <span>{{detailsData.Level}}</span>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      }
-      @if (isRelatedOrganizationsTabActive) {
-        <div class="related-organizations-container">
-          <div class="overall-data-container">
-            <div class="main-data-container">
-              <div class="sub-content full-width">
-                <span class="sub-header">Related Organizations</span>
-                <app-table visibleColumnStorageKey="capbilities-related-orgs" [tableCols]="relatedOrgsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="organizations" [contextSystemName]="detailsData?.Name"></app-table>
-              </div>
-            </div>
-          </div>
-        </div>
-      }
-      @if (isSupportingSystemsTabActive) {
-        <div class="supporting-systems-container">
-          <div class="overall-data-container">
-            <div class="main-data-container">
-              <div class="sub-content full-width">
-                <span class="sub-header">Supporting Systems</span>
-                <app-table visibleColumnStorageKey="capabilities-supporting-systems" [tableCols]="supportingSystemsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="systems" [contextSystemName]="detailsData?.Name"></app-table>
-              </div>
-            </div>
-          </div>
-        </div>
-      }
-      @if (isLoggedIn()) {
-        <app-button [buttonText]="'Edit'" buttonStyle="outline" (buttonClick)="editCapability()"></app-button>
-      }
+      </div>
     </div>
   </div>
 }

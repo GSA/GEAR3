@@ -1033,6 +1033,24 @@ export class ApiService {
       .get<TRM[]>(this.trmUrl)
       .pipe(catchError(this.handleError<TRM[]>('GET TRMs', [])));
   }
+  public getSingleTRM(id: number): Observable<TRM> {
+    return this.http
+      .get<TRM>(this.trmUrl + '/get/' + String(id))
+      .pipe(
+        map(t => t[0]),
+        catchError(this.handleError<TRM>('GET Single TRM')));
+  }
+  public getTRMRelatedITStandards(id: number): Observable<ITStandards[]> {
+    return this.http
+      .get<ITStandards[]>(this.trmUrl + '/get/relatedITStandards/' + String(id))
+      .pipe(catchError(this.handleError<ITStandards[]>('GET TRMs', [])));
+  }
+
+  public getITStandardsRelatedTRM(id: number): Observable<TRM[]> {
+    return this.http
+      .get<TRM[]>(this.techUrl + '/get/related_trms/' + String(id))
+      .pipe(catchError(this.handleError<TRM[]>('GET IT Standards Related TRMs')));
+  }
 
   //// Error Handler for calls
   private handleError<T>(operation: string = 'operation', result?: T) {

@@ -255,11 +255,6 @@ export class ItStandardsComponent implements OnInit {
         formatter: this.sharedService.formatDescriptionLite,
         titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Description')
       }, {
-        field: 'Category',
-        header: 'Category',
-        isSortable: true,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Category')
-      }, {
         field: 'Status',
         header: 'Status',
         isSortable: true,

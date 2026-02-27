@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Capability } from '@api/models/capabilities.model';
-import { Investment } from '@api/models/investments.model';
-import { Organization } from '@api/models/organizations.model';
-import { System } from '@api/models/systems.model';
+import { ITStandards } from '@api/models/it-standards.model';
+import { TRM } from '@api/models/trm.model';
 import { Column } from '@common/table-classes';
+import { RelatedTechnologiesColumns } from '@common/table-columns/related-technologies';
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
     selector: 'tech-categories-details',
@@ -17,167 +17,12 @@ import { TableService } from '@services/tables/table.service';
 })
 export class TechCategoriesDetailsComponent implements OnInit {
 
-  public capabilityId: number = null;
-  public detailsData: Capability;
+  public trmId: number = null;
+  public detailsData: TRM;
   public isDataReady: boolean = false;
-  public relatedOrganization: Organization[] = [];
-  public supportingSystems: System[] = [];
-  public hasRelatedOrganizations: boolean = false;
-  public hasSupportingSystems: boolean = false;
+  public relatedITStandards: ITStandards[] = [];
 
-  public isOverviewTabActive: boolean = true;
-  public isRelatedOrganizationsTabActive: boolean = false;
-  public isSupportingSystemsTabActive: boolean = false;
-
-  public relatedOrgsTableCols: Column[] = [
-    {
-      field: 'OrgSymbol',
-      header: 'Org Symbol',
-      isSortable: true
-    }, 
-    {
-      field: 'Name',
-      header: 'Organization Name',
-      isSortable: true
-    }, 
-    {
-      field: 'SSOName',
-      header: 'SSO Name',
-      isSortable: true
-    }, 
-    {
-      field: 'TwoLetterOrgSymbol',
-      header: 'Two Letter Org',
-      isSortable: true
-    }, 
-    {
-      field: 'TwoLetterOrgName',
-      header: 'Two Letter Org Name',
-      isSortable: true,
-      formatter: this.sharedService.formatDescription
-    }
-  ];
-
-  public supportingSystemsTableCols: Column[] = [
-    {
-      field: 'ID',
-      header: 'ID',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'DisplayName',
-      header: 'Alias / Acronym',
-      isSortable: true,
-    },
-    {
-      field: 'Name',
-      header: 'System Name',
-      isSortable: true,
-    },
-    {
-      field: 'Description',
-      header: 'Description',
-      isSortable: false,
-      showColumn: false,
-      formatter: this.sharedService.formatDescriptionShorter
-    },
-    {
-      field: 'SystemLevel',
-      header: 'System Level',
-      isSortable: true,
-      showColumn: true
-    },
-    {
-      field: 'Status',
-      header: 'Status',
-      isSortable: true,
-      showColumn: true,
-      formatter: this.sharedService.formatStatus
-    },
-    {
-      field: 'RespOrg',
-      header: 'Responsible Org',
-      isSortable: true,
-      showColumn: true
-    },
-    {
-      field: 'BusOrgSymbolAndName',
-      header: 'SSO/CXO',
-      isSortable: true,
-    },
-    {
-      field: 'BusOrg',
-      header: 'Business Org',
-      isSortable: true,
-      showColumn: true
-    },
-    {
-      field: 'ParentName',
-      header: 'Parent System',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'CSP',
-      header: 'Hosting Provider',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'CloudYN',
-      header: 'Cloud Hosted?',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'ServiceType',
-      header: 'Cloud Service Type',
-      isSortable: true,
-      showColumn: false,
-    },
-    {
-      field: 'AO',
-      header: 'Authorizing Official',
-      isSortable: true,
-      showColumn: false,
-      formatter: this.sharedService.pocStringNameFormatter,
-    },
-    {
-      field: 'SO',
-      header: 'System Owner',
-      isSortable: true,
-      showColumn: false,
-      formatter: this.sharedService.pocStringNameFormatter,
-    },
-    {
-      field: 'BusPOC',
-      header: 'Business POC',
-      isSortable: true,
-      showColumn: false,
-      formatter: this.sharedService.pocStringNameFormatter,
-    },
-    {
-      field: 'TechPOC',
-      header: 'Technical POC',
-      isSortable: true,
-      showColumn: false,
-      formatter: this.sharedService.pocStringNameFormatter,
-    },
-    {
-      field: 'DataSteward',
-      header: 'Data Steward',
-      isSortable: true,
-      showColumn: false,
-      formatter: this.sharedService.pocStringNameFormatter,
-    },
-    {
-      field: 'FISMASystemIdentifier',
-      header: 'FISMA System Identifier',
-      isSortable: true,
-      showColumn: false
-    }
-  ];
+  public relatedITStandardsTableCols: Column[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -189,66 +34,234 @@ export class TechCategoriesDetailsComponent implements OnInit {
   }
 
   public ngOnInit(): void {
+    this.apiService.getDataDictionaryByReportName('IT Standards List').subscribe(defs => {
+
+      // IT Standard Table Columns
+      this.relatedITStandardsTableCols = [{
+        field: 'ID',
+        header: 'Id',
+        isSortable: true,
+        showColumn: false,
+        titleTooltip: this.sharedService.getTooltip(defs, 'ID')
+      }, {
+        field: 'Name',
+        header: 'IT Standard Name',
+        isSortable: true,
+        showColumn: true,
+        titleTooltip: this.sharedService.getTooltip(defs, 'IT Standard Name')
+      },
+      {
+        field: 'ApprovedVersions',
+        header: 'Approved Versions',
+        isSortable: false,
+        showColumn: true,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Approved Versions')
+      }, {
+        field: 'Manufacturer',
+        header: 'Manufacturer ID',
+        isSortable: true,
+        showColumn: false,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Manufacturer ID')
+      }, {
+        field: 'ManufacturerName',
+        header: 'Manufacturer',
+        isSortable: true,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Manufacturer Name')
+      }, {
+        field: 'SoftwareProduct',
+        header: 'Product ID',
+        isSortable: true,
+        showColumn: false,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Software Product ID')
+      }, {
+        field: 'SoftwareProductName',
+        header: 'Product',
+        isSortable: true,
+        showColumn: false,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Software Product Name')
+      }, {
+        field: 'SoftwareVersion',
+        header: 'Version ID',
+        isSortable: true,
+        showColumn: false,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Software Version ID')
+      }, {
+        field: 'SoftwareVersionName',
+        header: 'Version',
+        isSortable: true,
+        showColumn: false,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Software Version Name')
+      }, {
+        field: 'SoftwareRelease',
+        header: 'Release ID',
+        isSortable: true,
+        showColumn: false,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Software Release ID')
+      }, {
+        field: 'SoftwareReleaseName',
+        header: 'Release',
+        isSortable: true,
+        showColumn: false,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Software Release Name')
+      }, {
+        field: 'EndOfLifeDate',
+        header: 'Vendor End of Life Date',
+        isSortable: true,
+        showColumn: false,
+        formatter: this.sharedService.dateFormatter,
+       titleTooltip: this.sharedService.getTooltip(defs, 'Software End of Life Date')
+      }, {
+        field: 'AlsoKnownAs',
+        header: 'Also Known As',
+        isSortable: true,
+        showColumn: false,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Previously Known As')
+      }, {
+        field: 'Description',
+        header: 'Description',
+        isSortable: true,
+        showColumn: true,
+        formatter: this.sharedService.formatDescriptionLite,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Description')
+      }, {
+        field: 'Status',
+        header: 'Status',
+        isSortable: true,
+        formatter: this.sharedService.formatStatus,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Status')
+      }, {
+        field: 'StandardType',
+        header: 'Standard Type',
+        isSortable: true,
+        showColumn: false,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Standard Type')
+      }, {
+        field: 'DeploymentType',
+        header: 'Deployment Type',
+        isSortable: true,
+        formatter: this.sharedService.formatDeploymentType,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Deployment Type')
+      }, {
+        field: 'ComplianceStatus',
+        header: '508 Compliance',
+        isSortable: true,
+        showColumn: false,
+        titleTooltip: this.sharedService.getTooltip(defs, '508 Compliance')
+      }, {
+        field: 'POC',
+        header: 'POC',
+        isSortable: true,
+        showColumn: false,
+        titleTooltip: this.sharedService.getTooltip(defs, 'POC')
+      }, {
+        field: 'POCorg',
+        header: 'POC Org',
+        isSortable: true,
+        showColumn: false,
+        titleTooltip: this.sharedService.getTooltip(defs, 'POC Org')
+      },
+      {
+        field: 'Comments',
+        header: 'Comments',
+        isSortable: true,
+        showColumn: false,
+        formatter: this.sharedService.formatDescription,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Comments')
+      }, {
+        field: 'attestation_required',
+        header: 'Attestation Required',
+        isSortable: true,
+        showColumn: false,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Attestation Required')
+      }, {
+        field: 'attestation_link',
+        header: 'Attestation Link',
+        isSortable: true,
+        showColumn: false,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Attestation Link')
+      }, {
+        field: 'fedramp',
+        header: 'FedRAMP',
+        isSortable: true,
+        showColumn: false,
+        formatter: this.YesNo,
+        titleTooltip: this.sharedService.getTooltip(defs, 'FedRAMP')
+      }, {
+        field: 'open_source',
+        header: 'Open Source',
+        isSortable: true,
+        showColumn: false,
+        formatter: this.YesNo,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Open Source')
+      },{
+        field: 'RITM',
+        header: 'Requested Item (RITM)',
+        isSortable: true,
+        showColumn: false,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Requested Item (RITM)')
+      }, {
+        field: 'ApprovalExpirationDate',
+        header: 'Approval Expires',
+        isSortable: true,
+        showColumn: true,
+        formatter: this.sharedService.dateFormatter,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Approval Expiration Date')
+      },
+      {
+        field: 'OperatingSystems',
+        header: 'Operating Systems',
+        isSortable: false,
+        showColumn: false,
+        formatter: this.sharedService.csvFormatter,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Operating Systems')
+      },
+      {
+        field: 'AppBundleIds',
+        header: 'App Bundle Ids',
+        isSortable: false,
+        showColumn: false,
+        formatter: this.sharedService.csvFormatter,
+        titleTooltip: this.sharedService.getTooltip(defs, 'App Bundle Ids')
+      },
+      {
+        field: 'ConditionsRestrictions',
+        header: 'Conditions/Restrictions',
+        isSortable: false,
+        showColumn: false,
+        titleTooltip: this.sharedService.getTooltip(defs, 'ConditionsRestrictions')
+      }];
+    });
+
+
     this.route.paramMap.subscribe(params => {
-      this.capabilityId = +params.get('capID');
+      this.trmId = +params.get('techCatID');
 
-      // Get Capability details
-      this.apiService.getOneCap(this.capabilityId).subscribe(i => {
-        this.detailsData = i;
+      forkJoin([
+        this.apiService.getSingleTRM(this.trmId),
+        this.apiService.getTRMRelatedITStandards(this.trmId),
+      ]).subscribe(
+      ([
+        trm,
+        relatedTech,
+      ]) => {
+        this.detailsData = trm;
+        this.relatedITStandards = relatedTech;
         this.isDataReady = true;
-      });
-
-      // Get Related Orgs
-      this.apiService.getCapOrgs(this.capabilityId).subscribe(o => {
-        this.relatedOrganization = o;
-        if(o.length > 0) {
-          this.hasRelatedOrganizations = true;
-        }
-      });
-
-      // Get Supporting Systems
-      this.apiService.getCapSystems(this.capabilityId).subscribe(s => {
-        this.supportingSystems = s;
-        if(s.length > 0) {
-          this.hasSupportingSystems = true;
-        }
       });
     });
   }
 
-  public onTabClick(tabName: string, event: Event): void {
-    event.preventDefault();
-    switch (tabName) {
-      case 'overview':
-        this.isOverviewTabActive = true;
-        this.isRelatedOrganizationsTabActive = false;
-        this.isSupportingSystemsTabActive = false;
-        break;
-      case 'related_organizations':
-        this.isOverviewTabActive = false;
-        this.isRelatedOrganizationsTabActive = true;
-        this.isSupportingSystemsTabActive = false;
-        this.tableService.updateReportTableData(this.relatedOrganization);
-        this.tableService.updateReportTableDataReadyStatus(true);
-        break;
-      case 'supporting_systems':
-        this.isOverviewTabActive = false;
-        this.isRelatedOrganizationsTabActive = false;
-        this.isSupportingSystemsTabActive = true;
-        this.tableService.updateReportTableData(this.supportingSystems);
-        this.tableService.updateReportTableDataReadyStatus(true);
-        break;
-      default:
-        break;
-    }
+  public hasRelatedTech(): boolean {
+    return this.relatedITStandards && this.relatedITStandards.length > 0;
   }
 
-  public editCapability(): void {
-    this.router.navigate(['capabilities_manager', this.detailsData.ID]);
+  public onRowClick(e: any): void {
+    this.router.navigate(['/it_standards', e.ID], {
+      queryParams: { fromPrevious: this.detailsData.Name }
+    });
   }
 
-  public isLoggedIn(): boolean {
-    return this.sharedService.loggedIn;
+  private YesNo(value, row, index, field): string {
+    return value === 'T'? "Yes" : "No";
   }
-
 }

@@ -1,4 +1,4 @@
-SELECT
+SELECT 
   trm.Technology_Category_Id AS Id,
   trm.TRM_Name AS Name,
   trm.TRM_Area AS Area,
@@ -12,4 +12,6 @@ SELECT
   trm.ChangeDTG,
   trm.CreateAudit,
   trm.ChangeAudit
-FROM obj_TRM AS trm
+FROM obj_TRM AS trm 
+INNER JOIN zk_technology_TRM AS ttrm ON trm.Technology_Category_Id = ttrm.obj_TRM_Id 
+INNER JOIN obj_technology AS tech ON tech.Id = ttrm.obj_technology_Id

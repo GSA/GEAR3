@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { System } from '@api/models/systems.model';
 import { TIME } from '@api/models/systime.model';
 import { Column } from '@common/table-classes';
@@ -50,11 +50,14 @@ export class TimeDetailsComponent implements OnInit {
   public recordsCols: Column[] = RecordsColumns;
   public websiteCols: Column[] = WebsitesColumns;
 
+  public splitPOCs: any = {};
+
   constructor(
     private route: ActivatedRoute,
     private apiService: ApiService,
     private sharedService: SharedService,
-    public tableService: TableService
+    public tableService: TableService,
+    private router: Router
   ) {
   }
 
@@ -65,6 +68,7 @@ export class TimeDetailsComponent implements OnInit {
       // Get system details
       this.apiService.getOneSys(this.systemId).subscribe(s => {
         this.detailsData = s;
+        this.splitPOCs = this.splitPOCInfo(this.detailsData.POC);
         this.isDataReady = true;
       });
 
@@ -156,5 +160,58 @@ export class TimeDetailsComponent implements OnInit {
 
   public getPOCList(): any[] {
     return this.tableService.renderPOCInfoTable(this.detailsData.POC);
+  }
+
+  public onCapRowClick(data: Capability): void {
+    this.router.navigate(['capabilities', data.ID], {
+      queryParams: { fromPrevious: this.detailsData.Name }
+    });
+  }
+
+  public onRelatedTechRowClick(data: ITStandards): void {
+    this.router.navigate(['it_standards', data.ID], {
+      queryParams: { fromPrevious: this.detailsData.Name }
+    });
+  }
+
+  public onRelatedRecordsRowClick(data: Record): void {
+    this.router.navigate(['records_mgmt', data.Rec_ID], {
+      queryParams: { fromPrevious: this.detailsData.Name }
+    });
+  }
+
+  public onRelatedWebsitesRowClick(data: Website): void {
+    this.router.navigate(['websites', data.website_id], {
+      queryParams: { fromPrevious: this.detailsData.Name }
+    });
+  }
+
+  private splitPOCInfo(p) {
+    let poc = null;
+    let poc1 = null;
+    let pocs = [];
+
+    if (p) {
+      poc1 = p.split('*');
+      poc1 = poc1.map((poctype, tmpObj) => {
+        poctype = poctype.split(':');
+        poc = poctype[1].split('; ');
+        for (var i = 0; i < poc.length; i++) {
+          var pieces = poc[i].split(',');
+          tmpObj = null;
+          if (pieces[0] !== ''){
+                tmpObj = {
+                  type: poctype[0],
+                  name: pieces[0],
+                  phone: pieces[2],
+                  email: pieces[1]
+                };
+                pocs.push(tmpObj);
+          }
+          
+        }
+      });
+    }
+    return pocs;
   }
 }

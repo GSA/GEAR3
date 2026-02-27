@@ -316,7 +316,8 @@ export class TemplatePageTitleStrategy extends TitleStrategy {
 const routerOption: ExtraOptions = {
   scrollPositionRestoration: 'enabled',
   anchorScrolling: 'enabled',
-   useHash: true
+  useHash: true,
+  onSameUrlNavigation: 'reload'
 
 }
 

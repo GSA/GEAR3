@@ -82,7 +82,17 @@ exports.searchAll = (req, res) => {
         'Business Systems -> GSA Websites' AS \`GEAR_Type_Display\`,
         '{}' AS \`Other\`
       FROM
-          gear_schema.obj_websites as web) AS global_search
+        gear_schema.obj_websites as web
+      UNION SELECT
+        trm.\`Technology_Category_Id\` AS \`Id\`,
+        trm.\`TRM_Name\` AS \`Name\`,
+        trm.\`Description\` AS \`Description\`,
+        '' AS \`Status\`,
+        'TRM' AS \`GEAR_Type\`,
+        'Technology Reference Model' AS \`GEAR_Type_Display\`,
+        '{}' AS \`Other\`
+      FROM
+        gear_schema.obj_TRM as trm) AS global_search
     WHERE Name LIKE '%${searchKW}%' or Description like '%${searchKW}%';`; // Removed cowboy_ods.obj_technology AS tech reference
 
   res = ctrl.sendQuery(query, `global search of ${searchKW}`, res);

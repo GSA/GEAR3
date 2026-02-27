@@ -8,7 +8,7 @@ import { Website } from '@api/models/websites.model';
 import { WebsiteScan } from '@api/models/website-scan.model';
 import { WebsiteServiceCategory } from '@api/models/website-service-category.model';
 import { RelatedWebsitesColumns } from '@common/table-columns/related-websites';
-import { forkJoin, of } from 'rxjs';
+import { forkJoin, of, Subscription } from 'rxjs';
 import { RelatedSystemsCols } from '@common/table-columns/related-systems';
 import { SharedService } from '@services/shared/shared.service';
 
@@ -151,5 +151,11 @@ export class WebsitesDetailsComponent implements OnInit {
 
   public isLoggedIn(): boolean {
     return this.sharedService.loggedIn;
+  }
+
+  public onRelatedSystemsRowClick(data: System): void {
+    this.router.navigate(['systems', data.ID], {
+      queryParams: { fromPrevious: this.detailsData.domain }
+    });
   }
 }

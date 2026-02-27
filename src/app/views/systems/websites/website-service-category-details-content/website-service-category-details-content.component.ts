@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Service_Category } from '@api/models/service-category.model';
 import { WebsiteServiceCategory } from '@api/models/website-service-category.model';
 import { Website } from '@api/models/websites.model';
@@ -19,6 +19,7 @@ export class WebsiteServiceCategoryDetailsContentLiteComponent implements OnInit
   @Input() data: WebsiteServiceCategory;
   @Input() showToolbar: boolean = true;
   @Input() showPagination: boolean = true;
+  @Input() websiteName: string;
   public relatedWebsites: Website[] = [];
 
   public relatedWebsitesTableCols: Column[] = RelatedWebsitesColumns;
@@ -28,7 +29,8 @@ export class WebsiteServiceCategoryDetailsContentLiteComponent implements OnInit
   constructor(
     private route: ActivatedRoute,
     private apiService: ApiService,
-    private tableService: TableService
+    private tableService: TableService,
+    private router: Router
   ) {
   }
 
@@ -36,6 +38,12 @@ export class WebsiteServiceCategoryDetailsContentLiteComponent implements OnInit
     this.apiService.getWebsiteServiceCategoryRelatedWebsites(this.data.website_service_category_id).subscribe(r => {
       this.relatedWebsites = r;
       this.isDataReady = true;
+    });
+  }
+
+  public onRelatedWebsitesRowClick(data: Website): void {
+    this.router.navigate(['websites', data.website_id], {
+      queryParams: { fromPrevious: this.websiteName }
     });
   }
 }

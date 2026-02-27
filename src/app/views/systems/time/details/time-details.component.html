@@ -174,10 +174,11 @@
                     <th>Name</th>
                     <th>Email</th>
                   </tr>
-                  @for (poc of getPOCList(); track poc) {
+                  @for (poc of splitPOCs; track poc) {
                     <tr>
                       <td> {{ poc.type }} </td>
                       <td> {{ poc.name }} </td>
+                      <!-- <td [title]="poc.orgName"> {{ poc.orgCode }} </td> -->
                       <td>
                         <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{poc.email}}" target="_blank" rel="noopener">{{ poc.email }}</a>
                       </td>
@@ -191,7 +192,7 @@
               </div>
               <div class="sub-content full-width">
                 <span class="sub-header">Related Business Capabilities</span>
-                <app-table visibleColumnStorageKey="time-related-business-capabilities" [localTableData]="sysCapabilitiesData" [isLocal]="true" [tableCols]="relatedCapabilitiesCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                <app-table visibleColumnStorageKey="time-related-business-capabilities" [localTableData]="sysCapabilitiesData" [isLocal]="true" [tableCols]="relatedCapabilitiesCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onCapRowClick($event)"></app-table>
               </div>
             </div>
           </div>
@@ -293,7 +294,7 @@
               </div>
               <div class="sub-content full-width">
                 <span class="sub-header">Related Technology</span>
-                <app-table visibleColumnStorageKey="time-related-technology" [localTableData]="sysTechnologiesData" [isLocal]="true" [tableCols]="relatedTechnologyCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                <app-table visibleColumnStorageKey="time-related-technology" [localTableData]="sysTechnologiesData" [isLocal]="true" [tableCols]="relatedTechnologyCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRelatedTechRowClick($event)"></app-table>
               </div>
             </div>
           </div>
@@ -305,7 +306,7 @@
             <div class="main-data-container">
               <div class="sub-content full-width">
                 <span class="sub-header">Related Records</span>
-                <app-table visibleColumnStorageKey="time-related-records" [localTableData]="sysRecordsData" [isLocal]="true" [tableCols]="recordsCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                <app-table visibleColumnStorageKey="time-related-records" [localTableData]="sysRecordsData" [isLocal]="true" [tableCols]="recordsCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRelatedRecordsRowClick($event)"></app-table>
               </div>
             </div>
           </div>
@@ -317,7 +318,7 @@
             <div class="main-data-container">
               <div class="sub-content full-width">
                 <span class="sub-header">Related Websites</span>
-                <app-table visibleColumnStorageKey="time-related-websites" [localTableData]="sysWebsitesData" [isLocal]="true" [tableCols]="websiteCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+                <app-table visibleColumnStorageKey="time-related-websites" [localTableData]="sysWebsitesData" [isLocal]="true" [tableCols]="websiteCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRelatedWebsitesRowClick($event)"></app-table>
               </div>
             </div>
           </div>

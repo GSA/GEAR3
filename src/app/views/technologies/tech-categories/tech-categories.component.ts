@@ -85,8 +85,9 @@ export class TechCategoriesComponent implements OnInit {
 
   public onRowClick(e: any) {
     // const searchTerm: string = e.tableSearchString || '';
-    // this.router.navigate(['/capabilities', e.ID], {
+    // this.router.navigate(['/tech_categories', e.ID], {
     //     queryParams: { tableSearchTerm: searchTerm }
     // });
+    this.router.navigate(['/tech_categories', e.Id]);
   }
 }

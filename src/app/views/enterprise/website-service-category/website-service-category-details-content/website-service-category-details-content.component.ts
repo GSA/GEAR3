@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Service_Category } from '@api/models/service-category.model';
 import { WebsiteServiceCategory } from '@api/models/website-service-category.model';
 import { Website } from '@api/models/websites.model';
@@ -28,7 +28,8 @@ export class WebsiteServiceCategoryDetailsContentComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private apiService: ApiService,
-    private tableService: TableService
+    private tableService: TableService,
+    private router: Router
   ) {
   }
 
@@ -38,4 +39,10 @@ export class WebsiteServiceCategoryDetailsContentComponent implements OnInit {
       this.isDataReady = true;
     });
   }
+
+  public onRowClick(data: Website): void {
+    this.router.navigate(['/websites', data.website_id], {
+      queryParams: { fromPrevious: this.data.name }
+    });
+  }W
 }

@@ -371,7 +371,7 @@ export class TechCategoriesModelComponent implements OnInit {
             .style('opacity', '1')
 
           d3.select('#trmName').text(
-            d.currentTarget.__data__.data.name + ' (' + d.currentTarget.__data__.data.referenceNum + ')'
+            d.currentTarget.__data__.data.name
           ); // Set Name
           d3.select('#trmLevel').text(d.currentTarget.__data__.data.level); // Set TRM Level
           d3.select('#trmDetailbody').text(d.currentTarget.__data__.data.description); // Set Body with description
@@ -389,7 +389,7 @@ export class TechCategoriesModelComponent implements OnInit {
             //   .subscribe((data: any) => {
             //       // var capData = data[0];
             //       // this.tableService.capsTableClick(capData);
-            //       this.router.navigate(['capabilities', data.ID], { queryParams: { fromCapModel: 'Business Capabilities Model' } });
+            this.router.navigate(['tech_categories', this.selectedTRM.identity], { queryParams: { fromPrevious: 'Technology Categories Model' } });
             //     }
             //   )
           }

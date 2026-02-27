@@ -251,4 +251,16 @@ export class CapabilitiesDetailsComponent implements OnInit {
     return this.sharedService.loggedIn;
   }
 
+  public onOrgRowClick(e: Organization) {
+    this.router.navigate(['/organizations', e.ID], {
+      queryParams: { fromPrevious: this.detailsData.Name }
+    });
+  }
+
+  public onSystemRowClick(e: System) {
+    this.router.navigate(['/systems', e.ID], {
+      queryParams: { fromPrevious: this.detailsData.Name }
+    });
+  }
+
 }

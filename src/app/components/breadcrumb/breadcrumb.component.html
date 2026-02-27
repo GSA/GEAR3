@@ -1,4 +1,4 @@
-@if (isFromSearch()) {
+<!-- @if (isFromSearch()) {
   <span class="breadcrumb-text">
     <a (click)="onGlobalBackClick()">Global Search</a>
   </span>
@@ -21,6 +21,20 @@
     </span>
     <span class="breadcrumb-separator">></span>
   }
+} -->
+@if (topLevelName) {
+  <span class="breadcrumb-text">
+    <span class="breadcrumb-text">{{topLevelName}}</span>
+  </span>
+  <span class="breadcrumb-separator">></span>
+}
+@if (previousLevelName) {
+<span class="breadcrumb-text">
+  <a (click)="onBack()">
+    <span class="breadcrumb-text">{{previousLevelName}}</span>
+  </a>
+</span>
+<span class="breadcrumb-separator">></span>
 }
 <span class="breadcrumb-text">
   <ng-content select="[currentPageName]"></ng-content>

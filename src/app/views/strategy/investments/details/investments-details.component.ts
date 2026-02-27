@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Investment } from '@api/models/investments.model';
 import { System } from '@api/models/systems.model';
 import { Column } from '@common/table-classes';
@@ -150,7 +150,8 @@ export class InvestmentsDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private apiService: ApiService,
     private sharedService: SharedService,
-    private tableService: TableService
+    private tableService: TableService,
+    private router: Router
   ) {
   }
 
@@ -196,6 +197,12 @@ export class InvestmentsDetailsComponent implements OnInit {
       default:
         break;
     }
+  }
+
+  public onRowClick(data: System): void {
+    this.router.navigate(['/systems', data.ID], {
+      queryParams: { fromPrevious: this.detailsData.Name }
+    });
   }
 
 }

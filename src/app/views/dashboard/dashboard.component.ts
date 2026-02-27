@@ -411,7 +411,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public onTableRowClick(rowData: any): void {
-    this.router.navigate(['/it_standards', rowData.ID]);
+    this.router.navigate(['/it_standards', rowData.ID], {
+      queryParams: { fromPrevious: rowData.Name }
+    });
   }
 
   public onBarChartClick(barName: string): void {

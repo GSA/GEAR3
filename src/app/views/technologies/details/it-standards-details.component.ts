@@ -4,6 +4,7 @@ import { DataDictionary } from '@api/models/data-dictionary.model';
 import { AppBundle } from '@api/models/it-standards-app-bundle.model';
 import { ITStandards } from '@api/models/it-standards.model';
 import { System } from '@api/models/systems.model';
+import { TRM } from '@api/models/trm.model';
 import { Column } from '@common/table-classes';
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
@@ -46,6 +47,8 @@ export class ItStandardsDetailsComponent implements OnInit {
   public isDataReady: boolean = false;
   public relatedSystems: System[] = [];
   public hasRelatedSystems: boolean = false;
+  public relatedTRMS: TRM[] = [];
+  public hasRelatedTRMS: boolean = false;
 
   public isOverviewTabActive: boolean = true;
   public isSystemsTabActive: boolean = false;
@@ -171,6 +174,51 @@ export class ItStandardsDetailsComponent implements OnInit {
     },
   ];
 
+  relatedTRMTableCols: Column[] = [
+    {
+      field: 'Id',
+      header: 'Id',
+      isSortable: true,
+    },
+    {
+      field: 'Name',
+      header: 'Name',
+      isSortable: true,
+    },
+    {
+      field: 'Area',
+      header: 'Area',
+      isSortable: true,
+    },
+    {
+      field: 'Domain',
+      header: 'Domain',
+      isSortable: true,
+    },
+    {
+      field: 'Description',
+      header: 'Description',
+      isSortable: true,
+      formatter: this.sharedService.formatDescription
+    },
+    {
+      field: 'Level',
+      header: 'Level',
+      isSortable: true,
+    },
+    {
+      field: 'Type',
+      header: 'Type',
+      isSortable: true,
+    },
+    {
+      field: 'FEACode',
+      header: 'FEA Code',
+      isSortable: true,
+      showColumn: false
+    },
+  ];
+
   constructor(
     private route: ActivatedRoute,
     private apiService: ApiService,
@@ -187,15 +235,22 @@ export class ItStandardsDetailsComponent implements OnInit {
       // Get IT standard details
       this.apiService.getOneITStandard(this.itStandardId).subscribe(s => {
         this.detailsData = s;
-        this.isDataReady = true;
+        
+        this.apiService.getITStandardsRelatedTRM(this.itStandardId).subscribe(trm => {
+          this.relatedTRMS = trm;
+          if(this.relatedTRMS.length > 0) {
+            this.hasRelatedTRMS = true;
+          }
+          this.isDataReady = true;
+        })
 
         // Get systems using this standard
         this.apiService.getITStandardsRelatedSystems(s.ID).subscribe(sys => {
           this.relatedSystems = sys;
           if(this.relatedSystems.length > 0) {
             this.hasRelatedSystems = true;
-            this.tableService.updateReportTableData(this.relatedSystems);
-            this.tableService.updateReportTableDataReadyStatus(true);
+            // this.tableService.updateReportTableData(this.relatedSystems);
+            // this.tableService.updateReportTableDataReadyStatus(true);
           }
         });
       });
@@ -343,6 +398,18 @@ export class ItStandardsDetailsComponent implements OnInit {
 
   public isApprovedWithConditions(): boolean {
     return this.detailsData.Status === 'Approved' && (this.detailsData.ConditionsRestrictions && this.detailsData.ConditionsRestrictions.length > 0);
+  }
+  
+  public onTRMRowClick(data: TRM): void {
+    this.router.navigate(['tech_categories', data.Id], {
+      queryParams: { fromPrevious: this.detailsData.Name }
+    });
+  }
+
+  public onRelatedSystemsRowClick(data: System): void {
+    this.router.navigate(['systems', data.ID], {
+      queryParams: { fromPrevious: this.detailsData.Name }
+    });
   }
 
 }
