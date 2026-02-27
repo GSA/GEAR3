@@ -110,8 +110,12 @@ export class CapabilitiesComponent implements OnInit {
 
   public onRowClick(e: any) {
     const searchTerm: string = e.tableSearchString || '';
-    this.router.navigate(['/capabilities', e.ID], {
+    if(searchTerm) {
+      this.router.navigate(['/capabilities', e.ID], {
         queryParams: { tableSearchTerm: searchTerm }
-    });
+      });
+    } else {
+      this.router.navigate(['/capabilities', e.ID]);
+    }
   }
 }

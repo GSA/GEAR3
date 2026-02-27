@@ -64,6 +64,9 @@ import { CapabilityManagerComponent } from './views/enterprise/capabilities/mana
 import { RecordsManagementManagerComponent } from './views/systems/records-management/manager/records-management-manager.component';
 import { WebsitesManagerComponent } from './views/systems/websites/manager/websites-manager.component';
 import { SystemsManagerComponent } from './views/systems/systems/manager/systems-manager.component';
+import { TechCategoriesComponent } from './views/technologies/tech-categories/tech-categories.component';
+import { TechCategoriesDetailsComponent } from './views/technologies/tech-categories/details/tech-categories-details.component';
+import { TechCategoriesModelComponent } from './views/technologies/tech-categories-model/tech-categories-model.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, title: 'Dashboard' },
@@ -231,6 +234,22 @@ const routes: Routes = [
     component: ItStandardsComponent,
     title: 'IT Standard',
   },
+
+  {
+    path: 'tech_categories',
+    component: TechCategoriesComponent,
+    title: 'Technology Categories',
+  },
+  {
+    path: 'tech_categories/:techCatID',
+    component: TechCategoriesDetailsComponent,
+    title: 'Technology Category',
+  },
+  {
+    path: 'tech_categories_model',
+    component: TechCategoriesModelComponent,
+    title: 'Technology Categories Model',
+  },
   
   //{ path: 'artifacts', component: ArtifactsComponent, title: 'Artifacts' },
   //{ path: 'ea_view', component: EAViewComponent, title: 'EA View' }, // We need to update the EA view to be more readable before publishing
@@ -297,7 +316,8 @@ export class TemplatePageTitleStrategy extends TitleStrategy {
 const routerOption: ExtraOptions = {
   scrollPositionRestoration: 'enabled',
   anchorScrolling: 'enabled',
-   useHash: true
+  useHash: true,
+  onSameUrlNavigation: 'reload'
 
 }
 

@@ -41,6 +41,8 @@ export class TimeComponent implements OnInit {
 
   colorScheme: any;
 
+  public isDataReady: boolean = false;
+
   constructor(
     private apiService: ApiService,
     private location: Location,
@@ -139,21 +141,20 @@ export class TimeComponent implements OnInit {
   ngOnInit(): void {
     this.apiService.getDataDictionaryByReportName('TIME Report').subscribe(defs => {
       this.attrDefinitions = defs
-    });
+    
 
     this.apiService.getTIME().subscribe(t => {
       this.tableService.updateReportTableData(t);
       this.tableService.updateReportTableDataReadyStatus(true);
       this.tableData = t;
       this.tableDataOriginal = t;
-    });
 
-    // Visualization data
-    this.apiService.getTIME().subscribe((data: any[]) => {
+      // Visualization data
+    // this.apiService.getTIME().subscribe((data: any[]) => {
       var yearTimeCount = {};
 
       // Count number of each TIME value for each FY
-      data.forEach((row) => {
+      this.tableData.forEach((row) => {
         let year = row['FY'];
         let timeVal = row['TIME Designation'];
 
@@ -186,9 +187,12 @@ export class TimeComponent implements OnInit {
 
       // Set color scheme for chart
       this.colorScheme = this.colorSets.find((s) => s.name === 'vivid');
-
-      // console.log(this.vizData);  // Debug
     });
+
+    this.isDataReady = true;
+  });
+      // console.log(this.vizData);  // Debug
+    // });
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {

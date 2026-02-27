@@ -270,4 +270,34 @@ export class SystemsDetailsComponent implements OnInit {
     }
     return pocs;
   }
+
+  public onCapRowClick(data: Capability): void {
+    this.router.navigate(['/capabilities', data.ID], {
+      queryParams: { fromPrevious: this.detailsData.Name }
+    });
+  }
+
+  public onTimeRowClick(data: TIME): void {
+    this.router.navigate(['/systems_TIME', data.Id], {
+      queryParams: { fromPrevious: this.detailsData.Name }
+    });
+  }
+
+  public onRelatedTechRowClick(data: ITStandards): void {
+    this.router.navigate(['/it_standards', data.ID], {
+      queryParams: { fromPrevious: this.detailsData.Name }
+    });
+  }
+
+  public onRelatedRecordsRowClick(data: Record): void {
+    this.router.navigate(['/records_mgmt', data.Rec_ID], {
+      queryParams: { fromPrevious: this.detailsData.Name }
+    });
+  }
+
+  public onRelatedWebsitesRowClick(data: Website): void {
+    this.router.navigate(['/websites', data.website_id], {
+      queryParams: { fromPrevious: this.detailsData.Name }
+    });
+  }
 }

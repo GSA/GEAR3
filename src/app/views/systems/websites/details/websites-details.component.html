@@ -88,7 +88,7 @@
                           {{sc.name}}
                         </p-accordion-header>
                         <p-accordion-content>
-                          <website-service-category-details-content-lite [data]="sc"></website-service-category-details-content-lite>
+                          <website-service-category-details-content-lite [data]="sc" [websiteName]="detailsData.domain"></website-service-category-details-content-lite>
                         </p-accordion-content>
                       </p-accordion-panel>
                     }
@@ -378,7 +378,7 @@
                           <div class="sub-content full-width">
                             <span class="sub-header">Related Systems</span>
                             <app-table visibleColumnStorageKey="websites-related-systems" [localTableData]="relatedSystemsData" [isLocal]="true" [tableCols]="relatedSystemsCols"
-                            [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="systems"></app-table>
+                            [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="systems" (rowClickEvent)="onRelatedSystemsRowClick($event)"></app-table>
                           </div>
                         </div>
                       </div>

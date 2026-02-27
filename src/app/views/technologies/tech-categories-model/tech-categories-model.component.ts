@@ -9,37 +9,48 @@ import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
 
-interface OrgTree {
+// Declare jQuery symbol
+declare var $: any;
+
+interface TRMTree {
   identity: number;
   name: string;
-  DisplayName: string;
+  description: string;
+  referenceNum: string;
   children: Array<any>;
 }
 
 @Component({
-    selector: 'organizations-chart',
-    templateUrl: './organizations-chart.component.html',
-    styleUrls: ['./organizations-chart.component.scss'],
+    selector: 'tech-categories-model',
+    templateUrl: './tech-categories-model.component.html',
+    styleUrls: ['./tech-categories-model.component.scss'],
     standalone: false
 })
-export class OrganizationsChartComponent implements OnInit {
-  @ViewChild('orgChart') public graphContainer: ElementRef;
-  private orgs: any[] = [];
+export class TechCategoriesModelComponent implements OnInit {
+  @ViewChild('trmGraph') public graphContainer: ElementRef;
+  private trms: any[] = [];
   private root: any = {};
-  private rootOrgId: string = 'A'; // Office of the Administrator
-  private orgTree: any = {};
+  private trmTree: any = {};
   public highlightColor: string = '#ff4136';
+  public defExpanded: boolean = false;
+
+  // Variables to store mouse position and dragging status
+  private dragging = false;
+  private initialMouseX = 0;
+  private initialMouseY = 0;
+  private initialElementX = 0;
+  private initialElementY = 0;
+  private positionX = 0;
+  private positionY = 0;
 
   private treemap: any;
   private vis: any;
 
   // Save selected node id
-  private selectedOrg: any;
+  private selectedTRM: any;
 
   public searchKey: string;
   private finalSearchPath;
-
-  public defExpanded: boolean = false;
 
   constructor(
     private apiService: ApiService,
@@ -48,61 +59,82 @@ export class OrganizationsChartComponent implements OnInit {
     private sharedService: SharedService,
     private tableService: TableService,
     private titleService: Title,
+    private elementRef: ElementRef,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.getOrgData();
+    // Enable popovers
+    $(function () {
+      $('[data-bs-toggle="popover"]').popover();
+    });
+
+    this.getTRMData();
 
     // Method to open details modal when referenced directly via URL
-    this.route.params.subscribe((params) => {
-      var detailOrgID = params['orgID'];
-      if (detailOrgID) {
-        this.apiService.getOneOrg(detailOrgID).subscribe((data: any) => {
-          this.tableService.orgsTableClick(data[0]);
-        });
-      }
-    });
+    // this.route.params.subscribe((params) => {
+    //   var detailCapID = params['capID'];
+    //   if (detailCapID) {
+    //     this.apiService.getOneCap(detailCapID).subscribe((data: any) => {
+    //       this.tableService.capsTableClick(data[0]);
+    //     });
+    //   }
+    // });
   }
 
-  // Create Org Chart
-  private getOrgData() {
-    this.apiService.getOrganizations().subscribe((data: any[]) => {
-      // console.log("Orgs: ", data);  // Debug
-      this.orgs = data;
+  ngAfterViewInit(): void {
+    // Select the TRMDetail element using D3.js
+    const trmDetail = d3.select(this.elementRef.nativeElement).select('#trmDetail');
+
+    // Attach mouse event listeners for dragging
+    trmDetail.on('mousedown', (event) => this.dragStart(event));
+    d3.select(document).on('mousemove', (event) => this.drag(event));
+    d3.select(document).on('mouseup', (event) => this.dragEnd(event));
+  }
+
+  // Create TRM Model Graph
+  private getTRMData() {
+    this.apiService.getTRM().subscribe((data: any[]) => {
+      this.trms = data;
 
       // Set Root Node
-      this.orgs.forEach((org) => {
-          if (org.ID == this.rootOrgId) {
-          this.orgTree = {
-            identity: org.ID,
-            name: org.Name,
-            displayName: org.DisplayName,
+      this.trms.forEach((t) => {
+        if (t.ParentId == 0) {
+          this.trmTree = {
+            identity: t.Id,
+            name: t.Name,
+            description: t.Description,
+            referenceNum: t.ParentId,
+            level: t.Level,
             children: [],
           };
         }
       });
-      
+
       // Set First-Level Children
-      this.orgs.forEach((org) => {
-        if (org.Parent_ID == this.orgTree.identity) {
-          this.orgTree.children.push({
-            identity: org.ID,
-            name: org.Name,
-            displayName: org.DisplayName,
+      this.trms.forEach((t) => {
+        if (t.ParentId == this.trmTree.identity) {
+          this.trmTree.children.push({
+            identity: t.Id,
+            name: t.Name,
+            description: t.Description,
+            referenceNum: t.ParentId,
+            level: t.Level,
             children: [],
           });
         }
       });
 
       // Set Second-Level Children
-      this.orgTree.children.forEach((firstLevelOrg) => {
-        this.orgs.forEach((org) => {
-          if (org.Parent_ID == firstLevelOrg.identity) {
-            firstLevelOrg.children.push({
-              identity: org.ID,
-              name: org.Name,
-              displayName: org.DisplayName,
+      this.trmTree.children.forEach((firstLevelTRM) => {
+        this.trms.forEach((t) => {
+          if (t.ParentId == firstLevelTRM.identity) {
+            firstLevelTRM.children.push({
+              identity: t.Id,
+              name: t.Name,
+              description: t.Description,
+              referenceNum: t.ParentId,
+              level: t.Level,
               children: [],
             });
           }
@@ -110,14 +142,16 @@ export class OrganizationsChartComponent implements OnInit {
       });
 
       // Set Third-Level Children
-      this.orgTree.children.forEach((firstLevelOrg) => {
-        firstLevelOrg.children.forEach((secondLevelOrg) => {
-          this.orgs.forEach((org) => {
-            if (org.Parent_ID == secondLevelOrg.identity) {
-              secondLevelOrg.children.push({
-                identity: org.ID,
-                name: org.Name,
-                displayName: org.DisplayName,
+      this.trmTree.children.forEach((firstLevelTRM) => {
+        firstLevelTRM.children.forEach((secondLevelTRM) => {
+          this.trms.forEach((t) => {
+            if (t.ParentId == secondLevelTRM.identity) {
+              secondLevelTRM.children.push({
+                identity: t.Id,
+                name: t.Name,
+                description: t.Description,
+                referenceNum: t.ParentId,
+                level: t.Level,
                 children: [],
               });
             }
@@ -125,53 +159,13 @@ export class OrganizationsChartComponent implements OnInit {
         });
       });
 
-      // Set Fourth-Level Children
-      this.orgTree.children.forEach((firstLevelOrg) => {
-        firstLevelOrg.children.forEach((secondLevelOrg) => {
-          secondLevelOrg.children.forEach((thirdLevelOrg) => {
-            this.orgs.forEach((org) => {
-              if (org.Parent_ID == thirdLevelOrg.identity) {
-                thirdLevelOrg.children.push({
-                  identity: org.ID,
-                  name: org.Name,
-                  displayName: org.DisplayName,
-                  children: [],
-                });
-              }
-            });
-          });
-        });
-      });
-
-      // Set Fifth-Level Children
-      this.orgTree.children.forEach((firstLevelOrg) => {
-        firstLevelOrg.children.forEach((secondLevelOrg) => {
-          secondLevelOrg.children.forEach((thirdLevelOrg) => {
-            thirdLevelOrg.children.forEach((fourthLevelOrg) => {
-              this.orgs.forEach((org) => {
-                if (org.Parent_ID == fourthLevelOrg.identity) {
-                  fourthLevelOrg.children.push({
-                    identity: org.ID,
-                    name: org.Name,
-                    displayName: org.DisplayName,
-                    children: [],
-                  });
-                }
-              });
-            });
-          });
-        });
-      });
-
-      // console.log("OrgTree: ", this.orgTree);  // Debug
-      // Create graph after retrieving data and computing tree
-      this.createChart();
+      this.createGraph();
     });
-  } // End of getOrgData
+  }
 
   // Example taken from https://bl.ocks.org/d3noob/1a96af738c89b88723eb63456beb6510
-  private createChart() {
-    var margin: any = { top: 20, bottom: 20, left: 150, right: 150 };
+  private createGraph() {
+    var margin: any = { top: 60, bottom: 20, left: 120, right: 120 };
     var i: number = 0;
 
     // Set margins
@@ -192,7 +186,7 @@ export class OrganizationsChartComponent implements OnInit {
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
     // Set root with hierarchy tree
-    this.root = d3.hierarchy(this.orgTree, function (d) {
+    this.root = d3.hierarchy(this.trmTree, function (d) {
       return d.children;
     });
     this.root.x0 = height / 2;
@@ -203,9 +197,7 @@ export class OrganizationsChartComponent implements OnInit {
 
     // Sort Nodes
     this.root.sort(function (a, b) {
-      return a.data.displayName
-        .toLowerCase()
-        .localeCompare(b.data.displayName.toLowerCase());
+      return a.data.referenceNum.localeCompare(b.data.referenceNum);
     });
     // console.log("Root: ", this.root);  // Debug
 
@@ -315,7 +307,7 @@ export class OrganizationsChartComponent implements OnInit {
 
       // Display node name for text
       .text(function (d) {
-        return d.data.displayName;
+        return d.data.name;
       })
       .attr('font-size', '0.75rem')
       .attr(
@@ -374,37 +366,51 @@ export class OrganizationsChartComponent implements OnInit {
       .on(
         'mouseenter',
         function (d) {
-          d3.select('#orgDetail')
+          d3.select('#trmDetail')
             .style('visibility', 'visible') // Show detail card
-            .style('opacity', '1');
+            .style('opacity', '1')
 
-          // d3.select('#orgName').text(d.data.name); // Set Name
-          d3.select('#orgName').text(d.currentTarget.__data__.data.name); // Set Name
+          d3.select('#trmName').text(
+            d.currentTarget.__data__.data.name
+          ); // Set Name
+          d3.select('#trmLevel').text(d.currentTarget.__data__.data.level); // Set TRM Level
+          d3.select('#trmDetailbody').text(d.currentTarget.__data__.data.description); // Set Body with description
 
-          // d3.select("#orgChart")
+          // d3.select("#busCapGraph")
           //   .style("transform", "translateY(13%)");   // Keeping this here in case the detail pane gets larger and needs to move
 
           // console.log("Hovered Node: ", d);  // Debug
-          this.selectedOrg = d; // Save selected node for links
+          this.selectedTRM = d.currentTarget.__data__.data; // Save selected node id for links
+
+          function handleClick() {
+            // // Grab data for selected node
+            // this.apiService
+            //   .getOneCap(this.selectedCap.identity)
+            //   .subscribe((data: any) => {
+            //       // var capData = data[0];
+            //       // this.tableService.capsTableClick(capData);
+            this.router.navigate(['tech_categories', this.selectedTRM.identity], { queryParams: { fromPrevious: 'Technology Categories Model' } });
+            //     }
+            //   )
+          }
 
           // Detail Pane Controls
-          var orgDetail = d3.select('#orgDetailLink');
+          var trmDetail = d3.select('#trmDetailLink');
 
           // When detail link is clicked
-          orgDetail.on(
+          trmDetail.on(
             'click',
-            function () {
-              // console.log("Selected Node: ", this.selectedOrg);  // Debug
-
-              // Grab data for selected node
-              this.apiService
-                .getOneOrg(this.selectedOrg.srcElement.__data__.data.identity)
-                .subscribe((data: any) => {
-                  // this.tableService.orgsTableClick(data);
-                  this.router.navigate(['organizations', data.ID]);
-                });
-            }.bind(this)
+            handleClick.bind(this)
           );
+
+          var trmName = d3.select('#trmName');
+
+          // When cap link is clicked
+          trmName.on(
+            'click',
+            handleClick.bind(this)
+          );
+
         }.bind(this)
       );
 
@@ -502,12 +508,12 @@ export class OrganizationsChartComponent implements OnInit {
     }
 
     // When close window is clicked
-    var orgClose = d3.select('#orgDetailClose');
-    orgClose.on('click', function (d) {
-      d3.select('#orgDetail')
+    var trmClose = d3.select('#trmDetailClose');
+    trmClose.on('click', function (d) {
+      d3.select('#trmDetail')
         .style('visibility', 'hidden')
         .style('opacity', '0');
-      d3.select('#orgChart').style('transform', null);
+      d3.select('#trmGraph').style('transform', null);
     });
   }; // End of update
 
@@ -532,7 +538,7 @@ export class OrganizationsChartComponent implements OnInit {
         this.finalSearchPath = openPaths(paths);
 
         // console.log("Final Search Paths: ", this.finalSearchPath);  // Debug
-        this.update(null, this.root);
+        this.update(event, this.root);
       } else {
         alert(this.searchKey + ' not found!');
       }
@@ -543,10 +549,7 @@ export class OrganizationsChartComponent implements OnInit {
 
         paths.push(d); // We assume this path is the right one
 
-        if (
-          d.data.name.match(patt) != null ||
-          d.data.displayName.match(patt) != null
-        ) {
+        if (d.data.name.match(patt) != null) {
           // Avoid duplication
           if (!paths.includes(d)) {
             paths.push(d);
@@ -573,7 +576,7 @@ export class OrganizationsChartComponent implements OnInit {
 
           // Include parent if not already in the path
           if (
-            paths[index].parent.data.displayName != 'Administrator (A)' &&
+            paths[index].parent.data.name != 'Technology Reference Model (TRM)' &&
             !paths.includes(paths[index].parent)
           ) {
             paths.push(paths[index].parent);
@@ -599,7 +602,43 @@ export class OrganizationsChartComponent implements OnInit {
     this.update(null, this.root);
   }
 
-  public onViewAll(): void {
-    this.defExpanded = !this.defExpanded;
-  }
+    // Method to handle mouse down event
+    dragStart(event): void {
+      this.dragging = true;
+      this.initialMouseX = event.clientX;
+      this.initialMouseY = event.clientY;
+
+      const trmDetail = d3.select(this.elementRef.nativeElement).select('#trmDetail');
+      const bbox = (trmDetail.node() as HTMLElement).getBoundingClientRect();
+      this.initialElementX = bbox.left;
+      this.initialElementY = bbox.top;
+      trmDetail.classed('grabbing', true);
+    }
+
+    // Method to handle mouse move event
+    drag(event): void {
+      if (this.dragging) {
+        const dx = event.clientX - this.initialMouseX;
+        const dy = event.clientY - this.initialMouseY;
+        this.positionX = this.initialElementX + dx;
+        this.positionY = this.initialElementY + dy;
+
+        // Update position of capDetail using D3.js
+        d3.select(this.elementRef.nativeElement).select('#trmDetail')
+          .style('visibility', 'visible')
+          .style('opacity', '1')
+          .style('left', this.positionX + 'px')
+          .style('top', this.positionY + 'px');
+      }
+    }
+
+    // Method to handle mouse up event
+    dragEnd(event): void {
+      this.dragging = false;
+      d3.select(this.elementRef.nativeElement).select('#trmDetail').classed('grabbing', false);
+    }
+
+    public onViewAll(): void {
+      this.defExpanded = !this.defExpanded;
+    }
 }

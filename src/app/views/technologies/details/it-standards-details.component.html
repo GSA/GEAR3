@@ -206,7 +206,7 @@
                     <td>{{detailsData.EndOfLifeDate | date : "MMMM d, y"}}</td>
                   </tr>
                 }
-                @if (isFieldPopulated(detailsData.Category)) {
+                <!-- @if (isFieldPopulated(detailsData.Category)) {
                   <tr>
                     <td>
                       <span [title]="getTooltip('Category')" role="tooltip">
@@ -216,7 +216,7 @@
                     </td>
                     <td>{{detailsData.Category}}</td>
                   </tr>
-                }
+                } -->
                 @if (isFieldPopulated(detailsData.StandardType)) {
                   <tr>
                     <td>
@@ -316,6 +316,11 @@
                 }
               </table>
             </div>
+            @if(hasRelatedTRMS) {
+              <div class="trm-table-container">
+                <app-table visibleColumnStorageKey="related-trm-report"  [localTableData]="relatedTRMS" [isLocal]="true" [tableCols]="relatedTRMTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onTRMRowClick($event)"></app-table>
+              </div>
+            }
           </div>
           <div class="edit-info-container">
             <div class="edit-info-button-wrapper">
@@ -337,7 +342,7 @@
         <div class="systems-container">
           <div class="overall-data-container">
             <div class="main-data-container">
-              <app-table visibleColumnStorageKey="it-standards-related-systems" [tableCols]="relatedSystemsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="systems" [contextSystemName]="detailsData?.Name"></app-table>
+              <app-table visibleColumnStorageKey="it-standards-related-systems"  [localTableData]="relatedSystems" [isLocal]="true" [tableCols]="relatedSystemsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="systems" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRelatedSystemsRowClick($event)"></app-table>
             </div>
           </div>
         </div>

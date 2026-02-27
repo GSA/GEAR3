@@ -619,6 +619,13 @@ exports.getRetiredTotals = (req, res) => {
   res = ctrl.sendQuery(query, `Retired IT standard totals`, res);
 };
 
+exports.getRelatedTRMS = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_it-standards_related_trms.sql`)).toString() +
+  ` WHERE tech.Id = ${req.params.id};`;
+
+  res = ctrl.sendQuery(query, `IT standard related TRMs`, res);
+};
+
 exports.getFilterTotals = (req, res) => {
   var filterQueryBase = 'AND (';
   var filterQuery = '';

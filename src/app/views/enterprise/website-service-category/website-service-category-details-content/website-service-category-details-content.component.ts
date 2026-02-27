@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Service_Category } from '@api/models/service-category.model';
 import { WebsiteServiceCategory } from '@api/models/website-service-category.model';
 import { Website } from '@api/models/websites.model';
@@ -30,6 +31,8 @@ export class WebsiteServiceCategoryDetailsContentComponent implements OnInit {
     private apiService: ApiService,
     private tableService: TableService,
     private router: Router
+    private tableService: TableService,
+    private router: Router
   ) {
   }
 
@@ -40,14 +43,9 @@ export class WebsiteServiceCategoryDetailsContentComponent implements OnInit {
     });
   }
 
-  public onRowClick(e: any) {
-    const searchTerm: string = e.tableSearchString || '';
-    this.router.navigate(['/websites', e.website_id], {
-        queryParams: { 
-          tableSearchTerm: searchTerm,
-          fromWSC: this.data.website_service_category_id,
-          fromWSCName: this.data.name
-         }
+  public onRowClick(data: Website): void {
+    this.router.navigate(['/websites', data.website_id], {
+      queryParams: { fromPrevious: this.data.name }
     });
-  }
+  }W
 }

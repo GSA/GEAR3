@@ -1,0 +1,92 @@
+@if (isDataReady) {
+  <div class="trm-details-container">
+    <div class="breadcrumb-container">
+      <app-breadcrumb>
+        <span currentPageName>{{detailsData.Name}}</span>
+      </app-breadcrumb>
+    </div>
+    <div class="title-container">
+      <span class="title">{{detailsData.Name}}</span>
+    </div>
+    <div class="content-container">
+      <div class="overview-container">
+        <div class="overall-data-container">
+          <div class="main-data-container">
+            <div class="data-wrapper">
+              <div class="data">
+                <label class="data-label">
+                  <span>
+                    Area
+                  </span>
+                </label>
+                <span>
+                  <span>{{detailsData.Area || 'N/A'}}</span>
+                </span>
+              </div>
+              <div class="data">
+                <label class="data-label">
+                  <span>
+                    Domain
+                  </span>
+                </label>
+                <span>
+                  <span>{{detailsData.Domain || 'N/A'}}</span>
+                </span>
+              </div>
+              <div class="data">
+                <label class="data-label">
+                  <span>
+                    Level
+                  </span>
+                </label>
+                <span>
+                  <span>{{detailsData.Level || 'N/A'}}</span>
+                </span>
+              </div>
+              <div class="data">
+                <label class="data-label">
+                  <span>
+                    Type
+                  </span>
+                </label>
+                <span>
+                  <span>{{detailsData.Type || 'N/A'}}</span>
+                </span>
+              </div>
+              <div class="data">
+                <label class="data-label">
+                  <span>
+                    FEA Code
+                  </span>
+                </label>
+                <span>
+                  <span>{{detailsData.FEACode || 'N/A'}}</span>
+                </span>
+              </div>
+              <div class="data-full">
+                <label class="data-label">
+                  <span>
+                    Description
+                  </span>
+                </label>
+                <span>
+                  <span>{{detailsData.Description || 'N/A'}}</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        @if(hasRelatedTech()) {
+          <div class="overall-data-container">
+            <div class="main-data-container">
+              <div class="sub-content full-width">
+                <span class="sub-header">Associated IT Standards</span>
+                <app-table visibleColumnStorageKey="tech-categories-related-tech" [localTableData]="relatedITStandards" [isLocal]="true" [tableCols]="relatedITStandardsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="technology" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRowClick($event)"></app-table>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

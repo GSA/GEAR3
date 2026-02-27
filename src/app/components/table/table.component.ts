@@ -354,17 +354,18 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
   public onRowSelect(e: TableRowSelectEvent) {
     e.data.tableSearchString = this.tabelSearchString;
-    if(this.tableType === 'globalSearch') {
-      this.rowClickEvent.emit(e);
-      // this.navigateByType(e.data.GEAR_Type, e.data);
-      return;
-    } else if(this.tableType === 'accessForms') {
-      this.rowClickEvent.emit(e);
-      return;
-    } else {
-      this.navigateByType(this.tableType, e.data);
-      return;
-    }
+    this.rowClickEvent.emit(e.data);
+    // if(this.tableType === 'globalSearch') {
+    //   this.rowClickEvent.emit(e);
+    //   // this.navigateByType(e.data.GEAR_Type, e.data);
+    //   return;
+    // } else if(this.tableType === 'accessForms') {
+    //   this.rowClickEvent.emit(e);
+    //   return;
+    // } else {
+    //   this.navigateByType(this.tableType, e.data);
+    //   return;
+    // }
   }
 
 

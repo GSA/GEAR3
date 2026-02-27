@@ -42,6 +42,8 @@ export class SidebarV2Component {
   ];
   public technologiesChildren: SidebarButtonChild[] = [
     { text: 'IT Standards List', route: '/it_standards' },
+    { text: 'Technology Category List', route: '/tech_categories' },
+    { text: 'Technology Category Model', route: '/tech_categories_model' },
     { text: 'IT Standards Approval Process', href: 'https://sites.google.com/a/gsa.gov/it_standards/software-approvals#h.vioogtbleinq', icon: 'fas fa-external-link-alt' }
   ];
   public enterpriseArchitectureChildren: SidebarButtonChild[] = [
