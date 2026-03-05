@@ -38,35 +38,60 @@ export class TechCategoriesDetailsComponent implements OnInit {
 
       // IT Standard Table Columns
       this.relatedITStandardsTableCols = [{
-        field: 'ID',
-        header: 'Id',
-        isSortable: true,
-        showColumn: false,
-        titleTooltip: this.sharedService.getTooltip(defs, 'ID')
-      }, {
         field: 'Name',
         header: 'IT Standard Name',
         isSortable: true,
         showColumn: true,
         titleTooltip: this.sharedService.getTooltip(defs, 'IT Standard Name')
-      },
-      {
+      }, {
         field: 'ApprovedVersions',
         header: 'Approved Versions',
         isSortable: false,
         showColumn: true,
         titleTooltip: this.sharedService.getTooltip(defs, 'Approved Versions')
       }, {
+        field: 'ManufacturerName',
+        header: 'Manufacturer',
+        isSortable: true,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Manufacturer Name')
+      }, {
+        field: 'Description',
+        header: 'Description',
+        isSortable: true,
+        showColumn: true,
+        formatter: this.sharedService.formatDescriptionLite,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Description')
+      }, {
+        field: 'Status',
+        header: 'Status',
+        isSortable: true,
+        formatter: this.sharedService.formatStatus,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Status')
+      }, {
+        field: 'DeploymentType',
+        header: 'Deployment Type',
+        isSortable: true,
+        formatter: this.sharedService.formatDeploymentType,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Deployment Type')
+      }, {
+        field: 'ApprovalExpirationDate',
+        header: 'Approval Expires',
+        isSortable: true,
+        showColumn: true,
+        formatter: this.sharedService.dateFormatter,
+        titleTooltip: this.sharedService.getTooltip(defs, 'Approval Expiration Date')
+      }, {
+        field: 'ID',
+        header: 'Id',
+        isSortable: true,
+        showColumn: false,
+        titleTooltip: this.sharedService.getTooltip(defs, 'ID')
+      },{
         field: 'Manufacturer',
         header: 'Manufacturer ID',
         isSortable: true,
         showColumn: false,
         titleTooltip: this.sharedService.getTooltip(defs, 'Manufacturer ID')
-      }, {
-        field: 'ManufacturerName',
-        header: 'Manufacturer',
-        isSortable: true,
-        titleTooltip: this.sharedService.getTooltip(defs, 'Manufacturer Name')
       }, {
         field: 'SoftwareProduct',
         header: 'Product ID',
@@ -103,44 +128,27 @@ export class TechCategoriesDetailsComponent implements OnInit {
         isSortable: true,
         showColumn: false,
         titleTooltip: this.sharedService.getTooltip(defs, 'Software Release Name')
-      }, {
-        field: 'EndOfLifeDate',
-        header: 'Vendor End of Life Date',
-        isSortable: true,
-        showColumn: false,
-        formatter: this.sharedService.dateFormatter,
-       titleTooltip: this.sharedService.getTooltip(defs, 'Software End of Life Date')
-      }, {
+      },
+      //  {
+      //   field: 'EndOfLifeDate',
+      //   header: 'Vendor End of Life Date',
+      //   isSortable: true,
+      //   showColumn: false,
+      //   formatter: this.sharedService.dateFormatter,
+      //  titleTooltip: this.sharedService.getTooltip(defs, 'Software End of Life Date')
+      // }, 
+      {
         field: 'AlsoKnownAs',
         header: 'Also Known As',
         isSortable: true,
         showColumn: false,
         titleTooltip: this.sharedService.getTooltip(defs, 'Previously Known As')
       }, {
-        field: 'Description',
-        header: 'Description',
-        isSortable: true,
-        showColumn: true,
-        formatter: this.sharedService.formatDescriptionLite,
-        titleTooltip: this.sharedService.getTooltip(defs, 'Description')
-      }, {
-        field: 'Status',
-        header: 'Status',
-        isSortable: true,
-        formatter: this.sharedService.formatStatus,
-        titleTooltip: this.sharedService.getTooltip(defs, 'Status')
-      }, {
         field: 'StandardType',
         header: 'Standard Type',
         isSortable: true,
         showColumn: false,
         titleTooltip: this.sharedService.getTooltip(defs, 'Standard Type')
-      }, {
-        field: 'DeploymentType',
-        header: 'Deployment Type',
-        isSortable: true,
-        formatter: this.sharedService.formatDeploymentType,
-        titleTooltip: this.sharedService.getTooltip(defs, 'Deployment Type')
       }, {
         field: 'ComplianceStatus',
         header: '508 Compliance',
@@ -200,14 +208,6 @@ export class TechCategoriesDetailsComponent implements OnInit {
         showColumn: false,
         titleTooltip: this.sharedService.getTooltip(defs, 'Requested Item (RITM)')
       }, {
-        field: 'ApprovalExpirationDate',
-        header: 'Approval Expires',
-        isSortable: true,
-        showColumn: true,
-        formatter: this.sharedService.dateFormatter,
-        titleTooltip: this.sharedService.getTooltip(defs, 'Approval Expiration Date')
-      },
-      {
         field: 'OperatingSystems',
         header: 'Operating Systems',
         isSortable: false,
