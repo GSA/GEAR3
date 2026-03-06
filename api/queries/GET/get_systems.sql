@@ -32,6 +32,7 @@ SELECT
   systems.`ex:FISMA_Reportable`                        	AS Reportable,
   systems.`ex:Goverment_Wide_Shared_Service`            AS SharedService,
   systems.`ex:CUI`                                      AS CUI,
+  systems.`ex:shadowbudget_alias`                       AS BudgetAlias,
   
   CONCAT_WS('*', CONCAT_WS(':', 'Authorizing Official', CONCAT_WS( '; ', CONCAT_WS(', ', `ex:Authorizing_Official_Full_Name`, `ex:Authorizing_Official_Email`, `ex:Authorizing_Official_Phone`))) ,
   CONCAT_WS(':', 'System Owner',  CONCAT_WS( '; ',  CONCAT_WS(', ', `ex:System_Owner_Full_Name`, `ex:System_Owner_eMail`, `ex:System_Owner_Phone`))) ,
