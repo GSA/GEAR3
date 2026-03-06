@@ -80,6 +80,15 @@
                 </div>
                 <div class="data-full">
                   <label class="data-label">
+                    <span [title]="getTooltip('Budget Alias')" role="tooltip">
+                      Budget Alias
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>{{detailsData.BudgetAlias || 'N/A'}}</span>
+                </div>
+                <div class="data-full">
+                  <label class="data-label">
                     <span [title]="getTooltip('Related Artifacts')" role="tooltip">
                       Related Artifacts
                       <i class="fas fa-info-circle"></i>
