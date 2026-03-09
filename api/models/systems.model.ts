@@ -39,4 +39,5 @@ export class System {
   public DataSteward: string;
   public RelatedArtifacts: string;
   public CUI: string;
+  public BudgetAlias: string;
 }

@@ -259,6 +259,13 @@ export class SystemsComponent implements OnInit {
           showColumn: false,
           titleTooltip: this.getTooltip('FISMA System Identifier')
         },
+        {
+          field: 'BudgetAlias',
+          header: 'Budget Alias',
+          isSortable: true,
+          showColumn: false,
+          titleTooltip: this.getTooltip('Budget Alias')
+        },
       ];
     
       // Inactive Column Defs
