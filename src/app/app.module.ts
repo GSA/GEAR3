@@ -126,6 +126,7 @@ import { TechCategoriesComponent } from './views/technologies/tech-categories/te
 import { TechCategoriesDetailsComponent } from './views/technologies/tech-categories/details/tech-categories-details.component';
 import { TechCategoriesModelComponent } from './views/technologies/tech-categories-model/tech-categories-model.component';
 import { PreviousRouteService } from '@services/previous-route/previous-route.service';
+import { PageHelpButtonComponent } from './components/page-help-button/page-help-button.component';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -202,7 +203,8 @@ import { PreviousRouteService } from '@services/previous-route/previous-route.se
         FeedbackComponent,
         TechCategoriesComponent,
         TechCategoriesDetailsComponent,
-        TechCategoriesModelComponent
+        TechCategoriesModelComponent,
+        PageHelpButtonComponent
     ],
     bootstrap: [
       AppComponent

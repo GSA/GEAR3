@@ -1,21 +1,7 @@
 <div class="website-categories-container">
   <div class="website-categories-title-container">
     <h2>GSA Website Service Categories List</h2>
-    <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
-      <b>Details:</b> Left click on a row within the table to view additional details.
-          <br><br>
-          <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
-          <br><br>
-          <b>Export:</b> Export data by clicking on the <i class='fas fa-download'></i> icon and selecting the format that meets 
-          your needs.
-          <br><br>
-          <b>Search:</b> Perform a filtered search across all fields in the displayed data. Hit the 'Enter' button on your 
-          keyboard to execute. Click the <i class='far fa-trash-alt'></i> icon to clear the search box. 
-          Search within specific columns by clicking on the <i class='fas fa-angle-down'></i> icon. 
-          <br><br>
-          <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
-          <i class='fas fa-caret-square-down'></i> icon to display everything on one page.
-    </app-button-overlay-panel>
+    <app-page-help-button></app-page-help-button>
   </div>
   <div class="website-categories-definition-container">
     <p class="website-categories-definition-text" [ngClass]="{'expanded' : defExpanded}">Website Service Categories draw connections between sites that serve similar themes. For instance, GSA supports both travel policy 
