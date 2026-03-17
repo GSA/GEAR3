@@ -30,6 +30,6 @@
       <app-button [buttonText]="defExpanded ? 'View Less' : 'View More'" buttonStyle="link" (buttonClick)="onViewAll()"></app-button>
     </div> -->
     <div class="trm-data-container">
-      <app-table visibleColumnStorageKey="trm-report" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)"></app-table>
+      <app-table visibleColumnStorageKey="trm-report" defaultSortField="Name" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)"></app-table>
     </div>
   </div>

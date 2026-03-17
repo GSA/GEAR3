@@ -24,6 +24,6 @@
   </div>
   <div class="sub-content full-width">
     <span class="sub-header">Related Websites</span>
-    <app-table visibleColumnStorageKey="website-service-category-related-websites" [localTableData]="relatedWebsites" [isLocal]="true" [tableCols]="relatedWebsitesTableCols" [showToolbar]="showToolbar" [showPagination]="showPagination" reportStyle="neutral" (rowClickEvent)="onRelatedWebsitesRowClick($event)"></app-table>
+    <app-table visibleColumnStorageKey="website-service-category-related-websites" defaultSortField="domain" [localTableData]="relatedWebsites" [isLocal]="true" [tableCols]="relatedWebsitesTableCols" [showToolbar]="showToolbar" [showPagination]="showPagination" reportStyle="neutral" (rowClickEvent)="onRelatedWebsitesRowClick($event)"></app-table>
   </div>
 }

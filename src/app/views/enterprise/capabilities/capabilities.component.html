@@ -36,6 +36,6 @@
       <app-button [buttonText]="defExpanded ? 'View Less' : 'View More'" buttonStyle="link" (buttonClick)="onViewAll()"></app-button>
     </div>
     <div class="capabilities-data-container">
-      <app-table visibleColumnStorageKey="capabilities-report" [tableCols]="tableCols" [attrDefs]="attrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)"></app-table>
+      <app-table visibleColumnStorageKey="capabilities-report" defaultSortField="Name" [tableCols]="tableCols" [attrDefs]="attrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)"></app-table>
     </div>
   </div>

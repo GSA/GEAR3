@@ -44,7 +44,7 @@
       </div>
     </div>
     <div class="systems-data-container">
-      <app-table visibleColumnStorageKey="systems-report" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"
+      <app-table visibleColumnStorageKey="systems-report" defaultSortField="Name" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"
         (rowClickEvent)="onRowClick($event)">
         <div class="filter-tabs-container" filterTabs>
           <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')" (keyup)="onKeyUp($event, 'All')" tabindex="0">

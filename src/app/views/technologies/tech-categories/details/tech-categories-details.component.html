@@ -81,7 +81,7 @@
             <div class="main-data-container">
               <div class="sub-content full-width">
                 <span class="sub-header">Associated IT Standards</span>
-                <app-table visibleColumnStorageKey="tech-categories-related-tech" [localTableData]="relatedITStandards" [isLocal]="true" [tableCols]="relatedITStandardsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="technology" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRowClick($event)"></app-table>
+                <app-table visibleColumnStorageKey="tech-categories-related-tech" defaultSortField="Name" [localTableData]="relatedITStandards" [isLocal]="true" [tableCols]="relatedITStandardsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="technology" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRowClick($event)"></app-table>
               </div>
             </div>
           </div>
