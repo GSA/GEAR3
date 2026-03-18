@@ -5,8 +5,9 @@
         <div class="data-wrapper">
           <div class="data-full">
             <label class="data-label">
-              <span>
-                {{data.name}}
+              <span [title]="getTooltip('Description')" role="tooltip">
+                Description
+                <i class="fas fa-info-circle"></i>
               </span>
             </label>
             <span>

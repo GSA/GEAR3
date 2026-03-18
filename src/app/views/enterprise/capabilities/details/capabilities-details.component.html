@@ -29,8 +29,9 @@
               <div class="data-wrapper">
                 <div class="data-full">
                   <label class="data-label">
-                    <span>
+                    <span [title]="getTooltip('Description')" role="tooltip">
                       Description
+                      <i class="fas fa-info-circle"></i>
                     </span>
                   </label>
                   <span>
@@ -39,8 +40,9 @@
                 </div>
                 <div class="data-full">
                   <label class="data-label">
-                    <span>
+                    <span [title]="getTooltip('Level')" role="tooltip">
                       Level
+                      <i class="fas fa-info-circle"></i>
                     </span>
                   </label>
                   <span>

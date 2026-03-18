@@ -4,6 +4,7 @@ import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Record } from '@api/models/records.model';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 
 @Component({
     selector: 'records-management-details',
@@ -16,6 +17,8 @@ export class RecordsManagementDetailsComponent implements OnInit {
   public recordsMgntId: number = null;
   public detailsData: Record;
   public isDataReady: boolean = false;
+
+  public attrDefinitions = <DataDictionary[]>[];
 
   constructor(
     private route: ActivatedRoute,
@@ -36,7 +39,21 @@ export class RecordsManagementDetailsComponent implements OnInit {
         this.isDataReady = true;
       });
 
+      // Get attribute definition list
+      this.apiService.getDataDictionaryByReportName('Records Management')
+        .subscribe((data: DataDictionary[]) => {
+          this.attrDefinitions = data;
+      });
+
     });
+  }
+
+  public getTooltip (name: string): string {
+    const def = this.attrDefinitions.find(def => def.Term === name);
+    if(def){
+      return def.TermDefinition;
+    }
+    return '';
   }
 
   public editRecord(): void {
