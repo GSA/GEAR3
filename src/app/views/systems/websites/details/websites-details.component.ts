@@ -11,6 +11,7 @@ import { RelatedWebsitesColumns } from '@common/table-columns/related-websites';
 import { forkJoin, of, Subscription } from 'rxjs';
 import { RelatedSystemsCols } from '@common/table-columns/related-systems';
 import { SharedService } from '@services/shared/shared.service';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 
 @Component({
     selector: 'websites-details',
@@ -37,6 +38,8 @@ export class WebsitesDetailsComponent implements OnInit {
 
   public relatedWebsitesCols: Column[] = RelatedWebsitesColumns;
 
+  public attrDefinitions = <DataDictionary[]>[];
+
   private IMG_PREFIX: string = '../../../../../assets/website-screenshots/';
 
   constructor(
@@ -56,18 +59,21 @@ export class WebsitesDetailsComponent implements OnInit {
         this.apiService.getOneWebsite(this.websiteId),
         this.apiService.getWebsiteScans(this.websiteId),
         this.apiService.getWebsiteServiceCategories(this.websiteId),
-        this.apiService.getWebsiteSys(this.websiteId)
+        this.apiService.getWebsiteSys(this.websiteId),
+        this.apiService.getDataDictionaryByReportName('GSA Websites')
       ]).subscribe({
         next: ([
           website,
           websiteScans,
           websiteServiceCategories,
-          websiteSystems
+          websiteSystems,
+          defs
         ]) => {
           this.detailsData = website;
           this.websiteScan = websiteScans[0];
           this.websiteServiceCategories = websiteServiceCategories;
-          this.relatedSystemsData = websiteSystems;      
+          this.relatedSystemsData = websiteSystems;
+          this.attrDefinitions = defs; 
         },
         error: (err) => console.log('Failed to load page data', err),
         complete: () => this.isDataReady = true,
@@ -93,6 +99,14 @@ export class WebsitesDetailsComponent implements OnInit {
       //   this.relatedSystemsData = sys;
       // });
     });
+  }
+
+  public getTooltip (name: string): string {
+    const def = this.attrDefinitions.find(def => def.Term === name);
+    if(def){
+      return def.TermDefinition;
+    }
+    return '';
   }
 
   public onTabClick(tabName: string, event: Event): void {

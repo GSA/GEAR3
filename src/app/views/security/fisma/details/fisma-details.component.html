@@ -23,8 +23,10 @@
             <div class="main-data-container">
               <div class="data">
                 <label class="data-label">
-                  <span> Status <i class="fas fa-info-circle"></i>
-                </span>
+                  <span [title]="getTooltip('Status')" role="tooltip">
+                    Status
+                    <i class="fas fa-info-circle"></i>
+                  </span>
               </label>
               <span>
                 <span [ngClass]="getStatusClass(detailsData.Status)">{{detailsData.Status}}</span>
@@ -32,22 +34,31 @@
             </div>
             <div class="data">
               <label class="data-label">
-                <span>
-                  <i class="fas fa-shield-alt"></i> FIPS Impact Level </span>
-                </label>
+                  <span [title]="getTooltip('FIPS Impact Level')" role="tooltip">
+                    <i class="fas fa-shield-alt"></i>
+                    FIPS Impact Level
+                    <i class="fas fa-info-circle"></i>
+                  </span>
+              </label>
                 <span>{{detailsData.FIPS_Impact_Level}}</span>
               </div>
               <div class="data">
                 <label class="data-label">
-                  <span>
-                    <i class="fas fa-calendar-alt"></i> ATO Date </span>
+                    <span [title]="getTooltip('ATO Date')" role="tooltip">
+                      <i class="fas fa-calendar-alt"></i>
+                      ATO Date
+                      <i class="fas fa-info-circle"></i>
+                    </span>
                   </label>
                   <span>{{detailsData.ATODate | date : "longDate"}}</span>
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span>
-                      <i class="fas fa-calendar-check"></i> Renewal Date </span>
+                    <span [title]="getTooltip('Renewal Date')" role="tooltip">
+                      <i class="fas fa-calendar-check"></i>
+                      Renewal Date
+                      <i class="fas fa-info-circle"></i>
+                    </span>
                     </label>
                     <span>{{detailsData.RenewalDate | date : "longDate"}}</span>
                   </div>
@@ -60,23 +71,31 @@
                     </div> -->
                     <div class="data">
                       <label class="data-label">
-                        <span>
-                          <i class="fas fa-user-shield"></i> PII </span>
+                          <span [title]="getTooltip('PII')" role="tooltip">
+                            <i class="fas fa-user-shield"></i>
+                            PII
+                            <i class="fas fa-info-circle"></i>
+                          </span>
                         </label>
                         <span>{{detailsData.PII}}</span>
                       </div>
                       <div class="data">
                         <label class="data-label">
-                          <span>
-                            <i class="fas fa-lock"></i> CUI </span>
+                            <span [title]="getTooltip('CUI')" role="tooltip">
+                              <i class="fas fa-lock"></i>
+                              CUI
+                              <i class="fas fa-info-circle"></i>
+                            </span>
                           </label>
                           <span>{{detailsData.CUI}}</span>
                         </div>
                         <div class="data-full">
                           <label class="data-label">
-                            <span> Description <i class="fas fa-info-circle"></i>
-                          </span>
-                        </label>
+                            <span [title]="getTooltip('Description')" role="tooltip">
+                              Description
+                              <i class="fas fa-info-circle"></i>
+                            </span>
+                          </label>
                         <span>{{detailsData.Description}}</span>
                       </div>
                     </div>
@@ -89,7 +108,7 @@
                         @if (isFieldPopulated(detailsData.SystemLevel)) {
                           <tr>
                             <td>
-                              <span> System Level <i class="fas fa-info-circle"></i>
+                              <span [title]="getTooltip('System Level')" role="tooltip"> System Level <i class="fas fa-info-circle"></i>
                             </span>
                           </td>
                           <td>{{detailsData.SystemLevel}}</td>
@@ -98,7 +117,7 @@
                       @if (isFieldPopulated(detailsData.SharedService)) {
                         <tr>
                           <td>
-                            <span> Shared Service <i class="fas fa-info-circle"></i>
+                            <span [title]="getTooltip('Shared Service')" role="tooltip"> Shared Service <i class="fas fa-info-circle"></i>
                           </span>
                         </td>
                         <td>{{detailsData.SharedService}}</td>
@@ -107,7 +126,7 @@
                     @if (isFieldPopulated(detailsData.RespOrg)) {
                       <tr>
                         <td>
-                          <span> Responsible Organization <i class="fas fa-info-circle"></i>
+                          <span [title]="getTooltip('Responsible Org')" role="tooltip"> Responsible Organization <i class="fas fa-info-circle"></i>
                         </span>
                       </td>
                       <td>{{detailsData.RespOrg}}</td>
@@ -116,7 +135,7 @@
                   @if (isFieldPopulated(detailsData.BusOrg)) {
                     <tr>
                       <td>
-                        <span> Business Organization <i class="fas fa-info-circle"></i>
+                        <span [title]="getTooltip('Business Organization')" role="tooltip"> Business Organization <i class="fas fa-info-circle"></i>
                       </span>
                     </td>
                     <td>{{detailsData.BusOrg}}</td>
@@ -125,7 +144,7 @@
                 @if (isFieldPopulated(detailsData.FISMASystemIdentifier)) {
                   <tr>
                     <td>
-                      <span> FISMA System Identifier <i class="fas fa-info-circle"></i>
+                      <span [title]="getTooltip('FISMA System Identifier')" role="tooltip"> FISMA System Identifier <i class="fas fa-info-circle"></i>
                     </span>
                   </td>
                   <td>{{detailsData.FISMASystemIdentifier}}</td>
@@ -134,7 +153,7 @@
               @if (isFieldPopulated(detailsData.ATOType)) {
                 <tr>
                   <td>
-                    <span> ATO Type <i class="fas fa-info-circle"></i>
+                    <span [title]="getTooltip('ATO Type')" role="tooltip"> ATO Type <i class="fas fa-info-circle"></i>
                   </span>
                 </td>
                 <td>{{detailsData.ATOType}}</td>
@@ -143,7 +162,7 @@
             @if (isFieldPopulated(detailsData.CloudYN)) {
               <tr>
                 <td>
-                  <span> Cloud Hosted <i class="fas fa-info-circle"></i>
+                  <span [title]="getTooltip('Cloud Hosted?')" role="tooltip"> Cloud Hosted <i class="fas fa-info-circle"></i>
                 </span>
               </td>
               <td>{{detailsData.CloudYN}}</td>
@@ -152,7 +171,7 @@
           @if (isFieldPopulated(detailsData.CSP)) {
             <tr>
               <td>
-                <span> Hosting Provider <i class="fas fa-info-circle"></i>
+                <span [title]="getTooltip('Hosting Provider')" role="tooltip"> Hosting Provider <i class="fas fa-info-circle"></i>
               </span>
             </td>
             <td>{{detailsData.CSP}}</td>
@@ -161,7 +180,7 @@
         @if (isFieldPopulated(detailsData.ServiceType)) {
           <tr>
             <td>
-              <span> Service Type <i class="fas fa-info-circle"></i>
+              <span [title]="getTooltip('Cloud Service Type')" role="tooltip"> Service Type <i class="fas fa-info-circle"></i>
             </span>
           </td>
           <td>{{detailsData.ServiceType}}</td>
@@ -170,7 +189,7 @@
       @if (isFieldPopulated(detailsData.FedContractorLoc)) {
         <tr>
           <td>
-            <span> Fed/Contractor Location <i class="fas fa-info-circle"></i>
+            <span [title]="getTooltip('Fed/Contractor Location')" role="tooltip"> Fed/Contractor Location <i class="fas fa-info-circle"></i>
           </span>
         </td>
         <td>{{detailsData.FedContractorLoc}}</td>
@@ -179,7 +198,7 @@
     @if (isFieldPopulated(detailsData.Reportable)) {
       <tr>
         <td>
-          <span> Reportable <i class="fas fa-info-circle"></i>
+          <span [title]="getTooltip('FISMA Reportable')" role="tooltip"> Reportable <i class="fas fa-info-circle"></i>
         </span>
       </td>
       <td>{{detailsData.Reportable}}</td>
@@ -188,7 +207,7 @@
   @if (isFieldPopulated(detailsData.ParentName)) {
     <tr>
       <td>
-        <span> Parent System <i class="fas fa-info-circle"></i>
+        <span [title]="getTooltip('Parent System')" role="tooltip"> Parent System <i class="fas fa-info-circle"></i>
       </span>
     </td>
     <td>{{detailsData.ParentName}}</td>
@@ -197,7 +216,7 @@
 @if (isFieldPopulated(detailsData.SubSystem_Tag)) {
   <tr>
     <td>
-      <span> Sub System Tag <i class="fas fa-info-circle"></i>
+      <span [title]="getTooltip('Sub System Tag')" role="tooltip"> Sub System Tag <i class="fas fa-info-circle"></i>
     </span>
   </td>
   <td>{{detailsData.SubSystem_Tag}}</td>
@@ -206,7 +225,7 @@
 @if (isFieldPopulated(detailsData.InactiveDate)) {
   <tr>
     <td>
-      <span> Inactive Date <i class="fas fa-info-circle"></i>
+      <span [title]="getTooltip('Inactive Date')" role="tooltip"> Inactive Date <i class="fas fa-info-circle"></i>
     </span>
   </td>
   <td>{{detailsData.InactiveDate | date : "longDate"}}</td>

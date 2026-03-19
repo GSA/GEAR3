@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 import { FISMA } from '@api/models/fisma.model';
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
@@ -20,6 +21,8 @@ export class FismaDetailsComponent implements OnInit {
   public isOverviewTabActive: boolean = true;
   public isPocTabActive: boolean = false;
 
+  public attrDefinitions = <DataDictionary[]>[];
+
   constructor(
     private route: ActivatedRoute,
     private apiService: ApiService,
@@ -37,7 +40,21 @@ export class FismaDetailsComponent implements OnInit {
         this.detailsData = data[0];
         this.isDataReady = true;
       });
+
+      // Get attribute definition list
+      this.apiService.getDataDictionaryByReportName('FISMA Systems Inventory')
+        .subscribe((data: DataDictionary[]) => {
+          this.attrDefinitions = data;
+      });
     });
+  }
+
+  public getTooltip (name: string): string {
+    const def = this.attrDefinitions.find(def => def.Term === name);
+    if(def){
+      return def.TermDefinition;
+    }
+    return '';
   }
 
   public getStatusClass(status: string): string {

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Capability } from '@api/models/capabilities.model';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 import { Investment } from '@api/models/investments.model';
 import { Organization } from '@api/models/organizations.model';
 import { System } from '@api/models/systems.model';
@@ -28,6 +29,8 @@ export class CapabilitiesDetailsComponent implements OnInit {
   public isOverviewTabActive: boolean = true;
   public isRelatedOrganizationsTabActive: boolean = false;
   public isSupportingSystemsTabActive: boolean = false;
+
+  public attrDefinitions = <DataDictionary[]>[];
 
   public relatedOrgsTableCols: Column[] = [
     {
@@ -213,7 +216,21 @@ export class CapabilitiesDetailsComponent implements OnInit {
           this.hasSupportingSystems = true;
         }
       });
+
+      // Get attribute definition list
+      this.apiService.getDataDictionaryByReportName('Business Capabilities')
+        .subscribe((data: DataDictionary[]) => {
+          this.attrDefinitions = data;
+      });
     });
+  }
+
+  public getTooltip (name: string): string {
+    const def = this.attrDefinitions.find(def => def.Term === name);
+    if(def){
+      return def.TermDefinition;
+    }
+    return '';
   }
 
   public onTabClick(tabName: string, event: Event): void {

@@ -15,6 +15,7 @@ import { Capability } from '@api/models/capabilities.model';
 import { ITStandards } from '@api/models/it-standards.model';
 import { Record } from '@api/models/records.model';
 import { Website } from '@api/models/websites.model';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 
 @Component({
     selector: 'time-details',
@@ -51,6 +52,8 @@ export class TimeDetailsComponent implements OnInit {
   public websiteCols: Column[] = WebsitesColumns;
 
   public splitPOCs: any = {};
+
+  public attrDefinitions = <DataDictionary[]>[];
 
   constructor(
     private route: ActivatedRoute,
@@ -98,7 +101,21 @@ export class TimeDetailsComponent implements OnInit {
         });
       });
 
+      // Get attribute definition list
+      this.apiService.getDataDictionaryByReportName('Business Systems')
+        .subscribe((data: DataDictionary[]) => {
+          this.attrDefinitions = data;
+      });
+
     });
+  }
+
+  public getTooltip (name: string): string {
+    const def = this.attrDefinitions.find(def => def.Term === name);
+    if(def){
+      return def.TermDefinition;
+    }
+    return '';
   }
 
   public getStatusClass(status: string): string {

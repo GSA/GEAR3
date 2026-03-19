@@ -29,8 +29,9 @@
               <div class="data-wrapper">
                 <div class="data-full">
                   <label class="data-label">
-                    <span>
+                    <span [title]="getTooltip('Description')" role="tooltip">
                       Description
+                      <i class="fas fa-info-circle"></i>
                     </span>
                   </label>
                   <span>
@@ -39,8 +40,9 @@
                 </div>
                 <div class="data-full">
                   <label class="data-label">
-                    <span>
+                    <span [title]="getTooltip('Level')" role="tooltip">
                       Level
+                      <i class="fas fa-info-circle"></i>
                     </span>
                   </label>
                   <span>
@@ -58,7 +60,7 @@
             <div class="main-data-container">
               <div class="sub-content full-width">
                 <span class="sub-header">Related Organizations</span>
-                <app-table visibleColumnStorageKey="capbilities-related-orgs" [tableCols]="relatedOrgsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="organizations" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onOrgRowClick($event)"></app-table>
+                <app-table visibleColumnStorageKey="capbilities-related-orgs" defaultSortField="Name" [tableCols]="relatedOrgsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="organizations" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onOrgRowClick($event)"></app-table>
               </div>
             </div>
           </div>
@@ -70,7 +72,7 @@
             <div class="main-data-container">
               <div class="sub-content full-width">
                 <span class="sub-header">Supporting Systems</span>
-                <app-table visibleColumnStorageKey="capabilities-supporting-systems" [tableCols]="supportingSystemsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="systems" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onSystemRowClick($event)"></app-table>
+                <app-table visibleColumnStorageKey="capabilities-supporting-systems" defaultSortField="DisplayName" [tableCols]="supportingSystemsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="systems" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onSystemRowClick($event)"></app-table>
               </div>
             </div>
           </div>

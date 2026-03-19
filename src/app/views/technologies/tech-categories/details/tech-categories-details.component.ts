@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 import { ITStandards } from '@api/models/it-standards.model';
 import { TRM } from '@api/models/trm.model';
 import { Column } from '@common/table-classes';
@@ -24,6 +25,8 @@ export class TechCategoriesDetailsComponent implements OnInit {
 
   public relatedITStandardsTableCols: Column[] = [];
 
+  public attrDefinitions = <DataDictionary[]>[];
+
   constructor(
     private route: ActivatedRoute,
     private apiService: ApiService,
@@ -34,6 +37,12 @@ export class TechCategoriesDetailsComponent implements OnInit {
   }
 
   public ngOnInit(): void {
+    // Get attribute definition list
+    this.apiService.getDataDictionaryByReportName('TRM')
+    .subscribe((data: DataDictionary[]) => {
+      this.attrDefinitions = data;
+    });
+
     this.apiService.getDataDictionaryByReportName('IT Standards List').subscribe(defs => {
 
       // IT Standard Table Columns
@@ -249,6 +258,14 @@ export class TechCategoriesDetailsComponent implements OnInit {
         this.isDataReady = true;
       });
     });
+  }
+
+  public getTooltip (name: string): string {
+    const def = this.attrDefinitions.find(def => def.Term === name);
+    if(def){
+      return def.TermDefinition;
+    }
+    return '';
   }
 
   public hasRelatedTech(): boolean {

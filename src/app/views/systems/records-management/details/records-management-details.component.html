@@ -20,7 +20,7 @@
             <div class="data-holder">
               <div class="data-full">
                 <label class="data-label">
-                  <span>
+                  <span [title]="getTooltip('Description')" role="tooltip">
                     Description
                     <i class="fas fa-info-circle"></i>
                   </span>
@@ -29,7 +29,7 @@
               </div>
               <div class="data-full">
                 <label class="data-label">
-                  <span>
+                  <span [title]="getTooltip('Retention Instructions')" role="tooltip">
                     Retention Instructions
                     <i class="fas fa-info-circle"></i>
                   </span>
@@ -40,7 +40,7 @@
               </div>
               <div class="data-full">
                 <label class="data-label">
-                  <span>
+                  <span [title]="getTooltip('Disposition Notes')" role="tooltip">
                     Disposition Notes
                     <i class="fas fa-info-circle"></i>
                   </span>

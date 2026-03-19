@@ -29,6 +29,8 @@ export class TechCategoriesComponent implements OnInit {
   tableData: TRM[] = [];
   tableDataOriginal: TRM[] = [];
 
+  public attrDefinitions: DataDictionary[] = [];
+
   tableCols: Column[] = [
     {
       field: 'Id',
@@ -80,6 +82,10 @@ export class TechCategoriesComponent implements OnInit {
       this.tableService.updateReportTableDataReadyStatus(true);
       this.tableData = t;
       this.tableDataOriginal = t;
+    });
+
+    this.apiService.getDataDictionaryByReportName('TRM').subscribe(defs => {
+      this.attrDefinitions = defs
     });
   }
 

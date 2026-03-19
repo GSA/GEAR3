@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 import { Service_Category } from '@api/models/service-category.model';
 import { WebsiteServiceCategory } from '@api/models/website-service-category.model';
 import { Website } from '@api/models/websites.model';
@@ -25,6 +26,8 @@ export class WebsiteServiceCategoryDetailsContentComponent implements OnInit {
 
   public isDataReady: boolean = false;
 
+  public attrDefinitions = <DataDictionary[]>[];
+
   constructor(
     private route: ActivatedRoute,
     private apiService: ApiService,
@@ -38,11 +41,25 @@ export class WebsiteServiceCategoryDetailsContentComponent implements OnInit {
       this.relatedWebsites = r;
       this.isDataReady = true;
     });
+
+    // Get attribute definition list
+    this.apiService.getDataDictionaryByReportName('Website Service Categories')
+    .subscribe((data: DataDictionary[]) => {
+      this.attrDefinitions = data;
+  });
   }
 
   public onRowClick(data: Website): void {
     this.router.navigate(['/websites', data.website_id], {
       queryParams: { fromPrevious: this.data.name }
     });
-  }W
+  }
+
+  public getTooltip (name: string): string {
+    const def = this.attrDefinitions.find(def => def.Term === name);
+    if(def){
+      return def.TermDefinition;
+    }
+    return '';
+  }
 }

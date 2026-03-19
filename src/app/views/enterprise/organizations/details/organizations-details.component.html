@@ -2,11 +2,11 @@
   <div class="organization-details-container">
     <div class="breadcrumb-container">
       <app-breadcrumb>
-        <span currentPageName>{{detailsData.DisplayName}}</span>
+        <span currentPageName>{{detailsData.Name}}</span>
       </app-breadcrumb>
     </div>
     <div class="title-container">
-      <span class="title">{{detailsData.DisplayName}}</span>
+      <span class="title">{{detailsData.Name}}</span>
     </div>
     <div class="content-container">
       <ul class="nav nav-tabs">
@@ -20,8 +20,9 @@
             <div class="data-wrapper">
               <div class="data">
                 <label class="data-label">
-                  <span>
+                  <span [title]="getTooltip('Organization Name')" role="tooltip">
                     Display Name
+                    <i class="fas fa-info-circle"></i>
                   </span>
                 </label>
                 <span>
@@ -30,8 +31,9 @@
               </div>
               <div class="data">
                 <label class="data-label">
-                  <span>
+                  <span [title]="getTooltip('SSO Name')" role="tooltip">
                     SSO Name
+                    <i class="fas fa-info-circle"></i>
                   </span>
                 </label>
                 <span>
@@ -40,8 +42,9 @@
               </div>
               <div class="data">
                 <label class="data-label">
-                  <span>
+                  <span [title]="getTooltip('Two Letter Org')" role="tooltip">
                     Two Letter Org
+                    <i class="fas fa-info-circle"></i>
                   </span>
                 </label>
                 <span>
@@ -50,8 +53,9 @@
               </div>
               <div class="data">
                 <label class="data-label">
-                  <span>
+                  <span [title]="getTooltip('Parent Organization')" role="tooltip">
                     Parent Organization
+                    <i class="fas fa-info-circle"></i>
                   </span>
                 </label>
                 <span>

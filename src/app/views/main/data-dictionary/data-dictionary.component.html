@@ -1,17 +1,9 @@
 <div class="data-dictionary-container">
   <div class="data-dictionary-title-container">
     <h2>Data Dictionary</h2>
-    <app-button-overlay-panel buttonText="More Help" buttonIcon="far fa-question-circle" buttonIconPos="right">
-      <b>Export:</b> Export data by clicking on the <i class='fas fa-download'></i> icon and selecting the format
-        that meets your needs.
-        <br><br>
-        <b>Search:</b> Perform a filtered search across all fields in the displayed
-        data. Hit the 'Enter' button on your keyboard to execute.
-        <br><br>
-        Click on the <i class='fas fa-caret-square-down'></i> icon to display everything on one page.
-    </app-button-overlay-panel>
+    <app-page-help-button></app-page-help-button>
   </div>
   <div class="data-dictionary-data-container">
-    <app-table visibleColumnStorageKey="data-dictionary-report" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
+    <app-table visibleColumnStorageKey="data-dictionary-report" defaultSortField="ReportName" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
   </div>
 </div>

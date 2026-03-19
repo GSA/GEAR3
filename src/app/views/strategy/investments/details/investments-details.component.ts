@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 import { Investment } from '@api/models/investments.model';
 import { System } from '@api/models/systems.model';
 import { Column } from '@common/table-classes';
@@ -24,6 +25,8 @@ export class InvestmentsDetailsComponent implements OnInit {
   public isOverviewTabActive: boolean = true;
   public isBudgetYearTabActive: boolean = false;
   public isRelatedSystemsTabActive: boolean = false;
+
+  public attrDefinitions = <DataDictionary[]>[];
 
   relatedSystemsTableCols: Column[] = [
     {
@@ -174,6 +177,20 @@ export class InvestmentsDetailsComponent implements OnInit {
         });
       });
     });
+
+    // Get attribute definition list
+    this.apiService.getDataDictionaryByReportName('IT Investments')
+    .subscribe((data: DataDictionary[]) => {
+      this.attrDefinitions = data;
+  });
+  }
+
+  public getTooltip (name: string): string {
+    const def = this.attrDefinitions.find(def => def.Term === name);
+    if(def){
+      return def.TermDefinition;
+    }
+    return '';
   }
 
   public onTabClick(tabName: string, event: Event): void {
