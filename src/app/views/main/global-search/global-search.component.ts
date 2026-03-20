@@ -83,7 +83,7 @@ export class GlobalSearchComponent implements OnInit {
   }
 
   public onRowClick(e: any): void {
-    const data = e.data;
+    const data = e;
     const searchTerm: string = data.tableSearchString || '';
     switch (data.GEAR_Type) {
       case 'System':
