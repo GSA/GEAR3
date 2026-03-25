@@ -7,7 +7,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { SidebarModule } from 'ng-sidebar-v4'; // Sidebar Module
+// import { SidebarModule } from 'ng-sidebar-v4'; // Sidebar Module
 import { PdfViewerModule } from 'ng2-pdf-viewer'; // PDF Viewer
 import { NgxChartsModule } from '@swimlane/ngx-charts'; // Visualizations
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -82,6 +82,8 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { providePrimeNG } from 'primeng/config';
 
 import { CommonModule } from '@angular/common';
+import { Sidebar } from './components/sidebar/sidebar.component';
+import { SidebarContainer } from './components/sidebar/sidebar-container.component';
 
 @NgModule({ 
   declarations: [
@@ -128,6 +130,8 @@ import { CommonModule } from '@angular/common';
     GearModelComponent,
     YesNoPipe,
     BannerComponent,
+    Sidebar,
+    SidebarContainer
   ],
   bootstrap: [
     AppComponent
@@ -144,7 +148,8 @@ import { CommonModule } from '@angular/common';
     ReactiveFormsModule,
     MultiSelectModule,
     SkipFocusPiechartDirective,
-    SidebarModule.forRoot()],
+    // SidebarModule.forRoot()
+  ],
   providers: [
     Globals,
     provideHttpClient(withInterceptorsFromDi()),

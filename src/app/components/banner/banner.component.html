@@ -1,4 +1,4 @@
-<section class="usa-banner" #bannerPanel id="appBanner" aria-label="Official website of the United States government">
+<section class="usa-banner" aria-label="Official website of the United States government">
   <div class="usa-accordion">
     <header class="usa-banner__header">
       <div class="usa-banner__inner">
@@ -11,13 +11,13 @@
           </p>
           <p class="usa-banner__header-action">Here’s how you know</p>
         </div>
-        <button type="button" #bannerExpandButton class="usa-accordion__button usa-banner__button" aria-expanded="true"
-          aria-controls="gov-banner-default">
+        <button type="button" class="usa-accordion__button usa-banner__button" aria-expanded="true" (click)="toggleBanner()">
           <span class="usa-banner__button-text">Here’s how you know</span>
         </button>
       </div>
     </header>
-    <div class="usa-banner__content usa-accordion__content" id="gov-banner-default">
+    @if(isExpanded) {
+    <div class="usa-banner__content usa-accordion__content">
       <div class="grid-row grid-gap-lg">
         <div class="usa-banner__guidance tablet:grid-col-6">
           <img class="usa-banner__icon usa-media-block__img" src="/assets/img/icon-dot-gov.svg" role="img" alt=""
@@ -52,5 +52,6 @@
         </div>
       </div>
     </div>
+  }
   </div>
 </section>

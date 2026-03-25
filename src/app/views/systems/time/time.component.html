@@ -30,35 +30,37 @@
   <div class="card-body card-text">
     <!-- Visualizations -->
     <div id="timeViz" class="row justify-content-center" style="height: 300px;">
-      <ngx-charts-bar-vertical-stacked *ngIf="vizData"
+      @if (vizData) {
+<ngx-charts-bar-vertical-stacked
         [scheme]="colorScheme"
-        [results]="vizData"
-        [xAxis]="showXAxis"
-        [yAxis]="showYAxis"
-        [legend]="showLegend"
-        [legendTitle]="legendTitle"
-        [showXAxisLabel]="showXAxisLabel"
-        [showYAxisLabel]="showYAxisLabel"
-        [xAxisLabel]="xAxisLabel"
-        [yAxisLabel]="yAxisLabel"
-        [animations]="animations"
-        (select)="onSelect($event)">
-      </ngx-charts-bar-vertical-stacked>
+          [results]="vizData"
+          [xAxis]="showXAxis"
+          [yAxis]="showYAxis"
+          [legend]="showLegend"
+          [legendTitle]="legendTitle"
+          [showXAxisLabel]="showXAxisLabel"
+          [showYAxisLabel]="showYAxisLabel"
+          [xAxisLabel]="xAxisLabel"
+          [yAxisLabel]="yAxisLabel"
+          [animations]="animations"
+          (select)="onSelect($event)">
+        </ngx-charts-bar-vertical-stacked>
+      }
     </div>
 
     <div class="d-flex justify-content-between">
       <!-- TIME Definitions Link -->
       <a type="button" class="btn btn-sm btn-info text-white ml-3" [routerLink]="['/about', 'sysRat']">
-        TIME Value Definitions</a>
+      TIME Value Definitions</a>
 
-        <a tabindex="0"
-          class="btn btn-sm btn-success text-white shadow d-flex align-items-center justify-content-center"
-          role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="auto" data-bs-html="true"
+      <a tabindex="0"
+        class="btn btn-sm btn-success text-white shadow d-flex align-items-center justify-content-center"
+        role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="auto" data-bs-html="true"
           title="How to complete my system's TIME questionnaire" data-bs-content="The TIME questionnaire is a spreadsheet that identifies where your system is in its lifecycle based on your responses. 
           To access your business system's TIME lifecycle questionnaire, please search for your system in the
           Business Systems report, click your system, then click the TIME questionnaire link">
-          <span class="mr-2">How to complete my system's TIME questionnaire</span><i class="far fa-question-circle fa-2x"></i>
-        </a>
+        <span class="mr-2">How to complete my system's TIME questionnaire</span><i class="far fa-question-circle fa-2x"></i>
+      </a>
 
     </div>
 

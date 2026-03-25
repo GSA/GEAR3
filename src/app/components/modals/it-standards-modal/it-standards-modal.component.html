@@ -22,12 +22,14 @@
         <ul id="itStandTabs" class="nav nav-tabs">
           <li class="nav-item">
             <a class="nav-link active" data-bs-toggle="tab" href="#itStandOverview">
-              Overview</a>
+            Overview</a>
           </li>
-          <li class="nav-item" *ngIf="showSystemsUsingTab()">
-            <a class="nav-link" data-bs-toggle="tab" href="#itStandRelatedSys">
+          @if (showSystemsUsingTab()) {
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="tab" href="#itStandRelatedSys">
               Systems Using This Standard</a>
-          </li>
+            </li>
+          }
         </ul>
 
         <!-- Tab Panes -->
@@ -52,13 +54,17 @@
                   <i class="fa fa-question-circle"></i>
                   <span class="heading">Approved Versions</span>
                 </div>
-                <div class="overview-item-content" *ngIf="isApproved()">
-                  {{itStandard.ApprovedVersions}}
-                </div>
-                <div class="overview-item-content" *ngIf="!isApproved()">
-                  <span class="status-icon" [ngClass]="getStatusIconColor(itStandard.Status)" [title]="getStatusIconTooltip()" role="tooltip"></span>
-                  {{itStandard.Status}}
-                </div>
+                @if (isApproved()) {
+                  <div class="overview-item-content">
+                    {{itStandard.ApprovedVersions}}
+                  </div>
+                }
+                @if (!isApproved()) {
+                  <div class="overview-item-content">
+                    <span class="status-icon" [ngClass]="getStatusIconColor(itStandard.Status)" [title]="getStatusIconTooltip()" role="tooltip"></span>
+                    {{itStandard.Status}}
+                  </div>
+                }
               </div>
               <div class="overview-item">
                 <div class="overview-item-title" [title]="getTooltip('Approval Expiration Date')" role="tooltip">
@@ -66,7 +72,9 @@
                   <span class="heading">Approval Expires</span>
                 </div>
                 <div class="overview-item-content">
-                  <span class="status-icon" [ngClass]="getApprovalExpDateIconColor(itStandard.ApprovalExpirationDate)" [title]="getApprovalExpDateIconTooltip()" role="tooltip" *ngIf="itStandard.ApprovalExpirationDate"></span>
+                  @if (itStandard.ApprovalExpirationDate) {
+                    <span class="status-icon" [ngClass]="getApprovalExpDateIconColor(itStandard.ApprovalExpirationDate)" [title]="getApprovalExpDateIconTooltip()" role="tooltip"></span>
+                  }
                   {{ itStandard.ApprovalExpirationDate | date : "MMMM d, y" }}
                 </div>
               </div>
@@ -94,7 +102,9 @@
                   <span class="heading">508 Compliance</span>
                 </div>
                 <div class="overview-item-content">
-                  <span class="status-icon" [ngClass]="getComplianceIconColor(itStandard.ComplianceStatus)" [title]="getComplianceIconTooltip()" role="tooltip" *ngIf="itStandard.ComplianceStatus"></span>
+                  @if (itStandard.ComplianceStatus) {
+                    <span class="status-icon" [ngClass]="getComplianceIconColor(itStandard.ComplianceStatus)" [title]="getComplianceIconTooltip()" role="tooltip"></span>
+                  }
                   {{itStandard.ComplianceStatus}}
                 </div>
               </div>
@@ -126,9 +136,9 @@
                 </div>
               </div>
             </div>
-          
+
             <hr class="divider" />
-          
+
             <!-- DESCRIPTION -->
             <div class="overview-container m2">
               <div class="overview-item">
@@ -136,15 +146,19 @@
                   <i class="fa fa-info-circle"></i>
                   <span class="heading">Description</span>
                 </div>
-                <div class="overview-item-content" *ngIf="isFieldPopulated(itStandard.Description)">
-                  {{itStandard.Description}}
-                </div>
-                <div class="overview-item-content" *ngIf="!isFieldPopulated(itStandard.Description)">
-                  N/A
-                </div>
+                @if (isFieldPopulated(itStandard.Description)) {
+                  <div class="overview-item-content">
+                    {{itStandard.Description}}
+                  </div>
+                }
+                @if (!isFieldPopulated(itStandard.Description)) {
+                  <div class="overview-item-content">
+                    N/A
+                  </div>
+                }
               </div>
             </div>
-          
+
             <!-- COMMENTS -->
             <div class="overview-container">
               <div class="overview-item">
@@ -152,22 +166,26 @@
                   <i class="fa fa-tag"></i>
                   <span class="heading">Comments</span>
                 </div>
-                <div class="overview-item-content" *ngIf="isFieldPopulated(itStandard.Comments)">
-                  {{itStandard.Comments}}
-                </div>
-                <div class="overview-item-content" *ngIf="!isFieldPopulated(itStandard.Comments)">
-                  N/A
-                </div>
+                @if (isFieldPopulated(itStandard.Comments)) {
+                  <div class="overview-item-content">
+                    {{itStandard.Comments}}
+                  </div>
+                }
+                @if (!isFieldPopulated(itStandard.Comments)) {
+                  <div class="overview-item-content">
+                    N/A
+                  </div>
+                }
               </div>
             </div>
-          
+
             <hr class="divider" />
-          
+
             <div class="context-btn-container">
               <div class="context-btn">
-                <button class="btn btn-sm btn-info text-white shadow" 
-                        (click)="toggleShowAllFields()">
-                        {{showAllFields ? 'Hide empty fields' : 'Show all fields'}}
+                <button class="btn btn-sm btn-info text-white shadow"
+                  (click)="toggleShowAllFields()">
+                  {{showAllFields ? 'Hide empty fields' : 'Show all fields'}}
                 </button>
               </div>
             </div>
@@ -184,101 +202,129 @@
                   </th>
                 </tr>
               </thead>
-          
+
               <tbody>
-                <tr *ngIf="isFieldPopulated(itStandard.ManufacturerName)">
-                  <td>
-                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Manufacturer Name')" role="tooltip">Manufacturer</span>
-                  </td>
-                  <td>{{ itStandard.ManufacturerName }}</td>
-                </tr>
-                <tr *ngIf="isFieldPopulated(itStandard.SoftwareProductName)">
-                  <td>
-                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software Product Name')" role="tooltip">Product</span>
-                  </td>
-                  <td>{{ itStandard.SoftwareProductName }}</td>
-                </tr>
-                <tr *ngIf="isFieldPopulated(itStandard.SoftwareVersionName)">
-                  <td>
-                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software Version Name')" role="tooltip">Version</span>
-                  </td>
-                  <td>{{ itStandard.SoftwareVersionName }}</td>
-                </tr>
-                <tr *ngIf="isFieldPopulated(itStandard.EndOfLifeDate)">
-                  <td>
-                    <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software End of Life Date')" role="tooltip">Vendor End of Life Date</span>
-                  </td>
-                  <td>{{ itStandard.EndOfLifeDate | date : "MMMM d, y" }}</td>
-                </tr>
-                <tr *ngIf="isFieldPopulated(itStandard.Category)">
-                  <td><i class="far fa-list-alt"></i><span [title]="getTooltip('Category')" role="tooltip">Category</span>
+                @if (isFieldPopulated(itStandard.ManufacturerName)) {
+                  <tr>
+                    <td>
+                      <i class="fas fa-toolbox"></i><span [title]="getTooltip('Manufacturer Name')" role="tooltip">Manufacturer</span>
+                    </td>
+                    <td>{{ itStandard.ManufacturerName }}</td>
+                  </tr>
+                }
+                @if (isFieldPopulated(itStandard.SoftwareProductName)) {
+                  <tr>
+                    <td>
+                      <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software Product Name')" role="tooltip">Product</span>
+                    </td>
+                    <td>{{ itStandard.SoftwareProductName }}</td>
+                  </tr>
+                }
+                @if (isFieldPopulated(itStandard.SoftwareVersionName)) {
+                  <tr>
+                    <td>
+                      <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software Version Name')" role="tooltip">Version</span>
+                    </td>
+                    <td>{{ itStandard.SoftwareVersionName }}</td>
+                  </tr>
+                }
+                @if (isFieldPopulated(itStandard.EndOfLifeDate)) {
+                  <tr>
+                    <td>
+                      <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software End of Life Date')" role="tooltip">Vendor End of Life Date</span>
+                    </td>
+                    <td>{{ itStandard.EndOfLifeDate | date : "MMMM d, y" }}</td>
+                  </tr>
+                }
+                @if (isFieldPopulated(itStandard.Category)) {
+                  <tr>
+                    <td><i class="far fa-list-alt"></i><span [title]="getTooltip('Category')" role="tooltip">Category</span>
                   </td>
                   <td>{{ itStandard.Category }}</td>
                 </tr>
-                <tr *ngIf="isFieldPopulated(itStandard.DeploymentType)">
+              }
+              @if (isFieldPopulated(itStandard.DeploymentType)) {
+                <tr>
                   <td><i class="fas fa-shipping-fast"></i><span [title]="getTooltip('Deployment Type')" role="tooltip">Deployment Type</span>
-                  </td>
-                  <td>{{ itStandard.DeploymentType }}</td>
-                </tr>
-                <tr *ngIf="isFieldPopulated(itStandard.StandardType)">
-                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Standard Type')" role="tooltip">Standard Type</span>
-                  </td>
-                  <td>{{ itStandard.StandardType }}</td>
-                </tr>
-                <tr *ngIf="isFieldPopulated(itStandard.attestation_required)">
-                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Attestation Required')" role="tooltip">Attestation Required</span></td>
-                  <td>{{ itStandard.attestation_required }}</td>
-                </tr>
-                <tr *ngIf="isFieldPopulated(itStandard.attestation_link)">
-                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Attestation Link')" role="tooltip">Attestation Link</span></td>
-                  <td>{{ itStandard.attestation_link }}</td>
-                </tr>
-                <tr *ngIf="isFieldPopulated(itStandard.fedramp)">
-                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('FedRAMP')" role="tooltip">FedRAMP</span></td>
-                  <td>{{ itStandard.fedramp | yesno }}</td>
-                </tr>
-                <tr *ngIf="isFieldPopulated(itStandard.open_source)">
-                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Open Source')" role="tooltip">Open Source</span></td>
-                  <td>{{ itStandard.open_source | yesno }}</td>
-                </tr>
-                <tr *ngIf="isFieldPopulated(itStandard.RITM)">
-                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Requested Item (RITM)')" role="tooltip">Requested Item (RITM)</span></td>
-                  <td>{{ itStandard.RITM }}</td>
-                </tr>
-                <tr *ngIf="isFieldPopulated(itStandard.ReferenceDocument)">
-                  <td><i class="far fa-comment"></i><span [title]="getTooltip('Reference Document')" role="tooltip">Reference Document</span></td>
-                  <td>
-                    <a [hidden]="!itStandard.ReferenceDocument" href="{{ itStandard.ReferenceDocument }}"
-                      target="_blank" rel="noopener">
-                      {{ itStandard.ReferenceDocument }}</a>
-                    <div [hidden]="itStandard.ReferenceDocument">None</div>
-                  </td>
-                </tr>
-                <tr *ngIf="isFieldPopulated(itStandard.AppBundleIds)">
-                  <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('App Bundle Ids')" role="tooltip">App Bundle IDs</span></td>
-                  <td [innerHtml]="renderListFromCsvString(itStandard.AppBundleIds)"></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+                </td>
+                <td>{{ itStandard.DeploymentType }}</td>
+              </tr>
+            }
+            @if (isFieldPopulated(itStandard.StandardType)) {
+              <tr>
+                <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Standard Type')" role="tooltip">Standard Type</span>
+              </td>
+              <td>{{ itStandard.StandardType }}</td>
+            </tr>
+          }
+          @if (isFieldPopulated(itStandard.attestation_required)) {
+            <tr>
+              <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Attestation Required')" role="tooltip">Attestation Required</span></td>
+              <td>{{ itStandard.attestation_required }}</td>
+            </tr>
+          }
+          @if (isFieldPopulated(itStandard.attestation_link)) {
+            <tr>
+              <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Attestation Link')" role="tooltip">Attestation Link</span></td>
+              <td>{{ itStandard.attestation_link }}</td>
+            </tr>
+          }
+          @if (isFieldPopulated(itStandard.fedramp)) {
+            <tr>
+              <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('FedRAMP')" role="tooltip">FedRAMP</span></td>
+              <td>{{ itStandard.fedramp | yesno }}</td>
+            </tr>
+          }
+          @if (isFieldPopulated(itStandard.open_source)) {
+            <tr>
+              <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Open Source')" role="tooltip">Open Source</span></td>
+              <td>{{ itStandard.open_source | yesno }}</td>
+            </tr>
+          }
+          @if (isFieldPopulated(itStandard.RITM)) {
+            <tr>
+              <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Requested Item (RITM)')" role="tooltip">Requested Item (RITM)</span></td>
+              <td>{{ itStandard.RITM }}</td>
+            </tr>
+          }
+          @if (isFieldPopulated(itStandard.ReferenceDocument)) {
+            <tr>
+              <td><i class="far fa-comment"></i><span [title]="getTooltip('Reference Document')" role="tooltip">Reference Document</span></td>
+              <td>
+                <a [hidden]="!itStandard.ReferenceDocument" href="{{ itStandard.ReferenceDocument }}"
+                  target="_blank" rel="noopener">
+                {{ itStandard.ReferenceDocument }}</a>
+                <div [hidden]="itStandard.ReferenceDocument">None</div>
+              </td>
+            </tr>
+          }
+          @if (isFieldPopulated(itStandard.AppBundleIds)) {
+            <tr>
+              <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('App Bundle Ids')" role="tooltip">App Bundle IDs</span></td>
+              <td [innerHtml]="renderListFromCsvString(itStandard.AppBundleIds)"></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
 
-          <!-- Related Systems Tab -->
-          <div class="tab-pane fade" id="itStandRelatedSys">
-            <table id="itRelSysTable"></table>
-          </div>
+    <!-- Related Systems Tab -->
+    <div class="tab-pane fade" id="itStandRelatedSys">
+      <table id="itRelSysTable"></table>
+    </div>
 
-          <div class="modal-footer">
-            <div class="float-right">
-              Last Updated:
-              {{ itStandard.ChangeDTG | date : "MMM d, y, h:mm:ss a O" }}
-            </div>
-            <button type="button" [hidden]="!sharedService.loggedIn" class="btn btn-info text-white"
-              (click)="itStandEdit()">
-              Edit This Item
-            </button>
-          </div>
-        </div>
+    <div class="modal-footer">
+      <div class="float-right">
+        Last Updated:
+        {{ itStandard.ChangeDTG | date : "MMM d, y, h:mm:ss a O" }}
       </div>
+      <button type="button" [hidden]="!sharedService.loggedIn" class="btn btn-info text-white"
+        (click)="itStandEdit()">
+        Edit This Item
+      </button>
     </div>
   </div>
+</div>
+</div>
+</div>
 </div>

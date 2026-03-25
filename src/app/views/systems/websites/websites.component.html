@@ -8,36 +8,38 @@
     </h3>
 
     <!-- GEAR Manager Access -->
-    <a
-      class="btn btn-sm btn-info text-white shadow mngr-btn d-flex align-items-center justify-content-center"
-      routerLink="/gear_manager"
-      *ngIf="!sharedService.loggedIn"
-      aria-label="GEAR Manager Login"
-      (click)="sharedService.setRedirectPath()"
-    >
-      <span class="mr-2">GEAR Manager Login</span
-      ><i class="fa fa-sign-in-alt fa-2x"></i>
-    </a>
-    <a
-      class="btn btn-sm btn-danger text-white shadow mngr-btn d-flex align-items-center justify-content-center"
-      routerLink="/websites"
-      *ngIf="sharedService.loggedIn"
-      aria-label="GEAR Manager Logout"
-      (click)="sharedService.logoutManager()"
-    >
-      <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
-    </a>
+    @if (!sharedService.loggedIn) {
+      <a
+        class="btn btn-sm btn-info text-white shadow mngr-btn d-flex align-items-center justify-content-center"
+        routerLink="/gear_manager"
+        aria-label="GEAR Manager Login"
+        (click)="sharedService.setRedirectPath()"
+        >
+        <span class="mr-2">GEAR Manager Login</span
+          ><i class="fa fa-sign-in-alt fa-2x"></i>
+        </a>
+      }
+      @if (sharedService.loggedIn) {
+        <a
+          class="btn btn-sm btn-danger text-white shadow mngr-btn d-flex align-items-center justify-content-center"
+          routerLink="/websites"
+          aria-label="GEAR Manager Logout"
+          (click)="sharedService.logoutManager()"
+          >
+          <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
+        </a>
+      }
 
-    <!-- Help Button -->
-    <a
-      tabindex="0"
-      class="btn btn-sm btn-info text-white shadow help-btn d-flex align-items-center justify-content-center"
-      role="button"
-      data-bs-toggle="popover"
-      data-bs-trigger="focus"
-      data-bs-placement="auto"
-      data-bs-html="true"
-      title="Help Using this Table"
+      <!-- Help Button -->
+      <a
+        tabindex="0"
+        class="btn btn-sm btn-info text-white shadow help-btn d-flex align-items-center justify-content-center"
+        role="button"
+        data-bs-toggle="popover"
+        data-bs-trigger="focus"
+        data-bs-placement="auto"
+        data-bs-html="true"
+        title="Help Using this Table"
       data-bs-content="<b>Details:</b> Left click on a row within the table to view additional details.
       <br><br>
       <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
@@ -63,42 +65,42 @@
       <span class="my-auto mr-3">Filter Buttons:</span>
       <button
         role="button"
-        name="websitesDecommissioned"
-        class="btn btn-primary"
-        (click)="showDecommissioned()"
-      >
-        Decommissioned
-      </button>
-      <button
-        role="button"
-        name="websitesRedirectBtn"
-        class="btn btn-primary"
-        (click)="showRedirect()"
-      >
-        Redirects
-      </button>
-      <button
-        role="button"
-        name="websitesExternalBtn"
-        class="btn btn-primary"
-        (click)="showExternal()"
-      >
-        External
-      </button>
+            name="websitesDecommissioned"
+            class="btn btn-primary"
+            (click)="showDecommissioned()"
+            >
+            Decommissioned
+          </button>
+          <button
+            role="button"
+            name="websitesRedirectBtn"
+            class="btn btn-primary"
+            (click)="showRedirect()"
+            >
+            Redirects
+          </button>
+          <button
+            role="button"
+            name="websitesExternalBtn"
+            class="btn btn-primary"
+            (click)="showExternal()"
+            >
+            External
+          </button>
 
-      <button
-        role="button"
-        name="sysBttn"
-        class="btn btn-outline-primary ml-3"
-        (click)="resetTableFilters()"
-        [hidden]="!filteredTable"
-      >
-        Back to Production Sites
-      </button>
+          <button
+            role="button"
+            name="sysBttn"
+            class="btn btn-outline-primary ml-3"
+            (click)="resetTableFilters()"
+            [hidden]="!filteredTable"
+            >
+            Back to Production Sites
+          </button>
 
-      <!-- Website Definition Popover -->
-      <a tabindex="0" class="btn btn-sm btn-info text-white position-absolute float-right w-11" role="button"
-      data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="auto" data-bs-html="true" title=""
+          <!-- Website Definition Popover -->
+          <a tabindex="0" class="btn btn-sm btn-info text-white position-absolute float-right w-11" role="button"
+            data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="auto" data-bs-html="true" title=""
       data-bs-content="This report represents GSA's inventory of public-facing websites (i.e. accessible to the general public 
       and not behind any authentication or firewall). This report can be used to better understand how the public views and interacts with GSA's
       business services, offerings, and information. This data is imported from the  
