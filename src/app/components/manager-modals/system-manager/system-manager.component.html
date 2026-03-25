@@ -6,7 +6,9 @@
       <div class="modal-header bg-danger">
         <h5 class="modal-title text-white" id="systemMngrTitle">
           <i class="fas fa-money-bill-wave"></i>
-          <span *ngIf="system.Name"> {{ system.Name }} - <span class="text-primary">**EDITING**</span></span>
+          @if (system.Name) {
+            <span> {{ system.Name }} - <span class="text-primary">**EDITING**</span></span>
+          }
         </h5>
         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
@@ -18,15 +20,15 @@
         <ul id="systemMngrTabs" class="nav nav-tabs">
           <li class="nav-item">
             <a class="nav-link active" data-bs-toggle="tab" href="#systemMngrCap">
-              Business Capability Mapping</a>
+            Business Capability Mapping</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="tab" href="#systemMngrInvest">
-              Investments Mapping</a>
+            Investments Mapping</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" data-bs-toggle="tab" href="#systemMngrITStand">
-              IT Standards Mapping</a>
+            IT Standards Mapping</a>
           </li>
         </ul>
 
@@ -39,7 +41,9 @@
                 <div class="form-group col-5">
                   <label for="busCapPool">Business Capabilities Pool</label>
                   <select class="form-control" id="busCapPool" size="27" multiple>
-                    <option *ngFor="let cap of notSelectedCaps" [value]="cap.ID">{{ cap.Name }} ({{ cap.ReferenceNum }})</option>
+                    @for (cap of notSelectedCaps; track cap) {
+                      <option [value]="cap.ID">{{ cap.Name }} ({{ cap.ReferenceNum }})</option>
+                    }
                   </select>
                 </div>
 
@@ -47,96 +51,106 @@
                   <button class="btn btn-success w-100 mb-5"
                     (click)="poolSelectedMove('#busCapPool', selectedCapsIDs, 'select')">Move
                     to<br>Selected <i class="fas fa-arrow-right fa-lg"></i></button>
-                  <button class="btn btn-warning w-100"
-                    (click)="poolSelectedMove('#busCapSelect', selectedCapsIDs, 'deselect')"><i
+                    <button class="btn btn-warning w-100"
+                      (click)="poolSelectedMove('#busCapSelect', selectedCapsIDs, 'deselect')"><i
                       class="fas fa-arrow-left fa-lg"></i> Move to<br>Un-Selected</button>
-                </div>
+                    </div>
 
-                <div class="form-group col-5">
-                  <label for="busCapSelect">Selected</label>
-                  <select class="form-control" id="busCapSelect" size="27" multiple>
-                    <option *ngFor="let cap of capRelations" [value]="cap.ID">{{ cap.Name }} ({{ cap.ReferenceNum }})</option>
-                  </select>
+                    <div class="form-group col-5">
+                      <label for="busCapSelect">Selected</label>
+                      <select class="form-control" id="busCapSelect" size="27" multiple>
+                        @for (cap of capRelations; track cap) {
+                          <option [value]="cap.ID">{{ cap.Name }} ({{ cap.ReferenceNum }})</option>
+                        }
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <!-- End of Business Capabilities Mapping Pane -->
+
+                <div class="tab-pane fade" id="systemMngrInvest">
+                  <h4>Investments</h4>
+                  <div class="row">
+                    <div class="form-group col-5">
+                      <label for="sysInvestPool">Investments Pool</label>
+                      <select class="form-control" id="sysInvestPool" size="27" multiple>
+                        @for (investment of notSelectedInvest; track investment) {
+                          <option [value]="investment.ID">{{ investment.Name }}</option>
+                        }
+                      </select>
+                    </div>
+
+                    <div class="col-2 my-auto">
+                      <button class="btn btn-success w-100 mb-5"
+                        (click)="poolSelectedMove('#sysInvestPool', selectedInvestIDs, 'select')">Move
+                        to<br>Selected <i class="fas fa-arrow-right fa-lg"></i></button>
+                        <button class="btn btn-warning w-100"
+                          (click)="poolSelectedMove('#sysInvestSelect', selectedInvestIDs, 'deselect')"><i
+                          class="fas fa-arrow-left fa-lg"></i> Move to<br>Un-Selected</button>
+                        </div>
+
+                        <div class="form-group col-5">
+                          <label for="sysInvestSelect">Selected</label>
+                          <select class="form-control" id="sysInvestSelect" size="27" multiple>
+                            @for (investment of investRelations; track investment) {
+                              <option [value]="investment.ID">{{ investment.Name }}</option>
+                            }
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- End of Investments Mapping Pane -->
+
+                    <div class="tab-pane fade" id="systemMngrITStand">
+                      <h4>IT Standards</h4>
+                      <div class="row">
+                        <div class="form-group col-5">
+                          <label for="sysITStandPool">IT Standards Pool</label>
+                          <select class="form-control" id="sysITStandPool" size="27" multiple>
+                            @for (tech of notSelectedTech; track tech) {
+                              <option [value]="tech.ID">{{ tech.Name }} ({{ tech.Category }})</option>
+                            }
+                          </select>
+                        </div>
+
+                        <div class="col-2 my-auto">
+                          <button class="btn btn-success w-100 mb-5"
+                            (click)="poolSelectedMove('#sysITStandPool', selectedTechIDs, 'select')">Move
+                            to<br>Selected <i class="fas fa-arrow-right fa-lg"></i></button>
+                            <button class="btn btn-warning w-100"
+                              (click)="poolSelectedMove('#sysITStandSelect', selectedTechIDs, 'deselect')"><i
+                              class="fas fa-arrow-left fa-lg"></i> Move to<br>Un-Selected</button>
+                            </div>
+
+                            <div class="form-group col-5">
+                              <label for="sysITStandSelect">Selected</label>
+                              <select class="form-control" id="sysITStandSelect" size="27" multiple>
+                                @for (tech of techRelations; track tech) {
+                                  <option [value]="tech.ID">{{ tech.Name }} ({{ tech.Category }})</option>
+                                }
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- End of IT Standards Mapping Pane -->
+
+                      </div>
+                    </form>
+                  </div>
+
+                  <div class="modal-footer">
+                    <div class="text-danger mr-auto">* Required</div>
+                    <div class="col-md-3 pl-0 ml-0 custom-control custom-checkbox text-right">
+                      <input type="checkbox" class="custom-control-input" id="systemCertifyCheck" [(ngModel)]="systemCertify">
+                      <label class="custom-control-label" for="systemCertifyCheck">
+                        <span class="text-danger">*</span>
+                        I certify all data is correct and up-to-date
+                      </label>
+                    </div>
+                    <button type="submit" form="systemForm" class="btn btn-info text-white" (click)="submitForm()"
+                    [disabled]="!(systemCertify && systemForm.valid)">Save</button>
+                  </div>
+
                 </div>
               </div>
             </div>
-            <!-- End of Business Capabilities Mapping Pane -->
-
-            <div class="tab-pane fade" id="systemMngrInvest">
-              <h4>Investments</h4>
-              <div class="row">
-                <div class="form-group col-5">
-                  <label for="sysInvestPool">Investments Pool</label>
-                  <select class="form-control" id="sysInvestPool" size="27" multiple>
-                    <option *ngFor="let investment of notSelectedInvest" [value]="investment.ID">{{ investment.Name }}</option>
-                  </select>
-                </div>
-
-                <div class="col-2 my-auto">
-                  <button class="btn btn-success w-100 mb-5"
-                    (click)="poolSelectedMove('#sysInvestPool', selectedInvestIDs, 'select')">Move
-                    to<br>Selected <i class="fas fa-arrow-right fa-lg"></i></button>
-                  <button class="btn btn-warning w-100"
-                    (click)="poolSelectedMove('#sysInvestSelect', selectedInvestIDs, 'deselect')"><i
-                      class="fas fa-arrow-left fa-lg"></i> Move to<br>Un-Selected</button>
-                </div>
-
-                <div class="form-group col-5">
-                  <label for="sysInvestSelect">Selected</label>
-                  <select class="form-control" id="sysInvestSelect" size="27" multiple>
-                    <option *ngFor="let investment of investRelations" [value]="investment.ID">{{ investment.Name }}</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <!-- End of Investments Mapping Pane -->
-
-            <div class="tab-pane fade" id="systemMngrITStand">
-              <h4>IT Standards</h4>
-              <div class="row">
-                <div class="form-group col-5">
-                  <label for="sysITStandPool">IT Standards Pool</label>
-                  <select class="form-control" id="sysITStandPool" size="27" multiple>
-                    <option *ngFor="let tech of notSelectedTech" [value]="tech.ID">{{ tech.Name }} ({{ tech.Category }})</option>
-                  </select>
-                </div>
-
-                <div class="col-2 my-auto">
-                  <button class="btn btn-success w-100 mb-5"
-                    (click)="poolSelectedMove('#sysITStandPool', selectedTechIDs, 'select')">Move
-                    to<br>Selected <i class="fas fa-arrow-right fa-lg"></i></button>
-                  <button class="btn btn-warning w-100"
-                    (click)="poolSelectedMove('#sysITStandSelect', selectedTechIDs, 'deselect')"><i
-                      class="fas fa-arrow-left fa-lg"></i> Move to<br>Un-Selected</button>
-                </div>
-
-                <div class="form-group col-5">
-                  <label for="sysITStandSelect">Selected</label>
-                  <select class="form-control" id="sysITStandSelect" size="27" multiple>
-                    <option *ngFor="let tech of techRelations" [value]="tech.ID">{{ tech.Name }} ({{ tech.Category }})</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <!-- End of IT Standards Mapping Pane -->
-
-          </div>
-        </form>
-      </div>
-
-      <div class="modal-footer">
-        <div class="text-danger mr-auto">* Required</div>
-        <div class="col-md-3 pl-0 ml-0 custom-control custom-checkbox text-right">
-          <input type="checkbox" class="custom-control-input" id="systemCertifyCheck" [(ngModel)]="systemCertify">
-          <label class="custom-control-label" for="systemCertifyCheck">
-            <span class="text-danger">*</span>
-            I certify all data is correct and up-to-date
-          </label>
-        </div>
-        <button type="submit" form="systemForm" class="btn btn-info text-white" (click)="submitForm()"
-          [disabled]="!(systemCertify && systemForm.valid)">Save</button>
-      </div>
-
-    </div>
-  </div>
-</div>

@@ -1,6 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
-
-import * as banner from 'node_modules/@uswds/uswds/packages/usa-banner/src/index.js';
+import { Component } from '@angular/core';
 
 @Component({
 standalone: false,
@@ -8,38 +6,14 @@ standalone: false,
   templateUrl: './banner.component.html',
   styleUrls: ['./banner.component.css']
 })
-export class BannerComponent implements AfterViewInit {
+export class BannerComponent {
 
-  @ViewChild('bannerPanel') bannerPanelRef: ElementRef;
-  @ViewChild('bannerExpandButton') bannerButtonRef: ElementRef;
+  public isExpanded: boolean = false;
 
-  constructor(private renderer: Renderer2) {
-
-    this.renderer.listen('window', 'click', (e: Event) => {
-      // hide banner for outside mouse click
-      if (!this.bannerPanelRef.nativeElement.contains(e.target)) {
-        this.collpseBanner();
-      }
-    });
+  constructor() {
   }
 
-  isBannerExpanded() {
-    return this.bannerButtonRef.nativeElement.getAttribute("aria-expanded") == 'true';
-  }
-
-  initBanner() {
-    banner.init(this.bannerPanelRef);
-  }
-
-  collpseBanner() {
-
-    if (this.isBannerExpanded()) {
-      // Reinitialize banner
-      this.initBanner();
-    }
-  }
-
-  ngAfterViewInit(): void {
-    this.initBanner();
+  toggleBanner() {
+    this.isExpanded = !this.isExpanded;
   }
 }

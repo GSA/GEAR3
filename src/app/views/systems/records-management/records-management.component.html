@@ -8,15 +8,19 @@
     </h3>
 
     <!-- GEAR Manager Access -->
-    <a class="btn btn-sm btn-info text-white shadow mngr-btn d-flex align-items-center justify-content-center"
-      routerLink="/gear_manager" *ngIf="!sharedService.loggedIn" aria-label="GEAR Manager Login" (click)="sharedService.setRedirectPath()">
-      <span class="mr-2">GEAR Manager Login</span><i class="fa fa-sign-in-alt fa-2x"></i>
-    </a>
-    <a class="btn btn-sm btn-danger text-white shadow mngr-btn d-flex align-items-center justify-content-center"
-      routerLink="/records_mgmt" *ngIf="sharedService.loggedIn" aria-label="GEAR Manager Logout" (click)="sharedService.logoutManager()">
-      <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
-    </a>
-    
+    @if (!sharedService.loggedIn) {
+      <a class="btn btn-sm btn-info text-white shadow mngr-btn d-flex align-items-center justify-content-center"
+        routerLink="/gear_manager" aria-label="GEAR Manager Login" (click)="sharedService.setRedirectPath()">
+        <span class="mr-2">GEAR Manager Login</span><i class="fa fa-sign-in-alt fa-2x"></i>
+      </a>
+    }
+    @if (sharedService.loggedIn) {
+      <a class="btn btn-sm btn-danger text-white shadow mngr-btn d-flex align-items-center justify-content-center"
+        routerLink="/records_mgmt" aria-label="GEAR Manager Logout" (click)="sharedService.logoutManager()">
+        <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
+      </a>
+    }
+
     <!-- Help Button -->
     <a tabindex="0"
       class="btn btn-sm btn-info text-white shadow help-btn d-flex align-items-center justify-content-center"
@@ -42,23 +46,23 @@
     <!-- GEAR Manager Google API Call button -->
     <!-- <a class="btn btn-primary" style="color:white"
        *ngIf="sharedService.loggedIn && !isLoading && !isDone"
-       (click)="runUpdateAllRecordSys()">Update All Related Records</a>
-    // GEAR Manager Google API Call updating animation 
-    <div *ngIf="isLoading" [@loadingAnimation]="isLoading ? 'true' : 'false'">
-      <p>Updating...</p>
-    </div>
-    // GEAR Manager Google API Call Response 
-    <div *ngIf="!isLoading && sharedService.loggedIn && isDone">
-      <p>
-        <b>Update All Related Records</b><span *ngIf="!isError && isDone" style="color:green"> - Completed Successfully!</span><span *ngIf="isError && isDone" style="color:red"> - Error, please contact the EA Team for assistance. </span><br>
-        <span *ngIf="!isError">Last Ran On: {{ updateAllInfoData.last_ran }}<br></span>
-        <span *ngIf="!isError">By: {{ updateAllInfoData.ran_by }}<br></span>
-        <span *ngIf="!isError"><b>{{ updateAllInfoData.tot_inserts }} rows inserted.</b></span>
-      </p>
-    </div> 
-    (hiding for now-- currently not operational) --> 
-
-    <!-- Main Table -->
-    <table id="recordsTable" aria-label="The records management table provides a list of records schedules. This table is useful in understanding the implications of each record schedule on specific types of data. It provides information about how long records should be kept and whether data should be archived."></table>
+  (click)="runUpdateAllRecordSys()">Update All Related Records</a>
+  // GEAR Manager Google API Call updating animation
+  <div *ngIf="isLoading" [@loadingAnimation]="isLoading ? 'true' : 'false'">
+    <p>Updating...</p>
   </div>
+  // GEAR Manager Google API Call Response
+  <div *ngIf="!isLoading && sharedService.loggedIn && isDone">
+    <p>
+      <b>Update All Related Records</b><span *ngIf="!isError && isDone" style="color:green"> - Completed Successfully!</span><span *ngIf="isError && isDone" style="color:red"> - Error, please contact the EA Team for assistance. </span><br>
+      <span *ngIf="!isError">Last Ran On: {{ updateAllInfoData.last_ran }}<br></span>
+      <span *ngIf="!isError">By: {{ updateAllInfoData.ran_by }}<br></span>
+      <span *ngIf="!isError"><b>{{ updateAllInfoData.tot_inserts }} rows inserted.</b></span>
+    </p>
+  </div>
+  (hiding for now-- currently not operational) -->
+
+  <!-- Main Table -->
+  <table id="recordsTable" aria-label="The records management table provides a list of records schedules. This table is useful in understanding the implications of each record schedule on specific types of data. It provides information about how long records should be kept and whether data should be archived."></table>
+</div>
 </div>
