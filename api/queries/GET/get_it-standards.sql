@@ -35,7 +35,7 @@ SELECT
   obj_standard_type.Keyname                       AS StandardType,
   obj_508_compliance_status.Keyname               AS ComplianceStatus,
   GROUP_CONCAT(DISTINCT  CONCAT_WS(', ', CONCAT(poc.FirstName, ' ', poc.LastName), poc.Email, org.Display_Name) SEPARATOR '; ')     AS POC,
-  GROUP_CONCAT(DISTINCT obj_standard_category.Keyname SEPARATOR ', ')   AS Category,
+  GROUP_CONCAT(DISTINCT obj_TRM.TRM_Name SEPARATOR ', ')   AS Category,
   tech.Keyname                                    AS OldName,
   DATE(tech.endOfLifeDate)                        AS EndOfLifeDate,
   tech.approvedVersions                           AS ApprovedVersions,
@@ -52,8 +52,8 @@ LEFT JOIN zk_technology_poc                   ON tech.Id = zk_technology_poc.obj
 LEFT JOIN obj_ldap_poc           AS poc       ON zk_technology_poc.obj_ldap_SamAccountName = poc.SamAccountName
 LEFT JOIN obj_organization      AS org        ON poc.OrgCode = org.Org_Symbol
 
-LEFT JOIN zk_technology_standard_category     ON tech.Id = zk_technology_standard_category.obj_technology_Id
-LEFT JOIN obj_standard_category               ON zk_technology_standard_category.obj_standard_category_Id = obj_standard_category.Id
+LEFT JOIN zk_technology_TRM     ON tech.Id = zk_technology_TRM.obj_technology_Id
+LEFT JOIN obj_TRM               ON zk_technology_TRM.obj_TRM_Id = obj_TRM.Technology_Category_Id
 LEFT JOIN obj_attestation_status_type         ON tech.attestation_required = obj_attestation_status_type.Id
 LEFT JOIN zk_technology_operating_system      ON tech.Id = zk_technology_operating_system.obj_technology_Id
 LEFT JOIN obj_operating_system		AS OS	  ON zk_technology_operating_system.obj_operating_system_Id = OS.Id

@@ -318,6 +318,7 @@
             </div>
             @if(hasRelatedTRMS) {
               <div class="trm-table-container">
+                <span class="sub-header">Technology Categories</span>
                 <app-table visibleColumnStorageKey="related-trm-report" defaultSortField="Name"  [localTableData]="relatedTRMS" [isLocal]="true" [tableCols]="relatedTRMTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onTRMRowClick($event)"></app-table>
               </div>
             }
