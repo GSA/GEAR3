@@ -251,12 +251,12 @@
                         }
                       </div>
                       <div class="data">
-                        <label for="itStandCategory" class="data-label">Category<span class="text-danger">*</span></label>
+                        <label for="itStandCategory" class="data-label">Technology Category<span class="text-danger">*</span></label>
                         <ng-select id="itStandCategory" formControlName="itStandCategory"
                           [items]="categories"
                           [multiple]="true"
                           bindLabel="Name"
-                          bindValue="ID"
+                          bindValue="Id"
                           clearAllText="Clear All"
                           [clearSearchOnAdd]="true"
                           [closeOnSelect]="false"
@@ -274,7 +274,7 @@
                           <div>
                             @if (itStandardsForm.controls['itStandCategory'].errors.required) {
                               <div class="invalid-feedback">
-                                IT Standard Category Required
+                                Technology Category Required
                               </div>
                             }
                           </div>

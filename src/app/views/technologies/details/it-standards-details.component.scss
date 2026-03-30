@@ -204,6 +204,17 @@
                 max-width: 100%;
                 flex: 0 0 100%;
             }
+
+            & .sub-header {
+                color: var(--neutral-black-color-dark);
+                font-family: var(--primary-font);
+                font-size: 1.5rem;
+                font-style: normal;
+                font-weight: 500;
+                line-height: normal;
+                display: block;
+                padding-bottom: 10px;
+            }
         }
 
         & .edit-info-container {

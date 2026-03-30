@@ -186,7 +186,7 @@ export class ItStandardsManagerComponent implements OnInit {
       this.apiService.getITStandStatuses(),
       this.apiService.getPOCs(),
       this.apiService.getITStandTypes(),
-      this.apiService.getITStandCategories(),
+      this.apiService.getTRM(),
       this.apiService.getITStand508Statuses(),
       this.apiService.getITStandDeploymentTypes(),
       this.apiService.getOperatingSystems()
@@ -331,7 +331,9 @@ export class ItStandardsManagerComponent implements OnInit {
       var categoryIDs = [];
       if (this.itStandard.Category) {
         this.itStandard.Category.split(', ').forEach(cat => {
-          categoryIDs.push(this.sharedService.findInArray(this.categories, 'Name', cat))
+          if(cat) {
+            categoryIDs.push(this.sharedService.findInArray(this.categories, 'Name', cat, 'Id'));
+          }
         });
       };
 
@@ -390,6 +392,18 @@ export class ItStandardsManagerComponent implements OnInit {
 
   submitForm() {
     if(this.itStandardsForm.valid) {
+      // Remove null values from existing pre-TRM categories
+      if(this.itStandardsForm.value.itStandCategory && this.itStandardsForm.value.itStandCategory.length > 0) {
+        let tempList = [];
+        this.itStandardsForm.value.itStandCategory.map(c => {
+          if(c){
+            tempList.push(c);
+          }
+        })
+        this.itStandardsForm.value.itStandCategory = tempList;
+        this.itStandardsForm.patchValue({itStandCategory: tempList});
+      }
+
       // Adjust MyView & Gold Image for saving
       if(this.itStandardsForm.value.itStandMyView) {
         this.itStandardsForm.value.itStandMyView = 'T';
@@ -1022,7 +1036,7 @@ export class ItStandardsManagerComponent implements OnInit {
 
     // Populate Categories
     this.catsLoading = true;
-    this.apiService.getITStandCategories().subscribe((data: any[]) => {
+    this.apiService.getTRM().subscribe((data: any[]) => {
       this.categories = data;
       this.catsBuffer = this.categories.slice(0, this.bufferSize);
       this.catsLoading = false;

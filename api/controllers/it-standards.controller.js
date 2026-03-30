@@ -270,10 +270,10 @@ exports.getAppBundles = (req, res) => {
 
 // Remove and Save Categories
 function removeSavedCategories(techId) {
-  return `DELETE FROM zk_technology_standard_category WHERE obj_technology_Id=${techId};`;
+  return `DELETE FROM zk_technology_TRM WHERE obj_technology_Id=${techId};`;
 }
 function saveCategories(techId, categoryId) {
-  return `INSERT INTO zk_technology_standard_category (obj_standard_category_Id, obj_technology_Id) VALUES (${categoryId}, ${techId});`;
+  return `INSERT INTO zk_technology_TRM (obj_TRM_Id, obj_technology_Id) VALUES (${categoryId}, ${techId});`;
 }
 
 // Remove and Save POCs
