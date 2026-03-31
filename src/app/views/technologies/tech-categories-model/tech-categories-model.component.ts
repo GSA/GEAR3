@@ -576,8 +576,9 @@ export class TechCategoriesModelComponent implements OnInit {
 
           // Include parent if not already in the path
           if (
+            paths[index].parent && (
             paths[index].parent.data.name != 'Technology Reference Model (TRM)' &&
-            !paths.includes(paths[index].parent)
+            !paths.includes(paths[index].parent))
           ) {
             paths.push(paths[index].parent);
           }
