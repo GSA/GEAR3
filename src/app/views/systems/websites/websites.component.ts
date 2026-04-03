@@ -264,6 +264,7 @@ export class WebsitesComponent implements OnInit {
   public onSelectTab(tabName: string): void {
     this.selectedTab = tabName;
     this.websitesTabFilterted = this.websitesData;
+    const tableSearchKeyword = this.tableService.reportDataTableFilterKey;
 
     if(this.selectedTab === 'All') {
       this.websitesTabFilterted = this.websitesData.filter(w => {
@@ -283,8 +284,9 @@ export class WebsitesComponent implements OnInit {
         return w.digital_brand_category === 'External';
       });
     }
-    this.tableService.updateReportTableData(this.websitesTabFilterted);
-    this.tableService.updateReportTableDataReadyStatus(true);
+    let data = this.tableService.getFilteredSearchData(this.websitesTabFilterted, tableSearchKeyword, this.tableCols);
+    this.tableService.updateReportTableData(data);
+    // this.tableService.updateReportTableDataReadyStatus(true);
   }
 
   public onKeyUp(e: KeyboardEvent, tabName: string) {

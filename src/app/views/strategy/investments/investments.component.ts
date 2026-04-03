@@ -63,6 +63,7 @@ export class InvestmentsComponent implements OnInit {
   public onSelectTab(tabName: string): void {
     this.selectedTab = tabName;
     this.itInvesmentsDataTabFilterted = this.itInvestmentsData;
+    const tableSearchKeyword = this.tableService.reportDataTableFilterKey;
 
     if(this.selectedTab === 'All') {
       this.itInvesmentsDataTabFilterted = this.itInvestmentsData;
@@ -82,8 +83,9 @@ export class InvestmentsComponent implements OnInit {
       });
       this.tableCols = this.defaultCols;
     }
-    this.tableService.updateReportTableData(this.itInvesmentsDataTabFilterted);
-    this.tableService.updateReportTableDataReadyStatus(true);
+    let data = this.tableService.getFilteredSearchData(this.itInvesmentsDataTabFilterted, tableSearchKeyword, this.tableCols);
+    this.tableService.updateReportTableData(data);
+    // this.tableService.updateReportTableDataReadyStatus(true);
   }
   
   public onKeyUp(e: KeyboardEvent, tabName: string) {

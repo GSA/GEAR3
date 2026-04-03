@@ -38,6 +38,8 @@ export class TableService {
   private reportTableDataReadySubject = new BehaviorSubject<boolean>(false);
   reportTableDataReady$ = this.reportTableDataReadySubject.asObservable();
 
+  reportDataTableFilterKey: string = null;
+
   // Systems Related Table Options
   public relSysTableOptions: {} = this.createTableOptions({
     advancedSearch: true,
@@ -799,5 +801,42 @@ export class TableService {
       }
     }
     this.updateReportTableData(filteredData);
+  }
+
+  public updateReportDataTableFilterKey(key: string) {
+    this.reportDataTableFilterKey = key;
+  }
+
+  public getFilteredSearchData(filteredData, keyword, tableCols): any {
+    if(keyword && keyword.length > 0) {
+      const searchableColumns = tableCols.filter(col => col.field && col.showColumn !== false);
+      const rankedData = filteredData.map(item => {
+        let maxScore = 0;
+        
+        searchableColumns.forEach(col => {
+          const value = item[col.field];
+          if (!value) return;
+          
+          const stringValue = String(value).toLowerCase();
+          
+          if (stringValue === keyword) {
+            maxScore = Math.max(maxScore, filteredData.length + 1);
+          } else {
+            const index = stringValue.indexOf(keyword);
+            if (index !== -1) {
+              maxScore = Math.max(maxScore, 1 / (index + 1));
+            }
+          }
+        });
+        
+        return { item, score: maxScore };
+      }).filter(ranked => ranked.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .map(ranked => ranked.item);
+  
+        return rankedData;
+    } else {
+      return filteredData;
+    }
   }
 }

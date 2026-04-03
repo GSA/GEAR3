@@ -71,12 +71,20 @@ export class ItStandardsComponent implements OnInit {
     this.selectedTab = tabName;
     this.itStandardsDataTabFilterted = this.itStandardsData;
 
+    const tableSearchKeyword = this.tableService.reportDataTableFilterKey;
+    // if(this.tableService.updatedReportData) {
+    //   this.itStandardsDataTabFilterted = this.tableService.updatedReportData;
+    // } else {
+    //   this.itStandardsDataTabFilterted = this.itStandardsData;
+    // }
+
     if(this.selectedTab === 'All') {
       if(this.hasSelectedChips()) {
         this.onFilterChipSelect(this.selectedChips);
       } else {
-        this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
-        this.tableService.updateReportTableDataReadyStatus(true);
+        let data = this.tableService.getFilteredSearchData(this.itStandardsDataTabFilterted, tableSearchKeyword, this.tableCols);
+        this.tableService.updateReportTableData(data);
+        //this.tableService.updateReportTableDataReadyStatus(true);
       }
     } else if (this.selectedTab === 'Other') {
       if(this.hasSelectedChips()) {
@@ -88,8 +96,9 @@ export class ItStandardsComponent implements OnInit {
         this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
           return x.Status !== 'Approved' && x.Status !== 'Denied' && x.Status !== 'Retired' && x.Status !== 'Approved with conditions';
         });
-        this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
-        this.tableService.updateReportTableDataReadyStatus(true);
+        let data = this.tableService.getFilteredSearchData(this.itStandardsDataTabFilterted, tableSearchKeyword, this.tableCols);
+        this.tableService.updateReportTableData(data);
+        //this.tableService.updateReportTableDataReadyStatus(true);
       }
     } else {
       if(this.hasSelectedChips()) {
@@ -101,8 +110,9 @@ export class ItStandardsComponent implements OnInit {
         this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
           return x.Status === tabName;
         });
-        this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
-        this.tableService.updateReportTableDataReadyStatus(true);
+        let data = this.tableService.getFilteredSearchData(this.itStandardsDataTabFilterted, tableSearchKeyword, this.tableCols);
+        this.tableService.updateReportTableData(data);
+        //this.tableService.updateReportTableDataReadyStatus(true);
       }
     }
   }

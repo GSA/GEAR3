@@ -141,7 +141,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
       )
       .subscribe((searchValue: string) => {
         this.onTableSearch(searchValue);
-      })
+    });
 
     this.matchModeOptions = [
       { label: 'Contains', value: FilterMatchMode.CONTAINS },
@@ -160,7 +160,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
       this.tableService.reportTableData$.subscribe(d => {
         if(d) {
           this.tableData = d;
-          this.originalTableData = [...d];
+          // this.originalTableData = [...d];
         }
       });
       this.tableService.reportTableDataReady$.subscribe(r => {
@@ -173,6 +173,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
           } else {
             this.isDataReady = r;
           }
+          this.originalTableData = [...this.tableData];
         });
 
       })
@@ -434,13 +435,15 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   onTableSearch(keyword: string) {
     if (!keyword || keyword.trim() === '') {
       this.tableData = [...this.originalTableData];
+      this.tableService.updateReportTableData(this.tableData);
+      this.tableService.updateReportDataTableFilterKey(null);
       return;
     }
 
     const searchTerm = keyword.toLowerCase().trim();
     const searchableColumns = this.tableCols.filter(col => col.field && col.showColumn !== false);
     
-    const rankedData = this.originalTableData.map(item => {
+    const rankedData = this.tableData.map(item => {
       let maxScore = 0;
       
       searchableColumns.forEach(col => {
@@ -450,7 +453,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
         const stringValue = String(value).toLowerCase();
         
         if (stringValue === searchTerm) {
-          maxScore = Math.max(maxScore, this.originalTableData.length + 1);
+          maxScore = Math.max(maxScore, this.tableData.length + 1);
         } else {
           const index = stringValue.indexOf(searchTerm);
           if (index !== -1) {
@@ -466,6 +469,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     
     this.tableData = rankedData;
     this.tabelSearchString = searchTerm;
+    this.tableService.updateReportDataTableFilterKey(keyword);
 
     // this.location.replaceState(this.router.url, `tableSearchTerm=${searchTerm}`);
 
