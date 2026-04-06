@@ -116,7 +116,7 @@
             }
           </ng-template>
           <!-- Table body -->
-          <ng-template #body let-rowData let-columns="columns">
+          <ng-template pTemplate="body" let-rowData let-columns="columns">
             <tr [pSelectableRow]="rowData">
               @for (col of columns; track col) {
                 @if (showColumn(col)) {

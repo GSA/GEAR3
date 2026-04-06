@@ -73,6 +73,8 @@ export class SystemsComponent implements OnInit {
     this.selectedTab = tabName;
     this.systemsDataTabFilterted = [];
 
+    const tableSearchKeyword = this.tableService.reportDataTableFilterKey;
+
     if(this.selectedTab === 'All') {
       this.systemsDataTabFilterted = this.systemsData.filter(s => {
         return s.Status === 'Active' && s.BusApp === 'Yes';
@@ -89,8 +91,9 @@ export class SystemsComponent implements OnInit {
       });
       this.tableCols = this.inactiveColumnDefs;
     }
-    this.tableService.updateReportTableData(this.systemsDataTabFilterted);
-    this.tableService.updateReportTableDataReadyStatus(true);
+    let data = this.tableService.getFilteredSearchData(this.systemsDataTabFilterted, tableSearchKeyword, this.tableCols);
+    this.tableService.updateReportTableData(data);
+    //this.tableService.updateReportTableDataReadyStatus(true);
   }
 
   public onKeyUp(e: KeyboardEvent, tabName: string) {
@@ -402,6 +405,7 @@ export class SystemsComponent implements OnInit {
         // Apply tab filter based on selectedTab
         this.selectedTab = 'All';
         this.onSelectTab(this.selectedTab);
+        this.tableService.updateReportTableDataReadyStatus(true);
       }
     });
 
