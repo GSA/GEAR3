@@ -5,6 +5,16 @@
       <app-page-help-button></app-page-help-button>
     </div>
   </div>
+
+
+  <button (click)="testAICall()">Send Data</button>
+
+<div *ngIf="aiResponse">
+  <h3>Response from AI:</h3>
+  <pre>{{ aiResponse | json }}</pre>
+</div>
+
+
   <div class="global-search-data-container">
     <app-table visibleColumnStorageKey="global-search" defaultSortField="Name" [tableCols]="tableCols" reportStyle="neutral" exportName="Global Search" tableType="globalSearch" (rowClickEvent)="onRowClick($event)"></app-table>
   </div>

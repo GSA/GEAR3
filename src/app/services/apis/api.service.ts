@@ -1066,6 +1066,10 @@ export class ApiService {
       .pipe(catchError(this.handleError<any[]>('GET Global Search Results', [])));
   }
 
+  public getAITest(data): any {
+    return this.http.post('http://localhost:3000/api/external-call', data);
+  }
+
   //// Set JWT into Header Options
   setHeaderOpts() {
     return {

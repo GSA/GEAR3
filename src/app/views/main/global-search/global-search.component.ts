@@ -19,6 +19,8 @@ export class GlobalSearchComponent implements OnInit {
   tableData: any[] = [];
   tableDataOriginal: any[] = [];
 
+  public aiResponse;
+
   constructor(
     private sharedService: SharedService,
     private tableService: TableService,
@@ -79,6 +81,22 @@ export class GlobalSearchComponent implements OnInit {
         // Log GA4 event
         this.analyticsService.logSearchEvent(this.searchKW);
       }
+    });
+  }
+
+  testAICall() {
+    const sampleData = {
+      "messages": [
+          {
+          "content": "What is 2+2?",
+          "role": "system"
+          }
+      ],
+      "model": "gemini-2.5-flash"
+  };
+    this.apiService.getAITest(sampleData).subscribe({
+      next: (data) => this.aiResponse = data,
+      error: (err) => console.error(err)
     });
   }
 

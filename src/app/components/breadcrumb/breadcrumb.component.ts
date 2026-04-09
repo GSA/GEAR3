@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { PreviousRouteService } from '@services/previous-route/previous-route.service';
 import { filter } from 'rxjs/operators';
@@ -10,7 +10,7 @@ import { filter } from 'rxjs/operators';
     styleUrls: ['./breadcrumb.component.scss'],
     standalone: false
 })
-export class BreadcrumbComponent implements OnInit {
+export class BreadcrumbComponent implements OnInit, OnChanges {
 
     @Input() showManagerLevel: boolean = false;
 
@@ -46,6 +46,10 @@ export class BreadcrumbComponent implements OnInit {
 
         this.topLevelName = this.getTopLevelRouteName(this.previousRoute);
         this.previousLevelName = this.getPreviousRouteName(this.previousRoute);
+    }
+
+    public ngOnChanges(changes: SimpleChanges): void {
+        
     }
 
     private getTopLevelRouteName(previous: string): string {
