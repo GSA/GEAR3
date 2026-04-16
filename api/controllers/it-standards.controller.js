@@ -16,6 +16,16 @@ exports.findAll = (req, res) => {
   res = ctrl.sendQuery(query, 'IT Standards', res); //removed sendQuery_cowboy reference
 };
 
+exports.findAllApproved = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
+    ` WHERE obj_standard_type.Keyname LIKE 'Software'
+      AND obj_technology_status.Keyname = 'Approved'
+      GROUP BY tech.Id
+      ORDER BY IFNULL(tech.softwareReleaseName, tech.Keyname);`;
+
+  res = ctrl.sendQuery(query, 'IT Standards', res); //removed sendQuery_cowboy reference
+};
+
 exports.findAllNoFilter = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
     ` WHERE obj_standard_type.Keyname LIKE 'Software'

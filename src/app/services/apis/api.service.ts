@@ -657,6 +657,13 @@ export class ApiService {
         catchError(this.handleError<ITStandards[]>('GET IT Standards', []))
       );
   }
+  public getApprovedITStandards(): Observable<ITStandards[]> {
+    return this.http
+      .get<ITStandards[]>(this.techUrl + '/get/findAllApproved')
+      .pipe(
+        catchError(this.handleError<ITStandards[]>('GET IT Standards', []))
+      );
+  }
   public getITStandardsFilterTotals(filters: string[]): Observable<any> {
     return this.http
     .get<any>(this.techUrl + '/filter_totals/' + filters)
@@ -1067,7 +1074,7 @@ export class ApiService {
   }
 
   public getAITest(data): any {
-    return this.http.post('http://localhost:3000/api/external-call', data);
+    return this.http.post('http://localhost:3001/api/external-call', data);
   }
 
   //// Set JWT into Header Options

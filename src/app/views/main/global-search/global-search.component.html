@@ -6,14 +6,13 @@
     </div>
   </div>
 
-
-  <button (click)="testAICall()">Send Data</button>
-
-<div *ngIf="aiResponse">
-  <h3>Response from AI:</h3>
-  <pre>{{ aiResponse | json }}</pre>
-</div>
-
+  @if(aiResponse) {
+    <h3>Response from AI:</h3>
+    <!-- <pre>{{ aiResponse.choices[0].message.content }}</pre> -->
+     <div class="ai-response-container" [innerHtml]="aiResponse.choices[0].message.content"></div>
+  } @else {
+    <div class="loader"></div>
+  }
 
   <div class="global-search-data-container">
     <app-table visibleColumnStorageKey="global-search" defaultSortField="Name" [tableCols]="tableCols" reportStyle="neutral" exportName="Global Search" tableType="globalSearch" (rowClickEvent)="onRowClick($event)"></app-table>

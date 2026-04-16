@@ -9,6 +9,9 @@ router.route('/')
 router.route('/all')
   .get(itsCtrl.findAllNoFilter);
 
+router.route('/get/findAllApproved')
+  .get(itsCtrl.findAllApproved);
+
 router.route('/get/:id')
   .get(itsCtrl.findOne);
 

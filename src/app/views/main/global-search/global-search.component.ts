@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ITStandards } from '@api/models/it-standards.model';
 import { Column } from '@common/table-classes';
 import { AnalyticsService } from '@services/analytics/analytics.service';
 import { ApiService } from '@services/apis/api.service';
@@ -20,6 +21,7 @@ export class GlobalSearchComponent implements OnInit {
   tableDataOriginal: any[] = [];
 
   public aiResponse;
+  public aiPrompt;
 
   constructor(
     private sharedService: SharedService,
@@ -71,6 +73,9 @@ export class GlobalSearchComponent implements OnInit {
         this.searchKW = params['keyword'];
         // const urlSearchParams = new URLSearchParams(this.searchKW);
         // this.apiService.getGlobalSearchResults(encodeURIComponent(this.searchKW.replace(/'/g, '%27'))).subscribe(s => {
+
+        this.sendAIPrompt();
+
         this.apiService.getGlobalSearchResults(encodeURIComponent(this.searchKW)).subscribe(s => {
           let sorted = this.sortBySearchTerm(s, this.searchKW, 'Name');
           this.tableService.updateReportTableData(sorted);
@@ -84,16 +89,20 @@ export class GlobalSearchComponent implements OnInit {
     });
   }
 
-  testAICall() {
+  sendAIPrompt() {
     const sampleData = {
       "messages": [
-          {
-          "content": "What is 2+2?",
+        {
+          "content": 'Format your response as html including bold for titles and unordered lists where appropriate',
           "role": "system"
-          }
+        },
+        {
+        "content": `Using the data from this url https://ea.gsa.gov/api/it_standards give me a list of approved software that would be good alternative to ${this.searchKW}. For each give me a comprehensive reason why this is a good alternative along with a pros and cons list.`,
+        "role": "user"
+        }
       ],
       "model": "gemini-2.5-flash"
-  };
+    };
     this.apiService.getAITest(sampleData).subscribe({
       next: (data) => this.aiResponse = data,
       error: (err) => console.error(err)
