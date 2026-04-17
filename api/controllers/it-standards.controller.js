@@ -26,9 +26,15 @@ exports.findAllNoFilter = (req, res) => {
 };
 
 exports.findOne = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
-    ` WHERE tech.Id = ${req.params.id};`;
-  res = ctrl.sendQuery(query, 'individual IT Standard', res); //removed sendQuery_cowboy reference
+  let id = req.params.id.trim();
+  if(/^\d+$/.test(id)) {
+    var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
+      ` WHERE tech.Id = ${id};`;
+
+    res = ctrl.sendQuery(query, "individual IT Standard", res);
+  } else {
+    res.status(404).json({message: "ID not found"});
+  }
 };
 
 exports.findLatest = (req, res) => {
@@ -49,13 +55,18 @@ exports.updatedWithinWeek = (req, res) => {
 };
 
 exports.findSystems = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
+  let id = req.params.id.trim();
+  if(/^\d+$/.test(id)) {
+    var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
     ` LEFT JOIN zk_systems_subsystems_technology_xml AS mappings ON systems.\`ex:GEAR_ID\` = mappings.\`ex:obj_systems_subsystems_Id\`
       LEFT JOIN obj_technology AS tech                                ON mappings.\`ex:obj_technology_Id\` = tech.Id
 
-      WHERE tech.Id = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`; //removed LEFT JOIN cowboy_ods.obj_technology reference
+      WHERE tech.Id = ${id} GROUP BY systems.\`ex:GEAR_ID\`;`;
 
-  res = ctrl.sendQuery(query, 'systems using IT Standard', res);
+    res = ctrl.sendQuery(query, 'systems using IT Standard', res);
+  } else {
+    res.status(404).json({message: "ID not found"});
+  }
 };
 
 exports.update = (req, res) => {
@@ -620,10 +631,15 @@ exports.getRetiredTotals = (req, res) => {
 };
 
 exports.getRelatedTRMS = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_it-standards_related_trms.sql`)).toString() +
-  ` WHERE tech.Id = ${req.params.id};`;
+  let id = req.params.id.trim();
+  if(/^\d+$/.test(id)) {
+    var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_it-standards_related_trms.sql`)).toString() +
+  ` WHERE tech.Id = ${id};`;
 
   res = ctrl.sendQuery(query, `IT standard related TRMs`, res);
+  } else {
+    res.status(404).json({message: "ID not found"});
+  }
 };
 
 exports.getFilterTotals = (req, res) => {
