@@ -20,8 +20,8 @@ exports.findOne = (req, res) => {
 
     res = ctrl.sendQuery(query, 'individual System/Subsystem', res);
   } else {
-    res.status(500).json({
-      message: "Error: Invalid ID",
+    res.status(404).json({
+      message: "ID not found",
     });
   }
 };
@@ -38,12 +38,19 @@ exports.findSubsystems = (req, res) => {
 };
 
 exports.findCapabilities = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_capabilities.sql')).toString() +
+  let id = req.params.id.trim();
+  if(/^\d+$/.test(id)) {
+    var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_capabilities.sql')).toString() +
     ` LEFT JOIN zk_systems_subsystems_capabilities AS cap_mapping    ON cap.capability_Id = cap_mapping.obj_capability_Id
       LEFT JOIN obj_fisma_archer                   AS systems        ON cap_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
-      WHERE systems.\`ex:GEAR_ID\` = ${req.params.id};`;
+      WHERE systems.\`ex:GEAR_ID\` = ${id};`;
 
-  res = ctrl.sendQuery(query, 'related capabilities for system', res);
+      res = ctrl.sendQuery(query, 'related capabilities for system', res);
+  } else {
+    res.status(404).json({
+      message: "ID not found",
+    });
+  }
 };
 
 exports.updateCaps = (req, res) => {
@@ -130,13 +137,19 @@ exports.updateInvest = (req, res) => {
 
 
 exports.findRecords = (req, res) => {
-  var query = `SELECT * FROM gear_schema.zk_systems_subsystems_records   AS records_mapping
+  let id = req.params.id.trim();
+  if(/^\d+$/.test(id)) {
+    var query = `SELECT * FROM gear_schema.zk_systems_subsystems_records   AS records_mapping
       LEFT JOIN obj_fisma_archer                                      AS systems       ON records_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
-      WHERE systems.\`ex:GEAR_ID\` = ${req.params.id}
+      WHERE systems.\`ex:GEAR_ID\` = ${id}
+      GROUP BY records_mapping.obj_records_Id;`;
 
-    GROUP BY records_mapping.obj_records_Id;`;
-
-  res = ctrl.sendQuery(query, 'related records for system', res);
+    res = ctrl.sendQuery(query, 'related records for system', res);
+  } else {
+    res.status(404).json({
+      message: "ID not found",
+    });
+  }
 };
 
 exports.findWebsites = (req, res) => {
@@ -151,24 +164,30 @@ exports.findWebsites = (req, res) => {
 
     res = ctrl.sendQuery(query, 'related websites for system', res);
   } else {
-    res.status(500).json({
-      message: "Error: Invalid ID",
+    res.status(404).json({
+      message: "ID not found",
     });
   }
 };
 
 
 exports.findTechnologies = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
+  let id = req.params.id.trim();
+  if(/^\d+$/.test(id)) {
+    var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
     ` LEFT JOIN gear_schema.zk_systems_subsystems_technology_xml   AS tech_mapping  ON tech.Id = tech_mapping.\`ex:obj_technology_Id\`
       LEFT JOIN gear_schema.obj_fisma_archer                   AS systems       ON tech_mapping.\`ex:obj_systems_subsystems_Id\` = systems.\`ex:GEAR_ID\`
       WHERE obj_standard_type.Keyname LIKE '%Software%'
-        AND systems.\`ex:GEAR_ID\` = ${req.params.id}
-
+        AND systems.\`ex:GEAR_ID\` = ${id}
     GROUP BY tech.Id
     ORDER BY tech.Keyname;`;
 
-  res = ctrl.sendQuery(query, 'related technologies for system', res); //Removed sendQuery_cowboy reference
+    res = ctrl.sendQuery(query, 'related technologies for system', res);
+  } else {
+    res.status(404).json({
+      message: "ID not found",
+    });
+  }
 };
 
 exports.updateTech = (req, res) => {
@@ -208,10 +227,17 @@ exports.updateTech = (req, res) => {
 };
 
 exports.findTIME = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_sysTIME.sql')).toString() +
-    ` AND \`System Id\` = ${req.params.id};`;
+  let id = req.params.id.trim();
+  if(/^\d+$/.test(id)) {
+    var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_sysTIME.sql')).toString() +
+    ` AND \`System Id\` = ${id};`;
 
-  res = ctrl.sendQuery(query, 'related TIME designations for system', res);
+    res = ctrl.sendQuery(query, 'related TIME designations for system', res);
+  } else {
+    res.status(404).json({
+      message: "ID not found",
+    });
+  }
 };
 
 exports.getFilterTotals = (req, res) => {  

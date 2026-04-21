@@ -62,8 +62,8 @@ exports.findServiceCategories = (req, res) => {
 
     res = ctrl.sendQuery(query, "service categories for a website", res);
   } else {
-    res.status(500).json({
-      message: "Error: Invalid ID",
+    res.status(404).json({
+      message: "ID not found",
     });
   }
 }

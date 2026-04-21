@@ -13,10 +13,15 @@ exports.findAll = (req, res) => {
 };
 
 exports.findOne = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_fisma_archer.sql')).toString() +
-    ` WHERE archer.\`ex:GEAR_ID\` = ${req.params.id} GROUP BY archer.\`ex:GEAR_ID\`;`;
+  let id = req.params.id.trim();
+  if(/^\d+$/.test(id)) {
+    var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_fisma_archer.sql')).toString() +
+      ` WHERE archer.\`ex:GEAR_ID\` = ${id} GROUP BY archer.\`ex:GEAR_ID\`;`;
 
-  res = ctrl.sendQuery(query, 'individual FISMA System', res);
+    res = ctrl.sendQuery(query, "individual FISMA System", res);
+  } else {
+    res.status(404).json({message: "ID not found"});
+  }
 };
 
 // exports.findApplications = (req, res) => {
