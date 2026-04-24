@@ -201,7 +201,7 @@ export class ItStandardsComponent implements OnInit {
         visible: false,
         formatter: this.sharedService.formatDescription,
         titleTooltip: this.getTooltip('Comments')
-      }, {
+      }, /* {
         field: 'attestation_required',
         title: 'Attestation Required',
         sortable: true,
@@ -213,7 +213,7 @@ export class ItStandardsComponent implements OnInit {
         sortable: true,
         visible: false,
         titleTooltip: this.getTooltip('Attestation Link')
-      }, {
+      }, */ {
         field: 'fedramp',
         title: 'FedRAMP',
         sortable: true,
