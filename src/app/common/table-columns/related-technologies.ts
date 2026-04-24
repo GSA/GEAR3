@@ -15,7 +15,7 @@ export const RelatedTechnologiesColumns: Column[] = [
         field: 'Category',
         header: 'Software Category',
         isSortable: true,
-      }, {
+      },/* {
         field: 'AttestationRequired',
         header: 'Attestation Required',
         showColumn: false,
@@ -25,7 +25,7 @@ export const RelatedTechnologiesColumns: Column[] = [
         header: 'Attestation Link',
         showColumn: false,
         isSortable: true,
-      }, {
+      }, */{
         field: 'Fedramp',
         header: 'Fedramp',
         showColumn: false,

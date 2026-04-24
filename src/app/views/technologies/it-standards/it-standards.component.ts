@@ -317,7 +317,7 @@ export class ItStandardsComponent implements OnInit {
         showColumn: false,
         formatter: this.sharedService.formatDescription,
         titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Comments')
-      }, {
+      }, /*{
         field: 'attestation_required',
         header: 'Attestation Required',
         isSortable: true,
@@ -329,7 +329,7 @@ export class ItStandardsComponent implements OnInit {
         isSortable: true,
         showColumn: false,
         titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Attestation Link')
-      }, {
+      }, */{
         field: 'fedramp',
         header: 'FedRAMP',
         isSortable: true,
