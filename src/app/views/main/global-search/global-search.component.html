@@ -9,7 +9,35 @@
   @if(aiResponse) {
     <h3>Response from AI:</h3>
     <!-- <pre>{{ aiResponse.choices[0].message.content }}</pre> -->
-     <div class="ai-response-container" [innerHtml]="aiResponse.choices[0].message.content"></div>
+     <div class="ai-response-container">
+      <!-- @for (response of aiResponse; track response) {
+        @if(response.responseType && resposne.responseType === 'ITStandard') {
+          @if(response.intro && response.intro.length > 0) {
+            <p>{{response.intro}}</p>
+          }
+          @if(response.searchedStandard && response.searchedStandard.length > 0) {
+            <h3><a [routerLink]="'/it_standard/' + response.searchedId">{{response.searchedStandard}}</a></h3>
+          }
+
+          @for(alts of response.alternatives; track response.alternatives) {
+            <h3><a [routerLink]="'/it_standard/' + alts.softwareId">{{alts.alternativeTitle}}</a></h3>
+          }
+        } @else {
+          {{response}}
+        } -->
+
+        <p>{{aiResponse | json}}</p>
+
+        <!-- <h3><a [routerLink]="'/it_standard/' + response.itStandardId">{{response.itStandardTitle}}</a></h3>
+        <h5>Reasoning:</h5>
+        <p>{{response.reasoning}}</p> -->
+        <!-- <h5>Pros:</h5>
+        <p>{{response.pros}}</p>
+        <h5>Cons:</h5>
+        <p>{{response.cons}}</p> -->
+      <!-- } -->
+     </div>
+    
   } @else {
     <div class="loader"></div>
   }

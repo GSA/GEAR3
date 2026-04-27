@@ -136,7 +136,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit(): void {
     this.tableSearchSubscription = this.tableSearchControl.valueChanges
       .pipe(
-        debounceTime(400),
+        debounceTime(200),
         distinctUntilChanged()
       )
       .subscribe((searchValue: string) => {

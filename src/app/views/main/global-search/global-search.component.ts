@@ -93,18 +93,53 @@ export class GlobalSearchComponent implements OnInit {
     const sampleData = {
       "messages": [
         {
-          "content": 'Format your response as html including bold for titles and unordered lists where appropriate',
+          "content": `You must use only data from the following urls:
+                        1. https://ea.gsa.gov/api/it_standards
+                        2. https://ea.gsa.gov/api/websites`,
           "role": "system"
         },
         {
-        "content": `Using the data from this url https://ea.gsa.gov/api/it_standards give me a list of approved software that would be good alternative to ${this.searchKW}. For each give me a comprehensive reason why this is a good alternative along with a pros and cons list.`,
+          "content": `This is what the user is searching for: ${this.searchKW}.`,
+          "role": "system"
+        },
+        {
+          "content": `Return your response as stringified json with the following rules:
+                        1. Do not include any back ticks, line breaks, new lines or anything else that might throw an error when passing the string into
+                            a JSON.parse() function.
+                        2. Reiterate what you think the user is trying to search for as a simple 1-3 sentence response at the beginning inside a property
+                            called 'intro'.
+                        3. In a second property called 'responseType', return either 'ITStandard' or 'Website' based on what you think the user is searching for.
+                        4. Follow any prompt specific JSON property names.`,
+          "role": "system"
+        },
+        {
+          "content": `If the responseType is 'ITStandard' use this prompt:
+                        Return a list of approved GSA IT Standards that would be a good alternative to the searched for IT Standard. If the searched for IT Standard
+                        is already approved also return it at the top of the list. Along with the IT Standards, also return a short description of the searched
+                        for IT Standard if it's approved and for every alternative return the reasoning why it would be a good alternative along with a pros
+                        and cons list. If a technology doesn't appear in the ITStandards data set and it isn't approved it cannot be listed as an alternative.
+                        Use the following JSON property names for each piece of data returned:
+                          1. Approved searched for IT Standard 'Name' should be in a property called 'searchedStandard' and its 'ID' should be in a property called 'searchedId'.
+                          2. Alternatives should be listed out in an array called 'alternatives'
+                            2a. each alternative should have a property 'itStandardTitle' that holds the IT Standard 'Name', 'itStandardId' that holds the
+                              IT Standard 'ID', 'reasoning' that holds the reason why this makes a good alternative, an array of pros called 'pros'
+                              and an array of cons called 'cons'`,
+          "role": "user"
+        },
+        {
+        "content": `If the responseType is 'Website' only return the string 'You searched for a website'.`,
         "role": "user"
         }
       ],
       "model": "gemini-2.5-flash"
     };
     this.apiService.getAITest(sampleData).subscribe({
-      next: (data) => this.aiResponse = data,
+      next: (data) => {
+        const rawStr = data.choices[0].message.content;
+        const cleansedStr = rawStr.replace(/^```json|```$/g, "");
+        this.aiResponse = JSON.parse(cleansedStr);
+        // this.aiResponse = JSON.parse(data.choices[0].message.content);
+      },
       error: (err) => console.error(err)
     });
   }
