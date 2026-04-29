@@ -257,7 +257,7 @@
               <td>{{ itStandard.StandardType }}</td>
             </tr>
           }
-          @if (isFieldPopulated(itStandard.attestation_required)) {
+          <!-- @if (isFieldPopulated(itStandard.attestation_required)) {
             <tr>
               <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Attestation Required')" role="tooltip">Attestation Required</span></td>
               <td>{{ itStandard.attestation_required }}</td>
@@ -268,7 +268,7 @@
               <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Attestation Link')" role="tooltip">Attestation Link</span></td>
               <td>{{ itStandard.attestation_link }}</td>
             </tr>
-          }
+          } -->
           @if (isFieldPopulated(itStandard.fedramp)) {
             <tr>
               <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('FedRAMP')" role="tooltip">FedRAMP</span></td>

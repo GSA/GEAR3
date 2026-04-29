@@ -263,7 +263,7 @@ export class SystemsModalComponent implements OnInit {
     field: 'Category',
     title: 'Software Category',
     sortable: true,
-  }, {
+  }, /* {
     field: 'AttestationRequired',
     title: 'Attestation Required',
     visible: false,
@@ -273,7 +273,7 @@ export class SystemsModalComponent implements OnInit {
     title: 'Attestation Link',
     visible: false,
     sortable: true,
-  }, {
+  }, */ {
     field: 'Fedramp',
     title: 'Fedramp',
     visible: false,
