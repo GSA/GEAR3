@@ -113,6 +113,8 @@ import { WebsiteServiceCategoryDetailsContentComponent } from './views/enterpris
 import { providePrimeNG } from 'primeng/config';
 import { DatePickerModule } from 'primeng/datepicker';
 import { PopoverModule } from 'primeng/popover';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 
 import Lara from '@primeuix/themes/lara';
 import { CommonModule } from '@angular/common';
@@ -229,7 +231,9 @@ import { PageHelpButtonComponent } from './components/page-help-button/page-help
         AccordionModule,
         TooltipModule,
         DatePickerModule,
-        PopoverModule
+        PopoverModule,
+        InputGroupModule,
+        InputGroupAddonModule
     ],
     providers: [
       Globals, provideHttpClient(withInterceptorsFromDi()),

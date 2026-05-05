@@ -71,19 +71,11 @@ export class ItStandardsComponent implements OnInit {
     this.selectedTab = tabName;
     this.itStandardsDataTabFilterted = this.itStandardsData;
 
-    const tableSearchKeyword = this.tableService.reportDataTableFilterKey;
-    // if(this.tableService.updatedReportData) {
-    //   this.itStandardsDataTabFilterted = this.tableService.updatedReportData;
-    // } else {
-    //   this.itStandardsDataTabFilterted = this.itStandardsData;
-    // }
-
     if(this.selectedTab === 'All') {
       if(this.hasSelectedChips()) {
         this.onFilterChipSelect(this.selectedChips);
       } else {
-        let data = this.tableService.getFilteredSearchData(this.itStandardsDataTabFilterted, tableSearchKeyword, this.tableCols);
-        this.tableService.updateReportTableData(data);
+        this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
         //this.tableService.updateReportTableDataReadyStatus(true);
       }
     } else if (this.selectedTab === 'Other') {
@@ -96,8 +88,7 @@ export class ItStandardsComponent implements OnInit {
         this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
           return x.Status !== 'Approved' && x.Status !== 'Denied' && x.Status !== 'Retired' && x.Status !== 'Approved with conditions';
         });
-        let data = this.tableService.getFilteredSearchData(this.itStandardsDataTabFilterted, tableSearchKeyword, this.tableCols);
-        this.tableService.updateReportTableData(data);
+        this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
         //this.tableService.updateReportTableDataReadyStatus(true);
       }
     } else {
@@ -110,8 +101,7 @@ export class ItStandardsComponent implements OnInit {
         this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
           return x.Status === tabName;
         });
-        let data = this.tableService.getFilteredSearchData(this.itStandardsDataTabFilterted, tableSearchKeyword, this.tableCols);
-        this.tableService.updateReportTableData(data);
+        this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
         //this.tableService.updateReportTableDataReadyStatus(true);
       }
     }
@@ -317,7 +307,7 @@ export class ItStandardsComponent implements OnInit {
         showColumn: false,
         formatter: this.sharedService.formatDescription,
         titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Comments')
-      }, {
+      }, /*{
         field: 'attestation_required',
         header: 'Attestation Required',
         isSortable: true,
@@ -329,7 +319,7 @@ export class ItStandardsComponent implements OnInit {
         isSortable: true,
         showColumn: false,
         titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Attestation Link')
-      }, {
+      }, */{
         field: 'fedramp',
         header: 'FedRAMP',
         isSortable: true,
