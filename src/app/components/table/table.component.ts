@@ -7,7 +7,7 @@ import { ApiService } from '@services/apis/api.service';
 import { FilterMatchMode, SelectItem } from 'primeng/api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { Location } from '@angular/common';
 import { DataDictionary } from '@api/models/data-dictionary.model';
 
@@ -116,6 +116,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   matchModeOptions: SelectItem[];
 
   isDataReady: boolean = false;
+  isSearchLoading: boolean = false;
 
   tableSearchControl = new FormControl('');
   private tableSearchSubscription?: Subscription;
@@ -134,13 +135,18 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Search is now triggered by Enter key, not by value changes
+    // But we still need to handle when search is manually cleared
     this.tableSearchSubscription = this.tableSearchControl.valueChanges
-      .pipe(
-        debounceTime(400),
-        distinctUntilChanged()
-      )
       .subscribe((searchValue: string) => {
-        this.onTableSearch(searchValue);
+        // Only trigger search reset when value becomes empty (manual clearing)
+        if (!searchValue || searchValue.trim() === '') {
+          this.isSearchLoading = true;
+          setTimeout(() => {
+            this.onTableSearch('');
+            this.isSearchLoading = false;
+          }, 0);
+        }
     });
 
     this.matchModeOptions = [
@@ -160,7 +166,13 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
       this.tableService.reportTableData$.subscribe(d => {
         if(d) {
           this.tableData = d;
-          // this.originalTableData = [...d];
+          // Update originalTableData to be the current filtered data
+          // This ensures search respects filter/tab selections
+          this.originalTableData = [...d];
+          // Re-apply search if one is active, otherwise keep current search term
+          if (this.tableSearchControl.value) {
+            this.onTableSearch(this.tableSearchControl.value);
+          }
         }
       });
       this.tableService.reportTableDataReady$.subscribe(r => {
@@ -173,7 +185,10 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
           } else {
             this.isDataReady = r;
           }
-          this.originalTableData = [...this.tableData];
+          // Only update originalTableData if it hasn't been set yet
+          if (this.originalTableData.length === 0) {
+            this.originalTableData = [...this.tableData];
+          }
         });
 
       })
@@ -218,7 +233,9 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   ngOnDestroy(): void {
     this.tableService.updateReportTableData(null);
     this.tableService.updateReportTableDataReadyStatus(false);
-    this.tableSearchSubscription.unsubscribe();
+    if (this.tableSearchSubscription) {
+      this.tableSearchSubscription.unsubscribe();
+    }
   }
 
   private initializeColumnVisibility() {
@@ -434,6 +451,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
   onTableSearch(keyword: string) {
     if (!keyword || keyword.trim() === '') {
+      // When search is empty, show all items from current filter
       this.tableData = [...this.originalTableData];
       this.tableService.updateReportTableData(this.tableData);
       this.tableService.updateReportDataTableFilterKey(null);
@@ -443,7 +461,8 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     const searchTerm = keyword.toLowerCase().trim();
     const searchableColumns = this.tableCols.filter(col => col.field && col.showColumn !== false);
     
-    const rankedData = this.tableData.map(item => {
+    // Search within the filtered/tab-selected data (originalTableData), not all data
+    const rankedData = this.originalTableData.map(item => {
       let maxScore = 0;
       
       searchableColumns.forEach(col => {
@@ -453,7 +472,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
         const stringValue = String(value).toLowerCase();
         
         if (stringValue === searchTerm) {
-          maxScore = Math.max(maxScore, this.tableData.length + 1);
+          maxScore = Math.max(maxScore, this.originalTableData.length + 1);
         } else {
           const index = stringValue.indexOf(searchTerm);
           if (index !== -1) {
@@ -470,15 +489,25 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     this.tableData = rankedData;
     this.tabelSearchString = searchTerm;
     this.tableService.updateReportDataTableFilterKey(keyword);
+  }
 
-    // this.location.replaceState(this.router.url, `tableSearchTerm=${searchTerm}`);
+  onTableSearchKeypress(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      this.onTableSearch(this.tableSearchControl.value || '');
+    }
+  }
 
-    // this.router.navigate([], {
-    //   relativeTo: this.route,
-    //   queryParams: { tableSearchTerm: searchTerm },
-    //   queryParamsHandling: 'merge',
-    //   skipLocationChange: true // The URL in the browser won't change
-    // });
+  onTableSearchIconClick(): void {
+    this.onTableSearch(this.tableSearchControl.value || '');
+  }
+
+  clearSearch(): void {
+    this.isSearchLoading = true;
+    this.tableSearchControl.setValue('', { emitEvent: false });
+    setTimeout(() => {
+      this.onTableSearch('');
+      this.isSearchLoading = false;
+    }, 0);
   }
 
   private updateOriginalData() {

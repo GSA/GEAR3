@@ -232,7 +232,6 @@ export class FismaComponent implements OnInit {
   public onSelectTab(tabName: string): void {
     this.selectedTab = tabName;
     this.fismaTabFilterted = this.fismaData;
-    const tableSearchKeyword = this.tableService.reportDataTableFilterKey;
 
     if(this.selectedTab === 'All') {
       this.fismaTabFilterted = this.fismaData.filter(f => {
@@ -243,8 +242,7 @@ export class FismaComponent implements OnInit {
         return f.Status === 'Inactive';
       });
     }
-    let data = this.tableService.getFilteredSearchData(this.fismaTabFilterted, tableSearchKeyword, this.tableCols);
-    this.tableService.updateReportTableData(data);
+    this.tableService.updateReportTableData(this.fismaTabFilterted);
     //this.tableService.updateReportTableDataReadyStatus(true);
   }
 

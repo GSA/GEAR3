@@ -1,4 +1,4 @@
-@if (isDataReady) {
+@if (isDataReady && !isSearchLoading) {
   <div class="table-responsive-container">
     <div class="d-flex justify-content-between">
       <div></div>
@@ -37,14 +37,19 @@
               <div class="table-toolbar-container">
                 @if (showSearchbar) {
                   <p-iconField iconPosition="left">
-                    <p-inputIcon styleClass="fa fa-search" />
-                    <input
+                    <p-inputgroup>
+                      <p-inputgroup-addon>
+                        <p-button icon="pi pi-search" severity="secondary" variant="text" (click)="onTableSearchIconClick()" />
+                      </p-inputgroup-addon>
+                      <input
                       pInputText
                       type="text"
                       [formControl]="tableSearchControl"
+                      (keypress)="onTableSearchKeypress($event)"
                       placeholder="Search keyword"
                       aria-label="Table Search" />
-                    </p-iconField>
+                    </p-inputgroup>
+                  </p-iconField>
                   }
                   @if (showShowHideColumnButton) {
                     <p-multiSelect
