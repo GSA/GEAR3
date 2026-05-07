@@ -102,7 +102,7 @@ export class SystemsDetailsComponent implements OnInit {
 
           const websiteIds = new Set(systemWebsites.map(({ obj_websites_Id }) => obj_websites_Id));
           this.sysWebsitesData = websites.filter(({ website_id }) => websiteIds.has(parseInt(website_id)));
-          
+
           this.splitPOCs = this.splitPOCInfo(this.detailsData.POC);
         },
         error: (err) => console.log('Failed to load page data', err),
@@ -256,14 +256,16 @@ export class SystemsDetailsComponent implements OnInit {
           var pieces = poc[i].split(',');
           tmpObj = null;
           if (pieces[0] !== ''){
-                tmpObj = {
-                  type: poctype[0],
-                  name: pieces[0],
-                  phone: pieces[2],
-                  email: pieces[1]
-                };
-                pocs.push(tmpObj);
-          }
+            tmpObj = {
+              type: poctype[0],
+              name: pieces[0]?.trim(),
+              email: pieces[1]?.trim(),
+              phone: pieces[2]?.trim(),
+              orgCode: pieces[3]?.trim(),
+              orgName: pieces[4]?.trim()
+            };
+            pocs.push(tmpObj);
+      }
           
         }
       });

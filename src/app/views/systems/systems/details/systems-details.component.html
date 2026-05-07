@@ -199,24 +199,16 @@
                     <th>Role</th>
                     <th>Name</th>
                     <th>Email</th>
+                    <th>Org Code</th>
                   </tr>
-                  <!-- @for (poc of getPOCList(); track poc) {
-                    <tr>
-                      <td> {{ poc.type }} </td>
-                      <td> {{ poc.name }} </td>
-                      <td>
-                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{poc.email}}" target="_blank" rel="noopener">{{ poc.email }}</a>
-                      </td>
-                    </tr>
-                  } -->
                   @for (poc of splitPOCs; track poc) {
                     <tr>
                       <td> {{ poc.type }} </td>
                       <td> {{ poc.name }} </td>
-                      <!-- <td [title]="poc.orgName"> {{ poc.orgCode }} </td> -->
                       <td>
                         <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{poc.email}}" target="_blank" rel="noopener">{{ poc.email }}</a>
                       </td>
+                      <td [title]="poc.orgName"> {{ poc.orgCode }} </td>
                     </tr>
                   }
                 </table>
