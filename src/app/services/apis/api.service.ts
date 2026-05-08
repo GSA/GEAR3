@@ -657,6 +657,15 @@ export class ApiService {
         catchError(this.handleError<ITStandards[]>('GET IT Standards', []))
       );
   }
+
+  public getITStandardsLite(): Observable<ITStandards[]> {
+    return this.http
+      .get<ITStandards[]>(this.techUrl + '/get/lite')
+      .pipe(
+        catchError(this.handleError<ITStandards[]>('GET IT Standards Lite', []))
+      );
+  }
+  
   public getApprovedITStandards(): Observable<ITStandards[]> {
     return this.http
       .get<ITStandards[]>(this.techUrl + '/get/findAllApproved')

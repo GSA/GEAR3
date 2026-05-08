@@ -6,7 +6,7 @@
     </div>
   </div>
 
-  @if(aiResponse) {
+  @if(aiItems && aiItems.length > 0) {
     <h3>Response from AI:</h3>
     <!-- <pre>{{ aiResponse.choices[0].message.content }}</pre> -->
      <div class="ai-response-container">
@@ -26,7 +26,11 @@
           {{response}}
         } -->
 
-        <p>{{aiResponse | json}}</p>
+        <!-- <p>{{aiResponse | json}}</p> -->
+         <p>The following are approved IT Standards that match {{searchKW}}</p>
+        @for(item of aiItems; track item) {
+          <p><a [routerLink]="'/it_standards/' + item.ID">{{item.Name}}</a></p>
+        }
 
         <!-- <h3><a [routerLink]="'/it_standard/' + response.itStandardId">{{response.itStandardTitle}}</a></h3>
         <h5>Reasoning:</h5>
@@ -38,7 +42,7 @@
       <!-- } -->
      </div>
     
-  } @else {
+  } @else{
     <div class="loader"></div>
   }
 

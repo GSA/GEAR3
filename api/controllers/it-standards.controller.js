@@ -16,6 +16,11 @@ exports.findAll = (req, res) => {
   res = ctrl.sendQuery(query, 'IT Standards', res); //removed sendQuery_cowboy reference
 };
 
+exports.getStandardsLite = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards-lite.sql')).toString();
+  res = ctrl.sendQuery(query, 'IT Standards Lite', res);
+};
+
 exports.findAllApproved = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
     ` WHERE obj_standard_type.Keyname LIKE 'Software'
