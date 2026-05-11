@@ -6,6 +6,9 @@ const router = express.Router();
 router.route('/')
   .get(itsCtrl.findAll);
 
+router.route('/get/lite')
+  .get(itsCtrl.getStandardsLite);
+
 router.route('/all')
   .get(itsCtrl.findAllNoFilter);
 
