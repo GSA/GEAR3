@@ -18,7 +18,7 @@ export class ButtonComponent {
 
     public isDropdownOpen: boolean = false;
 
-    @HostListener('document:click', ['$event']) onDocumentClick() {
+    @HostListener('document:click') onDocumentClick() {
         this.isDropdownOpen = false;
       }
   
