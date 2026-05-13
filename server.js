@@ -88,7 +88,7 @@ const app = express()
   .use(bodyParser.json({ limit: '50mb' }))
   .use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
   .use(passport.initialize())
-  .use(express.static(path.join(__dirname, 'public')))
+  .use(express.static(path.join(__dirname, 'public', 'browser')))
   .enable('trust proxy');  // For expressJS to know we're behind a proxy when deployed
 
 
@@ -101,8 +101,8 @@ app.use('/api', api);
 /********************************************************************
 REDIRECT ROOT TO GEAR "read only" (aka "angular") app
 ********************************************************************/
-app.get('/', function (req, res) {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+app.get('*', function (req, res) {
+  res.sendFile(path.join(__dirname, 'public', 'browser', 'index.html'));
 });
 
 
