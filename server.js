@@ -102,7 +102,7 @@ app.use('/api', api);
 REDIRECT ROOT TO GEAR "read only" (aka "angular") app
 ********************************************************************/
 app.get('*', function (req, res) {
-  res.sendFile(path.join(__dirname, 'public', 'browser', 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'browser'));
 });
 
 
