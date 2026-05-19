@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
+import { PreviousRouteService } from '@services/previous-route/previous-route.service';
 import { Record } from '@api/models/records.model';
 import { DataDictionary } from '@api/models/data-dictionary.model';
 
@@ -25,7 +26,8 @@ export class RecordsManagementDetailsComponent implements OnInit {
     private apiService: ApiService,
     private sharedService: SharedService,
     public tableService: TableService,
-    public router: Router
+    public router: Router,
+    private previousRouteService: PreviousRouteService
   ) {
   }
 
@@ -36,6 +38,7 @@ export class RecordsManagementDetailsComponent implements OnInit {
       // Get system details
       this.apiService.getOneRecord(this.recordsMgntId).subscribe(r => {
         this.detailsData = r;
+        this.previousRouteService.setCurrentPageTitle(r.Record_Item_Title);
         this.isDataReady = true;
       });
 

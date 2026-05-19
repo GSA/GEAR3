@@ -5,6 +5,7 @@ import { FISMA } from '@api/models/fisma.model';
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
+import { PreviousRouteService } from '@services/previous-route/previous-route.service';
 
 @Component({
     selector: 'fisma-details',
@@ -27,7 +28,8 @@ export class FismaDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private apiService: ApiService,
     private sharedService: SharedService,
-    private tableService: TableService
+    private tableService: TableService,
+    private previousRouteService: PreviousRouteService
   ) {
   }
 
@@ -38,6 +40,7 @@ export class FismaDetailsComponent implements OnInit {
       // Get FISMA system details
       this.apiService.getOneFISMASys(this.fismaId).subscribe((data: any[]) => {
         this.detailsData = data[0];
+        this.previousRouteService.setCurrentPageTitle(data[0].Name);
         this.isDataReady = true;
       });
 

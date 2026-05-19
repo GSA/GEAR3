@@ -8,6 +8,7 @@ import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from "@services/shared/shared.service";
 import { TableService } from "@services/tables/table.service";
+import { PreviousRouteService } from '@services/previous-route/previous-route.service';
 import { OperatingSystem } from '@api/models/operating-systems.model';
 import { AppBundle } from '@api/models/it-standards-app-bundle.model';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -119,7 +120,8 @@ export class ItStandardsManagerComponent implements OnInit {
     private sharedService: SharedService,
     private tableService: TableService,
     private route: ActivatedRoute,
-    private router: Router) { }
+    private router: Router,
+    private previousRouteService: PreviousRouteService) { }
 
   ngOnInit(): void {
     // Emit setFormDefaults for when edit button is pressed
@@ -135,6 +137,7 @@ export class ItStandardsManagerComponent implements OnInit {
       this.createBool = false;
       this.apiService.getOneITStandard(standardId).subscribe(s => {
         this.itStandard = s;
+        this.previousRouteService.setCurrentPageTitle(s.SoftwareReleaseName || s.AlsoKnownAs);
         this.loadFormData();
       });
     } else {

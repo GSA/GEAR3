@@ -8,6 +8,7 @@ import { RelatedCapabilitiesColumns } from '@common/table-columns/related-capabi
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
+import { PreviousRouteService } from '@services/previous-route/previous-route.service';
 import { RelatedTechnologiesColumns } from '@common/table-columns/related-technologies';
 import { RecordsColumns } from '@common/table-columns/records';
 import { WebsitesColumns } from '@common/table-columns/websites';
@@ -60,7 +61,8 @@ export class TimeDetailsComponent implements OnInit {
     private apiService: ApiService,
     private sharedService: SharedService,
     public tableService: TableService,
-    private router: Router
+    private router: Router,
+    private previousRouteService: PreviousRouteService
   ) {
   }
 
@@ -71,6 +73,7 @@ export class TimeDetailsComponent implements OnInit {
       // Get system details
       this.apiService.getOneSys(this.systemId).subscribe(s => {
         this.detailsData = s;
+        this.previousRouteService.setCurrentPageTitle(s.Name);
         this.splitPOCs = this.splitPOCInfo(this.detailsData.POC);
         this.isDataReady = true;
       });

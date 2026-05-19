@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { DataDictionary } from '@api/models/data-dictionary.model';
 import { Organization } from '@api/models/organizations.model';
 import { ApiService } from '@services/apis/api.service';
+import { PreviousRouteService } from '@services/previous-route/previous-route.service';
 
 @Component({
     selector: 'organizations-details',
@@ -20,7 +21,8 @@ export class OrganizationsDetailsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private previousRouteService: PreviousRouteService
   ) {
   }
 
@@ -31,6 +33,7 @@ export class OrganizationsDetailsComponent implements OnInit {
       // Get Capability details
       this.apiService.getOneOrg(this.organizationId).subscribe(o => {
         this.detailsData = o;
+        this.previousRouteService.setCurrentPageTitle(o.Name);
         this.isDataReady = true;
       });
 
