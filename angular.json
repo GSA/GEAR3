@@ -15,7 +15,8 @@
           "options": {
             "preserveSymlinks": true,
             "outputPath": {
-              "base": "dist/gear3"
+              "base": "public",
+              "browser": "browser"
             },
             "index": "src/index.html",
             "polyfills": [
