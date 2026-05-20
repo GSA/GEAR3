@@ -179,7 +179,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
       this.isDataReady = true;
     } else {
       this.tableService.reportTableData$.subscribe(d => {
-        if (d) {
+        if (d && d.length > 0) {
           this.tableData = d;
           this.originalTableData = [...d];
           // Re-apply active search: URL-based takes priority, then manual
