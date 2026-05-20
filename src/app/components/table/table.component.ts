@@ -123,6 +123,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
   private tabelSearchString: string = '';
   private urlSearchTerm: string = '';
+  private isHandlingDataUpdate: boolean = false;
 
   constructor(
     private sharedService: SharedService,
@@ -159,18 +160,12 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
     this.exportColumns = this.tableCols.map((col) => ({ title: col.header, dataKey: col.field }));
     
-    // Read tableSearchTerm from URL query params and apply it once data is ready.
-    // Done here (not nested inside reportTableDataReady$) so it reacts to param
-    // changes independently of whether updateReportTableDataReadyStatus is called.
     this.route.queryParams.subscribe(p => {
       this.urlSearchTerm = p['tableSearchTerm'] || '';
-      if (this.urlSearchTerm && this.originalTableData.length > 0) {
-        this.tableSearchControl.patchValue(this.urlSearchTerm, { emitEvent: false });
-        this.onTableSearch(this.urlSearchTerm);
-      } else if (!this.urlSearchTerm) {
-        // Navigated to a page without a search term — clear the search input
+      if (!this.urlSearchTerm) {
         this.tableSearchControl.patchValue('', { emitEvent: false });
       }
+      this.applyPendingSearch();
     });
 
     if (this.isLocal) {
@@ -179,23 +174,15 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
       this.isDataReady = true;
     } else {
       this.tableService.reportTableData$.subscribe(d => {
+        if (this.isHandlingDataUpdate) return;
         if (d && d.length > 0) {
           this.tableData = d;
           this.originalTableData = [...d];
-          // Re-apply active search: URL-based takes priority, then manual
-          const activeSearch = this.urlSearchTerm || this.tableSearchControl.value;
-          if (activeSearch) {
-            this.tableSearchControl.patchValue(activeSearch, { emitEvent: false });
-            this.onTableSearch(activeSearch);
-          }
+          this.applyPendingSearch();
         }
       });
       this.tableService.reportTableDataReady$.subscribe(r => {
         this.isDataReady = r;
-        if (r && this.urlSearchTerm && this.originalTableData.length > 0) {
-          this.tableSearchControl.patchValue(this.urlSearchTerm, { emitEvent: false });
-          this.onTableSearch(this.urlSearchTerm);
-        }
       });
     }
     
@@ -454,11 +441,22 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     //}
   }
 
+  private applyPendingSearch(): void {
+    const term = this.urlSearchTerm || this.tableSearchControl.value?.trim();
+    if (term && this.originalTableData.length > 0) {
+      this.urlSearchTerm = '';
+      this.tableSearchControl.patchValue(term, { emitEvent: false });
+      this.onTableSearch(term);
+    }
+  }
+
   onTableSearch(keyword: string) {
     if (!keyword || keyword.trim() === '') {
       // When search is empty, show all items from current filter
       this.tableData = [...this.originalTableData];
+      this.isHandlingDataUpdate = true;
       this.tableService.updateReportTableData(this.tableData);
+      this.isHandlingDataUpdate = false;
       this.tableService.updateReportDataTableFilterKey(null);
       return;
     }
