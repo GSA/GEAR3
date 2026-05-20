@@ -122,6 +122,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   private tableSearchSubscription?: Subscription;
 
   private tabelSearchString: string = '';
+  private urlSearchTerm: string = '';
 
   constructor(
     private sharedService: SharedService,
@@ -158,40 +159,44 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
     this.exportColumns = this.tableCols.map((col) => ({ title: col.header, dataKey: col.field }));
     
+    // Read tableSearchTerm from URL query params and apply it once data is ready.
+    // Done here (not nested inside reportTableDataReady$) so it reacts to param
+    // changes independently of whether updateReportTableDataReadyStatus is called.
+    this.route.queryParams.subscribe(p => {
+      this.urlSearchTerm = p['tableSearchTerm'] || '';
+      if (this.urlSearchTerm && this.originalTableData.length > 0) {
+        this.tableSearchControl.patchValue(this.urlSearchTerm, { emitEvent: false });
+        this.onTableSearch(this.urlSearchTerm);
+      } else if (!this.urlSearchTerm) {
+        // Navigated to a page without a search term — clear the search input
+        this.tableSearchControl.patchValue('', { emitEvent: false });
+      }
+    });
+
     if (this.isLocal) {
       this.tableData = this.localTableData;
       this.originalTableData = [...this.localTableData];
       this.isDataReady = true;
     } else {
       this.tableService.reportTableData$.subscribe(d => {
-        if(d) {
+        if (d) {
           this.tableData = d;
-          // Update originalTableData to be the current filtered data
-          // This ensures search respects filter/tab selections
           this.originalTableData = [...d];
-          // Re-apply search if one is active, otherwise keep current search term
-          if (this.tableSearchControl.value) {
-            this.onTableSearch(this.tableSearchControl.value);
+          // Re-apply active search: URL-based takes priority, then manual
+          const activeSearch = this.urlSearchTerm || this.tableSearchControl.value;
+          if (activeSearch) {
+            this.tableSearchControl.patchValue(activeSearch, { emitEvent: false });
+            this.onTableSearch(activeSearch);
           }
         }
       });
       this.tableService.reportTableDataReady$.subscribe(r => {
-        this.route.queryParams.subscribe(p => {
-          this.tabelSearchString = p['tableSearchTerm'];
-          if(this.tabelSearchString) {
-            this.tableSearchControl.patchValue(this.tabelSearchString, {emitEvent: true});
-            this.onTableSearch(this.tabelSearchString);
-            this.isDataReady = r;
-          } else {
-            this.isDataReady = r;
-          }
-          // Only update originalTableData if it hasn't been set yet
-          if (this.originalTableData.length === 0) {
-            this.originalTableData = [...this.tableData];
-          }
-        });
-
-      })
+        this.isDataReady = r;
+        if (r && this.urlSearchTerm && this.originalTableData.length > 0) {
+          this.tableSearchControl.patchValue(this.urlSearchTerm, { emitEvent: false });
+          this.onTableSearch(this.urlSearchTerm);
+        }
+      });
     }
     
     this.initializeColumnVisibility();
@@ -371,7 +376,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public onRowSelect(e: TableRowSelectEvent) {
-    e.data.tableSearchString = this.tabelSearchString;
+    e.data.tableSearchString = this.tabelSearchString || this.urlSearchTerm;
     this.rowClickEvent.emit(e.data);
     // if(this.tableType === 'globalSearch') {
     //   this.rowClickEvent.emit(e);
