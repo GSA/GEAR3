@@ -20,7 +20,7 @@ export class SidebarV2Component {
   }
 
   public itStrategyChildren: SidebarButtonChild[] = [
-    { text: 'IT Strategic Framework', route: '/strategic_framework' },
+    { text: 'IT Directives', href: 'https://insite.gsa.gov/directives-library/staff-offices?staff_office=GSA%20IT' },
     { text: 'IT Investments', route: '/investments' }
   ];
   public gsaEnterpriseChildren: SidebarButtonChild[] = [
