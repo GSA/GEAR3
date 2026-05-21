@@ -4,6 +4,7 @@ import { Service_Category } from '@api/models/service-category.model';
 import { WebsiteServiceCategory } from '@api/models/website-service-category.model';
 import { ApiService } from '@services/apis/api.service';
 import { TableService } from '@services/tables/table.service';
+import { PreviousRouteService } from '@services/previous-route/previous-route.service';
 
 @Component({
     selector: 'website-service-category-details',
@@ -20,7 +21,8 @@ export class WebsiteServiceCategoryDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private apiService: ApiService,
-    private tableService: TableService
+    private tableService: TableService,
+    private previousRouteService: PreviousRouteService
   ) {
   }
 
@@ -31,6 +33,7 @@ export class WebsiteServiceCategoryDetailsComponent implements OnInit {
       // Get Website Service Category details
       this.apiService.getOneWebsiteServiceCategory(this.websiteServiceCategoryId).subscribe(w => {
         this.detailsData = w;
+        this.previousRouteService.setCurrentPageTitle(w.name);
         this.isDataReady = true;
       });
     });

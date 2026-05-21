@@ -8,6 +8,7 @@ import { RelatedTechnologiesColumns } from '@common/table-columns/related-techno
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
+import { PreviousRouteService } from '@services/previous-route/previous-route.service';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -32,7 +33,8 @@ export class TechCategoriesDetailsComponent implements OnInit {
     private apiService: ApiService,
     private sharedService: SharedService,
     private tableService: TableService,
-    private router: Router
+    private router: Router,
+    private previousRouteService: PreviousRouteService
   ) {
   }
 
@@ -254,6 +256,7 @@ export class TechCategoriesDetailsComponent implements OnInit {
         relatedTech,
       ]) => {
         this.detailsData = trm;
+        this.previousRouteService.setCurrentPageTitle(trm.Name);
         this.relatedITStandards = relatedTech;
         this.isDataReady = true;
       });

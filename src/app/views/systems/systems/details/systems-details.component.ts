@@ -8,6 +8,7 @@ import { RelatedCapabilitiesColumns } from '@common/table-columns/related-capabi
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
+import { PreviousRouteService } from '@services/previous-route/previous-route.service';
 import { RelatedTechnologiesColumns } from '@common/table-columns/related-technologies';
 import { RecordsColumns } from '@common/table-columns/records';
 import { WebsitesColumns } from '@common/table-columns/websites';
@@ -61,7 +62,8 @@ export class SystemsDetailsComponent implements OnInit {
     private router: Router,
     private apiService: ApiService,
     private sharedService: SharedService,
-    public tableService: TableService
+    public tableService: TableService,
+    private previousRouteService: PreviousRouteService
   ) {
   }
 
@@ -93,6 +95,7 @@ export class SystemsDetailsComponent implements OnInit {
         ]) => {
           this.attrDefinitions = dataDictionaryBS;
           this.detailsData = systemDetails;
+          this.previousRouteService.setCurrentPageTitle(systemDetails.Name);
           this.systemTimeData = systemTIME;
           this.sysCapabilitiesData = systemCapabilities;
           this.sysTechnologiesData = systemITStandards;

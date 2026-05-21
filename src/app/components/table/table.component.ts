@@ -122,6 +122,8 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   private tableSearchSubscription?: Subscription;
 
   private tabelSearchString: string = '';
+  private urlSearchTerm: string = '';
+  private isHandlingDataUpdate: boolean = false;
 
   constructor(
     private sharedService: SharedService,
@@ -158,40 +160,30 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
     this.exportColumns = this.tableCols.map((col) => ({ title: col.header, dataKey: col.field }));
     
+    this.route.queryParams.subscribe(p => {
+      this.urlSearchTerm = p['tableSearchTerm'] || '';
+      if (!this.urlSearchTerm) {
+        this.tableSearchControl.patchValue('', { emitEvent: false });
+      }
+      this.applyPendingSearch();
+    });
+
     if (this.isLocal) {
       this.tableData = this.localTableData;
       this.originalTableData = [...this.localTableData];
       this.isDataReady = true;
     } else {
       this.tableService.reportTableData$.subscribe(d => {
-        if(d) {
+        if (this.isHandlingDataUpdate) return;
+        if (d && d.length > 0) {
           this.tableData = d;
-          // Update originalTableData to be the current filtered data
-          // This ensures search respects filter/tab selections
           this.originalTableData = [...d];
-          // Re-apply search if one is active, otherwise keep current search term
-          if (this.tableSearchControl.value) {
-            this.onTableSearch(this.tableSearchControl.value);
-          }
+          this.applyPendingSearch();
         }
       });
       this.tableService.reportTableDataReady$.subscribe(r => {
-        this.route.queryParams.subscribe(p => {
-          this.tabelSearchString = p['tableSearchTerm'];
-          if(this.tabelSearchString) {
-            this.tableSearchControl.patchValue(this.tabelSearchString, {emitEvent: true});
-            this.onTableSearch(this.tabelSearchString);
-            this.isDataReady = r;
-          } else {
-            this.isDataReady = r;
-          }
-          // Only update originalTableData if it hasn't been set yet
-          if (this.originalTableData.length === 0) {
-            this.originalTableData = [...this.tableData];
-          }
-        });
-
-      })
+        this.isDataReady = r;
+      });
     }
     
     this.initializeColumnVisibility();
@@ -371,7 +363,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public onRowSelect(e: TableRowSelectEvent) {
-    e.data.tableSearchString = this.tabelSearchString;
+    e.data.tableSearchString = this.tabelSearchString || this.urlSearchTerm;
     this.rowClickEvent.emit(e.data);
     // if(this.tableType === 'globalSearch') {
     //   this.rowClickEvent.emit(e);
@@ -449,11 +441,22 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     //}
   }
 
+  private applyPendingSearch(): void {
+    const term = this.urlSearchTerm || this.tableSearchControl.value?.trim();
+    if (term && this.originalTableData.length > 0) {
+      this.urlSearchTerm = '';
+      this.tableSearchControl.patchValue(term, { emitEvent: false });
+      this.onTableSearch(term);
+    }
+  }
+
   onTableSearch(keyword: string) {
     if (!keyword || keyword.trim() === '') {
       // When search is empty, show all items from current filter
       this.tableData = [...this.originalTableData];
+      this.isHandlingDataUpdate = true;
       this.tableService.updateReportTableData(this.tableData);
+      this.isHandlingDataUpdate = false;
       this.tableService.updateReportDataTableFilterKey(null);
       return;
     }

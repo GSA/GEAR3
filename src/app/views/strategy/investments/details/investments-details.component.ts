@@ -7,6 +7,7 @@ import { Column } from '@common/table-classes';
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
+import { PreviousRouteService } from '@services/previous-route/previous-route.service';
 
 @Component({
     selector: 'investments-details',
@@ -154,7 +155,8 @@ export class InvestmentsDetailsComponent implements OnInit {
     private apiService: ApiService,
     private sharedService: SharedService,
     private tableService: TableService,
-    private router: Router
+    private router: Router,
+    private previousRouteService: PreviousRouteService
   ) {
   }
 
@@ -165,6 +167,7 @@ export class InvestmentsDetailsComponent implements OnInit {
       // Get Investment details
       this.apiService.getOneInvest(this.inventmentId).subscribe(i => {
         this.detailsData = i;
+        this.previousRouteService.setCurrentPageTitle(i.Name);
         this.isDataReady = true;
 
         this.apiService.getInvestSys(this.inventmentId).subscribe(s => {

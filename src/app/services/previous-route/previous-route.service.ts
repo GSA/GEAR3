@@ -1,49 +1,63 @@
 import { Injectable } from '@angular/core';
-import { Router, NavigationEnd, RoutesRecognized } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+
+export interface NavEntry {
+  url: string;
+  title: string | null;
+}
+
+const SESSION_KEY = 'gear3_nav_history';
+const MAX_HISTORY = 20;
 
 @Injectable({
   providedIn: 'root'
 })
 export class PreviousRouteService {
-  private urls: string[] = [];
+  private history: NavEntry[] = [];
 
   constructor(private router: Router) {
+    try {
+      const stored = sessionStorage.getItem(SESSION_KEY);
+      if (stored) {
+        this.history = JSON.parse(stored);
+      }
+    } catch {}
+
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe((event: NavigationEnd) => {
-      // Store the full URL, including query params
-      this.urls.push(event.urlAfterRedirects);
+      this.history.push({ url: event.urlAfterRedirects, title: null });
+      this.persist();
     });
   }
 
-  public getPreviousUrl(): string | null {
-    // Return the second to last element in the array (the previous URL)
-    if (this.urls.length > 1) {
-      return this.urls[this.urls.length - 2];
+  public setCurrentPageTitle(title: string): void {
+    if (this.history.length > 0) {
+      this.history[this.history.length - 1].title = title;
+      this.persist();
+    }
+  }
+
+  public getPreviousEntry(): NavEntry | null {
+    if (this.history.length > 1) {
+      return this.history[this.history.length - 2];
     }
     return null;
   }
-  // private previousUrl: string | null = null;
-  // private currentUrl: string;
 
-  // constructor(private router: Router) {
-  //   this.currentUrl = this.router.url;
-  //   router.events.pipe(
-  //     filter((event): event is RoutesRecognized => event instanceof RoutesRecognized)
-  //   ).subscribe((event: RoutesRecognized) => {
-  //     this.previousUrl = this.currentUrl;
-  //     this.currentUrl = event.urlAfterRedirects;
-  //   });
-  // }
-
-  // public getPreviousUrl(): string | null {
-  //   return this.previousUrl;
-  // }
+  public getPreviousUrl(): string | null {
+    return this.getPreviousEntry()?.url ?? null;
+  }
 
   public getPreviousRouteWithoutParams(): string | undefined {
-    if (!this.getPreviousUrl()) {
-      return undefined;
-    }
-    // Split the URL by '?' to remove query parameters, and by ';' to remove matrix parameters
-    return this.getPreviousUrl().split('?')[0].split(';')[0];
+    const prev = this.getPreviousUrl();
+    if (!prev) return undefined;
+    return prev.split('?')[0].split(';')[0];
+  }
+
+  private persist(): void {
+    try {
+      const trimmed = this.history.length > MAX_HISTORY ? this.history.slice(-MAX_HISTORY) : this.history;
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify(trimmed));
+    } catch {}
   }
 }

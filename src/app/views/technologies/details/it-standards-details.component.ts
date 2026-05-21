@@ -9,6 +9,7 @@ import { Column } from '@common/table-classes';
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
+import { PreviousRouteService } from '@services/previous-route/previous-route.service';
 
 @Component({
     selector: 'it-standards',
@@ -224,7 +225,8 @@ export class ItStandardsDetailsComponent implements OnInit {
     private apiService: ApiService,
     private sharedService: SharedService,
     private tableService: TableService,
-    private router: Router
+    private router: Router,
+    private previousRouteService: PreviousRouteService
   ) {
   }
 
@@ -235,6 +237,7 @@ export class ItStandardsDetailsComponent implements OnInit {
       // Get IT standard details
       this.apiService.getOneITStandard(this.itStandardId).subscribe(s => {
         this.detailsData = s;
+        this.previousRouteService.setCurrentPageTitle(s.Name);
         
         this.apiService.getITStandardsRelatedTRM(this.itStandardId).subscribe(trm => {
           this.relatedTRMS = trm;

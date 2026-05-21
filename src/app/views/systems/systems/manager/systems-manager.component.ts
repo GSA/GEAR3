@@ -10,6 +10,7 @@ import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from "@services/shared/shared.service";
 import { TableService } from "@services/tables/table.service";
+import { PreviousRouteService } from '@services/previous-route/previous-route.service';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -61,7 +62,8 @@ export class SystemsManagerComponent implements OnInit {
     public modalService: ModalsService,
     private sharedService: SharedService,
     private tableService: TableService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private previousRouteService: PreviousRouteService
   ) { }
 
   ngOnInit(): void {
@@ -70,6 +72,7 @@ export class SystemsManagerComponent implements OnInit {
 
       this.apiService.getOneSys(this.systemId).subscribe(sys => {
         this.detailsData = sys;
+        this.previousRouteService.setCurrentPageTitle(sys.Name);
         this.setFormDefaults();
       });
     });

@@ -10,6 +10,7 @@ import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from "@services/shared/shared.service";
 import { TableService } from "@services/tables/table.service";
+import { PreviousRouteService } from '@services/previous-route/previous-route.service';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -45,7 +46,8 @@ export class RecordsManagementManagerComponent implements OnInit {
     public modalService: ModalsService,
     private sharedService: SharedService,
     private tableService: TableService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private previousRouteService: PreviousRouteService
   ) { }
 
   ngOnInit(): void {
@@ -54,6 +56,7 @@ export class RecordsManagementManagerComponent implements OnInit {
 
       this.apiService.getOneRecord(this.recordId).subscribe(rec => {
         this.detailsData = rec;
+        this.previousRouteService.setCurrentPageTitle(rec.Record_Item_Title);
         this.setFormDefaults();
       });
     });

@@ -4,6 +4,7 @@ import { System } from '@api/models/systems.model';
 import { Column } from '@common/table-classes';
 import { ApiService } from '@services/apis/api.service';
 import { TableService } from '@services/tables/table.service';
+import { PreviousRouteService } from '@services/previous-route/previous-route.service';
 import { Website } from '@api/models/websites.model';
 import { WebsiteScan } from '@api/models/website-scan.model';
 import { WebsiteServiceCategory } from '@api/models/website-service-category.model';
@@ -47,7 +48,8 @@ export class WebsitesDetailsComponent implements OnInit {
     private apiService: ApiService,
     public tableService: TableService,
     public sharedService: SharedService,
-    public router: Router
+    public router: Router,
+    private previousRouteService: PreviousRouteService
   ) {
   }
 
@@ -70,6 +72,7 @@ export class WebsitesDetailsComponent implements OnInit {
           defs
         ]) => {
           this.detailsData = website;
+          this.previousRouteService.setCurrentPageTitle(website.domain);
           this.websiteScan = websiteScans[0];
           this.websiteServiceCategories = websiteServiceCategories;
           this.relatedSystemsData = websiteSystems;
