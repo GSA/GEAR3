@@ -289,6 +289,18 @@
                           }
                         </select>
                       </div>
+                      @if (is508ExceptionGranted()) {
+                        <div class="data">
+                          <label for="itStand508ExceptionLink" class="data-label">508 Exception Link<span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" id="itStand508ExceptionLink"
+                            formControlName="itStand508ExceptionLink"
+                            placeholder="Enter the link for the 508 exception"
+                            [ngClass]="{'is-invalid': modalService.fieldValidCheck(itStandardsForm, 'itStand508ExceptionLink')}">
+                          @if (modalService.fieldValidCheck(itStandardsForm, 'itStand508ExceptionLink')) {
+                            <div class="invalid-feedback">508 Exception Link Required</div>
+                          }
+                        </div>
+                      }
                       <div class="data">
                         <label for="itStandDeployment" class="data-label">Deployment Type<span class="text-danger">*</span></label>
                         <select class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(itStandardsForm, 'itStandDeployment')}" id="itStandDeployment"
@@ -313,38 +325,40 @@
                         <input type="text" class="form-control" id="itStandVendorOrg" formControlName="itStandVendorOrg"
                           placeholder="Enter an Org Name (e.g. Adobe)" [value]="itStandard.Vendor_Standard_Organization">
                         </div>
-                        <div class="data">
-                          <label for="itStandMyView" class="data-label">Available through MyView</label>
-                          <div id="itStandMyView" class="custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input" id="itStandMyViewSwitch"
-                              formControlName="itStandMyView" [checked]="itStandard.Available_through_Myview === 'T'">
+                        <div class="data-full" style="display:flex; flex-direction:row; gap:2rem; align-items:flex-start;">
+                          <div>
+                            <label for="itStandMyView" class="data-label">Available through MyView</label>
+                            <div id="itStandMyView" class="custom-control custom-switch">
+                              <input type="checkbox" class="custom-control-input" id="itStandMyViewSwitch"
+                                formControlName="itStandMyView" [checked]="itStandard.Available_through_Myview === 'T'">
                               <label class="custom-control-label" for="itStandMyViewSwitch">True</label>
                             </div>
                           </div>
-                          <div class="data">
+                          <div>
                             <label for="itStandOpenSource" class="data-label">Open Source</label>
                             <div id="itStandOpenSource" class="custom-control custom-switch">
                               <input type="checkbox" class="custom-control-input" id="itStandOpenSourceSwitch"
                                 formControlName="itStandOpenSource" [checked]="itStandard.open_source === 'T'">
-                                <label class="custom-control-label" for="itStandOpenSourceSwitch">True</label>
-                              </div>
+                              <label class="custom-control-label" for="itStandOpenSourceSwitch">True</label>
                             </div>
-                            <div class="data">
-                              <label for="itStandFedramp" class="data-label">FedRAMP</label>
-                              <div id="itStandFedramp" class="custom-control custom-switch">
-                                <input type="checkbox" class="custom-control-input" id="itStandFedrampSwitch"
-                                  formControlName="itStandFedramp" [checked]="itStandard.fedramp === 'T'">
-                                  <label class="custom-control-label" for="itStandFedrampSwitch">True</label>
-                                </div>
-                              </div>
-                              <div class="data">
-                                <label for="itStandGoldImg" class="data-label">Gold Image</label>
-                                <div id="itStandGoldImg" class="custom-control custom-switch">
-                                  <input type="checkbox" class="custom-control-input" id="itStandGoldImgSwitch"
-                                    formControlName="itStandGoldImg" [checked]="itStandard.Gold_Image === 'T'">
-                                    <label class="custom-control-label" for="itStandGoldImgSwitch">True</label>
-                                  </div>
-                                </div>
+                          </div>
+                          <div>
+                            <label for="itStandFedramp" class="data-label">FedRAMP</label>
+                            <div id="itStandFedramp" class="custom-control custom-switch">
+                              <input type="checkbox" class="custom-control-input" id="itStandFedrampSwitch"
+                                formControlName="itStandFedramp" [checked]="itStandard.fedramp === 'T'">
+                              <label class="custom-control-label" for="itStandFedrampSwitch">True</label>
+                            </div>
+                          </div>
+                          <div>
+                            <label for="itStandGoldImg" class="data-label">Gold Image</label>
+                            <div id="itStandGoldImg" class="custom-control custom-switch">
+                              <input type="checkbox" class="custom-control-input" id="itStandGoldImgSwitch"
+                                formControlName="itStandGoldImg" [checked]="itStandard.Gold_Image === 'T'">
+                              <label class="custom-control-label" for="itStandGoldImgSwitch">True</label>
+                            </div>
+                          </div>
+                        </div>
                                 @if (showAppBundleField) {
                                   <div class="data-full">
                                     <label for="itStandMobileAppBundles" class="data-label">Mobile App Bundle Id(s)</label>
@@ -369,7 +383,7 @@
                                     <span class="title">Additional Information</span>
                                   </div>
                                 </div>
-                                <div class="data">
+                                <!-- <div class="data">
                                   <label for="itStandReqAtte" class="data-label">Attestation Required</label>
                                   <select class="form-control" id="itStandReqAtte" formControlName="itStandReqAtte">
                                     @for (attestationStatus of itStandReqAtteRefData; track attestationStatus) {
@@ -383,7 +397,7 @@
                                   <input type="text" class="form-control" id="itStandGoldLink"
                                     formControlName="itStandAtteLink" placeholder="Enter the link for the attestation"
                                     [value]="itStandard.attestation_link">
-                                  </div>
+                                  </div> -->
                                   <div class="data">
                                     <label for="itStandGoldComment" class="data-label">Gold Image Comment</label>
                                     <input type="text" class="form-control" id="itStandGoldComment"

@@ -39,6 +39,7 @@ export class ITStandards {
   public ManufacturerSoftwareProductName: string = null;
   public DateCreated: Date = null;
   public ComplianceStatus: string = null;
+  public ExceptionLink: string = null;
   public ChangeDTG: Date = null;
   public ConditionsRestrictions: string = null;
   public AlsoKnownAs: string = null;

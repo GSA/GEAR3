@@ -288,6 +288,12 @@ export class ItStandardsComponent implements OnInit {
         showColumn: false,
         titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, '508 Compliance')
       }, {
+        field: 'ExceptionLink',
+        header: '508 Exception Link',
+        isSortable: true,
+        showColumn: false,
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, '508 Exception Link')
+      }, {
         field: 'POC',
         header: 'POC',
         isSortable: true,
