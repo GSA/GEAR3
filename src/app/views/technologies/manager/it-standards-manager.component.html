@@ -281,27 +281,6 @@
                         }
                       </div>
                       <div class="data">
-                        <label for="itStand508" class="data-label">508 Compliance</label>
-                        <select class="form-control" id="itStand508" formControlName="itStand508">
-                          @for (status of compliance; track status) {
-                            <option [value]="status.ID"
-                            [selected]="status.Name === itStandard.ComplianceStatus">{{ status.Name }}</option>
-                          }
-                        </select>
-                      </div>
-                      @if (is508ExceptionGranted()) {
-                        <div class="data">
-                          <label for="itStand508ExceptionLink" class="data-label">508 Exception Link<span class="text-danger">*</span></label>
-                          <input type="text" class="form-control" id="itStand508ExceptionLink"
-                            formControlName="itStand508ExceptionLink"
-                            placeholder="Enter the link for the 508 exception"
-                            [ngClass]="{'is-invalid': modalService.fieldValidCheck(itStandardsForm, 'itStand508ExceptionLink')}">
-                          @if (modalService.fieldValidCheck(itStandardsForm, 'itStand508ExceptionLink')) {
-                            <div class="invalid-feedback">508 Exception Link Required</div>
-                          }
-                        </div>
-                      }
-                      <div class="data">
                         <label for="itStandDeployment" class="data-label">Deployment Type<span class="text-danger">*</span></label>
                         <select class="form-control" [ngClass]="{'is-invalid': modalService.fieldValidCheck(itStandardsForm, 'itStandDeployment')}" id="itStandDeployment"
                           formControlName="itStandDeployment" required (change)="changeDeploymentType()">
@@ -320,6 +299,27 @@
                           </div>
                         }
                       </div>
+                      <div class="data">
+                        <label for="itStand508" class="data-label">508 Compliance</label>
+                        <select class="form-control" id="itStand508" formControlName="itStand508">
+                          @for (status of compliance; track status) {
+                            <option [value]="status.ID"
+                            [selected]="status.Name === itStandard.ComplianceStatus">{{ status.Name }}</option>
+                          }
+                        </select>
+                      </div>
+                      @if (is508ExceptionGranted()) {
+                        <div class="data">
+                          <label for="itStand508ExceptionLink" class="data-label">508 Exception Link<span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" id="itStand508ExceptionLink"
+                            formControlName="itStand508ExceptionLink"
+                            placeholder="Enter link for 508 exception"
+                            [ngClass]="{'is-invalid': modalService.fieldValidCheck(itStandardsForm, 'itStand508ExceptionLink')}">
+                          @if (modalService.fieldValidCheck(itStandardsForm, 'itStand508ExceptionLink')) {
+                            <div class="invalid-feedback">508 Exception Link Required</div>
+                          }
+                        </div>
+                      }
                       <div class="data">
                         <label for="itStandVendorOrg" class="data-label">Vendor Standard Organization</label>
                         <input type="text" class="form-control" id="itStandVendorOrg" formControlName="itStandVendorOrg"
