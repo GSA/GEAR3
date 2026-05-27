@@ -507,6 +507,7 @@ function updateData(techId, data) {
   data.itStandComments = ctrl.setNullEmptyTextHandler(data.itStandComments);
   data.itStandConditionsRestrictions = ctrl.setNullEmptyTextHandler(data.itStandConditionsRestrictions);
   data.itStandAlsoKnownAs = ctrl.setNullEmptyTextHandler(data.itStandAlsoKnownAs);
+  data.itStand508ExceptionLink = ctrl.setNullEmptyTextHandler(data.itStand508ExceptionLink);
 
   data.tcEndOfLifeDate = ctrl.setNullEmptyTextHandler(data.tcEndOfLifeDate);
 
@@ -518,6 +519,7 @@ function updateData(techId, data) {
             Description                       = ${data.itStandDesc},
             obj_standard_type_Id              = ${data.itStandType},
             obj_508_compliance_status_Id      = ${data.itStand508},
+            \`508_exception_link\`            = ${data.itStand508ExceptionLink},
             Available_through_Myview          = '${data.itStandMyView}',
             Vendor_Standard_Organization      = ${data.itStandVendorOrg},
             obj_deployment_type_Id            = ${data.itStandDeployment},
@@ -560,6 +562,7 @@ function saveData(data) {
   data.itStandComments = ctrl.setNullEmptyTextHandler(data.itStandComments);
   data.itStandConditionsRestrictions = ctrl.setNullEmptyTextHandler(data.itStandConditionsRestrictions);
   data.itStandAlsoKnownAs = ctrl.setNullEmptyTextHandler(data.itStandAlsoKnownAs);
+  data.itStand508ExceptionLink = ctrl.setNullEmptyTextHandler(data.itStand508ExceptionLink);
 
   return `INSERT INTO obj_technology(
             obj_technology_status_Id,
@@ -568,6 +571,7 @@ function saveData(data) {
             Description,
             obj_standard_type_Id,
             obj_508_compliance_status_Id,
+            \`508_exception_link\`,
             Available_through_Myview,
             Vendor_Standard_Organization,
             obj_deployment_type_Id,
@@ -595,6 +599,7 @@ function saveData(data) {
            ${data.itStandDesc},
            ${data.itStandType},
            ${data.itStand508},
+           ${data.itStand508ExceptionLink},
            '${data.itStandMyView}',
            ${data.itStandVendorOrg},
            ${data.itStandDeployment},

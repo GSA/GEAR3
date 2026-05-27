@@ -40,7 +40,8 @@ SELECT
   DATE(tech.endOfLifeDate)                        AS EndOfLifeDate,
   tech.approvedVersions                           AS ApprovedVersions,
   GROUP_CONCAT(DISTINCT OS.Keyname SEPARATOR ', ') 		  AS OperatingSystems,
-  GROUP_CONCAT(DISTINCT BUNDLE.Keyname SEPARATOR ', ') 	  AS AppBundleIds
+  GROUP_CONCAT(DISTINCT BUNDLE.Keyname SEPARATOR ', ') 	  AS AppBundleIds,
+  tech.`508_exception_link`                               AS ExceptionLink
 FROM obj_technology AS tech
 
 LEFT JOIN obj_technology_status               ON tech.obj_technology_status_Id = obj_technology_status.Id

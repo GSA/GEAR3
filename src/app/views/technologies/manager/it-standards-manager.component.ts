@@ -39,6 +39,7 @@ export class ItStandardsManagerComponent implements OnInit {
     itStandType: new FormControl(null, [Validators.required]),
     itStandCategory: new FormControl(null, [Validators.required]),
     itStand508: new FormControl(),
+    itStand508ExceptionLink: new FormControl(),
     itStandMyView: new FormControl(),
     itStandReqAtte: new FormControl(null),
     itStandAtteLink: new FormControl(),
@@ -173,8 +174,30 @@ export class ItStandardsManagerComponent implements OnInit {
     // }.bind(this));
 
     // Reset Form Errors on any value update
-    this.itStandardsForm.valueChanges.subscribe(change=>{  this.anyServerError = false; })
+    this.itStandardsForm.valueChanges.subscribe(change=>{  this.anyServerError = false; });
 
+    // Toggle required validator on 508 exception link based on compliance selection
+    this.itStandardsForm.get('itStand508')?.valueChanges.subscribe(() => {
+      this.update508ExceptionLinkValidator();
+    });
+  }
+
+  public is508ExceptionGranted(): boolean {
+    const val = this.itStandardsForm.get('itStand508')?.value;
+    if (!val || !this.compliance?.length) return false;
+    const found = this.compliance.find(c => c.ID == val);
+    return found?.Name === 'Exception Granted';
+  }
+
+  private update508ExceptionLinkValidator(): void {
+    const ctrl = this.itStandardsForm.get('itStand508ExceptionLink');
+    if (!ctrl) return;
+    if (this.is508ExceptionGranted()) {
+      ctrl.setValidators([Validators.required]);
+    } else {
+      ctrl.clearValidators();
+    }
+    ctrl.updateValueAndValidity();
   }
 
   public loadFormData(): void {
@@ -371,6 +394,7 @@ export class ItStandardsManagerComponent implements OnInit {
         itStandType: this.sharedService.findInArray(this.types, 'Name', this.itStandard.StandardType),
         itStandCategory: categoryIDs,
         itStand508: this.sharedService.findInArray(this.compliance, 'Name', this.itStandard.ComplianceStatus),
+        itStand508ExceptionLink: this.itStandard.ExceptionLink,
         itStandMyView: myView,
         itStandReqAtte: this.sharedService.findInArray(this.itStandReqAtteRefData, 'Name', this.itStandard.attestation_required),
         itStandAtteLink: this.itStandard.attestation_link,
@@ -484,6 +508,14 @@ export class ItStandardsManagerComponent implements OnInit {
       if(!this.itStandardsForm.value.itStandAtteLink || typeof(this.itStandardsForm.value.itStandAtteLink) === 'undefined') {
         this.itStandardsForm.value.itStandAtteLink = 'N/A';
         this.itStandardsForm.patchValue({itStandAtteLink: 'N/A'});
+      }
+
+      if (!this.is508ExceptionGranted()) {
+        this.itStandardsForm.value.itStand508ExceptionLink = null;
+        this.itStandardsForm.patchValue({itStand508ExceptionLink: null});
+      } else if (this.itStandardsForm.value.itStand508ExceptionLink) {
+        this.itStandardsForm.value.itStand508ExceptionLink = this.escapeString(this.itStandardsForm.value.itStand508ExceptionLink);
+        this.itStandardsForm.patchValue({itStand508ExceptionLink: this.itStandardsForm.value.itStand508ExceptionLink});
       }
 
       // Escape strings
@@ -943,6 +975,7 @@ export class ItStandardsManagerComponent implements OnInit {
       itStandType: new FormControl(null, [Validators.required]),
       itStandCategory: new FormControl(null, [Validators.required]),
       itStand508: new FormControl(),
+      itStand508ExceptionLink: new FormControl(),
       itStandMyView: new FormControl(),
       itStandReqAtte: new FormControl(null),
       itStandAtteLink: new FormControl(),

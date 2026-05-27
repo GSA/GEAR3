@@ -107,6 +107,18 @@
                   {{detailsData.ComplianceStatus}}
                 </span>
               </div>
+              @if (detailsData.ComplianceStatus === 'Exception Granted') {
+                <div class="data">
+                  <label class="data-label">508 Exception Link</label>
+                  <span>
+                    @if (detailsData.ExceptionLink) {
+                      <a [href]="detailsData.ExceptionLink" target="_blank" rel="noopener">{{detailsData.ExceptionLink}}</a>
+                    } @else {
+                      N/A
+                    }
+                  </span>
+                </div>
+              }
               <div class="data">
                 <label class="data-label">
                   <span [title]="getTooltip('POC')" role="tooltip">
