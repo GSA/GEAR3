@@ -190,7 +190,7 @@ export class FismaComponent implements OnInit {
           const expiringFiltered = [];
           fisma.forEach(f => {
             let renewal = new Date(f.ATOExpirationDate);
-            if(f.ATOExpirationDate && (renewal >= now && renewal <= expiringWithin)) {
+            if(f.ATOExpirationDate && (renewal >= now && renewal <= expiringWithin) && f.SystemLevel === 'System' && (f.Status === 'Active' || f.Status === 'Pending')) {
               expiringFiltered.push(f);
             }
           });
