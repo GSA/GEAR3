@@ -182,17 +182,17 @@ export class FismaComponent implements OnInit {
         }
 
         if(this.daysExpiring > 0) {
-          const now = new Date(); // Current date and time
-          now.setUTCHours(0, 0, 0, 0);
-          const expiringWithin = new Date();
-          expiringWithin.setDate(now.getDate() + this.daysExpiring); // number of days set in the url
-          expiringWithin.setUTCHours(0, 0, 0, 0);
-          const expiringFiltered = [];
-          fisma.forEach(f => {
-            let renewal = new Date(f.ATOExpirationDate);
-            if(f.ATOExpirationDate && (renewal >= now && renewal <= expiringWithin) && f.SystemLevel === 'System' && (f.Status === 'Active' || f.Status === 'Pending')) {
-              expiringFiltered.push(f);
-            }
+          const now = new Date();
+          now.setHours(0, 0, 0, 0);
+          const expiringWithin = new Date(now);
+          expiringWithin.setDate(expiringWithin.getDate() + this.daysExpiring);
+          const expiringFiltered = fisma.filter(f => {
+            if (!f.ATOExpirationDate) return false;
+            const renewal = new Date(f.ATOExpirationDate);
+            renewal.setHours(0, 0, 0, 0);
+            return renewal >= now && renewal <= expiringWithin
+              && f.SystemLevel === 'System'
+              && (f.Status === 'Active' || f.Status === 'Pending');
           });
           this.tableService.updateReportTableData(expiringFiltered);
           this.tableService.updateReportTableDataReadyStatus(true);
