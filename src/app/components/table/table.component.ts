@@ -162,9 +162,9 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     
     this.route.queryParams.subscribe(p => {
       this.urlSearchTerm = p['tableSearchTerm'] || '';
-      if (!this.urlSearchTerm) {
-        this.tableSearchControl.patchValue('', { emitEvent: false });
-      }
+      // Always sync the form control immediately so the value is available
+      // as a reliable fallback when data loads later in applyPendingSearch.
+      this.tableSearchControl.patchValue(this.urlSearchTerm, { emitEvent: false });
       this.applyPendingSearch();
     });
 
@@ -445,7 +445,6 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     const term = this.urlSearchTerm || this.tableSearchControl.value?.trim();
     if (term && this.originalTableData.length > 0) {
       this.urlSearchTerm = '';
-      this.tableSearchControl.patchValue(term, { emitEvent: false });
       this.onTableSearch(term);
     }
   }
