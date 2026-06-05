@@ -172,13 +172,17 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
       this.tableData = this.localTableData;
       this.originalTableData = [...this.localTableData];
       this.isDataReady = true;
+      this.applyPendingSearch();
     } else {
       this.tableService.reportTableData$.subscribe(d => {
         if (this.isHandlingDataUpdate) return;
         if (d && d.length > 0) {
           this.tableData = d;
           this.originalTableData = [...d];
-          this.applyPendingSearch();
+          const searchTerm = this.tableSearchControl.value?.trim();
+          if (searchTerm) {
+            this.onTableSearch(searchTerm);
+          }
         }
       });
       this.tableService.reportTableDataReady$.subscribe(r => {
@@ -442,9 +446,8 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private applyPendingSearch(): void {
-    const term = this.urlSearchTerm || this.tableSearchControl.value?.trim();
+    const term = this.tableSearchControl.value?.trim();
     if (term && this.originalTableData.length > 0) {
-      this.urlSearchTerm = '';
       this.onTableSearch(term);
     }
   }
