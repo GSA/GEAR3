@@ -346,6 +346,12 @@ export class SystemsComponent implements OnInit {
           titleTooltip: this.getTooltip('Inactive Date')
         },
       ];
+
+      // If systems data loaded before column definitions (race condition),
+      // re-push data now that tableCols are defined so search can work.
+      if (this.systemsData.length > 0) {
+        this.onSelectTab(this.selectedTab || 'All');
+      }
     });
 
     this.apiService.getSystems().subscribe(systems => {
