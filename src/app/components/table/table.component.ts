@@ -184,6 +184,9 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
       });
       this.tableService.reportTableDataReady$.subscribe(r => {
         this.isDataReady = r;
+        if (r) {
+          this.applyPendingSearch();
+        }
       });
     }
     
