@@ -179,10 +179,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
         if (d && d.length > 0) {
           this.tableData = d;
           this.originalTableData = [...d];
-          const searchTerm = this.tableSearchControl.value?.trim();
-          if (searchTerm) {
-            this.onTableSearch(searchTerm);
-          }
+          this.applyPendingSearch();
         }
       });
       this.tableService.reportTableDataReady$.subscribe(r => {
@@ -446,14 +443,18 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private applyPendingSearch(): void {
-    const term = this.tableSearchControl.value?.trim();
+    const term = this.urlSearchTerm || this.tabelSearchString;
     if (term && this.originalTableData.length > 0) {
+      if (this.urlSearchTerm) {
+        this.urlSearchTerm = '';
+      }
       this.onTableSearch(term);
     }
   }
 
   onTableSearch(keyword: string) {
     if (!keyword || keyword.trim() === '') {
+      this.tabelSearchString = '';
       // When search is empty, show all items from current filter
       this.tableData = [...this.originalTableData];
       this.isHandlingDataUpdate = true;
