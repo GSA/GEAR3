@@ -20,12 +20,19 @@
 }
 
 /* Keeping this here in case the detail pane gets larger and needs to move */
-/* #orgChart {
-  z-index: 1;
-  -moz-transition: all 0.3s linear;
-  -webkit-transition: all 0.3s linear;
-  transition: all 0.3s linear;
-} */
+#orgChart {
+  width: 100%;
+  min-height: 600px;
+
+  display: block;        /* FIX: remove flex */
+  overflow-x: auto;      /* enable horizontal scroll */
+  overflow-y: hidden;    /* optional: cleaner */
+}
+
+/* IMPORTANT: allow svg to grow wider than container */
+#orgChart svg {
+  display: block;
+}
 
 .org-container {
   display: flex;
