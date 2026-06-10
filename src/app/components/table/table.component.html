@@ -65,6 +65,13 @@
                         <i class="fa fa-th-list"></i>
                       </ng-template>
                     </p-multiSelect>
+                    <p-button
+                      icon="fa fa-undo"
+                      pTooltip="Reset columns to default"
+                      tooltipPosition="left"
+                      severity="secondary"
+                      (click)="resetVisibleColumns()"
+                      ariaLabel="Reset Columns" />
                   }
                   @if (showExportButton) {
                     <p-button icon="fa fa-download" pTooltip="Export table data" tooltipPosition="left" severity="primary" (click)="exportSanitizedData()" ariaLabel="Export Data" />
