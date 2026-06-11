@@ -18,6 +18,7 @@ declare var $: any;
   providedIn: 'root'
 })
 export class SharedService {
+  public static readonly COOKIE_EXPIRE_HOURS = 12;
 
   // Sidebar Toggle Service
   toggleEmitter = new EventEmitter();
@@ -437,6 +438,24 @@ export class SharedService {
     const expires: string = `expires=${d.toUTCString()}`;
     const cpath: string = path ? `; path=${path}` : '';
     document.cookie = `${name}=${value}; ${expires}${cpath}`;
+  }
+
+  public setJsonCookie<T>(name: string, value: T, expireHours: number = SharedService.COOKIE_EXPIRE_HOURS, path: string = ''): void {
+    const expireDays = expireHours / 24;
+    this.setCookie(name, JSON.stringify(value), expireDays, path);
+  }
+
+  public getJsonCookie<T>(name: string): T | null {
+    const raw = this.getCookie(name);
+    if (!raw) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(raw) as T;
+    } catch (error) {
+      return null;
+    }
   }
 
   // get a list of all cookies

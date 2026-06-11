@@ -125,7 +125,6 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   private urlSearchTerm: string = '';
   private isHandlingDataUpdate: boolean = false;
   private defaultColumnVisibility: Map<string, boolean> = new Map();
-  private readonly visibleColumnsExpirationMs: number = 12 * 60 * 60 * 1000;
 
   constructor(
     private sharedService: SharedService,
@@ -200,12 +199,19 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
       this.captureDefaultColumnVisibility();
     }
 
-    const savedColumnFields = this.getSavedVisibleColumnFields();
-    if (savedColumnFields) {
-      this.applySavedColumnVisibility(savedColumnFields);
+    const savedColumns = this.getSavedVisibleColumnFields();
+    if (savedColumns) {
+      this.applySavedColumnVisibility(savedColumns);
     } else {
       this.resetVisibleColumnsToDefault();
     }
+    
+    // Handle tableCols changes (e.g., when switching tabs)
+    // if (changes.tableCols && !changes.tableCols.firstChange) {
+
+    // } else {
+      
+    // }
   }
 
   ngOnDestroy(): void {
@@ -229,58 +235,13 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
       return null;
     }
 
-    const rawValue = localStorage.getItem(this.visibleColumnStorageKey);
-    if (!rawValue) {
-      return null;
-    }
-
-    try {
-      const parsedValue = JSON.parse(rawValue);
-      if (parsedValue && typeof parsedValue === 'object' && !Array.isArray(parsedValue)) {
-        const savedAt = Number(parsedValue.savedAt);
-        const savedColumns = parsedValue.savedColumns;
-
-        if (!savedAt || !savedColumns) {
-          return null;
-        }
-
-        if (Date.now() - savedAt > this.visibleColumnsExpirationMs) {
-          localStorage.removeItem(this.visibleColumnStorageKey);
-          return null;
-        }
-
-        if (Array.isArray(savedColumns)) {
-          return savedColumns.map((item: any) => typeof item === 'string' ? item : item?.field).filter((field: any) => typeof field === 'string');
-        }
-      }
-
-      if (Array.isArray(parsedValue)) {
-        return parsedValue.map((item: any) => typeof item === 'string' ? item : item?.field).filter((field: any) => typeof field === 'string');
-      }
-    } catch (error) {
-      // Ignore invalid storage format
-    }
-
-    return null;
+    return this.sharedService.getJsonCookie<string[]>(this.visibleColumnStorageKey);
   }
 
-  private saveVisibleColumnPreferences(columnFields: string[]): void {
-    if (!this.visibleColumnStorageKey) {
-      return;
-    }
-
-    const payload = {
-      savedAt: Date.now(),
-      savedColumns: columnFields
-    };
-
-    localStorage.setItem(this.visibleColumnStorageKey, JSON.stringify(payload));
-  }
-
-  private applySavedColumnVisibility(savedColumnFields: string[]): void {
-    const savedFieldSet = new Set(savedColumnFields);
+  private applySavedColumnVisibility(savedFields: string[]): void {
+    const fieldSet = new Set(savedFields);
     this.tableCols.forEach(col => {
-      col.showColumn = savedFieldSet.has(col.field);
+      col.showColumn = fieldSet.has(col.field);
     });
     this.initializeColumnVisibility();
   }
@@ -291,11 +252,11 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
       col.showColumn = defaultVisibility !== false;
     });
 
-    this.initializeColumnVisibility();
-
     if (this.visibleColumnStorageKey) {
-      localStorage.removeItem(this.visibleColumnStorageKey);
+      this.sharedService.deleteCookie(this.visibleColumnStorageKey);
     }
+
+    this.initializeColumnVisibility();
   }
 
   private initializeColumnVisibility() {
@@ -323,7 +284,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
     if(this.visibleColumnStorageKey) {
       const selectedFields = this.visibleColumns.map(col => col.field).filter(field => !!field);
-      this.saveVisibleColumnPreferences(selectedFields);
+      this.sharedService.setJsonCookie(this.visibleColumnStorageKey, selectedFields);
     }
   }
 
