@@ -9,6 +9,7 @@ import jwtDecode from 'jwt-decode';
 import { HttpClient } from '@angular/common/http';
 import { set } from 'd3';
 import { BehaviorSubject } from 'rxjs';
+import { CookieService } from './cookie.service';
 import { DataDictionary } from '@api/models/data-dictionary.model';
 
 // Declare jQuery symbol
@@ -46,7 +47,8 @@ export class SharedService {
     private globals: Globals,
     private location: Location,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private cookieService: CookieService
     ) {
   }
 
@@ -408,65 +410,29 @@ export class SharedService {
     this.location.replaceState(`${normalizedURL}/${row[IDname]}`);
   };
 
-  // cookies functions ---------------------------------------
+  // Cookie helpers delegate to CookieService
+  public setCookie(name: string, value: string, expireHours: number, path: string = '') {
+    this.cookieService.setCookie(name, value, expireHours, path);
+  }
 
-  // get a cookie by name
-  public getCookie(name: string) {
-    const ca: Array<string> = document.cookie.split(';');
-    const caLen: number = ca.length;
-    const cookieName = `${name}=`;
-    let c: string;
-  
-    for (let i = 0; i < caLen; i += 1) {
-      c = ca[i].replace(/^\s+/g, '');
-      if (c.indexOf(cookieName) === 0) {
-        return c.substring(cookieName.length, c.length);
-      }
-    }
-    return '';
+  public getCookie(name: string): string {
+    return this.cookieService.getCookie(name);
   }
-  
-  // delete a cookie by name
-  public deleteCookie(name) {
-    this.setCookie(name, '', -1);
-  }
-  
-  // set a cookie
-  public setCookie(name: string, value: string, expireDays: number, path: string = '') {
-    const d: Date = new Date();
-    d.setTime(d.getTime() + expireDays * 24 * 60 * 60 * 1000);
-    const expires: string = `expires=${d.toUTCString()}`;
-    const cpath: string = path ? `; path=${path}` : '';
-    document.cookie = `${name}=${value}; ${expires}${cpath}`;
+
+  public deleteCookie(name: string, path: string = ''): void {
+    this.cookieService.deleteCookie(name, path);
   }
 
   public setJsonCookie<T>(name: string, value: T, expireHours: number = SharedService.COOKIE_EXPIRE_HOURS, path: string = ''): void {
-    const expireDays = expireHours / 24;
-    this.setCookie(name, JSON.stringify(value), expireDays, path);
+    this.cookieService.setJsonCookie(name, value, expireHours, path);
   }
 
   public getJsonCookie<T>(name: string): T | null {
-    const raw = this.getCookie(name);
-    if (!raw) {
-      return null;
-    }
-
-    try {
-      return JSON.parse(raw) as T;
-    } catch (error) {
-      return null;
-    }
+    return this.cookieService.getJsonCookie<T>(name);
   }
 
-  // get a list of all cookies
   public getCookies() {
-    const pairs = document.cookie.split(';');
-    const cookies = {};
-    for (let i = 0; i < pairs.length; i++) {
-      const pair = pairs[i].split('=');
-      cookies[(pair[0] + '').trim()] = unescape(pair.slice(1).join('='));
-    }
-    return cookies;
+    return this.cookieService.getCookies();
   }
 
   public enableStickyHeader(tableComponentId: string, closestScrollableClass: string = '.content-body') {
