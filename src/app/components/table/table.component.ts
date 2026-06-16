@@ -2,6 +2,7 @@ import { Component, EventEmitter, HostListener, Input, OnChanges, OnDestroy, OnI
 import { Table, TableLazyLoadEvent, TableRowSelectEvent } from 'primeng/table';
 import { Column, ExportColumn, TwoDimArray, FilterButton, ColumnFilter } from '../../common/table-classes';
 import { SharedService } from '@services/shared/shared.service';
+import { CookieService } from '@services/shared/cookie.service';
 import { TableService } from '@services/tables/table.service';
 import { ApiService } from '@services/apis/api.service';
 import { FilterMatchMode, SelectItem } from 'primeng/api';
@@ -124,9 +125,11 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   private tabelSearchString: string = '';
   private urlSearchTerm: string = '';
   private isHandlingDataUpdate: boolean = false;
+  private defaultColumnVisibility: Map<string, boolean> = new Map();
 
   constructor(
     private sharedService: SharedService,
+    private cookieService: CookieService,
     private tableService: TableService,
     private apiService: ApiService,
     private router: Router,
@@ -194,24 +197,15 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
       this.originalTableData = [...this.localTableData];
     }
 
-    if(localStorage.getItem(this.visibleColumnStorageKey)) {
-      const savedCols = JSON.parse(localStorage.getItem(this.visibleColumnStorageKey));
+    if (changes.tableCols && this.tableCols && this.tableCols.length > 0) {
+      this.captureDefaultColumnVisibility();
+    }
 
-      const statusMap = new Map();
-      savedCols.forEach(item => {
-          statusMap.set(item.field, true); 
-      });
-
-      this.tableCols.forEach(item1 => {
-          if (statusMap.has(item1.field)) {
-              item1.showColumn = true;
-          } else {
-            item1.showColumn = false;
-          }
-      });
-      this.initializeColumnVisibility();
+    const savedColumns = this.getSavedVisibleColumnFields();
+    if (savedColumns) {
+      this.applySavedColumnVisibility(savedColumns);
     } else {
-      this.initializeColumnVisibility();
+      this.resetVisibleColumnsToDefault();
     }
     
     // Handle tableCols changes (e.g., when switching tabs)
@@ -230,9 +224,50 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
+  private captureDefaultColumnVisibility(): void {
+    this.tableCols.forEach(col => {
+      if (!this.defaultColumnVisibility.has(col.field)) {
+        this.defaultColumnVisibility.set(col.field, col.showColumn !== false);
+      }
+    });
+  }
+
+  private getSavedVisibleColumnFields(): string[] | null {
+    if (!this.visibleColumnStorageKey) {
+      return null;
+    }
+
+    return this.cookieService.getJsonCookie<string[]>(this.visibleColumnStorageKey);
+  }
+
+  private applySavedColumnVisibility(savedFields: string[]): void {
+    const fieldSet = new Set(savedFields);
+    this.tableCols.forEach(col => {
+      col.showColumn = fieldSet.has(col.field);
+    });
+    this.initializeColumnVisibility();
+  }
+
+  private resetVisibleColumnsToDefault(): void {
+    this.tableCols.forEach(col => {
+      const defaultVisibility = this.defaultColumnVisibility.get(col.field);
+      col.showColumn = defaultVisibility !== false;
+    });
+
+    if (this.visibleColumnStorageKey) {
+      this.cookieService.deleteCookie(this.visibleColumnStorageKey);
+    }
+
+    this.initializeColumnVisibility();
+  }
+
   private initializeColumnVisibility() {
     // Simply set visibleColumns to all columns that should be visible
     this.visibleColumns = this.tableCols.filter(col => col.showColumn !== false);
+  }
+
+  public resetVisibleColumns(): void {
+    this.resetVisibleColumnsToDefault();
   }
 
   toggleVisible(e: any) {
@@ -250,8 +285,8 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     });
 
     if(this.visibleColumnStorageKey) {
-      localStorage.setItem(this.visibleColumnStorageKey, JSON.stringify(this.visibleColumns));
-      // localStorage.setItem(this.visibleColumnStorageKey, JSON.stringify(this.tableCols));
+      const selectedFields = this.visibleColumns.map(col => col.field).filter(field => !!field);
+      this.cookieService.setJsonCookie(this.visibleColumnStorageKey, selectedFields);
     }
   }
 

@@ -18,6 +18,7 @@ declare var $: any;
   providedIn: 'root'
 })
 export class SharedService {
+  public static readonly COOKIE_EXPIRE_HOURS = 12;
 
   // Sidebar Toggle Service
   toggleEmitter = new EventEmitter();
@@ -407,49 +408,7 @@ export class SharedService {
     this.location.replaceState(`${normalizedURL}/${row[IDname]}`);
   };
 
-  // cookies functions ---------------------------------------
-
-  // get a cookie by name
-  public getCookie(name: string) {
-    const ca: Array<string> = document.cookie.split(';');
-    const caLen: number = ca.length;
-    const cookieName = `${name}=`;
-    let c: string;
-  
-    for (let i = 0; i < caLen; i += 1) {
-      c = ca[i].replace(/^\s+/g, '');
-      if (c.indexOf(cookieName) === 0) {
-        return c.substring(cookieName.length, c.length);
-      }
-    }
-    return '';
-  }
-  
-  // delete a cookie by name
-  public deleteCookie(name) {
-    this.setCookie(name, '', -1);
-  }
-  
-  // set a cookie
-  public setCookie(name: string, value: string, expireDays: number, path: string = '') {
-    const d: Date = new Date();
-    d.setTime(d.getTime() + expireDays * 24 * 60 * 60 * 1000);
-    const expires: string = `expires=${d.toUTCString()}`;
-    const cpath: string = path ? `; path=${path}` : '';
-    document.cookie = `${name}=${value}; ${expires}${cpath}`;
-  }
-
-  // get a list of all cookies
-  public getCookies() {
-    const pairs = document.cookie.split(';');
-    const cookies = {};
-    for (let i = 0; i < pairs.length; i++) {
-      const pair = pairs[i].split('=');
-      cookies[(pair[0] + '').trim()] = unescape(pair.slice(1).join('='));
-    }
-    return cookies;
-  }
-
+  // Cookie helpers delegate to CookieService
   public enableStickyHeader(tableComponentId: string, closestScrollableClass: string = '.content-body') {
     $('#'+tableComponentId).floatThead({
       responsiveContainer: function($table) {
