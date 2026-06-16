@@ -2,6 +2,7 @@ import { Component, EventEmitter, HostListener, Input, OnChanges, OnDestroy, OnI
 import { Table, TableLazyLoadEvent, TableRowSelectEvent } from 'primeng/table';
 import { Column, ExportColumn, TwoDimArray, FilterButton, ColumnFilter } from '../../common/table-classes';
 import { SharedService } from '@services/shared/shared.service';
+import { CookieService } from '@services/shared/cookie.service';
 import { TableService } from '@services/tables/table.service';
 import { ApiService } from '@services/apis/api.service';
 import { FilterMatchMode, SelectItem } from 'primeng/api';
@@ -128,6 +129,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(
     private sharedService: SharedService,
+    private cookieService: CookieService,
     private tableService: TableService,
     private apiService: ApiService,
     private router: Router,
@@ -235,7 +237,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
       return null;
     }
 
-    return this.sharedService.getJsonCookie<string[]>(this.visibleColumnStorageKey);
+    return this.cookieService.getJsonCookie<string[]>(this.visibleColumnStorageKey);
   }
 
   private applySavedColumnVisibility(savedFields: string[]): void {
@@ -253,7 +255,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     });
 
     if (this.visibleColumnStorageKey) {
-      this.sharedService.deleteCookie(this.visibleColumnStorageKey);
+      this.cookieService.deleteCookie(this.visibleColumnStorageKey);
     }
 
     this.initializeColumnVisibility();
@@ -284,7 +286,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
     if(this.visibleColumnStorageKey) {
       const selectedFields = this.visibleColumns.map(col => col.field).filter(field => !!field);
-      this.sharedService.setJsonCookie(this.visibleColumnStorageKey, selectedFields);
+      this.cookieService.setJsonCookie(this.visibleColumnStorageKey, selectedFields);
     }
   }
 

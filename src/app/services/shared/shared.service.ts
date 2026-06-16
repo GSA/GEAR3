@@ -9,7 +9,6 @@ import jwtDecode from 'jwt-decode';
 import { HttpClient } from '@angular/common/http';
 import { set } from 'd3';
 import { BehaviorSubject } from 'rxjs';
-import { CookieService } from './cookie.service';
 import { DataDictionary } from '@api/models/data-dictionary.model';
 
 // Declare jQuery symbol
@@ -47,8 +46,7 @@ export class SharedService {
     private globals: Globals,
     private location: Location,
     private router: Router,
-    private http: HttpClient,
-    private cookieService: CookieService
+    private http: HttpClient
     ) {
   }
 
@@ -411,30 +409,6 @@ export class SharedService {
   };
 
   // Cookie helpers delegate to CookieService
-  public setCookie(name: string, value: string, expireHours: number, path: string = '') {
-    this.cookieService.setCookie(name, value, expireHours, path);
-  }
-
-  public getCookie(name: string): string {
-    return this.cookieService.getCookie(name);
-  }
-
-  public deleteCookie(name: string, path: string = ''): void {
-    this.cookieService.deleteCookie(name, path);
-  }
-
-  public setJsonCookie<T>(name: string, value: T, expireHours: number = SharedService.COOKIE_EXPIRE_HOURS, path: string = ''): void {
-    this.cookieService.setJsonCookie(name, value, expireHours, path);
-  }
-
-  public getJsonCookie<T>(name: string): T | null {
-    return this.cookieService.getJsonCookie<T>(name);
-  }
-
-  public getCookies() {
-    return this.cookieService.getCookies();
-  }
-
   public enableStickyHeader(tableComponentId: string, closestScrollableClass: string = '.content-body') {
     $('#'+tableComponentId).floatThead({
       responsiveContainer: function($table) {
