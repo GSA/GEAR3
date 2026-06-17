@@ -1,3 +1,6 @@
+const fs = require("fs");
+const path = require("path");
+
 const { JobLogger } = require('../cron-jobs/job-logger.js');
 const JobStatus = require('../enums/job-status.js');
 const cronJobDbUtilService = require("../cron-jobs/cron-job-db-util.service.js");
@@ -7,6 +10,14 @@ const { runQuery, getConnection, relaseConnection } = require("../util/db-query-
 
 const jobType = "POC-JOB";
 const jobName = `CRON JOB: POC Update Job`;
+
+// Minimum acceptable CSV size, in KB. A file smaller than this is treated
+// as missing/empty/partial data and ingestion is skipped.
+const MIN_CSV_SIZE_KB = 1000;
+
+// Absolute path to the CSV produced by the PowerShell/CSV job.
+// __dirname = root/api/cron-jobs, so go up two levels to the project root.
+const csvPath = path.resolve(__dirname, "../../scripts/pocs/GSA_Pocs.csv");
 
 /**
  * Runs the POC job. Updates the POC data. Logs execution details and job status into the database.
@@ -27,6 +38,31 @@ const runPocJob = async () => {
       return;
     }
 
+    // ----------------------------------------------------------------------
+    // GATE: Verify the CSV file exists and is not empty/partial before
+    // ingesting. This prevents loading a missing or bad data set into the
+    // database. A file below MIN_CSV_SIZE_KB is treated as suspect (e.g.,
+    // a header-only or partial export) and ingestion is skipped.
+    // ----------------------------------------------------------------------
+    if (!fs.existsSync(csvPath)) {
+      jobLogger.log(`*WARNING* - CSV file does not exist at: ${csvPath}. Skipping ingestion.`);
+      jobId = await cronJobDbUtilService.insertDbData({ jobType, startTime: formatDateTime(new Date()), jobLogs: jobLogger.getLogs(), jobStatus: JobStatus.CANCELLED });
+      return;
+    }
+
+    const csvSizeKb = fs.statSync(csvPath).size / 1024;
+
+    if (csvSizeKb < MIN_CSV_SIZE_KB) {
+      jobLogger.log(`*WARNING* - CSV file size (${csvSizeKb.toFixed(2)} KB) is below the minimum of ${MIN_CSV_SIZE_KB} KB at: ${csvPath}. Likely an empty or partial data set. Skipping ingestion.`);
+      jobId = await cronJobDbUtilService.insertDbData({ jobType, startTime: formatDateTime(new Date()), jobLogs: jobLogger.getLogs(), jobStatus: JobStatus.CANCELLED });
+      return;
+    }
+
+    jobLogger.log(`CSV file found (${csvSizeKb.toFixed(2)} KB) at: ${csvPath}. Proceeding with ingestion.`);
+    // ----------------------------------------------------------------------
+    // END GATE
+    // ----------------------------------------------------------------------
+
     // Insert new job record
     jobId = await cronJobDbUtilService.insertDbData({ jobType, startTime: formatDateTime(new Date()), jobLogs: '', jobStatus: JobStatus.PENDING });
     console.log(`Cron job id: ${jobId} - start`);
@@ -34,7 +70,7 @@ const runPocJob = async () => {
     // TODO: Add code to get data using Active Directory using activedirectory2 lib
 
     // Parse the CSV file & skip the first row
-    const pocCsv = await parseCSV("scripts/pocs/GSA_Pocs.csv", false, 1);
+    const pocCsv = await parseCSV(csvPath, false, 1);
 
     // Clear tmp_obj_ldap_poc table
     const clearQuery = "DELETE FROM tmp_obj_ldap_poc";
