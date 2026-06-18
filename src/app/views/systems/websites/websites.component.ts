@@ -286,9 +286,8 @@ export class WebsitesComponent implements OnInit, AfterViewInit {
       return false;
     }
 
-    const words = text.trim().split(/\s+/).length;
-    const wordThreshold = 40;
-    return words > wordThreshold || isOverflow;
+    // Only show view-more when the rendered text is actually truncated
+    return isOverflow;
   }
 
   public onSelectTab(tabName: string): void {
