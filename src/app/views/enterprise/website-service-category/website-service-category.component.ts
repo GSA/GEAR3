@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
@@ -16,8 +16,10 @@ import { DataDictionary } from '@api/models/data-dictionary.model';
     styleUrls: ['./website-service-category.component.scss'],
     standalone: false
 })
-export class WebsiteServiceCategoryComponent implements OnInit {
+export class WebsiteServiceCategoryComponent implements OnInit, AfterViewInit {
+  @ViewChild('definitionText') public definitionText: ElementRef;
   public defExpanded: boolean = false;
+  public showViewMore: boolean = false;
 
   public attrDefinitions: DataDictionary[] = [];
 
@@ -30,7 +32,8 @@ export class WebsiteServiceCategoryComponent implements OnInit {
     private sharedService: SharedService,
     private tableService: TableService,
     private titleService: Title,
-    private router: Router
+    private router: Router,
+    private cdRef: ChangeDetectorRef
   ) {
     this.modalService.currentWebsiteServiceCategory.subscribe(
       (row) => (this.row = row)
@@ -89,6 +92,33 @@ export class WebsiteServiceCategoryComponent implements OnInit {
 
   public onViewAll(): void {
     this.defExpanded = !this.defExpanded;
+  }
+
+  public ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.updateViewMoreVisibility();
+      this.cdRef.detectChanges();
+    });
+  }
+
+  private updateViewMoreVisibility(): void {
+    if (!this.definitionText || !this.definitionText.nativeElement) {
+      this.showViewMore = false;
+      return;
+    }
+
+    const el = this.definitionText.nativeElement as HTMLElement;
+    this.showViewMore = this.shouldShowViewMore(el.innerText, el.scrollHeight > el.clientHeight + 1);
+  }
+
+  private shouldShowViewMore(text: string, isOverflow: boolean): boolean {
+    if (!text || !text.trim()) {
+      return false;
+    }
+
+    const words = text.trim().split(/\s+/).length;
+    const wordThreshold = 40;
+    return words > wordThreshold || isOverflow;
   }
 
   public onRowClick(e: any) {

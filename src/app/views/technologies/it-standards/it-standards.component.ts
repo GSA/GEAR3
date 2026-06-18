@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
@@ -20,7 +20,11 @@ import { Column } from '@common/table-classes';
     styleUrls: ['./it-standards.component.scss'],
     standalone: false
 })
-export class ItStandardsComponent implements OnInit {
+export class ItStandardsComponent implements OnInit, AfterViewInit {
+  @ViewChild('definitionText') public definitionText!: ElementRef;
+  public showViewMore: boolean = false;
+  public defExpanded: boolean = false;
+
   // row: Object = <any>{};
   // filteredTable: boolean = false;
   // filterTitle: string = '';
@@ -28,7 +32,6 @@ export class ItStandardsComponent implements OnInit {
   // columnDefs: any[] = [];
   // dataReady: boolean = false;
 
-  public defExpanded: boolean = false;
   public tableCols: Column[] = [];
   public selectedTab: string = 'All';
   public filterTotals: any = null;
@@ -50,7 +53,8 @@ export class ItStandardsComponent implements OnInit {
     public sharedService: SharedService,
     private tableService: TableService,
     private titleService: Title,
-    private router: Router
+    private router: Router,
+    private cdRef: ChangeDetectorRef
   ) {
     // this.modalService.currentITStand.subscribe((row) => (this.row = row));
   }
@@ -65,6 +69,33 @@ export class ItStandardsComponent implements OnInit {
 
   public onViewAll(): void {
     this.defExpanded = !this.defExpanded;
+  }
+
+  public ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.updateViewMoreVisibility();
+      this.cdRef.detectChanges();
+    });
+  }
+
+  private updateViewMoreVisibility(): void {
+    if (!this.definitionText || !this.definitionText.nativeElement) {
+      this.showViewMore = false;
+      return;
+    }
+
+    const el = this.definitionText.nativeElement as HTMLElement;
+    this.showViewMore = this.shouldShowViewMore(el.innerText, el.scrollHeight > el.clientHeight + 1);
+  }
+
+  private shouldShowViewMore(text: string, isOverflow: boolean): boolean {
+    if (!text || !text.trim()) {
+      return false;
+    }
+
+    const words = text.trim().split(/\s+/).length;
+    const wordThreshold = 40;
+    return words > wordThreshold || isOverflow;
   }
 
   public onSelectTab(tabName: string): void {
@@ -137,7 +168,7 @@ export class ItStandardsComponent implements OnInit {
     return this.selectedChips && this.selectedChips.length > 0;
   }
 
-  private YesNo(value, row, index, field): string {
+  private YesNo(value: any, row: any, index: number, field: string): string {
     return value === 'T'? "Yes" : "No";
   }
 
@@ -384,7 +415,7 @@ export class ItStandardsComponent implements OnInit {
         const expiringWithin = new Date();
         expiringWithin.setDate(now.getDate() + this.daysExpiring); // number of days set in the url
         expiringWithin.setUTCHours(0, 0, 0, 0);
-        const expiringFiltered = [];
+        const expiringFiltered: ITStandards[] = [];
         i.forEach(x => {
           let renewal = new Date(x.ApprovalExpirationDate);
           renewal.setUTCHours(0, 0, 0, 0);
@@ -400,7 +431,7 @@ export class ItStandardsComponent implements OnInit {
         const expiredWithin = new Date();
         expiredWithin.setDate(now.getDate() - this.daysRetired); // number of days set in the url
         expiredWithin.setUTCHours(0, 0, 0, 0);
-        const expiringFiltered = [];
+        const expiringFiltered: ITStandards[] = [];
         i.forEach(x => {
           let renewal = new Date(x.ApprovalExpirationDate);
           renewal.setUTCHours(0, 0, 0, 0);

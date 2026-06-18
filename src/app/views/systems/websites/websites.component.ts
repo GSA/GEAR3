@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -18,8 +18,10 @@ import { DataDictionary } from '@api/models/data-dictionary.model';
     styleUrls: ['./websites.component.scss'],
     standalone: false
 })
-export class WebsitesComponent implements OnInit {
+export class WebsitesComponent implements OnInit, AfterViewInit {
+  @ViewChild('definitionText') public definitionText: ElementRef;
   public defExpanded: boolean = false;
+  public showViewMore: boolean = false;
   public selectedTab: string = 'All';
   public filterTotals: any = null;
   public websitesData: Website[] = [];
@@ -34,7 +36,8 @@ export class WebsitesComponent implements OnInit {
     private router: Router,
     public sharedService: SharedService,
     private tableService: TableService,
-    private titleService: Title
+    private titleService: Title,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   // filterButtons: TwoDimArray<FilterButton> = [
@@ -259,6 +262,33 @@ export class WebsitesComponent implements OnInit {
 
   public onViewAll(): void {
     this.defExpanded = !this.defExpanded;
+  }
+
+  public ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.updateViewMoreVisibility();
+      this.cdRef.detectChanges();
+    });
+  }
+
+  private updateViewMoreVisibility(): void {
+    if (!this.definitionText || !this.definitionText.nativeElement) {
+      this.showViewMore = false;
+      return;
+    }
+
+    const el = this.definitionText.nativeElement as HTMLElement;
+    this.showViewMore = this.shouldShowViewMore(el.innerText, el.scrollHeight > el.clientHeight + 1);
+  }
+
+  private shouldShowViewMore(text: string, isOverflow: boolean): boolean {
+    if (!text || !text.trim()) {
+      return false;
+    }
+
+    const words = text.trim().split(/\s+/).length;
+    const wordThreshold = 40;
+    return words > wordThreshold || isOverflow;
   }
 
   public onSelectTab(tabName: string): void {

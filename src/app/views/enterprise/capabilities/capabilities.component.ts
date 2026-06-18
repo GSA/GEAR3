@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -17,8 +17,10 @@ import { DataDictionary } from '@api/models/data-dictionary.model';
     styleUrls: ['./capabilities.component.scss'],
     standalone: false
 })
-export class CapabilitiesComponent implements OnInit {
+export class CapabilitiesComponent implements OnInit, AfterViewInit {
+  @ViewChild('definitionText') public definitionText: ElementRef | undefined;
   public defExpanded: boolean = false;
+  public showViewMore: boolean = false;
 
   public attrDefinitions: DataDictionary[] = [];
 
@@ -34,7 +36,8 @@ export class CapabilitiesComponent implements OnInit {
     public sharedService: SharedService,
     private tableService: TableService,
     private titleService: Title,
-    private router: Router
+    private router: Router,
+    private cdRef: ChangeDetectorRef
   ) {
     this.modalService.currentCap.subscribe((row) => (this.row = row));
   }
@@ -106,6 +109,33 @@ export class CapabilitiesComponent implements OnInit {
 
   public onViewAll(): void {
     this.defExpanded = !this.defExpanded;
+  }
+
+  public ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.updateViewMoreVisibility();
+      this.cdRef.detectChanges();
+    });
+  }
+
+  private updateViewMoreVisibility(): void {
+    if (!this.definitionText || !this.definitionText.nativeElement) {
+      this.showViewMore = false;
+      return;
+    }
+
+    const el = this.definitionText.nativeElement as HTMLElement;
+    this.showViewMore = this.shouldShowViewMore(el.innerText, el.scrollHeight > el.clientHeight + 1);
+  }
+
+  private shouldShowViewMore(text: string, isOverflow: boolean): boolean {
+    if (!text || !text.trim()) {
+      return false;
+    }
+
+    const words = text.trim().split(/\s+/).length;
+    const wordThreshold = 40;
+    return words > wordThreshold || isOverflow;
   }
 
   public onRowClick(e: any) {
