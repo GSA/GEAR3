@@ -349,7 +349,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const day = threeMonthsFromNow.getDate();
     const month = threeMonthsFromNow.toLocaleString('default', { month: 'long' });
 
-    return `${day}th ${month}`;
+    return `${month} ${day}`;
   }
 
   public navigateToHostingPlatforms(): void {
