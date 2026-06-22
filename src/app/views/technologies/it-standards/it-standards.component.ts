@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
@@ -20,10 +20,7 @@ import { Column } from '@common/table-classes';
     styleUrls: ['./it-standards.component.scss'],
     standalone: false
 })
-export class ItStandardsComponent implements OnInit, AfterViewInit {
-  @ViewChild('definitionText') public definitionText!: ElementRef;
-  public showViewMore: boolean = false;
-  public defExpanded: boolean = false;
+export class ItStandardsComponent implements OnInit {
 
   // row: Object = <any>{};
   // filteredTable: boolean = false;
@@ -53,8 +50,7 @@ export class ItStandardsComponent implements OnInit, AfterViewInit {
     public sharedService: SharedService,
     private tableService: TableService,
     private titleService: Title,
-    private router: Router,
-    private cdRef: ChangeDetectorRef
+    private router: Router
   ) {
     // this.modalService.currentITStand.subscribe((row) => (this.row = row));
   }
@@ -65,36 +61,6 @@ export class ItStandardsComponent implements OnInit, AfterViewInit {
 
   public onCreateNew(): void {
     this.router.navigate(['/it_standards_manager']);
-  }
-
-  public onViewAll(): void {
-    this.defExpanded = !this.defExpanded;
-  }
-
-  public ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.updateViewMoreVisibility();
-      this.cdRef.detectChanges();
-    });
-  }
-
-  private updateViewMoreVisibility(): void {
-    if (!this.definitionText || !this.definitionText.nativeElement) {
-      this.showViewMore = false;
-      return;
-    }
-
-    const el = this.definitionText.nativeElement as HTMLElement;
-    this.showViewMore = this.shouldShowViewMore(el.innerText, el.scrollHeight > el.clientHeight + 1);
-  }
-
-  private shouldShowViewMore(text: string, isOverflow: boolean): boolean {
-    if (!text || !text.trim()) {
-      return false;
-    }
-
-    // Only show view-more when the rendered text is actually truncated
-    return isOverflow;
   }
 
   public onSelectTab(tabName: string): void {

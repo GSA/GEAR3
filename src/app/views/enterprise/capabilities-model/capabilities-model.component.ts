@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 
-import { Component, ElementRef, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, ElementRef, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
@@ -28,14 +28,11 @@ interface CapTree {
 })
 export class CapabilitiesModelComponent implements OnInit, AfterViewInit {
   @ViewChild('busCapGraph') public graphContainer: ElementRef | undefined;
-  @ViewChild('definitionText') public definitionText: ElementRef | undefined;
   private caps: any[] = [];
   private root: any = {};
   private rootCap: string = 'Manage GSA';
   private capTree: any = {};
   public highlightColor: string = '#ff4136';
-  public defExpanded: boolean = false;
-  public showViewMore: boolean = false;
 
   // Variables to store mouse position and dragging status
   private dragging = false;
@@ -63,8 +60,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit {
     private tableService: TableService,
     private titleService: Title,
     private elementRef: ElementRef,
-    private router: Router,
-    private cdRef: ChangeDetectorRef
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -98,10 +94,6 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit {
     d3.select(document).on('mousemove', (event) => this.drag(event));
     d3.select(document).on('mouseup', (event) => this.dragEnd(event));
 
-    setTimeout(() => {
-      this.updateViewMoreVisibility();
-      this.cdRef.detectChanges();
-    });
   }
 
   // Create Capability Model Graph
@@ -695,26 +687,4 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit {
       d3.select(this.elementRef.nativeElement).select('#capDetail').classed('grabbing', false);
     }
 
-    public onViewAll(): void {
-      this.defExpanded = !this.defExpanded;
-    }
-
-    private updateViewMoreVisibility(): void {
-      if (!this.definitionText || !this.definitionText.nativeElement) {
-        this.showViewMore = false;
-        return;
-      }
-
-      const el = this.definitionText.nativeElement as HTMLElement;
-      this.showViewMore = this.shouldShowViewMore(el.innerText, el.scrollHeight > el.clientHeight + 1);
-    }
-
-    private shouldShowViewMore(text: string, isOverflow: boolean): boolean {
-      if (!text || !text.trim()) {
-        return false;
-      }
-
-      // Only show view-more when the rendered text is actually truncated
-      return isOverflow;
-    }
-}
+  }

@@ -22,7 +22,6 @@ import { DataDictionary } from '@api/models/data-dictionary.model';
 })
 export class InvestmentsComponent implements OnInit {
 
-  public defExpanded: boolean = false;
   public tableCols: Column[] = [];
   public selectedTab: string = 'All';
   public filterTotals: any = null;
@@ -54,10 +53,6 @@ export class InvestmentsComponent implements OnInit {
     private router: Router
   ) {
     // this.modalService.currentInvest.subscribe((row) => (this.row = row));
-  }
-
-  public onViewAll(): void {
-    this.defExpanded = !this.defExpanded;
   }
 
   public onSelectTab(tabName: string): void {

@@ -15,10 +15,9 @@
     </div>
   </div>
   <div class="it-standards-definition-container">
-    <p #definitionText class="it-standards-definition-text" [ngClass]="{'expanded' : defExpanded, 'truncated': showViewMore && !defExpanded}">
+    <p class="it-standards-definition-text">
       The IT Standards Inventory is GSA’s repository for approved software. It ensures users access only IT Security-authorized products. For more details, visit the <a href='https://sites.google.com/a/gsa.gov/it_standards/it-standards' target='_blank' rel='noopener'>IT Standards site</a>.
     </p>
-      <app-button *ngIf="showViewMore" [buttonText]="defExpanded ? 'View Less' : 'View More'" buttonStyle="link" (buttonClick)="onViewAll()"></app-button>
     </div>
     <div class="it-standards-data-container">
       <app-filter-chips [chips]="filterChips" dropdownName="Deployment Types" (chipSelect)="onFilterChipSelect($event)"></app-filter-chips>

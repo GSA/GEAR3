@@ -12,10 +12,9 @@
     </div>
   </div>
   <div class="websites-definition-container">
-    <p #definitionText class="websites-definition-text" [ngClass]="{'expanded' : defExpanded, 'truncated': showViewMore && !defExpanded}">
+    <p class="websites-definition-text">
       This report lists GSA’s public-facing websites that are available to anyone online without a login or firewall. It helps teams understand how the public accesses and interacts with GSA services and information. The data comes from the Touchpoints website inventory and Enterprise Digital Experience (EDX) website scans.
     </p>
-      <app-button *ngIf="showViewMore" [buttonText]="defExpanded ? 'View Less' : 'View More'" buttonStyle="link" (buttonClick)="onViewAll()"></app-button>
     </div>
     <div class="websites-data-container">
       <app-table visibleColumnStorageKey="websites-report" defaultSortField="domain" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)">

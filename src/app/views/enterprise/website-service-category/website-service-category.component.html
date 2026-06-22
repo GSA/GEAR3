@@ -4,10 +4,9 @@
     <app-page-help-button></app-page-help-button>
   </div>
   <div class="website-categories-definition-container">
-    <p #definitionText class="website-categories-definition-text" [ngClass]="{'expanded' : defExpanded, 'truncated': showViewMore && !defExpanded}">
+    <p class="website-categories-definition-text">
       Website Service Categories link sites with shared themes. For example, GSA oversees travel through both policy and services. To provide a consistent experience, teams managing shared topics must coordinate closely.
     </p>
-      <app-button *ngIf="showViewMore" [buttonText]="defExpanded ? 'View Less' : 'View More'" buttonStyle="link" (buttonClick)="onViewAll()"></app-button>
   </div>
   <div class="website-categories-data-container">
     <app-table visibleColumnStorageKey="websites-website-categories" defaultSortField="name" [tableCols]="tableCols" [attrDefs]="attrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)"></app-table>

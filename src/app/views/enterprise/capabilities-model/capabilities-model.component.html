@@ -18,11 +18,10 @@
     </div>
   </div>
   <div class="capabilities-definition-container">
-    <p #definitionText class="capabilities-definition-text" [ngClass]="{'expanded' : defExpanded, 'truncated': showViewMore && !defExpanded}">
+    <p class="capabilities-definition-text">
       This model categorizes GSA’s business functions and services using a standard framework rather than organizational charts. By standardizing these functions, it promotes collaboration, shared services, and IT solution reuse. It is most effective when used for business analysis, design, and decision-making to improve agency performance. (<a href='https://obamawhitehouse.archives.gov/sites/default/files/omb/assets/egov_docs/fea_v2.pdf' target='_blank' rel='noopener'>FEAF pg 30</a>)
     </p>
-      <app-button *ngIf="showViewMore" [buttonText]="defExpanded ? 'View Less' : 'View More'" buttonStyle="link" (buttonClick)="onViewAll()"></app-button>
-    </div>
+  </div>
     <div class="capabilities-data-container">
     <!-- Detail Card -->
     <div id="capDetail" class="card col-6 h-30">
