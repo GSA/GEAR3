@@ -61,6 +61,17 @@
       & .capabilities-definition-text {
           margin-bottom: .25rem;
 
+          a {
+              color: #005ea2;
+              text-decoration: underline;
+
+              &:hover,
+              &:focus {
+                  color: #1a4480;
+                  text-decoration-thickness: 2px;
+              }
+          }
+
           &.truncated {
               display: -webkit-box;
               -webkit-line-clamp: 4;
