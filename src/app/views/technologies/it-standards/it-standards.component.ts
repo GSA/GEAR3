@@ -21,6 +21,7 @@ import { Column } from '@common/table-classes';
     standalone: false
 })
 export class ItStandardsComponent implements OnInit {
+
   // row: Object = <any>{};
   // filteredTable: boolean = false;
   // filterTitle: string = '';
@@ -28,7 +29,6 @@ export class ItStandardsComponent implements OnInit {
   // columnDefs: any[] = [];
   // dataReady: boolean = false;
 
-  public defExpanded: boolean = false;
   public tableCols: Column[] = [];
   public selectedTab: string = 'All';
   public filterTotals: any = null;
@@ -61,10 +61,6 @@ export class ItStandardsComponent implements OnInit {
 
   public onCreateNew(): void {
     this.router.navigate(['/it_standards_manager']);
-  }
-
-  public onViewAll(): void {
-    this.defExpanded = !this.defExpanded;
   }
 
   public onSelectTab(tabName: string): void {
@@ -137,7 +133,7 @@ export class ItStandardsComponent implements OnInit {
     return this.selectedChips && this.selectedChips.length > 0;
   }
 
-  private YesNo(value, row, index, field): string {
+  private YesNo(value: any, row: any, index: number, field: string): string {
     return value === 'T'? "Yes" : "No";
   }
 
@@ -384,7 +380,7 @@ export class ItStandardsComponent implements OnInit {
         const expiringWithin = new Date();
         expiringWithin.setDate(now.getDate() + this.daysExpiring); // number of days set in the url
         expiringWithin.setUTCHours(0, 0, 0, 0);
-        const expiringFiltered = [];
+        const expiringFiltered: ITStandards[] = [];
         i.forEach(x => {
           let renewal = new Date(x.ApprovalExpirationDate);
           renewal.setUTCHours(0, 0, 0, 0);
@@ -400,7 +396,7 @@ export class ItStandardsComponent implements OnInit {
         const expiredWithin = new Date();
         expiredWithin.setDate(now.getDate() - this.daysRetired); // number of days set in the url
         expiredWithin.setUTCHours(0, 0, 0, 0);
-        const expiringFiltered = [];
+        const expiringFiltered: ITStandards[] = [];
         i.forEach(x => {
           let renewal = new Date(x.ApprovalExpirationDate);
           renewal.setUTCHours(0, 0, 0, 0);

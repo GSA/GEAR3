@@ -19,7 +19,6 @@ import { DataDictionary } from '@api/models/data-dictionary.model';
     standalone: false
 })
 export class WebsitesComponent implements OnInit {
-  public defExpanded: boolean = false;
   public selectedTab: string = 'All';
   public filterTotals: any = null;
   public websitesData: Website[] = [];
@@ -256,10 +255,6 @@ export class WebsitesComponent implements OnInit {
   //   this.tableData = this.filteredTableData;
   //   this.tableService.updateReportTableData(this.tableData);
   // }
-
-  public onViewAll(): void {
-    this.defExpanded = !this.defExpanded;
-  }
 
   public onSelectTab(tabName: string): void {
     this.selectedTab = tabName;

@@ -12,13 +12,9 @@
     </div>
   </div>
   <div class="websites-definition-container">
-    <p class="websites-definition-text" [ngClass]="{'expanded' : defExpanded}">This report represents GSA's inventory of public-facing websites (i.e. accessible to the general public
-      and not behind any authentication or firewall). This report can be used to better understand how the public views and interacts with GSA's
-      business services, offerings, and information. This data is imported from the
-      <a href='https://touchpoints.app.cloud.gov/admin/websites' target='_blank' rel='noopener'>Touchpoints websites inventory</a>
-      as well as from the Enterprise Digital Experience (EDX) team's
-      <a href='https://github.com/GSA/EDX/tree/main/Tools/edxcli' target='_blank' rel='noopener'>ecxcli website scans</a>.</p>
-      <app-button [buttonText]="defExpanded ? 'View Less' : 'View More'" buttonStyle="link" (buttonClick)="onViewAll()"></app-button>
+    <p class="websites-definition-text">
+      This report lists GSA’s public-facing websites that are available to anyone online without a login or firewall. It helps teams understand how the public accesses and interacts with GSA services and information. The data comes from the <a href='https://touchpoints.app.cloud.gov/admin/websites' target='_blank' rel='noopener'>Touchpoints</a> website inventory and website scans.
+    </p>
     </div>
     <div class="websites-data-container">
       <app-table visibleColumnStorageKey="websites-report" defaultSortField="domain" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)">
