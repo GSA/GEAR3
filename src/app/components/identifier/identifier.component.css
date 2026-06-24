@@ -1,3 +1,18 @@
 .usa-identifier {
   text-align: left;
+  font-family: "Public Sans Web", "Public Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+}
+
+.usa-identifier__required-link,
+.usa-identifier__required-link.usa-link,
+.usa-identifier__required-link:visited,
+.usa-identifier__required-link.usa-link:visited {
+  color: #a9aeb1;
+}
+
+.usa-identifier__required-link:hover,
+.usa-identifier__required-link:active,
+.usa-identifier__required-link.usa-link:hover,
+.usa-identifier__required-link.usa-link:active {
+  color: #dfe1e2;
 }
