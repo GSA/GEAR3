@@ -4,14 +4,13 @@
     <app-page-help-button></app-page-help-button>
   </div>
   <div class="it-investments-definition-container">
-    <p class="it-investments-definition-text" [ngClass]="{'expanded' : defExpanded}">An IT investment is a resource expenditure 
+    <p class="it-investments-definition-text">An IT investment is a resource expenditure 
       to address mission delivery and management support. This includes the development, modernization, enhancement, maintenance,
        and operation of IT assets or functional groups in a production environment. This data is imported from
         <a href="https://access-management-gsa.folio.ecpic.gov/Authentication" target="_blank" rel="noopener">Folio</a>,
          a Capital Planning and Investment Control (CPIC) solution that helps Agencies manage their IT Portfolios and submit 
          required data to the OMB IT Dashboard.
     </p>
-      <app-button [buttonText]="defExpanded ? 'View Less' : 'View More'" buttonStyle="link" (buttonClick)="onViewAll()"></app-button>
   </div>
   <div class="investments-graph-container">
     <span id="investVizText" tabindex="0"

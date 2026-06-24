@@ -17,11 +17,9 @@ import { DataDictionary } from '@api/models/data-dictionary.model';
     standalone: false
 })
 export class WebsiteServiceCategoryComponent implements OnInit {
-  public defExpanded: boolean = false;
-
   public attrDefinitions: DataDictionary[] = [];
 
-  row: Object = <any>{};
+  row: any = {};
 
   constructor(
     private apiService: ApiService,
@@ -85,10 +83,6 @@ export class WebsiteServiceCategoryComponent implements OnInit {
           });
       }
     });
-  }
-
-  public onViewAll(): void {
-    this.defExpanded = !this.defExpanded;
   }
 
   public onRowClick(e: any) {

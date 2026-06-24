@@ -4,10 +4,7 @@
     <app-page-help-button></app-page-help-button>
   </div>
   <div class="fisma-inventory-definition-container">
-    <p class="fisma-inventory-definition-text">A FISMA system represents a logical boundary for which common
-       security controls and policies are applied to a grouping of related assets (e.g., networks, devices, and people) to accomplish some mission 
-       or business objective. It is informed by security artifacts, such as a system security and privacy plan (SSPP).
-        (<a href='https://csrc.nist.gov/projects/risk-management/fisma-background' target='_blank' rel='noopener'>Link</a>)</p>
+    <p class="fisma-inventory-definition-text">A FISMA system groups related assets—such as networks, devices, and people—that share common security controls and policies to support a specific business mission. These systems are defined by security documents like a System Security and Privacy Plan (SSPP). (<a href='https://csrc.nist.gov/projects/risk-management/fisma-background' target='_blank' rel='noopener'>Link</a>)</p>
   </div>
   <div class="fisma-inventory-data-container">
     <app-table visibleColumnStorageKey="fisma-report" defaultSortField="Name" [tableCols]="tableCols" [showToolbar]="true" [attrDefs]="attrDefinitions" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)">

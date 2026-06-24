@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
@@ -26,14 +26,13 @@ interface CapTree {
     styleUrls: ['./capabilities-model.component.scss'],
     standalone: false
 })
-export class CapabilitiesModelComponent implements OnInit {
-  @ViewChild('busCapGraph') public graphContainer: ElementRef;
+export class CapabilitiesModelComponent implements OnInit, AfterViewInit {
+  @ViewChild('busCapGraph') public graphContainer: ElementRef | undefined;
   private caps: any[] = [];
   private root: any = {};
   private rootCap: string = 'Manage GSA';
   private capTree: any = {};
   public highlightColor: string = '#ff4136';
-  public defExpanded: boolean = false;
 
   // Variables to store mouse position and dragging status
   private dragging = false;
@@ -50,8 +49,8 @@ export class CapabilitiesModelComponent implements OnInit {
   // Save selected node id
   private selectedCap: any;
 
-  public searchKey: string;
-  private finalSearchPath;
+  public searchKey: string = '';
+  private finalSearchPath: any = null;
 
   constructor(
     private apiService: ApiService,
@@ -94,6 +93,7 @@ export class CapabilitiesModelComponent implements OnInit {
     capDetail.on('mousedown', (event) => this.dragStart(event));
     d3.select(document).on('mousemove', (event) => this.drag(event));
     d3.select(document).on('mouseup', (event) => this.dragEnd(event));
+
   }
 
   // Create Capability Model Graph
@@ -687,7 +687,4 @@ export class CapabilitiesModelComponent implements OnInit {
       d3.select(this.elementRef.nativeElement).select('#capDetail').classed('grabbing', false);
     }
 
-    public onViewAll(): void {
-      this.defExpanded = !this.defExpanded;
-    }
-}
+  }

@@ -18,8 +18,6 @@ import { DataDictionary } from '@api/models/data-dictionary.model';
     standalone: false
 })
 export class CapabilitiesComponent implements OnInit {
-  public defExpanded: boolean = false;
-
   public attrDefinitions: DataDictionary[] = [];
 
   row: Object = <any>{};
@@ -102,10 +100,6 @@ export class CapabilitiesComponent implements OnInit {
 
   public isLoggedIn(): boolean {
     return this.sharedService.loggedIn;
-  }
-
-  public onViewAll(): void {
-    this.defExpanded = !this.defExpanded;
   }
 
   public onRowClick(e: any) {
