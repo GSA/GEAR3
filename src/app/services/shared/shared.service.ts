@@ -5,7 +5,6 @@ import {Router} from '@angular/router';
 
 import {Globals} from '@common/globals';
 
-import jwtDecode from 'jwt-decode';
 import { HttpClient } from '@angular/common/http';
 import { set } from 'd3';
 import { BehaviorSubject } from 'rxjs';

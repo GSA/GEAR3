@@ -10,7 +10,6 @@ const bodyParser = require('body-parser'),
 
   dbCredentials = require("./api/db.js").dbCredentials,
   jsonwebtoken = require('jsonwebtoken'),
-  jwt = require('express-jwt'),
   mysql = require('mysql2'),
   passport = require('passport'),
   passportJWT = require("passport-jwt"),
