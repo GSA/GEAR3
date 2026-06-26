@@ -487,10 +487,7 @@ export class SystemsComponent implements OnInit {
   }
 
   public onRowClick(e: any) {
-    const searchTerm: string = e.tableSearchString || '';
-    this.router.navigate(['/systems', e.ID], {
-        queryParams: { tableSearchTerm: searchTerm }
-    });
+    this.tableService.systemsTableClick(e);
   }
 
   onSelect(chartData: any): void {
