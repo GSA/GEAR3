@@ -10,7 +10,6 @@ const bodyParser = require('body-parser'),
 
   dbCredentials = require("./api/db.js").dbCredentials,
   jsonwebtoken = require('jsonwebtoken'),
-  jwt = require('express-jwt'),
   mysql = require('mysql2'),
   passport = require('passport'),
   passportJWT = require("passport-jwt"),
@@ -26,6 +25,7 @@ const bodyParser = require('body-parser'),
   JWTStrategy = passportJWT.Strategy;
 
   const pocJobHandler = require('./api/cron-jobs/poc-job-handler.js');
+  const pocCsvJobHandler = require('./api/cron-jobs/poc-csv-handler.js');
   const cloudJobHandler = require('./api/cron-jobs/cloud-adoption-handler.js');
   const tpiJobHandler = require('./api/cron-jobs/tpi-job-handler.js');
 
@@ -520,6 +520,12 @@ const putData = async data => {
   };
 }; */
 
+// -------------------------------------------------------------------------------------------------
+// Function to create POC csv file every Wednesday at 4:00 AM ET and place the file into scripts/pocs
+cron.schedule(process.env.POC_CSV_CRON, async () => {
+  await pocCsvJobHandler.runPocCsvJob();
+});
+// -------------------------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------------------------
 // Function to load POC data every Wednesday at 5:00 AM ET from the csv file in scripts/pocs
