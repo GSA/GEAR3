@@ -22,6 +22,11 @@
         <li class="nav-item">
           <a class="nav-link" [class.active]="isRecordsTabActive" (click)="onTabClick('records', $event)" href="#records">Records</a>
         </li>
+        @if(showSubsystemsTab()){
+          <li class="nav-item">
+            <a class="nav-link" [class.active]="isSubsystemsTabActive" (click)="onTabClick('subsystems', $event)" href="#subsystems">Subsystems</a>
+          </li>
+        }
         @if(sysWebsitesData && sysWebsitesData.length > 0){
           <li class="nav-item">
             <a class="nav-link" [class.active]="isWebsitesTabActive" (click)="onTabClick('websites', $event)" href="#websites">Websites</a>
@@ -350,6 +355,18 @@
               <div class="sub-content full-width">
                 <span class="sub-header">Related Websites</span>
                 <app-table visibleColumnStorageKey="systems-related-websites" defaultSortField="domain" [localTableData]="sysWebsitesData" [isLocal]="true" [tableCols]="websiteCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="website" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRelatedWebsitesRowClick($event)"></app-table>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+      @if (isSubsystemsTabActive) {
+        <div class="tab-container">
+          <div class="overall-data-container">
+            <div class="main-data-container">
+              <div class="sub-content full-width">
+                <span class="sub-header">Related Subsystems</span>
+                <app-table visibleColumnStorageKey="systems-related-subsystems" defaultSortField="Name" [localTableData]="sysSubsystemsData" [isLocal]="true" [tableCols]="relatedSystemsCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="systems" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRelatedSubsystemsRowClick($event)"></app-table>
               </div>
             </div>
           </div>

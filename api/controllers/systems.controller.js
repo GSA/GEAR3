@@ -27,14 +27,21 @@ exports.findOne = (req, res) => {
 };
 
 exports.findSubsystems = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
-    ` WHERE systems.\`ex:FISMA_System_Identifier\` = 
-        (SELECT systems.\`ex:FISMA_System_Identifier\`
-        FROM obj_fisma_archer AS systems
-        WHERE systems.\`ex:GEAR_ID\` = ${req.params.id} )
-      AND systems.\`ex:SystemLevel\` = 'SubSystem';`;
-      
-  res = ctrl.sendQuery(query, 'Subsystems', res);
+  let id = req.params.id.trim();
+  if(/^[0-9]+$/.test(id)) {
+    var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
+      ` WHERE systems.\`ex:Parent_Name\` =
+          (SELECT parent_system.\`ex:System_Name\`
+           FROM obj_fisma_archer AS parent_system
+           WHERE parent_system.\`ex:GEAR_ID\` = ${id})
+        AND LOWER(systems.\`ex:SystemLevel\`) = 'subsystem';`;
+
+    res = ctrl.sendQuery(query, 'Subsystems', res);
+  } else {
+    res.status(404).json({
+      message: 'ID not found',
+    });
+  }
 };
 
 exports.findCapabilities = (req, res) => {
