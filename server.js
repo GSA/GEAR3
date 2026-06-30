@@ -522,32 +522,46 @@ const putData = async data => {
 
 // -------------------------------------------------------------------------------------------------
 // Function to create POC csv file every Wednesday at 4:00 AM ET and place the file into scripts/pocs
-cron.schedule(process.env.POC_CSV_CRON, async () => {
-  await pocCsvJobHandler.runPocCsvJob();
-});
+if (process.env.POC_CSV_CRON) {
+  cron.schedule(process.env.POC_CSV_CRON, async () => {
+    await pocCsvJobHandler.runPocCsvJob();
+  });
+} else {
+  console.warn('POC_CSV_CRON env variable not set — skipping cron job.');
+}
 // -------------------------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------------------------
 // Function to load POC data every Wednesday at 5:00 AM ET from the csv file in scripts/pocs
 const { consoleTestResultHandler } = require('tslint/lib/test.js');
-
-cron.schedule(process.env.POC_CRON, async () => { //PRODUCTION
-  await pocJobHandler.runPocJob();
-});
+if (process.env.POC_CRON) {
+  cron.schedule(process.env.POC_CRON, async () => { //PRODUCTION
+    await pocJobHandler.runPocJob();
+  });
+} else {
+  console.warn('POC_CRON env variable not set — skipping cron job.');
+}
 
 // -------------------------------------------------------------------------------------------------
 // Function to Insert calculated cloud adoption rate based on obj_fisma_archer data every day at 10:20 PM ET
-
-cron.schedule(process.env.CLOUD_ADOPTION_CRON, async () => { //PRODUCTION
-  await cloudJobHandler.runCloudAdoptionJob();
-});
+if (process.env.CLOUD_ADOPTION_CRON) {
+  cron.schedule(process.env.CLOUD_ADOPTION_CRON, async () => { //PRODUCTION
+    await cloudJobHandler.runCloudAdoptionJob();
+  });
+} else {
+  console.warn('CLOUD_ADOPTION_CRON env variable not set — skipping cron job.');
+}
 
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Google Sheets API - Update All Related Records (runs every weekday at 11:00 PM)
-cron.schedule(process.env.RECORDS_CRON, async () => { 
-  await googleApiService.saveToken().catch(console.error);
-  await cronCtrl.runUpdateAllRelatedRecordsJob();
-});
+if (process.env.RECORDS_CRON) {
+  cron.schedule(process.env.RECORDS_CRON, async () => { 
+    await googleApiService.saveToken().catch(console.error);
+    await cronCtrl.runUpdateAllRelatedRecordsJob();
+  });
+} else {
+  console.warn('RECORDS_CRON env variable not set — skipping cron job.');
+}
 /* 
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Tech Catalog Daily Import
@@ -563,6 +577,10 @@ cron.schedule(process.env.TECH_CATALOG_CRON2, () => {
 // -------------------------------------------------------------------------------------------------
 */
 // CRON JOB: Touchpoints API - Update Websites (runs every day at 11:05 PM)
-cron.schedule(process.env.TOUCHPOINTS_CRON, async () => { 
-  await tpiJobHandler.runTouchpointImportJob();
-});
+if (process.env.TOUCHPOINTS_CRON) {
+  cron.schedule(process.env.TOUCHPOINTS_CRON, async () => { 
+    await tpiJobHandler.runTouchpointImportJob();
+  });
+} else {
+  console.warn('TOUCHPOINTS_CRON env variable not set — skipping cron job.');
+}
