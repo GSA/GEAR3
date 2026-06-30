@@ -151,6 +151,7 @@
 
         & .p-datatable-thead>tr>th {
             padding: .5rem .25rem;
+            font-size: 14px;
             // background-color: #ececec;
             background-color: var(--primary-color);
             color: #fff !important;
@@ -263,6 +264,7 @@
 
             border: none;
             padding: .625rem;
+            font-size: 14px;
 
             & .table-heading {
                 text-transform: none;
@@ -283,7 +285,7 @@
                 border: none;
                 border-bottom: 1px var(--neutral-black-color-light) solid;
                 padding: 1rem .625rem;
-                font-size: .75rem;
+                font-size: 12px;
                 width: 14rem;
             }
 
@@ -295,9 +297,9 @@
                     border: none;
                     border-bottom: 1px var(--neutral-black-color-light) solid;
                     padding: .5rem;
-                    font-size: .75rem;
+                    font-size: 12px;
                     padding: 1rem .625rem;
-                    font-size: .75rem;
+                    font-size: 12px;
                     width: 14rem;
                 }
             }
