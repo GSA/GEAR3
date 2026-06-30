@@ -502,6 +502,18 @@ export class ApiService {
         )
       );
   }
+  public getSysSubsystems(id: number): Observable<System[]> {
+    return this.http
+      .get<System[]>(this.sysUrl + '/get/' + String(id) + '/subsystems')
+      .pipe(
+        catchError(
+          this.handleError<System[]>(
+            'GET System Related Subsystems',
+            []
+          )
+        )
+      );
+  }
   public getSystemsFilterTotals(): Observable<any> {
     return this.http
     .get<any>(this.sysUrl + '/filter_totals')

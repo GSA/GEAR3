@@ -12,6 +12,7 @@ import { PreviousRouteService } from '@services/previous-route/previous-route.se
 import { RelatedTechnologiesColumns } from '@common/table-columns/related-technologies';
 import { RecordsColumns } from '@common/table-columns/records';
 import { WebsitesColumns } from '@common/table-columns/websites';
+import { RelatedSystemsCols } from '@common/table-columns/related-systems';
 import { Capability } from '@api/models/capabilities.model';
 import { ITStandards } from '@api/models/it-standards.model';
 import { Record } from '@api/models/records.model';
@@ -40,18 +41,21 @@ export class SystemsDetailsComponent implements OnInit {
   public sysTechnologiesData: ITStandards[] = [];
   public sysRecordsData: Record[] = [];
   public sysWebsitesData: Website[] = [];
+  public sysSubsystemsData: System[] = [];
 
   public isOverviewTabActive: boolean = true;
   public isBusinessTabActive: boolean = false;
   public isTechnicalTabActive: boolean = false;
   public isRecordsTabActive: boolean = false;
   public isWebsitesTabActive: boolean = false;
+  public isSubsystemsTabActive: boolean = false;
 
   public systemTimeCols: Column[] = SystemTimeColumns;
   public relatedCapabilitiesCols: Column[] = RelatedCapabilitiesColumns;
   public relatedTechnologyCols: Column[] = RelatedTechnologiesColumns;
   public recordsCols: Column[] = RecordsColumns;
   public websiteCols: Column[] = WebsitesColumns;
+  public relatedSystemsCols: Column[] = RelatedSystemsCols;
 
   public attrDefinitions = <DataDictionary[]>[];
 
@@ -79,6 +83,7 @@ export class SystemsDetailsComponent implements OnInit {
         this.apiService.getSysITStandards(this.systemId),
         this.apiService.getSysRecords(this.systemId),
         this.apiService.getSysWebsites(this.systemId),
+        this.apiService.getSysSubsystems(this.systemId),
         this.apiService.getRecords(),
         this.apiService.getWebsites()
       ]).subscribe({
@@ -90,6 +95,7 @@ export class SystemsDetailsComponent implements OnInit {
           systemITStandards,
           systemRecords,
           systemWebsites,
+          systemSubsystems,
           records,
           websites
         ]) => {
@@ -105,6 +111,8 @@ export class SystemsDetailsComponent implements OnInit {
 
           const websiteIds = new Set(systemWebsites.map(({ obj_websites_Id }) => obj_websites_Id));
           this.sysWebsitesData = websites.filter(({ website_id }) => websiteIds.has(parseInt(website_id)));
+
+          this.sysSubsystemsData = systemSubsystems;
 
           this.splitPOCs = this.splitPOCInfo(this.detailsData.POC);
         },
@@ -172,6 +180,7 @@ export class SystemsDetailsComponent implements OnInit {
         this.isTechnicalTabActive = false;
         this.isRecordsTabActive = false;
         this.isWebsitesTabActive = false;
+        this.isSubsystemsTabActive = false;
         break;
       case 'business':
         this.isOverviewTabActive = false;
@@ -179,6 +188,7 @@ export class SystemsDetailsComponent implements OnInit {
         this.isTechnicalTabActive = false;
         this.isRecordsTabActive = false;
         this.isWebsitesTabActive = false;
+        this.isSubsystemsTabActive = false;
         break;
       case 'technical':
         this.isOverviewTabActive = false;
@@ -186,6 +196,7 @@ export class SystemsDetailsComponent implements OnInit {
         this.isTechnicalTabActive = true;
         this.isRecordsTabActive = false;
         this.isWebsitesTabActive = false;
+        this.isSubsystemsTabActive = false;
         break;
       case 'records':
         this.isOverviewTabActive = false;
@@ -193,6 +204,7 @@ export class SystemsDetailsComponent implements OnInit {
         this.isTechnicalTabActive = false;
         this.isRecordsTabActive = true;
         this.isWebsitesTabActive = false;
+        this.isSubsystemsTabActive = false;
         break;
       case 'websites':
         this.isOverviewTabActive = false;
@@ -200,6 +212,15 @@ export class SystemsDetailsComponent implements OnInit {
         this.isTechnicalTabActive = false;
         this.isRecordsTabActive = false;
         this.isWebsitesTabActive = true;
+        this.isSubsystemsTabActive = false;
+        break;
+      case 'subsystems':
+        this.isOverviewTabActive = false;
+        this.isBusinessTabActive = false;
+        this.isTechnicalTabActive = false;
+        this.isRecordsTabActive = false;
+        this.isWebsitesTabActive = false;
+        this.isSubsystemsTabActive = true;
         break;
       default:
         break;
@@ -304,5 +325,15 @@ export class SystemsDetailsComponent implements OnInit {
     this.router.navigate(['/websites', data.website_id], {
       queryParams: { fromPrevious: this.detailsData.Name }
     });
+  }
+
+  public onRelatedSubsystemsRowClick(data: System): void {
+    this.router.navigate(['/systems', data.ID], {
+      queryParams: { fromPrevious: this.detailsData.Name }
+    });
+  }
+
+  public showSubsystemsTab(): boolean {
+    return this.detailsData?.SystemLevel?.trim()?.toLowerCase() === 'system';
   }
 }
