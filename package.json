@@ -4,7 +4,7 @@
   "description": "Next Iteration of the GEAR portal to latest tech stack of 2020",
   "main": "server.js",
   "engines": {
-    "node": ">=18.14.2"
+    "node": ">=20.19.0"
   },
   "scripts": {
     "ng": "ng",
@@ -123,5 +123,8 @@
     "typescript": "^5.9.3",
     "typescript-guid": "1.0.3",
     "webpack-bundle-analyzer": "^4.6.1"
+  },
+  "overrides": {
+    "undici": "^7.28.0"
   }
 }
