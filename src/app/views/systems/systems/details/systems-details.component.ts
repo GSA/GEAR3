@@ -334,6 +334,7 @@ export class SystemsDetailsComponent implements OnInit {
   }
 
   public showSubsystemsTab(): boolean {
-    return this.detailsData?.SystemLevel?.trim()?.toLowerCase() === 'system';
+    return this.detailsData?.SystemLevel?.trim()?.toLowerCase() === 'system'
+      && this.sysSubsystemsData?.length > 0;
   }
 }
