@@ -26,6 +26,17 @@
             overflow: hidden;
             margin-bottom: 5px;
 
+            a {
+                color: #005ea2;
+                text-decoration: underline;
+
+                &:hover,
+                &:focus {
+                    color: #1a4480;
+                    text-decoration-thickness: 2px;
+                }
+            }
+
             &.expanded {
                 -webkit-line-clamp: none;
                 overflow: visible;
