@@ -134,7 +134,7 @@
 
     .p-datatable {
         font-family: Nunito Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", Segoe UI Symbol;
-        font-size: 12px;
+        font-size: 0.75rem;
         font-weight: 200;
         line-height: 21px;
         display: flex;
@@ -151,7 +151,7 @@
 
         & .p-datatable-thead>tr>th {
             padding: .5rem .25rem;
-            font-size: 14px;
+            font-size: 0.875rem;
             // background-color: #ececec;
             background-color: var(--primary-color);
             color: #fff !important;
@@ -264,7 +264,7 @@
 
             border: none;
             padding: .625rem;
-            font-size: 14px;
+            font-size: 0.875rem;
 
             & .table-heading {
                 text-transform: none;
@@ -285,7 +285,7 @@
                 border: none;
                 border-bottom: 1px var(--neutral-black-color-light) solid;
                 padding: 1rem .625rem;
-                font-size: 12px;
+                font-size: .75rem;
                 width: 14rem;
             }
 
@@ -297,9 +297,9 @@
                     border: none;
                     border-bottom: 1px var(--neutral-black-color-light) solid;
                     padding: .5rem;
-                    font-size: 12px;
+                    font-size: .75rem;
                     padding: 1rem .625rem;
-                    font-size: 12px;
+                    font-size: .75rem;
                     width: 14rem;
                 }
             }
@@ -325,12 +325,12 @@
             color: #fff;
             border-color: #4a5055;
             padding: .5rem 1.5rem;
-            font-size: 12px;
+            font-size: 0.75rem;
 
             & .table-status-badge-green {
                 background: #EEF6EE;
                 color: #006100;
-                font-size: 12px;
+                font-size: 0.75rem;
                 font-style: normal;
                 font-weight: 400;
                 line-height: normal;
@@ -345,7 +345,7 @@
             & .table-status-badge-yellow {
                 background: #FFEFD6;
                 color: #943600;
-                font-size: 12px;
+                font-size: 0.75rem;
                 font-style: normal;
                 font-weight: 400;
                 line-height: normal;
@@ -360,7 +360,7 @@
             & .table-status-badge-red {
                 background-color: #FAEAEA;
                 color: #ea0000;
-                font-size: 12px;
+                font-size: 0.75rem;
                 font-style: normal;
                 font-weight: 400;
                 line-height: normal;
@@ -379,12 +379,12 @@
             & td {
                 border-color: #343a40;
                 padding: .5rem 1.5rem;
-                font-size: 12px;
+                font-size: 0.75rem;
 
                 & .table-status-badge-green {
                     background: #EEF6EE;
                     color: #006100;
-                    font-size: 12px;
+                    font-size: 0.75rem;
                     font-style: normal;
                     font-weight: 400;
                     line-height: normal;
@@ -399,7 +399,7 @@
                 & .table-status-badge-yellow {
                     background: #FFEFD6;
                     color: #943600;
-                    font-size: 12px;
+                    font-size: 0.75rem;
                     font-style: normal;
                     font-weight: 400;
                     line-height: normal;
@@ -413,7 +413,7 @@
                 & .table-status-badge-red {
                     background-color: #FAEAEA;
                     color: #ea0000;
-                    font-size: 12px;
+                    font-size: 0.75rem;
                     font-style: normal;
                     font-weight: 400;
                     line-height: normal;
