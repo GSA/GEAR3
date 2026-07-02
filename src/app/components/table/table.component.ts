@@ -179,9 +179,10 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
       this.tableService.reportTableData$.subscribe(d => {
         if (this.isHandlingDataUpdate) return;
         if (d && d.length > 0) {
-          this.tableData = d;
           this.originalTableData = [...d];
-          this.applyPendingSearch();
+          if (!this.applyPendingSearch()) {
+            this.tableData = d;
+          }
         }
       });
       this.tableService.reportTableDataReady$.subscribe(r => {
@@ -199,6 +200,8 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
     if (changes.tableCols && this.tableCols && this.tableCols.length > 0) {
       this.captureDefaultColumnVisibility();
+      // Re-apply search if columns arrived after data (e.g., from an async API call)
+      this.applyPendingSearch();
     }
 
     const savedColumns = this.getSavedVisibleColumnFields();
@@ -476,13 +479,15 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     //}
   }
 
-  private applyPendingSearch(): void {
+  private applyPendingSearch(): boolean {
     const term = this.urlSearchTerm || this.tableSearchControl.value?.trim();
     if (term && this.originalTableData.length > 0) {
       this.urlSearchTerm = '';
       this.tableSearchControl.patchValue(term, { emitEvent: false });
       this.onTableSearch(term);
+      return true;
     }
+    return false;
   }
 
   onTableSearch(keyword: string) {

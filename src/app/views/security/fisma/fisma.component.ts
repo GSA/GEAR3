@@ -176,34 +176,30 @@ export class FismaComponent implements OnInit {
 
     this.apiService.getFISMA().subscribe(fisma => {
       this.fismaData = fisma;
-      fisma.forEach(f => {
-        if(f.Status === 'Active' && f.SystemLevel === 'System' && f.Reportable === 'Yes') {
-          this.fismaTabFilterted.push(f);
-        }
 
-        if(this.daysExpiring > 0) {
-          const now = new Date();
-          now.setHours(0, 0, 0, 0);
-          const expiringWithin = new Date(now);
-          expiringWithin.setDate(expiringWithin.getDate() + this.daysExpiring);
-          const expiringFiltered = fisma.filter(f => {
-            if (!f.ATOExpirationDate) return false;
-            const renewal = new Date(f.ATOExpirationDate);
-            renewal.setHours(0, 0, 0, 0);
-            return renewal >= now && renewal <= expiringWithin
-              && f.SystemLevel === 'System'
-              && (f.Status === 'Active' || f.Status === 'Pending');
-          });
-          this.tableService.updateReportTableData(expiringFiltered);
-          this.tableService.updateReportTableDataReadyStatus(true);
-          return;
-        } else {
-          this.tableService.updateReportTableData(this.fismaTabFilterted);
-          this.tableService.updateReportTableDataReadyStatus(true);
-        }
-      });
-      
-      // Apply tab filter if specified in route
+      if (this.daysExpiring > 0) {
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+        const expiringWithin = new Date(now);
+        expiringWithin.setDate(expiringWithin.getDate() + this.daysExpiring);
+        const expiringFiltered = fisma.filter(f => {
+          if (!f.ATOExpirationDate) return false;
+          const renewal = new Date(f.ATOExpirationDate);
+          renewal.setHours(0, 0, 0, 0);
+          return renewal >= now && renewal <= expiringWithin
+            && f.SystemLevel === 'System'
+            && (f.Status === 'Active' || f.Status === 'Pending');
+        });
+        this.tableService.updateReportTableData(expiringFiltered);
+      } else {
+        this.fismaTabFilterted = fisma.filter(f =>
+          f.Status === 'Active' && f.SystemLevel === 'System' && f.Reportable === 'Yes'
+        );
+        this.tableService.updateReportTableData(this.fismaTabFilterted);
+      }
+
+      this.tableService.updateReportTableDataReadyStatus(true);
+
       if (this.selectedTab !== 'All') {
         this.onSelectTab(this.selectedTab);
       }
