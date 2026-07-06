@@ -56,9 +56,12 @@ export class BreadcrumbComponent implements OnInit {
     public ngOnInit(): void {
         this.route.queryParams.subscribe(params => {
             this.tableSearchTerm = params['tableSearchTerm'];
+            this.buildBreadcrumb();
         });
 
-        this.buildBreadcrumb();
+        this.route.paramMap.subscribe(() => {
+            this.buildBreadcrumb();
+        });
     }
 
     private buildBreadcrumb(): void {
