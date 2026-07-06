@@ -73,6 +73,7 @@ export class SystemsDetailsComponent implements OnInit {
 
   public ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
+      this.resetDetailsState();
       this.systemId = +params.get('sysID');
 
       forkJoin([
@@ -159,6 +160,24 @@ export class SystemsDetailsComponent implements OnInit {
       // });
 
     });
+  }
+
+  private resetDetailsState(): void {
+    this.isDataReady = false;
+
+    this.isOverviewTabActive = true;
+    this.isBusinessTabActive = false;
+    this.isTechnicalTabActive = false;
+    this.isRecordsTabActive = false;
+    this.isWebsitesTabActive = false;
+    this.isSubsystemsTabActive = false;
+
+    this.systemTimeData = [];
+    this.sysCapabilitiesData = [];
+    this.sysTechnologiesData = [];
+    this.sysRecordsData = [];
+    this.sysWebsitesData = [];
+    this.sysSubsystemsData = [];
   }
 
   public getStatusClass(status: string): string {
