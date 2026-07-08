@@ -482,9 +482,16 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   private applyPendingSearch(): boolean {
     const term = this.urlSearchTerm || this.tableSearchControl.value?.trim();
     if (term && this.originalTableData.length > 0) {
-      this.urlSearchTerm = '';
+      const searchableColumns = this.tableCols.filter(col => col.field && col.showColumn !== false);
+
       this.tableSearchControl.patchValue(term, { emitEvent: false });
+
+      if (searchableColumns.length === 0) {
+        return false;
+      }
+
       this.onTableSearch(term);
+      this.urlSearchTerm = '';
       return true;
     }
     return false;
