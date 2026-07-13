@@ -200,8 +200,6 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
     if (changes.tableCols && this.tableCols && this.tableCols.length > 0) {
       this.captureDefaultColumnVisibility();
-      // Re-apply search if columns arrived after data (e.g., from an async API call)
-      this.applyPendingSearch();
     }
 
     const savedColumns = this.getSavedVisibleColumnFields();
@@ -209,6 +207,11 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
       this.applySavedColumnVisibility(savedColumns);
     } else {
       this.resetVisibleColumnsToDefault();
+    }
+
+    if (changes.tableCols && this.tableCols && this.tableCols.length > 0) {
+      // Re-apply search after visible columns have been restored.
+      this.applyPendingSearch();
     }
     
     // Handle tableCols changes (e.g., when switching tabs)
