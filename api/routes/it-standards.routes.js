@@ -45,6 +45,12 @@ router.route('/deployment_types')
 router.route('/statuses')
   .get(itsCtrl.findStatuses);
 
+router.route('/critical_reviews')
+  .get(itsCtrl.findCriticalReviews);
+
+router.route('/c_scrm_reviews')
+  .get(itsCtrl.findCSCRMReviews);
+
 router.route('/types')
   .get(itsCtrl.findTypes);
 

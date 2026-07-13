@@ -43,6 +43,24 @@
               </div>
               <div class="data">
                 <label class="data-label">
+                  <span [title]="getTooltip('Critical Software Review Results')" role="tooltip">
+                    Critical Software Review Results
+                    <i class="fas fa-info-circle"></i>
+                  </span>
+                </label>
+                <span>{{detailsData.CriticalReview}}</span>
+              </div>
+              <div class="data">
+                <label class="data-label">
+                  <span [title]="getTooltip('C-SCRM Review Results')" role="tooltip">
+                    C-SCRM Review Results
+                    <i class="fas fa-info-circle"></i>
+                  </span>
+                </label>
+                <span>{{detailsData.CSCRMReview}}</span>
+              </div>
+              <div class="data">
+                <label class="data-label">
                   <span [title]="getTooltip('Software Release Name')" role="tooltip">
                     Software Release Name
                     <i class="fas fa-info-circle"></i>

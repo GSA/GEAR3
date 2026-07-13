@@ -34,6 +34,8 @@ export class ItStandardsManagerComponent implements OnInit {
     tcSoftwareRelease: new FormControl(),
     tcEndOfLifeDate: new FormControl(),
     itStandStatus: new FormControl(null, [Validators.required]),
+    itStandCriticalReview: new FormControl(null),
+    itStandCSCRMReview: new FormControl(null),
     itStandPOC: new FormControl(null, [Validators.required]),
     itStandDesc: new FormControl(),
     itStandType: new FormControl(null, [Validators.required]),
@@ -63,6 +65,8 @@ export class ItStandardsManagerComponent implements OnInit {
   itStandard = <any>{};
   createBool: boolean = false;
   statuses: any[];
+  criticalReviews: any[] = [];
+  cscrmReviews: any[] = [];
 
   POCs: any = [];
   pocsLoading = false;
@@ -210,6 +214,8 @@ export class ItStandardsManagerComponent implements OnInit {
       this.apiService.getCustomManufacturers(),
       this.apiService.getAttestationStatusTypes(),
       this.apiService.getITStandStatuses(),
+      this.apiService.getITStandCriticalReviews(),
+      this.apiService.getITStandCSCRMReviews(),
       this.apiService.getPOCs(),
       this.apiService.getITStandTypes(),
       this.apiService.getTRM(),
@@ -222,6 +228,8 @@ export class ItStandardsManagerComponent implements OnInit {
         customManufacturers,
         attestationStatus,
         statuses,
+        criticalReviews,
+        cscrmReviews,
         pocs,
         types,
         cats,
@@ -242,6 +250,12 @@ export class ItStandardsManagerComponent implements OnInit {
 
         // statuses
         this.statuses = statuses;
+
+        // critical reviews
+        this.criticalReviews = criticalReviews;
+
+        // c-scrm reviews
+        this.cscrmReviews = cscrmReviews;
 
         // pocs
         this.POCs = pocs;
@@ -389,6 +403,8 @@ export class ItStandardsManagerComponent implements OnInit {
         tcSoftwareRelease: {id: this.itStandard.SoftwareRelease, application: this.itStandard.SoftwareReleaseName},
         tcEndOfLifeDate: (this.itStandard.EndOfLifeDate ? formatDate(this.itStandard.EndOfLifeDate, 'MMMM dd, yyyy', 'en-US') : null),
         itStandStatus: this.sharedService.findInArray(this.statuses, 'Name', this.itStandard.Status),
+        itStandCriticalReview: this.sharedService.findInArray(this.criticalReviews, 'Name', this.itStandard.CriticalReview),
+        itStandCSCRMReview: this.sharedService.findInArray(this.cscrmReviews, 'Name', this.itStandard.CSCRMReview),
         itStandPOC: pocIDs,
         itStandDesc: this.itStandard.Description,
         itStandType: this.sharedService.findInArray(this.types, 'Name', this.itStandard.StandardType),
@@ -970,6 +986,8 @@ export class ItStandardsManagerComponent implements OnInit {
       tcSoftwareRelease: new FormControl(),
       tcEndOfLifeDate: new FormControl(),
       itStandStatus: new FormControl(null, [Validators.required]),
+      itStandCriticalReview: new FormControl(null),
+      itStandCSCRMReview: new FormControl(null),
       itStandPOC: new FormControl(null, [Validators.required]),
       itStandDesc: new FormControl(),
       itStandType: new FormControl(null, [Validators.required]),
@@ -998,6 +1016,8 @@ export class ItStandardsManagerComponent implements OnInit {
     this.itStandard = {};
     this.createBool = false;
     this.statuses = [];
+    this.criticalReviews = [];
+    this.cscrmReviews = [];
     this.manufacturers = [];
     this.manufacturersLoading = false;
     this.manufacturersBuffer = [];

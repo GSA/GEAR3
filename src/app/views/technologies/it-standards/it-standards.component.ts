@@ -196,6 +196,18 @@ export class ItStandardsComponent implements OnInit {
         formatter: this.sharedService.formatStatus,
         titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Status')
       }, {
+        field: 'CriticalReview',
+        header: 'Critical Software Review Results',
+        isSortable: true,
+        showColumn: true,
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Critical Software Review Results')
+      }, {
+        field: 'CSCRMReview',
+        header: 'C-SCRM Review Results',
+        isSortable: true,
+        showColumn: true,
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'C-SCRM Review Results')
+      }, {
         field: 'DeploymentType',
         header: 'Deployment Type',
         isSortable: true,

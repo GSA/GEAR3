@@ -19,6 +19,8 @@ import { InvestmentType } from '@api/models/investment-types.model';
 import { ITStandards } from '@api/models/it-standards.model';
 import { ITStandard508Status } from '@api/models/it-standards-508_statuses.model';
 import { ITStandardCategory } from '@api/models/it-standards-categories.model';
+import { ITStandardCriticalReview } from '@api/models/it-standards-critical-review.model';
+import { ITStandardCSCRMReview } from '@api/models/it-standards-c-scrm-review.model';
 import { ITStandardDeployTypes } from '@api/models/it-standards-deploy_types.model';
 import { ITStandardStatus } from '@api/models/it-standards-statuses.model';
 import { ITStandardTypes } from '@api/models/it-standards-types.model';
@@ -779,6 +781,24 @@ export class ApiService {
       .pipe(
         catchError(
           this.handleError<ITStandardStatus[]>('GET IT Standard Statuses', [])
+        )
+      );
+  }
+  public getITStandCriticalReviews(): Observable<ITStandardCriticalReview[]> {
+    return this.http
+      .get<ITStandardCriticalReview[]>(this.techUrl + '/critical_reviews')
+      .pipe(
+        catchError(
+          this.handleError<ITStandardCriticalReview[]>('GET IT Standard Critical Reviews', [])
+        )
+      );
+  }
+  public getITStandCSCRMReviews(): Observable<ITStandardCSCRMReview[]> {
+    return this.http
+      .get<ITStandardCSCRMReview[]>(this.techUrl + '/c_scrm_reviews')
+      .pipe(
+        catchError(
+          this.handleError<ITStandardCSCRMReview[]>('GET IT Standard C-SCRM Reviews', [])
         )
       );
   }
