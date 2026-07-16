@@ -644,6 +644,12 @@ exports.getExpiringWeek = (req, res) => {
   res = ctrl.sendQuery(query, `Expiring IT standards this week`, res);
 };
 
+exports.getPastDue = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_it-standards_past_due.sql`)).toString();
+
+  res = ctrl.sendQuery(query, `Past due IT standards`, res);
+};
+
 exports.getRetiredTotals = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_it-standards_retired_totals.sql`)).toString();
 

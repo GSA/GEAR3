@@ -40,6 +40,7 @@ export class ItStandardsComponent implements OnInit {
 
   public daysExpiring: number = 0;
   public daysRetired: number = 0;
+  public includePastDueExpirations: boolean = false;
 
   public isDataReady: boolean = false;
 
@@ -154,6 +155,9 @@ export class ItStandardsComponent implements OnInit {
       }
       if(params['expiringWithinDays']) {
         this.daysExpiring = +params['expiringWithinDays'];
+      }
+      if (params['includePastDue']) {
+        this.includePastDueExpirations = params['includePastDue'] === 'true';
       }
       if(params['retiredWithinDays']) {
         this.daysRetired = +params['retiredWithinDays'];
@@ -380,11 +384,15 @@ export class ItStandardsComponent implements OnInit {
         const expiringWithin = new Date();
         expiringWithin.setDate(now.getDate() + this.daysExpiring); // number of days set in the url
         expiringWithin.setUTCHours(0, 0, 0, 0);
+        const includePastDue = this.includePastDueExpirations;
         const expiringFiltered: ITStandards[] = [];
         i.forEach(x => {
           let renewal = new Date(x.ApprovalExpirationDate);
           renewal.setUTCHours(0, 0, 0, 0);
-          if(x.ApprovalExpirationDate && (renewal >= now && renewal <= expiringWithin)) {
+          const isInWindow = includePastDue
+            ? renewal <= expiringWithin
+            : (renewal >= now && renewal <= expiringWithin);
+          if(x.ApprovalExpirationDate && isInWindow) {
             expiringFiltered.push(x);
           }
         });

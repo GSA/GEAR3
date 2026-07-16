@@ -222,6 +222,12 @@ exports.getExpiringWeek = (req, res) => {
   res = ctrl.sendQuery(query, `Expiring FISMA this week`, res);
 };
 
+exports.getPastDue = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_fisma_past_due.sql`)).toString();
+
+  res = ctrl.sendQuery(query, `Past due FISMA`, res);
+};
+
 exports.getFilterTotals = (req, res) => {  
   var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_fisma_filter_totals.sql`)).toString();
 

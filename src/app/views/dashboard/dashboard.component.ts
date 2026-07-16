@@ -137,12 +137,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public fismaExpiringThisQuarter: number = 0;
   public fismaExpiringThisWeek: number = 0;
+  public fismaPastDue: number = 0;
 
   public decommissionedSystemsLast6Months: number = 0;
   public decommissionedSystemsLastMonth: number = 0;
 
   public standardsExpiringThisQuarter: number = 0;
   public standardsExpiringThisWeek: number = 0;
+  public standardsPastDue: number = 0;
 
   public retiredITStandardsLast6Months: number = 0;
   public retiredITStandardsLast7Days: number = 0;
@@ -160,8 +162,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     forkJoin([
       this.apiService.getITStandardsExpiringThisQuarter(),
       this.apiService.getITStandardsExpiringThisWeek(),
+      this.apiService.getITStandardsPastDue(),
       this.apiService.getFismaExpiringThisQuarter(),
       this.apiService.getFismaExpiringThisWeek(),
+      this.apiService.getFismaPastDue(),
       this.apiService.getDecommissionedSystemTotals(),
       this.apiService.getRetiredStandardsTotals(),
       this.apiService.getDataDictionaryByReportName('IT Standards List')
@@ -169,16 +173,20 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       ([
         standardsExpiringQuarter,
         standardsExpiringWeek,
+        standardsPastDue,
         fismaExpiringQuarter,
         fismaExpiringWeek,
+        fismaPastDue,
         decommissionedSystemTotals,
         RetiredStandardTotals,
         definitions
       ]) => {
         this.standardsExpiringThisQuarter = standardsExpiringQuarter || 0;
         this.standardsExpiringThisWeek = standardsExpiringWeek || 0;
+        this.standardsPastDue = standardsPastDue || 0;
         this.fismaExpiringThisQuarter = fismaExpiringQuarter || 0;
         this.fismaExpiringThisWeek = fismaExpiringWeek || 0;
+        this.fismaPastDue = fismaPastDue || 0;
 
         this.decommissionedSystemsLast6Months = decommissionedSystemTotals?.DecommissionedSystemsLastSixMonths || 0;
         this.decommissionedSystemsLastMonth = decommissionedSystemTotals?.DecommissionedSystemsLastMonth || 0;
@@ -394,16 +402,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public viewExpiringFisma():void {
-    this.analyticsService.logClickEvent('/FISMA', 'Dashboard FISMA expiring this week');
-    this.router.navigate(['/FISMA'], { queryParams: { expiringWithinDays: '7' } });
+    this.analyticsService.logClickEvent('/FISMA', 'Dashboard FISMA expiring this week or past due');
+    this.router.navigate(['/FISMA'], { queryParams: { expiringWithinDays: '7', includePastDue: 'true' } });
   }
   public viewDecommissionedSystems(): void {
     this.analyticsService.logClickEvent('/systems', 'Dashboard decommissioned systems this week');
     this.router.navigate(['/systems'], { queryParams: { decommissionedWithinMonths: '1' } });
   }
   public viewExpiringITStandards(): void {
-    this.analyticsService.logClickEvent('/it_standards', 'Dashboard IT standards expiring this week');
-    this.router.navigate(['/it_standards'], { queryParams: { expiringWithinDays: '7' } });
+    this.analyticsService.logClickEvent('/it_standards', 'Dashboard IT standards expiring this week or past due');
+    this.router.navigate(['/it_standards'], { queryParams: { expiringWithinDays: '7', includePastDue: 'true' } });
   }
   public viewRecentRetiredITStandards(): void {
     this.analyticsService.logClickEvent('/it_standards', 'Dashboard IT standards retired in past week');
@@ -421,5 +429,44 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.router.navigate(['/systems'], {queryParams: { systemCSP: barName } });
     } 
 
+  }
+
+  public getFismaExpiryAlertCount(): number {
+    return (this.fismaExpiringThisWeek || 0) + (this.fismaPastDue || 0);
+  }
+
+  public getStandardsExpiryAlertCount(): number {
+    return (this.standardsExpiringThisWeek || 0) + (this.standardsPastDue || 0);
+  }
+
+  public getFismaExpiryAlertMessage(): string {
+    return this.buildExpiryAlertMessage(this.fismaExpiringThisWeek, this.fismaPastDue);
+  }
+
+  public getStandardsExpiryAlertMessage(): string {
+    return this.buildExpiryAlertMessage(this.standardsExpiringThisWeek, this.standardsPastDue);
+  }
+
+  private buildExpiryAlertMessage(expiringCount: number, pastDueCount: number): string {
+    const expiring = expiringCount || 0;
+    const pastDue = pastDueCount || 0;
+
+    if (expiring === 0 && pastDue === 0) {
+      return 'No items expiring within 7 days or past due';
+    }
+
+    const parts: string[] = [];
+    if (expiring > 0) {
+      parts.push(`${this.itemLabel(expiring)} expiring within 7 days`);
+    }
+    if (pastDue > 0) {
+      parts.push(`${this.itemLabel(pastDue)} past due`);
+    }
+
+    return parts.join(' and ');
+  }
+
+  private itemLabel(count: number): string {
+    return `${count} item${count === 1 ? '' : 's'}`;
   }
 }
