@@ -32,7 +32,7 @@ SELECT
 
   obj_technology_status.Keyname                   AS Status,
   obj_technology_critical_review.Keyname          AS CriticalReview,
-  obj_technology_c_scrm_review.Keyname            AS CSCRMReview,
+  obj_technology_cscrm_review.Keyname              AS CSCRMReview,
   obj_deployment_type.Keyname                     AS DeploymentType,
   obj_standard_type.Keyname                       AS StandardType,
   obj_508_compliance_status.Keyname               AS ComplianceStatus,
@@ -48,7 +48,7 @@ FROM obj_technology AS tech
 
 LEFT JOIN obj_technology_status               ON tech.obj_technology_status_Id = obj_technology_status.Id
 LEFT JOIN obj_technology_critical_review      ON tech.obj_technology_critical_review_Id = obj_technology_critical_review.Id
-LEFT JOIN obj_technology_c_scrm_review        ON tech.obj_technology_c_scrm_review_Id = obj_technology_c_scrm_review.Id
+LEFT JOIN obj_technology_cscrm_review         ON tech.obj_technology_cscrm_review_Id = obj_technology_cscrm_review.Id
 LEFT JOIN obj_deployment_type                 ON tech.obj_deployment_type_Id = obj_deployment_type.Id
 LEFT JOIN obj_standard_type                   ON tech.obj_standard_type_Id = obj_standard_type.Id
 LEFT JOIN obj_508_compliance_status           ON tech.obj_508_compliance_status_Id = obj_508_compliance_status.Id
