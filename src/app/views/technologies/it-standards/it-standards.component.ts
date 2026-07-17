@@ -41,6 +41,7 @@ export class ItStandardsComponent implements OnInit {
   public daysExpiring: number = 0;
   public daysRetired: number = 0;
   public includePastDueExpirations: boolean = false;
+  public pastDueOnly: boolean = false;
 
   public isDataReady: boolean = false;
 
@@ -158,6 +159,9 @@ export class ItStandardsComponent implements OnInit {
       }
       if (params['includePastDue']) {
         this.includePastDueExpirations = params['includePastDue'] === 'true';
+      }
+      if (params['pastDueOnly']) {
+        this.pastDueOnly = params['pastDueOnly'] === 'true';
       }
       if(params['retiredWithinDays']) {
         this.daysRetired = +params['retiredWithinDays'];
@@ -378,13 +382,18 @@ export class ItStandardsComponent implements OnInit {
       this.itStandardsDataTabFilterted = this.setCondtionStatus(i);
       this.itStandardsDataChipFilterted = this.setCondtionStatus(i);
 
-      if(this.daysExpiring > 0) {
+      const queryParams = this.route.snapshot.queryParams;
+      const daysExpiring = Number(queryParams['expiringWithinDays'] || this.daysExpiring || 0);
+      const daysRetired = Number(queryParams['retiredWithinDays'] || this.daysRetired || 0);
+      const includePastDue = queryParams['includePastDue'] === 'true' || this.includePastDueExpirations;
+      const pastDueOnly = queryParams['pastDueOnly'] === 'true' || this.pastDueOnly;
+
+      if(daysExpiring > 0) {
         const now = new Date(); // Current date and time
         now.setUTCHours(0, 0, 0, 0);
         const expiringWithin = new Date();
-        expiringWithin.setDate(now.getDate() + this.daysExpiring); // number of days set in the url
+        expiringWithin.setDate(now.getDate() + daysExpiring); // number of days set in the url
         expiringWithin.setUTCHours(0, 0, 0, 0);
-        const includePastDue = this.includePastDueExpirations;
         const expiringFiltered: ITStandards[] = [];
         i.forEach(x => {
           let renewal = new Date(x.ApprovalExpirationDate);
@@ -398,11 +407,24 @@ export class ItStandardsComponent implements OnInit {
         });
         this.tableService.updateReportTableData(expiringFiltered);
         this.tableService.updateReportTableDataReadyStatus(true);
-      } else if(this.daysRetired > 0) {
+      } else if (pastDueOnly) {
+        const now = new Date();
+        now.setUTCHours(0, 0, 0, 0);
+        const pastDueFiltered: ITStandards[] = [];
+        i.forEach(x => {
+          let renewal = new Date(x.ApprovalExpirationDate);
+          renewal.setUTCHours(0, 0, 0, 0);
+          if (x.ApprovalExpirationDate && renewal < now) {
+            pastDueFiltered.push(x);
+          }
+        });
+        this.tableService.updateReportTableData(pastDueFiltered);
+        this.tableService.updateReportTableDataReadyStatus(true);
+      } else if(daysRetired > 0) {
         const now = new Date(); // Current date and time
         now.setUTCHours(0, 0, 0, 0);
         const expiredWithin = new Date();
-        expiredWithin.setDate(now.getDate() - this.daysRetired); // number of days set in the url
+        expiredWithin.setDate(now.getDate() - daysRetired); // number of days set in the url
         expiredWithin.setUTCHours(0, 0, 0, 0);
         const expiringFiltered: ITStandards[] = [];
         i.forEach(x => {

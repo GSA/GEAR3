@@ -123,6 +123,38 @@
             & a {
               color: #8a4300;
             }
+
+            &.multi-line-expire-text {
+              display: flex;
+              flex-direction: column;
+              align-items: flex-start;
+              gap: 0.15rem;
+              width: 100%;
+            }
+
+            & .expire-link-line {
+              display: flex;
+              align-items: center;
+              gap: 0.25rem;
+              text-decoration-line: underline;
+              cursor: pointer;
+              width: fit-content;
+              transition: transform 120ms ease, filter 120ms ease;
+
+              &:hover {
+                filter: brightness(0.9);
+              }
+
+              &:active {
+                transform: translateY(1px) scale(0.99);
+              }
+
+              &:focus-visible {
+                outline: 2px solid rgba(0, 95, 204, 0.45);
+                outline-offset: 2px;
+                border-radius: 2px;
+              }
+            }
           }
   
           & .positive-expire-text {

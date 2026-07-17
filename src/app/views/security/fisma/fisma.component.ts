@@ -24,6 +24,7 @@ export class FismaComponent implements OnInit {
 
   public daysExpiring: number = 0;
   public includePastDueExpirations: boolean = false;
+  public pastDueOnly: boolean = false;
 
   public attrDefinitions: DataDictionary[] = [];
 
@@ -172,6 +173,9 @@ export class FismaComponent implements OnInit {
       if (params['includePastDue']) {
         this.includePastDueExpirations = params['includePastDue'] === 'true';
       }
+      if (params['pastDueOnly']) {
+        this.pastDueOnly = params['pastDueOnly'] === 'true';
+      }
     });
 
     this.apiService.getDataDictionaryByReportName('FISMA Systems Inventory').subscribe(defs => {
@@ -199,6 +203,18 @@ export class FismaComponent implements OnInit {
             && (f.Status === 'Active' || f.Status === 'Pending');
         });
         this.tableService.updateReportTableData(expiringFiltered);
+      } else if (this.pastDueOnly) {
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+        const pastDueFiltered = fisma.filter(f => {
+          if (!f.ATOExpirationDate) return false;
+          const renewal = new Date(f.ATOExpirationDate);
+          renewal.setHours(0, 0, 0, 0);
+          return renewal < now
+            && f.SystemLevel === 'System'
+            && (f.Status === 'Active' || f.Status === 'Pending');
+        });
+        this.tableService.updateReportTableData(pastDueFiltered);
       } else {
         this.fismaTabFilterted = fisma.filter(f =>
           f.Status === 'Active' && f.SystemLevel === 'System' && f.Reportable === 'Yes'

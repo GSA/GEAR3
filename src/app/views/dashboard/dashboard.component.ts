@@ -402,16 +402,24 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public viewExpiringFisma():void {
-    this.analyticsService.logClickEvent('/FISMA', 'Dashboard FISMA expiring this week or past due');
-    this.router.navigate(['/FISMA'], { queryParams: { expiringWithinDays: '7', includePastDue: 'true' } });
+    this.analyticsService.logClickEvent('/FISMA', 'Dashboard FISMA expiring this week');
+    this.router.navigate(['/FISMA'], { queryParams: { expiringWithinDays: '7' } });
+  }
+  public viewPastDueFisma(): void {
+    this.analyticsService.logClickEvent('/FISMA', 'Dashboard FISMA past due');
+    this.router.navigate(['/FISMA'], { queryParams: { pastDueOnly: 'true' } });
   }
   public viewDecommissionedSystems(): void {
     this.analyticsService.logClickEvent('/systems', 'Dashboard decommissioned systems this week');
     this.router.navigate(['/systems'], { queryParams: { decommissionedWithinMonths: '1' } });
   }
   public viewExpiringITStandards(): void {
-    this.analyticsService.logClickEvent('/it_standards', 'Dashboard IT standards expiring this week or past due');
-    this.router.navigate(['/it_standards'], { queryParams: { expiringWithinDays: '7', includePastDue: 'true' } });
+    this.analyticsService.logClickEvent('/it_standards', 'Dashboard IT standards expiring this week');
+    this.router.navigate(['/it_standards'], { queryParams: { expiringWithinDays: '7' } });
+  }
+  public viewPastDueITStandards(): void {
+    this.analyticsService.logClickEvent('/it_standards', 'Dashboard IT standards past due');
+    this.router.navigate(['/it_standards'], { queryParams: { pastDueOnly: 'true' } });
   }
   public viewRecentRetiredITStandards(): void {
     this.analyticsService.logClickEvent('/it_standards', 'Dashboard IT standards retired in past week');
@@ -439,34 +447,23 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     return (this.standardsExpiringThisWeek || 0) + (this.standardsPastDue || 0);
   }
 
-  public getFismaExpiryAlertMessage(): string {
-    return this.buildExpiryAlertMessage(this.fismaExpiringThisWeek, this.fismaPastDue);
-  }
-
-  public getStandardsExpiryAlertMessage(): string {
-    return this.buildExpiryAlertMessage(this.standardsExpiringThisWeek, this.standardsPastDue);
-  }
-
-  private buildExpiryAlertMessage(expiringCount: number, pastDueCount: number): string {
-    const expiring = expiringCount || 0;
-    const pastDue = pastDueCount || 0;
-
-    if (expiring === 0 && pastDue === 0) {
-      return 'No items expiring within 7 days or past due';
-    }
-
-    const parts: string[] = [];
-    if (expiring > 0) {
-      parts.push(`${this.itemLabel(expiring)} expiring within 7 days`);
-    }
-    if (pastDue > 0) {
-      parts.push(`${this.itemLabel(pastDue)} past due`);
-    }
-
-    return parts.join(' and ');
-  }
-
   private itemLabel(count: number): string {
     return `${count} item${count === 1 ? '' : 's'}`;
+  }
+
+  public getFismaPastDueLabel(): string {
+    return `${this.itemLabel(this.fismaPastDue || 0)} past due`;
+  }
+
+  public getFismaExpiringSoonLabel(): string {
+    return `${this.itemLabel(this.fismaExpiringThisWeek || 0)} expiring within 7 days`;
+  }
+
+  public getStandardsPastDueLabel(): string {
+    return `${this.itemLabel(this.standardsPastDue || 0)} past due`;
+  }
+
+  public getStandardsExpiringSoonLabel(): string {
+    return `${this.itemLabel(this.standardsExpiringThisWeek || 0)} expiring within 7 days`;
   }
 }
