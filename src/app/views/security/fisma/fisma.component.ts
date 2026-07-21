@@ -185,12 +185,16 @@ export class FismaComponent implements OnInit {
     this.apiService.getFISMA().subscribe(fisma => {
       this.fismaData = fisma;
 
-      if (this.daysExpiring > 0) {
+      const queryParams = this.route.snapshot.queryParams;
+      const daysExpiring = Number(queryParams['expiringWithinDays'] || this.daysExpiring || 0);
+      const includePastDue = queryParams['includePastDue'] === 'true' || this.includePastDueExpirations;
+      const pastDueOnly = queryParams['pastDueOnly'] === 'true' || this.pastDueOnly;
+
+      if (daysExpiring > 0) {
         const now = new Date();
         now.setHours(0, 0, 0, 0);
         const expiringWithin = new Date(now);
-        expiringWithin.setDate(expiringWithin.getDate() + this.daysExpiring);
-        const includePastDue = this.includePastDueExpirations;
+        expiringWithin.setDate(expiringWithin.getDate() + daysExpiring);
         const expiringFiltered = fisma.filter(f => {
           if (!f.ATOExpirationDate) return false;
           const renewal = new Date(f.ATOExpirationDate);
@@ -203,7 +207,7 @@ export class FismaComponent implements OnInit {
             && (f.Status === 'Active' || f.Status === 'Pending');
         });
         this.tableService.updateReportTableData(expiringFiltered);
-      } else if (this.pastDueOnly) {
+      } else if (pastDueOnly) {
         const now = new Date();
         now.setHours(0, 0, 0, 0);
         const pastDueFiltered = fisma.filter(f => {

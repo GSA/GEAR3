@@ -401,7 +401,7 @@ export class ItStandardsComponent implements OnInit {
           const isInWindow = includePastDue
             ? renewal <= expiringWithin
             : (renewal >= now && renewal <= expiringWithin);
-          if(x.ApprovalExpirationDate && isInWindow) {
+          if(x.ApprovalExpirationDate && isInWindow && this.isInExpiringStatusScope(x)) {
             expiringFiltered.push(x);
           }
         });
@@ -414,7 +414,7 @@ export class ItStandardsComponent implements OnInit {
         i.forEach(x => {
           let renewal = new Date(x.ApprovalExpirationDate);
           renewal.setUTCHours(0, 0, 0, 0);
-          if (x.ApprovalExpirationDate && renewal < now) {
+          if (x.ApprovalExpirationDate && renewal < now && this.isInExpiringStatusScope(x)) {
             pastDueFiltered.push(x);
           }
         });
@@ -540,5 +540,14 @@ export class ItStandardsComponent implements OnInit {
       }
     });
     return itStandards;
+  }
+
+  // Keep dashboard deep-link filters consistent with backend totals query scope.
+  private isInExpiringStatusScope(standard: ITStandards): boolean {
+    return standard.Status === 'Approved'
+      || standard.Status === 'Approved with conditions'
+      || standard.Status === 'Pilot'
+      || standard.Status === 'Exception'
+      || standard.Status === 'Sunsetting';
   }
 }
