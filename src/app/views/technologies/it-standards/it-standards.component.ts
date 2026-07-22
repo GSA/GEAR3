@@ -165,6 +165,12 @@ export class ItStandardsComponent implements OnInit {
 
       // IT Standard Table Columns
       this.tableCols = [{
+        field: 'ID',
+        header: 'ID',
+        isSortable: true,
+        showColumn: false,
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'ID')
+      }, {
         field: 'Name',
         header: 'IT Standard Name',
         isSortable: true,
@@ -196,18 +202,6 @@ export class ItStandardsComponent implements OnInit {
         formatter: this.sharedService.formatStatus,
         titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Status')
       }, {
-        field: 'CriticalReview',
-        header: 'Critical Software Review Results',
-        isSortable: true,
-        showColumn: false,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Critical Software Review Results')
-      }, {
-        field: 'CSCRMReview',
-        header: 'C-SCRM Review Results',
-        isSortable: true,
-        showColumn: false,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'C-SCRM Review Results')
-      }, {
         field: 'DeploymentType',
         header: 'Deployment Type',
         isSortable: true,
@@ -220,12 +214,6 @@ export class ItStandardsComponent implements OnInit {
         showColumn: true,
         formatter: this.sharedService.dateFormatter,
         titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Approval Expiration Date')
-      }, {
-        field: 'ID',
-        header: 'ID',
-        isSortable: true,
-        showColumn: false,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'ID')
       }, {
         field: 'Manufacturer',
         header: 'Manufacturer ID',
@@ -375,6 +363,18 @@ export class ItStandardsComponent implements OnInit {
         isSortable: false,
         showColumn: false,
         titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'ConditionsRestrictions')
+      }, {
+        field: 'CriticalReview',
+        header: 'Critical Software Review Results',
+        isSortable: true,
+        showColumn: false,
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Critical Software Review Results')
+      }, {
+        field: 'CSCRMReview',
+        header: 'C-SCRM Review Results',
+        isSortable: true,
+        showColumn: false,
+        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'C-SCRM Review Results')
       }];
     });
 
