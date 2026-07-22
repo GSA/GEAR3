@@ -199,13 +199,13 @@ export class ItStandardsComponent implements OnInit {
         field: 'CriticalReview',
         header: 'Critical Software Review Results',
         isSortable: true,
-        showColumn: true,
+        showColumn: false,
         titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Critical Software Review Results')
       }, {
         field: 'CSCRMReview',
         header: 'C-SCRM Review Results',
         isSortable: true,
-        showColumn: true,
+        showColumn: false,
         titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'C-SCRM Review Results')
       }, {
         field: 'DeploymentType',
