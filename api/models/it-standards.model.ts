@@ -26,6 +26,7 @@ export class ITStandards {
   public SoftwareProductName: string = null;
   public SoftwareVersionName: string = null;
   public SoftwareReleaseName: string = null;
+  public StatusId: number = null;
   public Status: string = null;
   public DeploymentType: string = null;
   public StandardType: string = null;

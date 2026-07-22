@@ -390,14 +390,14 @@ export class ItStandardsComponent implements OnInit {
 
       if(daysExpiring > 0) {
         const now = new Date(); // Current date and time
-        now.setUTCHours(0, 0, 0, 0);
+        now.setHours(0, 0, 0, 0);
         const expiringWithin = new Date();
         expiringWithin.setDate(now.getDate() + daysExpiring); // number of days set in the url
-        expiringWithin.setUTCHours(0, 0, 0, 0);
+        expiringWithin.setHours(0, 0, 0, 0);
         const expiringFiltered: ITStandards[] = [];
         i.forEach(x => {
           let renewal = new Date(x.ApprovalExpirationDate);
-          renewal.setUTCHours(0, 0, 0, 0);
+          renewal.setHours(0, 0, 0, 0);
           const isInWindow = includePastDue
             ? renewal <= expiringWithin
             : (renewal >= now && renewal <= expiringWithin);
@@ -409,11 +409,11 @@ export class ItStandardsComponent implements OnInit {
         this.tableService.updateReportTableDataReadyStatus(true);
       } else if (pastDueOnly) {
         const now = new Date();
-        now.setUTCHours(0, 0, 0, 0);
+        now.setHours(0, 0, 0, 0);
         const pastDueFiltered: ITStandards[] = [];
         i.forEach(x => {
           let renewal = new Date(x.ApprovalExpirationDate);
-          renewal.setUTCHours(0, 0, 0, 0);
+          renewal.setHours(0, 0, 0, 0);
           if (x.ApprovalExpirationDate && renewal < now && this.isInExpiringStatusScope(x)) {
             pastDueFiltered.push(x);
           }
@@ -422,14 +422,14 @@ export class ItStandardsComponent implements OnInit {
         this.tableService.updateReportTableDataReadyStatus(true);
       } else if(daysRetired > 0) {
         const now = new Date(); // Current date and time
-        now.setUTCHours(0, 0, 0, 0);
+        now.setHours(0, 0, 0, 0);
         const expiredWithin = new Date();
         expiredWithin.setDate(now.getDate() - daysRetired); // number of days set in the url
-        expiredWithin.setUTCHours(0, 0, 0, 0);
+        expiredWithin.setHours(0, 0, 0, 0);
         const expiringFiltered: ITStandards[] = [];
         i.forEach(x => {
           let renewal = new Date(x.ApprovalExpirationDate);
-          renewal.setUTCHours(0, 0, 0, 0);
+          renewal.setHours(0, 0, 0, 0);
           if(x.ApprovalExpirationDate && (renewal <= now && renewal >= expiredWithin) && (x.Status === 'Retired')) {
             expiringFiltered.push(x);
           }
@@ -544,6 +544,12 @@ export class ItStandardsComponent implements OnInit {
 
   // Keep dashboard deep-link filters consistent with backend totals query scope.
   private isInExpiringStatusScope(standard: ITStandards): boolean {
+    const approvedLikeStatusIds = [11, 2, 6, 9];
+
+    if (typeof standard.StatusId === 'number') {
+      return approvedLikeStatusIds.includes(standard.StatusId);
+    }
+
     return standard.Status === 'Approved'
       || standard.Status === 'Approved with conditions'
       || standard.Status === 'Pilot'

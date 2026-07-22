@@ -30,6 +30,7 @@ SELECT
   tech.softwareReleaseName                        AS SoftwareReleaseName,
   IFNULL(CONCAT(tech.manufacturerName, ' - ', tech.softwareProductName), tech.Keyname) AS ManufacturerSoftwareProductName,
 
+  tech.obj_technology_status_Id                  AS StatusId,
   obj_technology_status.Keyname                   AS Status,
   obj_deployment_type.Keyname                     AS DeploymentType,
   obj_standard_type.Keyname                       AS StandardType,
