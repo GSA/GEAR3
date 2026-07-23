@@ -17,18 +17,24 @@
           <a (click)="viewAllFisma()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllFisma()" (keydown.space)="viewAllFisma()">View All</a>
         </div>
         <span class="quick-view-text">FISMA Systems Expiring by {{ getExpiringDate() }}</span>
-        <div class="quick-view-expiring-text-container" [ngClass]="{'neutral-message': (fismaExpiringThisWeek || 0) === 0}">
-          @if ((fismaExpiringThisWeek || 0) > 0) {
-            <i class="expire-icon fas fa-exclamation-triangle"></i>
-          }
-          <span class="expire-text" [ngClass]="{'positive-expire-text' : fismaExpiringThisWeek > 0, 'neutral-text': (fismaExpiringThisWeek || 0) === 0}">
+        <div class="quick-view-expiring-text-container" [ngClass]="{'neutral-message': getFismaExpiryAlertCount() === 0}">
+          <div class="expire-text multi-line-expire-text" [ngClass]="{'neutral-text': getFismaExpiryAlertCount() === 0}">
+            @if ((fismaPastDue || 0) > 0) {
+              <span class="expire-link-line" tabindex="0" (click)="viewPastDueFisma()" (keydown.enter)="viewPastDueFisma()" (keydown.space)="viewPastDueFisma()">
+                <i class="expire-icon fas fa-exclamation-triangle"></i>
+                {{ getFismaPastDueLabel() }}
+              </span>
+            }
             @if ((fismaExpiringThisWeek || 0) > 0) {
-              <span tabindex="0" (click)="viewExpiringFisma()" (keydown.enter)="viewExpiringFisma()" (keydown.space)="viewExpiringFisma()">{{ fismaExpiringThisWeek || 0 }} items expiring within 7 days</span>
+              <span class="expire-link-line" tabindex="0" (click)="viewExpiringFisma()" (keydown.enter)="viewExpiringFisma()" (keydown.space)="viewExpiringFisma()">
+                <i class="expire-icon fas fa-exclamation-triangle"></i>
+                {{ getFismaExpiringSoonLabel() }}
+              </span>
             }
-            @if ((fismaExpiringThisWeek || 0) === 0) {
-              <span>No items expiring within 7 days</span>
+            @if (getFismaExpiryAlertCount() === 0) {
+              <span>No items expiring within 7 days or past due</span>
             }
-          </span>
+          </div>
         </div>
       </div>
       <!-- Decommissioned Systems -->
@@ -69,18 +75,24 @@
           <a (click)="viewAllITStandards()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllITStandards()" (keydown.space)="viewAllITStandards()">View All</a>
         </div>
         <span class="quick-view-text">IT Standards Expiring by {{ getExpiringDate() }}</span>
-        <div class="quick-view-expiring-text-container" [ngClass]="{'neutral-message': (standardsExpiringThisWeek || 0) === 0}">
-          @if ((standardsExpiringThisWeek || 0) > 0) {
-            <i class="expire-icon fas fa-exclamation-triangle"></i>
-          }
-          <span class="expire-text" [ngClass]="{'positive-expire-text' : standardsExpiringThisWeek > 0, 'neutral-text': (standardsExpiringThisWeek || 0) === 0}">
+        <div class="quick-view-expiring-text-container" [ngClass]="{'neutral-message': getStandardsExpiryAlertCount() === 0}">
+          <div class="expire-text multi-line-expire-text" [ngClass]="{'neutral-text': getStandardsExpiryAlertCount() === 0}">
+            @if ((standardsPastDue || 0) > 0) {
+              <span class="expire-link-line" tabindex="0" (click)="viewPastDueITStandards()" (keydown.enter)="viewPastDueITStandards()" (keydown.space)="viewPastDueITStandards()">
+                <i class="expire-icon fas fa-exclamation-triangle"></i>
+                {{ getStandardsPastDueLabel() }}
+              </span>
+            }
             @if ((standardsExpiringThisWeek || 0) > 0) {
-              <span tabindex="0" (click)="viewExpiringITStandards()" (keydown.enter)="viewExpiringITStandards()" (keydown.space)="viewExpiringITStandards()">{{ standardsExpiringThisWeek || 0 }} items expiring within 7 days</span>
+              <span class="expire-link-line" tabindex="0" (click)="viewExpiringITStandards()" (keydown.enter)="viewExpiringITStandards()" (keydown.space)="viewExpiringITStandards()">
+                <i class="expire-icon fas fa-exclamation-triangle"></i>
+                {{ getStandardsExpiringSoonLabel() }}
+              </span>
             }
-            @if ((standardsExpiringThisWeek || 0) === 0) {
-              <span>No items expiring within 7 days</span>
+            @if (getStandardsExpiryAlertCount() === 0) {
+              <span>No items expiring within 7 days or past due</span>
             }
-          </span>
+          </div>
         </div>
       </div>
       <!-- Retired IT Standards -->

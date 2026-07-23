@@ -220,6 +220,14 @@ export class ApiService {
         catchError(this.handleError<any>(`GET FISMA expiring this week`)));
   }
 
+  public getFismaPastDue(): Observable<any> {
+    return this.http
+      .get<any>(this.fismaUrl + '/past_due')
+      .pipe(
+        map(r => r[0].Total),
+        catchError(this.handleError<any>(`GET FISMA past due`)));
+  }
+
   public getFismaFilterTotals(): Observable<any> {
     return this.http
     .get<any>(this.fismaUrl + '/filter_totals')
@@ -861,6 +869,14 @@ export class ApiService {
       .pipe(
         map(r => r[0][0].Total),
         catchError(this.handleError<any>(`GET IT Standards expiring this week`)));
+  }
+
+  public getITStandardsPastDue(): Observable<any> {
+    return this.http
+      .get<any>(this.techUrl + '/past_due')
+      .pipe(
+        map(r => r[0][0].Total),
+        catchError(this.handleError<any>(`GET IT Standards past due`)));
   }
 
   public getITStandardsRelatedSystems(id: number): Observable<System[]> {

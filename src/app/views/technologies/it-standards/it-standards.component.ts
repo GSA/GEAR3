@@ -40,6 +40,8 @@ export class ItStandardsComponent implements OnInit {
 
   public daysExpiring: number = 0;
   public daysRetired: number = 0;
+  public includePastDueExpirations: boolean = false;
+  public pastDueOnly: boolean = false;
 
   public isDataReady: boolean = false;
 
@@ -154,6 +156,12 @@ export class ItStandardsComponent implements OnInit {
       }
       if(params['expiringWithinDays']) {
         this.daysExpiring = +params['expiringWithinDays'];
+      }
+      if (params['includePastDue']) {
+        this.includePastDueExpirations = params['includePastDue'] === 'true';
+      }
+      if (params['pastDueOnly']) {
+        this.pastDueOnly = params['pastDueOnly'] === 'true';
       }
       if(params['retiredWithinDays']) {
         this.daysRetired = +params['retiredWithinDays'];
@@ -374,32 +382,54 @@ export class ItStandardsComponent implements OnInit {
       this.itStandardsDataTabFilterted = this.setCondtionStatus(i);
       this.itStandardsDataChipFilterted = this.setCondtionStatus(i);
 
-      if(this.daysExpiring > 0) {
+      const queryParams = this.route.snapshot.queryParams;
+      const daysExpiring = Number(queryParams['expiringWithinDays'] || this.daysExpiring || 0);
+      const daysRetired = Number(queryParams['retiredWithinDays'] || this.daysRetired || 0);
+      const includePastDue = queryParams['includePastDue'] === 'true' || this.includePastDueExpirations;
+      const pastDueOnly = queryParams['pastDueOnly'] === 'true' || this.pastDueOnly;
+
+      if(daysExpiring > 0) {
         const now = new Date(); // Current date and time
-        now.setUTCHours(0, 0, 0, 0);
+        now.setHours(0, 0, 0, 0);
         const expiringWithin = new Date();
-        expiringWithin.setDate(now.getDate() + this.daysExpiring); // number of days set in the url
-        expiringWithin.setUTCHours(0, 0, 0, 0);
+        expiringWithin.setDate(now.getDate() + daysExpiring); // number of days set in the url
+        expiringWithin.setHours(0, 0, 0, 0);
         const expiringFiltered: ITStandards[] = [];
         i.forEach(x => {
           let renewal = new Date(x.ApprovalExpirationDate);
-          renewal.setUTCHours(0, 0, 0, 0);
-          if(x.ApprovalExpirationDate && (renewal >= now && renewal <= expiringWithin)) {
+          renewal.setHours(0, 0, 0, 0);
+          const isInWindow = includePastDue
+            ? renewal <= expiringWithin
+            : (renewal >= now && renewal <= expiringWithin);
+          if(x.ApprovalExpirationDate && isInWindow && this.isInExpiringStatusScope(x)) {
             expiringFiltered.push(x);
           }
         });
         this.tableService.updateReportTableData(expiringFiltered);
         this.tableService.updateReportTableDataReadyStatus(true);
-      } else if(this.daysRetired > 0) {
+      } else if (pastDueOnly) {
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+        const pastDueFiltered: ITStandards[] = [];
+        i.forEach(x => {
+          let renewal = new Date(x.ApprovalExpirationDate);
+          renewal.setHours(0, 0, 0, 0);
+          if (x.ApprovalExpirationDate && renewal < now && this.isInExpiringStatusScope(x)) {
+            pastDueFiltered.push(x);
+          }
+        });
+        this.tableService.updateReportTableData(pastDueFiltered);
+        this.tableService.updateReportTableDataReadyStatus(true);
+      } else if(daysRetired > 0) {
         const now = new Date(); // Current date and time
-        now.setUTCHours(0, 0, 0, 0);
+        now.setHours(0, 0, 0, 0);
         const expiredWithin = new Date();
-        expiredWithin.setDate(now.getDate() - this.daysRetired); // number of days set in the url
-        expiredWithin.setUTCHours(0, 0, 0, 0);
+        expiredWithin.setDate(now.getDate() - daysRetired); // number of days set in the url
+        expiredWithin.setHours(0, 0, 0, 0);
         const expiringFiltered: ITStandards[] = [];
         i.forEach(x => {
           let renewal = new Date(x.ApprovalExpirationDate);
-          renewal.setUTCHours(0, 0, 0, 0);
+          renewal.setHours(0, 0, 0, 0);
           if(x.ApprovalExpirationDate && (renewal <= now && renewal >= expiredWithin) && (x.Status === 'Retired')) {
             expiringFiltered.push(x);
           }
@@ -510,5 +540,20 @@ export class ItStandardsComponent implements OnInit {
       }
     });
     return itStandards;
+  }
+
+  // Keep dashboard deep-link filters consistent with backend totals query scope.
+  private isInExpiringStatusScope(standard: ITStandards): boolean {
+    const approvedLikeStatusIds = [11, 2, 6, 9];
+
+    if (typeof standard.StatusId === 'number') {
+      return approvedLikeStatusIds.includes(standard.StatusId);
+    }
+
+    return standard.Status === 'Approved'
+      || standard.Status === 'Approved with conditions'
+      || standard.Status === 'Pilot'
+      || standard.Status === 'Exception'
+      || standard.Status === 'Sunsetting';
   }
 }

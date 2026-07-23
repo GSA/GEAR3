@@ -24,6 +24,9 @@ router.route('/expiring_quarter')
 router.route('/expiring_week')
   .get(fismaCtrl.getExpiringWeek);
 
+router.route('/past_due')
+  .get(fismaCtrl.getPastDue);
+
 router.route('/filter_totals')
   .get(fismaCtrl.getFilterTotals);
 

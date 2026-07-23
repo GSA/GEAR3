@@ -23,6 +23,8 @@ export class FismaComponent implements OnInit {
   public fismaTabFilterted: FISMA[] = [];
 
   public daysExpiring: number = 0;
+  public includePastDueExpirations: boolean = false;
+  public pastDueOnly: boolean = false;
 
   public attrDefinitions: DataDictionary[] = [];
 
@@ -168,6 +170,12 @@ export class FismaComponent implements OnInit {
       if(params['expiringWithinDays']) {
         this.daysExpiring = +params['expiringWithinDays'];
       }
+      if (params['includePastDue']) {
+        this.includePastDueExpirations = params['includePastDue'] === 'true';
+      }
+      if (params['pastDueOnly']) {
+        this.pastDueOnly = params['pastDueOnly'] === 'true';
+      }
     });
 
     this.apiService.getDataDictionaryByReportName('FISMA Systems Inventory').subscribe(defs => {
@@ -177,20 +185,40 @@ export class FismaComponent implements OnInit {
     this.apiService.getFISMA().subscribe(fisma => {
       this.fismaData = fisma;
 
-      if (this.daysExpiring > 0) {
+      const queryParams = this.route.snapshot.queryParams;
+      const daysExpiring = Number(queryParams['expiringWithinDays'] || this.daysExpiring || 0);
+      const includePastDue = queryParams['includePastDue'] === 'true' || this.includePastDueExpirations;
+      const pastDueOnly = queryParams['pastDueOnly'] === 'true' || this.pastDueOnly;
+
+      if (daysExpiring > 0) {
         const now = new Date();
         now.setHours(0, 0, 0, 0);
         const expiringWithin = new Date(now);
-        expiringWithin.setDate(expiringWithin.getDate() + this.daysExpiring);
+        expiringWithin.setDate(expiringWithin.getDate() + daysExpiring);
         const expiringFiltered = fisma.filter(f => {
           if (!f.ATOExpirationDate) return false;
           const renewal = new Date(f.ATOExpirationDate);
           renewal.setHours(0, 0, 0, 0);
-          return renewal >= now && renewal <= expiringWithin
+          const isInWindow = includePastDue
+            ? renewal <= expiringWithin
+            : (renewal >= now && renewal <= expiringWithin);
+          return isInWindow
             && f.SystemLevel === 'System'
             && (f.Status === 'Active' || f.Status === 'Pending');
         });
         this.tableService.updateReportTableData(expiringFiltered);
+      } else if (pastDueOnly) {
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+        const pastDueFiltered = fisma.filter(f => {
+          if (!f.ATOExpirationDate) return false;
+          const renewal = new Date(f.ATOExpirationDate);
+          renewal.setHours(0, 0, 0, 0);
+          return renewal < now
+            && f.SystemLevel === 'System'
+            && (f.Status === 'Active' || f.Status === 'Pending');
+        });
+        this.tableService.updateReportTableData(pastDueFiltered);
       } else {
         this.fismaTabFilterted = fisma.filter(f =>
           f.Status === 'Active' && f.SystemLevel === 'System' && f.Reportable === 'Yes'

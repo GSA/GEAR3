@@ -66,6 +66,9 @@ router.route('/expiring_quarter')
 router.route('/expiring_week')
   .get(itsCtrl.getExpiringWeek);
 
+router.route('/past_due')
+  .get(itsCtrl.getPastDue);
+
 router.route('/filter_totals')
   .get(itsCtrl.getFilterTotals);
   
