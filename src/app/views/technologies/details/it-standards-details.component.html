@@ -158,7 +158,7 @@
                 </label>
                 <span>{{detailsData.Description}}</span>
               </div>
-              <div class="data-full" style="padding-bottom: 0;">
+              <div class="data-full">
                 <label class="data-label">
                   <span [title]="getTooltip('Comments')" role="tooltip">
                     Comments
@@ -166,6 +166,29 @@
                   </span>
                 </label>
                 <span>{{detailsData.Comments}}</span>
+              </div>
+              <div class="data-full review-results-group">
+                <span class="review-results-title">Review Results</span>
+                <div class="review-results-grid">
+                  <div class="data">
+                    <label class="data-label">
+                      <span [title]="getTooltip('Critical Software Review Results')" role="tooltip">
+                        Critical Software Review Results
+                        <i class="fas fa-info-circle"></i>
+                      </span>
+                    </label>
+                    <span>{{detailsData.CriticalReview}}</span>
+                  </div>
+                  <div class="data">
+                    <label class="data-label">
+                      <span [title]="getTooltip('C-SCRM Review Results')" role="tooltip">
+                        C-SCRM Review Results
+                        <i class="fas fa-info-circle"></i>
+                      </span>
+                    </label>
+                    <span>{{detailsData.CSCRMReview}}</span>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="sub-data-container">

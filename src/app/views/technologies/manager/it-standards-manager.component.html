@@ -308,6 +308,24 @@
                           }
                         </select>
                       </div>
+                      <div class="data">
+                        <label for="itStandCriticalReview" class="data-label">Critical Software Review Results</label>
+                        <select class="form-control" id="itStandCriticalReview" formControlName="itStandCriticalReview">
+                          @for (review of criticalReviews; track review) {
+                            <option [value]="review.ID"
+                            [selected]="review.Name === itStandard.CriticalReview">{{ review.Name }}</option>
+                          }
+                        </select>
+                      </div>
+                      <div class="data">
+                        <label for="itStandCSCRMReview" class="data-label">C-SCRM Review Results</label>
+                        <select class="form-control" id="itStandCSCRMReview" formControlName="itStandCSCRMReview">
+                          @for (review of cscrmReviews; track review) {
+                            <option [value]="review.ID"
+                            [selected]="review.Name === itStandard.CSCRMReview">{{ review.Name }}</option>
+                          }
+                        </select>
+                      </div>
                       @if (is508ExceptionGranted()) {
                         <div class="data">
                           <label for="itStand508ExceptionLink" class="data-label">508 Exception Link<span class="text-danger">*</span></label>

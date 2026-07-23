@@ -259,6 +259,18 @@ exports.findTypes = (req, res) => {
   res = ctrl.sendQuery(query, 'IT Standard Types', res); //removed sendQuery_cowboy reference
 };
 
+exports.findCriticalReviews = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standard_critical_reviews.sql')).toString();
+
+  res = ctrl.sendQuery(query, 'IT Standard Critical Reviews', res);
+};
+
+exports.findCSCRMReviews = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standard_c_scrm_reviews.sql')).toString();
+
+  res = ctrl.sendQuery(query, 'IT Standard C-SCRM Reviews', res);
+};
+
 exports.findAttestationStatusTypes = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_attestation-status_types.sql')).toString();
 
@@ -519,6 +531,8 @@ function updateData(techId, data) {
             Description                       = ${data.itStandDesc},
             obj_standard_type_Id              = ${data.itStandType},
             obj_508_compliance_status_Id      = ${data.itStand508},
+            obj_technology_critical_review_Id = ${data.itStandCriticalReview},
+            obj_technology_cscrm_review_Id    = ${data.itStandCSCRMReview},
             \`508_exception_link\`            = ${data.itStand508ExceptionLink},
             Available_through_Myview          = '${data.itStandMyView}',
             Vendor_Standard_Organization      = ${data.itStandVendorOrg},
@@ -571,6 +585,8 @@ function saveData(data) {
             Description,
             obj_standard_type_Id,
             obj_508_compliance_status_Id,
+            obj_technology_critical_review_Id,
+            obj_technology_cscrm_review_Id,
             \`508_exception_link\`,
             Available_through_Myview,
             Vendor_Standard_Organization,
@@ -599,6 +615,8 @@ function saveData(data) {
            ${data.itStandDesc},
            ${data.itStandType},
            ${data.itStand508},
+           ${data.itStandCriticalReview},
+           ${data.itStandCSCRMReview},
            ${data.itStand508ExceptionLink},
            '${data.itStandMyView}',
            ${data.itStandVendorOrg},

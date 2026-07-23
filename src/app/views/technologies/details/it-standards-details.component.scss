@@ -146,6 +146,26 @@
                         font-weight: bold;
                     }
                 }
+
+                & .review-results-group {
+                    margin-top: 0.5rem;
+                    padding-top: 1rem;
+                    border-top: 1px solid #e5e5e5;
+
+                    & .review-results-title {
+                        font-weight: 700;
+                        margin-bottom: 0.75rem;
+                    }
+
+                    & .review-results-grid {
+                        display: flex;
+                        flex-wrap: wrap;
+
+                        & .data {
+                            padding-bottom: 0;
+                        }
+                    }
+                }
             }
 
             & .sub-data-container {

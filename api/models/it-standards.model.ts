@@ -28,6 +28,8 @@ export class ITStandards {
   public SoftwareReleaseName: string = null;
   public StatusId: number = null;
   public Status: string = null;
+  public CriticalReview: string = null;
+  public CSCRMReview: string = null;
   public DeploymentType: string = null;
   public StandardType: string = null;
   public POC: string = null;
