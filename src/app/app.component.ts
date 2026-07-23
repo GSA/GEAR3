@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { distinctUntilChanged, filter } from 'rxjs/operators';
 
@@ -6,13 +6,16 @@ import { distinctUntilChanged, filter } from 'rxjs/operators';
 declare var $: any;
 declare var gtag: Function;
 
+// August 28, 2026 at 11:59 PM EST (UTC-4)
+const COUNTDOWN_TARGET = new Date('2026-08-29T03:59:00Z');
+
 @Component({
   standalone: false,
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   constructor(private router: Router) {
     this.router.events.subscribe(event => {
       // Send page_view event to GA
@@ -23,11 +26,40 @@ export class AppComponent implements OnInit {
   }
 
   title = 'gear3';
+  countdown: string = '';
+  private countdownInterval: any;
 
   ngOnInit() {
     // Pad main Module by how big the top navbar is
     $(document).ready(this.setNavOffsets);
     $(window).resize(this.setNavOffsets);
+
+    this.updateCountdown();
+    this.countdownInterval = setInterval(() => this.updateCountdown(), 1000);
+  }
+
+  ngOnDestroy() {
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+    }
+  }
+
+  private updateCountdown(): void {
+    const now = new Date();
+    const diff = COUNTDOWN_TARGET.getTime() - now.getTime();
+
+    if (diff <= 0) {
+      this.countdown = '0d 0h 0m 0s';
+      clearInterval(this.countdownInterval);
+      return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    this.countdown = `${days}d ${hours}h ${minutes}m ${seconds}s`;
   }
 
   setNavOffsets() {
