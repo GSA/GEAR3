@@ -65,7 +65,7 @@
     "express-jwt": "^6.1.0",
     "express-rate-limit": "^6.7.0",
     "fast-csv": "^4.3.6",
-    "follow-redirects": "^1.14.7",
+    "follow-redirects": "^1.16.0",
     "form-data": "^2.5.5",
     "google-auth-library": "^9.14.1",
     "googleapis": "^114.0.0",
