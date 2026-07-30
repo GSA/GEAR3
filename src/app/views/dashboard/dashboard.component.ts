@@ -33,7 +33,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     domain: ['#1f77b4', '#17becf', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b']
   };
   public pieColorScheme = {
-    domain: ['#4CAF50', '#FF6B35']
+    domain: ['#1F77B4', '#B07D12']
   };
 
   public hostingPlatformsData: any[] = [];
