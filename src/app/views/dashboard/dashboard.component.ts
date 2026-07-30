@@ -18,7 +18,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public isDataReady: boolean = false;
 
-  private resizeObserver: ResizeObserver;
+  private resizeObserver: any = null;
 
   public readonly recentITStandardAmount: number = 10;
 
@@ -317,9 +317,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private updateChartViews() {
     this.checkIfLabelsShouldRotate();
     
-    const barContainer = document.querySelector('.bar-chart-content');
-    if (barContainer?.clientWidth > 0) {
-      const barWidth = barContainer.clientWidth;
+    const barContainer: any = document.getElementsByClassName('bar-chart-content')[0];
+    if (barContainer) {
+      const barWidth = barContainer.offsetWidth;
       const screenWidth = window.innerWidth;
       
       const heights = this.shouldRotateLabels 
@@ -335,9 +335,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.barChartView = [600, 350];
     }
 
-    const pieContainer = document.querySelector('.pie-chart-content');
-    if (pieContainer?.clientWidth > 0) {
-      const pieWidth = pieContainer.clientWidth;
+    const pieContainer: any = document.getElementsByClassName('pie-chart-content')[0];
+    if (pieContainer) {
+      const pieWidth = pieContainer.offsetWidth;
       const screenWidth = window.innerWidth;
       const pieHeight = screenWidth <= 576 ? 180 :
                         screenWidth <= 992 ? 200 :
