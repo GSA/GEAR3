@@ -22,6 +22,8 @@ import { Column } from '@common/table-classes';
 })
 export class ItStandardsComponent implements OnInit {
 
+  private readonly otherStatuses: string[] = ['Approved', 'Denied', 'Retired'];
+
   // row: Object = <any>{};
   // filteredTable: boolean = false;
   // filterTitle: string = '';
@@ -140,9 +142,17 @@ export class ItStandardsComponent implements OnInit {
   }
 
   private updateTotals(): void {
-    this.apiService.getITStandardsFilterTotals(this.selectedChips).subscribe(t => {
-      this.filterTotals = t;
-    })
+    const filteredData = this.hasSelectedChips()
+      ? this.itStandardsData.filter(standard => this.selectedChips.includes(standard.DeploymentType))
+      : this.itStandardsData;
+
+    this.filterTotals = {
+      ApprovedTotal: filteredData.filter(standard => standard.Status === 'Approved').length,
+      DeniedTotal: filteredData.filter(standard => standard.Status === 'Denied').length,
+      RetiredTotal: filteredData.filter(standard => standard.Status === 'Retired').length,
+      OtherTotal: filteredData.filter(standard => !this.otherStatuses.includes(standard.Status)).length,
+      AllTotal: filteredData.length,
+    };
   }
 
   ngOnInit(): void {
@@ -389,10 +399,12 @@ export class ItStandardsComponent implements OnInit {
     // Set JWT when logged into GEAR Manager when returning from secureAuth
     this.sharedService.setJWTonLogIn();
 
-  this.apiService.getITStandards().subscribe(i => {
-      this.itStandardsData = this.setCondtionStatus(i);
-      this.itStandardsDataTabFilterted = this.setCondtionStatus(i);
-      this.itStandardsDataChipFilterted = this.setCondtionStatus(i);
+    this.apiService.getITStandards().subscribe(i => {
+      const standardsWithConditionStatus = this.setCondtionStatus(i);
+      this.itStandardsData = standardsWithConditionStatus;
+      this.itStandardsDataTabFilterted = standardsWithConditionStatus;
+      this.itStandardsDataChipFilterted = standardsWithConditionStatus;
+      this.updateTotals();
 
       const queryParams = this.route.snapshot.queryParams;
       const daysExpiring = Number(queryParams['expiringWithinDays'] || this.daysExpiring || 0);
@@ -458,10 +470,6 @@ export class ItStandardsComponent implements OnInit {
       if (this.selectedTab !== 'All') {
         this.onSelectTab(this.selectedTab);
       }
-    });
-
-    this.apiService.getITStandardsFilterTotals(this.selectedChips).subscribe(t => {
-      this.filterTotals = t;
     });
 
   //   // Method to open details modal when referenced directly via URL
