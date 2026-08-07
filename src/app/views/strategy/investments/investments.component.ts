@@ -40,7 +40,7 @@ export class InvestmentsComponent implements OnInit {
   vizData: any[] = [];
   vizLabel: string = 'Total Current IT Investments';
   colorScheme: {} = {
-    domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5'],
+    domain: ['#1F77B4', '#D97706', '#8B5CF6', '#0F766E', '#6B7280', '#A16207'],
   };
 
   constructor(

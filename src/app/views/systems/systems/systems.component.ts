@@ -36,9 +36,16 @@ export class SystemsComponent implements OnInit {
 
   vizData: any[] = [];
   vizLabel: string = 'Total Active Systems';
-  colorScheme: {} = {
-    domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5'],
+  colorScheme: { domain: string[] } = {
+    domain: []
   };
+
+  private readonly chartColors: string[] = [
+    '#0D47A1', '#D97706', '#6A1B9A', '#0F766E', '#C2410C', '#2563EB',
+    '#8E24AA', '#A16207', '#334155', '#0E7490', '#5B21B6', '#B45309',
+    '#1D4ED8', '#134E4A', '#7C3AED', '#92400E', '#155E75', '#0369A1',
+    '#4A148C', '#2F4B7C', '#6D28D9', '#1565C0', '#1E40AF', '#0B3B91'
+  ];
 
   public tableCols: Column[] = [];
   public selectedTab: string = '';
@@ -49,7 +56,7 @@ export class SystemsComponent implements OnInit {
 
   // custom filter queryParams values
   public monthsDecommissioned: number = 0;
-  public cloudBasedFilterValue = null;
+  public cloudBasedFilterValue: string | null = null;
   public cspName: string = '';
 
   public attributeDefs: DataDictionary[] = [];
@@ -357,7 +364,7 @@ export class SystemsComponent implements OnInit {
         const decommWithin = new Date();
         decommWithin.setMonth(now.getMonth() - this.monthsDecommissioned); // number of months set in the url
         decommWithin.setUTCHours(0, 0, 0, 0);
-        const expiringFiltered = [];
+        const expiringFiltered: System[] = [];
         systems.forEach(s => {
           let expDate = new Date(s.InactiveDate);
           if(s.InactiveDate && (expDate <= now && expDate >= decommWithin) && (s.Status === 'Inactive' && s.BusApp === 'Yes')) {
@@ -368,10 +375,11 @@ export class SystemsComponent implements OnInit {
         this.tableService.updateReportTableData(expiringFiltered);
         this.tableService.updateReportTableDataReadyStatus(true);
       } else if (this.cloudBasedFilterValue) {
-        const notCloudBasedFiltered = [];
+        const cloudBasedFilterValue = this.cloudBasedFilterValue as string;
+        const notCloudBasedFiltered: System[] = [];
         systems.forEach(s => {
-          if(s.CloudYN){ 
-            if((s.CloudYN.toLocaleLowerCase() === this.cloudBasedFilterValue.toLocaleLowerCase()) && s.Status == 'Active' && s.BusApp == 'Yes') {
+          if(s.CloudYN && cloudBasedFilterValue){ 
+            if((s.CloudYN.toLocaleLowerCase() === cloudBasedFilterValue.toLocaleLowerCase()) && s.Status == 'Active' && s.BusApp == 'Yes') {
               notCloudBasedFiltered.push(s);
             }
           }
@@ -380,7 +388,7 @@ export class SystemsComponent implements OnInit {
         this.tableService.updateReportTableData(notCloudBasedFiltered);
         this.tableService.updateReportTableDataReadyStatus(true);
       } else if (this.cspName) {
-        const cspFiltered = [];
+        const cspFiltered: System[] = [];
         systems.forEach(s => {
           if(s.CSP) {
             if(this.cspName.toLocaleLowerCase() === 'aws') {
@@ -435,6 +443,10 @@ export class SystemsComponent implements OnInit {
         .sort(function (a, b) {
           return b.value - a.value;
         });
+
+      this.colorScheme = {
+        domain: this.buildDistinctColorDomain(this.vizData.length)
+      };
 
       // console.log(this.vizData);  // Debug
     });
@@ -526,5 +538,15 @@ export class SystemsComponent implements OnInit {
       return def.TermDefinition;
     }
     return '';
+  }
+
+  private buildDistinctColorDomain(count: number): string[] {
+    const domain: string[] = [];
+
+    for (let index = 0; index < count; index++) {
+      domain.push(this.chartColors[index % this.chartColors.length]);
+    }
+
+    return domain;
   }
 }
