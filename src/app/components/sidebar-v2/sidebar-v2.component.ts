@@ -47,6 +47,7 @@ export class SidebarV2Component {
     { text: 'IT Standards Approval Process', href: 'https://sites.google.com/a/gsa.gov/it_standards/software-approvals#h.vioogtbleinq', icon: 'fas fa-external-link-alt' }
   ];
   public enterpriseArchitectureChildren: SidebarButtonChild[] = [
+    { text: 'EA Team', href: 'https://sites.google.com/gsa.gov/enterprisearchitecture/about-us', icon: 'fas fa-external-link-alt' },
     { text: 'GEAR Model Diagram', route: '/gear_model' }
   ];
   public additionalInfoChildren: SidebarButtonChild[] = [
