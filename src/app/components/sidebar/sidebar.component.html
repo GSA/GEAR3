@@ -129,6 +129,13 @@
           <i class="fas fa-network-wired fa-lg fa-fw"></i>
         </ng-template> -->
         <ng-template pTemplate="content">
+          <a
+            class="sidebar-sublink"
+            (click)="onClickNavigate($event, 'ea_team')"
+            (keydown)="onKeyboardNavigate($event, 'ea_team', false)"
+            href="https://sites.google.com/gsa.gov/enterprisearchitecture/about-us"
+            target="_blank"
+            rel="noopener">EA Team <i class="fas fa-external-link-alt"></i></a>
           <a class="sidebar-sublink" routerLink="/gear_model" (click)="onClickNavigate($event, '/gear_model')" (keydown)="onKeyboardNavigate($event, '/gear_model')">GEAR Model Diagram</a>
         </ng-template>
       </p-accordion-panel>

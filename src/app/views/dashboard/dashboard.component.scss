@@ -394,12 +394,12 @@
             height: 12px;
             border-radius: 50%;
 
-            &.green {
-              background-color: #4CAF50;
+            &.cloud-based {
+              background-color: #1F77B4;
             }
 
-            &.orange {
-              background-color: #FF6B35;
+            &.not-cloud-based {
+              background-color: #B07D12;
             }
           }
 
