@@ -4,6 +4,7 @@ const express = require("express");
 const rateLimit = require("express-rate-limit");
 
 const cap = require(routesPath + "capabilities.routes");
+const dashboard = require(routesPath + "dashboard.routes");
 const dataFlow = require(routesPath + "dataflow.routes");
 const fisma = require(routesPath + "fisma.routes");
 const googleAuth = require(routesPath + "google.routes");
@@ -31,7 +32,35 @@ let limiter = rateLimit({
   max: 15000, // 15000 requests
 });
 router.use(limiter);
+
+/**
+ * Cache-Control middleware for read-only GET endpoints.
+ * Dashboard summary and slow aggregate endpoints: 5 min (300s).
+ * All other GET API responses: 60s stale-while-revalidate.
+ * Mutations (POST/PUT/DELETE) are never cached.
+ */
+router.use((req, res, next) => {
+  if (req.method === 'GET') {
+    const longCachePaths = [
+      '/dashboard_summary',
+      '/cloud_adoption_rate',
+      '/data_dictionary',
+      '/attribute_definitions',
+    ];
+    const isLongCache = longCachePaths.some(p => req.path.startsWith(p));
+    if (isLongCache) {
+      res.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=60');
+    } else {
+      res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=30');
+    }
+  } else {
+    res.set('Cache-Control', 'no-store');
+  }
+  next();
+});
+
 router.use("/capabilities", cap);
+router.use("/dashboard_summary", dashboard);
 router.use("/data_flow", dataFlow);
 router.use("/fisma", fisma);
 router.use("/googleAuth", googleAuth);

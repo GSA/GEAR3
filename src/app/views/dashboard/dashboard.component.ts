@@ -4,7 +4,7 @@ import { Column } from '@common/table-classes';
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, combineLatest } from 'rxjs';
 import { AnalyticsService } from '@services/analytics/analytics.service';
 import { DataDictionary } from '@api/models/data-dictionary.model';
 
@@ -159,60 +159,39 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   public ngOnInit(): void {
+    // Single aggregated call replaces 9 separate dashboard metric requests
     forkJoin([
-      this.apiService.getITStandardsExpiringThisQuarter(),
-      this.apiService.getITStandardsExpiringThisWeek(),
-      this.apiService.getITStandardsPastDue(),
-      this.apiService.getFismaExpiringThisQuarter(),
-      this.apiService.getFismaExpiringThisWeek(),
-      this.apiService.getFismaPastDue(),
-      this.apiService.getDecommissionedSystemTotals(),
-      this.apiService.getRetiredStandardsTotals(),
+      this.apiService.getDashboardSummary(),
       this.apiService.getDataDictionaryByReportName('IT Standards List')
-    ]).subscribe(
-      ([
-        standardsExpiringQuarter,
-        standardsExpiringWeek,
-        standardsPastDue,
-        fismaExpiringQuarter,
-        fismaExpiringWeek,
-        fismaPastDue,
-        decommissionedSystemTotals,
-        RetiredStandardTotals,
-        definitions
-      ]) => {
-        this.standardsExpiringThisQuarter = standardsExpiringQuarter || 0;
-        this.standardsExpiringThisWeek = standardsExpiringWeek || 0;
-        this.standardsPastDue = standardsPastDue || 0;
-        this.fismaExpiringThisQuarter = fismaExpiringQuarter || 0;
-        this.fismaExpiringThisWeek = fismaExpiringWeek || 0;
-        this.fismaPastDue = fismaPastDue || 0;
+    ]).subscribe(([summary, definitions]) => {
+      this.standardsExpiringThisQuarter = summary.standardsExpiringThisQuarter ?? 0;
+      this.standardsExpiringThisWeek    = summary.standardsExpiringThisWeek ?? 0;
+      this.standardsPastDue             = summary.standardsPastDue ?? 0;
+      this.fismaExpiringThisQuarter     = summary.fismaExpiringThisQuarter ?? 0;
+      this.fismaExpiringThisWeek        = summary.fismaExpiringThisWeek ?? 0;
+      this.fismaPastDue                 = summary.fismaPastDue ?? 0;
 
-        this.decommissionedSystemsLast6Months = decommissionedSystemTotals?.DecommissionedSystemsLastSixMonths || 0;
-        this.decommissionedSystemsLastMonth = decommissionedSystemTotals?.DecommissionedSystemsLastMonth || 0;
-        this.retiredITStandardsLast6Months = RetiredStandardTotals?.RetiredStandardsLastSixMonths || 0;
-        this.retiredITStandardsLast7Days = RetiredStandardTotals?.RetiredStandardsLastWeek || 0;
+      this.decommissionedSystemsLast6Months = summary.decommissionedSystemsLast6Months ?? 0;
+      this.decommissionedSystemsLastMonth   = summary.decommissionedSystemsLastMonth ?? 0;
+      this.retiredITStandardsLast6Months    = summary.retiredStandardsLast6Months ?? 0;
+      this.retiredITStandardsLast7Days      = summary.retiredStandardsLastWeek ?? 0;
 
-        this.attrDefinitions = definitions;
-
-        this.isDataReady = true;
+      const cloudData = summary.cloudAdoptionRate;
+      if (cloudData) {
+        this.cloudBusinessSystemsData = [
+          { name: 'Cloud Based', value: cloudData.CloudBusSystemsCount },
+          { name: 'Not Cloud Based', value: cloudData.BusSystemsCount - cloudData.CloudBusSystemsCount }
+        ];
+        this.totalBusinessSystems = cloudData.BusSystemsCount || 0;
       }
-    );
+
+      this.attrDefinitions = definitions;
+      this.isDataReady = true;
+    });
 
     this.apiService.getRecentITStandards(this.recentITStandardAmount).subscribe(standards => {
       this.tableService.updateReportTableData(standards);
       this.tableService.updateReportTableDataReadyStatus(true);
-    });
-
-    this.apiService.getCloudAdoptionRate().subscribe(cloudData => {
-      if (cloudData && cloudData.length > 0) {
-        const latestData = cloudData[0];
-        this.cloudBusinessSystemsData = [
-          { name: 'Cloud Based', value: latestData.CloudBusSystemsCount },
-          { name: 'Not Cloud Based', value: latestData.BusSystemsCount - latestData.CloudBusSystemsCount }
-        ];
-        this.totalBusinessSystems = latestData.BusSystemsCount || 0;
-      }
     });
 
     this.loadHostingPlatformsData();
@@ -237,19 +216,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private loadHostingPlatformsData(): void {
-   this.apiService.getSystems().subscribe(systems => {
-      const platformCounts = systems
-        .filter(system => system.Status === 'Active' && system.BusApp === 'Yes' && system.CSP)
-        .reduce((counts, system) => {
-          const platform = this.normalizePlatformName(system.CSP.trim());
-          counts[platform] = (counts[platform] || 0) + 1;
-          return counts;
-        }, {} as { [key: string]: number });
-
-      const { individualPlatforms, othersCount } = Object.entries(platformCounts)
-        .map(([name, value]) => ({ name, value }))
-        .sort((a: any, b: any) => b.value - a.value)
-        .reduce((acc, platform: any) => {
+    // Replaces full GET /api/systems (1.98MB) with a lightweight aggregation endpoint
+    this.apiService.getHostingPlatforms().subscribe(rows => {
+      const { individualPlatforms, othersCount } = rows
+        .map(row => ({ name: this.normalizePlatformName(row.CSP), value: row.count }))
+        .sort((a, b) => b.value - a.value)
+        .reduce((acc, platform) => {
           if (platform.value >= 3) {
             acc.individualPlatforms.push(platform);
           } else {
@@ -266,7 +238,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.hostingPlatformsData = finalData;
       this.updateChartViews();
       this.cdr.detectChanges();
-   });
+    });
   }
 
   private normalizePlatformName(platform: string): string {

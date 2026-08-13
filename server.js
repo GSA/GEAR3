@@ -1,6 +1,7 @@
 var dotenv = require('dotenv').config();  // .env Credentials
 
-const bodyParser = require('body-parser'),
+const compression = require('compression'),
+  bodyParser = require('body-parser'),
   cors = require('cors'),
   express = require('express'),
   fs = require('fs'),
@@ -84,6 +85,7 @@ passport.use(new JWTStrategy({
 LOAD EXPRESSJS MIDDLEWARE
 ********************************************************************/
 const app = express()
+  .use(compression())
   .use(cors())
   .use(bodyParser.json({ limit: '50mb' }))
   .use(bodyParser.urlencoded({ limit: '50mb', extended: false }))
