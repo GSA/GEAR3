@@ -145,12 +145,12 @@ app.get('/verify',
     // get the GSAGEARAPIT cookie value
     const apiToken = cookies.GSAGEARAPIT;
     if (apiToken) {
-      const query = `select count(*) as cnt from gear_acl.logins where email = '${userName}' and jwt = '${apiToken}' and date_add(expireDate, interval 1 day) > now();`;
+      const query = 'select count(*) as cnt from gear_acl.logins where email = ? and jwt = ? and date_add(expireDate, interval 1 day) > now();';
       // query the database for the api token
       const db = mysql.createConnection(dbCredentials);
       db.connect();
       //console.log('query = ', query); // debug
-      db.query(query,
+      db.query(query, [userName, apiToken],
         (err, results, fields) => {
           if (err) {
             // send the error to the client
@@ -200,11 +200,11 @@ app.get('/checkGearManagerAccess',
       return;
     }
     
-    const query = `select count(*) as cnt from gear_acl.logins where email = '${userName}' and jwt = '${apiToken}' and date_add(expireDate, interval 1 day) > now();`;
+    const query = 'select count(*) as cnt from gear_acl.logins where email = ? and jwt = ? and date_add(expireDate, interval 1 day) > now();';
     const db = mysql.createConnection(dbCredentials);
     db.connect();
     
-    db.query(query,
+    db.query(query, [userName, apiToken],
       (err, results, fields) => {
         if (err) {
           res.status(500).json({ 
@@ -250,7 +250,7 @@ app.post('/logout', (req, res) => {
   // log the logout to log.event
   const db = mysql.createConnection(dbCredentials);
   db.connect();
-  db.query(`insert into gear_log.event (Event, User, DTG) values ('GEAR Manager - Logged Out', '${userName}', now());`);
+  db.query('insert into gear_log.event (Event, User, DTG) values (?, ?, now());', ['GEAR Manager - Logged Out', userName]);
   // send the response with no cookies
   res.status(200).json({ message: 'logged out' });
 });
@@ -263,11 +263,11 @@ app.post(samlConfig.path,
     const samlProfile = req.user;
     const db = mysql.createConnection(dbCredentials);
     db.connect();
-    db.query(`CALL gear_acl.get_user_perms('${samlProfile.nameID}');`,
+    db.query('CALL gear_acl.get_user_perms(?);', [samlProfile.nameID],
       (err, results, fields) => {
         if (err) {
           // log error returned by get_user_perms() to log.event
-          db.query(`insert into gear_log.event (Event, User, DTG) values ('GEAR Manager - Login Error', '${samlProfile.nameID}', now());`);
+          db.query('insert into gear_log.event (Event, User, DTG) values (?, ?, now());', ['GEAR Manager - Login Error', samlProfile.nameID]);
           
           // send the error to the client
           res.status(500);
@@ -279,7 +279,7 @@ app.post(samlConfig.path,
 
           if (results[0].length === 0) {
             // log user not found to log.event
-            db.query(`insert into gear_log.event (Event, User, DTG) values ('GEAR Manager - Unable to Verify User', '${samlProfile.nameID}', now());`);
+            db.query('insert into gear_log.event (Event, User, DTG) values (?, ?, now());', ['GEAR Manager - Unable to Verify User', samlProfile.nameID]);
             
             // Create a more user-friendly error page that redirects back to GEAR Manager
             html = `
@@ -341,7 +341,7 @@ app.post(samlConfig.path,
           const apiToken = CryptoJS.AES.encrypt(`${jwt.auditID}`, key);
 
           // set the JWT in the database
-          db.query(`CALL gear_acl.setJwt ('${jwt.auditID}', '${apiToken}');`,
+          db.query('CALL gear_acl.setJwt (?, ?);', [jwt.auditID, `${apiToken}`],
           (err) => {
             if (err) {
               console.log(err);
@@ -368,7 +368,7 @@ app.post(samlConfig.path,
 `
           
           // Log GEAR Manager login
-          db.query(`insert into gear_log.event (Event, User, DTG) values ('GEAR Manager - Successful Login', '${samlProfile.nameID}', now());`);
+          db.query('insert into gear_log.event (Event, User, DTG) values (?, ?, now());', ['GEAR Manager - Successful Login', samlProfile.nameID]);
 
           // set the cookie expiration date
           let date = new Date();

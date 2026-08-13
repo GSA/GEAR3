@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '../../shared/shared.module';
 
-import { EAViewComponent } from './ea-view/ea-view.component';
 import { GearModelComponent } from './gear-model/gear-model.component';
 
 const routes: Routes = [
@@ -12,7 +11,6 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [
-    EAViewComponent,
     GearModelComponent,
   ],
   imports: [

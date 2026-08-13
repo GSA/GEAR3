@@ -4,7 +4,7 @@ import { Column } from '@common/table-classes';
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
-import { forkJoin, combineLatest } from 'rxjs';
+import { forkJoin } from 'rxjs';
 import { AnalyticsService } from '@services/analytics/analytics.service';
 import { DataDictionary } from '@api/models/data-dictionary.model';
 

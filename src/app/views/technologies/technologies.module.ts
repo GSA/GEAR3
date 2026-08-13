@@ -12,11 +12,11 @@ import { TechCategoriesModelComponent } from './tech-categories-model/tech-categ
 
 const routes: Routes = [
   { path: 'it_standards', component: ItStandardsComponent, title: 'IT Standards' },
+  { path: 'it_standards/filtered/:deploymentType/:status', component: ItStandardsComponent, title: 'IT Standard' },
+  { path: 'it_standards/filtered/:deploymentType', component: ItStandardsComponent, title: 'IT Standard' },
   { path: 'it_standards/:standardID', component: ItStandardsDetailsComponent, title: 'IT Standard' },
   { path: 'it_standards_manager', component: ItStandardsManagerComponent, title: 'IT Standard Manager' },
   { path: 'it_standards_manager/:standardID', component: ItStandardsManagerComponent, title: 'IT Standard Manager' },
-  { path: 'it_standards/filtered/:deploymentType/:status', component: ItStandardsComponent, title: 'IT Standard' },
-  { path: 'it_standards/filtered/:deploymentType', component: ItStandardsComponent, title: 'IT Standard' },
   { path: 'tech_categories', component: TechCategoriesComponent, title: 'Technology Categories' },
   { path: 'tech_categories/:techCatID', component: TechCategoriesDetailsComponent, title: 'Technology Category' },
   { path: 'tech_categories_model', component: TechCategoriesModelComponent, title: 'Technology Categories Model' },
