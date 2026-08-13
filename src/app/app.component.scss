@@ -6,6 +6,12 @@
     display: flex;
     flex-direction: row;
     height: 100%;
+
+    & .main-content {
+      display: block;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
   }
 }
 

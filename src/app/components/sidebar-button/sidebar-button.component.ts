@@ -69,7 +69,7 @@ export class SidebarButtonComponent implements OnChanges {
         this.routeChange.emit();
     }
 
-    private hasChildren(): boolean {
+    public hasChildren(): boolean {
         return this.buttonChildren && this.buttonChildren.length > 0;
     }
 
