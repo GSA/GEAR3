@@ -2,6 +2,7 @@ var dotenv = require('dotenv').config();  // .env Credentials
 
 const compression = require('compression'),
   bodyParser = require('body-parser'),
+  compression = require('compression'),
   cors = require('cors'),
   express = require('express'),
   fs = require('fs'),
@@ -80,6 +81,26 @@ passport.use(new JWTStrategy({
   }
 ));
 
+const browserBuildPath = path.join(__dirname, 'public', 'browser');
+
+const staticAssetOptions = {
+  etag: true,
+  lastModified: true,
+  setHeaders: (res, servedPath) => {
+    if (servedPath.endsWith('index.html')) {
+      res.setHeader('Cache-Control', 'no-cache');
+      return;
+    }
+
+    const normalizedPath = servedPath.replace(/\\/g, '/');
+    const isFingerprintedAsset = /-(?:[A-Z0-9]{8,})\.(?:js|css)$/.test(normalizedPath);
+
+    if (isFingerprintedAsset) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    }
+  }
+};
+
 
 /********************************************************************
 LOAD EXPRESSJS MIDDLEWARE
@@ -90,7 +111,7 @@ const app = express()
   .use(bodyParser.json({ limit: '50mb' }))
   .use(bodyParser.urlencoded({ limit: '50mb', extended: false }))
   .use(passport.initialize())
-  .use(express.static(path.join(__dirname, 'public', 'browser')))
+  .use(express.static(browserBuildPath, staticAssetOptions))
   .enable('trust proxy');  // For expressJS to know we're behind a proxy when deployed
 
 
@@ -414,7 +435,8 @@ app.post(samlConfig.path,
 REDIRECT ROOT TO GEAR "read only" (aka "angular") app
 ********************************************************************/
 app.get('*', function (req, res) {
-  res.sendFile(path.join(__dirname, 'public', 'browser', 'index.html'));
+  res.setHeader('Cache-Control', 'no-cache');
+  res.sendFile(path.join(browserBuildPath, 'index.html'));
 });
 
 /********************************************************************

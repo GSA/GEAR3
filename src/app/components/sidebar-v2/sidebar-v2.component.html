@@ -1,5 +1,5 @@
 <div class="sidebar-container" [ngClass]="{'expanded' : isSidebarExpanded}" (mouseenter)="toggleSidebar()"
-  (mouseleave)="toggleSidebar()" (focus)="toggleSidebar()" tabindex="1" id="sidebar" [class.expanded]="isSidebarExpanded">
+  (mouseleave)="toggleSidebar()" (focus)="toggleSidebar()" tabindex="0" id="sidebar" [class.expanded]="isSidebarExpanded" role="navigation" aria-label="Primary navigation">
   
 <div class="sidebar-button-container">
   <app-sidebar-button buttonText="Dashboard"

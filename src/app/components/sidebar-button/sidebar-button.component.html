@@ -1,4 +1,4 @@
-<div class="sidebar-button" (click)="onButtonClick()" (keyup)="onKeyUp($event)" tabindex="1">
+<div class="sidebar-button" (click)="onButtonClick()" (keyup)="onKeyUp($event)" tabindex="0" [attr.role]="hasChildren() ? 'button' : 'link'" [attr.aria-label]="buttonText" [attr.aria-expanded]="hasChildren() ? isButtonExpanded : null">
   <div class="sidebar-button-icon">
     <i [ngClass]="buttonIcon"></i>
   </div>
@@ -10,7 +10,7 @@
 </div>
 <div class="sidebar-children-container" [ngClass]="{'expanded' : isButtonExpanded}">
   @for (child of buttonChildren; track child) {
-    <div class="sidebar-button-child" (keyup)="onChildKeyUp($event, child)" (click)="onChildButtonClick(child)" tabindex="1">
+    <div class="sidebar-button-child" (keyup)="onChildKeyUp($event, child)" (click)="onChildButtonClick(child)" tabindex="0" role="link" [attr.aria-label]="child.text">
       <div class="sidebar-button-text">
         {{child.text}}
       </div>
