@@ -2,7 +2,6 @@ var dotenv = require('dotenv').config();  // .env Credentials
 
 const compression = require('compression'),
   bodyParser = require('body-parser'),
-  compression = require('compression'),
   cors = require('cors'),
   express = require('express'),
   fs = require('fs'),
@@ -112,7 +111,8 @@ const app = express()
   .use(bodyParser.urlencoded({ limit: '50mb', extended: false }))
   .use(passport.initialize())
   .use(express.static(browserBuildPath, staticAssetOptions))
-  .enable('trust proxy');  // For expressJS to know we're behind a proxy when deployed
+  .enable('trust proxy');
+app.set('trust proxy', 1); // Trust only the first proxy hop (load balancer/CDN)
 
 
 /********************************************************************
