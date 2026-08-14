@@ -111,6 +111,9 @@ export class ApiService {
   // TRM
   trmUrl: string = this.sharedService.internalURLFmt('/api/trm');
 
+  // Dashboard Summary
+  dashboardSummaryUrl: string = this.sharedService.internalURLFmt('/api/dashboard_summary');
+
   constructor(
     private globals: Globals,
     private http: HttpClient,
@@ -118,6 +121,19 @@ export class ApiService {
   ) {}
 
   // Calls
+  //// Dashboard Summary
+  public getDashboardSummary(): Observable<any> {
+    return this.http
+      .get<any>(this.dashboardSummaryUrl)
+      .pipe(catchError(this.handleError<any>('GET Dashboard Summary', {})));
+  }
+
+  public getHostingPlatforms(): Observable<{ CSP: string; count: number }[]> {
+    return this.http
+      .get<{ CSP: string; count: number }[]>(this.dashboardSummaryUrl + '/hosting_platforms')
+      .pipe(catchError(this.handleError<any[]>('GET Hosting Platforms', [])));
+  }
+
   //// Capabilities
   public getCapabilities(): Observable<Capability[]> {
     return this.http

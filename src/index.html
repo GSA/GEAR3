@@ -21,7 +21,21 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/svg+xml" href="/assets/img/cog-solid.svg" />
-  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
+
+  <!-- Preconnect to Google Fonts origins to reduce connection overhead -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Load Google Fonts asynchronously to avoid render-blocking -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap"></noscript>
+
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/icon?family=Material+Icons" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"></noscript>
+
+  <!-- Preload Nunito Sans (loaded via @import in bootstrap.min.css) to improve load priority -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,600&display=swap"></noscript>
 </head>
 
 <body>
