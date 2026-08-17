@@ -53,7 +53,7 @@
                   }
                   @if (showShowHideColumnButton) {
                     <p-multiSelect
-                      [options]="tableCols"
+                      [options]="pickableColumns"
                       [(ngModel)]="visibleColumns"
                       (onChange)="toggleVisible($event)"
                       optionLabel="header"

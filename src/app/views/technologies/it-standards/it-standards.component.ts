@@ -392,6 +392,7 @@ export class ItStandardsComponent implements OnInit {
         header: 'C-SCRM Review Results',
         isSortable: true,
         showColumn: false,
+        hideFromPicker: true,
         titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'C-SCRM Review Results')
       }];
     });
