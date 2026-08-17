@@ -333,8 +333,11 @@ export class ItStandardsManagerComponent implements OnInit {
       if (this.itStandard.POC) {
         this.itStandard.POC.split('; ').forEach(poc => {
           // Index 0 has name of POC
-          let pocName = poc.split(', ')[0]
-          pocIDs.push(this.sharedService.findInArray(this.POCs, 'Name', pocName, 'SamAccountName'));
+          let pocName = poc.split(', ')[0];
+          const samAccountName = this.sharedService.findInArray(this.POCs, 'Name', pocName, 'SamAccountName');
+          if (samAccountName !== undefined && samAccountName !== null) {
+            pocIDs.push(samAccountName);
+          }
         });
       };
 
@@ -372,7 +375,10 @@ export class ItStandardsManagerComponent implements OnInit {
       if (this.itStandard.Category) {
         this.itStandard.Category.split(', ').forEach(cat => {
           if(cat) {
-            categoryIDs.push(this.sharedService.findInArray(this.categories, 'Name', cat, 'Id'));
+            const catId = this.sharedService.findInArray(this.categories, 'Name', cat, 'Id');
+            if(catId !== undefined && catId !== null) {
+              categoryIDs.push(catId);
+            }
           }
         });
       };
@@ -621,7 +627,12 @@ export class ItStandardsManagerComponent implements OnInit {
       let initialOS: number[] = [];
       if(this.itStandard.OperatingSystems) {
         let initialOSString = this.itStandard.OperatingSystems.split(', ');
-        initialOSString.forEach(o => initialOS.push(this.sharedService.findInArray(this.operatingSystems, 'Name', o)));
+        initialOSString.forEach(o => {
+          const osId = this.sharedService.findInArray(this.operatingSystems, 'Name', o);
+          if (osId !== undefined && osId !== null) {
+            initialOS.push(osId);
+          }
+        });
       }
       this.itStandardsForm.value.initialOS = initialOS;
 

@@ -459,6 +459,9 @@ function saveCustomSoftwareRelease(techId, softwareRelease, softwareVersion) {
 
 function updateITStandardRelease(techId, softwareRelease) {
   let queryString = '';
+  if (!softwareRelease || softwareRelease.application === undefined || softwareRelease.application === null) {
+    return queryString;
+  }
   queryString = `UPDATE 
                   obj_technology
                 SET
@@ -520,6 +523,12 @@ function updateData(techId, data) {
   data.itStandConditionsRestrictions = ctrl.setNullEmptyTextHandler(data.itStandConditionsRestrictions);
   data.itStandAlsoKnownAs = ctrl.setNullEmptyTextHandler(data.itStandAlsoKnownAs);
   data.itStand508ExceptionLink = ctrl.setNullEmptyTextHandler(data.itStand508ExceptionLink);
+  if (data.itStandCSCRMReview === undefined || data.itStandCSCRMReview === null || data.itStandCSCRMReview === '') {
+    data.itStandCSCRMReview = null;
+  }
+  if (data.itStandCriticalReview === undefined || data.itStandCriticalReview === null || data.itStandCriticalReview === '') {
+    data.itStandCriticalReview = null;
+  }
 
   data.tcEndOfLifeDate = ctrl.setNullEmptyTextHandler(data.tcEndOfLifeDate);
 
@@ -577,6 +586,12 @@ function saveData(data) {
   data.itStandConditionsRestrictions = ctrl.setNullEmptyTextHandler(data.itStandConditionsRestrictions);
   data.itStandAlsoKnownAs = ctrl.setNullEmptyTextHandler(data.itStandAlsoKnownAs);
   data.itStand508ExceptionLink = ctrl.setNullEmptyTextHandler(data.itStand508ExceptionLink);
+  if (data.itStandCSCRMReview === undefined || data.itStandCSCRMReview === null || data.itStandCSCRMReview === '') {
+    data.itStandCSCRMReview = null;
+  }
+  if (data.itStandCriticalReview === undefined || data.itStandCriticalReview === null || data.itStandCriticalReview === '') {
+    data.itStandCriticalReview = null;
+  }
 
   return `INSERT INTO obj_technology(
             obj_technology_status_Id,
