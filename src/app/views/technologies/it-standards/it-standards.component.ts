@@ -2,17 +2,33 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
-import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
-import { TableService } from '@services/tables/table.service';
-import { Title } from '@angular/platform-browser';
 
 import { ITStandards } from '@api/models/it-standards.model';
 import { DataDictionary } from '@api/models/data-dictionary.model';
-import { Column } from '@common/table-classes';
 
-// Declare jQuery symbol
-// declare var $: any;
+export interface RollupCol {
+  field: string;
+  header: string;
+  isSortable: boolean;
+  showColumn: boolean;
+}
+
+export interface ItStandardRollupRow {
+  productKey: string;
+  displayName: string;
+  manufacturerName: string;
+  status: string;
+  deploymentType: string;
+  description: string;
+  approvalExpirationDate: any;
+  alsoKnownAs: string;
+  standardType: string;
+  versionsCount: number;
+  hasMultipleVersions: boolean;
+  mostRecentStandard: ITStandards;
+  versions: ITStandards[];
+}
 
 @Component({
     selector: 'it-standards',
@@ -22,555 +38,342 @@ import { Column } from '@common/table-classes';
 })
 export class ItStandardsComponent implements OnInit {
 
-  private readonly otherStatuses: string[] = ['Approved', 'Denied', 'Retired'];
+  private readonly otherStatuses = ['Approved', 'Denied', 'Retired', 'Approved with conditions'];
 
-  // row: Object = <any>{};
-  // filteredTable: boolean = false;
-  // filterTitle: string = '';
   attrDefinitions: DataDictionary[] = [];
-  // columnDefs: any[] = [];
-  // dataReady: boolean = false;
+  itStandardsData: ITStandards[] = [];
 
-  public tableCols: Column[] = [];
-  public selectedTab: string = 'All';
-  public filterTotals: any = null;
-  public itStandardsData: ITStandards[] = [];
-  public itStandardsDataTabFilterted: ITStandards[] = [];
-  public itStandardsDataChipFilterted: ITStandards[] = [];
-  public filterChips: string[] = ['Mobile', 'Desktop', 'Server', 'SaaS', 'PaaS', 'Other'];
+  rollupRows: ItStandardRollupRow[] = [];
+  rollupRowsFiltered: ItStandardRollupRow[] = [];
+  rollupTotals: any = null;
+  isRollupReady: boolean = false;
+
+  selectedTab: string = 'All';
+  filterChips: string[] = ['Mobile', 'Desktop', 'Server', 'SaaS', 'PaaS', 'Other'];
   private selectedChips: string[] = [];
 
-  public daysExpiring: number = 0;
-  public daysRetired: number = 0;
-  public includePastDueExpirations: boolean = false;
-  public pastDueOnly: boolean = false;
+  searchTerm: string = '';
+  expandedRows: { [key: string]: boolean } = {};
 
-  public isDataReady: boolean = false;
+  rollupCols: RollupCol[] = [
+    { field: 'displayName',           header: 'IT Standard Name', isSortable: true,  showColumn: true  },
+    { field: 'versionsCount',         header: 'Versions',         isSortable: true,  showColumn: true  },
+    { field: 'manufacturerName',      header: 'Manufacturer',     isSortable: true,  showColumn: true  },
+    { field: 'description',           header: 'Description',      isSortable: false, showColumn: true  },
+    { field: 'status',                header: 'Status',           isSortable: true,  showColumn: true  },
+    { field: 'deploymentType',        header: 'Deployment Type',  isSortable: true,  showColumn: true  },
+    { field: 'approvalExpirationDate', header: 'Approval Expires', isSortable: true, showColumn: true  },
+    { field: 'alsoKnownAs',           header: 'Also Known As',    isSortable: true,  showColumn: false },
+    { field: 'standardType',          header: 'Standard Type',    isSortable: true,  showColumn: false },
+  ];
+
+  selectedCols: RollupCol[] = [];
+
+  daysExpiring: number = 0;
+  daysRetired: number = 0;
+  includePastDueExpirations: boolean = false;
+  pastDueOnly: boolean = false;
 
   constructor(
     private apiService: ApiService,
-    private modalService: ModalsService,
     private route: ActivatedRoute,
     public sharedService: SharedService,
-    private tableService: TableService,
-    private titleService: Title,
     private router: Router
-  ) {
-    // this.modalService.currentITStand.subscribe((row) => (this.row = row));
+  ) {}
+
+  get visibleCols(): RollupCol[] {
+    return this.rollupCols.filter(c => c.showColumn);
   }
 
-  public isLoggedIn(): boolean {
+  isLoggedIn(): boolean {
     return this.sharedService.loggedIn;
   }
 
-  public onCreateNew(): void {
+  onCreateNew(): void {
     this.router.navigate(['/it_standards_manager']);
   }
 
-  public onSelectTab(tabName: string): void {
-    this.selectedTab = tabName;
-    this.itStandardsDataTabFilterted = this.itStandardsData;
+  ngOnInit(): void {
+    this.selectedCols = this.rollupCols.filter(c => c.showColumn);
 
-    if(this.selectedTab === 'All') {
-      if(this.hasSelectedChips()) {
-        this.onFilterChipSelect(this.selectedChips);
-      } else {
-        this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
-        //this.tableService.updateReportTableDataReadyStatus(true);
-      }
-    } else if (this.selectedTab === 'Other') {
-      if(this.hasSelectedChips()) {
-        this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
-          return x.Status !== 'Approved' && x.Status !== 'Denied' && x.Status !== 'Retired';
-        });
-        this.onFilterChipSelect(this.selectedChips);
-      } else {
-        this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
-          return x.Status !== 'Approved' && x.Status !== 'Denied' && x.Status !== 'Retired' && x.Status !== 'Approved with conditions';
-        });
-        this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
-        //this.tableService.updateReportTableDataReadyStatus(true);
-      }
-    } else {
-      if(this.hasSelectedChips()) {
-        this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
-          return x.Status === tabName;
-        });
-        this.onFilterChipSelect(this.selectedChips);
-      } else {
-        this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
-          return x.Status === tabName;
-        });
-        this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
-        //this.tableService.updateReportTableDataReadyStatus(true);
-      }
-    }
+    this.route.queryParams.subscribe(params => {
+      if (params['tab'])               this.selectedTab = params['tab'];
+      if (params['expiringWithinDays']) this.daysExpiring = +params['expiringWithinDays'];
+      if (params['includePastDue'])    this.includePastDueExpirations = params['includePastDue'] === 'true';
+      if (params['pastDueOnly'])       this.pastDueOnly = params['pastDueOnly'] === 'true';
+      if (params['retiredWithinDays']) this.daysRetired = +params['retiredWithinDays'];
+      if (params['tableSearchTerm'])   this.searchTerm = params['tableSearchTerm'];
+    });
+
+    this.apiService.getDataDictionaryByReportName('IT Standards List').subscribe(defs => {
+      this.attrDefinitions = defs;
+    });
+
+    this.sharedService.setJWTonLogIn();
+
+    this.apiService.getITStandards().subscribe(standards => {
+      this.itStandardsData = this.applyConditionStatus(standards);
+      const filtered = this.applyDateFilters(this.itStandardsData);
+      this.rollupRows = this.buildRollupRows(filtered);
+      this.applyRollupFilters();
+      this.isRollupReady = true;
+    });
   }
 
-  public onKeyUp(e: KeyboardEvent, tabName: string) {
-    if(e.key === ' ' || e.key === 'Enter') {
-      this.onSelectTab(tabName);
-    }
-  }
+  private applyDateFilters(standards: ITStandards[]): ITStandards[] {
+    const p = this.route.snapshot.queryParams;
+    const daysExpiring = Number(p['expiringWithinDays'] || this.daysExpiring || 0);
+    const daysRetired = Number(p['retiredWithinDays'] || this.daysRetired || 0);
+    const includePastDue = p['includePastDue'] === 'true' || this.includePastDueExpirations;
+    const pastDueOnly = p['pastDueOnly'] === 'true' || this.pastDueOnly;
 
-  public onFilterChipSelect(selectedChips: string[]): void {
-    this.selectedChips = selectedChips;
-    this.itStandardsDataChipFilterted = this.itStandardsDataTabFilterted;
-    if(this.hasSelectedChips()) {
-      this.itStandardsDataChipFilterted = this.itStandardsDataTabFilterted.filter(f => {
-        return selectedChips.includes(f.DeploymentType);
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    if (daysExpiring > 0) {
+      const until = new Date(now);
+      until.setDate(until.getDate() + daysExpiring);
+      return standards.filter(x => {
+        if (!x.ApprovalExpirationDate) return false;
+        const d = new Date(x.ApprovalExpirationDate);
+        d.setHours(0, 0, 0, 0);
+        const inWindow = includePastDue ? d <= until : (d >= now && d <= until);
+        return inWindow && this.isInExpiringStatusScope(x);
       });
-      this.tableService.updateReportTableData(this.itStandardsDataChipFilterted);
-      this.tableService.updateReportTableDataReadyStatus(true);
-    } else {
-      this.itStandardsDataChipFilterted = this.itStandardsDataTabFilterted;
-      this.onSelectTab(this.selectedTab);
+    } else if (pastDueOnly) {
+      return standards.filter(x => {
+        if (!x.ApprovalExpirationDate) return false;
+        const d = new Date(x.ApprovalExpirationDate);
+        d.setHours(0, 0, 0, 0);
+        return d < now && this.isInExpiringStatusScope(x);
+      });
+    } else if (daysRetired > 0) {
+      const since = new Date(now);
+      since.setDate(since.getDate() - daysRetired);
+      return standards.filter(x => {
+        if (!x.ApprovalExpirationDate) return false;
+        const d = new Date(x.ApprovalExpirationDate);
+        d.setHours(0, 0, 0, 0);
+        return d <= now && d >= since && x.Status === 'Retired';
+      });
     }
-    this.updateTotals();
+
+    return standards;
   }
 
-  public isTabSelected(tabName: string): boolean {
-    return this.selectedTab === tabName;
+  private buildRollupRows(standards: ITStandards[]): ItStandardRollupRow[] {
+    const groups = new Map<string, ITStandards[]>();
+
+    for (const std of standards) {
+      const key = std.SoftwareProduct != null ? `p${std.SoftwareProduct}` : `s${std.ID}`;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key)!.push(std);
+    }
+
+    const rows: ItStandardRollupRow[] = [];
+    groups.forEach((versions, key) => {
+      const recent = this.getMostRecentVersion(versions);
+      rows.push({
+        productKey: key,
+        displayName: recent.SoftwareProductName || recent.Name,
+        manufacturerName: recent.ManufacturerName,
+        status: recent.Status,
+        deploymentType: recent.DeploymentType,
+        description: recent.Description,
+        approvalExpirationDate: recent.ApprovalExpirationDate,
+        alsoKnownAs: recent.AlsoKnownAs,
+        standardType: recent.StandardType,
+        versionsCount: versions.length,
+        hasMultipleVersions: versions.length > 1,
+        mostRecentStandard: recent,
+        versions: this.sortVersions(versions),
+      });
+    });
+
+    return rows.sort((a, b) => (a.displayName || '').localeCompare(b.displayName || ''));
   }
 
-  private hasSelectedChips(): boolean {
-    return this.selectedChips && this.selectedChips.length > 0;
+  private getMostRecentVersion(versions: ITStandards[]): ITStandards {
+    const withDate = versions.filter(v => v.ApprovalExpirationDate);
+    if (withDate.length > 0) {
+      return withDate.sort((a, b) =>
+        new Date(b.ApprovalExpirationDate).getTime() - new Date(a.ApprovalExpirationDate).getTime()
+      )[0];
+    }
+    return [...versions].sort((a, b) => b.ID - a.ID)[0];
   }
 
-  private YesNo(value: any, row: any, index: number, field: string): string {
-    return value === 'T'? "Yes" : "No";
+  private sortVersions(versions: ITStandards[]): ITStandards[] {
+    const priority = (s: string): number => {
+      if (s === 'Approved' || s === 'Approved with conditions') return 0;
+      if (s === 'Denied') return 1;
+      if (s === 'Retired') return 2;
+      return 3;
+    };
+    return [...versions].sort((a, b) => {
+      const p = priority(a.Status) - priority(b.Status);
+      if (p !== 0) return p;
+      if (a.ApprovalExpirationDate && b.ApprovalExpirationDate) {
+        return new Date(b.ApprovalExpirationDate).getTime() - new Date(a.ApprovalExpirationDate).getTime();
+      }
+      return b.ID - a.ID;
+    });
   }
 
-  private updateTotals(): void {
-    const filteredData = this.hasSelectedChips()
-      ? this.itStandardsData.filter(standard => this.selectedChips.includes(standard.DeploymentType))
-      : this.itStandardsData;
+  applyRollupFilters(): void {
+    let rows = [...this.rollupRows];
 
-    this.filterTotals = {
-      ApprovedTotal: filteredData.filter(standard => standard.Status === 'Approved').length,
-      DeniedTotal: filteredData.filter(standard => standard.Status === 'Denied').length,
-      RetiredTotal: filteredData.filter(standard => standard.Status === 'Retired').length,
-      OtherTotal: filteredData.filter(standard => !this.otherStatuses.includes(standard.Status)).length,
-      AllTotal: filteredData.length,
+    if (this.selectedTab !== 'All') {
+      if (this.selectedTab === 'Other') {
+        rows = rows.filter(r => !this.otherStatuses.includes(r.status));
+      } else if (this.selectedTab === 'Approved') {
+        rows = rows.filter(r => r.status === 'Approved' || r.status === 'Approved with conditions');
+      } else {
+        rows = rows.filter(r => r.status === this.selectedTab);
+      }
+    }
+
+    if (this.selectedChips.length > 0) {
+      rows = rows.filter(r => this.selectedChips.includes(r.deploymentType));
+    }
+
+    const term = this.searchTerm?.trim().toLowerCase();
+    if (term) {
+      rows = rows.filter(r =>
+        this.visibleCols.some(col => {
+          const val = (r as any)[col.field];
+          return val != null && String(val).toLowerCase().includes(term);
+        })
+      );
+    }
+
+    this.rollupRowsFiltered = rows;
+    this.computeRollupTotals();
+  }
+
+  private computeRollupTotals(): void {
+    let base = [...this.rollupRows];
+    if (this.selectedChips.length > 0) {
+      base = base.filter(r => this.selectedChips.includes(r.deploymentType));
+    }
+    this.rollupTotals = {
+      AllTotal:      base.length,
+      ApprovedTotal: base.filter(r => r.status === 'Approved' || r.status === 'Approved with conditions').length,
+      DeniedTotal:   base.filter(r => r.status === 'Denied').length,
+      RetiredTotal:  base.filter(r => r.status === 'Retired').length,
+      OtherTotal:    base.filter(r => !this.otherStatuses.includes(r.status)).length,
     };
   }
 
-  ngOnInit(): void {
-    /*
-    * Get definitions for the table header tooltips
-    * Then set the column defintions and initialize the table
-    */
-   this.route.queryParams.subscribe(params => {
-      if (params['tab']) {
-        this.selectedTab = params['tab'];
-      }
-      if(params['expiringWithinDays']) {
-        this.daysExpiring = +params['expiringWithinDays'];
-      }
-      if (params['includePastDue']) {
-        this.includePastDueExpirations = params['includePastDue'] === 'true';
-      }
-      if (params['pastDueOnly']) {
-        this.pastDueOnly = params['pastDueOnly'] === 'true';
-      }
-      if(params['retiredWithinDays']) {
-        this.daysRetired = +params['retiredWithinDays'];
-      }
-    });
-    
-    this.apiService.getDataDictionaryByReportName('IT Standards List').subscribe(defs => {
-      this.attrDefinitions = defs
-
-      // IT Standard Table Columns
-      this.tableCols = [{
-        field: 'ID',
-        header: 'ID',
-        isSortable: true,
-        showColumn: false,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'ID')
-      }, {
-        field: 'Name',
-        header: 'IT Standard Name',
-        isSortable: true,
-        showColumn: true,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'IT Standard Name')
-      },
-      {
-        field: 'ApprovedVersions',
-        header: 'Approved Versions',
-        isSortable: false,
-        showColumn: true,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Approved Versions')
-      }, {
-        field: 'ManufacturerName',
-        header: 'Manufacturer',
-        isSortable: true,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Manufacturer Name')
-      }, {
-        field: 'Description',
-        header: 'Description',
-        isSortable: true,
-        showColumn: true,
-        formatter: this.sharedService.formatDescriptionLite,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Description')
-      }, {
-        field: 'Status',
-        header: 'Status',
-        isSortable: true,
-        formatter: this.sharedService.formatStatus,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Status')
-      }, {
-        field: 'DeploymentType',
-        header: 'Deployment Type',
-        isSortable: true,
-        formatter: this.sharedService.formatDeploymentType,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Deployment Type')
-      }, {
-        field: 'ApprovalExpirationDate',
-        header: 'Approval Expires',
-        isSortable: true,
-        showColumn: true,
-        formatter: this.sharedService.dateFormatter,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Approval Expiration Date')
-      }, {
-        field: 'Manufacturer',
-        header: 'Manufacturer ID',
-        isSortable: true,
-        showColumn: false,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Manufacturer ID')
-      }, {
-        field: 'SoftwareProduct',
-        header: 'Product ID',
-        isSortable: true,
-        showColumn: false,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Software Product ID')
-      }, {
-        field: 'SoftwareProductName',
-        header: 'Product',
-        isSortable: true,
-        showColumn: false,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Software Product Name')
-      }, {
-        field: 'SoftwareVersion',
-        header: 'Version ID',
-        isSortable: true,
-        showColumn: false,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Software Version ID')
-      }, {
-        field: 'SoftwareVersionName',
-        header: 'Version',
-        isSortable: true,
-        showColumn: false,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Software Version Name')
-      }, {
-        field: 'SoftwareRelease',
-        header: 'Release ID',
-        isSortable: true,
-        showColumn: false,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Software Release ID')
-      }, {
-        field: 'SoftwareReleaseName',
-        header: 'Release',
-        isSortable: true,
-        showColumn: false,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Software Release Name')
-      },
-      //  {
-      //   field: 'EndOfLifeDate',
-      //   header: 'Vendor End of Life Date',
-      //   isSortable: true,
-      //   showColumn: false,
-      //   formatter: this.sharedService.dateFormatter,
-      //  titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Software End of Life Date')
-      // },
-       {
-        field: 'AlsoKnownAs',
-        header: 'Also Known As',
-        isSortable: true,
-        showColumn: false,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Previously Known As')
-      },{
-        field: 'StandardType',
-        header: 'Standard Type',
-        isSortable: true,
-        showColumn: false,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Standard Type')
-      },{
-        field: 'ComplianceStatus',
-        header: '508 Compliance',
-        isSortable: true,
-        showColumn: false,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, '508 Compliance')
-      }, {
-        field: 'ExceptionLink',
-        header: '508 Exception Link',
-        isSortable: true,
-        showColumn: false,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, '508 Exception Link')
-      }, {
-        field: 'POC',
-        header: 'POC',
-        isSortable: true,
-        showColumn: false,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'POC')
-      }, {
-        field: 'POCorg',
-        header: 'POC Org',
-        isSortable: true,
-        showColumn: false,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'POC Org')
-      },
-      {
-        field: 'Comments',
-        header: 'Comments',
-        isSortable: true,
-        showColumn: false,
-        formatter: this.sharedService.formatDescription,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Comments')
-      }, /*{
-        field: 'attestation_required',
-        header: 'Attestation Required',
-        isSortable: true,
-        showColumn: false,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Attestation Required')
-      }, {
-        field: 'attestation_link',
-        header: 'Attestation Link',
-        isSortable: true,
-        showColumn: false,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Attestation Link')
-      }, */{
-        field: 'fedramp',
-        header: 'FedRAMP',
-        isSortable: true,
-        showColumn: false,
-        formatter: this.YesNo,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'FedRAMP')
-      }, {
-        field: 'open_source',
-        header: 'Open Source',
-        isSortable: true,
-        showColumn: false,
-        formatter: this.YesNo,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Open Source')
-      },{
-        field: 'RITM',
-        header: 'Requested Item (RITM)',
-        isSortable: true,
-        showColumn: false,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Requested Item (RITM)')
-      }, {
-        field: 'OperatingSystems',
-        header: 'Operating Systems',
-        isSortable: false,
-        showColumn: false,
-        formatter: this.sharedService.csvFormatter,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Operating Systems')
-      },
-      {
-        field: 'AppBundleIds',
-        header: 'App Bundle Ids',
-        isSortable: false,
-        showColumn: false,
-        formatter: this.sharedService.csvFormatter,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'App Bundle Ids')
-      },
-      {
-        field: 'ConditionsRestrictions',
-        header: 'Conditions/Restrictions',
-        isSortable: false,
-        showColumn: false,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'ConditionsRestrictions')
-      }, {
-        field: 'CriticalReview',
-        header: 'Critical Software Review Results',
-        isSortable: true,
-        showColumn: false,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Critical Software Review Results')
-      }, {
-        field: 'CSCRMReview',
-        header: 'C-SCRM Review Results',
-        isSortable: true,
-        showColumn: false,
-        hideFromPicker: true,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'C-SCRM Review Results')
-      }];
-    });
-
-    // Set JWT when logged into GEAR Manager when returning from secureAuth
-    this.sharedService.setJWTonLogIn();
-
-    this.apiService.getITStandards().subscribe(i => {
-      const standardsWithConditionStatus = this.setCondtionStatus(i);
-      this.itStandardsData = standardsWithConditionStatus;
-      this.itStandardsDataTabFilterted = standardsWithConditionStatus;
-      this.itStandardsDataChipFilterted = standardsWithConditionStatus;
-      this.updateTotals();
-
-      const queryParams = this.route.snapshot.queryParams;
-      const daysExpiring = Number(queryParams['expiringWithinDays'] || this.daysExpiring || 0);
-      const daysRetired = Number(queryParams['retiredWithinDays'] || this.daysRetired || 0);
-      const includePastDue = queryParams['includePastDue'] === 'true' || this.includePastDueExpirations;
-      const pastDueOnly = queryParams['pastDueOnly'] === 'true' || this.pastDueOnly;
-
-      if(daysExpiring > 0) {
-        const now = new Date(); // Current date and time
-        now.setHours(0, 0, 0, 0);
-        const expiringWithin = new Date();
-        expiringWithin.setDate(now.getDate() + daysExpiring); // number of days set in the url
-        expiringWithin.setHours(0, 0, 0, 0);
-        const expiringFiltered: ITStandards[] = [];
-        i.forEach(x => {
-          let renewal = new Date(x.ApprovalExpirationDate);
-          renewal.setHours(0, 0, 0, 0);
-          const isInWindow = includePastDue
-            ? renewal <= expiringWithin
-            : (renewal >= now && renewal <= expiringWithin);
-          if(x.ApprovalExpirationDate && isInWindow && this.isInExpiringStatusScope(x)) {
-            expiringFiltered.push(x);
-          }
-        });
-        this.tableService.updateReportTableData(expiringFiltered);
-        this.tableService.updateReportTableDataReadyStatus(true);
-      } else if (pastDueOnly) {
-        const now = new Date();
-        now.setHours(0, 0, 0, 0);
-        const pastDueFiltered: ITStandards[] = [];
-        i.forEach(x => {
-          let renewal = new Date(x.ApprovalExpirationDate);
-          renewal.setHours(0, 0, 0, 0);
-          if (x.ApprovalExpirationDate && renewal < now && this.isInExpiringStatusScope(x)) {
-            pastDueFiltered.push(x);
-          }
-        });
-        this.tableService.updateReportTableData(pastDueFiltered);
-        this.tableService.updateReportTableDataReadyStatus(true);
-      } else if(daysRetired > 0) {
-        const now = new Date(); // Current date and time
-        now.setHours(0, 0, 0, 0);
-        const expiredWithin = new Date();
-        expiredWithin.setDate(now.getDate() - daysRetired); // number of days set in the url
-        expiredWithin.setHours(0, 0, 0, 0);
-        const expiringFiltered: ITStandards[] = [];
-        i.forEach(x => {
-          let renewal = new Date(x.ApprovalExpirationDate);
-          renewal.setHours(0, 0, 0, 0);
-          if(x.ApprovalExpirationDate && (renewal <= now && renewal >= expiredWithin) && (x.Status === 'Retired')) {
-            expiringFiltered.push(x);
-          }
-        });
-        this.tableService.updateReportTableData(expiringFiltered);
-        this.tableService.updateReportTableDataReadyStatus(true);
-      } else {
-        this.tableService.updateReportTableData(i);
-        this.tableService.updateReportTableDataReadyStatus(true);
-      }
-
-      // this.tableService.updateReportTableData(i);
-      
-      if (this.selectedTab !== 'All') {
-        this.onSelectTab(this.selectedTab);
-      }
-    });
-
-  //   // Method to open details modal when referenced directly via URL
-  //   this.route.params.subscribe((params) => {
-  //     let detailStandID = params['standardID'];
-  //     let deploymentType = params['deploymentType'];
-  //     let status = params['status'];
-
-  //     if(deploymentType) {
-  //       let filterButton = {
-  //         buttonText: deploymentType[0].toUpperCase() + deploymentType.slice(1),
-  //         filters: [
-  //           { field: 'DeploymentType', value: deploymentType.toLocaleLowerCase() }
-  //         ]
-  //       };
-  //       this.preloadedFilterButtons.push(filterButton);
-  //     }
-
-  //     if(status) {
-  //       let filterButton = {
-  //         buttonText: status[0].toUpperCase() + status.slice(1),
-  //         filters: [
-  //           { field: 'Status', value: status.toLocaleLowerCase() }
-  //         ]
-  //       };
-  //       this.preloadedFilterButtons.push(filterButton);
-  //     }
-
-  //     if (detailStandID) {
-  //       this.titleService.setTitle(
-  //         `${this.titleService.getTitle()} - ${detailStandID}`
-  //       );
-  //       this.apiService
-  //         .getOneITStandard(detailStandID)
-  //         .subscribe((data: any[]) => {
-  //           this.tableService.itStandTableClick(data[0]);
-  //         });
-  //     }
-  //   });
+  onSelectTab(tabName: string): void {
+    this.selectedTab = tabName;
+    this.applyRollupFilters();
   }
 
-  // // Create new IT Standard when in GEAR Manager mode
-  // createITStand() {
-  //   var emptyITStand = new ITStandards();
+  onKeyUp(e: KeyboardEvent, tabName: string): void {
+    if (e.key === ' ' || e.key === 'Enter') this.onSelectTab(tabName);
+  }
 
-  //   // By default, set new record status to "Pilot"
-  //   emptyITStand.Status = 'Pilot';
-  //   this.modalService.updateRecordCreation(true);
-  //   this.sharedService.setITStandardsForm();
-  //   this.modalService.updateDetails(emptyITStand, 'it-standard', false);
-  //   $('#itStandardsManager').modal('show');
+  onFilterChipSelect(selectedChips: string[]): void {
+    this.selectedChips = selectedChips;
+    this.applyRollupFilters();
+  }
 
-  //   // disable the tcSoftwareProduct on the itStandardsManager modal
-  //   $('#divProduct').addClass("disabledDivProduct");
-  //   $('#divVersion').addClass("disabledDivVersion");
-  //   $('#divRelease').addClass("disabledDivRelease");
-  // }
+  isTabSelected(tabName: string): boolean {
+    return this.selectedTab === tabName;
+  }
 
-  // getTooltip (name: string): string {
-  //   const def = this.attrDefinitions.find(def => def.Term === name);
-  //   if(def){
-  //     return def.TermDefinition;
-  //   }
-  //   return '';
-  // }
+  onSearchChange(): void {
+    this.applyRollupFilters();
+  }
 
-  public onRowClick(e: any) {
-    const searchTerm: string = e.tableSearchString || '';
-    this.router.navigate(['/it_standards', e.ID], {
-        queryParams: { tableSearchTerm: searchTerm }
+  onRowClick(row: ItStandardRollupRow): void {
+    this.router.navigate(['/it-standard-rollup', row.productKey], {
+      queryParams: { tableSearchTerm: this.searchTerm || undefined }
     });
   }
 
-  // onFilterClick(filterButtons: FilterButton[]) {
-  //   this.tableData = this.tableDataOriginal;
-  //   this.tableService.filterButtonClick(filterButtons, this.tableData);
-  // }
-
-  // onFilterResetClick() {
-  //   this.tableData = this.tableDataOriginal;
-  //   this.tableService.updateReportTableData(this.tableDataOriginal);
-  // }
-
-  private setCondtionStatus(itStandards: ITStandards[]): ITStandards[] {
-    itStandards.forEach(i => {
-      if(i.ConditionsRestrictions && i.ConditionsRestrictions.length > 0) {
-        i.Status = 'Approved with conditions';
-      }
+  onVersionClick(standard: ITStandards, event: Event): void {
+    event.stopPropagation();
+    this.router.navigate(['/it_standards', standard.ID], {
+      queryParams: { tableSearchTerm: this.searchTerm || undefined }
     });
-    return itStandards;
   }
 
-  // Keep dashboard deep-link filters consistent with backend totals query scope.
+  getVersionFieldValue(version: ITStandards, field: string): any {
+    switch (field) {
+      case 'displayName':            return version.SoftwareReleaseName || version.Name;
+      case 'versionsCount':          return 1;
+      case 'manufacturerName':       return version.ManufacturerName;
+      case 'description':            return version.Description;
+      case 'status':                 return version.Status;
+      case 'deploymentType':         return version.DeploymentType;
+      case 'approvalExpirationDate': return version.ApprovalExpirationDate;
+      case 'alsoKnownAs':            return version.AlsoKnownAs;
+      case 'standardType':           return version.StandardType;
+      default:                       return '';
+    }
+  }
+
+  getStatusClass(status: string): string {
+    if (status === 'Approved' || status === 'Approved with conditions') return 'status-green';
+    if (status === 'Denied' || status === 'Retired' || status === 'Expired') return 'status-red';
+    return 'status-yellow';
+  }
+
+  getDeploymentTypeIcon(deploymentType: string): string {
+    if (deploymentType === 'Desktop') return 'fas fa-desktop';
+    if (deploymentType === 'Mobile')  return 'fas fa-mobile-alt';
+    if (deploymentType === 'Server')  return 'fas fa-server';
+    return 'fas fa-keyboard';
+  }
+
+  onColPickerChange(event: any): void {
+    const selected = new Set<string>(event.value.map((c: RollupCol) => c.field));
+    this.rollupCols.forEach(col => { col.showColumn = selected.has(col.field); });
+  }
+
+  resetColumns(): void {
+    const defaults = new Set(['displayName', 'versionsCount', 'manufacturerName', 'description', 'status', 'deploymentType', 'approvalExpirationDate']);
+    this.rollupCols.forEach(col => { col.showColumn = defaults.has(col.field); });
+    this.selectedCols = this.rollupCols.filter(c => c.showColumn);
+  }
+
+  exportData(): void {
+    const headers = this.visibleCols.map(c => c.header).join(',');
+    const lines = this.rollupRowsFiltered.map(row =>
+      this.visibleCols.map(col => {
+        let val = (row as any)[col.field];
+        if (col.field === 'approvalExpirationDate' && val) {
+          val = new Date(val).toLocaleDateString('en-US');
+        }
+        return `"${String(val ?? '').replace(/"/g, '""')}"`;
+      }).join(',')
+    );
+    const csv = [headers, ...lines].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'it-standards.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  private applyConditionStatus(standards: ITStandards[]): ITStandards[] {
+    standards.forEach(s => {
+      if (s.ConditionsRestrictions && s.ConditionsRestrictions.length > 0) {
+        s.Status = 'Approved with conditions';
+      }
+    });
+    return standards;
+  }
+
   private isInExpiringStatusScope(standard: ITStandards): boolean {
     const approvedLikeStatusIds = [11, 2, 6, 9];
-
     if (typeof standard.StatusId === 'number') {
       return approvedLikeStatusIds.includes(standard.StatusId);
     }
-
     return standard.Status === 'Approved'
       || standard.Status === 'Approved with conditions'
       || standard.Status === 'Pilot'

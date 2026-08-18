@@ -1,0 +1,334 @@
+@if (isDataReady) {
+  <div class="it-standards-details-container">
+    <div class="breadcrumb-container">
+      <app-breadcrumb>
+        <span currentPageName>{{productName}}</span>
+      </app-breadcrumb>
+    </div>
+    <div class="title-container">
+      <span class="title" role="heading" aria-level="1">
+        {{productName}}
+      </span>
+    </div>
+    <div class="content-container">
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" href="#overview" (click)="$event.preventDefault()">Overview</a>
+        </li>
+      </ul>
+
+      <div class="overview-container">
+        <div class="overall-data-container">
+          <!-- Main data card (mirrors it-standards-details) -->
+          <div class="main-data-container">
+            <div class="data">
+              <label class="data-label">
+                <span [title]="getTooltip('Status')" role="tooltip">
+                  Status
+                  <i class="fas fa-info-circle"></i>
+                </span>
+              </label>
+              <span>
+                @if (isApprovedWithConditions()) {
+                  <span class="status-yellow">Approved with conditions</span>
+                } @else {
+                  <span [ngClass]="getStatusClass(detailsData.Status)">{{detailsData.Status}}</span>
+                }
+              </span>
+            </div>
+            <div class="data">
+              <label class="data-label">
+                <span [title]="getTooltip('Software Release Name')" role="tooltip">
+                  Software Release Name
+                  <i class="fas fa-info-circle"></i>
+                </span>
+              </label>
+              <span>{{detailsData.SoftwareReleaseName}}</span>
+            </div>
+            @if (isApproved()) {
+              <div class="data">
+                <label class="data-label">
+                  <span [title]="getTooltip('Approved Versions')" role="tooltip">
+                    Approved Versions
+                    <i class="fas fa-info-circle"></i>
+                  </span>
+                </label>
+                <span>{{detailsData.ApprovedVersions}}</span>
+              </div>
+            }
+            @if (!isApproved()) {
+              <div class="data">
+                <label class="data-label">
+                  <span [title]="getTooltip('Approved Versions')" role="tooltip">
+                    Approved Versions
+                    <i class="fas fa-info-circle"></i>
+                  </span>
+                </label>
+                <span>
+                  <span [ngClass]="getStatusClass(detailsData.Status)">{{detailsData.Status}}</span>
+                </span>
+              </div>
+            }
+            <div class="data">
+              <label class="data-label">
+                <span [title]="getTooltip('Also Known As')" role="tooltip">
+                  Also Known As
+                  <i class="fas fa-info-circle"></i>
+                </span>
+              </label>
+              <span>{{detailsData.AlsoKnownAs}}</span>
+            </div>
+            <div class="data">
+              <label class="data-label">
+                <span [title]="getTooltip('Approval Expiration Date')" role="tooltip">
+                  Approval Expires
+                  <i class="fas fa-info-circle"></i>
+                </span>
+              </label>
+              <span class="data-icon-container">
+                <span [ngClass]="getDateStatusCircle(detailsData.ApprovalExpirationDate)"></span>
+                {{detailsData.ApprovalExpirationDate | date: 'longDate'}}
+              </span>
+            </div>
+            <div class="data">
+              <label class="data-label">
+                <span [title]="getTooltip('508 Compliance')" role="tooltip">
+                  508 Compliance
+                  <i class="fas fa-info-circle"></i>
+                </span>
+              </label>
+              <span class="data-icon-container">
+                <span [ngClass]="getComplianceStatusCircle(detailsData.ComplianceStatus)"></span>
+                {{detailsData.ComplianceStatus}}
+              </span>
+            </div>
+            @if (detailsData.ComplianceStatus === 'Exception Granted') {
+              <div class="data">
+                <label class="data-label">508 Exception Link</label>
+                <span>
+                  @if (detailsData.ExceptionLink) {
+                    <a [href]="detailsData.ExceptionLink" target="_blank" rel="noopener">{{detailsData.ExceptionLink}}</a>
+                  } @else {
+                    N/A
+                  }
+                </span>
+              </div>
+            }
+            <div class="data">
+              <label class="data-label">
+                <span [title]="getTooltip('POC')" role="tooltip">
+                  POC
+                  <i class="fas fa-info-circle"></i>
+                </span>
+              </label>
+              <span>{{detailsData.POC}}</span>
+            </div>
+            <div class="data">
+              <label class="data-label">
+                <span [title]="getTooltip('Deployment Type')" role="tooltip">
+                  Deployment Type
+                  <i class="fas fa-info-circle"></i>
+                </span>
+              </label>
+              <span class="data-icon-container">
+                <i [ngClass]="getDeploymentTypeIcon(detailsData.DeploymentType)"></i>
+                {{detailsData.DeploymentType}}
+              </span>
+            </div>
+            <div class="data-full">
+              <label class="data-label">
+                <span [title]="getTooltip('Conditions/Restrictions')" role="tooltip">
+                  Conditions/Restrictions
+                  <i class="fas fa-info-circle"></i>
+                </span>
+              </label>
+              <span [ngClass]="getConditionsRestrictionsClass()">{{detailsData.ConditionsRestrictions}}</span>
+            </div>
+            <div class="data-full">
+              <label class="data-label">
+                <span [title]="getTooltip('Description')" role="tooltip">
+                  Description
+                  <i class="fas fa-info-circle"></i>
+                </span>
+              </label>
+              <span>{{detailsData.Description}}</span>
+            </div>
+            <div class="data-full">
+              <label class="data-label">
+                <span [title]="getTooltip('Comments')" role="tooltip">
+                  Comments
+                  <i class="fas fa-info-circle"></i>
+                </span>
+              </label>
+              <span>{{detailsData.Comments}}</span>
+            </div>
+            <div class="data-full review-results-group">
+              <span class="review-results-title">Review Results</span>
+              <div class="review-results-grid">
+                <div class="data">
+                  <label class="data-label">
+                    <span [title]="getTooltip('Critical Software Review Results')" role="tooltip">
+                      Critical Software Review Results
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>{{detailsData.CriticalReview}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sidebar attribute table -->
+          <div class="sub-data-container">
+            <table>
+              <tr>
+                <th>Attribute</th>
+                <th>Value</th>
+              </tr>
+              @if (isFieldPopulated(detailsData.ManufacturerName)) {
+                <tr>
+                  <td>
+                    <span [title]="getTooltip('Manufacturer Name')" role="tooltip">
+                      Manufacturer
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </td>
+                  <td>{{detailsData.ManufacturerName}}</td>
+                </tr>
+              }
+              @if (isFieldPopulated(detailsData.SoftwareProductName)) {
+                <tr>
+                  <td>
+                    <span [title]="getTooltip('Software Product Name')" role="tooltip">
+                      Product
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </td>
+                  <td>{{detailsData.SoftwareProductName}}</td>
+                </tr>
+              }
+              @if (isFieldPopulated(detailsData.SoftwareVersionName)) {
+                <tr>
+                  <td>
+                    <span [title]="getTooltip('Software Version Name')" role="tooltip">
+                      Version
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </td>
+                  <td>{{detailsData.SoftwareVersionName}}</td>
+                </tr>
+              }
+              @if (isFieldPopulated(detailsData.StandardType)) {
+                <tr>
+                  <td>
+                    <span [title]="getTooltip('Standard Type')" role="tooltip">
+                      Standard Type
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </td>
+                  <td>{{detailsData.StandardType}}</td>
+                </tr>
+              }
+              @if (isFieldPopulated(detailsData.fedramp)) {
+                <tr>
+                  <td>
+                    <span [title]="getTooltip('FedRAMP')" role="tooltip">
+                      FedRAMP
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </td>
+                  <td>{{getYesNoValue(detailsData.fedramp)}}</td>
+                </tr>
+              }
+              @if (isFieldPopulated(detailsData.open_source)) {
+                <tr>
+                  <td>
+                    <span [title]="getTooltip('Open Source')" role="tooltip">
+                      Open Source
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </td>
+                  <td>{{getYesNoValue(detailsData.open_source)}}</td>
+                </tr>
+              }
+              @if (isFieldPopulated(detailsData.RITM)) {
+                <tr>
+                  <td>
+                    <span [title]="getTooltip('Requested Item (RITM)')" role="tooltip">
+                      Requested Item (RITM)
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </td>
+                  <td>{{detailsData.RITM}}</td>
+                </tr>
+              }
+              @if (isFieldPopulated(detailsData.ReferenceDocument)) {
+                <tr>
+                  <td>
+                    <span [title]="getTooltip('Reference Document')" role="tooltip">
+                      Reference Document
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </td>
+                  @if (detailsData.ReferenceDocument) {
+                    <td>
+                      <a [href]="detailsData.ReferenceDocument" target="_blank" rel="noopener">{{detailsData.ReferenceDocument}}</a>
+                    </td>
+                  } @else {
+                    <td>None</td>
+                  }
+                </tr>
+              }
+              @if (isFieldPopulated(detailsData.AppBundleIds)) {
+                <tr>
+                  <td>
+                    <span [title]="getTooltip('App Bundle Ids')" role="tooltip">
+                      App Bundle IDs
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </td>
+                  <td [innerHtml]="renderAppBundleList(detailsData.AppBundleIds)"></td>
+                </tr>
+              }
+            </table>
+          </div>
+        </div>
+
+        <!-- Versions table -->
+        <div class="versions-section">
+          <div class="trm-table-container">
+            <span class="sub-header">All Versions ({{allVersions.length}})</span>
+            <p class="versions-note">Click a version to view its full details page.</p>
+            <app-table
+              visibleColumnStorageKey="it-standard-rollup-versions"
+              defaultSortField="SoftwareReleaseName"
+              [localTableData]="allVersions"
+              [isLocal]="true"
+              [tableCols]="versionsTableCols"
+              [showToolbar]="true"
+              [showPagination]="false"
+              reportStyle="neutral"
+              (rowClickEvent)="onVersionRowClick($event)">
+            </app-table>
+          </div>
+        </div>
+
+        <div class="edit-info-container">
+          <div class="edit-info-button-wrapper">
+            @if (isLoggedIn()) {
+              <app-button [buttonText]="'Edit Most Recent'" buttonStyle="outline" (buttonClick)="editITStandard()"></app-button>
+            }
+            <app-button [buttonText]="getShowAllFieldsButtonText()" buttonStyle="outline" (buttonClick)="toggleShowAllFields()"></app-button>
+            <app-button buttonText="Back to IT Standards" buttonStyle="outline" (buttonClick)="navigateBack()"></app-button>
+          </div>
+          <span>
+            <span class="date-label">Last Updated:</span> {{detailsData.ChangeDTG | date: 'full'}}
+          </span>
+          <span>
+            <span class="date-label">Created:</span> {{detailsData.CreateDTG | date: 'full'}}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+}

@@ -16,38 +16,182 @@
   </div>
   <div class="it-standards-definition-container">
     <p class="it-standards-definition-text">
-      The IT Standards Inventory is GSA’s repository for approved software. It ensures users access only IT Security-authorized products. For more details, visit the <a href='https://sites.google.com/a/gsa.gov/it_standards/it-standards' target='_blank' rel='noopener'>IT Standards site</a>.
+      The IT Standards Inventory is GSA's repository for approved software. It ensures users access only IT Security-authorized products. For more details, visit the <a href='https://sites.google.com/a/gsa.gov/it_standards/it-standards' target='_blank' rel='noopener'>IT Standards site</a>.
     </p>
-    </div>
-    <div class="it-standards-data-container">
-      <app-filter-chips [chips]="filterChips" dropdownName="Deployment Types" (chipSelect)="onFilterChipSelect($event)"></app-filter-chips>
-      @if (filterTotals) {
-        <div>
-          <app-table visibleColumnStorageKey="it-standards-report" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" defaultSortField="Name" (rowClickEvent)="onRowClick($event)">
-            <div class="filter-tabs-container" filterTabs>
-              <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')" (keyup)="onKeyUp($event, 'All')" tabindex="0">
-                <span class="filter-tab-text">All</span>
-                <span class="filter-tab-number first">{{filterTotals.AllTotal}}</span>
-              </div>
-              <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Approved')}" (click)="onSelectTab('Approved')" (keyup)="onKeyUp($event, 'Approved')" tabindex="0">
-                <span class="filter-tab-text">Approved</span>
-                <span class="filter-tab-number second">{{filterTotals.ApprovedTotal}}</span>
-              </div>
-              <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Denied')}" (click)="onSelectTab('Denied')" (keyup)="onKeyUp($event, 'Denied')" tabindex="0">
-                <span class="filter-tab-text">Denied</span>
-                <span class="filter-tab-number third">{{filterTotals.DeniedTotal}}</span>
-              </div>
-              <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Retired')}" (click)="onSelectTab('Retired')" (keyup)="onKeyUp($event, 'Retired')" tabindex="0">
-                <span class="filter-tab-text">Retired</span>
-                <span class="filter-tab-number fourth">{{filterTotals.RetiredTotal}}</span>
-              </div>
-              <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Other')}" (click)="onSelectTab('Other')" (keyup)="onKeyUp($event, 'Other')" tabindex="0">
-                <span class="filter-tab-text">Other</span>
-                <span class="filter-tab-number fifth">{{filterTotals.OtherTotal}}</span>
-              </div>
-            </div>
-          </app-table>
-        </div>
-      }
-    </div>
   </div>
+  <div class="it-standards-data-container">
+    <app-filter-chips [chips]="filterChips" dropdownName="Deployment Types" (chipSelect)="onFilterChipSelect($event)"></app-filter-chips>
+
+    @if (isRollupReady && rollupTotals) {
+      <!-- Filter tabs -->
+      <div class="filter-tabs-container">
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')" (keyup)="onKeyUp($event, 'All')" tabindex="0">
+          <span class="filter-tab-text">All</span>
+          <span class="filter-tab-number first">{{rollupTotals.AllTotal}}</span>
+        </div>
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Approved')}" (click)="onSelectTab('Approved')" (keyup)="onKeyUp($event, 'Approved')" tabindex="0">
+          <span class="filter-tab-text">Approved</span>
+          <span class="filter-tab-number second">{{rollupTotals.ApprovedTotal}}</span>
+        </div>
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Denied')}" (click)="onSelectTab('Denied')" (keyup)="onKeyUp($event, 'Denied')" tabindex="0">
+          <span class="filter-tab-text">Denied</span>
+          <span class="filter-tab-number third">{{rollupTotals.DeniedTotal}}</span>
+        </div>
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Retired')}" (click)="onSelectTab('Retired')" (keyup)="onKeyUp($event, 'Retired')" tabindex="0">
+          <span class="filter-tab-text">Retired</span>
+          <span class="filter-tab-number fourth">{{rollupTotals.RetiredTotal}}</span>
+        </div>
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Other')}" (click)="onSelectTab('Other')" (keyup)="onKeyUp($event, 'Other')" tabindex="0">
+          <span class="filter-tab-text">Other</span>
+          <span class="filter-tab-number fifth">{{rollupTotals.OtherTotal}}</span>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="rollup-toolbar">
+        <div class="p-inputgroup rollup-search">
+          <span class="p-inputgroup-addon"><i class="pi pi-search"></i></span>
+          <input
+            pInputText
+            type="text"
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onSearchChange()"
+            placeholder="Search keyword"
+            aria-label="Search table" />
+        </div>
+        <p-multiSelect
+          [options]="rollupCols"
+          [(ngModel)]="selectedCols"
+          (onChange)="onColPickerChange($event)"
+          optionLabel="header"
+          pTooltip="Add/Remove Columns"
+          tooltipPosition="left"
+          [showToggleAll]="false"
+          ariaLabel="Toggle Columns">
+          <ng-template pTemplate="selectedItems">
+            <i class="fa fa-th-list"></i>
+          </ng-template>
+        </p-multiSelect>
+        <p-button icon="fa fa-undo" pTooltip="Reset columns to default" tooltipPosition="left" severity="primary" (click)="resetColumns()" ariaLabel="Reset Columns" />
+        <p-button icon="fa fa-download" pTooltip="Export table data" tooltipPosition="left" severity="primary" (click)="exportData()" ariaLabel="Export Data" />
+      </div>
+
+      <!-- Rollup table -->
+      <p-table
+        [value]="rollupRowsFiltered"
+        dataKey="productKey"
+        [(expandedRowKeys)]="expandedRows"
+        [rows]="25"
+        [paginator]="true"
+        [rowsPerPageOptions]="[10, 25, 50, 100]"
+        [scrollable]="true"
+        scrollHeight="65vh"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        styleClass="neutral p-datatable-gridlines"
+        defaultSortField="displayName">
+
+        <!-- Header -->
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="expand-col"></th>
+            @for (col of visibleCols; track col.field) {
+              <th [pSortableColumn]="col.isSortable ? col.field : null" [pSortableColumnDisabled]="!col.isSortable">
+                {{ col.header }}
+                @if (col.isSortable) {
+                  <p-sortIcon [field]="col.field" />
+                }
+              </th>
+            }
+          </tr>
+        </ng-template>
+
+        <!-- Body -->
+        <ng-template pTemplate="body" let-row let-expanded="expanded">
+          <tr class="rollup-row" (click)="onRowClick(row)">
+            <td class="expand-col">
+              @if (row.hasMultipleVersions) {
+                <p-button
+                  type="button"
+                  [pRowToggler]="row"
+                  [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+                  severity="secondary"
+                  variant="text"
+                  size="small"
+                  (click)="$event.stopPropagation()"
+                  ariaLabel="Expand versions" />
+              }
+            </td>
+            @for (col of visibleCols; track col.field) {
+              <td>
+                @switch (col.field) {
+                  @case ('status') {
+                    <span [ngClass]="getStatusClass(row.status)" class="status-badge">{{ row.status }}</span>
+                  }
+                  @case ('deploymentType') {
+                    <span class="deploy-cell">
+                      <i [ngClass]="getDeploymentTypeIcon(row.deploymentType)"></i>
+                      {{ row.deploymentType }}
+                    </span>
+                  }
+                  @case ('approvalExpirationDate') {
+                    {{ row.approvalExpirationDate | date: 'MMM d, y' }}
+                  }
+                  @case ('description') {
+                    <span class="desc-truncate" [title]="row.description">{{ row.description }}</span>
+                  }
+                  @default {
+                    {{ row[col.field] }}
+                  }
+                }
+              </td>
+            }
+          </tr>
+        </ng-template>
+
+        <!-- Row expansion: one sub-row per version -->
+        <ng-template pTemplate="rowexpansion" let-row>
+          @for (version of row.versions; track version.ID) {
+            <tr class="version-sub-row" (click)="onVersionClick(version, $event)">
+              <td class="expand-col"></td>
+              @for (col of visibleCols; track col.field) {
+                <td>
+                  @switch (col.field) {
+                    @case ('displayName') {
+                      <span class="version-name">{{ version.SoftwareReleaseName || version.Name }}</span>
+                    }
+                    @case ('versionsCount') { 1 }
+                    @case ('status') {
+                      <span [ngClass]="getStatusClass(version.Status)" class="status-badge">{{ version.Status }}</span>
+                    }
+                    @case ('deploymentType') {
+                      <span class="deploy-cell">
+                        <i [ngClass]="getDeploymentTypeIcon(version.DeploymentType)"></i>
+                        {{ version.DeploymentType }}
+                      </span>
+                    }
+                    @case ('approvalExpirationDate') {
+                      {{ version.ApprovalExpirationDate | date: 'MMM d, y' }}
+                    }
+                    @case ('description') {
+                      <span class="desc-truncate" [title]="version.Description">{{ version.Description }}</span>
+                    }
+                    @default {
+                      {{ getVersionFieldValue(version, col.field) }}
+                    }
+                  }
+                </td>
+              }
+            </tr>
+          }
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td [colSpan]="visibleCols.length + 1" class="empty-message">No records found.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
+  </div>
+</div>

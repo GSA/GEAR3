@@ -1,0 +1,222 @@
+// Reuse the details page styles — this component uses the same container class
+// so it inherits the .it-standards-details-container layout from its own encapsulated styles.
+
+.it-standards-details-container {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 1.5rem;
+    background-color: #f8f9fa;
+
+    & .breadcrumb-container {
+        display: flex;
+        padding-bottom: 2rem;
+    }
+
+    & .title-container {
+        display: flex;
+        padding-bottom: 1.5rem;
+
+        & .title {
+            color: var(--neutral-black-color-dark);
+            font-family: var(--primary-font);
+            font-size: 2rem;
+            font-weight: 500;
+            line-height: normal;
+        }
+    }
+
+    & .content-container {
+        display: flex;
+        flex-direction: column;
+
+        & .nav-tabs {
+            margin-bottom: 1.5rem;
+        }
+
+        & .overview-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        & .overall-data-container {
+            display: flex;
+            flex-flow: row wrap;
+            gap: 15px;
+
+            & .main-data-container {
+                padding: 1.5rem;
+                display: flex;
+                flex-wrap: wrap;
+                flex: 0 0 calc(60% - 15px);
+                max-width: calc(60% - 15px);
+                background-color: #fff;
+                box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.08);
+                border-radius: 4px;
+
+                @media (max-width: 1200px) {
+                    max-width: 100%;
+                    flex: 0 0 100%;
+                }
+
+                & .data {
+                    display: flex;
+                    flex-direction: column;
+                    flex: 50%;
+                    padding-bottom: 1.5rem;
+
+                    & .data-label { font-weight: bold; }
+
+                    & .status-green {
+                        padding: .5rem;
+                        border-radius: 4px;
+                        background-color: #EEF6EE;
+                        color: #006100;
+                        display: inline-block;
+                    }
+                    & .status-red {
+                        padding: .5rem;
+                        border-radius: 4px;
+                        background-color: #FDE8EA;
+                        color: #7A0019;
+                        display: inline-block;
+                    }
+                    & .status-yellow {
+                        padding: .5rem;
+                        border-radius: 4px;
+                        background-color: #FFEFD6;
+                        color: #943600;
+                        display: inline-block;
+                    }
+
+                    & .data-icon-container {
+                        display: flex;
+                        align-items: center;
+                        gap: .5rem;
+
+                        & .circle-green {
+                            display: inline-block; height: 1rem; width: 1rem;
+                            background-color: #006100; border: 2px #333 solid; border-radius: 50px;
+                        }
+                        & .circle-yellow {
+                            display: inline-block; height: 1rem; width: 1rem;
+                            background-color: #ffe292; border: 2px #333 solid; border-radius: 50px;
+                        }
+                        & .circle-red {
+                            display: inline-block; height: 1rem; width: 1rem;
+                            background-color: #9E0000; border: 2px #333 solid; border-radius: 50px;
+                        }
+                    }
+                }
+
+                & .data-full {
+                    display: flex;
+                    flex-direction: column;
+                    flex: 100%;
+                    padding-bottom: 1.5rem;
+
+                    & .data-label { font-weight: bold; }
+
+                    & .condition-restriction {
+                        padding: .5rem;
+                        border-radius: 4px;
+                        color: rgb(32, 31, 24);
+                        background-color: #ffe292;
+                        display: inline-block;
+                        font-weight: bold;
+                    }
+                }
+
+                & .review-results-group {
+                    margin-top: 0.5rem;
+                    padding-top: 1rem;
+                    border-top: 1px solid #e5e5e5;
+
+                    & .review-results-title {
+                        font-weight: 700;
+                        margin-bottom: 0.75rem;
+                    }
+
+                    & .review-results-grid {
+                        display: flex;
+                        flex-wrap: wrap;
+
+                        & .data { padding-bottom: 0; }
+                    }
+                }
+            }
+
+            & .sub-data-container {
+                padding: 1.5rem;
+                flex: 0 0 40%;
+                max-width: 40%;
+                background-color: #fff;
+                box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.08);
+                border-radius: 4px;
+
+                @media (max-width: 1200px) {
+                    max-width: 100%;
+                    flex: 0 0 100%;
+                }
+
+                & tr { border-bottom: 1px solid #E5E5E5; padding: 1rem 0; }
+                & th { width: 70%; padding: .625rem; }
+                & td {
+                    padding: 1rem .625rem;
+                    &:nth-of-type(odd) { font-weight: bold; }
+                    a { line-break: anywhere; }
+                }
+            }
+        }
+
+        & .versions-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        & .trm-table-container {
+            padding: 1.5rem;
+            background-color: #fff;
+            box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.08);
+            border-radius: 4px;
+
+            & .sub-header {
+                color: var(--neutral-black-color-dark);
+                font-family: var(--primary-font);
+                font-size: 1.5rem;
+                font-weight: 500;
+                display: block;
+                padding-bottom: 6px;
+            }
+
+            & .versions-note {
+                color: #6c757d;
+                font-size: 0.875rem;
+                margin-bottom: 1rem;
+            }
+        }
+
+        & .edit-info-container {
+            display: flex;
+            align-items: flex-end;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+
+            & .edit-info-button-wrapper {
+                display: flex;
+                flex-direction: row;
+                gap: 1.5rem;
+            }
+
+            & span {
+                font-style: italic;
+
+                & .date-label {
+                    font-weight: 800;
+                    font-style: normal;
+                }
+            }
+        }
+    }
+}
