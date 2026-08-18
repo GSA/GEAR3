@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
+import { PreviousRouteService } from '@services/previous-route/previous-route.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
@@ -38,12 +39,23 @@ export class OrganizationsChartComponent implements OnInit {
 
   public searchKey: string;
   private finalSearchPath;
+  private pendingSearchKey: string | null = null;
 
   public defExpanded: boolean = false;
+
+  private getSearchTermFromHistory(): string | null {
+    const prevUrl = this.previousRouteService.getPreviousEntry()?.url ?? null;
+    if (!prevUrl) return null;
+    const path = prevUrl.split('?')[0];
+    if (!path.startsWith('/organizations/')) return null;
+    const qs = prevUrl.split('?')[1] ?? '';
+    return new URLSearchParams(qs).get('tableSearchTerm');
+  }
 
   constructor(
     private apiService: ApiService,
     private modalService: ModalsService,
+    private previousRouteService: PreviousRouteService,
     private route: ActivatedRoute,
     private sharedService: SharedService,
     private tableService: TableService,
@@ -53,6 +65,15 @@ export class OrganizationsChartComponent implements OnInit {
 
   ngOnInit(): void {
     this.getOrgData();
+
+    // Restore search term when returning via breadcrumb or browser back navigation
+    this.route.queryParams.subscribe((params) => {
+      const term = params['tableSearchTerm'] || this.getSearchTermFromHistory();
+      if (term) {
+        this.searchKey = term;
+        this.pendingSearchKey = term;
+      }
+    });
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {
@@ -166,6 +187,13 @@ export class OrganizationsChartComponent implements OnInit {
       // console.log("OrgTree: ", this.orgTree);  // Debug
       // Create graph after retrieving data and computing tree
       this.createChart();
+
+      // Restore pending search if user navigated back with a search term
+      if (this.pendingSearchKey) {
+        this.searchKey = this.pendingSearchKey;
+        this.pendingSearchKey = null;
+        this.search({ key: 'Enter' });
+      }
     });
   } // End of getOrgData
 
@@ -401,7 +429,9 @@ export class OrganizationsChartComponent implements OnInit {
                 .getOneOrg(this.selectedOrg.srcElement.__data__.data.identity)
                 .subscribe((data: any) => {
                   // this.tableService.orgsTableClick(data);
-                  this.router.navigate(['organizations', data.ID]);
+                  const qp: Record<string, any> = { fromPrevious: 'GSA Organizations Chart' };
+                  if (this.searchKey) { qp['tableSearchTerm'] = this.searchKey; }
+                  this.router.navigate(['organizations', data.ID], { queryParams: qp });
                 });
             }.bind(this)
           );

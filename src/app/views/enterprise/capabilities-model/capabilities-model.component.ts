@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
+import { PreviousRouteService } from '@services/previous-route/previous-route.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
@@ -51,6 +52,16 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit {
 
   public searchKey: string = '';
   private finalSearchPath: any = null;
+  private pendingSearchKey: string | null = null;
+
+  private getSearchTermFromHistory(): string | null {
+    const prevUrl = this.previousRouteService.getPreviousEntry()?.url ?? null;
+    if (!prevUrl) return null;
+    const path = prevUrl.split('?')[0];
+    if (!path.startsWith('/capabilities/')) return null;
+    const qs = prevUrl.split('?')[1] ?? '';
+    return new URLSearchParams(qs).get('tableSearchTerm');
+  }
 
   constructor(
     private apiService: ApiService,
@@ -60,6 +71,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit {
     private tableService: TableService,
     private titleService: Title,
     private elementRef: ElementRef,
+    private previousRouteService: PreviousRouteService,
     private router: Router
   ) {}
 
@@ -71,6 +83,15 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit {
 
     // Set JWT when logged into GEAR Manager when returning from secureAuth
     this.sharedService.setJWTonLogIn();
+
+    // Restore search term when returning via breadcrumb or browser back navigation
+    this.route.queryParams.subscribe((params) => {
+      const term = params['tableSearchTerm'] || this.getSearchTermFromHistory();
+      if (term) {
+        this.searchKey = term;
+        this.pendingSearchKey = term;
+      }
+    });
 
     this.getCapData();
 
@@ -209,6 +230,13 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit {
       // console.log("CapTree: ", this.capTree);  // Debug
       // Create graph after retrieving data and computing tree
       this.createGraph();
+
+      // Restore pending search if user navigated back with a search term
+      if (this.pendingSearchKey) {
+        this.searchKey = this.pendingSearchKey;
+        this.pendingSearchKey = null;
+        this.search({ key: 'Enter' });
+      }
     });
   } // End of getCapData
 
@@ -438,7 +466,9 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit {
               .subscribe((data: any) => {
                   // var capData = data[0];
                   // this.tableService.capsTableClick(capData);
-                  this.router.navigate(['capabilities', data.ID]);
+                  const qp: Record<string, any> = { fromPrevious: 'GSA Capabilities Model' };
+                  if (this.searchKey) { qp['tableSearchTerm'] = this.searchKey; }
+                  this.router.navigate(['capabilities', data.ID], { queryParams: qp });
                 }
               )
           }
