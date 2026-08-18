@@ -159,7 +159,7 @@
             </tr>
           </ng-template>
           <!-- Row expansion content (projected from parent via #expansionRows ContentChild) -->
-          <ng-template #rowexpansion let-row>
+          <ng-template #expandedrow let-row>
             @if (expansionRowsTemplate) {
               <ng-container *ngTemplateOutlet="expansionRowsTemplate; context: { $implicit: row }"></ng-container>
             }
