@@ -57,6 +57,8 @@ export class TechCategoriesModelComponent implements OnInit {
   private getSearchTermFromHistory(): string | null {
     const prevUrl = this.previousRouteService.getPreviousEntry()?.url ?? null;
     if (!prevUrl) return null;
+    const path = prevUrl.split('?')[0];
+    if (!path.startsWith('/tech_categories/')) return null;
     const qs = prevUrl.split('?')[1] ?? '';
     return new URLSearchParams(qs).get('tableSearchTerm');
   }
