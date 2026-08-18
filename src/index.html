@@ -3,7 +3,7 @@
 
 <head>
   <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DRCLWZLXKB"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DRCLWZLXKB" defer></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -23,7 +23,7 @@
   <link rel="icon" type="image/svg+xml" href="/assets/img/cog-solid.svg" />
 
   <!-- Preconnect to Google Fonts origins to reduce connection overhead -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <!-- Load Google Fonts asynchronously to avoid render-blocking -->
@@ -33,8 +33,8 @@
   <link rel="preload" as="style" href="https://fonts.googleapis.com/icon?family=Material+Icons" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"></noscript>
 
-  <!-- Preload Nunito Sans (loaded via @import in bootstrap.min.css) to improve load priority -->
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <!-- Preload Nunito Sans with high fetch priority -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,600&display=swap" fetchpriority="high" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,600&display=swap"></noscript>
 </head>
 

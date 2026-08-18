@@ -3,7 +3,7 @@
 @use "./filter-tabs.scss";
 
 // Override font-display for icon fonts to avoid render-blocking (Lighthouse: Font display)
-// fa-brands, fa-solid, primeicons all default to 'block'; swap reduces FCP delay
+// fa-brands, fa-solid, fa-regular, primeicons, bootstrap-icons all default to 'block'; swap reduces FCP delay
 @font-face {
   font-family: 'Font Awesome 5 Free';
   font-style: normal;
@@ -11,6 +11,15 @@
   font-display: swap;
   src: url('../assets/fontawesome-free-5.13.0-web/webfonts/fa-solid-900.woff2') format('woff2'),
        url('../assets/fontawesome-free-5.13.0-web/webfonts/fa-solid-900.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Font Awesome 5 Free';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../assets/fontawesome-free-5.13.0-web/webfonts/fa-regular-400.woff2') format('woff2'),
+       url('../assets/fontawesome-free-5.13.0-web/webfonts/fa-regular-400.woff') format('woff');
 }
 
 @font-face {
@@ -30,7 +39,20 @@
   src: url('../../node_modules/primeicons/fonts/primeicons.woff2') format('woff2');
 }
 
+@font-face {
+  font-display: swap;
+  font-family: "bootstrap-icons";
+  src: url('../../node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff2') format('woff2'),
+       url('../../node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff') format('woff');
+}
 
+
+
+// Fix non-composited animation (Lighthouse CLS: p-ripple uses border-color transitions on non-composited layers)
+// Promote to its own compositor layer so border animations don't trigger layout/paint
+.p-ripple {
+  will-change: transform;
+}
 
 .p-multiselect-option.p-multiselect-option-selected{
 background-color: transparent !important;

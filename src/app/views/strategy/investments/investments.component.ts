@@ -349,35 +349,24 @@ export class InvestmentsComponent implements OnInit {
       this.tableService.updateReportTableDataReadyStatus(true);
       this.itInvestmentsData = i;
       this.itInvesmentsDataTabFilterted = i;
+
+      // Compute chart data from the same response to avoid a duplicate API call
+      const counts = i.reduce((p: Record<string, number>, c: any) => {
+        const name = c.Type;
+        if (!p.hasOwnProperty(name)) {
+          p[name] = 0;
+        }
+        if (!c.Status.includes('Eliminated')) p[name]++;
+        return p;
+      }, {} as Record<string, number>);
+
+      this.vizData = Object.keys(counts)
+        .map((k) => ({ name: k, value: counts[k] }))
+        .sort((a, b) => b.value - a.value);
     });
 
     this.apiService.getITInvestmentsFilterTotals().subscribe(t => {
       this.filterTotals = t;
-    });
-
-    // Get Investment data for visuals
-    this.apiService.getInvestments().subscribe((data: any[]) => {
-      // Get counts by Investment Type
-      var counts = data.reduce((p, c) => {
-        var name = c.Type;
-        if (!p.hasOwnProperty(name)) {
-          p[name] = 0;
-        }
-        // Only count if not eliminated
-        if (c.Status.includes('Eliminated') == false) p[name]++;
-        return p;
-      }, {});
-
-      // Resolve the counts into an object and sort by value
-      this.vizData = Object.keys(counts)
-        .map((k) => {
-          return { name: k, value: counts[k] };
-        })
-        .sort(function (a, b) {
-          return b.value - a.value;
-        });
-
-      // console.log(this.vizData);  // Debug
     });
 
     // // Method to open details modal when referenced directly via URL

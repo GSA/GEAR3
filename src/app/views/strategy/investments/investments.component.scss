@@ -38,6 +38,8 @@
     }
 
     & .investments-graph-container {
+        content-visibility: auto;
+        contain-intrinsic-size: 0 300px;
 
         & .investments-graph {
             width: 95%;
@@ -49,6 +51,8 @@
         display: flex;
         flex-direction: column;
         padding: 1rem 0;
+        content-visibility: auto;
+        contain-intrinsic-size: 0 600px;
 
         & .filter-tabs-container {
             & .filter-tab {
