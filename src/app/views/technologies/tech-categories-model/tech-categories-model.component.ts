@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
+import { PreviousRouteService } from '@services/previous-route/previous-route.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
@@ -51,6 +52,14 @@ export class TechCategoriesModelComponent implements OnInit {
 
   public searchKey: string;
   private finalSearchPath;
+  private pendingSearchKey: string | null = null;
+
+  private getSearchTermFromHistory(): string | null {
+    const prevUrl = this.previousRouteService.getPreviousEntry()?.url ?? null;
+    if (!prevUrl) return null;
+    const qs = prevUrl.split('?')[1] ?? '';
+    return new URLSearchParams(qs).get('tableSearchTerm');
+  }
 
   constructor(
     private apiService: ApiService,
@@ -60,6 +69,7 @@ export class TechCategoriesModelComponent implements OnInit {
     private tableService: TableService,
     private titleService: Title,
     private elementRef: ElementRef,
+    private previousRouteService: PreviousRouteService,
     private router: Router
   ) {}
 
@@ -67,6 +77,15 @@ export class TechCategoriesModelComponent implements OnInit {
     // Enable popovers
     $(function () {
       $('[data-bs-toggle="popover"]').popover();
+    });
+
+    // Restore search term when returning via breadcrumb or browser back navigation
+    this.route.queryParams.subscribe((params) => {
+      const term = params['tableSearchTerm'] || this.getSearchTermFromHistory();
+      if (term) {
+        this.searchKey = term;
+        this.pendingSearchKey = term;
+      }
     });
 
     this.getTRMData();
@@ -160,6 +179,13 @@ export class TechCategoriesModelComponent implements OnInit {
       });
 
       this.createGraph();
+
+      // Restore pending search if user navigated back with a search term
+      if (this.pendingSearchKey) {
+        this.searchKey = this.pendingSearchKey;
+        this.pendingSearchKey = null;
+        this.search({ key: 'Enter' });
+      }
     });
   }
 
@@ -389,7 +415,7 @@ export class TechCategoriesModelComponent implements OnInit {
             //   .subscribe((data: any) => {
             //       // var capData = data[0];
             //       // this.tableService.capsTableClick(capData);
-            this.router.navigate(['tech_categories', this.selectedTRM.identity], { queryParams: { fromPrevious: 'Technology Categories Model' } });
+            this.router.navigate(['tech_categories', this.selectedTRM.identity], { queryParams: { fromPrevious: 'Technology Categories Model', ...(this.searchKey ? { tableSearchTerm: this.searchKey } : {}) } });
             //     }
             //   )
           }
