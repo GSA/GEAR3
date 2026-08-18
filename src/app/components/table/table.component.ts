@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ContentChild, EventEmitter, HostListener, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { Table, TableLazyLoadEvent, TableRowSelectEvent } from 'primeng/table';
 import { Column, ExportColumn, TwoDimArray, FilterButton, ColumnFilter } from '../../common/table-classes';
 import { SharedService } from '@services/shared/shared.service';
@@ -68,6 +68,15 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   @Input() visibleColumnStorageKey: string = '';
 
   @Input() attrDefs: DataDictionary[] = [];
+
+  // Row expansion support
+  @Input() showExpandColumn: boolean = false;
+  @Input() expandDataKey: string = 'id';
+  @Input() expandableRowField: string = '';
+
+  @ContentChild('expansionRows', { read: TemplateRef }) expansionRowsTemplate: TemplateRef<any>;
+
+  expandedRows: { [key: string]: boolean } = {};
 
   // Filter event (some reports change available columns when filtered)
   @Output() filterEvent = new EventEmitter<string>();

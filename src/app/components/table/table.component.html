@@ -27,7 +27,9 @@
       [showCurrentPageReport]="true"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
       (onPage)="pageChange($event)"
-      (onRowSelect)="onRowSelect($event)">
+      (onRowSelect)="onRowSelect($event)"
+      [dataKey]="showExpandColumn ? expandDataKey : null"
+      [(expandedRowKeys)]="expandedRows">
 
       <ng-template #caption>
         <div class="caption-container">
@@ -83,6 +85,9 @@
         <ng-template #header let-columns>
           <!-- Headings -->
           <tr>
+            @if (showExpandColumn) {
+              <th style="width: 3rem;"></th>
+            }
             @for (col of columns; track col) {
               @if (showColumn(col)) {
                 <th [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.isSortable ? true : false" [class]="col.class">
@@ -122,8 +127,23 @@
             }
           </ng-template>
           <!-- Table body -->
-          <ng-template pTemplate="body" let-rowData let-columns="columns">
+          <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
             <tr [pSelectableRow]="rowData">
+              @if (showExpandColumn) {
+                <td style="width: 3rem; text-align: center;">
+                  @if (!expandableRowField || rowData[expandableRowField]) {
+                    <p-button
+                      type="button"
+                      [pRowToggler]="rowData"
+                      [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+                      severity="secondary"
+                      variant="text"
+                      size="small"
+                      (click)="$event.stopPropagation()"
+                      ariaLabel="Expand row" />
+                  }
+                </td>
+              }
               @for (col of columns; track col) {
                 @if (showColumn(col)) {
                   <td>
@@ -137,6 +157,12 @@
                 }
               }
             </tr>
+          </ng-template>
+          <!-- Row expansion content (projected from parent via #expansionRows ContentChild) -->
+          <ng-template #rowexpansion let-row>
+            @if (expansionRowsTemplate) {
+              <ng-container *ngTemplateOutlet="expansionRowsTemplate; context: { $implicit: row }"></ng-container>
+            }
           </ng-template>
           <ng-template #emptymessage let-columns>
             <tr>

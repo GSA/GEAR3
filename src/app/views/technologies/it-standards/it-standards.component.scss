@@ -60,91 +60,24 @@
     }
 }
 
-/* ── Rollup toolbar ─────────────────────────────────────────────────────── */
-.rollup-toolbar {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 0;
-
-    .rollup-search {
-        min-width: 240px;
-    }
-}
-
-/* ── Rollup table cells ─────────────────────────────────────────────────── */
-.expand-col {
-    width: 3rem;
-    text-align: center;
-}
-
-.rollup-row {
-    cursor: pointer;
-
-    &:hover td {
-        background-color: #f0f4f8;
-    }
-}
-
+/* ── Version sub-rows (inside expanded rollup rows) ─────────────────────── */
 .version-sub-row {
     cursor: pointer;
     background-color: #f8f9fb;
 
     &:hover td {
-        background-color: #eef1f6;
+        background-color: #eef1f6 !important;
     }
+}
 
-    td {
-        padding-left: 1.5rem;
-        font-size: 0.9rem;
-        border-top: 1px dashed #dee2e6;
-    }
+.version-info-row {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.25rem 0;
 }
 
 .version-name {
-    font-style: italic;
-}
-
-.desc-truncate {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    max-width: 300px;
-}
-
-.deploy-cell {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-}
-
-.empty-message {
-    text-align: center;
-    padding: 2rem;
-    color: #6c757d;
-}
-
-/* ── Status badges (reused in rollup table) ─────────────────────────────── */
-.status-badge {
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    display: inline-block;
-    font-size: 0.85rem;
     font-weight: 500;
-
-    &.status-green {
-        background-color: #EEF6EE;
-        color: #006100;
-    }
-
-    &.status-red {
-        background-color: #FDE8EA;
-        color: #7A0019;
-    }
-
-    &.status-yellow {
-        background-color: #FFEFD6;
-        color: #943600;
-    }
+    min-width: 180px;
 }
