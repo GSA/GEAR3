@@ -103,6 +103,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   originalTableData: any[] = [];
 
   visibleColumns: Column[] = [];
+  pickableColumns: Column[] = [];
   exportColumns!: ExportColumn[];
   currentFilterButton: string = '';
   currentFilterButtons: string[] = [];
@@ -270,6 +271,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   private initializeColumnVisibility() {
     // Simply set visibleColumns to all columns that should be visible
     this.visibleColumns = this.tableCols.filter(col => col.showColumn !== false);
+    this.pickableColumns = this.tableCols.filter(col => !col.hideFromPicker);
   }
 
   public resetVisibleColumns(): void {

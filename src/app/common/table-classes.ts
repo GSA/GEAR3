@@ -5,6 +5,7 @@ export interface Column {
   field: string,
   isSortable?: boolean,
   showColumn?: boolean,
+  hideFromPicker?: boolean,
   class?: string,
   formatter?: Function,
   titleTooltip?: string

@@ -457,6 +457,7 @@
         color: #fff;
         background-color: var(--primary-color) !important;
         border-left: 1px solid #fff;
+        height: 38px;
 
         &:hover,
         &:active {
@@ -478,7 +479,7 @@
         background-color: var(--p-primary-color, #027eb2);
         border-color: var(--p-primary-color, #027eb2);
         border-radius: 0;
-        height: 34px;
+        height: 38px;
 
         &:hover {
             background-color: var(--p-primary-hover-color, #1a82ae);
