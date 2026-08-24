@@ -153,6 +153,16 @@ export class OrganizationsDetailsComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       this.organizationId = params.get('orgID');
 
+      // Reset to Overview tab on every navigation (including child org clicks)
+      this.isOverviewTabActive = true;
+      this.isBusinessSystemsTabActive = false;
+      this.isBusinessCapabilitiesTabActive = false;
+      this.isChildOrgsTabActive = false;
+      this.isDataReady = false;
+      this.businessSystems = [];
+      this.businessCapabilities = [];
+      this.childOrgs = [];
+
       // Get Capability details
       this.apiService.getOneOrg(this.organizationId).subscribe(o => {
         this.detailsData = o;
