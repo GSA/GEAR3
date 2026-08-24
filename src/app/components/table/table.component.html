@@ -17,8 +17,13 @@
       [rows]="defaultPaginationNumber"
       [first]="first"
       [paginator]="showPagination"
+      [lazy]="serverSidePagination"
+      [lazyLoadOnInit]="serverSidePagination"
+      [totalRecords]="serverSidePagination ? serverSideTotalRecords : tableData.length"
       [scrollable]="true"
       [scrollHeight]="screenHeight"
+      [virtualScroll]="!showPagination"
+      [virtualScrollItemSize]="46"
       [exportFilename]="getExportFilename()"
       [styleClass]="reportStyle + ' p-datatable-gridlines'"
       [sortOrder]="defaultSortOrder"
@@ -27,6 +32,7 @@
       [showCurrentPageReport]="true"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
       (onPage)="pageChange($event)"
+      (onLazyLoad)="onLazyLoad($event)"
       (onRowSelect)="onRowSelect($event)">
 
       <ng-template #caption>
@@ -46,6 +52,7 @@
                       type="text"
                       [formControl]="tableSearchControl"
                       (keypress)="onTableSearchKeypress($event)"
+                      (keyup.enter)="serverSidePagination ? onServerSideSearch() : null"
                       placeholder="Search keyword"
                       aria-label="Table Search" />
                     </p-inputgroup>

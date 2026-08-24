@@ -6,6 +6,9 @@ const router = express.Router();
 router.route('/')
   .get(orgCtrl.findAll);
 
+router.route('/paginated')
+  .get(orgCtrl.findPaginated);
+
 router.route('/get/:id')
   .get(orgCtrl.findOne);
 

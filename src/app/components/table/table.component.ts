@@ -69,6 +69,13 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() attrDefs: DataDictionary[] = [];
 
+  // Server-side (lazy) pagination
+  @Input() serverSidePagination: boolean = false;
+  @Input() serverSideTotalRecords: number = 0;
+
+  // Emits {page, pageSize, sortField, sortOrder, search} for server-side pagination
+  @Output() lazyLoadEvent = new EventEmitter<{ page: number; pageSize: number; sortField: string; sortOrder: number; search: string }>();
+
   // Filter event (some reports change available columns when filtered)
   @Output() filterEvent = new EventEmitter<string>();
 
@@ -394,6 +401,30 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   pageChange(event) {
     this.first = event.first;
     this.rows = event.rows;
+  }
+
+  onLazyLoad(event: TableLazyLoadEvent): void {
+    if (!this.serverSidePagination) return;
+    const pageSize = event.rows || this.defaultPaginationNumber;
+    const page = Math.floor((event.first || 0) / pageSize) + 1;
+    const sortField = (event.sortField as string) || this.defaultSortField;
+    const sortOrder = event.sortOrder || this.defaultSortOrder;
+    const search = this.tableSearchControl.value?.trim() || '';
+    this.lazyLoadEvent.emit({ page, pageSize, sortField, sortOrder, search });
+  }
+
+  onServerSideSearch(): void {
+    if (!this.serverSidePagination) return;
+    const search = this.tableSearchControl.value?.trim() || '';
+    const pageSize = this.rows || this.defaultPaginationNumber;
+    this.first = 0;
+    this.lazyLoadEvent.emit({
+      page: 1,
+      pageSize,
+      sortField: this.defaultSortField,
+      sortOrder: this.defaultSortOrder,
+      search,
+    });
   }
 
   hasPreFilteredTableData() {

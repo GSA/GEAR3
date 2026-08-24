@@ -332,6 +332,22 @@ export class ApiService {
         catchError(this.handleError<Organization[]>('GET Organizations', []))
       );
   }
+
+  public getOrganizationsPaginated(
+    page: number,
+    pageSize: number,
+    sortField: string = 'Name',
+    sortOrder: number = 1,
+    search: string = ''
+  ): Observable<{ total: number; data: Organization[] }> {
+    const params: any = { page, pageSize, sortField, sortOrder };
+    if (search) { params.search = search; }
+    return this.http
+      .get<{ total: number; data: Organization[] }>(this.orgUrl + '/paginated', { params })
+      .pipe(
+        catchError(this.handleError<{ total: number; data: Organization[] }>('GET Organizations Paginated', { total: 0, data: [] }))
+      );
+  }
   public getOneOrg(id: string): Observable<Organization> {
     return this.http
       .get<Organization>(this.orgUrl + '/get/' + String(id))
