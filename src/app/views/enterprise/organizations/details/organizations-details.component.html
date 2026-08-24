@@ -2,11 +2,11 @@
   <div class="organization-details-container">
     <div class="breadcrumb-container">
       <app-breadcrumb>
-        <span currentPageName>{{detailsData.Name}}</span>
+        <span currentPageName>{{detailsData.DisplayName}}</span>
       </app-breadcrumb>
     </div>
     <div class="title-container">
-      <span class="title">{{detailsData.Name}}</span>
+      <span class="title">{{detailsData.DisplayName}}</span>
     </div>
     <div class="content-container">
       <ul class="nav nav-tabs">
@@ -43,6 +43,17 @@
                   </label>
                   <span>
                     <span>{{detailsData.DisplayName}}</span>
+                  </span>
+                </div>
+                <div class="data">
+                  <label class="data-label">
+                    <span role="tooltip">
+                      Org Code
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>
+                    <span>{{detailsData.OrgSymbol}}</span>
                   </span>
                 </div>
                 <div class="data">
@@ -89,7 +100,7 @@
             <div class="main-data-container">
               <div class="sub-content full-width">
                 <span class="sub-header">Business Systems</span>
-                <app-table visibleColumnStorageKey="organizations-business-systems" defaultSortField="DisplayName" [isLocal]="true" [localTableData]="businessSystems" [tableCols]="businessSystemsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="systems" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onSystemRowClick($event)"></app-table>
+                <app-table visibleColumnStorageKey="organizations-business-systems" defaultSortField="Name" [isLocal]="true" [localTableData]="businessSystems" [tableCols]="businessSystemsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="systems" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onSystemRowClick($event)"></app-table>
               </div>
             </div>
           </div>
