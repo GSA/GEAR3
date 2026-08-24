@@ -44,17 +44,30 @@ exports.findChildOrgs = (req, res) => {
 };
 
 exports.findBusinessSystems = (req, res) => {
-  // Match systems where this org (or any child org) is the business org
-  // Uses obj_org_SSO_Id FK which maps Organization_Id -> obj_systems_subsystems
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
-    ` WHERE systems_ext.obj_org_SSO_Id IN (
-        SELECT Organization_Id FROM gear_schema.obj_organization
-        WHERE Organization_Id = '${req.params.id}'
-           OR Parent_Id = '${req.params.id}'
-      )
-      AND systems.\`ex:Status\` = 'Active'
-      AND systems.\`ex:BusinessApplication\` = 'Yes'
-      GROUP BY systems.\`ex:GEAR_ID\`;`;
+  // Business_Org is a free-text field like "Ofc. of Supply Mgmt. (FDC)"
+  // Match systems where Business_Org contains "(OrgSymbol)" for this org
+  const sql = require('../db.js').connection;
 
-  res = ctrl.sendQuery(query, 'business systems for organization', res);
+  sql.query(
+    'SELECT Org_Symbol FROM gear_schema.obj_organization WHERE Organization_Id = ?',
+    [req.params.id],
+    (err, rows) => {
+      if (err || !rows || rows.length === 0) {
+        return res.status(404).json({ message: 'Organization not found' });
+      }
+      const orgSymbol = rows[0].Org_Symbol;
+      var sysQuery = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
+        ` WHERE systems_ext.Business_Org LIKE '%(${ orgSymbol})%'
+          AND systems.\`ex:Status\` = 'Active'
+          AND systems.\`ex:BusinessApplication\` = 'Yes'
+          GROUP BY systems.\`ex:GEAR_ID\`;`;
+
+      sql.query(sysQuery, (err2, results) => {
+        if (err2) {
+          return res.status(501).json({ message: err2.message });
+        }
+        res.status(200).json(results);
+      });
+    }
+  );
 };
