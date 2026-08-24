@@ -1,7 +1,7 @@
 {
   "name": "gear3",
-  "version": "3.0.0",
-  "description": "Next Iteration of the GEAR portal to latest tech stack of 2020",
+  "version": "3.1.0",
+  "description": "Next Iteration of the GEAR portal to latest tech stack",
   "main": "server.js",
   "engines": {
     "node": ">=20.19.0"
