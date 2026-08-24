@@ -11,61 +11,114 @@
     <div class="content-container">
       <ul class="nav nav-tabs">
         <li class="nav-item">
-          <a class="nav-link active" href="#overview">Overview</a>
+          <a class="nav-link" [class.active]="isOverviewTabActive" (click)="onTabClick('overview', $event)" href="#overview">Overview</a>
         </li>
+        @if (businessSystems.length > 0) {
+          <li class="nav-item">
+            <a class="nav-link" [class.active]="isBusinessSystemsTabActive" (click)="onTabClick('business_systems', $event)" href="#business_systems">Business Systems</a>
+          </li>
+        }
+        @if (businessCapabilities.length > 0) {
+          <li class="nav-item">
+            <a class="nav-link" [class.active]="isBusinessCapabilitiesTabActive" (click)="onTabClick('business_capabilities', $event)" href="#business_capabilities">Business Capabilities</a>
+          </li>
+        }
+        @if (childOrgs.length > 0) {
+          <li class="nav-item">
+            <a class="nav-link" [class.active]="isChildOrgsTabActive" (click)="onTabClick('child_orgs', $event)" href="#child_orgs">Child Organizations</a>
+          </li>
+        }
       </ul>
-      <div class="overview-container">
-        <div class="overall-data-container">
-          <div class="main-data-container">
-            <div class="data-wrapper">
-              <div class="data">
-                <label class="data-label">
-                  <span [title]="getTooltip('Organization Name')" role="tooltip">
-                    Display Name
-                    <i class="fas fa-info-circle"></i>
+      @if (isOverviewTabActive) {
+        <div class="overview-container">
+          <div class="overall-data-container">
+            <div class="main-data-container">
+              <div class="data-wrapper">
+                <div class="data">
+                  <label class="data-label">
+                    <span [title]="getTooltip('Organization Name')" role="tooltip">
+                      Display Name
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>
+                    <span>{{detailsData.DisplayName}}</span>
                   </span>
-                </label>
-                <span>
-                  <span>{{detailsData.DisplayName}}</span>
-                </span>
-              </div>
-              <div class="data">
-                <label class="data-label">
-                  <span [title]="getTooltip('SSO Name')" role="tooltip">
-                    SSO Name
-                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div class="data">
+                  <label class="data-label">
+                    <span [title]="getTooltip('SSO Name')" role="tooltip">
+                      SSO Name
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>
+                    <span>{{detailsData.SSOName}}</span>
                   </span>
-                </label>
-                <span>
-                  <span>{{detailsData.SSOName}}</span>
-                </span>
-              </div>
-              <div class="data">
-                <label class="data-label">
-                  <span [title]="getTooltip('Two Letter Org')" role="tooltip">
-                    Two Letter Org
-                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div class="data">
+                  <label class="data-label">
+                    <span [title]="getTooltip('Two Letter Org')" role="tooltip">
+                      Two Letter Org
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>
+                    <span>{{detailsData.TwoLetterOrgName}}</span>
                   </span>
-                </label>
-                <span>
-                  <span>{{detailsData.TwoLetterOrgName}}</span>
-                </span>
-              </div>
-              <div class="data">
-                <label class="data-label">
-                  <span [title]="getTooltip('Parent Organization')" role="tooltip">
-                    Parent Organization
-                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div class="data">
+                  <label class="data-label">
+                    <span [title]="getTooltip('Parent Organization')" role="tooltip">
+                      Parent Organization
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>
+                    <span>{{detailsData.Parent}}</span>
                   </span>
-                </label>
-                <span>
-                  <span>{{detailsData.Parent}}</span>
-                </span>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      }
+      @if (isBusinessSystemsTabActive) {
+        <div class="supporting-systems-container">
+          <div class="overall-data-container">
+            <div class="main-data-container">
+              <div class="sub-content full-width">
+                <span class="sub-header">Business Systems</span>
+                <app-table visibleColumnStorageKey="organizations-business-systems" defaultSortField="DisplayName" [isLocal]="true" [localTableData]="businessSystems" [tableCols]="businessSystemsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="systems" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onSystemRowClick($event)"></app-table>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+      @if (isBusinessCapabilitiesTabActive) {
+        <div class="supporting-systems-container">
+          <div class="overall-data-container">
+            <div class="main-data-container">
+              <div class="sub-content full-width">
+                <span class="sub-header">Business Capabilities</span>
+                <app-table visibleColumnStorageKey="organizations-business-capabilities" defaultSortField="Name" [isLocal]="true" [localTableData]="businessCapabilities" [tableCols]="businessCapabilitiesTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="capabilities" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onCapabilityRowClick($event)"></app-table>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+      @if (isChildOrgsTabActive) {
+        <div class="supporting-systems-container">
+          <div class="overall-data-container">
+            <div class="main-data-container">
+              <div class="sub-content full-width">
+                <span class="sub-header">Child Organizations</span>
+                <app-table visibleColumnStorageKey="organizations-child-orgs" defaultSortField="Name" [isLocal]="true" [localTableData]="childOrgs" [tableCols]="childOrgsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="organizations" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onOrgRowClick($event)"></app-table>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
     </div>
   </div>
 }

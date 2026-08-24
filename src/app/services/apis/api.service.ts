@@ -361,6 +361,24 @@ export class ApiService {
         )
       );
   }
+  public getOrgBusinessSystems(id: string): Observable<System[]> {
+    return this.http
+      .get<System[]>(this.orgUrl + '/get/' + id + '/business_systems')
+      .pipe(
+        catchError(
+          this.handleError<System[]>('GET Business Systems for Organization', [])
+        )
+      );
+  }
+  public getOrgChildOrgs(id: string): Observable<Organization[]> {
+    return this.http
+      .get<Organization[]>(this.orgUrl + '/get/' + id + '/child_orgs')
+      .pipe(
+        catchError(
+          this.handleError<Organization[]>('GET Child Organizations for Organization', [])
+        )
+      );
+  }
 
   //// POCs
   public getPOCs(): Observable<POC[]> {
