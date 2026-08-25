@@ -1,28 +1,28 @@
 const path = require('path');
-const { promises: fs } = require('fs');
 const { google } = require('googleapis');
+const { GoogleAuth } = require('google-auth-library');
 
 // Write scope is required to clear/update sheet values.
-// If this scope changes, the stored token must be re-authorized.
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
-const CREDENTIALS_PATH = path.join(__dirname, '../../certs/gear_google_credentials.json');
-const TOKEN_PATH = path.join(__dirname, '../../token.json');
+// Service account key file. The service account email must be granted edit
+// access to the target spreadsheet for writes to succeed.
+const KEY_FILE = path.join(__dirname, '../../certs/gear-google-auth-client-credentials.json');
 
 /**
- * Builds an authorized OAuth2 client using the stored credentials and token.
+ * Builds an authorized service-account client. No interactive consent required.
  *
- * @returns {Promise<import('google-auth-library').OAuth2Client>} Authorized client.
+ * @returns {Promise<import('google-auth-library').JSONClient>} Authorized client.
  */
 const getAuthClient = async () => {
-  const content = await fs.readFile(CREDENTIALS_PATH, 'utf8');
-  const { client_id, client_secret } = JSON.parse(content).installed;
+  console.log('[sheets-writer] Authorizing with service account key at', KEY_FILE);
+  const auth = new GoogleAuth({
+    keyFile: KEY_FILE,
+    scopes: SCOPES,
+  });
 
-  const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, process.env.GOOGLE_AUTH_REDIRECT);
-
-  const token = await fs.readFile(TOKEN_PATH, 'utf8');
-  oAuth2Client.setCredentials(JSON.parse(token));
-
-  return oAuth2Client;
+  const client = await auth.getClient();
+  console.log('[sheets-writer] Service account authorized:', client.email || '(unknown email)');
+  return client;
 };
 
 /**
@@ -38,11 +38,13 @@ const clearAndWriteTab = async (spreadsheetId, tabName, values) => {
   const sheets = google.sheets({ version: 'v4', auth });
 
   // Clear the entire tab first so stale rows are removed.
+  console.log(`[sheets-writer] Clearing tab '${tabName}'...`);
   await sheets.spreadsheets.values.clear({
     spreadsheetId,
     range: `${tabName}`,
   });
 
+  console.log(`[sheets-writer] Writing ${values.length} rows to '${tabName}!A1'...`);
   const response = await sheets.spreadsheets.values.update({
     spreadsheetId,
     range: `${tabName}!A1`,
@@ -52,6 +54,7 @@ const clearAndWriteTab = async (spreadsheetId, tabName, values) => {
     },
   });
 
+  console.log(`[sheets-writer] Update complete. Updated cells:`, response.data && response.data.updatedCells);
   return response.data;
 };
 

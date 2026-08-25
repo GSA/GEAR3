@@ -43,13 +43,19 @@ const runFismaSheetJob = async () => {
   const jobLogger = new JobLogger();
   let jobId;
 
+  // Logs to both the in-memory job logger (persisted to DB) and stdout (iisnode log).
+  const log = (message) => {
+    jobLogger.log(message);
+    console.log(`[${jobType}] ${message}`);
+  };
+
   try {
-    jobLogger.log(`${jobName} - Execution start`);
+    log(`${jobName} - Execution start`);
 
     // Check for any pending job
     const pendingJobId = await cronJobDbUtilService.getAnyPendingJob(jobType);
     if (pendingJobId) {
-      jobLogger.log(`Active Job '${pendingJobId}' is Running. Aborting the job now.`);
+      log(`Active Job '${pendingJobId}' is Running. Aborting the job now.`);
       await cronJobDbUtilService.insertDbData({ jobType, startTime: formatDateTime(new Date()), jobLogs: jobLogger.getLogs(), jobStatus: JobStatus.CANCELLED });
       return;
     }
@@ -59,30 +65,42 @@ const runFismaSheetJob = async () => {
     console.log(`Cron job id: ${jobId} - start`);
 
     // Pull all FISMA data (matches fisma.controller.findAll).
+    log('Preparing FISMA query...');
     const query = await prepareQuery("GET/get_fisma_archer.sql") + " GROUP BY archer.`ex:GEAR_ID`;";
+    log('Running FISMA query against the database...');
     const rows = await runQuery(query, []);
-    jobLogger.log(`Retrieved ${rows.length} FISMA records from the database.`);
+    log(`Retrieved ${rows.length} FISMA records from the database.`);
 
     const values = toSheetValues(rows);
     if (values.length === 0) {
-      jobLogger.log('No FISMA data found. Nothing written to the sheet.');
+      log('No FISMA data found. Nothing written to the sheet.');
       await postprocessJobExecution(jobId, jobLogger, JobStatus.SUCCESS);
       return;
     }
 
     // Clear the TEST tab and write headers + data.
+    log(`Writing to spreadsheet '${SHEET_ID}', tab '${TAB_NAME}' (${values.length - 1} data rows + header)...`);
     await clearAndWriteTab(SHEET_ID, TAB_NAME, values);
-    jobLogger.log(`Wrote ${values.length - 1} data rows to the '${TAB_NAME}' tab.`);
+    log(`Wrote ${values.length - 1} data rows to the '${TAB_NAME}' tab.`);
 
     await postprocessJobExecution(jobId, jobLogger, JobStatus.SUCCESS);
+    log(`${jobName} - Completed successfully.`);
   } catch (error) {
-    const status = `error occurred while running:  \n` + error;
+    // Log full error details to the iisnode log (stdout/stderr) and to the job logger.
+    console.error(`[${jobType}] ERROR:`, error && error.message ? error.message : error);
+    console.error(`[${jobType}] STACK:`, error && error.stack ? error.stack : '(no stack)');
+    if (error && error.response && error.response.data) {
+      console.error(`[${jobType}] API RESPONSE:`, JSON.stringify(error.response.data));
+    }
+
+    const status = `error occurred while running:  \n` + (error && error.stack ? error.stack : error);
+    jobLogger.log(jobName + ' - ' + status);
+    if (error && error.response && error.response.data) {
+      jobLogger.log(`API response: ${JSON.stringify(error.response.data)}`);
+    }
+
     if (jobId) {
-      jobLogger.log(jobName + ' - ' + status);
-      jobLogger.log(error.stack);
       await postprocessJobExecution(jobId, jobLogger, JobStatus.FAILURE);
-    } else {
-      jobLogger.log(error);
     }
   }
 };
