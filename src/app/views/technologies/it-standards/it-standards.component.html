@@ -37,19 +37,27 @@
 
           <!-- Version sub-rows shown when a rollup row is expanded -->
           <ng-template #expansionRows let-row>
-            @for (version of row.versions; track version.ID) {
-              <tr class="version-sub-row" (click)="onVersionClick(version, $event)">
-                <td></td>
-                <td colspan="100">
-                  <div class="version-info-row">
-                    <span class="version-name">{{ version.SoftwareReleaseName || version.Name }}</span>
-                    <span [innerHTML]="sharedService.formatStatus(version.Status, version)"></span>
-                    <span [innerHTML]="sharedService.formatDeploymentType(version.DeploymentType, version)"></span>
-                    <span>{{ version.ApprovalExpirationDate | date: 'MMM d, y' }}</span>
+            <tr class="expansion-wrapper-row">
+              <td class="expansion-indent-cell"></td>
+              <td colspan="100" class="expansion-content-cell">
+                <div class="expansion-panel">
+                  <div class="expansion-panel-header">
+                    <span>Version Name</span>
+                    <span>Status</span>
+                    <span>Deployment Type</span>
+                    <span>Approval Expires</span>
                   </div>
-                </td>
-              </tr>
-            }
+                  @for (version of row.versions; track version.ID) {
+                    <div class="expansion-version-row" (click)="onVersionClick(version, $event)">
+                      <span class="version-name-col">{{ version.SoftwareReleaseName || version.Name }}</span>
+                      <span [innerHTML]="sharedService.formatStatus(version.Status, version)"></span>
+                      <span [innerHTML]="sharedService.formatDeploymentType(version.DeploymentType, version)"></span>
+                      <span class="version-date-col">{{ version.ApprovalExpirationDate | date: 'MMM d, y' }}</span>
+                    </div>
+                  }
+                </div>
+              </td>
+            </tr>
           </ng-template>
 
           <div class="filter-tabs-container" filterTabs>

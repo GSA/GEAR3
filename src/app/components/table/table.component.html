@@ -128,7 +128,7 @@
           </ng-template>
           <!-- Table body -->
           <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
-            <tr [pSelectableRow]="rowData">
+            <tr [pSelectableRow]="rowData" [ngClass]="{'row-is-expanded': expanded && showExpandColumn}">
               @if (showExpandColumn) {
                 <td style="width: 3rem; text-align: center;">
                   @if (!expandableRowField || rowData[expandableRowField]) {

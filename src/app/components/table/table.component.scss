@@ -516,6 +516,18 @@
         background-color: #027eb2 !important;
         color: #fff !important;
     }
+
+    /* Expanded parent row — blue border on top and sides, no bottom */
+    .p-datatable .p-datatable-tbody > tr.row-is-expanded > td {
+        border-top: 2px solid var(--primary-color) !important;
+        border-bottom: none !important;
+    }
+    .p-datatable .p-datatable-tbody > tr.row-is-expanded > td:first-child {
+        border-left: 2px solid var(--primary-color) !important;
+    }
+    .p-datatable .p-datatable-tbody > tr.row-is-expanded > td:last-child {
+        border-right: 2px solid var(--primary-color) !important;
+    }
 }
 
 .p-inputicon {
