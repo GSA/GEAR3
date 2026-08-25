@@ -2,7 +2,7 @@ const { JobLogger } = require('../cron-jobs/job-logger.js');
 const JobStatus = require('../enums/job-status.js');
 const cronJobDbUtilService = require("../cron-jobs/cron-job-db-util.service.js");
 const { formatDateTime } = require('../util/date-time-format-service.js');
-const { prepareQuery, runQuery } = require("../util/db-query-service.js");
+const { runQuery } = require("../util/db-query-service.js");
 const { clearAndWriteTab } = require("../util/google-sheets-writer-service.js");
 
 const jobType = "FISMA-SHEET-JOB";
@@ -11,6 +11,7 @@ const jobName = `CRON JOB: FISMA Data to Google Sheet (TEST tab)`;
 // Same spreadsheet used elsewhere in the app.
 const SHEET_ID = '1eSoyn7-2EZMqbohzTMNDcFmNBbkl-CzXtpwNXHNHD1A';
 const TAB_NAME = 'TEST';
+const FISMA_QUERY = 'SELECT * FROM gear_schema.obj_fisma_archer';
 
 /**
  * Converts an array of row objects into a 2D array (headers + values) for Google Sheets.
@@ -35,8 +36,8 @@ const toSheetValues = (rows) => {
 };
 
 /**
- * Runs the FISMA-to-Sheet job. Pulls all FISMA data from the database (the same data served by
- * the /api/fisma endpoint) and writes it into the TEST tab of the Google Sheet.
+ * Runs the FISMA-to-Sheet job. Pulls all rows from gear_schema.obj_fisma_archer and writes
+ * them into the TEST tab of the Google Sheet.
  * Logs execution details and job status into the database.
  */
 const runFismaSheetJob = async () => {
@@ -64,11 +65,9 @@ const runFismaSheetJob = async () => {
     jobId = await cronJobDbUtilService.insertDbData({ jobType, startTime: formatDateTime(new Date()), jobLogs: '', jobStatus: JobStatus.PENDING });
     console.log(`Cron job id: ${jobId} - start`);
 
-    // Pull all FISMA data (matches fisma.controller.findAll).
-    log('Preparing FISMA query...');
-    const query = await prepareQuery("GET/get_fisma_archer.sql") + " GROUP BY archer.`ex:GEAR_ID`;";
+    // Pull all FISMA data.
     log('Running FISMA query against the database...');
-    const rows = await runQuery(query, []);
+    const rows = await runQuery(FISMA_QUERY, []);
     log(`Retrieved ${rows.length} FISMA records from the database.`);
 
     const values = toSheetValues(rows);
