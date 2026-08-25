@@ -3,7 +3,7 @@ const JobStatus = require('../enums/job-status.js');
 const cronJobDbUtilService = require("../cron-jobs/cron-job-db-util.service.js");
 const { formatDateTime } = require('../util/date-time-format-service.js');
 const { runQuery } = require("../util/db-query-service.js");
-const { clearAndWriteTab } = require("../util/google-sheets-writer-service.js");
+const { clearAndWriteTab, writeDataPreservingFirstRow } = require("../util/google-sheets-writer-service.js");
 
 const jobType = "FISMA-SHEET-JOB";
 const jobName = `CRON JOB: FISMA Data to Google Sheet (TEST tab)`;
@@ -11,7 +11,12 @@ const jobName = `CRON JOB: FISMA Data to Google Sheet (TEST tab)`;
 // Same spreadsheet used elsewhere in the app.
 const SHEET_ID = '1eSoyn7-2EZMqbohzTMNDcFmNBbkl-CzXtpwNXHNHD1A';
 const TAB_NAME = 'TEST';
-const FISMA_QUERY = 'SELECT * FROM gear_schema.obj_fisma_archer';
+
+// Secondary spreadsheet. Data starts at row 2; row 1 holds "LAST UPDATED:" (A1) and timestamp (B1).
+const SECONDARY_SHEET_ID = '11bGtM1DQScYHNZfFsRNicSvzMxmR0Za6n_Rji__iiHw';
+const SECONDARY_TAB_NAME = 'GSA-systems-subsystems';
+
+const FISMA_QUERY = 'SELECT * FROM gear_schema.obj_fisma_archer WHERE `ex:Status` = "Active" or `ex:Status` = "Pending"';
 
 /**
  * Converts an array of row objects into a 2D array (headers + values) for Google Sheets.
@@ -81,6 +86,13 @@ const runFismaSheetJob = async () => {
     log(`Writing to spreadsheet '${SHEET_ID}', tab '${TAB_NAME}' (${values.length - 1} data rows + header)...`);
     await clearAndWriteTab(SHEET_ID, TAB_NAME, values);
     log(`Wrote ${values.length - 1} data rows to the '${TAB_NAME}' tab.`);
+
+    // Write to the secondary sheet starting at row 2 (row 1 is preserved). B1 gets the refresh time.
+    const dataRows = values.slice(1);
+    const lastUpdated = formatDateTime(new Date());
+    log(`Writing to spreadsheet '${SECONDARY_SHEET_ID}', tab '${SECONDARY_TAB_NAME}' (${dataRows.length} data rows from row 2)...`);
+    await writeDataPreservingFirstRow(SECONDARY_SHEET_ID, SECONDARY_TAB_NAME, dataRows, lastUpdated);
+    log(`Wrote ${dataRows.length} data rows to the '${SECONDARY_TAB_NAME}' tab and set B1 to '${lastUpdated}'.`);
 
     await postprocessJobExecution(jobId, jobLogger, JobStatus.SUCCESS);
     log(`${jobName} - Completed successfully.`);

@@ -58,6 +58,51 @@ const clearAndWriteTab = async (spreadsheetId, tabName, values) => {
   return response.data;
 };
 
+/**
+ * Writes data starting at row 2 of a tab while preserving row 1 (a header/metadata row).
+ * Clears rows 2 and below, writes the provided data rows starting at A2, and sets B1 to the
+ * supplied "last updated" timestamp. Row 1 (aside from B1) is left untouched.
+ *
+ * @param {string} spreadsheetId - The target spreadsheet ID.
+ * @param {string} tabName - The name of the tab/sheet to write to.
+ * @param {Array<Array<*>>} dataRows - A 2D array of data rows (no header row included).
+ * @param {string} lastUpdated - The timestamp string to write into cell B1.
+ * @returns {Promise<Object>} The Google Sheets batch update response data.
+ */
+const writeDataPreservingFirstRow = async (spreadsheetId, tabName, dataRows, lastUpdated) => {
+  const auth = await getAuthClient();
+  const sheets = google.sheets({ version: 'v4', auth });
+
+  // Clear everything from row 2 down, leaving row 1 intact.
+  console.log(`[sheets-writer] Clearing '${tabName}' from row 2 down...`);
+  await sheets.spreadsheets.values.clear({
+    spreadsheetId,
+    range: `${tabName}!A2:ZZZ`,
+  });
+
+  console.log(`[sheets-writer] Updating '${tabName}!B1' timestamp and writing ${dataRows.length} data rows from A2...`);
+  const response = await sheets.spreadsheets.values.batchUpdate({
+    spreadsheetId,
+    requestBody: {
+      valueInputOption: 'RAW',
+      data: [
+        {
+          range: `${tabName}!B1`,
+          values: [[lastUpdated]],
+        },
+        {
+          range: `${tabName}!A2`,
+          values: dataRows,
+        },
+      ],
+    },
+  });
+
+  console.log(`[sheets-writer] Update complete. Total updated cells:`, response.data && response.data.totalUpdatedCells);
+  return response.data;
+};
+
 module.exports = {
   clearAndWriteTab,
+  writeDataPreservingFirstRow,
 };
