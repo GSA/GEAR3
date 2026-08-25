@@ -77,7 +77,7 @@ const writeDataPreservingFirstRow = async (spreadsheetId, tabName, dataRows, las
   console.log(`[sheets-writer] Clearing '${tabName}' from row 2 down...`);
   await sheets.spreadsheets.values.clear({
     spreadsheetId,
-    range: `${tabName}!A2:ZZZ`,
+    range: `${tabName}!A2:ZZ`,
   });
 
   console.log(`[sheets-writer] Updating '${tabName}!B1' timestamp and writing ${dataRows.length} data rows from A2...`);
