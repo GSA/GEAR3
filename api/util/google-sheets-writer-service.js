@@ -59,17 +59,17 @@ const clearAndWriteTab = async (spreadsheetId, tabName, values) => {
 };
 
 /**
- * Writes data starting at row 2 of a tab while preserving row 1 (a header/metadata row).
- * Clears rows 2 and below, writes the provided data rows starting at A2, and sets B1 to the
- * supplied "last updated" timestamp. Row 1 (aside from B1) is left untouched.
+ * Writes data starting at row 2 of a tab while preserving row 1 (a metadata row).
+ * Clears rows 2 and below, writes the provided rows (headers + data) starting at A2, and sets B1
+ * to the supplied "last updated" timestamp. Row 1 (aside from B1) is left untouched.
  *
  * @param {string} spreadsheetId - The target spreadsheet ID.
  * @param {string} tabName - The name of the tab/sheet to write to.
- * @param {Array<Array<*>>} dataRows - A 2D array of data rows (no header row included).
+ * @param {Array<Array<*>>} rows - A 2D array of rows to write from A2 (first row is the header row).
  * @param {string} lastUpdated - The timestamp string to write into cell B1.
  * @returns {Promise<Object>} The Google Sheets batch update response data.
  */
-const writeDataPreservingFirstRow = async (spreadsheetId, tabName, dataRows, lastUpdated) => {
+const writeDataPreservingFirstRow = async (spreadsheetId, tabName, rows, lastUpdated) => {
   const auth = await getAuthClient();
   const sheets = google.sheets({ version: 'v4', auth });
 
@@ -80,7 +80,7 @@ const writeDataPreservingFirstRow = async (spreadsheetId, tabName, dataRows, las
     range: `${tabName}!A2:ZZ`,
   });
 
-  console.log(`[sheets-writer] Updating '${tabName}!B1' timestamp and writing ${dataRows.length} data rows from A2...`);
+  console.log(`[sheets-writer] Updating '${tabName}!B1' timestamp and writing ${rows.length} rows from A2...`);
   const response = await sheets.spreadsheets.values.batchUpdate({
     spreadsheetId,
     requestBody: {
@@ -92,7 +92,7 @@ const writeDataPreservingFirstRow = async (spreadsheetId, tabName, dataRows, las
         },
         {
           range: `${tabName}!A2`,
-          values: dataRows,
+          values: rows,
         },
       ],
     },

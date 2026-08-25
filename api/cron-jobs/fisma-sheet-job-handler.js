@@ -87,12 +87,12 @@ const runFismaSheetJob = async () => {
     await clearAndWriteTab(SHEET_ID, TAB_NAME, values);
     log(`Wrote ${values.length - 1} data rows to the '${TAB_NAME}' tab.`);
 
-    // Write to the secondary sheet starting at row 2 (row 1 is preserved). B1 gets the refresh time.
-    const dataRows = values.slice(1);
+    // Write to the secondary sheet starting at row 2 (row 1 is preserved). Headers go in row 2,
+    // data follows below. B1 gets the refresh time.
     const lastUpdated = formatDateTime(new Date());
-    log(`Writing to spreadsheet '${SECONDARY_SHEET_ID}', tab '${SECONDARY_TAB_NAME}' (${dataRows.length} data rows from row 2)...`);
-    await writeDataPreservingFirstRow(SECONDARY_SHEET_ID, SECONDARY_TAB_NAME, dataRows, lastUpdated);
-    log(`Wrote ${dataRows.length} data rows to the '${SECONDARY_TAB_NAME}' tab and set B1 to '${lastUpdated}'.`);
+    log(`Writing to spreadsheet '${SECONDARY_SHEET_ID}', tab '${SECONDARY_TAB_NAME}' (${values.length - 1} data rows + header from row 2)...`);
+    await writeDataPreservingFirstRow(SECONDARY_SHEET_ID, SECONDARY_TAB_NAME, values, lastUpdated);
+    log(`Wrote ${values.length - 1} data rows to the '${SECONDARY_TAB_NAME}' tab and set B1 to '${lastUpdated}'.`);
 
     await postprocessJobExecution(jobId, jobLogger, JobStatus.SUCCESS);
     log(`${jobName} - Completed successfully.`);
