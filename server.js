@@ -453,6 +453,12 @@ cron.schedule(process.env.RECORDS_CRON, async () => {
   await googleApiService.saveToken().catch(console.error);
   await cronCtrl.runUpdateAllRelatedRecordsJob();
 });
+
+// -------------------------------------------------------------------------------------------------
+// CRON JOB: FISMA data -> Google Sheet "TEST" tab
+cron.schedule(process.env.FISMA_SHEET_CRON, async () => {
+  await cronCtrl.runFismaSheetJob();
+});
 /* 
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Tech Catalog Daily Import
