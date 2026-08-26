@@ -46,6 +46,7 @@ router.use((req, res, next) => {
       '/cloud_adoption_rate',
       '/data_dictionary',
       '/attribute_definitions',
+      '/it_standards',
     ];
     const isLongCache = longCachePaths.some(p => req.path.startsWith(p));
     if (isLongCache) {

@@ -1,6 +1,7 @@
 var dotenv = require('dotenv').config();  // .env Credentials
 
 const compression = require('compression'),
+  zlib = require('zlib'),
   bodyParser = require('body-parser'),
   cors = require('cors'),
   express = require('express'),
@@ -104,8 +105,40 @@ const staticAssetOptions = {
 /********************************************************************
 LOAD EXPRESSJS MIDDLEWARE
 ********************************************************************/
+// Brotli-first compression middleware (falls back to gzip for older clients)
+// Uses Node's built-in zlib — no extra package needed.
+function brotliCompression(req, res, next) {
+  const acceptEncoding = req.headers['accept-encoding'] || '';
+
+  if (acceptEncoding.includes('br')) {
+    const _write = res.write.bind(res);
+    const _end = res.end.bind(res);
+    const brotli = zlib.createBrotliCompress({
+      params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 4 } // quality 4: fast, good ratio
+    });
+
+    res.setHeader('Content-Encoding', 'br');
+    res.removeHeader('Content-Length');
+
+    brotli.on('data', chunk => _write(chunk));
+    brotli.on('end', () => _end());
+    brotli.on('error', () => next());
+
+    res.write = (chunk) => brotli.write(chunk);
+    res.end = (chunk) => {
+      if (chunk) brotli.write(chunk);
+      brotli.end();
+    };
+
+    return next();
+  }
+
+  // Fallback to gzip for clients that don't support Brotli
+  return compression()(req, res, next);
+}
+
 const app = express()
-  .use(compression())
+  .use(brotliCompression)
   .use(cors())
   .use(bodyParser.json({ limit: '50mb' }))
   .use(bodyParser.urlencoded({ limit: '50mb', extended: false }))
