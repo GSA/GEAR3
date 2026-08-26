@@ -18,4 +18,10 @@ router.route('/get/:id/capabilities/')
 router.route('/get/:name/systems/')
   .get(orgCtrl.findSystems);
 
+router.route('/get/:id/business_systems/')
+  .get(orgCtrl.findBusinessSystems);
+
+router.route('/get/:id/child_orgs/')
+  .get(orgCtrl.findChildOrgs);
+
 module.exports = router;
