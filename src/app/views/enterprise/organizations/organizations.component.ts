@@ -34,6 +34,8 @@ export class OrganizationsComponent implements OnInit {
   tableData: Organization[] = [];
   tableDataOriginal: Organization[] = [];
 
+  totalRecords: number = 0;
+
   tableCols: Column[] = [
     {
       field: 'OrgSymbol',
@@ -64,28 +66,27 @@ export class OrganizationsComponent implements OnInit {
 
   ngOnInit(): void {
     this.apiService.getDataDictionaryByReportName('Organization').subscribe(defs => {
-      this.attrDefinitions = defs
+      this.attrDefinitions = defs;
     });
 
-    this.apiService.getOrganizations().subscribe(o => {
-      this.tableService.updateReportTableData(o);
+    // Initial load: first page
+    this.loadPage({ page: 1, pageSize: 50, sortField: 'OrgSymbol', sortOrder: 1, search: '' });
+  }
+
+  public loadPage(event: { page: number; pageSize: number; sortField: string; sortOrder: number; search: string }): void {
+    this.tableService.updateReportTableDataReadyStatus(false);
+    this.apiService.getOrganizationsPaginated(
+      event.page,
+      event.pageSize,
+      event.sortField,
+      event.sortOrder,
+      event.search
+    ).subscribe(result => {
+      this.tableData = result.data;
+      this.totalRecords = result.total;
+      this.tableService.updateReportTableData(result.data);
       this.tableService.updateReportTableDataReadyStatus(true);
-      this.tableData = o;
-      this.tableDataOriginal = o;
     });
-
-    // Method to open details modal when referenced directly via URL
-    // this.route.params.subscribe((params) => {
-    //   var detailOrgID = params['orgID'];
-    //   if (detailOrgID) {
-    //     this.titleService.setTitle(
-    //       `${this.titleService.getTitle()} - ${detailOrgID}`
-    //     );
-    //     this.apiService.getOneOrg(detailOrgID).subscribe((data: any) => {
-    //       this.tableService.orgsTableClick(data[0]);
-    //     });
-    //   }
-    // });
   }
 
   public onRowClick(e: any) {

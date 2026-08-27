@@ -47,12 +47,12 @@
               "node_modules/bootstrap-icons/font/bootstrap-icons.css",
               "node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css",
               "node_modules/@ng-select/ng-select/themes/default.theme.css",
-              "node_modules/@uswds/uswds/dist/css/uswds.css"
+              "node_modules/@uswds/uswds/dist/css/uswds.css",
+              "src/assets/fontawesome-free-5.13.0-web/css/all.min.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
               "src/assets/jquery-floatthead-2.2.5/jquery.floatThead.js",
-              "src/assets/fontawesome-free-5.13.0-web/js/all.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
               "node_modules/bootstrap-table/dist/bootstrap-table.min.js",
               "node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js",

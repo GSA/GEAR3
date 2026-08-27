@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { forkJoin } from 'rxjs';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
@@ -146,11 +147,19 @@ export class ItStandardsComponent implements OnInit {
       ? this.itStandardsData.filter(standard => this.selectedChips.includes(standard.DeploymentType))
       : this.itStandardsData;
 
+    let approvedTotal = 0, deniedTotal = 0, retiredTotal = 0, otherTotal = 0;
+    for (const standard of filteredData) {
+      if (standard.Status === 'Approved') { approvedTotal++; }
+      else if (standard.Status === 'Denied') { deniedTotal++; }
+      else if (standard.Status === 'Retired') { retiredTotal++; }
+      else { otherTotal++; }
+    }
+
     this.filterTotals = {
-      ApprovedTotal: filteredData.filter(standard => standard.Status === 'Approved').length,
-      DeniedTotal: filteredData.filter(standard => standard.Status === 'Denied').length,
-      RetiredTotal: filteredData.filter(standard => standard.Status === 'Retired').length,
-      OtherTotal: filteredData.filter(standard => !this.otherStatuses.includes(standard.Status)).length,
+      ApprovedTotal: approvedTotal,
+      DeniedTotal: deniedTotal,
+      RetiredTotal: retiredTotal,
+      OtherTotal: otherTotal,
       AllTotal: filteredData.length,
     };
   }
@@ -178,8 +187,11 @@ export class ItStandardsComponent implements OnInit {
       }
     });
     
-    this.apiService.getDataDictionaryByReportName('IT Standards List').subscribe(defs => {
-      this.attrDefinitions = defs
+    forkJoin({
+      defs: this.apiService.getDataDictionaryByReportName('IT Standards List'),
+      standards: this.apiService.getITStandards(),
+    }).subscribe(({ defs, standards }) => {
+      this.attrDefinitions = defs;
 
       // IT Standard Table Columns
       this.tableCols = [{
@@ -395,12 +407,11 @@ export class ItStandardsComponent implements OnInit {
         hideFromPicker: true,
         titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'C-SCRM Review Results')
       }];
-    });
 
-    // Set JWT when logged into GEAR Manager when returning from secureAuth
-    this.sharedService.setJWTonLogIn();
+      // Set JWT when logged into GEAR Manager when returning from secureAuth
+      this.sharedService.setJWTonLogIn();
 
-    this.apiService.getITStandards().subscribe(i => {
+      const i = standards;
       const standardsWithConditionStatus = this.setCondtionStatus(i);
       this.itStandardsData = standardsWithConditionStatus;
       this.itStandardsDataTabFilterted = standardsWithConditionStatus;
@@ -471,7 +482,7 @@ export class ItStandardsComponent implements OnInit {
       if (this.selectedTab !== 'All') {
         this.onSelectTab(this.selectedTab);
       }
-    });
+    }); // end forkJoin
 
   //   // Method to open details modal when referenced directly via URL
   //   this.route.params.subscribe((params) => {
