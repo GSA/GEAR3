@@ -272,9 +272,13 @@ export class CapabilitiesDetailsComponent implements OnInit {
   }
 
   public onOrgRowClick(e: Organization) {
-    this.router.navigate(['/organizations', e.ID], {
-      queryParams: { fromPrevious: this.detailsData.Name }
-    });
+    const currentParams = new URLSearchParams(this.router.url.split('?')[1] ?? '');
+    const originRoute = currentParams.get('originRoute');
+    const queryParams: Record<string, any> = { fromPrevious: this.detailsData.Name };
+    if (originRoute) {
+      queryParams['originRoute'] = originRoute;
+    }
+    this.router.navigate(['/organizations', e.ID], { queryParams });
   }
 
   public onSystemRowClick(e: System) {

@@ -466,7 +466,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit {
               .subscribe((data: any) => {
                   // var capData = data[0];
                   // this.tableService.capsTableClick(capData);
-                  const qp: Record<string, any> = { fromPrevious: 'GSA Capabilities Model' };
+                  const qp: Record<string, any> = { fromPrevious: 'GSA Capabilities Model', originRoute: '/capabilities_model' };
                   if (this.searchKey) { qp['tableSearchTerm'] = this.searchKey; }
                   this.router.navigate(['capabilities', data.ID], { queryParams: qp });
                 }

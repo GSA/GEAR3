@@ -68,6 +68,7 @@ export class BreadcrumbComponent implements OnInit {
         const currentParams = new URLSearchParams(this.router.url.split('?')[1] ?? '');
         const fromPrevious = currentParams.get('fromPrevious');
         const onBack = currentParams.get('onBack');
+        const originRoute = currentParams.get('originRoute');
 
         const currentBase = this.route.snapshot.url[0]?.path ?? '';
         const currentMeta = ROUTE_META[currentBase];
@@ -81,6 +82,23 @@ export class BreadcrumbComponent implements OnInit {
             const prevSegments = prevPath.split('/').filter(s => s);
             const prevBase = prevSegments[0] ?? '';
             const prevMeta = ROUTE_META[prevBase];
+
+            // Determine the origin route: prefer the explicit param, then look back at
+            // the prev entry's own URL params, then derive from the prev entry itself if
+            // it was a list/chart page.
+            if (!originRoute) {
+                const prevParams = new URLSearchParams(prevUrl?.split('?')[1] ?? '');
+                const prevOrigin = prevParams.get('originRoute');
+                if (prevOrigin) {
+                    (this as any)._resolvedOriginRoute = prevOrigin;
+                } else if (prevSegments.length === 1) {
+                    (this as any)._resolvedOriginRoute = prevPath;
+                } else {
+                    (this as any)._resolvedOriginRoute = null;
+                }
+            } else {
+                (this as any)._resolvedOriginRoute = originRoute;
+            }
 
             if (prevPath === '/') {
                 this.topLevelName = '';
@@ -98,11 +116,25 @@ export class BreadcrumbComponent implements OnInit {
                 this.previousLevelName = prevEntry.title ?? fromPrevious ?? prevMeta?.listName ?? '';
             }
         } else {
-            // No navigation history (direct URL, page refresh) or user clicked back
-            // Fall back to the parent list for this route
-            this.topLevelName = currentMeta?.section ?? '';
-            this.previousLevelName = fromPrevious ?? currentMeta?.listName ?? '';
-            this.previousRouteWithoutParams = currentMeta?.listRoute ?? `/${currentBase}`;
+            // No navigation history (direct URL, page refresh) or user clicked back.
+            // If an originRoute was passed, use it so the breadcrumb still points to
+            // the chart/model the user originally came from instead of defaulting to
+            // the generic list route.
+            const resolvedOrigin: string | null = originRoute ?? null;
+            if (resolvedOrigin) {
+                const originSegments = resolvedOrigin.split('/').filter(s => s);
+                const originBase = originSegments[0] ?? '';
+                const originMeta = ROUTE_META[originBase];
+                this.topLevelName = currentMeta?.section ?? '';
+                this.previousLevelName = fromPrevious ?? originMeta?.listName ?? currentMeta?.listName ?? '';
+                this.previousRouteWithoutParams = resolvedOrigin;
+            } else {
+                // Fall back to the parent list for this route
+                this.topLevelName = currentMeta?.section ?? '';
+                this.previousLevelName = fromPrevious ?? currentMeta?.listName ?? '';
+                this.previousRouteWithoutParams = currentMeta?.listRoute ?? `/${currentBase}`;
+            }
+            (this as any)._resolvedOriginRoute = resolvedOrigin;
         }
     }
 
@@ -110,6 +142,10 @@ export class BreadcrumbComponent implements OnInit {
         const queryParams: Record<string, any> = { onBack: true };
         if (this.tableSearchTerm) {
             queryParams['tableSearchTerm'] = this.tableSearchTerm;
+        }
+        const resolvedOrigin: string | null = (this as any)._resolvedOriginRoute ?? null;
+        if (resolvedOrigin) {
+            queryParams['originRoute'] = resolvedOrigin;
         }
         this.router.navigate([this.previousRouteWithoutParams], { queryParams });
     }
