@@ -429,7 +429,7 @@ export class OrganizationsChartComponent implements OnInit {
                 .getOneOrg(this.selectedOrg.srcElement.__data__.data.identity)
                 .subscribe((data: any) => {
                   // this.tableService.orgsTableClick(data);
-                  const qp: Record<string, any> = { fromPrevious: 'GSA Organizations Chart' };
+                  const qp: Record<string, any> = { fromPrevious: 'GSA Organizations Chart', originRoute: '/org_chart' };
                   if (this.searchKey) { qp['tableSearchTerm'] = this.searchKey; }
                   this.router.navigate(['organizations', data.ID], { queryParams: qp });
                 });
