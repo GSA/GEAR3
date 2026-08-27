@@ -586,6 +586,15 @@ if (process.env.RECORDS_CRON) {
 } else {
   console.warn('RECORDS_CRON env variable not set — skipping cron job.');
 }
+
+// CRON JOB: FISMA data -> Google Sheets
+if (process.env.FISMA_SHEET_CRON) {
+  cron.schedule(process.env.FISMA_SHEET_CRON, async () => {
+    await cronCtrl.runFismaSheetJob();
+  });
+} else {
+  console.warn('FISMA_SHEET_CRON env variable not set — skipping cron job.');
+}
 /* 
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Tech Catalog Daily Import
