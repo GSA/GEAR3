@@ -351,6 +351,8 @@
 
       & .pie-chart-content {
         position: relative;
+        display: flex;
+        justify-content: center;
         & .pie-chart-center-text {
           position: absolute;
           top: 50%;
@@ -358,6 +360,7 @@
           text-align: center;
           line-height: 0.5;
           transform: translate(-50%, -50%);
+          pointer-events: none;
 
           & .center-title {
             color: #666666;
