@@ -30,6 +30,8 @@ const ROUTE_META: Record<string, RouteMeta> = {
   it_standards_manager:     { section: 'Technologies',     listName: 'GSA IT Standards',                     listRoute: '/it_standards' },
   tech_categories:          { section: 'Technologies',     listName: 'Technology Reference Model',           listRoute: '/tech_categories' },
   tech_categories_model:    { section: 'Technologies',     listName: 'Technology Categories Model',          listRoute: '/tech_categories_model' },
+  it_bricks:                { section: 'Technologies',     listName: 'IT Bricks',                            listRoute: '/it_bricks' },
+  it_bricks_executive:      { section: 'Technologies',     listName: 'IT Bricks (Executive)',                listRoute: '/it_bricks_executive' },
 };
 
 @Component({
