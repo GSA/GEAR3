@@ -134,6 +134,9 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   private urlSearchTerm: string = '';
   private isHandlingDataUpdate: boolean = false;
   private defaultColumnVisibility: Map<string, boolean> = new Map();
+  private tableDataSubscription?: Subscription;
+  private tableReadySubscription?: Subscription;
+  private queryParamsSubscription?: Subscription;
 
   constructor(
     private sharedService: SharedService,
@@ -171,7 +174,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
     this.exportColumns = this.tableCols.map((col) => ({ title: col.header, dataKey: col.field }));
     
-    this.route.queryParams.subscribe(p => {
+    this.queryParamsSubscription = this.route.queryParams.subscribe(p => {
       this.urlSearchTerm = p['tableSearchTerm'] || '';
       if (!this.urlSearchTerm) {
         this.tableSearchControl.patchValue('', { emitEvent: false });
@@ -184,7 +187,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
       this.originalTableData = [...this.localTableData];
       this.isDataReady = true;
     } else {
-      this.tableService.reportTableData$.subscribe(d => {
+      this.tableDataSubscription = this.tableService.reportTableData$.subscribe(d => {
         if (this.isHandlingDataUpdate) return;
         if (d && d.length > 0) {
           this.originalTableData = [...d];
@@ -193,7 +196,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
           }
         }
       });
-      this.tableService.reportTableDataReady$.subscribe(r => {
+      this.tableReadySubscription = this.tableService.reportTableDataReady$.subscribe(r => {
         this.isDataReady = r;
       });
     }
@@ -233,9 +236,10 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   ngOnDestroy(): void {
     this.tableService.updateReportTableData(null);
     this.tableService.updateReportTableDataReadyStatus(false);
-    if (this.tableSearchSubscription) {
-      this.tableSearchSubscription.unsubscribe();
-    }
+    this.tableSearchSubscription?.unsubscribe();
+    this.tableDataSubscription?.unsubscribe();
+    this.tableReadySubscription?.unsubscribe();
+    this.queryParamsSubscription?.unsubscribe();
   }
 
   private captureDefaultColumnVisibility(): void {

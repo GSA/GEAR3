@@ -358,6 +358,20 @@ export class SystemsComponent implements OnInit {
     this.apiService.getSystems().subscribe(systems => {
       this.systemsData = systems;
 
+      // Build chart data from the already-fetched systems array
+      const counts = systems.reduce((p, c) => {
+        const name = c.BusOrgSymbolAndName;
+        if (!p.hasOwnProperty(name) && c.Status == 'Active' && c.BusApp == 'Yes') {
+          p[name] = 0;
+        }
+        if (c.Status == 'Active' && c.BusApp == 'Yes') p[name]++;
+        return p;
+      }, {});
+      this.vizData = Object.keys(counts)
+        .map(k => ({ name: k, value: counts[k] }))
+        .sort((a, b) => b.value - a.value);
+      this.colorScheme = { domain: this.buildDistinctColorDomain(this.vizData.length) };
+
       if(this.monthsDecommissioned > 0) {
         const now = new Date(); // Current date and time
         now.setUTCHours(0, 0, 0, 0);
@@ -416,39 +430,6 @@ export class SystemsComponent implements OnInit {
 
     this.apiService.getSystemsFilterTotals().subscribe(t => {
       this.filterTotals = t;
-    });
-
-    // Get System data for visuals
-    this.apiService.getSystems().subscribe((data: any[]) => {
-      // Get counts by SSO
-      var counts = data.reduce((p, c) => {
-        var name = c.BusOrgSymbolAndName;
-        if (
-          !p.hasOwnProperty(name) &&
-          c.Status == 'Active' &&
-          c.BusApp == 'Yes'
-        ) {
-          p[name] = 0;
-        }
-        // Only count if Status is Active
-        if (c.Status == 'Active' && c.BusApp == 'Yes') p[name]++;
-        return p;
-      }, {});
-
-      // Resolve the counts into an object and sort by value
-      this.vizData = Object.keys(counts)
-        .map((k) => {
-          return { name: k, value: counts[k] };
-        })
-        .sort(function (a, b) {
-          return b.value - a.value;
-        });
-
-      this.colorScheme = {
-        domain: this.buildDistinctColorDomain(this.vizData.length)
-      };
-
-      // console.log(this.vizData);  // Debug
     });
 
 
