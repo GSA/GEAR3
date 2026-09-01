@@ -169,6 +169,21 @@ export class ItStandardsComponent implements OnInit {
     * Get definitions for the table header tooltips
     * Then set the column defintions and initialize the table
     */
+
+    // Support deep-link filtered URLs: /it_standards/filtered/:deploymentType/:status
+    const routeParams = this.route.snapshot.params;
+    if (routeParams['deploymentType']) {
+      const depType = routeParams['deploymentType'];
+      const match = this.filterChips.find(c => c.toLowerCase() === depType.toLowerCase());
+      if (match) {
+        this.selectedChips = [match];
+      }
+    }
+    if (routeParams['status']) {
+      const status = routeParams['status'];
+      this.selectedTab = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+    }
+
    this.route.queryParams.subscribe(params => {
       if (params['tab']) {
         this.selectedTab = params['tab'];
