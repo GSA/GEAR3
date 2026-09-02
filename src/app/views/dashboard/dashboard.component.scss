@@ -252,6 +252,19 @@
         flex: 1 1 100%; /* Full width on small screens */
       }
 
+      & .bar-chart-content {
+        width: 100%;
+
+        ::ng-deep ngx-charts-bar-vertical {
+          display: block;
+          width: 100%;
+
+          ::ng-deep .ngx-charts-outer {
+            width: 100% !important;
+          }
+        }
+      }
+
       & .item-header {
         display: flex;
         flex-direction: row;
@@ -353,6 +366,14 @@
         position: relative;
         display: flex;
         justify-content: center;
+
+        // ngx-charts renders the SVG inside a plain div; we use ::ng-deep to give
+        // that wrapper relative positioning so the center-text overlay is anchored
+        // to the actual chart SVG rather than the full container width.
+        ::ng-deep ngx-charts-pie-chart > div {
+          position: relative;
+        }
+
         & .pie-chart-center-text {
           position: absolute;
           top: 50%;
@@ -361,6 +382,7 @@
           line-height: 0.5;
           transform: translate(-50%, -50%);
           pointer-events: none;
+          z-index: 1;
 
           & .center-title {
             color: #666666;

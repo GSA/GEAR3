@@ -198,9 +198,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public ngAfterViewInit(): void {
-    this.updateChartViews();
+    // Defer initial measurement so the flex layout has settled and
+    // container offsetWidth returns the correct value.
+    setTimeout(() => {
+      this.updateChartViews();
+      this.cdr.detectChanges();
+    }, 0);
     this.setupResizeObserver();
-    this.cdr.detectChanges();
   }
 
   public ngOnDestroy(): void {
