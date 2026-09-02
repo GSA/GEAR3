@@ -1,8 +1,10 @@
 <div class="it-bricks-container">
   <iframe
+    #bricksFrame
     class="it-bricks-frame"
     [src]="safeUrl"
     [title]="pageTitle"
+    (load)="onFrameLoad()"
     frameborder="0"
     loading="lazy"
   ></iframe>
