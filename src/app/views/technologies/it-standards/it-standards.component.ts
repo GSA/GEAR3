@@ -70,6 +70,7 @@ export class ItStandardsComponent implements OnInit {
 
   public onSelectTab(tabName: string): void {
     this.selectedTab = tabName;
+    this.syncUrlToFilters();
     this.itStandardsDataTabFilterted = this.itStandardsData;
 
     if(this.selectedTab === 'All') {
@@ -116,6 +117,7 @@ export class ItStandardsComponent implements OnInit {
 
   public onFilterChipSelect(selectedChips: string[]): void {
     this.selectedChips = selectedChips;
+    this.syncUrlToFilters();
     this.itStandardsDataChipFilterted = this.itStandardsDataTabFilterted;
     if(this.hasSelectedChips()) {
       this.itStandardsDataChipFilterted = this.itStandardsDataTabFilterted.filter(f => {
@@ -136,6 +138,19 @@ export class ItStandardsComponent implements OnInit {
 
   private hasSelectedChips(): boolean {
     return this.selectedChips && this.selectedChips.length > 0;
+  }
+
+  private syncUrlToFilters(): void {
+    const chip = this.selectedChips.length === 1 ? this.selectedChips[0] : null;
+    const tab = this.selectedTab;
+
+    if (chip && tab && tab !== 'All') {
+      this.router.navigate(['/it_standards/filtered', chip, tab], { replaceUrl: true });
+    } else if (chip) {
+      this.router.navigate(['/it_standards/filtered', chip], { replaceUrl: true });
+    } else {
+      this.router.navigate(['/it_standards'], { replaceUrl: true });
+    }
   }
 
   private YesNo(value: any, row: any, index: number, field: string): string {
