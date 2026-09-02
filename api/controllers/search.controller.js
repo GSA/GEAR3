@@ -96,7 +96,36 @@ exports.searchAll = (req, res) => {
         '{}' AS \`Other\`
       FROM
           gear_schema.obj_websites as web) AS global_search
-    WHERE Name LIKE '%${req.params.kw}%' or Description like '%${req.params.kw}%';`; // Removed cowboy_ods.obj_technology AS tech reference
+    WHERE Name LIKE '%${req.params.kw}%' or Description like '%${req.params.kw}%'
+    ORDER BY
+      /* Primary relevance tier based on WHERE the keyword matches in Name */
+      CASE
+        WHEN Name = '${req.params.kw}' THEN 0            /* exact match */
+        WHEN Name LIKE '${req.params.kw}%' THEN 1        /* name starts with */
+        WHEN Name LIKE '% ${req.params.kw}%' THEN 2      /* matches start of a word */
+        WHEN Name LIKE '%${req.params.kw}%' THEN 3       /* matches anywhere in name */
+        ELSE 4                                           /* description-only match */
+      END ASC,
+      /* Tiebreaker 1: earlier the keyword appears in the Name, the more relevant.
+         Rows with no Name match (description-only) get a large value so they sink. */
+      CASE
+        WHEN Name LIKE '%${req.params.kw}%'
+          THEN LOCATE('${req.params.kw}', Name)
+        ELSE 999999
+      END ASC,
+      /* Tiebreaker 2: shorter names are more relevant (keyword is a bigger portion of the name) */
+      CHAR_LENGTH(Name) ASC,
+      /* Tiebreaker 3: GEAR_Type importance */
+      CASE \`GEAR_Type\`
+        WHEN 'Technology'   THEN 0
+        WHEN 'System'       THEN 1
+        WHEN 'FISMA'        THEN 2
+        WHEN 'Website'      THEN 3
+        WHEN 'Organization' THEN 4
+        WHEN 'Capability'   THEN 5
+        WHEN 'Investment'   THEN 6
+        ELSE 7
+      END ASC;`; // Removed cowboy_ods.obj_technology AS tech reference
 
   res = ctrl.sendQuery(query, `global search of ${req.params.kw}`, res);
 };

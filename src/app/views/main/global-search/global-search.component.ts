@@ -36,8 +36,8 @@ export class GlobalSearchComponent implements OnInit {
     headerStyle: null,
     pagination: true,
     search: true,
-    sortName: 'Name',
-    sortOrder: 'asc',
+    sortName: null,
+    sortOrder: null,
     showToggle: true,
     url: null
   });
