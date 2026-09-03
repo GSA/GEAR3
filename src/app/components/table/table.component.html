@@ -138,7 +138,7 @@
                       <span [ngClass]="col.class">{{ rowData[col.field] }}</span>
                     }
                     @if (col.formatter) {
-                      <span [ngClass]="col.class" [innerHTML]="col.formatter(rowData[col.field])"></span>
+                      <span [ngClass]="col.class" [innerHTML]="rowData[col.field] | applyFormatter:col.formatter"></span>
                     }
                   </td>
                 }

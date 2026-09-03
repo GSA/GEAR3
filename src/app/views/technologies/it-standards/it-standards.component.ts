@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
@@ -21,23 +21,14 @@ import { Column } from '@common/table-classes';
     styleUrls: ['./it-standards.component.scss'],
     standalone: false
 })
-export class ItStandardsComponent implements OnInit {
+export class ItStandardsComponent implements OnInit, OnDestroy {
 
-  private readonly otherStatuses: string[] = ['Approved', 'Denied', 'Retired'];
-
-  // row: Object = <any>{};
-  // filteredTable: boolean = false;
-  // filterTitle: string = '';
   attrDefinitions: DataDictionary[] = [];
-  // columnDefs: any[] = [];
-  // dataReady: boolean = false;
 
   public tableCols: Column[] = [];
   public selectedTab: string = 'All';
   public filterTotals: any = null;
-  public itStandardsData: ITStandards[] = [];
-  public itStandardsDataTabFilterted: ITStandards[] = [];
-  public itStandardsDataChipFilterted: ITStandards[] = [];
+  public totalRecords: number = 0;
   public filterChips: string[] = ['Mobile', 'Desktop', 'Server', 'SaaS', 'PaaS', 'Other'];
   private selectedChips: string[] = [];
 
@@ -46,7 +37,13 @@ export class ItStandardsComponent implements OnInit {
   public includePastDueExpirations: boolean = false;
   public pastDueOnly: boolean = false;
 
-  public isDataReady: boolean = false;
+  // Sticky paging/sort/search state, preserved across tab and chip changes.
+  private currentSortField: string = 'Name';
+  private currentSortOrder: number = 1;
+  private currentSearch: string = '';
+  private currentPageSize: number = 50;
+
+  private queryParamsSubscription?: Subscription;
 
   constructor(
     private apiService: ApiService,
@@ -71,46 +68,17 @@ export class ItStandardsComponent implements OnInit {
   public onSelectTab(tabName: string): void {
     this.selectedTab = tabName;
     this.syncUrlToFilters();
-    this.itStandardsDataTabFilterted = this.itStandardsData;
-
-    if(this.selectedTab === 'All') {
-      if(this.hasSelectedChips()) {
-        this.onFilterChipSelect(this.selectedChips);
-      } else {
-        this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
-        //this.tableService.updateReportTableDataReadyStatus(true);
-      }
-    } else if (this.selectedTab === 'Other') {
-      if(this.hasSelectedChips()) {
-        this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
-          return x.Status !== 'Approved' && x.Status !== 'Denied' && x.Status !== 'Retired';
-        });
-        this.onFilterChipSelect(this.selectedChips);
-      } else {
-        this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
-          return x.Status !== 'Approved' && x.Status !== 'Denied' && x.Status !== 'Retired' && x.Status !== 'Approved with conditions';
-        });
-        this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
-        //this.tableService.updateReportTableDataReadyStatus(true);
-      }
-    } else {
-      if(this.hasSelectedChips()) {
-        this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
-          return x.Status === tabName;
-        });
-        this.onFilterChipSelect(this.selectedChips);
-      } else {
-        this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
-          return x.Status === tabName;
-        });
-        this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
-        //this.tableService.updateReportTableDataReadyStatus(true);
-      }
-    }
+    this.loadPage({
+      page: 1,
+      pageSize: this.currentPageSize,
+      sortField: this.currentSortField,
+      sortOrder: this.currentSortOrder,
+      search: this.currentSearch,
+    });
   }
 
   public onKeyUp(e: KeyboardEvent, tabName: string) {
-    if(e.key === ' ' || e.key === 'Enter') {
+    if (e.key === ' ' || e.key === 'Enter') {
       this.onSelectTab(tabName);
     }
   }
@@ -118,26 +86,18 @@ export class ItStandardsComponent implements OnInit {
   public onFilterChipSelect(selectedChips: string[]): void {
     this.selectedChips = selectedChips;
     this.syncUrlToFilters();
-    this.itStandardsDataChipFilterted = this.itStandardsDataTabFilterted;
-    if(this.hasSelectedChips()) {
-      this.itStandardsDataChipFilterted = this.itStandardsDataTabFilterted.filter(f => {
-        return selectedChips.includes(f.DeploymentType);
-      });
-      this.tableService.updateReportTableData(this.itStandardsDataChipFilterted);
-      this.tableService.updateReportTableDataReadyStatus(true);
-    } else {
-      this.itStandardsDataChipFilterted = this.itStandardsDataTabFilterted;
-      this.onSelectTab(this.selectedTab);
-    }
-    this.updateTotals();
+    this.loadPage({
+      page: 1,
+      pageSize: this.currentPageSize,
+      sortField: this.currentSortField,
+      sortOrder: this.currentSortOrder,
+      search: this.currentSearch,
+    });
+    this.refreshTotals();
   }
 
   public isTabSelected(tabName: string): boolean {
     return this.selectedTab === tabName;
-  }
-
-  private hasSelectedChips(): boolean {
-    return this.selectedChips && this.selectedChips.length > 0;
   }
 
   private syncUrlToFilters(): void {
@@ -154,29 +114,40 @@ export class ItStandardsComponent implements OnInit {
   }
 
   private YesNo(value: any, row: any, index: number, field: string): string {
-    return value === 'T'? "Yes" : "No";
+    return value === 'T' ? "Yes" : "No";
   }
 
-  private updateTotals(): void {
-    const filteredData = this.hasSelectedChips()
-      ? this.itStandardsData.filter(standard => this.selectedChips.includes(standard.DeploymentType))
-      : this.itStandardsData;
+  private refreshTotals(): void {
+    this.apiService.getITStandardsFilterTotals(this.selectedChips).subscribe(totals => {
+      this.filterTotals = totals;
+    });
+  }
 
-    let approvedTotal = 0, deniedTotal = 0, retiredTotal = 0, otherTotal = 0;
-    for (const standard of filteredData) {
-      if (standard.Status === 'Approved') { approvedTotal++; }
-      else if (standard.Status === 'Denied') { deniedTotal++; }
-      else if (standard.Status === 'Retired') { retiredTotal++; }
-      else { otherTotal++; }
-    }
+  public loadPage(event: { page: number; pageSize: number; sortField: string; sortOrder: number; search: string }): void {
+    this.currentSortField = event.sortField || 'Name';
+    this.currentSortOrder = event.sortOrder || 1;
+    this.currentSearch = event.search || '';
+    this.currentPageSize = event.pageSize || this.currentPageSize;
 
-    this.filterTotals = {
-      ApprovedTotal: approvedTotal,
-      DeniedTotal: deniedTotal,
-      RetiredTotal: retiredTotal,
-      OtherTotal: otherTotal,
-      AllTotal: filteredData.length,
-    };
+    this.tableService.updateReportTableDataReadyStatus(false);
+    this.apiService.getITStandardsPaginated(
+      event.page,
+      this.currentPageSize,
+      this.currentSortField,
+      this.currentSortOrder,
+      this.currentSearch,
+      this.selectedTab,
+      this.selectedChips,
+      this.daysExpiring,
+      this.daysRetired,
+      this.pastDueOnly,
+      this.includePastDueExpirations
+    ).subscribe(result => {
+      const dataWithConditionStatus = this.setCondtionStatus(result.data);
+      this.totalRecords = result.total;
+      this.tableService.updateReportTableData(dataWithConditionStatus);
+      this.tableService.updateReportTableDataReadyStatus(true);
+    });
   }
 
   ngOnInit(): void {
@@ -199,11 +170,11 @@ export class ItStandardsComponent implements OnInit {
       this.selectedTab = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
     }
 
-   this.route.queryParams.subscribe(params => {
+    this.queryParamsSubscription = this.route.queryParams.subscribe(params => {
       if (params['tab']) {
         this.selectedTab = params['tab'];
       }
-      if(params['expiringWithinDays']) {
+      if (params['expiringWithinDays']) {
         this.daysExpiring = +params['expiringWithinDays'];
       }
       if (params['includePastDue']) {
@@ -212,15 +183,15 @@ export class ItStandardsComponent implements OnInit {
       if (params['pastDueOnly']) {
         this.pastDueOnly = params['pastDueOnly'] === 'true';
       }
-      if(params['retiredWithinDays']) {
+      if (params['retiredWithinDays']) {
         this.daysRetired = +params['retiredWithinDays'];
       }
     });
-    
-    forkJoin({
-      defs: this.apiService.getDataDictionaryByReportName('IT Standards List'),
-      standards: this.apiService.getITStandards(),
-    }).subscribe(({ defs, standards }) => {
+
+    // Set JWT when logged into GEAR Manager when returning from secureAuth
+    this.sharedService.setJWTonLogIn();
+
+    this.apiService.getDataDictionaryByReportName('IT Standards List').subscribe(defs => {
       this.attrDefinitions = defs;
 
       // IT Standard Table Columns
@@ -317,14 +288,6 @@ export class ItStandardsComponent implements OnInit {
         showColumn: false,
         titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Software Release Name')
       },
-      //  {
-      //   field: 'EndOfLifeDate',
-      //   header: 'Vendor End of Life Date',
-      //   isSortable: true,
-      //   showColumn: false,
-      //   formatter: this.sharedService.dateFormatter,
-      //  titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Software End of Life Date')
-      // },
        {
         field: 'AlsoKnownAs',
         header: 'Also Known As',
@@ -369,19 +332,7 @@ export class ItStandardsComponent implements OnInit {
         showColumn: false,
         formatter: this.sharedService.formatDescription,
         titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Comments')
-      }, /*{
-        field: 'attestation_required',
-        header: 'Attestation Required',
-        isSortable: true,
-        showColumn: false,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Attestation Required')
       }, {
-        field: 'attestation_link',
-        header: 'Attestation Link',
-        isSortable: true,
-        showColumn: false,
-        titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Attestation Link')
-      }, */{
         field: 'fedramp',
         header: 'FedRAMP',
         isSortable: true,
@@ -438,145 +389,22 @@ export class ItStandardsComponent implements OnInit {
         titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'C-SCRM Review Results')
       }];
 
-      // Set JWT when logged into GEAR Manager when returning from secureAuth
-      this.sharedService.setJWTonLogIn();
-
-      const i = standards;
-      const standardsWithConditionStatus = this.setCondtionStatus(i);
-      this.itStandardsData = standardsWithConditionStatus;
-      this.itStandardsDataTabFilterted = standardsWithConditionStatus;
-      this.itStandardsDataChipFilterted = standardsWithConditionStatus;
-      this.updateTotals();
-
-      const queryParams = this.route.snapshot.queryParams;
-      const daysExpiring = Number(queryParams['expiringWithinDays'] || this.daysExpiring || 0);
-      const daysRetired = Number(queryParams['retiredWithinDays'] || this.daysRetired || 0);
-      const includePastDue = queryParams['includePastDue'] === 'true' || this.includePastDueExpirations;
-      const pastDueOnly = queryParams['pastDueOnly'] === 'true' || this.pastDueOnly;
-
-      if(daysExpiring > 0) {
-        const now = new Date(); // Current date and time
-        now.setHours(0, 0, 0, 0);
-        const expiringWithin = new Date();
-        expiringWithin.setDate(now.getDate() + daysExpiring); // number of days set in the url
-        expiringWithin.setHours(0, 0, 0, 0);
-        const expiringFiltered: ITStandards[] = [];
-        i.forEach(x => {
-          let renewal = new Date(x.ApprovalExpirationDate);
-          renewal.setHours(0, 0, 0, 0);
-          const isInWindow = includePastDue
-            ? renewal <= expiringWithin
-            : (renewal >= now && renewal <= expiringWithin);
-          if(x.ApprovalExpirationDate && isInWindow && this.isInExpiringStatusScope(x)) {
-            expiringFiltered.push(x);
-          }
-        });
-        this.tableService.updateReportTableData(expiringFiltered);
-        this.tableService.updateReportTableDataReadyStatus(true);
-      } else if (pastDueOnly) {
-        const now = new Date();
-        now.setHours(0, 0, 0, 0);
-        const pastDueFiltered: ITStandards[] = [];
-        i.forEach(x => {
-          let renewal = new Date(x.ApprovalExpirationDate);
-          renewal.setHours(0, 0, 0, 0);
-          if (x.ApprovalExpirationDate && renewal < now && this.isInExpiringStatusScope(x)) {
-            pastDueFiltered.push(x);
-          }
-        });
-        this.tableService.updateReportTableData(pastDueFiltered);
-        this.tableService.updateReportTableDataReadyStatus(true);
-      } else if(daysRetired > 0) {
-        const now = new Date(); // Current date and time
-        now.setHours(0, 0, 0, 0);
-        const expiredWithin = new Date();
-        expiredWithin.setDate(now.getDate() - daysRetired); // number of days set in the url
-        expiredWithin.setHours(0, 0, 0, 0);
-        const expiringFiltered: ITStandards[] = [];
-        i.forEach(x => {
-          let renewal = new Date(x.ApprovalExpirationDate);
-          renewal.setHours(0, 0, 0, 0);
-          if(x.ApprovalExpirationDate && (renewal <= now && renewal >= expiredWithin) && (x.Status === 'Retired')) {
-            expiringFiltered.push(x);
-          }
-        });
-        this.tableService.updateReportTableData(expiringFiltered);
-        this.tableService.updateReportTableDataReadyStatus(true);
-      } else {
-        this.tableService.updateReportTableData(i);
-        this.tableService.updateReportTableDataReadyStatus(true);
-      }
-
-      // this.tableService.updateReportTableData(i);
-      
-      if (this.selectedTab !== 'All') {
-        this.onSelectTab(this.selectedTab);
-      }
-    }); // end forkJoin
-
-  //   // Method to open details modal when referenced directly via URL
-  //   this.route.params.subscribe((params) => {
-  //     let detailStandID = params['standardID'];
-  //     let deploymentType = params['deploymentType'];
-  //     let status = params['status'];
-
-  //     if(deploymentType) {
-  //       let filterButton = {
-  //         buttonText: deploymentType[0].toUpperCase() + deploymentType.slice(1),
-  //         filters: [
-  //           { field: 'DeploymentType', value: deploymentType.toLocaleLowerCase() }
-  //         ]
-  //       };
-  //       this.preloadedFilterButtons.push(filterButton);
-  //     }
-
-  //     if(status) {
-  //       let filterButton = {
-  //         buttonText: status[0].toUpperCase() + status.slice(1),
-  //         filters: [
-  //           { field: 'Status', value: status.toLocaleLowerCase() }
-  //         ]
-  //       };
-  //       this.preloadedFilterButtons.push(filterButton);
-  //     }
-
-  //     if (detailStandID) {
-  //       this.titleService.setTitle(
-  //         `${this.titleService.getTitle()} - ${detailStandID}`
-  //       );
-  //       this.apiService
-  //         .getOneITStandard(detailStandID)
-  //         .subscribe((data: any[]) => {
-  //           this.tableService.itStandTableClick(data[0]);
-  //         });
-  //     }
-  //   });
+      // Initial load: first page, using whatever tab/chip/date-filter state
+      // was parsed from the route above.
+      this.loadPage({
+        page: 1,
+        pageSize: this.currentPageSize,
+        sortField: this.currentSortField,
+        sortOrder: this.currentSortOrder,
+        search: this.currentSearch,
+      });
+      this.refreshTotals();
+    });
   }
 
-  // // Create new IT Standard when in GEAR Manager mode
-  // createITStand() {
-  //   var emptyITStand = new ITStandards();
-
-  //   // By default, set new record status to "Pilot"
-  //   emptyITStand.Status = 'Pilot';
-  //   this.modalService.updateRecordCreation(true);
-  //   this.sharedService.setITStandardsForm();
-  //   this.modalService.updateDetails(emptyITStand, 'it-standard', false);
-  //   $('#itStandardsManager').modal('show');
-
-  //   // disable the tcSoftwareProduct on the itStandardsManager modal
-  //   $('#divProduct').addClass("disabledDivProduct");
-  //   $('#divVersion').addClass("disabledDivVersion");
-  //   $('#divRelease').addClass("disabledDivRelease");
-  // }
-
-  // getTooltip (name: string): string {
-  //   const def = this.attrDefinitions.find(def => def.Term === name);
-  //   if(def){
-  //     return def.TermDefinition;
-  //   }
-  //   return '';
-  // }
+  ngOnDestroy(): void {
+    this.queryParamsSubscription?.unsubscribe();
+  }
 
   public onRowClick(e: any) {
     const searchTerm: string = e.tableSearchString || '';
@@ -585,37 +413,12 @@ export class ItStandardsComponent implements OnInit {
     });
   }
 
-  // onFilterClick(filterButtons: FilterButton[]) {
-  //   this.tableData = this.tableDataOriginal;
-  //   this.tableService.filterButtonClick(filterButtons, this.tableData);
-  // }
-
-  // onFilterResetClick() {
-  //   this.tableData = this.tableDataOriginal;
-  //   this.tableService.updateReportTableData(this.tableDataOriginal);
-  // }
-
   private setCondtionStatus(itStandards: ITStandards[]): ITStandards[] {
     itStandards.forEach(i => {
-      if(i.ConditionsRestrictions && i.ConditionsRestrictions.length > 0) {
+      if (i.ConditionsRestrictions && i.ConditionsRestrictions.length > 0) {
         i.Status = 'Approved with conditions';
       }
     });
     return itStandards;
-  }
-
-  // Keep dashboard deep-link filters consistent with backend totals query scope.
-  private isInExpiringStatusScope(standard: ITStandards): boolean {
-    const approvedLikeStatusIds = [11, 2, 6, 9];
-
-    if (typeof standard.StatusId === 'number') {
-      return approvedLikeStatusIds.includes(standard.StatusId);
-    }
-
-    return standard.Status === 'Approved'
-      || standard.Status === 'Approved with conditions'
-      || standard.Status === 'Pilot'
-      || standard.Status === 'Exception'
-      || standard.Status === 'Sunsetting';
   }
 }

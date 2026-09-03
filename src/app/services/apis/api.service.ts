@@ -748,7 +748,35 @@ export class ApiService {
         catchError(this.handleError<ITStandards[]>('GET IT Standards Lite', []))
       );
   }
-  
+
+  public getITStandardsPaginated(
+    page: number,
+    pageSize: number,
+    sortField: string = 'Name',
+    sortOrder: number = 1,
+    search: string = '',
+    tab: string = 'All',
+    chips: string[] = [],
+    expiringWithinDays: number = 0,
+    retiredWithinDays: number = 0,
+    pastDueOnly: boolean = false,
+    includePastDue: boolean = false
+  ): Observable<{ total: number; data: ITStandards[] }> {
+    const params: any = { page, pageSize, sortField, sortOrder, tab };
+    if (search) { params.search = search; }
+    if (chips && chips.length > 0) { params.chips = chips.join(','); }
+    if (expiringWithinDays > 0) { params.expiringWithinDays = expiringWithinDays; }
+    if (retiredWithinDays > 0) { params.retiredWithinDays = retiredWithinDays; }
+    if (pastDueOnly) { params.pastDueOnly = 'true'; }
+    if (includePastDue) { params.includePastDue = 'true'; }
+
+    return this.http
+      .get<{ total: number; data: ITStandards[] }>(this.techUrl + '/paginated', { params })
+      .pipe(
+        catchError(this.handleError<{ total: number; data: ITStandards[] }>('GET IT Standards Paginated', { total: 0, data: [] }))
+      );
+  }
+
   public getApprovedITStandards(): Observable<ITStandards[]> {
     return this.http
       .get<ITStandards[]>(this.techUrl + '/get/findAllApproved')
@@ -756,9 +784,12 @@ export class ApiService {
         catchError(this.handleError<ITStandards[]>('GET IT Standards', []))
       );
   }
-  public getITStandardsFilterTotals(filters: string[]): Observable<any> {
+  public getITStandardsFilterTotals(chips: string[] = [], search: string = ''): Observable<any> {
+    const params: any = {};
+    if (search) { params.search = search; }
+    const path = chips && chips.length > 0 ? '/filter_totals/' + chips.join(',') : '/filter_totals';
     return this.http
-    .get<any>(this.techUrl + '/filter_totals/' + filters)
+    .get<any>(this.techUrl + path, { params })
     .pipe(
       map(t => t[0]),
       catchError(this.handleError<any>('GET IT Standards Filter Totals', []))
@@ -1147,9 +1178,9 @@ export class ApiService {
 
   // Get Data Dictionary By Report Name
   public getDataDictionaryByReportName(reportName: string): Observable<DataDictionary[]> {
-    return this.http
+    return this.getCached('data-dictionary:' + reportName, this.http
       .get<DataDictionary[]>(this.dataDictionaryUrl + '/get/' + encodeURIComponent(reportName))
-      .pipe(catchError(this.handleError<DataDictionary[]>('GET Data Dictionary By Report Name', [])));
+      .pipe(catchError(this.handleError<DataDictionary[]>('GET Data Dictionary By Report Name', []))));
   }
 
   //// TRM
