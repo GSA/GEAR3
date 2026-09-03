@@ -120,13 +120,21 @@ export class SharedService {
     return pocObjs;
   }
 
+  private cookiesVerified: boolean = false;
+
   // JWT Handling
   //// Set JWT on log in to be tracked when checking for authentication
   public setJWTonLogIn(): void {
     this.verifyCookies();
   }
 
-  verifyCookies() : void {    
+  verifyCookies() : void {
+    if (this.cookiesVerified) {
+      return;
+    }
+    // Mark in-flight immediately so concurrent page-init calls don't each fire
+    // a separate request while the first one is still pending.
+    this.cookiesVerified = true;
     //console.log('requesting cookies...'); // debug
     this.http.get('/verify', {
       headers: {
@@ -157,6 +165,8 @@ export class SharedService {
       }
     }
     , error => {
+      // Reset so a real retry can happen if the server was temporarily unavailable
+      this.cookiesVerified = false;
       console.error('An error occurred while verifying cookies', error);
     });
   }

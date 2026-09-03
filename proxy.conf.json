@@ -2,5 +2,13 @@
   "/api": {
     "target": "http://localhost:3000",
     "secure": true
+  },
+  "/verify": {
+    "target": "http://localhost:3000",
+    "secure": true
+  },
+  "/logout": {
+    "target": "http://localhost:3000",
+    "secure": true
   }
 }

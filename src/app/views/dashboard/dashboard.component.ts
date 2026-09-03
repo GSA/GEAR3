@@ -222,8 +222,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private loadHostingPlatformsData(): void {
     // Replaces full GET /api/systems (1.98MB) with a lightweight aggregation endpoint
     this.apiService.getHostingPlatforms().subscribe(rows => {
-      const { individualPlatforms, othersCount } = rows
-        .map(row => ({ name: this.normalizePlatformName(row.CSP), value: row.count }))
+      // Normalize names first, then merge duplicate names so ngx-charts
+      // does not silently overwrite bars that share the same key.
+      const mergedMap = new Map<string, number>();
+      for (const row of rows) {
+        const name = this.normalizePlatformName(row.CSP);
+        mergedMap.set(name, (mergedMap.get(name) ?? 0) + row.count);
+      }
+
+      const { individualPlatforms, othersCount } = Array.from(mergedMap.entries())
+        .map(([name, value]) => ({ name, value }))
         .sort((a, b) => b.value - a.value)
         .reduce((acc, platform) => {
           if (platform.value >= 3) {

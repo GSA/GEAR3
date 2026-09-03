@@ -90,7 +90,7 @@
         <ng-template #header let-columns>
           <!-- Headings -->
           <tr>
-            @for (col of columns; track col) {
+            @for (col of columns; track col.field) {
               @if (showColumn(col)) {
                 <th [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.isSortable ? true : false" [class]="col.class">
                   <div class="d-flex align-items-center table-heading">
@@ -112,7 +112,7 @@
           </tr>
           @if (showFilters) {
             <tr>
-              @for (col of columns; track col) {
+              @for (col of columns; track col.field) {
                 @if (showColumn(col)) {
                   <th>
                     <p-columnFilter
@@ -131,7 +131,7 @@
           <!-- Table body -->
           <ng-template pTemplate="body" let-rowData let-columns="columns">
             <tr [pSelectableRow]="rowData">
-              @for (col of columns; track col) {
+              @for (col of columns; track col.field) {
                 @if (showColumn(col)) {
                   <td>
                     @if (!col.formatter) {
