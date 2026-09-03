@@ -42,6 +42,9 @@ router.route('/deployment_types')
 router.route('/statuses')
   .get(itsCtrl.findStatuses);
 
+router.route('/critical_reviews')
+  .get(itsCtrl.findCriticalReviews);
+
 router.route('/types')
   .get(itsCtrl.findTypes);
 

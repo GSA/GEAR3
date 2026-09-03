@@ -287,6 +287,12 @@
               <td>{{ itStandard.RITM }}</td>
             </tr>
           }
+          @if (isFieldPopulated(itStandard.CriticalReview)) {
+            <tr>
+              <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Critical Software Review Results')" role="tooltip">Critical Software Review Results</span></td>
+              <td>{{ itStandard.CriticalReview }}</td>
+            </tr>
+          }
           @if (isFieldPopulated(itStandard.ReferenceDocument)) {
             <tr>
               <td><i class="far fa-comment"></i><span [title]="getTooltip('Reference Document')" role="tooltip">Reference Document</span></td>

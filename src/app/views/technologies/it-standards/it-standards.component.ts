@@ -234,6 +234,12 @@ export class ItStandardsComponent implements OnInit {
         visible: false,
         titleTooltip: this.getTooltip('Requested Item (RITM)')
       }, {
+        field: 'CriticalReview',
+        title: 'Critical Software Review Results',
+        sortable: true,
+        visible: false,
+        titleTooltip: this.getTooltip('Critical Software Review Results')
+      }, {
         field: 'ApprovalExpirationDate',
         title: 'Approval Expires',
         sortable: true,
