@@ -70,6 +70,7 @@ export class ItStandardsComponent implements OnInit {
 
   public onSelectTab(tabName: string): void {
     this.selectedTab = tabName;
+    this.syncUrlToFilters();
     this.itStandardsDataTabFilterted = this.itStandardsData;
 
     if(this.selectedTab === 'All') {
@@ -116,6 +117,7 @@ export class ItStandardsComponent implements OnInit {
 
   public onFilterChipSelect(selectedChips: string[]): void {
     this.selectedChips = selectedChips;
+    this.syncUrlToFilters();
     this.itStandardsDataChipFilterted = this.itStandardsDataTabFilterted;
     if(this.hasSelectedChips()) {
       this.itStandardsDataChipFilterted = this.itStandardsDataTabFilterted.filter(f => {
@@ -136,6 +138,19 @@ export class ItStandardsComponent implements OnInit {
 
   private hasSelectedChips(): boolean {
     return this.selectedChips && this.selectedChips.length > 0;
+  }
+
+  private syncUrlToFilters(): void {
+    const chip = this.selectedChips.length === 1 ? this.selectedChips[0] : null;
+    const tab = this.selectedTab;
+
+    if (chip && tab && tab !== 'All') {
+      this.router.navigate(['/it_standards/filtered', chip, tab], { replaceUrl: true });
+    } else if (chip) {
+      this.router.navigate(['/it_standards/filtered', chip], { replaceUrl: true });
+    } else {
+      this.router.navigate(['/it_standards'], { replaceUrl: true });
+    }
   }
 
   private YesNo(value: any, row: any, index: number, field: string): string {
@@ -169,6 +184,21 @@ export class ItStandardsComponent implements OnInit {
     * Get definitions for the table header tooltips
     * Then set the column defintions and initialize the table
     */
+
+    // Support deep-link filtered URLs: /it_standards/filtered/:deploymentType/:status
+    const routeParams = this.route.snapshot.params;
+    if (routeParams['deploymentType']) {
+      const depType = routeParams['deploymentType'];
+      const match = this.filterChips.find(c => c.toLowerCase() === depType.toLowerCase());
+      if (match) {
+        this.selectedChips = [match];
+      }
+    }
+    if (routeParams['status']) {
+      const status = routeParams['status'];
+      this.selectedTab = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+    }
+
    this.route.queryParams.subscribe(params => {
       if (params['tab']) {
         this.selectedTab = params['tab'];
