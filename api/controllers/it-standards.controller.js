@@ -229,6 +229,12 @@ exports.findStatuses = (req, res) => {
   res = ctrl.sendQuery(query, 'IT Standard Statuses', res); //removed sendQuery_cowboy reference
 };
 
+exports.findCriticalReviews = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standard_critical_reviews.sql')).toString();
+
+  res = ctrl.sendQuery(query, 'IT Standard Critical Reviews', res);
+};
+
 exports.findTypes = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standard_types.sql')).toString();
 
@@ -485,6 +491,10 @@ function updateData(techId, data) {
 
   data.tcEndOfLifeDate = ctrl.setNullEmptyTextHandler(data.tcEndOfLifeDate);
 
+  if (data.itStandCriticalReview === undefined || data.itStandCriticalReview === null || data.itStandCriticalReview === '') {
+    data.itStandCriticalReview = null;
+  }
+
   return `UPDATE obj_technology
           SET
             obj_technology_status_Id          = ${data.itStandStatus},
@@ -493,6 +503,7 @@ function updateData(techId, data) {
             Description                       = ${data.itStandDesc},
             obj_standard_type_Id              = ${data.itStandType},
             obj_508_compliance_status_Id      = ${data.itStand508},
+            obj_technology_critical_review_Id = ${data.itStandCriticalReview},
             Available_through_Myview          = '${data.itStandMyView}',
             Vendor_Standard_Organization      = ${data.itStandVendorOrg},
             obj_deployment_type_Id            = ${data.itStandDeployment},
@@ -532,6 +543,10 @@ function saveData(data) {
   data.itStandRITM = ctrl.setNullEmptyTextHandler(data.itStandRITM);
   data.itStandComments = ctrl.setNullEmptyTextHandler(data.itStandComments);
 
+  if (data.itStandCriticalReview === undefined || data.itStandCriticalReview === null || data.itStandCriticalReview === '') {
+    data.itStandCriticalReview = null;
+  }
+
   return `INSERT INTO obj_technology(
             obj_technology_status_Id,
             Keyname,
@@ -539,6 +554,7 @@ function saveData(data) {
             Description,
             obj_standard_type_Id,
             obj_508_compliance_status_Id,
+            obj_technology_critical_review_Id,
             Available_through_Myview,
             Vendor_Standard_Organization,
             obj_deployment_type_Id,
@@ -560,6 +576,7 @@ function saveData(data) {
            ${data.itStandDesc},
            ${data.itStandType},
            ${data.itStand508},
+           ${data.itStandCriticalReview},
            '${data.itStandMyView}',
            ${data.itStandVendorOrg},
            ${data.itStandDeployment},

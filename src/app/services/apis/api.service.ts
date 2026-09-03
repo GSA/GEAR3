@@ -22,6 +22,7 @@ import { ITStandardCategory } from '@api/models/it-standards-categories.model';
 import { ITStandardDeployTypes } from '@api/models/it-standards-deploy_types.model';
 import { ITStandardStatus } from '@api/models/it-standards-statuses.model';
 import { ITStandardTypes } from '@api/models/it-standards-types.model';
+import { ITStandardCriticalReview } from '@api/models/it-standards-critical-review.model';
 
 import { Organization } from '@api/models/organizations.model';
 import { Service_Category } from '@api/models/service-category.model';
@@ -651,6 +652,15 @@ export class ApiService {
       .pipe(
         catchError(
           this.handleError<ITStandardStatus[]>('GET IT Standard Statuses', [])
+        )
+      );
+  }
+  public getITStandCriticalReviews(): Observable<ITStandardCriticalReview[]> {
+    return this.http
+      .get<ITStandardCriticalReview[]>(this.techUrl + '/critical_reviews')
+      .pipe(
+        catchError(
+          this.handleError<ITStandardCriticalReview[]>('GET IT Standard Critical Reviews', [])
         )
       );
   }

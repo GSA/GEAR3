@@ -36,6 +36,7 @@ export class ItStandardManagerComponent implements OnInit {
     itStandType: new FormControl(null, [Validators.required]),
     itStandCategory: new FormControl(null, [Validators.required]),
     itStand508: new FormControl(),
+    itStandCriticalReview: new FormControl(null),
     itStandMyView: new FormControl(),
     itStandReqAtte: new FormControl(null),
     itStandAtteLink: new FormControl(),
@@ -91,6 +92,7 @@ export class ItStandardManagerComponent implements OnInit {
   catsBuffer = [];
 
   compliance: any[] = [];
+  criticalReviews: any[] = [];
   deploymentTypes: any[] = [];
   aprvExpDate: Date;
 
@@ -173,6 +175,9 @@ export class ItStandardManagerComponent implements OnInit {
 
     // Populate 508 Compliance Statuses
     this.apiService.getITStand508Statuses().subscribe((data: any[]) => { this.compliance = data });
+
+    // Populate Critical Software Review Results
+    this.apiService.getITStandCriticalReviews().subscribe((data: any[]) => { this.criticalReviews = data });
 
     // Populate Deployment Types
     this.apiService.getITStandDeploymentTypes().subscribe((data: any[]) => { this.deploymentTypes = data });
@@ -315,6 +320,7 @@ export class ItStandardManagerComponent implements OnInit {
         itStandType: this.sharedService.findInArray(this.types, 'Name', this.itStandard.StandardType),
         itStandCategory: categoryIDs,
         itStand508: this.sharedService.findInArray(this.compliance, 'Name', this.itStandard.ComplianceStatus),
+        itStandCriticalReview: this.sharedService.findInArray(this.criticalReviews, 'Name', this.itStandard.CriticalReview),
         itStandMyView: myView,
         itStandReqAtte: this.sharedService.findInArray(this.itStandReqAtteRefData, 'Name', this.itStandard.attestation_required),
         itStandAtteLink: this.itStandard.attestation_link,
@@ -398,6 +404,14 @@ export class ItStandardManagerComponent implements OnInit {
       } else {
         this.itStandardsForm.value.itStand508 = +this.itStandardsForm.value.itStand508;
         this.itStandardsForm.patchValue({itStand508: +this.itStandardsForm.value.itStand508});
+      }
+
+      if(!this.itStandardsForm.value.itStandCriticalReview || typeof(this.itStandardsForm.value.itStandCriticalReview) === 'undefined') {
+        this.itStandardsForm.value.itStandCriticalReview = '3';
+        this.itStandardsForm.patchValue({itStandCriticalReview: '3'});
+      } else {
+        this.itStandardsForm.value.itStandCriticalReview = +this.itStandardsForm.value.itStandCriticalReview;
+        this.itStandardsForm.patchValue({itStandCriticalReview: +this.itStandardsForm.value.itStandCriticalReview});
       }
 
       if(!this.itStandardsForm.value.itStandAtteLink || typeof(this.itStandardsForm.value.itStandAtteLink) === 'undefined') {
@@ -878,6 +892,7 @@ export class ItStandardManagerComponent implements OnInit {
       itStandType: new FormControl(null, [Validators.required]),
       itStandCategory: new FormControl(null, [Validators.required]),
       itStand508: new FormControl(),
+      itStandCriticalReview: new FormControl(null),
       itStandMyView: new FormControl(),
       itStandReqAtte: new FormControl(null),
       itStandAtteLink: new FormControl(),
@@ -919,6 +934,7 @@ export class ItStandardManagerComponent implements OnInit {
     this.catsLoading = false;
     this.catsBuffer = [];
     this.compliance = [];
+    this.criticalReviews = [];
     this.deploymentTypes = [];
     this.aprvExpDate = null;
     this.itStandCertify = false;
@@ -980,6 +996,9 @@ export class ItStandardManagerComponent implements OnInit {
 
     // Populate 508 Compliance Statuses
     this.apiService.getITStand508Statuses().subscribe((data: any[]) => { this.compliance = data });
+
+    // Populate Critical Software Review Results
+    this.apiService.getITStandCriticalReviews().subscribe((data: any[]) => { this.criticalReviews = data });
 
     // Populate Deployment Types
     this.apiService.getITStandDeploymentTypes().subscribe((data: any[]) => { this.deploymentTypes = data });

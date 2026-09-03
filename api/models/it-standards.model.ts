@@ -27,6 +27,7 @@ export class ITStandards {
   public SoftwareVersionName: string = null;
   public SoftwareReleaseName: string = null;
   public Status: string = null;
+  public CriticalReview: string = null;
   public Deploymenttype: string = null;
   public StandardType: string = null;
   public POC: string = null;
