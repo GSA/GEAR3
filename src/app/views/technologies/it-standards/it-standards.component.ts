@@ -30,7 +30,7 @@ export class ItStandardsComponent implements OnInit, OnDestroy {
   public filterTotals: any = null;
   public totalRecords: number = 0;
   public filterChips: string[] = ['Mobile', 'Desktop', 'Server', 'SaaS', 'PaaS', 'Other'];
-  private selectedChips: string[] = [];
+  public selectedChips: string[] = [];
 
   public daysExpiring: number = 0;
   public daysRetired: number = 0;
@@ -84,7 +84,7 @@ export class ItStandardsComponent implements OnInit, OnDestroy {
   }
 
   public onFilterChipSelect(selectedChips: string[]): void {
-    this.selectedChips = selectedChips;
+    this.selectedChips = [...selectedChips];
     this.syncUrlToFilters();
     this.loadPage({
       page: 1,

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, ViewChild, ElementRef, Input, Output, Renderer2 } from '@angular/core';
+import { Component, EventEmitter, ViewChild, ElementRef, Input, OnChanges, Output, Renderer2, SimpleChanges } from '@angular/core';
 
 @Component({
     selector: 'app-filter-chips',
@@ -6,12 +6,18 @@ import { Component, EventEmitter, ViewChild, ElementRef, Input, Output, Renderer
     styleUrls: ['./filter-chips.component.scss'],
     standalone: false
 })
-export class FilterChipsComponent {
+export class FilterChipsComponent implements OnChanges {
 
   @ViewChild('button') button: ElementRef;
   @ViewChild('menu') menu: ElementRef;
 
   @Input() chips: string[] = [];
+  // Currently-applied selection, e.g. restored from the URL. Kept in sync
+  // with displayedChips so the pills survive this component being
+  // recreated (Angular destroys/recreates it whenever the parent route
+  // navigates between /it_standards and /it_standards/filtered/... since
+  // those are distinct route configs).
+  @Input() selectedChips: string[] = [];
   @Input() dropdownName: string = '';
   @Output() chipSelect: EventEmitter<string[]> = new EventEmitter<string[]>();
 
@@ -27,6 +33,12 @@ export class FilterChipsComponent {
           }
         }
       });
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+      if (changes['selectedChips']) {
+        this.displayedChips = [...(this.selectedChips || [])];
+      }
     }
 
     public onDropdownClick(): void {
