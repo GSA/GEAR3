@@ -29,6 +29,7 @@ import { ButtonOverlayPanelComponent } from '../components/button-overlay-panel/
 import { SidebarButtonComponent } from '../components/sidebar-button/sidebar-button.component';
 import { PageHelpButtonComponent } from '../components/page-help-button/page-help-button.component';
 import { YesNoPipe } from '../pipes/yesno.pipe';
+import { ApplyFormatterPipe } from '../pipes/apply-formatter.pipe';
 import { SkipFocusPiechartDirective } from '../common/skip-focus-piechart.directive';
 import { TableColumnFilterModalComponent } from '../components/modals/table-column-filter-modal/table-column-filter-modal.component';
 
@@ -42,6 +43,7 @@ const SHARED_DECLARATIONS = [
   SidebarButtonComponent,
   PageHelpButtonComponent,
   YesNoPipe,
+  ApplyFormatterPipe,
   SkipFocusPiechartDirective,
   TableColumnFilterModalComponent,
 ];

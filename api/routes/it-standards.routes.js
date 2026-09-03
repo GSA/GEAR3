@@ -6,6 +6,9 @@ const router = express.Router();
 router.route('/')
   .get(itsCtrl.findAll);
 
+router.route('/paginated')
+  .get(itsCtrl.findPaginated);
+
 router.route('/get/lite')
   .get(itsCtrl.getStandardsLite);
 

@@ -3,11 +3,28 @@ const ctrl = require('./base.controller');
 const fs = require('fs');
 const path = require('path');
 const { Guid } = require('typescript-guid');
+const SqlString = require('sqlstring');
 
 const queryPath = '../queries/';
 
+// Read once at module load instead of on every request.
+const IT_STANDARDS_BASE_QUERY = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString();
+
+// Treats an 'Approved' record with non-empty Conditions_Restrictions as its own
+// status, matching the frontend's setCondtionStatus() display logic.
+const EFFECTIVE_STATUS_EXPR = `CASE WHEN obj_technology_status.Keyname = 'Approved' AND tech.Conditions_Restrictions IS NOT NULL AND tech.Conditions_Restrictions <> '' THEN 'Approved with conditions' ELSE obj_technology_status.Keyname END`;
+
+const ALLOWED_SORT_FIELDS = {
+  Name: 'Name',
+  ManufacturerName: 'ManufacturerName',
+  Description: 'Description',
+  Status: 'Status',
+  DeploymentType: 'DeploymentType',
+  ApprovalExpirationDate: 'ApprovalExpirationDate',
+};
+
 exports.findAll = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
+  var query = IT_STANDARDS_BASE_QUERY +
     ` WHERE obj_standard_type.Keyname LIKE 'Software'
       AND obj_technology_status.Keyname NOT LIKE 'Not yet submitted'
       GROUP BY tech.Id
@@ -16,13 +33,97 @@ exports.findAll = (req, res) => {
   res = ctrl.sendQuery(query, 'IT Standards', res); //removed sendQuery_cowboy reference
 };
 
+exports.findPaginated = (req, res) => {
+  const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+  const pageSize = Math.min(200, Math.max(1, parseInt(req.query.pageSize, 10) || 50));
+  const offset = (page - 1) * pageSize;
+
+  const rawSortField = req.query.sortField || 'Name';
+  const sortColumn = ALLOWED_SORT_FIELDS[rawSortField] || 'Name';
+  const sortOrder = req.query.sortOrder === '-1' ? 'DESC' : 'ASC';
+
+  const search = (req.query.search || '').trim();
+  const tab = (req.query.tab || 'All').trim();
+  const chips = (req.query.chips || '').split(',').map(c => c.trim()).filter(Boolean);
+  const expiringWithinDays = parseInt(req.query.expiringWithinDays, 10) || 0;
+  const retiredWithinDays = parseInt(req.query.retiredWithinDays, 10) || 0;
+  const pastDueOnly = req.query.pastDueOnly === 'true';
+  const includePastDue = req.query.includePastDue === 'true';
+
+  let whereClause = ` WHERE obj_standard_type.Keyname LIKE 'Software'
+      AND obj_technology_status.Keyname NOT LIKE 'Not yet submitted'`;
+
+  if (tab === 'Other') {
+    whereClause += ` AND (${EFFECTIVE_STATUS_EXPR}) NOT IN ('Approved','Denied','Retired')`;
+  } else if (tab && tab !== 'All') {
+    whereClause += ` AND (${EFFECTIVE_STATUS_EXPR}) = ${SqlString.escape(tab)}`;
+  }
+
+  if (chips.length > 0) {
+    whereClause += ` AND obj_deployment_type.Keyname IN (${chips.map(c => SqlString.escape(c)).join(',')})`;
+  }
+
+  if (search) {
+    const escaped = SqlString.escape('%' + search + '%');
+    whereClause += ` AND (
+      IFNULL(tech.softwareReleaseName, tech.Keyname) LIKE ${escaped}
+      OR tech.manufacturerName LIKE ${escaped}
+      OR tech.Description LIKE ${escaped}
+      OR obj_technology_status.Keyname LIKE ${escaped}
+      OR obj_deployment_type.Keyname LIKE ${escaped}
+    )`;
+  }
+
+  // Matches the frontend's isInExpiringStatusScope() scope for expiring/past-due/retired deep links.
+  const expiringScopeClause = `(${EFFECTIVE_STATUS_EXPR}) IN ('Approved','Approved with conditions','Pilot','Exception','Sunsetting')`;
+  if (expiringWithinDays > 0) {
+    whereClause += ` AND tech.Approved_Status_Expiration_Date IS NOT NULL
+      AND DATE(tech.Approved_Status_Expiration_Date) <= DATE_ADD(CURDATE(), INTERVAL ${expiringWithinDays} DAY)`;
+    if (!includePastDue) {
+      whereClause += ` AND DATE(tech.Approved_Status_Expiration_Date) >= CURDATE()`;
+    }
+    whereClause += ` AND ${expiringScopeClause}`;
+  } else if (pastDueOnly) {
+    whereClause += ` AND tech.Approved_Status_Expiration_Date IS NOT NULL
+      AND DATE(tech.Approved_Status_Expiration_Date) < CURDATE()
+      AND ${expiringScopeClause}`;
+  } else if (retiredWithinDays > 0) {
+    whereClause += ` AND tech.Approved_Status_Expiration_Date IS NOT NULL
+      AND DATE(tech.Approved_Status_Expiration_Date) <= CURDATE()
+      AND DATE(tech.Approved_Status_Expiration_Date) >= DATE_SUB(CURDATE(), INTERVAL ${retiredWithinDays} DAY)
+      AND obj_technology_status.Keyname = 'Retired'`;
+  }
+
+  const countQuery = `SELECT COUNT(*) AS total FROM (
+      ${IT_STANDARDS_BASE_QUERY}${whereClause} GROUP BY tech.Id
+    ) AS counted;`;
+
+  const dataQuery = `${IT_STANDARDS_BASE_QUERY}${whereClause}
+    GROUP BY tech.Id
+    ORDER BY ${sortColumn} ${sortOrder}
+    LIMIT ${pageSize} OFFSET ${offset};`;
+
+  const connPool = require('../db.js').promisePool;
+  Promise.all([connPool.query(countQuery), connPool.query(dataQuery)])
+    .then(([[countRows], [dataRows]]) => {
+      res.status(200).json({
+        total: countRows[0].total,
+        data: dataRows,
+      });
+    })
+    .catch(err => {
+      console.error('DB Query Error while executing paginated IT standards:', err);
+      res.status(501).json({ message: err.message || 'DB Query Error' });
+    });
+};
+
 exports.getStandardsLite = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards-lite.sql')).toString();
   res = ctrl.sendQuery(query, 'IT Standards Lite', res);
 };
 
 exports.findAllApproved = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
+  var query = IT_STANDARDS_BASE_QUERY +
     ` WHERE obj_standard_type.Keyname LIKE 'Software'
       AND obj_technology_status.Keyname = 'Approved'
       GROUP BY tech.Id
@@ -32,7 +133,7 @@ exports.findAllApproved = (req, res) => {
 };
 
 exports.findAllNoFilter = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
+  var query = IT_STANDARDS_BASE_QUERY +
     ` WHERE obj_standard_type.Keyname LIKE 'Software'
       GROUP BY tech.Id
       ORDER BY IFNULL(tech.softwareReleaseName, tech.Keyname);`;
@@ -43,7 +144,7 @@ exports.findAllNoFilter = (req, res) => {
 exports.findOne = (req, res) => {
   let id = req.params.id.trim();
   if(/^\d+$/.test(id)) {
-    var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
+    var query = IT_STANDARDS_BASE_QUERY +
       ` WHERE tech.Id = ${id};`;
 
     res = ctrl.sendQuery(query, "individual IT Standard", res);
@@ -53,7 +154,7 @@ exports.findOne = (req, res) => {
 };
 
 exports.findLatest = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
+  var query = IT_STANDARDS_BASE_QUERY +
     ` GROUP BY tech.Id
       ORDER BY tech.CreateDTG DESC LIMIT 1;`;
 
@@ -61,12 +162,12 @@ exports.findLatest = (req, res) => {
 };
 
 exports.updatedWithinWeek = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
+  var query = IT_STANDARDS_BASE_QUERY +
     ` WHERE tech.ChangeDTG >= (CURDATE() - INTERVAL 7 DAY)
       GROUP BY tech.Id
       ORDER BY tech.ChangeDTG DESC;`;
 
-  res = ctrl.sendQuery(query, 'IT standard with change date in the last 7 days', res); 
+  res = ctrl.sendQuery(query, 'IT standard with change date in the last 7 days', res);
 };
 
 exports.findSystems = (req, res) => {
@@ -702,52 +803,40 @@ exports.getRelatedTRMS = (req, res) => {
 };
 
 exports.getFilterTotals = (req, res) => {
-  var filterQueryBase = 'AND (';
-  var filterQuery = '';
-  var filterQueryEnd  = ')';
-  var filterQueryFull = '';
-  if(req.params.filters && req.params.filters.length > 0) {
-    var filters = req.params.filters.split(',');
+  const chips = (req.params.filters || '').split(',').map(c => c.trim()).filter(Boolean);
+  const search = (req.query.search || '').trim();
 
-    for(i = 0; i < filters.length; i++) {
-      if(i === 0) {
-        filterQuery += `obj_deployment_type.Keyname = '${filters[i]}'`;
-      } else {
-        filterQuery += ` OR obj_deployment_type.Keyname = '${filters[i]}'`;
-      }
-    }
-
-    filterQueryFull = filterQueryBase + filterQuery + filterQueryEnd;
+  let filterClause = '';
+  if (chips.length > 0) {
+    filterClause = ` AND obj_deployment_type.Keyname IN (${chips.map(c => SqlString.escape(c)).join(',')})`;
   }
 
-  var allQuery = '';
-  if(!filterQueryFull) {
-    allQuery = '*';
-  } else {
-    allQuery = `CASE WHEN (${filterQuery}) THEN 1 ELSE NULL END`;
+  let searchClause = '';
+  if (search) {
+    const escaped = SqlString.escape('%' + search + '%');
+    searchClause = ` AND (
+      IFNULL(tech.softwareReleaseName, tech.Keyname) LIKE ${escaped}
+      OR tech.manufacturerName LIKE ${escaped}
+      OR tech.Description LIKE ${escaped}
+      OR obj_technology_status.Keyname LIKE ${escaped}
+      OR obj_deployment_type.Keyname LIKE ${escaped}
+    )`;
   }
 
-  var query = `SELECT COUNT(CASE WHEN obj_technology_status.Keyname = 'Approved' ${filterQueryFull} THEN 1
-                  ELSE NULL
-                END) AS ApprovedTotal,
-                COUNT(CASE WHEN obj_technology_status.Keyname = 'Denied' ${filterQueryFull} THEN 1
-                  ELSE NULL
-                END) AS DeniedTotal,
-                COUNT(CASE WHEN obj_technology_status.Keyname = 'Retired' ${filterQueryFull} THEN 1
-                  ELSE NULL
-                END) AS RetiredTotal,
-                COUNT(CASE WHEN (obj_technology_status.Keyname != 'Approved' 
-                            AND obj_technology_status.Keyname != 'Denied' 
-                            AND obj_technology_status.Keyname != 'Retired') ${filterQueryFull} THEN 1
-                     ELSE NULL
-              END) AS OtherTotal,
-                COUNT(${allQuery}) AS AllTotal
+  var query = `SELECT
+                COUNT(CASE WHEN (${EFFECTIVE_STATUS_EXPR}) = 'Approved' THEN 1 ELSE NULL END) AS ApprovedTotal,
+                COUNT(CASE WHEN (${EFFECTIVE_STATUS_EXPR}) = 'Denied' THEN 1 ELSE NULL END) AS DeniedTotal,
+                COUNT(CASE WHEN (${EFFECTIVE_STATUS_EXPR}) = 'Retired' THEN 1 ELSE NULL END) AS RetiredTotal,
+                COUNT(CASE WHEN (${EFFECTIVE_STATUS_EXPR}) NOT IN ('Approved','Denied','Retired') THEN 1 ELSE NULL END) AS OtherTotal,
+                COUNT(*) AS AllTotal
               FROM obj_technology AS tech
               LEFT JOIN obj_technology_status   ON tech.obj_technology_status_Id = obj_technology_status.Id
               LEFT JOIN obj_standard_type       ON tech.obj_standard_type_Id = obj_standard_type.Id
               LEFT JOIN obj_deployment_type     ON tech.obj_deployment_type_Id = obj_deployment_type.Id
               WHERE obj_standard_type.Keyname LIKE 'Software'
-              AND obj_technology_status.Keyname NOT LIKE 'Not yet submitted'`;
+              AND obj_technology_status.Keyname NOT LIKE 'Not yet submitted'
+              ${filterClause}
+              ${searchClause};`;
 
   res = ctrl.sendQuery(query, `IT Standards filter totals`, res);
 };

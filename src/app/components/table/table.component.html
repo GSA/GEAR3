@@ -1,4 +1,4 @@
-@if (isDataReady && !isSearchLoading) {
+@if (hasEverLoaded && !isSearchLoading) {
   <div class="table-responsive-container">
     <div class="d-flex justify-content-between">
       <div></div>
@@ -19,6 +19,7 @@
       [paginator]="showPagination"
       [lazy]="serverSidePagination"
       [lazyLoadOnInit]="serverSidePagination"
+      [loading]="serverSidePagination && !isDataReady"
       [totalRecords]="serverSidePagination ? serverSideTotalRecords : tableData.length"
       [scrollable]="true"
       [scrollHeight]="screenHeight"
@@ -138,7 +139,7 @@
                       <span [ngClass]="col.class">{{ rowData[col.field] }}</span>
                     }
                     @if (col.formatter) {
-                      <span [ngClass]="col.class" [innerHTML]="col.formatter(rowData[col.field])"></span>
+                      <span [ngClass]="col.class" [innerHTML]="rowData[col.field] | applyFormatter:col.formatter"></span>
                     }
                   </td>
                 }

@@ -125,6 +125,11 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   matchModeOptions: SelectItem[];
 
   isDataReady: boolean = false;
+  // Latches true the first time data loads and never resets, so the
+  // paginator's own [lazy] table isn't torn down and recreated (and its
+  // lazyLoadOnInit re-triggered) every time isDataReady pulses false while
+  // a later page/sort/filter refresh is in flight.
+  hasEverLoaded: boolean = false;
   isSearchLoading: boolean = false;
 
   tableSearchControl = new FormControl('');
@@ -186,6 +191,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
       this.tableData = this.localTableData;
       this.originalTableData = [...this.localTableData];
       this.isDataReady = true;
+      this.hasEverLoaded = true;
     } else {
       this.tableDataSubscription = this.tableService.reportTableData$.subscribe(d => {
         if (this.isHandlingDataUpdate) return;
@@ -198,6 +204,9 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
       });
       this.tableReadySubscription = this.tableService.reportTableDataReady$.subscribe(r => {
         this.isDataReady = r;
+        if (r) {
+          this.hasEverLoaded = true;
+        }
       });
     }
     
