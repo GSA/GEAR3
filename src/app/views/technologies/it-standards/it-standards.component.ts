@@ -101,7 +101,11 @@ export class ItStandardsComponent implements OnInit, OnDestroy {
   }
 
   private syncUrlToFilters(): void {
-    const chip = this.selectedChips.length === 1 ? this.selectedChips[0] : null;
+    // Comma-join so multiple selected chips all survive being re-parsed
+    // out of the URL after this component gets recreated (Angular treats
+    // /it_standards, /it_standards/filtered/:x and /it_standards/filtered/:x/:y
+    // as distinct route configs, so it destroys/recreates on every switch).
+    const chip = this.selectedChips.length > 0 ? this.selectedChips.join(',') : null;
     const tab = this.selectedTab;
 
     if (chip && tab && tab !== 'All') {
@@ -157,12 +161,13 @@ export class ItStandardsComponent implements OnInit, OnDestroy {
     */
 
     // Support deep-link filtered URLs: /it_standards/filtered/:deploymentType/:status
+    // :deploymentType may be a comma-separated list to support multi-select chips.
     const routeParams = this.route.snapshot.params;
     if (routeParams['deploymentType']) {
-      const depType = routeParams['deploymentType'];
-      const match = this.filterChips.find(c => c.toLowerCase() === depType.toLowerCase());
-      if (match) {
-        this.selectedChips = [match];
+      const depTypes = (routeParams['deploymentType'] as string).split(',').map(d => d.trim().toLowerCase());
+      const matches = this.filterChips.filter(c => depTypes.includes(c.toLowerCase()));
+      if (matches.length > 0) {
+        this.selectedChips = matches;
       }
     }
     if (routeParams['status']) {
