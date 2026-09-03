@@ -198,9 +198,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public ngAfterViewInit(): void {
-    this.updateChartViews();
+    // Defer initial measurement so the flex layout has settled and
+    // container offsetWidth returns the correct value.
+    setTimeout(() => {
+      this.updateChartViews();
+      this.cdr.detectChanges();
+    }, 0);
     this.setupResizeObserver();
-    this.cdr.detectChanges();
   }
 
   public ngOnDestroy(): void {
@@ -236,8 +240,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
 
       this.hostingPlatformsData = finalData;
-      this.updateChartViews();
-      this.cdr.detectChanges();
+      // Defer measurement until after Angular has reflowed the DOM with the new data.
+      // Without this, offsetWidth can be 0 or stale on the initial load, causing the
+      // bar chart to render condensed to the left.
+      setTimeout(() => {
+        this.updateChartViews();
+        this.cdr.detectChanges();
+      }, 0);
     });
   }
 
@@ -257,7 +266,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private setupResizeObserver(): void {
     if (typeof ResizeObserver !== 'undefined') {
       this.resizeObserver = new ResizeObserver(() => {
-        this.updateChartViews();
+        // Defer to avoid measuring mid-reflow during resize events
+        setTimeout(() => this.updateChartViews(), 0);
       });
 
       const barContainer = document.querySelector('.bar-chart-content');
