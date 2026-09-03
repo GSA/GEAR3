@@ -1,4 +1,4 @@
-@if (isDataReady && !isSearchLoading) {
+@if (hasEverLoaded && !isSearchLoading) {
   <div class="table-responsive-container">
     <div class="d-flex justify-content-between">
       <div></div>
@@ -19,6 +19,7 @@
       [paginator]="showPagination"
       [lazy]="serverSidePagination"
       [lazyLoadOnInit]="serverSidePagination"
+      [loading]="serverSidePagination && !isDataReady"
       [totalRecords]="serverSidePagination ? serverSideTotalRecords : tableData.length"
       [scrollable]="true"
       [scrollHeight]="screenHeight"
