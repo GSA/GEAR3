@@ -39,7 +39,7 @@ export class ItStandardsComponent implements OnInit {
   public itStandardsDataTabFilterted: ITStandards[] = [];
   public itStandardsDataChipFilterted: ITStandards[] = [];
   public filterChips: string[] = ['Mobile', 'Desktop', 'Server', 'SaaS', 'PaaS', 'Other'];
-  private selectedChips: string[] = [];
+  public selectedChips: string[] = [];
 
   public daysExpiring: number = 0;
   public daysRetired: number = 0;
