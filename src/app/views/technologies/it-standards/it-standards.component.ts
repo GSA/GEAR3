@@ -148,6 +148,8 @@ export class ItStandardsComponent implements OnInit {
       this.router.navigate(['/it_standards/filtered', chip, tab], { replaceUrl: true });
     } else if (chip) {
       this.router.navigate(['/it_standards/filtered', chip], { replaceUrl: true });
+    } else if (tab && tab !== 'All') {
+      this.router.navigate(['/it_standards/status', tab], { replaceUrl: true });
     } else {
       this.router.navigate(['/it_standards'], { replaceUrl: true });
     }
@@ -186,6 +188,7 @@ export class ItStandardsComponent implements OnInit {
     */
 
     // Support deep-link filtered URLs: /it_standards/filtered/:deploymentType/:status
+    // and /it_standards/status/:status
     const routeParams = this.route.snapshot.params;
     if (routeParams['deploymentType']) {
       const depType = routeParams['deploymentType'];
