@@ -74,39 +74,27 @@ export class ItStandardsComponent implements OnInit {
     this.itStandardsDataTabFilterted = this.itStandardsData;
 
     if(this.selectedTab === 'All') {
-      if(this.hasSelectedChips()) {
-        this.onFilterChipSelect(this.selectedChips);
-      } else {
-        this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
-        //this.tableService.updateReportTableDataReadyStatus(true);
-      }
+      // no status filter needed
     } else if (this.selectedTab === 'Other') {
-      if(this.hasSelectedChips()) {
-        this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
-          return x.Status !== 'Approved' && x.Status !== 'Denied' && x.Status !== 'Retired';
-        });
-        this.onFilterChipSelect(this.selectedChips);
-      } else {
-        this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
-          return x.Status !== 'Approved' && x.Status !== 'Denied' && x.Status !== 'Retired' && x.Status !== 'Approved with conditions';
-        });
-        this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
-        //this.tableService.updateReportTableDataReadyStatus(true);
-      }
+      this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
+        return x.Status !== 'Approved' && x.Status !== 'Denied' && x.Status !== 'Retired' && x.Status !== 'Approved with conditions';
+      });
     } else {
-      if(this.hasSelectedChips()) {
-        this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
-          return x.Status === tabName;
-        });
-        this.onFilterChipSelect(this.selectedChips);
-      } else {
-        this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
-          return x.Status === tabName;
-        });
-        this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
-        //this.tableService.updateReportTableDataReadyStatus(true);
-      }
+      this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
+        return x.Status === tabName;
+      });
     }
+
+    if(this.hasSelectedChips()) {
+      this.itStandardsDataChipFilterted = this.itStandardsDataTabFilterted.filter(f => {
+        return this.selectedChips.includes(f.DeploymentType);
+      });
+      this.tableService.updateReportTableData(this.itStandardsDataChipFilterted);
+      this.tableService.updateReportTableDataReadyStatus(true);
+    } else {
+      this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
+    }
+    this.updateTotals();
   }
 
   public onKeyUp(e: KeyboardEvent, tabName: string) {
@@ -118,7 +106,19 @@ export class ItStandardsComponent implements OnInit {
   public onFilterChipSelect(selectedChips: string[]): void {
     this.selectedChips = selectedChips;
     this.syncUrlToFilters();
-    this.itStandardsDataChipFilterted = this.itStandardsDataTabFilterted;
+
+    // Always re-derive the tab-filtered set from the full dataset
+    this.itStandardsDataTabFilterted = this.itStandardsData;
+    if (this.selectedTab === 'Other') {
+      this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
+        return x.Status !== 'Approved' && x.Status !== 'Denied' && x.Status !== 'Retired' && x.Status !== 'Approved with conditions';
+      });
+    } else if (this.selectedTab !== 'All') {
+      this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
+        return x.Status === this.selectedTab;
+      });
+    }
+
     if(this.hasSelectedChips()) {
       this.itStandardsDataChipFilterted = this.itStandardsDataTabFilterted.filter(f => {
         return selectedChips.includes(f.DeploymentType);
@@ -127,7 +127,7 @@ export class ItStandardsComponent implements OnInit {
       this.tableService.updateReportTableDataReadyStatus(true);
     } else {
       this.itStandardsDataChipFilterted = this.itStandardsDataTabFilterted;
-      this.onSelectTab(this.selectedTab);
+      this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
     }
     this.updateTotals();
   }
