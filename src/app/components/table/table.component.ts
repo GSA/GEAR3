@@ -189,11 +189,9 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     } else {
       this.tableDataSubscription = this.tableService.reportTableData$.subscribe(d => {
         if (this.isHandlingDataUpdate) return;
-        if (d && d.length > 0) {
-          this.originalTableData = [...d];
-          if (!this.applyPendingSearch()) {
-            this.tableData = d;
-          }
+        this.originalTableData = d ? [...d] : [];
+        if (!this.applyPendingSearch()) {
+          this.tableData = d ?? [];
         }
       });
       this.tableReadySubscription = this.tableService.reportTableDataReady$.subscribe(r => {

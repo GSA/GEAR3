@@ -23,7 +23,7 @@ export class FilterChipsComponent implements OnChanges {
       // Handle outside clicks to close menu
       this.renderer.listen('window', 'click', (e: Event) => {
         if(this.button && this.menu) {
-          if(e.target !== this.button.nativeElement && e.target !== this.menu.nativeElement) {
+          if(!this.button.nativeElement.contains(e.target) && !this.menu.nativeElement.contains(e.target)) {
             this.dropdownOpen = false;
           }
         }

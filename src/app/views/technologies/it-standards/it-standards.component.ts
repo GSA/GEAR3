@@ -90,10 +90,10 @@ export class ItStandardsComponent implements OnInit {
         return this.selectedChips.includes(f.DeploymentType);
       });
       this.tableService.updateReportTableData(this.itStandardsDataChipFilterted);
-      this.tableService.updateReportTableDataReadyStatus(true);
     } else {
       this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
     }
+    this.tableService.updateReportTableDataReadyStatus(true);
     this.updateTotals();
   }
 
@@ -141,14 +141,30 @@ export class ItStandardsComponent implements OnInit {
   }
 
   private syncUrlToFilters(): void {
-    const chip = this.selectedChips.length === 1 ? this.selectedChips[0] : null;
+    const chips = this.selectedChips;
     const tab = this.selectedTab;
+    const hasChips = chips.length > 0;
+    const hasTab = tab && tab !== 'All';
 
-    if (chip && tab && tab !== 'All') {
-      this.router.navigate(['/it_standards/filtered', chip, tab], { replaceUrl: true });
-    } else if (chip) {
-      this.router.navigate(['/it_standards/filtered', chip], { replaceUrl: true });
-    } else if (tab && tab !== 'All') {
+    if (hasChips && hasTab) {
+      if (chips.length === 1) {
+        this.router.navigate(['/it_standards/filtered', chips[0], tab], { replaceUrl: true });
+      } else {
+        this.router.navigate(['/it_standards'], {
+          replaceUrl: true,
+          queryParams: { deploymentTypes: chips.join(','), status: tab }
+        });
+      }
+    } else if (hasChips) {
+      if (chips.length === 1) {
+        this.router.navigate(['/it_standards/filtered', chips[0]], { replaceUrl: true });
+      } else {
+        this.router.navigate(['/it_standards'], {
+          replaceUrl: true,
+          queryParams: { deploymentTypes: chips.join(',') }
+        });
+      }
+    } else if (hasTab) {
       this.router.navigate(['/it_standards/status', tab], { replaceUrl: true });
     } else {
       this.router.navigate(['/it_standards'], { replaceUrl: true });
@@ -205,6 +221,14 @@ export class ItStandardsComponent implements OnInit {
    this.route.queryParams.subscribe(params => {
       if (params['tab']) {
         this.selectedTab = params['tab'];
+      }
+      if (params['deploymentTypes']) {
+        const types: string[] = params['deploymentTypes'].split(',');
+        this.selectedChips = types.filter(t => this.filterChips.some(c => c.toLowerCase() === t.toLowerCase()))
+          .map(t => this.filterChips.find(c => c.toLowerCase() === t.toLowerCase())!);
+      }
+      if (params['status']) {
+        this.selectedTab = params['status'].charAt(0).toUpperCase() + params['status'].slice(1).toLowerCase();
       }
       if(params['expiringWithinDays']) {
         this.daysExpiring = +params['expiringWithinDays'];
