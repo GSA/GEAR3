@@ -86,6 +86,10 @@ const runPocJob = async () => {
       INSERT INTO gear_schema.obj_ldap_poc (SamAccountName, FirstName, LastName, Email, EmployeeType, Enabled, RISSO)
       VALUES ('AssistTechTeam', 'Assist', 'Tech Team', 'assisttechteam@gsa.gov', 'Group', 'True', '24')
       ON DUPLICATE KEY UPDATE SamAccountName = 'AssistTechTeam';
+      
+      INSERT INTO gear_schema.obj_ldap_poc (SamAccountName, FirstName, LastName, Email, EmployeeType, Enabled, RISSO)
+      VALUES ('FCSopsTeam', 'FCS', 'Ops Team', 'fcs-ops@gsa.gov', 'Group', 'True', '24')
+      ON DUPLICATE KEY UPDATE SamAccountName = 'FCSopsTeam';
     `;
     await runQuery(updateEndOfLifeQuery, []);
     jobLogger.log('Update obj_ldap_poc to separate records and add group account.');
