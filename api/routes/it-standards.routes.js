@@ -87,4 +87,7 @@ router.route('/retired_standard_totals')
 router.route('/get/related_trms/:id')
   .get(itsCtrl.getRelatedTRMS);
 
+router.route('/trm')
+  .get(itsCtrl.getAllStandardsTRMS);
+
 module.exports = router;

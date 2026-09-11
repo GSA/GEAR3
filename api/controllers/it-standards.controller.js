@@ -701,6 +701,12 @@ exports.getRelatedTRMS = (req, res) => {
   }
 };
 
+exports.getAllStandardsTRMS = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_it-standards_trms.sql`)).toString();
+
+  res = ctrl.sendQuery(query, `IT standards with related TRMs`, res);
+};
+
 exports.getFilterTotals = (req, res) => {
   var filterQueryBase = 'AND (';
   var filterQuery = '';
