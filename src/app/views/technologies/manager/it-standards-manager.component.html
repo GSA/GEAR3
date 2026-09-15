@@ -303,8 +303,7 @@
                         <label for="itStand508" class="data-label">508 Compliance</label>
                         <select class="form-control" id="itStand508" formControlName="itStand508">
                           @for (status of compliance; track status) {
-                            <option [value]="status.ID"
-                            [selected]="status.Name === itStandard.ComplianceStatus">{{ status.Name }}</option>
+                            <option [value]="status.ID">{{ status.Name }}</option>
                           }
                         </select>
                       </div>
@@ -313,8 +312,7 @@
                         <select class="form-control" id="itStandCriticalReview" formControlName="itStandCriticalReview"
                           [ngClass]="{'is-invalid': modalService.fieldValidCheck(itStandardsForm, 'itStandCriticalReview')}">
                           @for (review of criticalReviews; track review) {
-                            <option [value]="review.ID"
-                            [selected]="review.Name === itStandard.CriticalReview">{{ review.Name }}</option>
+                            <option [value]="review.ID">{{ review.Name }}</option>
                           }
                         </select>
                         @if (modalService.fieldValidCheck(itStandardsForm, 'itStandCriticalReview')) {

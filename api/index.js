@@ -41,12 +41,21 @@ router.use(limiter);
  */
 router.use((req, res, next) => {
   if (req.method === 'GET') {
+    const noCachePaths = [
+      '/it_standards',
+    ];
+    const isNoCache = noCachePaths.some(p => req.path.startsWith(p));
+    if (isNoCache) {
+      res.set('Cache-Control', 'no-store');
+      next();
+      return;
+    }
+
     const longCachePaths = [
       '/dashboard_summary',
       '/cloud_adoption_rate',
       '/data_dictionary',
       '/attribute_definitions',
-      '/it_standards',
     ];
     const isLongCache = longCachePaths.some(p => req.path.startsWith(p));
     if (isLongCache) {

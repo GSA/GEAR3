@@ -564,6 +564,10 @@ export class ItStandardsManagerComponent implements OnInit {
       this.itStandardsForm.value.itStandStatus = +this.itStandardsForm.value.itStandStatus;
       this.itStandardsForm.patchValue({itStandStatus: +this.itStandardsForm.value.itStandStatus});
 
+      // Critical Software Review Results
+      this.itStandardsForm.value.itStandCriticalReview = +this.itStandardsForm.value.itStandCriticalReview;
+      this.itStandardsForm.patchValue({itStandCriticalReview: +this.itStandardsForm.value.itStandCriticalReview});
+
       // Deployment
       this.itStandardsForm.value.itStandDeployment = +this.itStandardsForm.value.itStandDeployment;
       this.itStandardsForm.patchValue({itStandDeployment: +this.itStandardsForm.value.itStandDeployment});
