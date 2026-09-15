@@ -464,7 +464,7 @@
 
                                     <div class="row">
                                       <div class="form-group col-4">
-                                        <label for="itStandCriticalReview">Critical Software Review Results</label>
+                                        <label for="itStandCriticalReview">Critical Software Review Results<span class="text-danger">*</span></label>
                                         <select class="form-control" id="itStandCriticalReview" formControlName="itStandCriticalReview">
                                           @for (review of criticalReviews; track review) {
                                             <option [value]="review.ID"
