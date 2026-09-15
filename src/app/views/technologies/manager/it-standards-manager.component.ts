@@ -693,6 +693,7 @@ export class ItStandardsManagerComponent implements OnInit {
     this.initalAppBundleIds = [];
     this.currentAppBundleId = '';
 
+    this.apiService.invalidateCache('it-standards');
     this.router.navigate([`/it_standards/${data.ID}`]);
 
     // Refresh Table
