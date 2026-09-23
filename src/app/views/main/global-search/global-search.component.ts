@@ -7,6 +7,11 @@ import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 
+interface ChatMessage {
+  role: 'user' | 'assistant';
+  text: string;
+}
+
 @Component({
     selector: 'global-search',
     templateUrl: './global-search.component.html',
@@ -18,6 +23,16 @@ export class GlobalSearchComponent implements OnInit {
   public searchKW: string = '';
   tableData: any[] = [];
   tableDataOriginal: any[] = [];
+
+  // RAG / AI Answer state
+  public ragLoading: boolean = false;
+  public ragAnswer: string = '';
+  public ragSources: string[] = [];
+
+  // Follow-up chat state
+  public followUpQuestion: string = '';
+  public chatHistory: ChatMessage[] = [];
+  public chatLoading: boolean = false;
 
   constructor(
     private sharedService: SharedService,
@@ -78,6 +93,9 @@ export class GlobalSearchComponent implements OnInit {
         });
         // Log GA4 event
         this.analyticsService.logSearchEvent(this.searchKW);
+
+        // Query the RAG API for an AI answer
+        this.queryRag(this.searchKW);
       }
     });
   }
@@ -160,5 +178,55 @@ export class GlobalSearchComponent implements OnInit {
 
     arr.sort((a, b) => matchFN(b) - matchFN(a));
     return arr;
+  }
+
+  // ── RAG / AI methods ─────────────────────────────────────────────────────
+
+  private queryRag(query: string): void {
+    this.ragLoading = true;
+    this.ragAnswer = '';
+    this.ragSources = [];
+    this.chatHistory = [];
+
+    // TODO: Replace this dummy call with your real Databricks RAG API endpoint.
+    // e.g. this.apiService.getRagAnswer(query).subscribe(res => { ... });
+    this.dummyRagApi(query).then(res => {
+      this.ragAnswer = res.answer;
+      this.ragSources = res.sources;
+      this.ragLoading = false;
+    }).catch(() => {
+      this.ragAnswer = '';
+      this.ragLoading = false;
+    });
+  }
+
+  public sendFollowUp(): void {
+    const question = this.followUpQuestion?.trim();
+    if (!question) return;
+
+    this.chatHistory.push({ role: 'user', text: question });
+    this.followUpQuestion = '';
+    this.chatLoading = true;
+
+    // TODO: Replace with real RAG follow-up call, passing chatHistory as context.
+    this.dummyRagApi(question, this.chatHistory).then(res => {
+      this.chatHistory.push({ role: 'assistant', text: res.answer });
+      this.chatLoading = false;
+    }).catch(() => {
+      this.chatHistory.push({ role: 'assistant', text: 'Sorry, I could not retrieve an answer. Please try again.' });
+      this.chatLoading = false;
+    });
+  }
+
+  /** Dummy RAG API — replace with real Databricks endpoint. */
+  private dummyRagApi(query: string, _history: ChatMessage[] = []): Promise<{ answer: string; sources: string[] }> {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve({
+          answer: `This is a dummy AI answer for "${query}". Once your Databricks RAG API is ready, this will be replaced with a real response based on your knowledge base documents.`,
+          sources: ['GEAR Knowledge Base', 'IT Standards Catalog', 'Enterprise Architecture Docs']
+        });
+      }, 1200);
+    });
   }
 }

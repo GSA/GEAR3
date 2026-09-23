@@ -1,11 +1,75 @@
 <div class="global-search-container">
   <div class="global-search-title-container">
-    <h2>Global Search Results</h2>
+    <h2>Global Search Results for <span class="search-kw">"{{ searchKW }}"</span></h2>
     <div class="global-search-title-right-button-container">
       <app-page-help-button></app-page-help-button>
     </div>
   </div>
+
+  <!-- AI Answer Box (Google AI Overview style) -->
+  <div class="ai-answer-panel" *ngIf="searchKW">
+    <div class="ai-answer-header">
+      <span class="ai-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L13.09 8.26L19 7L14.74 11.74L21 13L14.74 14.26L19 19L13.09 15.74L12 22L10.91 15.74L5 19L9.26 14.26L3 13L9.26 11.74L5 7L10.91 8.26L12 2Z" fill="currentColor"/>
+        </svg>
+      </span>
+      <span class="ai-label">AI Overview</span>
+      <span class="ai-badge">RAG-Powered</span>
+    </div>
+
+    <div class="ai-answer-body">
+      <!-- Loading state -->
+      <div class="ai-loading" *ngIf="ragLoading">
+        <div class="ai-loading-dots">
+          <span></span><span></span><span></span>
+        </div>
+        <span class="ai-loading-text">Searching knowledge base...</span>
+      </div>
+
+      <!-- Answer state -->
+      <div class="ai-answer-content" *ngIf="!ragLoading && ragAnswer">
+        <p class="ai-answer-text">{{ ragAnswer }}</p>
+        <div class="ai-sources" *ngIf="ragSources && ragSources.length > 0">
+          <span class="ai-sources-label">Sources:</span>
+          <span class="ai-source-chip" *ngFor="let src of ragSources">{{ src }}</span>
+        </div>
+      </div>
+
+      <!-- No answer state -->
+      <div class="ai-no-answer" *ngIf="!ragLoading && !ragAnswer">
+        <span>No AI overview available for this query.</span>
+      </div>
+
+      <!-- Chat follow-up input -->
+      <div class="ai-chat-followup" *ngIf="!ragLoading">
+        <div class="ai-chat-history" *ngIf="chatHistory.length > 0">
+          <div class="ai-chat-bubble" *ngFor="let msg of chatHistory" [ngClass]="msg.role">
+            <span class="bubble-icon">{{ msg.role === 'user' ? '🧑' : '🤖' }}</span>
+            <span class="bubble-text">{{ msg.text }}</span>
+          </div>
+        </div>
+        <div class="ai-chat-input-row">
+          <input
+            class="ai-chat-input"
+            type="text"
+            [(ngModel)]="followUpQuestion"
+            placeholder="Ask a follow-up question..."
+            (keydown.enter)="sendFollowUp()"
+            [disabled]="chatLoading"
+          />
+          <button class="ai-chat-send-btn" (click)="sendFollowUp()" [disabled]="chatLoading || !followUpQuestion?.trim()">
+            <span *ngIf="!chatLoading">Ask</span>
+            <span *ngIf="chatLoading">...</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Standard search results table -->
   <div class="global-search-data-container">
+    <h4 class="results-section-label">Search Results</h4>
     <app-table visibleColumnStorageKey="global-search" [tableCols]="tableCols" reportStyle="neutral" exportName="Global Search" tableType="globalSearch" (rowClickEvent)="onRowClick($event)"></app-table>
   </div>
 </div>
