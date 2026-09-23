@@ -31,16 +31,16 @@
       <app-table visibleColumnStorageKey="systems-report" defaultSortField="Name" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"
         (rowClickEvent)="onRowClick($event)">
         <div class="filter-tabs-container" filterTabs>
-          <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')" (keyup)="onKeyUp($event, 'All')" tabindex="0">
+          <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')" (keyup)="onKeyUp($event, 'All')" tabindex="0" title="FISMA status — all systems actively monitored and reported on in the Agency's FISMA inventory.">
             <span class="filter-tab-text">All Active</span>
             <span class="filter-tab-number first">{{filterTotals?.AllTotal}}</span>
           </div>
           <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Cloud Enabled')}"
-            (click)="onSelectTab('Cloud Enabled')" (keyup)="onKeyUp($event, 'Cloud Enabled')" tabindex="0">
+            (click)="onSelectTab('Cloud Enabled')" (keyup)="onKeyUp($event, 'Cloud Enabled')" tabindex="0" title="FISMA status — active systems that have been migrated to or are operating in a cloud environment.">
             <span class="filter-tab-text">Active Cloud Enabled</span>
             <span class="filter-tab-number second">{{filterTotals?.CloudEnabledTotal}}</span>
           </div>
-          <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Inactive')}" (click)="onSelectTab('Inactive')" (keyup)="onKeyUp($event, 'Inactive')" tabindex="0">
+          <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Inactive')}" (click)="onSelectTab('Inactive')" (keyup)="onKeyUp($event, 'Inactive')" tabindex="0" title="FISMA status — systems no longer actively monitored or maintained in the Agency's FISMA inventory.">
             <span class="filter-tab-text">Inactive</span>
             <span class="filter-tab-number third">{{filterTotals?.InactiveTotal}}</span>
           </div>
