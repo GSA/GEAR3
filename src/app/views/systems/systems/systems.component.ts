@@ -82,6 +82,8 @@ export class SystemsComponent implements OnInit, OnDestroy {
 
   public onSelectTab(tabName: string): void {
     this.selectedTab = tabName;
+    this.filteredTable = false;
+    this.filterTitle = '';
     this.systemsDataTabFilterted = [];
 
     if(this.selectedTab === 'All') {
