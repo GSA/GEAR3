@@ -193,6 +193,15 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
         if (!this.applyPendingSearch()) {
           this.tableData = d ?? [];
         }
+        // Defer paginator reset to after Angular has applied the new tableData
+        // binding so PrimeNG recalculates totalRecords and page links correctly.
+        setTimeout(() => {
+          this.first = 0;
+          if (this.dt) {
+            this.dt.first = 0;
+            this.dt.totalRecords = this.tableData.length;
+          }
+        });
       });
       this.tableReadySubscription = this.tableService.reportTableDataReady$.subscribe(r => {
         this.isDataReady = r;
