@@ -27,6 +27,12 @@
         role="navigation"></ngx-charts-advanced-pie-chart>
       </div>
     </div>
+    @if (filteredTable) {
+      <div class="systems-org-filter-banner">
+        <span>Filtered by org: <strong>{{filterTitle}}</strong></span>
+        <button class="systems-org-filter-clear" (click)="onSelectTab(selectedTab)" aria-label="Clear org filter">&#x2715; Clear filter</button>
+      </div>
+    }
     <div class="systems-data-container">
       <app-table visibleColumnStorageKey="systems-report" defaultSortField="Name" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"
         (rowClickEvent)="onRowClick($event)">
