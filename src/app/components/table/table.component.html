@@ -92,7 +92,7 @@
           <tr>
             @for (col of columns; track col.field) {
               @if (showColumn(col)) {
-                <th [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.isSortable ? true : false" [class]="col.class">
+                <th [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.isSortable ? true : false" [class]="col.class" [ngStyle]="col.style">
                   <div class="d-flex align-items-center table-heading">
                     @if (!col.titleTooltip) {
                       <span [title]="getTooltip(col.header)" >{{ col.header }}</span>
@@ -133,7 +133,7 @@
             <tr [pSelectableRow]="rowData">
               @for (col of columns; track col.field) {
                 @if (showColumn(col)) {
-                  <td>
+                  <td [ngStyle]="col.style">
                     @if (!col.formatter) {
                       <span [ngClass]="col.class">{{ rowData[col.field] }}</span>
                     }
