@@ -69,12 +69,11 @@ export class OrganizationsComponent implements OnInit {
       this.attrDefinitions = defs;
     });
 
-    // Initial load: first page
+    // Manually trigger initial load since lazyLoadOnInit requires the table to be in DOM first
     this.loadPage({ page: 1, pageSize: 50, sortField: 'OrgSymbol', sortOrder: 1, search: '' });
   }
 
   public loadPage(event: { page: number; pageSize: number; sortField: string; sortOrder: number; search: string }): void {
-    this.tableService.updateReportTableDataReadyStatus(false);
     this.apiService.getOrganizationsPaginated(
       event.page,
       event.pageSize,

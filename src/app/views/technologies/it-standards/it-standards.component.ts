@@ -39,7 +39,7 @@ export class ItStandardsComponent implements OnInit {
   public itStandardsDataTabFilterted: ITStandards[] = [];
   public itStandardsDataChipFilterted: ITStandards[] = [];
   public filterChips: string[] = ['Mobile', 'Desktop', 'Server', 'SaaS', 'PaaS', 'Other'];
-  private selectedChips: string[] = [];
+  public selectedChips: string[] = [];
 
   public daysExpiring: number = 0;
   public daysRetired: number = 0;
@@ -70,42 +70,31 @@ export class ItStandardsComponent implements OnInit {
 
   public onSelectTab(tabName: string): void {
     this.selectedTab = tabName;
+    this.syncUrlToFilters();
     this.itStandardsDataTabFilterted = this.itStandardsData;
 
     if(this.selectedTab === 'All') {
-      if(this.hasSelectedChips()) {
-        this.onFilterChipSelect(this.selectedChips);
-      } else {
-        this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
-        //this.tableService.updateReportTableDataReadyStatus(true);
-      }
+      // no status filter needed
     } else if (this.selectedTab === 'Other') {
-      if(this.hasSelectedChips()) {
-        this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
-          return x.Status !== 'Approved' && x.Status !== 'Denied' && x.Status !== 'Retired';
-        });
-        this.onFilterChipSelect(this.selectedChips);
-      } else {
-        this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
-          return x.Status !== 'Approved' && x.Status !== 'Denied' && x.Status !== 'Retired' && x.Status !== 'Approved with conditions';
-        });
-        this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
-        //this.tableService.updateReportTableDataReadyStatus(true);
-      }
+      this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
+        return x.Status !== 'Approved' && x.Status !== 'Denied' && x.Status !== 'Retired' && x.Status !== 'Approved with conditions';
+      });
     } else {
-      if(this.hasSelectedChips()) {
-        this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
-          return x.Status === tabName;
-        });
-        this.onFilterChipSelect(this.selectedChips);
-      } else {
-        this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
-          return x.Status === tabName;
-        });
-        this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
-        //this.tableService.updateReportTableDataReadyStatus(true);
-      }
+      this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
+        return x.Status === tabName;
+      });
     }
+
+    if(this.hasSelectedChips()) {
+      this.itStandardsDataChipFilterted = this.itStandardsDataTabFilterted.filter(f => {
+        return this.selectedChips.includes(f.DeploymentType);
+      });
+      this.tableService.updateReportTableData(this.itStandardsDataChipFilterted);
+    } else {
+      this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
+    }
+    this.tableService.updateReportTableDataReadyStatus(true);
+    this.updateTotals();
   }
 
   public onKeyUp(e: KeyboardEvent, tabName: string) {
@@ -116,7 +105,20 @@ export class ItStandardsComponent implements OnInit {
 
   public onFilterChipSelect(selectedChips: string[]): void {
     this.selectedChips = selectedChips;
-    this.itStandardsDataChipFilterted = this.itStandardsDataTabFilterted;
+    this.syncUrlToFilters();
+
+    // Always re-derive the tab-filtered set from the full dataset
+    this.itStandardsDataTabFilterted = this.itStandardsData;
+    if (this.selectedTab === 'Other') {
+      this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
+        return x.Status !== 'Approved' && x.Status !== 'Denied' && x.Status !== 'Retired' && x.Status !== 'Approved with conditions';
+      });
+    } else if (this.selectedTab !== 'All') {
+      this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
+        return x.Status === this.selectedTab;
+      });
+    }
+
     if(this.hasSelectedChips()) {
       this.itStandardsDataChipFilterted = this.itStandardsDataTabFilterted.filter(f => {
         return selectedChips.includes(f.DeploymentType);
@@ -125,7 +127,7 @@ export class ItStandardsComponent implements OnInit {
       this.tableService.updateReportTableDataReadyStatus(true);
     } else {
       this.itStandardsDataChipFilterted = this.itStandardsDataTabFilterted;
-      this.onSelectTab(this.selectedTab);
+      this.tableService.updateReportTableData(this.itStandardsDataTabFilterted);
     }
     this.updateTotals();
   }
@@ -136,6 +138,37 @@ export class ItStandardsComponent implements OnInit {
 
   private hasSelectedChips(): boolean {
     return this.selectedChips && this.selectedChips.length > 0;
+  }
+
+  private syncUrlToFilters(): void {
+    const chips = this.selectedChips;
+    const tab = this.selectedTab;
+    const hasChips = chips.length > 0;
+    const hasTab = tab && tab !== 'All';
+
+    if (hasChips && hasTab) {
+      if (chips.length === 1) {
+        this.router.navigate(['/it_standards/filtered', chips[0], tab], { replaceUrl: true });
+      } else {
+        this.router.navigate(['/it_standards'], {
+          replaceUrl: true,
+          queryParams: { deploymentTypes: chips.join(','), status: tab }
+        });
+      }
+    } else if (hasChips) {
+      if (chips.length === 1) {
+        this.router.navigate(['/it_standards/filtered', chips[0]], { replaceUrl: true });
+      } else {
+        this.router.navigate(['/it_standards'], {
+          replaceUrl: true,
+          queryParams: { deploymentTypes: chips.join(',') }
+        });
+      }
+    } else if (hasTab) {
+      this.router.navigate(['/it_standards/status', tab], { replaceUrl: true });
+    } else {
+      this.router.navigate(['/it_standards'], { replaceUrl: true });
+    }
   }
 
   private YesNo(value: any, row: any, index: number, field: string): string {
@@ -169,9 +202,33 @@ export class ItStandardsComponent implements OnInit {
     * Get definitions for the table header tooltips
     * Then set the column defintions and initialize the table
     */
+
+    // Support deep-link filtered URLs: /it_standards/filtered/:deploymentType/:status
+    // and /it_standards/status/:status
+    const routeParams = this.route.snapshot.params;
+    if (routeParams['deploymentType']) {
+      const depType = routeParams['deploymentType'];
+      const match = this.filterChips.find(c => c.toLowerCase() === depType.toLowerCase());
+      if (match) {
+        this.selectedChips = [match];
+      }
+    }
+    if (routeParams['status']) {
+      const status = routeParams['status'];
+      this.selectedTab = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+    }
+
    this.route.queryParams.subscribe(params => {
       if (params['tab']) {
         this.selectedTab = params['tab'];
+      }
+      if (params['deploymentTypes']) {
+        const types: string[] = params['deploymentTypes'].split(',');
+        this.selectedChips = types.filter(t => this.filterChips.some(c => c.toLowerCase() === t.toLowerCase()))
+          .map(t => this.filterChips.find(c => c.toLowerCase() === t.toLowerCase())!);
+      }
+      if (params['status']) {
+        this.selectedTab = params['status'].charAt(0).toUpperCase() + params['status'].slice(1).toLowerCase();
       }
       if(params['expiringWithinDays']) {
         this.daysExpiring = +params['expiringWithinDays'];

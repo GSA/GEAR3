@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { switchMap, take } from 'rxjs/operators';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
@@ -25,7 +27,7 @@ import { DataDictionary } from '@api/models/data-dictionary.model';
     styleUrls: ['./systems.component.scss'],
     standalone: false
 })
-export class SystemsComponent implements OnInit {
+export class SystemsComponent implements OnInit, OnDestroy {
   // row: Object = <any>{};
   filteredTable: boolean = false;
   filterTitle: string = '';
@@ -63,6 +65,8 @@ export class SystemsComponent implements OnInit {
   public  defaultTableCols: Column[] = [];
   public inactiveColumnDefs: Column[] = [];
 
+  private queryParamsSub: Subscription | null = null;
+
   constructor(
     private apiService: ApiService,
     private location: Location,
@@ -78,6 +82,8 @@ export class SystemsComponent implements OnInit {
 
   public onSelectTab(tabName: string): void {
     this.selectedTab = tabName;
+    this.filteredTable = false;
+    this.filterTitle = '';
     this.systemsDataTabFilterted = [];
 
     if(this.selectedTab === 'All') {
@@ -113,22 +119,6 @@ export class SystemsComponent implements OnInit {
   ngOnInit(): void {
     // // Set JWT when logged into GEAR Manager when returning from secureAuth
     this.sharedService.setJWTonLogIn();
-
-    // Check for tab parameter in route
-    this.route.queryParams.subscribe(params => {
-      if (params['tab']) {
-        this.selectedTab = params['tab'];
-      }
-      if(params['decommissionedWithinMonths']) {
-        this.monthsDecommissioned = +params['decommissionedWithinMonths'];
-      }
-      if(params['cloudBased']) {
-        this.cloudBasedFilterValue = params['cloudBased'];
-      }
-      if(params['systemCSP']) {
-        this.cspName = params['systemCSP'];
-      }
-    });
 
     this.apiService.getDataDictionaryByReportName('Business Systems').subscribe(defs => {
       this.attributeDefs = defs;
@@ -355,10 +345,44 @@ export class SystemsComponent implements OnInit {
       ];
     });
 
-    this.apiService.getSystems().subscribe(systems => {
+    // Subscribe to query param changes and re-apply filtering every time navigation
+    // brings the user back to this page (even when the component is reused via
+    // onSameUrlNavigation:'reload'). Using switchMap guarantees that if the params
+    // change before getSystems responds, the stale request is cancelled.
+    this.queryParamsSub = this.route.queryParams.pipe(
+      switchMap(params => {
+        // Snapshot the params so they are available when getSystems resolves.
+        const tabParam = params['tab'] || '';
+        const decommParam = params['decommissionedWithinMonths'];
+        const cloudBasedParam = params['cloudBased'] || null;
+        const cspParam = params['systemCSP'] || '';
+
+        this.selectedTab = tabParam;
+        this.monthsDecommissioned = decommParam ? +decommParam : 0;
+        this.cloudBasedFilterValue = cloudBasedParam;
+        this.cspName = cspParam;
+
+        // getSystems is cached – this just gets the cached replay.
+        return this.apiService.getSystems().pipe(take(1));
+      })
+    ).subscribe(systems => {
       this.systemsData = systems;
 
-      if(this.monthsDecommissioned > 0) {
+      // Build chart data from the already-fetched systems array
+      const counts = systems.reduce((p, c) => {
+        const name = c.BusOrgSymbolAndName;
+        if (!p.hasOwnProperty(name) && c.Status == 'Active' && c.BusApp == 'Yes') {
+          p[name] = 0;
+        }
+        if (c.Status == 'Active' && c.BusApp == 'Yes') p[name]++;
+        return p;
+      }, {});
+      this.vizData = Object.keys(counts)
+        .map(k => ({ name: k, value: counts[k] }))
+        .sort((a, b) => b.value - a.value);
+      this.colorScheme = { domain: this.buildDistinctColorDomain(this.vizData.length) };
+
+      if (this.monthsDecommissioned > 0) {
         const now = new Date(); // Current date and time
         now.setUTCHours(0, 0, 0, 0);
         const decommWithin = new Date();
@@ -408,7 +432,7 @@ export class SystemsComponent implements OnInit {
         this.tableService.updateReportTableDataReadyStatus(true);
       } else { 
         // Apply tab filter based on selectedTab
-        this.selectedTab = 'All';
+        this.selectedTab = this.selectedTab || 'All';
         this.onSelectTab(this.selectedTab);
         this.tableService.updateReportTableDataReadyStatus(true);
       }
@@ -416,39 +440,6 @@ export class SystemsComponent implements OnInit {
 
     this.apiService.getSystemsFilterTotals().subscribe(t => {
       this.filterTotals = t;
-    });
-
-    // Get System data for visuals
-    this.apiService.getSystems().subscribe((data: any[]) => {
-      // Get counts by SSO
-      var counts = data.reduce((p, c) => {
-        var name = c.BusOrgSymbolAndName;
-        if (
-          !p.hasOwnProperty(name) &&
-          c.Status == 'Active' &&
-          c.BusApp == 'Yes'
-        ) {
-          p[name] = 0;
-        }
-        // Only count if Status is Active
-        if (c.Status == 'Active' && c.BusApp == 'Yes') p[name]++;
-        return p;
-      }, {});
-
-      // Resolve the counts into an object and sort by value
-      this.vizData = Object.keys(counts)
-        .map((k) => {
-          return { name: k, value: counts[k] };
-        })
-        .sort(function (a, b) {
-          return b.value - a.value;
-        });
-
-      this.colorScheme = {
-        domain: this.buildDistinctColorDomain(this.vizData.length)
-      };
-
-      // console.log(this.vizData);  // Debug
     });
 
 
@@ -466,6 +457,12 @@ export class SystemsComponent implements OnInit {
     //     });
     //   }
     // });
+  }
+
+  public ngOnDestroy(): void {
+    if (this.queryParamsSub) {
+      this.queryParamsSub.unsubscribe();
+    }
   }
 
   // onFilterEvent(filter: string) {

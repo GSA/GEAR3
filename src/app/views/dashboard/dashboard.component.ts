@@ -198,9 +198,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public ngAfterViewInit(): void {
-    this.updateChartViews();
+    // Defer initial measurement so the flex layout has settled and
+    // container offsetWidth returns the correct value.
+    setTimeout(() => {
+      this.updateChartViews();
+      this.cdr.detectChanges();
+    }, 0);
     this.setupResizeObserver();
-    this.cdr.detectChanges();
   }
 
   public ngOnDestroy(): void {
@@ -218,8 +222,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private loadHostingPlatformsData(): void {
     // Replaces full GET /api/systems (1.98MB) with a lightweight aggregation endpoint
     this.apiService.getHostingPlatforms().subscribe(rows => {
-      const { individualPlatforms, othersCount } = rows
-        .map(row => ({ name: this.normalizePlatformName(row.CSP), value: row.count }))
+      // Normalize names first, then merge duplicate names so ngx-charts
+      // does not silently overwrite bars that share the same key.
+      const mergedMap = new Map<string, number>();
+      for (const row of rows) {
+        const name = this.normalizePlatformName(row.CSP);
+        mergedMap.set(name, (mergedMap.get(name) ?? 0) + row.count);
+      }
+
+      const { individualPlatforms, othersCount } = Array.from(mergedMap.entries())
+        .map(([name, value]) => ({ name, value }))
         .sort((a, b) => b.value - a.value)
         .reduce((acc, platform) => {
           if (platform.value >= 3) {
@@ -236,8 +248,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
 
       this.hostingPlatformsData = finalData;
-      this.updateChartViews();
-      this.cdr.detectChanges();
+      // Defer measurement until after Angular has reflowed the DOM with the new data.
+      // Without this, offsetWidth can be 0 or stale on the initial load, causing the
+      // bar chart to render condensed to the left.
+      setTimeout(() => {
+        this.updateChartViews();
+        this.cdr.detectChanges();
+      }, 0);
     });
   }
 
@@ -257,7 +274,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private setupResizeObserver(): void {
     if (typeof ResizeObserver !== 'undefined') {
       this.resizeObserver = new ResizeObserver(() => {
-        this.updateChartViews();
+        // Defer to avoid measuring mid-reflow during resize events
+        setTimeout(() => this.updateChartViews(), 0);
       });
 
       const barContainer = document.querySelector('.bar-chart-content');

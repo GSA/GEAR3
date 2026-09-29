@@ -193,7 +193,7 @@ export class TechCategoriesModelComponent implements OnInit {
 
   // Example taken from https://bl.ocks.org/d3noob/1a96af738c89b88723eb63456beb6510
   private createGraph() {
-    var margin: any = { top: 60, bottom: 20, left: 120, right: 120 };
+    var margin: any = { top: 60, bottom: 20, left: 260, right: 120 };
     var i: number = 0;
 
     // Set margins

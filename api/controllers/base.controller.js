@@ -399,7 +399,7 @@ async function refresh(auth, response, sheetID, dataRange, requester, jobLogger,
       // Insert new records for the given recordsId
       for (let systemId of m.get(recordsId)) {
         // Append the DML statement to the string
-        systemString += `INSERT INTO zk_systems_subsystems_records (obj_records_Id, obj_systems_subsystems_Id) VALUES (${recordsId}, ${systemId}); `;
+        systemString += `INSERT IGNORE INTO zk_systems_subsystems_records (obj_records_Id, obj_systems_subsystems_Id) VALUES (${recordsId}, ${systemId}); `;
         dmlStatementCounter++
         insertCounter++
       }

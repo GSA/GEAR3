@@ -1,4 +1,4 @@
-import { Component, EventEmitter, ViewChild, ElementRef, Input, Output, Renderer2 } from '@angular/core';
+import { Component, EventEmitter, ViewChild, ElementRef, Input, OnChanges, Output, Renderer2, SimpleChanges } from '@angular/core';
 
 @Component({
     selector: 'app-filter-chips',
@@ -6,13 +6,14 @@ import { Component, EventEmitter, ViewChild, ElementRef, Input, Output, Renderer
     styleUrls: ['./filter-chips.component.scss'],
     standalone: false
 })
-export class FilterChipsComponent {
+export class FilterChipsComponent implements OnChanges {
 
   @ViewChild('button') button: ElementRef;
   @ViewChild('menu') menu: ElementRef;
 
   @Input() chips: string[] = [];
   @Input() dropdownName: string = '';
+  @Input() initialChips: string[] = [];
   @Output() chipSelect: EventEmitter<string[]> = new EventEmitter<string[]>();
 
   public dropdownOpen: boolean = false;
@@ -22,11 +23,17 @@ export class FilterChipsComponent {
       // Handle outside clicks to close menu
       this.renderer.listen('window', 'click', (e: Event) => {
         if(this.button && this.menu) {
-          if(e.target !== this.button.nativeElement && e.target !== this.menu.nativeElement) {
+          if(!this.button.nativeElement.contains(e.target) && !this.menu.nativeElement.contains(e.target)) {
             this.dropdownOpen = false;
           }
         }
       });
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+      if (changes['initialChips'] && changes['initialChips'].firstChange && this.initialChips.length > 0) {
+        this.displayedChips = [...this.initialChips];
+      }
     }
 
     public onDropdownClick(): void {
