@@ -6,6 +6,10 @@ import { ApiService } from '@services/apis/api.service';
 
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
+import {
+  ChatbotService,
+  ChatMessage,
+} from '@services/chatbot/chatbot.service';
 
 @Component({
     selector: 'global-search',
@@ -19,13 +23,21 @@ export class GlobalSearchComponent implements OnInit {
   tableData: any[] = [];
   tableDataOriginal: any[] = [];
 
+  // AI overview + follow-up chat state
+  public aiOverview: string = '';
+  public aiLoading: boolean = false;
+  public chatMessages: ChatMessage[] = [];
+  public chatInput: string = '';
+  public chatLoading: boolean = false;
+
   constructor(
     private sharedService: SharedService,
     private tableService: TableService,
     private route: ActivatedRoute,
     private router: Router,
     private apiService: ApiService,
-    private analyticsService: AnalyticsService
+    private analyticsService: AnalyticsService,
+    private chatbotService: ChatbotService
   ) { }
 
   tableCols: Column[] = [];
@@ -67,6 +79,10 @@ export class GlobalSearchComponent implements OnInit {
 
       if(params && params['keyword']) {
         this.searchKW = params['keyword'];
+        // Reset AI state for the new search term
+        this.aiOverview = '';
+        this.chatMessages = [];
+        this.chatInput = '';
         // const urlSearchParams = new URLSearchParams(this.searchKW);
         // this.apiService.getGlobalSearchResults(encodeURIComponent(this.searchKW.replace(/'/g, '%27'))).subscribe(s => {
         this.apiService.getGlobalSearchResults(encodeURIComponent(this.searchKW)).subscribe(s => {
@@ -75,11 +91,62 @@ export class GlobalSearchComponent implements OnInit {
           this.tableService.updateReportTableDataReadyStatus(true);
           this.tableData = sorted;
           this.tableDataOriginal = sorted;
+
+          // Request the AI overview for this term using the results just loaded
+          this.loadAiOverview(this.searchKW, sorted);
         });
         // Log GA4 event
         this.analyticsService.logSearchEvent(this.searchKW);
       }
     });
+  }
+
+  /** Fetch a short AI overview of the search term given the results. */
+  private loadAiOverview(searchKW: string, results: any[]): void {
+    this.aiLoading = true;
+    this.aiOverview = '';
+    this.chatbotService.getSearchOverview(searchKW, results || []).subscribe((res) => {
+      this.aiOverview = res && res.reply ? res.reply : '';
+      this.aiLoading = false;
+    });
+  }
+
+  /** Send a follow-up question after the overview; grounded via chat tools. */
+  public sendFollowUp(): void {
+    const text = this.chatInput.trim();
+    if (!text || this.chatLoading) {
+      return;
+    }
+
+    // Seed the conversation with the overview so follow-ups have context.
+    const history: ChatMessage[] = [];
+    if (this.aiOverview) {
+      history.push({
+        role: 'assistant',
+        content: `Overview for search "${this.searchKW}": ${this.aiOverview}`,
+      });
+    }
+    history.push(...this.chatMessages);
+
+    this.chatMessages.push({ role: 'user', content: text });
+    this.chatInput = '';
+    this.chatLoading = true;
+
+    this.chatbotService.sendMessage(text, history).subscribe((res) => {
+      const reply =
+        res && typeof res.reply === 'string' && res.reply.trim().length > 0
+          ? res.reply
+          : 'Sorry, I could not generate a response for that. The AI service may be temporarily rate-limited or over budget - please wait a moment and try again.';
+      this.chatMessages.push({ role: 'assistant', content: reply });
+      this.chatLoading = false;
+    });
+  }
+
+  public onFollowUpKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      this.sendFollowUp();
+    }
   }
 
   public onRowClick(e: any): void {
@@ -148,17 +215,47 @@ export class GlobalSearchComponent implements OnInit {
   }
 
   private sortBySearchTerm(arr, searchTerm, key) {
-    const matchFN = (item) => {
-      const value = item[key];
-      // if no direct match return 0
-      if (!value) return 0;
-      // if exact match make sure it goes to the top
-      if(value.toLowerCase() === searchTerm.toLowerCase()) return arr.length + 1;
-      const index = value.toLowerCase().indexOf(searchTerm.toLowerCase());
-      return index === -1 ? 0 : 1 / (index + 1);
-    }
+    if (!Array.isArray(arr)) return arr;
+    const term = (searchTerm || '').toLowerCase().trim();
 
-    arr.sort((a, b) => matchFN(b) - matchFN(a));
-    return arr;
+    // Tiered score so that Item Name matches always outrank description-only
+    // (relevance) matches. Higher score = more relevant.
+    //   4000+ : exact name match
+    //   3000+ : name starts with the term
+    //   2000+ : whole-word name match (term appears as its own word)
+    //   1000+ : name contains the term anywhere
+    //      0+ : no name match (rely on DB relevance only)
+    // Within each tier we add the DB `relevance` (if present) and, for the
+    // "contains" tiers, favor earlier positions in the name.
+    const scoreFN = (item) => {
+      const rawName = item && item[key] ? String(item[key]) : '';
+      const name = rawName.toLowerCase();
+      const relevance = Number(item && item.relevance) || 0;
+
+      if (!term) return relevance;
+
+      if (name === term) return 4000 + relevance;
+
+      const idx = name.indexOf(term);
+      if (idx === -1) return relevance; // no name match
+
+      if (idx === 0) return 3000 + relevance;
+
+      // Whole-word match (bounded by non-word chars)
+      const wordBoundary = new RegExp(
+        `(^|[^a-z0-9])${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}([^a-z0-9]|$)`,
+        'i'
+      );
+      if (wordBoundary.test(name)) return 2000 + relevance;
+
+      // Contains anywhere; earlier position is slightly better.
+      return 1000 + relevance + 1 / (idx + 1);
+    };
+
+    // Stable sort: compare scores, break ties by original order.
+    return arr
+      .map((item, i) => ({ item, i, score: scoreFN(item) }))
+      .sort((a, b) => (b.score - a.score) || (a.i - b.i))
+      .map((entry) => entry.item);
   }
 }

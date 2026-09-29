@@ -1,0 +1,83 @@
+<!-- GEAR Assistant chat: replaces the global search box in the top navbar. -->
+<div class="gear-chatbot">
+  <button
+    type="button"
+    class="btn btn-light btn-sm gear-chatbot-toggle"
+    (click)="toggle()"
+    aria-haspopup="dialog"
+    [attr.aria-expanded]="open"
+    aria-label="Open GEAR Assistant"
+  >
+    <i class="fas fa-comments mr-1"></i> Ask GEAR
+  </button>
+
+  @if (open) {
+    <div class="gear-chatbot-panel shadow-lg" role="dialog" aria-label="GEAR Assistant">
+      <div class="gear-chatbot-header">
+        <span><i class="fas fa-robot mr-2"></i>GEAR Assistant</span>
+        <div>
+          <button
+            type="button"
+            class="btn btn-sm btn-link text-white"
+            (click)="clear()"
+            aria-label="Clear conversation"
+            title="Clear conversation"
+          >
+            <i class="fas fa-trash"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-link text-white"
+            (click)="toggle()"
+            aria-label="Close"
+            title="Close"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="gear-chatbot-messages" #scrollContainer>
+        @if (messages.length === 0) {
+          <div class="gear-chatbot-empty">
+            Ask about GSA systems, technologies, capabilities, investments, and more.
+          </div>
+        }
+        @for (msg of messages; track $index) {
+          <div
+            class="gear-chatbot-message"
+            [class.user]="msg.role === 'user'"
+            [class.assistant]="msg.role === 'assistant'"
+          >
+            <div class="bubble">{{ msg.content }}</div>
+          </div>
+        }
+        @if (loading) {
+          <div class="gear-chatbot-message assistant">
+            <div class="bubble typing">GEAR Assistant is thinking…</div>
+          </div>
+        }
+      </div>
+
+      <div class="gear-chatbot-input">
+        <textarea
+          [(ngModel)]="inputText"
+          (keydown)="onKeydown($event)"
+          rows="1"
+          placeholder="Ask GEAR a question…"
+          aria-label="Message to GEAR Assistant"
+          [disabled]="loading"
+        ></textarea>
+        <button
+          type="button"
+          class="btn btn-primary btn-sm"
+          (click)="send()"
+          [disabled]="loading || !inputText.trim()"
+          aria-label="Send"
+        >
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  }
+</div>

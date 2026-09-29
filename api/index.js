@@ -4,6 +4,7 @@ const express = require("express");
 const rateLimit = require("express-rate-limit");
 
 const cap = require(routesPath + "capabilities.routes");
+const chat = require(routesPath + "chat.routes");
 const dashboard = require(routesPath + "dashboard.routes");
 const dataFlow = require(routesPath + "dataflow.routes");
 const fisma = require(routesPath + "fisma.routes");
@@ -70,6 +71,7 @@ router.use((req, res, next) => {
 });
 
 router.use("/capabilities", cap);
+router.use("/chat", chat);
 router.use("/dashboard_summary", dashboard);
 router.use("/data_flow", dataFlow);
 router.use("/fisma", fisma);

@@ -28,4 +28,88 @@
         flex-direction: column;
         padding: 1rem 0;
     }
+
+    & .ai-overview-container {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        background: #f6f8fa;
+        margin-bottom: 1rem;
+        overflow: hidden;
+
+        & .ai-overview-header {
+            background: var(--primary, #0b4778);
+            color: #fff;
+            padding: 8px 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        & .ai-overview-body {
+            padding: 12px;
+            white-space: pre-wrap;
+            line-height: 1.4;
+
+            &.ai-overview-loading {
+                color: #6c757d;
+                font-style: italic;
+            }
+        }
+
+        & .ai-chat-thread {
+            padding: 0 12px 8px;
+            display: flex;
+            flex-direction: column;
+
+            & .ai-chat-message {
+                display: flex;
+                margin-bottom: 8px;
+
+                &.user {
+                    justify-content: flex-end;
+                }
+
+                & .bubble {
+                    max-width: 80%;
+                    padding: 8px 12px;
+                    border-radius: 12px;
+                    white-space: pre-wrap;
+                    word-break: break-word;
+                    line-height: 1.35;
+                }
+
+                &.user .bubble {
+                    background: var(--primary, #0b4778);
+                    color: #fff;
+                    border-bottom-right-radius: 2px;
+                }
+
+                &.assistant .bubble {
+                    background: #fff;
+                    border: 1px solid #dee2e6;
+                    border-bottom-left-radius: 2px;
+                }
+
+                & .bubble.typing {
+                    font-style: italic;
+                    color: #6c757d;
+                }
+            }
+        }
+
+        & .ai-chat-input {
+            display: flex;
+            gap: 8px;
+            padding: 8px 12px 12px;
+
+            & textarea {
+                flex: 1;
+                resize: none;
+                border: 1px solid #ced4da;
+                border-radius: 6px;
+                padding: 6px 8px;
+                max-height: 120px;
+            }
+        }
+    }
 }
