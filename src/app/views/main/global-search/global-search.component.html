@@ -7,59 +7,79 @@
   </div>
 
   <!-- AI Overview + follow-up chat -->
-  <div class="ai-overview-container">
-    <div class="ai-overview-header">
+  <div class="ai-overview-container"
+       [class.minimized]="chatMinimized"
+       role="complementary"
+       aria-label="GEAR Assistant">
+    <div class="ai-overview-header" (click)="toggleChatMinimized()">
       <i class="fas fa-robot mr-2"></i>
-      <span>GEAR Assistant overview{{ searchKW ? ' for "' + searchKW + '"' : '' }}</span>
-    </div>
-
-    @if (aiLoading) {
-      <div class="ai-overview-body ai-overview-loading">
-        Generating an overview…
-      </div>
-    } @else if (aiOverview) {
-      <div class="ai-overview-body">{{ aiOverview }}</div>
-    } @else {
-      <div class="ai-overview-body ai-overview-loading">
-        No AI overview available for this search.
-      </div>
-    }
-
-    <!-- Follow-up conversation -->
-    @if (chatMessages.length > 0) {
-      <div class="ai-chat-thread">
-        @for (msg of chatMessages; track $index) {
-          <div class="ai-chat-message" [class.user]="msg.role === 'user'" [class.assistant]="msg.role === 'assistant'">
-            <div class="bubble">{{ msg.content }}</div>
-          </div>
-        }
-        @if (chatLoading) {
-          <div class="ai-chat-message assistant">
-            <div class="bubble typing">GEAR Assistant is thinking…</div>
-          </div>
-        }
-      </div>
-    }
-
-    <div class="ai-chat-input">
-      <textarea
-        [(ngModel)]="chatInput"
-        (keydown)="onFollowUpKeydown($event)"
-        rows="1"
-        placeholder="Ask a follow-up question about these results…"
-        aria-label="Ask a follow-up question"
-        [disabled]="aiLoading"
-      ></textarea>
+      <span class="ai-overview-title">GEAR Assistant{{ searchKW ? ' · "' + searchKW + '"' : '' }}</span>
       <button
         type="button"
-        class="btn btn-primary btn-sm"
-        (click)="sendFollowUp()"
-        [disabled]="chatLoading || aiLoading || !chatInput.trim()"
-        aria-label="Send follow-up"
+        class="ai-overview-toggle"
+        (click)="toggleChatMinimized(); $event.stopPropagation()"
+        [attr.aria-expanded]="!chatMinimized"
+        [attr.aria-label]="chatMinimized ? 'Expand GEAR Assistant' : 'Minimize GEAR Assistant'"
       >
-        <i class="fas fa-paper-plane"></i>
+        <i class="fas" [class.fa-chevron-down]="!chatMinimized" [class.fa-chevron-up]="chatMinimized"></i>
       </button>
     </div>
+
+    @if (!chatMinimized) {
+      <div class="ai-overview-content">
+        @if (aiLoading) {
+          <div class="ai-overview-body ai-overview-loading">
+            Generating an overview…
+          </div>
+        } @else if (aiOverview) {
+          <div class="ai-overview-body" [innerHTML]="aiOverviewHtml"></div>
+        } @else {
+          <div class="ai-overview-body ai-overview-loading">
+            No AI overview available for this search.
+          </div>
+        }
+
+        <!-- Follow-up conversation -->
+        @if (chatMessages.length > 0) {
+          <div class="ai-chat-thread">
+            @for (msg of chatMessages; track $index) {
+              <div class="ai-chat-message" [class.user]="msg.role === 'user'" [class.assistant]="msg.role === 'assistant'">
+                @if (msg.role === 'assistant') {
+                  <div class="bubble" [innerHTML]="renderMarkdown(msg.content)"></div>
+                } @else {
+                  <div class="bubble">{{ msg.content }}</div>
+                }
+              </div>
+            }
+            @if (chatLoading) {
+              <div class="ai-chat-message assistant">
+                <div class="bubble typing">GEAR Assistant is thinking…</div>
+              </div>
+            }
+          </div>
+        }
+
+        <div class="ai-chat-input">
+          <textarea
+            [(ngModel)]="chatInput"
+            (keydown)="onFollowUpKeydown($event)"
+            rows="1"
+            placeholder="Ask a follow-up question about these results…"
+            aria-label="Ask a follow-up question"
+            [disabled]="aiLoading"
+          ></textarea>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            (click)="sendFollowUp()"
+            [disabled]="chatLoading || aiLoading || !chatInput.trim()"
+            aria-label="Send follow-up"
+          >
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+    }
   </div>
 
   <div class="global-search-data-container">

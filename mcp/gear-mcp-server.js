@@ -15,6 +15,11 @@
  * before using this MCP server.
  */
 
+const path = require('path');
+// Load the project-root .env so AI_CERT and other vars are available no matter
+// how this process is launched (VS Code agent mode, Claude Desktop, CLI).
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+
 const { McpServer } = require('@modelcontextprotocol/sdk/server/mcp.js');
 const {
   StdioServerTransport,

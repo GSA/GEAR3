@@ -62,6 +62,55 @@ async function searchGear({ keyword, limit }) {
   return capResults(data, limit || DEFAULT_RESULT_LIMIT);
 }
 
+/**
+ * Find the single business system (GEAR_Type System or FISMA) that best matches
+ * a name, using name-aware ranking rather than the DB's loose full-text
+ * relevance (which can surface unrelated systems for multi-word queries).
+ * Returns the best match plus a few alternates so the model can disambiguate.
+ */
+async function findSystem({ name }) {
+  if (!name || typeof name !== 'string') {
+    throw new Error('name is required');
+  }
+  const term = name.toLowerCase().trim();
+  const data = await gearApiGet(`/search/${encodeURIComponent(name)}`);
+  const rows = Array.isArray(data) ? data : [];
+
+  const systems = rows.filter(
+    (r) => r.GEAR_Type === 'System' || r.GEAR_Type === 'FISMA'
+  );
+
+  const score = (r) => {
+    const n = String(r.Name || '').toLowerCase();
+    if (!n) return 0;
+    if (n === term) return 5;
+    if (n.startsWith(term)) return 4;
+    // whole-word match
+    const esc = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    if (new RegExp(`(^|[^a-z0-9])${esc}([^a-z0-9]|$)`, 'i').test(n)) return 3;
+    if (n.includes(term)) return 2;
+    // term may be an acronym inside parentheses, e.g. "... (GEAR)"
+    if (new RegExp(`\\(${esc}\\)`, 'i').test(n)) return 4;
+    return 1;
+  };
+
+  const ranked = systems
+    .map((r, i) => ({ r, i, s: score(r) }))
+    .sort((a, b) => b.s - a.s || a.i - b.i)
+    .map((e) => ({
+      Id: e.r.Id,
+      Name: e.r.Name,
+      Type: e.r.GEAR_Type,
+      Status: e.r.Status,
+    }));
+
+  return {
+    bestMatch: ranked[0] || null,
+    alternates: ranked.slice(1, 5),
+    totalSystemMatches: ranked.length,
+  };
+}
+
 async function getSystem({ id }) {
   if (!id) throw new Error('id is required');
   const data = await gearApiGet(`/systems/get/${encodeURIComponent(id)}`);
@@ -229,6 +278,35 @@ const tools = [
       required: ['keyword'],
     },
     handler: searchGear,
+  },
+  {
+    name: 'find_system',
+    description:
+      'Find the single BUSINESS SYSTEM (GEAR_Type System or FISMA) that best matches a name, with name-aware ranking. Use this (not search_gear) whenever the user asks about a business system by name - for example to answer what software/technologies a system uses. Returns { bestMatch, alternates, totalSystemMatches }. Use bestMatch.Id for follow-up calls. If bestMatch does not actually match the requested name, pick the correct one from alternates or tell the user it was not found.',
+    parameters: {
+      type: 'object',
+      properties: {
+        name: {
+          type: 'string',
+          description: 'The business system name or acronym to find (e.g. "eOffer", "GEAR").',
+        },
+      },
+      required: ['name'],
+    },
+    handler: findSystem,
+  },
+  {
+    name: 'get_system_software',
+    description:
+      'Get the list of software products / IT standards (technologies) recorded for a business system, by its GEAR ID. This is the authoritative list of software a system uses. Always obtain the id from find_system first.',
+    parameters: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', description: 'The GEAR ID of the business system.' },
+      },
+      required: ['id'],
+    },
+    handler: ({ id }) => getSystemRelated({ id, relation: 'technologies' }),
   },
   {
     name: 'get_system',

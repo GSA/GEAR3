@@ -30,29 +30,110 @@
     }
 
     & .ai-overview-container {
+        position: fixed;
+        bottom: 1.25rem;
+        right: 1.25rem;
+        z-index: 1050;
+        width: 380px;
+        max-width: calc(100vw - 2.5rem);
+        max-height: calc(100vh - 7rem);
+        display: flex;
+        flex-direction: column;
         border: 1px solid #dee2e6;
-        border-radius: 8px;
+        border-radius: 10px;
         background: #f6f8fa;
-        margin-bottom: 1rem;
+        margin-bottom: 0;
         overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+        transition: max-height 0.2s ease, width 0.2s ease;
+
+        &.minimized {
+            max-height: none;
+            width: 300px;
+        }
 
         & .ai-overview-header {
             background: var(--primary, #0b4778);
             color: #fff;
-            padding: 8px 12px;
+            padding: 10px 12px;
             font-weight: 600;
             display: flex;
             align-items: center;
+            cursor: pointer;
+            user-select: none;
+
+            & .ai-overview-title {
+                flex: 1;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            & .ai-overview-toggle {
+                background: transparent;
+                border: none;
+                color: #fff;
+                cursor: pointer;
+                padding: 0 4px;
+                font-size: 1rem;
+                line-height: 1;
+                opacity: 0.9;
+
+                &:hover {
+                    opacity: 1;
+                }
+            }
+        }
+
+        & .ai-overview-content {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
         }
 
         & .ai-overview-body {
             padding: 12px;
             white-space: pre-wrap;
             line-height: 1.4;
+            overflow-y: auto;
+            max-height: 220px;
 
             &.ai-overview-loading {
                 color: #6c757d;
                 font-style: italic;
+            }
+
+            // Rendered markdown (bold/lists). Reset pre-wrap for block content
+            // so <p>/<ul> don't inherit extra whitespace from the raw text view.
+            p {
+                margin: 0 0 0.5rem;
+                white-space: normal;
+            }
+
+            p:last-child {
+                margin-bottom: 0;
+            }
+
+            ul {
+                margin: 0 0 0.5rem;
+                padding-left: 1.25rem;
+                white-space: normal;
+            }
+
+            ul:last-child {
+                margin-bottom: 0;
+            }
+
+            li {
+                margin-bottom: 0.2rem;
+            }
+
+            code {
+                background: #eef1f4;
+                border-radius: 3px;
+                padding: 0 3px;
+                font-size: 0.9em;
             }
         }
 
@@ -60,6 +141,10 @@
             padding: 0 12px 8px;
             display: flex;
             flex-direction: column;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 0;
+            max-height: 300px;
 
             & .ai-chat-message {
                 display: flex;
@@ -88,6 +173,38 @@
                     background: #fff;
                     border: 1px solid #dee2e6;
                     border-bottom-left-radius: 2px;
+                }
+
+                &.assistant .bubble {
+                    p {
+                        margin: 0 0 0.4rem;
+                        white-space: normal;
+                    }
+
+                    p:last-child {
+                        margin-bottom: 0;
+                    }
+
+                    ul {
+                        margin: 0 0 0.4rem;
+                        padding-left: 1.25rem;
+                        white-space: normal;
+                    }
+
+                    ul:last-child {
+                        margin-bottom: 0;
+                    }
+
+                    li {
+                        margin-bottom: 0.2rem;
+                    }
+
+                    code {
+                        background: #eef1f4;
+                        border-radius: 3px;
+                        padding: 0 3px;
+                        font-size: 0.9em;
+                    }
                 }
 
                 & .bubble.typing {

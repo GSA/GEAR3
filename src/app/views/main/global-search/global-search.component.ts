@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Column } from '@common/table-classes';
 import { AnalyticsService } from '@services/analytics/analytics.service';
 import { ApiService } from '@services/apis/api.service';
@@ -25,10 +26,12 @@ export class GlobalSearchComponent implements OnInit {
 
   // AI overview + follow-up chat state
   public aiOverview: string = '';
+  public aiOverviewHtml: SafeHtml = '';
   public aiLoading: boolean = false;
   public chatMessages: ChatMessage[] = [];
   public chatInput: string = '';
   public chatLoading: boolean = false;
+  public chatMinimized: boolean = false;
 
   constructor(
     private sharedService: SharedService,
@@ -37,7 +40,8 @@ export class GlobalSearchComponent implements OnInit {
     private router: Router,
     private apiService: ApiService,
     private analyticsService: AnalyticsService,
-    private chatbotService: ChatbotService
+    private chatbotService: ChatbotService,
+    private sanitizer: DomSanitizer
   ) { }
 
   tableCols: Column[] = [];
@@ -81,6 +85,7 @@ export class GlobalSearchComponent implements OnInit {
         this.searchKW = params['keyword'];
         // Reset AI state for the new search term
         this.aiOverview = '';
+        this.aiOverviewHtml = '';
         this.chatMessages = [];
         this.chatInput = '';
         // const urlSearchParams = new URLSearchParams(this.searchKW);
@@ -105,10 +110,69 @@ export class GlobalSearchComponent implements OnInit {
   private loadAiOverview(searchKW: string, results: any[]): void {
     this.aiLoading = true;
     this.aiOverview = '';
+    this.aiOverviewHtml = '';
     this.chatbotService.getSearchOverview(searchKW, results || []).subscribe((res) => {
       this.aiOverview = res && res.reply ? res.reply : '';
+      this.aiOverviewHtml = this.renderMarkdown(this.aiOverview);
       this.aiLoading = false;
     });
+  }
+
+  /**
+   * Convert the AI assistant's lightweight markdown (**bold**, *italics*,
+   * `code`, and - / • bullet lists) into sanitized HTML for display. Input is
+   * HTML-escaped first so model output cannot inject markup.
+   */
+  public renderMarkdown(text: string): SafeHtml {
+    const escaped = this.escapeHtml(text || '');
+
+    // Split into lines so we can turn bullet runs into <ul> lists.
+    const lines = escaped.split(/\r?\n/);
+    const htmlParts: string[] = [];
+    let inList = false;
+
+    const closeList = () => {
+      if (inList) {
+        htmlParts.push('</ul>');
+        inList = false;
+      }
+    };
+
+    for (const rawLine of lines) {
+      const line = rawLine.trim();
+      const bulletMatch = line.match(/^(?:[-*•]|\d+\.)\s+(.*)$/);
+      if (bulletMatch) {
+        if (!inList) {
+          htmlParts.push('<ul>');
+          inList = true;
+        }
+        htmlParts.push('<li>' + this.applyInlineFormatting(bulletMatch[1]) + '</li>');
+      } else if (line.length === 0) {
+        closeList();
+      } else {
+        closeList();
+        htmlParts.push('<p>' + this.applyInlineFormatting(line) + '</p>');
+      }
+    }
+    closeList();
+
+    return this.sanitizer.bypassSecurityTrustHtml(htmlParts.join(''));
+  }
+
+  /** Apply inline markdown (bold, italics, inline code) on already-escaped text. */
+  private applyInlineFormatting(text: string): string {
+    return text
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/(^|[^*])\*([^*]+)\*(?!\*)/g, '$1<em>$2</em>')
+      .replace(/`([^`]+)`/g, '<code>$1</code>');
+  }
+
+  /** Escape HTML special characters so model output cannot inject markup. */
+  private escapeHtml(text: string): string {
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
   }
 
   /** Send a follow-up question after the overview; grounded via chat tools. */
@@ -147,6 +211,11 @@ export class GlobalSearchComponent implements OnInit {
       event.preventDefault();
       this.sendFollowUp();
     }
+  }
+
+  /** Toggle the floating assistant window between expanded and minimized. */
+  public toggleChatMinimized(): void {
+    this.chatMinimized = !this.chatMinimized;
   }
 
   public onRowClick(e: any): void {

@@ -144,6 +144,57 @@ function cleanFinalAnswer(content) {
 }
 
 /**
+ * Detect a "what software / tech stack / IT standards does <X> use" question and
+ * extract <X>. Returns the system name string, or null if not that intent.
+ * This drives a deterministic fast-path so the model cannot wander to the
+ * website/search tools for this common, high-value question.
+ */
+function detectSystemSoftwareQuestion(userMessage) {
+  const msg = String(userMessage || '').trim();
+  if (!msg) return null;
+
+  // Must mention software / tech stack / technology / IT standards.
+  const mentionsSoftware =
+    /\b(software|tech(?:nical)?\s*stack|technolog(?:y|ies)|it\s*standards?|applications?)\b/i.test(
+      msg
+    );
+  if (!mentionsSoftware) return null;
+
+  // Patterns like:
+  //   what software does <X> use
+  //   what is the tech stack for <X>
+  //   which IT standards does the <X> system use
+  const patterns = [
+    /\bwhat\s+software\s+(?:does|do|is)\s+(?:the\s+)?(.+?)\s+(?:use|using|run|rely on)\b/i,
+    /\bwhat\s+(?:tech(?:nical)?\s*stack|technolog(?:y|ies)|it\s*standards?)\s+(?:does|do|is|are)\s+(?:the\s+)?(.+?)\s+(?:use|using|run|rely on|built on)\b/i,
+    /\b(?:tech(?:nical)?\s*stack|software|it\s*standards?)\s+(?:for|of|used by)\s+(?:the\s+)?(.+?)(?:\?|$)/i,
+    /\bwhat\s+(?:does|do)\s+(?:the\s+)?(.+?)\s+(?:system\s+)?use\s+for\s+software\b/i,
+  ];
+
+  for (const re of patterns) {
+    const m = msg.match(re);
+    if (m && m[1]) {
+      return cleanEntityName(m[1]);
+    }
+  }
+  return null;
+}
+
+/** Strip trailing qualifiers like "system"/"business system"/punctuation from an extracted name. */
+function cleanEntityName(raw) {
+  let name = String(raw).trim();
+  name = name.replace(/\?+$/, '').trim();
+  name = name.replace(/^the\s+/i, '').trim();
+  // Remove a trailing "system"/"business system"/"tool" qualifier only if it
+  // is an extra descriptor (keep it if it is part of the actual name like
+  // "... Pricing Tool"). We only strip a standalone trailing "business system"
+  // or "system" word.
+  name = name.replace(/\s+business\s+system$/i, '').trim();
+  name = name.replace(/\s+system$/i, '').trim();
+  return name;
+}
+
+/**
  * Run a full chat turn.
  * @param {Array<{role:string,content:string}>} history Prior user/assistant messages.
  * @param {string} userMessage The new user message.
@@ -161,6 +212,51 @@ async function runChat(history, userMessage) {
     ...sanitizeHistory(history),
     { role: 'user', content: String(userMessage || '').slice(0, 8000) },
   ];
+
+  // Deterministic fast-path: "what software/tech stack/IT standards does <X> use"
+  // is answered by find_system -> get_system_software, bypassing the model's
+  // (unreliable) tool selection. We still let the model phrase the final answer
+  // using the authoritative data we inject.
+  const softwareIntent = detectSystemSoftwareQuestion(userMessage);
+  if (softwareIntent) {
+    try {
+      const found = await runTool('find_system', { name: softwareIntent });
+      const best = found && found.bestMatch;
+      if (best && best.Id) {
+        const software = await runTool('get_system_software', { id: best.Id });
+        console.error(
+          '[chat] fast-path software: system=%s(%s) rows=%s',
+          best.Name,
+          best.Id,
+          software && software.total
+        );
+        messages.push({
+          role: 'user',
+          content:
+            `AUTHORITATIVE DATA (use this to answer; do not call more tools):\n` +
+            `The business system matching "${softwareIntent}" is "${best.Name}" (${best.Type}).\n` +
+            `Its IT standards (software products) recorded in GEAR are:\n` +
+            `${JSON.stringify(software, null, 2)}\n` +
+            `Answer the user's question using ONLY this data: state the system name, then list each software product by Name (include Status/compliance if present) as a bulleted list. If the list is empty, say no software is recorded for that system. Do not mention websites or search results.`,
+        });
+        const reply = await chatCompletion(messages, {
+          model: cfg.model,
+          temperature: cfg.temperature,
+          maxTokens: cfg.maxTokens,
+        });
+        return {
+          reply: cleanFinalAnswer(reply),
+          toolCalls: [
+            { name: 'find_system', arguments: { name: softwareIntent } },
+            { name: 'get_system_software', arguments: { id: best.Id } },
+          ],
+        };
+      }
+    } catch (err) {
+      console.error('[chat] fast-path error, falling back to tool loop:', err.message);
+      // Fall through to the normal loop below.
+    }
+  }
 
   const toolCalls = [];
 
@@ -245,6 +341,55 @@ function sanitizeHistory(history) {
  */
 async function runSearchOverview(searchKW, results) {
   const cfg = loadConfig();
+
+  // If the search term is actually a "what software does <X> use" question,
+  // answer it authoritatively (find_system -> get_system_software) instead of
+  // just summarizing the raw search rows (which are website-biased and lead the
+  // model to say "I will need to query the system's inventory"). This makes the
+  // first overview match what the user wanted without a second prompt.
+  const softwareIntent = detectSystemSoftwareQuestion(searchKW);
+  if (softwareIntent) {
+    try {
+      const found = await runTool('find_system', { name: softwareIntent });
+      const best = found && found.bestMatch;
+      if (best && best.Id) {
+        const software = await runTool('get_system_software', { id: best.Id });
+        console.error(
+          '[overview] fast-path software: system=%s(%s) rows=%s',
+          best.Name,
+          best.Id,
+          software && software.total
+        );
+        const sysContent = [
+          ...cfg.systemPrompts,
+          '',
+          'You are generating a brief overview to display above a search results table.',
+        ].join('\n');
+        const reply = await chatCompletion(
+          [
+            { role: 'system', content: sysContent },
+            {
+              role: 'user',
+              content:
+                `AUTHORITATIVE DATA (use this to answer; do not say you need to query anything):\n` +
+                `The business system matching "${softwareIntent}" is "${best.Name}" (${best.Type}).\n` +
+                `Its IT standards (software products) recorded in GEAR are:\n` +
+                `${JSON.stringify(software, null, 2)}\n` +
+                `Answer the question "What software does ${softwareIntent} use?" using ONLY this data: state the system name, then list each software product by Name (include Status/compliance if present) as a bulleted list. If the list is empty, say no software is recorded for that system. Keep it concise. Do not mention websites or search results.`,
+            },
+          ],
+          { model: cfg.model, temperature: cfg.temperature, maxTokens: cfg.maxTokens }
+        );
+        return { reply: cleanFinalAnswer(reply) };
+      }
+    } catch (err) {
+      console.error(
+        '[overview] fast-path error, falling back to summary:',
+        err.message
+      );
+      // Fall through to the generic summary below.
+    }
+  }
 
   const rows = Array.isArray(results) ? results.slice(0, 30) : [];
   const compact = rows.map((r) => ({

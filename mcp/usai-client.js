@@ -10,6 +10,12 @@
  * JSON protocol rather than the `tools` request field.
  */
 
+const path = require('path');
+// Safety net: ensure the project-root .env is loaded so AI_CERT is available
+// even when this client is required by a process that didn't call dotenv itself
+// (e.g. a standalone script). No-op if the vars are already set.
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+
 const USAI_API_BASE = process.env.USAI_API_BASE || 'https://api.gsa.usai.gov';
 const USAI_CHAT_PATH = '/api/v1/chat/completions';
 
