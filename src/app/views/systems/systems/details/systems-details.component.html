@@ -170,7 +170,7 @@
                     </span>
                   </label>
                   <span>
-                    <span>{{detailsData.ATODate | date: 'longDate'}}</span>
+                    <span>{{detailsData.ATODate | date: 'longDate' : 'UTC'}}</span>
                   </span>
                 </div>
                 <div class="data"></div>
@@ -193,7 +193,7 @@
                     </span>
                   </label>
                   <span>
-                    <span>{{(detailsData.RenewalDate | date: 'longDate') || 'N/A'}}</span>
+                    <span>{{(detailsData.RenewalDate | date: 'longDate' : 'UTC') || 'N/A'}}</span>
                   </span>
                 </div>
               </div>
