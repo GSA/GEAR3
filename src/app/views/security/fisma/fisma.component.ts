@@ -79,13 +79,13 @@ export class FismaComponent implements OnInit {
       field: 'ATODate',
       title: 'ATO Date',
       sortable: true,
-      formatter: this.sharedService.dateFormatter,
+      formatter: this.sharedService.utcDateFormatter,
     },
     {
       field: 'RenewalDate',
       title: 'Renewal Date',
       sortable: true,
-      formatter: this.sharedService.dateFormatter,
+      formatter: this.sharedService.utcDateFormatter,
     },
     {
       field: 'ATOType',
@@ -226,7 +226,7 @@ export class FismaComponent implements OnInit {
       field: 'InactiveDate',
       title: 'Inactive Date',
       sortable: true,
-      formatter: this.sharedService.dateFormatter,
+      formatter: this.sharedService.utcDateFormatter,
     });
 
     // Change columns, filename, and url
