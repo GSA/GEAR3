@@ -339,7 +339,7 @@ export class SystemsComponent implements OnInit, OnDestroy {
           field: 'InactiveDate',
           header: 'Inactive Date',
           isSortable: true,
-          formatter: this.sharedService.dateFormatter,
+          formatter: this.sharedService.utcDateFormatter,
           titleTooltip: this.getTooltip('Inactive Date')
         },
       ];
