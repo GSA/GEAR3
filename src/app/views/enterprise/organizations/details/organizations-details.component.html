@@ -36,7 +36,7 @@
               <div class="data-wrapper">
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('Organization Name')" role="tooltip">
+                    <span [pTooltip]="getTooltip('Organization Name')" [escape]="false" role="tooltip">
                       Display Name
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -58,7 +58,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('SSO Name')" role="tooltip">
+                    <span [pTooltip]="getTooltip('SSO Name')" [escape]="false" role="tooltip">
                       SSO Name
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -69,7 +69,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('Two Letter Org')" role="tooltip">
+                    <span [pTooltip]="getTooltip('Two Letter Org')" [escape]="false" role="tooltip">
                       Two Letter Org
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -80,7 +80,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('Parent Organization')" role="tooltip">
+                    <span [pTooltip]="getTooltip('Parent Organization')" [escape]="false" role="tooltip">
                       Parent Organization
                       <i class="fas fa-info-circle"></i>
                     </span>

@@ -264,11 +264,7 @@ export class TechCategoriesDetailsComponent implements OnInit {
   }
 
   public getTooltip (name: string): string {
-    const def = this.attrDefinitions.find(def => def.Term === name);
-    if(def){
-      return def.TermDefinition;
-    }
-    return '';
+    return this.sharedService.getTooltip(this.attrDefinitions, name);
   }
 
   public hasRelatedTech(): boolean {

@@ -449,8 +449,31 @@ export class SharedService {
   public getTooltip (attrDefinitions: DataDictionary[], name: string): string {
     const def = attrDefinitions.find(def => def.Term === name);
     if(def){
-      return def.TermDefinition;
+      return this.buildTooltip(def);
     }
     return '';
+  }
+
+  // Builds the helper text displayed in tooltips. When a data source is
+  // available the entire "Data source: {value}" line is shown in bold on its
+  // own line, followed by the (non-bold) term definition. The returned string
+  // contains HTML, so it must be rendered with a tooltip that allows HTML
+  // (e.g. pTooltip with [escape]="false").
+  private buildTooltip (def: DataDictionary): string {
+    const definition = this.escapeHtml(def.TermDefinition || '');
+    if (def.DataSource) {
+      const dataSource = this.escapeHtml(def.DataSource);
+      return `<strong class="tooltip-data-source">Data source: ${dataSource}</strong><br>${definition}`;
+    }
+    return definition;
+  }
+
+  private escapeHtml (value: string): string {
+    return value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 }
