@@ -30,6 +30,7 @@ export class OrganizationsDetailsComponent implements OnInit {
   public isChildOrgsTabActive: boolean = false;
 
   public attrDefinitions = <DataDictionary[]>[];
+  public systemsAttrDefinitions = <DataDictionary[]>[];
 
   public businessSystemsTableCols: Column[] = [
     {
@@ -190,11 +191,41 @@ export class OrganizationsDetailsComponent implements OnInit {
         .subscribe((data: DataDictionary[]) => {
           this.attrDefinitions = data;
       });
+
+      // Get attribute definitions for the business systems table
+      this.apiService.getDataDictionaryByReportName('Business Systems')
+        .subscribe((data: DataDictionary[]) => {
+          this.systemsAttrDefinitions = data;
+          this.businessSystemsTableCols = this.buildBusinessSystemsCols(data);
+      });
     });
   }
 
   public getTooltip (name: string): string {
     return this.sharedService.getTooltip(this.attrDefinitions, name);
+  }
+
+  // The Business Systems table uses the 'Business Systems' data dictionary.
+  // Set an explicit titleTooltip on each column using the correct Term for the
+  // field (some headers differ from their dictionary Term).
+  private buildBusinessSystemsCols(systemsDefs: DataDictionary[]): Column[] {
+    const termByField: { [field: string]: string } = {
+      ID: 'ID',
+      DisplayName: 'Alias/Acronym',
+      Name: 'System Name',
+      Description: 'Description',
+      SystemLevel: 'System Level',
+      Status: 'Status',
+      RespOrg: 'Responsible IT Org',
+      BusOrg: 'Business Org'
+    };
+    return this.businessSystemsTableCols.map(col => {
+      const term = termByField[col.field];
+      if (term) {
+        return { ...col, titleTooltip: this.sharedService.getTooltip(systemsDefs, term) };
+      }
+      return { ...col };
+    });
   }
 
   public onTabClick(tabName: string, event: Event): void {

@@ -23,6 +23,7 @@ export class FismaPocsDetailsComponent implements OnInit {
   public isPocTabActive: boolean = false;
 
   public attrDefinitions = <DataDictionary[]>[];
+  public systemsAttrDefinitions = <DataDictionary[]>[];
 
   constructor(
     private route: ActivatedRoute,
@@ -49,11 +50,21 @@ export class FismaPocsDetailsComponent implements OnInit {
         .subscribe((data: DataDictionary[]) => {
           this.attrDefinitions = data;
       });
+
+      // The Business/Technical POC definitions live in the Business Systems report
+      this.apiService.getDataDictionaryByReportName('Business Systems')
+        .subscribe((data: DataDictionary[]) => {
+          this.systemsAttrDefinitions = data;
+      });
     });
   }
 
   public getTooltip (name: string): string {
     return this.sharedService.getTooltip(this.attrDefinitions, name);
+  }
+
+  public getSystemsTooltip (name: string): string {
+    return this.sharedService.getTooltip(this.systemsAttrDefinitions, name);
   }
 
   public getStatusClass(status: string): string {

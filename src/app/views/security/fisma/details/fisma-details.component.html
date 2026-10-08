@@ -189,7 +189,7 @@
       @if (isFieldPopulated(detailsData.FedContractorLoc)) {
         <tr>
           <td>
-            <span [pTooltip]="getTooltip('Fed/Contractor Location')" [escape]="false" role="tooltip"> Fed/Contractor Location <i class="fas fa-info-circle"></i>
+            <span [pTooltip]="getTooltip('Fed or Contractor System')" [escape]="false" role="tooltip"> Fed/Contractor Location <i class="fas fa-info-circle"></i>
           </span>
         </td>
         <td>{{detailsData.FedContractorLoc}}</td>
@@ -299,7 +299,7 @@
         </div>
         <div class="data">
           <label class="data-label">
-            <span [pTooltip]="getTooltip('Business POC')" [escape]="false" role="tooltip">
+            <span [pTooltip]="getSystemsTooltip('Business POC')" [escape]="false" role="tooltip">
               Business POC
               <i class="fas fa-info-circle"></i>
             </span>
@@ -308,7 +308,7 @@
         </div>
         <div class="data">
           <label class="data-label">
-            <span [pTooltip]="getTooltip('Technical POC')" [escape]="false" role="tooltip">
+            <span [pTooltip]="getSystemsTooltip('Technical POC')" [escape]="false" role="tooltip">
               Technical POC
               <i class="fas fa-info-circle"></i>
             </span>

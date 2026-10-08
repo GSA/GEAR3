@@ -28,6 +28,7 @@ export class WebsiteServiceCategoryDetailsContentComponent implements OnInit {
   public isDataReady: boolean = false;
 
   public attrDefinitions = <DataDictionary[]>[];
+  public websitesAttrDefinitions = <DataDictionary[]>[];
 
   constructor(
     private route: ActivatedRoute,
@@ -49,6 +50,13 @@ export class WebsiteServiceCategoryDetailsContentComponent implements OnInit {
     .subscribe((data: DataDictionary[]) => {
       this.attrDefinitions = data;
   });
+
+    // Get attribute definitions for the related websites table
+    this.apiService.getDataDictionaryByReportName('GSA Websites')
+    .subscribe((data: DataDictionary[]) => {
+      this.websitesAttrDefinitions = data;
+      this.relatedWebsitesTableCols = this.buildRelatedWebsitesCols(data);
+  });
   }
 
   public onRowClick(data: Website): void {
@@ -59,5 +67,26 @@ export class WebsiteServiceCategoryDetailsContentComponent implements OnInit {
 
   public getTooltip (name: string): string {
     return this.sharedService.getTooltip(this.attrDefinitions, name);
+  }
+
+  // The Related Websites table uses the 'GSA Websites' data dictionary. Set an
+  // explicit titleTooltip on each column using the correct Term for the field
+  // (some headers differ from their dictionary Term).
+  private buildRelatedWebsitesCols(websitesDefs: DataDictionary[]): Column[] {
+    const termByField: { [field: string]: string } = {
+      website_id: 'Website Id',
+      domain: 'Domain',
+      site_owner_email: 'Website Manager',
+      office: 'Office',
+      sub_office: 'Sub-Office',
+      production_status: 'Status'
+    };
+    return RelatedWebsitesColumns.map(col => {
+      const term = termByField[col.field];
+      if (term) {
+        return { ...col, titleTooltip: this.sharedService.getTooltip(websitesDefs, term) };
+      }
+      return { ...col };
+    });
   }
 }

@@ -45,6 +45,7 @@ export class ItStandardsDetailsComponent implements OnInit {
   public detailsData: ITStandards;
   public showAllFields: boolean = false;
   public attrDefinitions = <DataDictionary[]>[];
+  public trmAttrDefinitions = <DataDictionary[]>[];
   public isDataReady: boolean = false;
   public relatedSystems: System[] = [];
   public hasRelatedSystems: boolean = false;
@@ -262,6 +263,12 @@ export class ItStandardsDetailsComponent implements OnInit {
       this.apiService.getDataDictionaryByReportName('IT Standards List')
         .subscribe((data: DataDictionary[]) => {
           this.attrDefinitions = data;
+      });
+
+      // Get attribute definitions for the Technology Categories table
+      this.apiService.getDataDictionaryByReportName('TRM')
+        .subscribe((data: DataDictionary[]) => {
+          this.trmAttrDefinitions = data;
       });
     });
   }

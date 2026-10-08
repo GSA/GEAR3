@@ -100,7 +100,7 @@
             <div class="main-data-container">
               <div class="sub-content full-width">
                 <span class="sub-header">Business Systems</span>
-                <app-table visibleColumnStorageKey="organizations-business-systems" defaultSortField="Name" [isLocal]="true" [localTableData]="businessSystems" [tableCols]="businessSystemsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="systems" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onSystemRowClick($event)"></app-table>
+                <app-table visibleColumnStorageKey="organizations-business-systems" defaultSortField="Name" [isLocal]="true" [localTableData]="businessSystems" [tableCols]="businessSystemsTableCols" [attrDefs]="systemsAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="systems" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onSystemRowClick($event)"></app-table>
               </div>
             </div>
           </div>
@@ -124,7 +124,7 @@
             <div class="main-data-container">
               <div class="sub-content full-width">
                 <span class="sub-header">Child Organizations</span>
-                <app-table visibleColumnStorageKey="organizations-child-orgs" defaultSortField="Name" [isLocal]="true" [localTableData]="childOrgs" [tableCols]="childOrgsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="organizations" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onOrgRowClick($event)"></app-table>
+                <app-table visibleColumnStorageKey="organizations-child-orgs" defaultSortField="Name" [isLocal]="true" [localTableData]="childOrgs" [tableCols]="childOrgsTableCols" [attrDefs]="attrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="organizations" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onOrgRowClick($event)"></app-table>
               </div>
             </div>
           </div>
