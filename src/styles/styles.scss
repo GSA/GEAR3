@@ -356,10 +356,11 @@ a.position-absolute.float-right {
   display: block !important;
 }
 
-/* Ensure the bold "Data source:" label stays readable against dark tooltip backgrounds */
-.p-tooltip .tooltip-data-source,
-.p-tooltip-text .tooltip-data-source {
-  color: #ffffff !important;
+/* Make the bold "Data source:" / "Definition:" labels a light gray that stays
+   readable against the dark tooltip background */
+.p-tooltip .tooltip-label,
+.p-tooltip-text .tooltip-label {
+  color: #d1d5db !important;
 }
 
 /* Widen helper-text tooltips, shrink the text, and allow long descriptions to scroll */

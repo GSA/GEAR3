@@ -208,7 +208,12 @@
                   </tr>
                   @for (poc of splitPOCs; track poc) {
                     <tr>
-                      <td> {{ poc.type }} </td>
+                      <td>
+                        <span [pTooltip]="getTooltip(poc.type)" [escape]="false" role="tooltip">
+                          {{ poc.type }}
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </td>
                       <td> {{ poc.name }} </td>
                       <td>
                         <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{poc.email}}" target="_blank" rel="noopener">{{ poc.email }}</a>
@@ -220,11 +225,11 @@
               </div>
               <div class="sub-content full-width">
                 <span class="sub-header">Related Business Capabilities</span>
-                <app-table visibleColumnStorageKey="systems-related-business-capabilities" defaultSortField="Name" [localTableData]="sysCapabilitiesData" [isLocal]="true" [tableCols]="relatedCapabilitiesCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="capabilities" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onCapRowClick($event)"></app-table>
+                <app-table visibleColumnStorageKey="systems-related-business-capabilities" defaultSortField="Name" [localTableData]="sysCapabilitiesData" [isLocal]="true" [tableCols]="relatedCapabilitiesCols" [attrDefs]="capabilitiesAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="capabilities" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onCapRowClick($event)"></app-table>
               </div>
               <div class="sub-content full-width">
                 <span class="sub-header">System Time Report</span>
-                <app-table visibleColumnStorageKey="systems-system-time" defaultSortField="System Name" [localTableData]="systemTimeData" [isLocal]="true" [tableCols]="systemTimeCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onTimeRowClick($event)"></app-table>
+                <app-table visibleColumnStorageKey="systems-system-time" defaultSortField="System Name" [localTableData]="systemTimeData" [isLocal]="true" [tableCols]="systemTimeCols" [attrDefs]="timeAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onTimeRowClick($event)"></app-table>
               </div>
             </div>
           </div>
@@ -326,7 +331,7 @@
               </div>
               <div class="sub-content full-width">
                 <span class="sub-header">Related Technology</span>
-                <app-table visibleColumnStorageKey="systems-related-technology" defaultSortField="Name" [localTableData]="sysTechnologiesData" [isLocal]="true" [tableCols]="relatedTechnologyCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="itStandards" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRelatedTechRowClick($event)"></app-table>
+                <app-table visibleColumnStorageKey="systems-related-technology" defaultSortField="Name" [localTableData]="sysTechnologiesData" [isLocal]="true" [tableCols]="relatedTechnologyCols" [attrDefs]="technologyAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="itStandards" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRelatedTechRowClick($event)"></app-table>
               </div>
             </div>
           </div>
@@ -339,7 +344,7 @@
               <div class="sub-content full-width">
                 <span class="sub-header">Related Records</span>
                 @if(sysRecordsData && sysRecordsData.length > 0) {
-                  <app-table visibleColumnStorageKey="systems-related-records" defaultSortField="GSA_Number" [localTableData]="sysRecordsData" [isLocal]="true" [tableCols]="recordsCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="records" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRelatedRecordsRowClick($event)"></app-table>
+                  <app-table visibleColumnStorageKey="systems-related-records" defaultSortField="GSA_Number" [localTableData]="sysRecordsData" [isLocal]="true" [tableCols]="recordsCols" [attrDefs]="recordsAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="records" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRelatedRecordsRowClick($event)"></app-table>
                 } @else {
                   <span>Contact Records Management (records@gsa.gov) for a more detailed analysis of records associated with this system.</span>
                 }
@@ -354,7 +359,7 @@
             <div class="main-data-container">
               <div class="sub-content full-width">
                 <span class="sub-header">Related Websites</span>
-                <app-table visibleColumnStorageKey="systems-related-websites" defaultSortField="domain" [localTableData]="sysWebsitesData" [isLocal]="true" [tableCols]="websiteCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="website" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRelatedWebsitesRowClick($event)"></app-table>
+                <app-table visibleColumnStorageKey="systems-related-websites" defaultSortField="domain" [localTableData]="sysWebsitesData" [isLocal]="true" [tableCols]="websiteCols" [attrDefs]="websitesAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="website" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRelatedWebsitesRowClick($event)"></app-table>
               </div>
             </div>
           </div>
