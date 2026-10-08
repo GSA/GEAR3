@@ -56,14 +56,7 @@
       <div class="ai-panel__body">
 
         <!-- Scrollable thread: overview + Q&A sections -->
-        <div class="ai-panel__thread" #threadContainer>
-
-          <!-- Scroll-to-top button (visible after first Q&A) -->
-          @if (chatPairs.length > 0) {
-            <button type="button" class="ai-panel__scroll-top" (click)="scrollThreadToTop()" title="Back to overview" aria-label="Scroll to top">
-              <i class="fas fa-arrow-up"></i> Overview
-            </button>
-          }
+        <div class="ai-panel__thread" #threadContainer (scroll)="onThreadScroll()">
 
           <!-- Section 0: AI overview for the search keyword -->
           <div class="ai-panel__section ai-panel__section--overview">
@@ -131,6 +124,13 @@
           }
 
         </div>
+
+        <!-- Sticky scroll-to-top: visible only when user scrolled down -->
+        @if (showScrollTop) {
+          <button type="button" class="ai-panel__scroll-top" (click)="scrollThreadToTop()" title="Back to Overview" aria-label="Scroll to top">
+            <i class="fas fa-arrow-up"></i> Overview
+          </button>
+        }
 
         <!-- Input bar -->
         <div class="ai-panel__input-row">

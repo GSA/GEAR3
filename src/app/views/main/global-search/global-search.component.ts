@@ -37,6 +37,7 @@ export class GlobalSearchComponent implements OnInit {
   public overviewTime: string = '';
   public unreadCount: number = 0;
   public copiedIndex: number = -1;
+  public showScrollTop: boolean = false;
 
   @ViewChild('threadContainer') private threadContainer?: ElementRef;
 
@@ -100,6 +101,7 @@ export class GlobalSearchComponent implements OnInit {
         this.overviewTime = '';
         this.unreadCount = 0;
         this.copiedIndex = -1;
+        this.showScrollTop = false;
         // const urlSearchParams = new URLSearchParams(this.searchKW);
         // this.apiService.getGlobalSearchResults(encodeURIComponent(this.searchKW.replace(/'/g, '%27'))).subscribe(s => {
         this.apiService.getGlobalSearchResults(encodeURIComponent(this.searchKW)).subscribe(s => {
@@ -251,6 +253,12 @@ export class GlobalSearchComponent implements OnInit {
   public scrollThreadToTop(): void {
     if (this.threadContainer) {
       this.threadContainer.nativeElement.scrollTop = 0;
+    }
+  }
+
+  public onThreadScroll(): void {
+    if (this.threadContainer) {
+      this.showScrollTop = this.threadContainer.nativeElement.scrollTop > 80;
     }
   }
 

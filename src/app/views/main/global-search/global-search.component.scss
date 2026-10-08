@@ -399,22 +399,30 @@
         animation: gear-badge-pop 0.2s ease-out;
     }
 
-    // ── Scroll-to-top button ──────────────────────────────────────────────────
+    // ── Scroll-to-top button (floating above input bar) ───────────────────────
     &__scroll-top {
         display: flex;
         align-items: center;
+        justify-content: center;
         gap: 5px;
-        margin: 8px auto 4px;
-        background: transparent;
-        border: 1px solid #dee2e6;
+        margin: 0 auto 6px;
+        background: #fff;
+        border: 1px solid var(--primary, #0b4778);
         border-radius: 20px;
         color: var(--primary, #0b4778);
         font-size: 0.75rem;
         font-weight: 600;
-        padding: 3px 12px;
+        padding: 4px 14px;
         cursor: pointer;
-        transition: background 0.15s;
-        &:hover { background: #e9ecef; }
+        box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        transition: background 0.15s, box-shadow 0.15s;
+        animation: gear-panel-open 0.15s ease-out;
+
+        &:hover {
+            background: var(--primary, #0b4778);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+        }
     }
 
     // ── Avatar icons ──────────────────────────────────────────────────────────
