@@ -19,6 +19,9 @@
       <span class="ai-panel__title">
         <i class="fas fa-robot mr-2"></i>
         GEAR Assistant{{ searchKW ? ' · "' + searchKW + '"' : '' }}
+        @if (chatMinimized && unreadCount > 0) {
+          <span class="ai-panel__unread-badge">{{ unreadCount }}</span>
+        }
       </span>
       <div class="ai-panel__actions">
         <!-- Expand to full overlay -->
@@ -54,6 +57,13 @@
 
         <!-- Scrollable thread: overview + Q&A sections -->
         <div class="ai-panel__thread" #threadContainer>
+
+          <!-- Scroll-to-top button (visible after first Q&A) -->
+          @if (chatPairs.length > 0) {
+            <button type="button" class="ai-panel__scroll-top" (click)="scrollThreadToTop()" title="Back to overview" aria-label="Scroll to top">
+              <i class="fas fa-arrow-up"></i> Overview
+            </button>
+          }
 
           <!-- Section 0: AI overview for the search keyword -->
           <div class="ai-panel__section ai-panel__section--overview">
@@ -91,6 +101,7 @@
               </div>
               <!-- User question -->
               <div class="ai-panel__msg ai-panel__msg--user">
+                <div class="ai-panel__avatar ai-panel__avatar--user"><i class="fas fa-user"></i></div>
                 <div class="ai-panel__bubble">
                   {{ pair.question }}
                   <div class="ai-panel__msg-time">{{ pair.askedAt }}</div>
@@ -99,12 +110,17 @@
               <!-- Assistant answer -->
               @if (pair.answer) {
                 <div class="ai-panel__msg ai-panel__msg--assistant">
-                  <div class="ai-panel__bubble" [innerHTML]="renderMarkdown(pair.answer)">
+                  <div class="ai-panel__avatar ai-panel__avatar--bot"><i class="fas fa-robot"></i></div>
+                  <div class="ai-panel__bubble" [class.ai-panel__bubble--error]="isErrorReply(pair.answer)" [innerHTML]="renderMarkdown(pair.answer)">
                   </div>
+                  <button type="button" class="ai-panel__copy-btn" (click)="copyToClipboard(pair.answer, $index)" [title]="copiedIndex === $index ? 'Copied!' : 'Copy answer'">
+                    <i class="fas" [class.fa-check]="copiedIndex === $index" [class.fa-copy]="copiedIndex !== $index"></i>
+                  </button>
                   <div class="ai-panel__msg-time ai-panel__msg-time--assistant">{{ pair.answeredAt }}</div>
                 </div>
               } @else {
                 <div class="ai-panel__msg ai-panel__msg--assistant">
+                  <div class="ai-panel__avatar ai-panel__avatar--bot"><i class="fas fa-robot"></i></div>
                   <div class="ai-panel__typing">
                     <span class="ai-panel__typing-label"><i class="fas fa-robot mr-1"></i>GEAR Assistant is thinking</span>
                     <span class="ai-panel__dots"><span></span><span></span><span></span></span>
@@ -118,15 +134,23 @@
 
         <!-- Input bar -->
         <div class="ai-panel__input-row">
-          <textarea
-            class="ai-panel__textarea"
-            [(ngModel)]="chatInput"
-            (keydown)="onFollowUpKeydown($event)"
-            rows="1"
-            placeholder="Ask a follow-up question…"
-            aria-label="Ask a follow-up question"
-            [disabled]="aiLoading || chatLoading"
-          ></textarea>
+          <div class="ai-panel__input-wrap">
+            <textarea
+              class="ai-panel__textarea"
+              [(ngModel)]="chatInput"
+              (keydown)="onFollowUpKeydown($event)"
+              (input)="onInputChange()"
+              rows="1"
+              placeholder="Ask a follow-up question…"
+              aria-label="Ask a follow-up question"
+              [disabled]="aiLoading || chatLoading"
+              maxlength="500"
+            ></textarea>
+            <div class="ai-panel__input-meta">
+              <span class="ai-panel__kbd-hint">Enter to send &middot; Shift+Enter for new line</span>
+              <span class="ai-panel__char-count" [class.ai-panel__char-count--warn]="chatInput.length > 450">{{ chatInput.length }}/500</span>
+            </div>
+          </div>
           <button
             type="button"
             class="btn btn-primary btn-sm ai-panel__send-btn"

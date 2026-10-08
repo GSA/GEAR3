@@ -35,6 +35,8 @@ export class GlobalSearchComponent implements OnInit {
   public chatMinimized: boolean = false;
   public chatExpanded: boolean = false;
   public overviewTime: string = '';
+  public unreadCount: number = 0;
+  public copiedIndex: number = -1;
 
   @ViewChild('threadContainer') private threadContainer?: ElementRef;
 
@@ -96,6 +98,8 @@ export class GlobalSearchComponent implements OnInit {
         this.chatMinimized = false;
         this.chatExpanded = false;
         this.overviewTime = '';
+        this.unreadCount = 0;
+        this.copiedIndex = -1;
         // const urlSearchParams = new URLSearchParams(this.searchKW);
         // this.apiService.getGlobalSearchResults(encodeURIComponent(this.searchKW.replace(/'/g, '%27'))).subscribe(s => {
         this.apiService.getGlobalSearchResults(encodeURIComponent(this.searchKW)).subscribe(s => {
@@ -227,6 +231,10 @@ export class GlobalSearchComponent implements OnInit {
       this.chatPairs[this.chatPairs.length - 1].answer = reply;
       this.chatPairs[this.chatPairs.length - 1].answeredAt = this.formatTime(new Date());
       this.chatLoading = false;
+      // Increment unread badge if panel is minimised
+      if (this.chatMinimized) {
+        this.unreadCount++;
+      }
       this.scrollThreadToBottom();
     });
   }
@@ -238,6 +246,30 @@ export class GlobalSearchComponent implements OnInit {
           this.threadContainer.nativeElement.scrollHeight;
       }
     }, 50);
+  }
+
+  public scrollThreadToTop(): void {
+    if (this.threadContainer) {
+      this.threadContainer.nativeElement.scrollTop = 0;
+    }
+  }
+
+  public onInputChange(): void {
+    // triggered by (input) — Angular's [(ngModel)] handles the value,
+    // this is a hook for future use (e.g. auto-resize textarea)
+  }
+
+  public copyToClipboard(text: string | null, index: number): void {
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+      this.copiedIndex = index;
+      setTimeout(() => { this.copiedIndex = -1; }, 2000);
+    }).catch(() => {});
+  }
+
+  public isErrorReply(answer: string | null): boolean {
+    if (!answer) return false;
+    return answer.startsWith('Sorry,');
   }
 
   private formatTime(date: Date): string {
@@ -254,6 +286,9 @@ export class GlobalSearchComponent implements OnInit {
   /** Toggle the floating assistant window between expanded and minimized. */
   public toggleChatMinimized(): void {
     this.chatMinimized = !this.chatMinimized;
+    if (!this.chatMinimized) {
+      this.unreadCount = 0;
+    }
   }
 
   /** Toggle full-page expanded mode. */
