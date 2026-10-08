@@ -33,16 +33,18 @@
             <i class="fas" [class.fa-expand-alt]="!chatExpanded" [class.fa-compress-alt]="chatExpanded"></i>
           </button>
         }
-        <!-- Minimise / restore -->
-        <button
-          type="button"
-          class="ai-panel__btn"
-          (click)="toggleChatMinimized(); $event.stopPropagation()"
-          [title]="chatMinimized ? 'Open assistant' : 'Minimise'"
-          [attr.aria-label]="chatMinimized ? 'Open GEAR Assistant' : 'Minimise GEAR Assistant'"
-        >
-          <i class="fas" [class.fa-chevron-up]="chatMinimized" [class.fa-chevron-down]="!chatMinimized"></i>
-        </button>
+        <!-- Minimise / restore (hidden in expanded overlay mode) -->
+        @if (!chatExpanded) {
+          <button
+            type="button"
+            class="ai-panel__btn"
+            (click)="toggleChatMinimized(); $event.stopPropagation()"
+            [title]="chatMinimized ? 'Open assistant' : 'Minimise'"
+            [attr.aria-label]="chatMinimized ? 'Open GEAR Assistant' : 'Minimise GEAR Assistant'"
+          >
+            <i class="fas" [class.fa-chevron-up]="chatMinimized" [class.fa-chevron-down]="!chatMinimized"></i>
+          </button>
+        }
       </div>
     </div>
 
@@ -54,33 +56,59 @@
         <div class="ai-panel__thread" #threadContainer>
 
           <!-- Section 0: AI overview for the search keyword -->
-          <div class="ai-panel__section">
-            <div class="ai-panel__section-label">Overview · "{{ searchKW }}"</div>
+          <div class="ai-panel__section ai-panel__section--overview">
+            <div class="ai-panel__section-label">
+              <span class="ai-panel__section-badge">Overview</span>
+              <span class="ai-panel__section-kw">"{{ searchKW }}"</span>
+            </div>
             @if (aiLoading) {
-              <span class="ai-panel__status">Generating an overview…</span>
+              <div class="ai-panel__typing">
+                <span class="ai-panel__typing-label"><i class="fas fa-robot mr-1"></i>GEAR Assistant is thinking</span>
+                <span class="ai-panel__dots"><span></span><span></span><span></span></span>
+              </div>
             } @else if (aiOverview) {
               <div class="ai-panel__overview-text" [innerHTML]="aiOverviewHtml"></div>
+              <div class="ai-panel__timestamp">{{ overviewTime }}</div>
             } @else {
               <span class="ai-panel__status">No overview available for this search.</span>
             }
           </div>
 
+          <!-- Empty state: no follow-ups yet -->
+          @if (chatPairs.length === 0 && !aiLoading) {
+            <div class="ai-panel__empty-state">
+              <i class="fas fa-comments ai-panel__empty-icon"></i>
+              <p>Have a follow-up question?</p>
+              <span>Ask below and GEAR Assistant will answer using live data.</span>
+            </div>
+          }
+
           <!-- Follow-up Q&A sections (one section per exchange) -->
           @for (pair of chatPairs; track $index) {
             <div class="ai-panel__section ai-panel__section--qa">
-              <div class="ai-panel__section-label">Question {{ $index + 1 }}</div>
+              <div class="ai-panel__section-label">
+                <span class="ai-panel__section-badge ai-panel__section-badge--qa">Q{{ $index + 1 }}</span>
+              </div>
               <!-- User question -->
               <div class="ai-panel__msg ai-panel__msg--user">
-                <div class="ai-panel__bubble">{{ pair.question }}</div>
+                <div class="ai-panel__bubble">
+                  {{ pair.question }}
+                  <div class="ai-panel__msg-time">{{ pair.askedAt }}</div>
+                </div>
               </div>
               <!-- Assistant answer -->
               @if (pair.answer) {
                 <div class="ai-panel__msg ai-panel__msg--assistant">
-                  <div class="ai-panel__bubble" [innerHTML]="renderMarkdown(pair.answer)"></div>
+                  <div class="ai-panel__bubble" [innerHTML]="renderMarkdown(pair.answer)">
+                  </div>
+                  <div class="ai-panel__msg-time ai-panel__msg-time--assistant">{{ pair.answeredAt }}</div>
                 </div>
               } @else {
                 <div class="ai-panel__msg ai-panel__msg--assistant">
-                  <div class="ai-panel__bubble ai-panel__bubble--typing">GEAR Assistant is thinking…</div>
+                  <div class="ai-panel__typing">
+                    <span class="ai-panel__typing-label"><i class="fas fa-robot mr-1"></i>GEAR Assistant is thinking</span>
+                    <span class="ai-panel__dots"><span></span><span></span><span></span></span>
+                  </div>
                 </div>
               }
             </div>
@@ -107,6 +135,7 @@
             aria-label="Send"
           >
             <i class="fas fa-paper-plane"></i>
+            @if (chatExpanded) { <span class="ai-panel__send-label">Send</span> }
           </button>
         </div>
 

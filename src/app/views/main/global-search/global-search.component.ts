@@ -29,11 +29,12 @@ export class GlobalSearchComponent implements OnInit {
   public aiOverviewHtml: SafeHtml = '';
   public aiLoading: boolean = false;
   // Each Q&A exchange is stored as a pair so the template can render separate sections
-  public chatPairs: { question: string; answer: string | null }[] = [];
+  public chatPairs: { question: string; answer: string | null; askedAt: string; answeredAt: string | null }[] = [];
   public chatInput: string = '';
   public chatLoading: boolean = false;
   public chatMinimized: boolean = false;
   public chatExpanded: boolean = false;
+  public overviewTime: string = '';
 
   @ViewChild('threadContainer') private threadContainer?: ElementRef;
 
@@ -94,6 +95,7 @@ export class GlobalSearchComponent implements OnInit {
         this.chatInput = '';
         this.chatMinimized = false;
         this.chatExpanded = false;
+        this.overviewTime = '';
         // const urlSearchParams = new URLSearchParams(this.searchKW);
         // this.apiService.getGlobalSearchResults(encodeURIComponent(this.searchKW.replace(/'/g, '%27'))).subscribe(s => {
         this.apiService.getGlobalSearchResults(encodeURIComponent(this.searchKW)).subscribe(s => {
@@ -120,6 +122,7 @@ export class GlobalSearchComponent implements OnInit {
     this.chatbotService.getSearchOverview(searchKW, results || []).subscribe((res) => {
       this.aiOverview = res && res.reply ? res.reply : '';
       this.aiOverviewHtml = this.renderMarkdown(this.aiOverview);
+      this.overviewTime = this.formatTime(new Date());
       this.aiLoading = false;
     });
   }
@@ -210,7 +213,7 @@ export class GlobalSearchComponent implements OnInit {
     }
 
     // Add a new pending pair (answer = null until response arrives)
-    this.chatPairs.push({ question: text, answer: null });
+    this.chatPairs.push({ question: text, answer: null, askedAt: this.formatTime(new Date()), answeredAt: null });
     this.chatInput = '';
     this.chatLoading = true;
     this.scrollThreadToBottom();
@@ -222,6 +225,7 @@ export class GlobalSearchComponent implements OnInit {
           : 'Sorry, I could not generate a response. The AI service may be temporarily unavailable — please try again.';
       // Fill in the answer for the last pair
       this.chatPairs[this.chatPairs.length - 1].answer = reply;
+      this.chatPairs[this.chatPairs.length - 1].answeredAt = this.formatTime(new Date());
       this.chatLoading = false;
       this.scrollThreadToBottom();
     });
@@ -234,6 +238,10 @@ export class GlobalSearchComponent implements OnInit {
           this.threadContainer.nativeElement.scrollHeight;
       }
     }, 50);
+  }
+
+  private formatTime(date: Date): string {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 
   public onFollowUpKeydown(event: KeyboardEvent): void {
