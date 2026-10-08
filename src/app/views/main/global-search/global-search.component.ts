@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Column } from '@common/table-classes';
@@ -28,10 +28,14 @@ export class GlobalSearchComponent implements OnInit {
   public aiOverview: string = '';
   public aiOverviewHtml: SafeHtml = '';
   public aiLoading: boolean = false;
-  public chatMessages: ChatMessage[] = [];
+  // Each Q&A exchange is stored as a pair so the template can render separate sections
+  public chatPairs: { question: string; answer: string | null }[] = [];
   public chatInput: string = '';
   public chatLoading: boolean = false;
   public chatMinimized: boolean = false;
+  public chatExpanded: boolean = false;
+
+  @ViewChild('threadContainer') private threadContainer?: ElementRef;
 
   constructor(
     private sharedService: SharedService,
@@ -86,8 +90,10 @@ export class GlobalSearchComponent implements OnInit {
         // Reset AI state for the new search term
         this.aiOverview = '';
         this.aiOverviewHtml = '';
-        this.chatMessages = [];
+        this.chatPairs = [];
         this.chatInput = '';
+        this.chatMinimized = false;
+        this.chatExpanded = false;
         // const urlSearchParams = new URLSearchParams(this.searchKW);
         // this.apiService.getGlobalSearchResults(encodeURIComponent(this.searchKW.replace(/'/g, '%27'))).subscribe(s => {
         this.apiService.getGlobalSearchResults(encodeURIComponent(this.searchKW)).subscribe(s => {
@@ -182,7 +188,7 @@ export class GlobalSearchComponent implements OnInit {
       return;
     }
 
-    // Seed the conversation with the overview so follow-ups have context.
+    // Build history from previous pairs + overview context
     const history: ChatMessage[] = [];
     if (this.aiOverview) {
       history.push({
@@ -190,20 +196,44 @@ export class GlobalSearchComponent implements OnInit {
         content: `Overview for search "${this.searchKW}": ${this.aiOverview}`,
       });
     }
-    history.push(...this.chatMessages);
+    for (const pair of this.chatPairs) {
+      history.push({ role: 'user', content: pair.question });
+      if (pair.answer) {
+        history.push({ role: 'assistant', content: pair.answer });
+      }
+    }
 
-    this.chatMessages.push({ role: 'user', content: text });
+    // Auto-expand to full overlay on the first follow-up question
+    if (this.chatPairs.length === 0) {
+      this.chatExpanded = true;
+      this.chatMinimized = false;
+    }
+
+    // Add a new pending pair (answer = null until response arrives)
+    this.chatPairs.push({ question: text, answer: null });
     this.chatInput = '';
     this.chatLoading = true;
+    this.scrollThreadToBottom();
 
     this.chatbotService.sendMessage(text, history).subscribe((res) => {
       const reply =
         res && typeof res.reply === 'string' && res.reply.trim().length > 0
           ? res.reply
-          : 'Sorry, I could not generate a response for that. The AI service may be temporarily rate-limited or over budget - please wait a moment and try again.';
-      this.chatMessages.push({ role: 'assistant', content: reply });
+          : 'Sorry, I could not generate a response. The AI service may be temporarily unavailable — please try again.';
+      // Fill in the answer for the last pair
+      this.chatPairs[this.chatPairs.length - 1].answer = reply;
       this.chatLoading = false;
+      this.scrollThreadToBottom();
     });
+  }
+
+  private scrollThreadToBottom(): void {
+    setTimeout(() => {
+      if (this.threadContainer) {
+        this.threadContainer.nativeElement.scrollTop =
+          this.threadContainer.nativeElement.scrollHeight;
+      }
+    }, 50);
   }
 
   public onFollowUpKeydown(event: KeyboardEvent): void {
@@ -216,6 +246,15 @@ export class GlobalSearchComponent implements OnInit {
   /** Toggle the floating assistant window between expanded and minimized. */
   public toggleChatMinimized(): void {
     this.chatMinimized = !this.chatMinimized;
+  }
+
+  /** Toggle full-page expanded mode. */
+  public toggleExpanded(): void {
+    this.chatExpanded = !this.chatExpanded;
+    // Ensure body is visible when expanding
+    if (this.chatExpanded) {
+      this.chatMinimized = false;
+    }
   }
 
   public onRowClick(e: any): void {

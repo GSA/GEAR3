@@ -75,6 +75,7 @@
 
 .gear-chatbot-message.assistant .bubble {
   background: #fff;
+  color: #212529;
   border: 1px solid #dee2e6;
   border-bottom-left-radius: 2px;
 }

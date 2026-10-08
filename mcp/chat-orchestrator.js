@@ -21,6 +21,7 @@ const path = require('path');
 
 const { tools, runTool } = require('./gear-tools');
 const { chatCompletion } = require('./usai-client');
+const promptCache = require('./prompt-cache');
 
 const CONFIG_PATH = path.join(__dirname, 'chat-config.json');
 
@@ -203,6 +204,17 @@ function cleanEntityName(raw) {
 async function runChat(history, userMessage) {
   const cfg = loadConfig();
 
+  // Cache lookup: only cache single-turn questions (no prior history) since
+  // follow-up questions depend on context and should not be cached.
+  const isFirstTurn = !history || history.length === 0;
+  if (isFirstTurn) {
+    const cached = await promptCache.lookup(userMessage, 'chat');
+    if (cached) {
+      console.error('[chat] cache HIT — skipping USAi call');
+      return cached;
+    }
+  }
+
   const systemContent = [...cfg.systemPrompts, '', buildToolInstructions()].join(
     '\n'
   );
@@ -244,13 +256,17 @@ async function runChat(history, userMessage) {
           temperature: cfg.temperature,
           maxTokens: cfg.maxTokens,
         });
-        return {
+        const result = {
           reply: cleanFinalAnswer(reply),
           toolCalls: [
             { name: 'find_system', arguments: { name: softwareIntent } },
             { name: 'get_system_software', arguments: { id: best.Id } },
           ],
         };
+        if (isFirstTurn) {
+          promptCache.save(userMessage, 'chat', result.reply, result.toolCalls).catch(() => {});
+        }
+        return result;
       }
     } catch (err) {
       console.error('[chat] fast-path error, falling back to tool loop:', err.message);
@@ -270,7 +286,11 @@ async function runChat(history, userMessage) {
     const call = parseToolCall(content);
     if (!call) {
       console.error('[chat] final answer (no tool call). iter=%d', i);
-      return { reply: cleanFinalAnswer(content), toolCalls };
+      const finalReply = cleanFinalAnswer(content);
+      if (isFirstTurn) {
+        promptCache.save(userMessage, 'chat', finalReply, toolCalls).catch(() => {});
+      }
+      return { reply: finalReply, toolCalls };
     }
 
     console.error('[chat] tool_call:', call.name, JSON.stringify(call.arguments));
@@ -312,7 +332,11 @@ async function runChat(history, userMessage) {
     ],
     { model: cfg.model, temperature: cfg.temperature, maxTokens: cfg.maxTokens }
   );
-  return { reply: cleanFinalAnswer(finalContent), toolCalls };
+  const finalReply = cleanFinalAnswer(finalContent);
+  if (isFirstTurn) {
+    promptCache.save(userMessage, 'chat', finalReply, toolCalls).catch(() => {});
+  }
+  return { reply: finalReply, toolCalls };
 }
 
 /** Keep only well-formed user/assistant turns and cap length. */
@@ -341,6 +365,13 @@ function sanitizeHistory(history) {
  */
 async function runSearchOverview(searchKW, results) {
   const cfg = loadConfig();
+
+  // Cache lookup for search overviews — keyword-based, 7-day TTL.
+  const cachedOverview = await promptCache.lookup(searchKW, 'overview');
+  if (cachedOverview) {
+    console.error('[overview] cache HIT — skipping USAi call');
+    return { reply: cachedOverview.reply };
+  }
 
   // If the search term is actually a "what software does <X> use" question,
   // answer it authoritatively (find_system -> get_system_software) instead of
@@ -380,7 +411,9 @@ async function runSearchOverview(searchKW, results) {
           ],
           { model: cfg.model, temperature: cfg.temperature, maxTokens: cfg.maxTokens }
         );
-        return { reply: cleanFinalAnswer(reply) };
+        const overviewReply = cleanFinalAnswer(reply);
+        promptCache.save(searchKW, 'overview', overviewReply, []).catch(() => {});
+        return { reply: overviewReply };
       }
     } catch (err) {
       console.error(
@@ -421,6 +454,7 @@ async function runSearchOverview(searchKW, results) {
     { model: cfg.model, temperature: cfg.temperature, maxTokens: cfg.maxTokens }
   );
 
+  promptCache.save(searchKW, 'overview', reply, []).catch(() => {});
   return { reply };
 }
 

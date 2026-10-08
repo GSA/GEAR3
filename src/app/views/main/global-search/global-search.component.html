@@ -6,83 +6,117 @@
     </div>
   </div>
 
-  <!-- AI Overview + follow-up chat -->
-  <div class="ai-overview-container"
-       [class.minimized]="chatMinimized"
-       role="complementary"
-       aria-label="GEAR Assistant">
-    <div class="ai-overview-header" (click)="toggleChatMinimized()">
-      <i class="fas fa-robot mr-2"></i>
-      <span class="ai-overview-title">GEAR Assistant{{ searchKW ? ' · "' + searchKW + '"' : '' }}</span>
-      <button
-        type="button"
-        class="ai-overview-toggle"
-        (click)="toggleChatMinimized(); $event.stopPropagation()"
-        [attr.aria-expanded]="!chatMinimized"
-        [attr.aria-label]="chatMinimized ? 'Expand GEAR Assistant' : 'Minimize GEAR Assistant'"
-      >
-        <i class="fas" [class.fa-chevron-down]="!chatMinimized" [class.fa-chevron-up]="chatMinimized"></i>
-      </button>
+  <!-- Results table -->
+  <div class="global-search-data-container">
+    <app-table visibleColumnStorageKey="global-search" [tableCols]="tableCols" reportStyle="neutral" exportName="Global Search" tableType="globalSearch" (rowClickEvent)="onRowClick($event)"></app-table>
+  </div>
+
+  <!-- ===== GEAR AI Assistant — floating bottom-right ===== -->
+  <div class="ai-panel" [class.ai-panel--expanded]="chatExpanded" [class.ai-panel--minimized]="chatMinimized" role="complementary" aria-label="GEAR Assistant">
+
+    <!-- Header -->
+    <div class="ai-panel__header" (click)="chatMinimized && toggleChatMinimized()">
+      <span class="ai-panel__title">
+        <i class="fas fa-robot mr-2"></i>
+        GEAR Assistant{{ searchKW ? ' · "' + searchKW + '"' : '' }}
+      </span>
+      <div class="ai-panel__actions">
+        <!-- Expand to full overlay -->
+        @if (!chatMinimized) {
+          <button
+            type="button"
+            class="ai-panel__btn"
+            (click)="toggleExpanded(); $event.stopPropagation()"
+            [title]="chatExpanded ? 'Collapse' : 'Expand'"
+            [attr.aria-label]="chatExpanded ? 'Collapse assistant' : 'Expand to full page'"
+          >
+            <i class="fas" [class.fa-expand-alt]="!chatExpanded" [class.fa-compress-alt]="chatExpanded"></i>
+          </button>
+        }
+        <!-- Minimise / restore -->
+        <button
+          type="button"
+          class="ai-panel__btn"
+          (click)="toggleChatMinimized(); $event.stopPropagation()"
+          [title]="chatMinimized ? 'Open assistant' : 'Minimise'"
+          [attr.aria-label]="chatMinimized ? 'Open GEAR Assistant' : 'Minimise GEAR Assistant'"
+        >
+          <i class="fas" [class.fa-chevron-up]="chatMinimized" [class.fa-chevron-down]="!chatMinimized"></i>
+        </button>
+      </div>
     </div>
 
+    <!-- Body (hidden when minimised) -->
     @if (!chatMinimized) {
-      <div class="ai-overview-content">
-        @if (aiLoading) {
-          <div class="ai-overview-body ai-overview-loading">
-            Generating an overview…
-          </div>
-        } @else if (aiOverview) {
-          <div class="ai-overview-body" [innerHTML]="aiOverviewHtml"></div>
-        } @else {
-          <div class="ai-overview-body ai-overview-loading">
-            No AI overview available for this search.
-          </div>
-        }
+      <div class="ai-panel__body">
 
-        <!-- Follow-up conversation -->
-        @if (chatMessages.length > 0) {
-          <div class="ai-chat-thread">
-            @for (msg of chatMessages; track $index) {
-              <div class="ai-chat-message" [class.user]="msg.role === 'user'" [class.assistant]="msg.role === 'assistant'">
-                @if (msg.role === 'assistant') {
-                  <div class="bubble" [innerHTML]="renderMarkdown(msg.content)"></div>
-                } @else {
-                  <div class="bubble">{{ msg.content }}</div>
-                }
-              </div>
-            }
-            @if (chatLoading) {
-              <div class="ai-chat-message assistant">
-                <div class="bubble typing">GEAR Assistant is thinking…</div>
-              </div>
+        <!-- Scrollable thread: overview + Q&A sections -->
+        <div class="ai-panel__thread" #threadContainer>
+
+          <!-- Section 0: AI overview for the search keyword -->
+          <div class="ai-panel__section">
+            <div class="ai-panel__section-label">Overview · "{{ searchKW }}"</div>
+            @if (aiLoading) {
+              <span class="ai-panel__status">Generating an overview…</span>
+            } @else if (aiOverview) {
+              <div class="ai-panel__overview-text" [innerHTML]="aiOverviewHtml"></div>
+            } @else {
+              <span class="ai-panel__status">No overview available for this search.</span>
             }
           </div>
-        }
 
-        <div class="ai-chat-input">
+          <!-- Follow-up Q&A sections (one section per exchange) -->
+          @for (pair of chatPairs; track $index) {
+            <div class="ai-panel__section ai-panel__section--qa">
+              <div class="ai-panel__section-label">Question {{ $index + 1 }}</div>
+              <!-- User question -->
+              <div class="ai-panel__msg ai-panel__msg--user">
+                <div class="ai-panel__bubble">{{ pair.question }}</div>
+              </div>
+              <!-- Assistant answer -->
+              @if (pair.answer) {
+                <div class="ai-panel__msg ai-panel__msg--assistant">
+                  <div class="ai-panel__bubble" [innerHTML]="renderMarkdown(pair.answer)"></div>
+                </div>
+              } @else {
+                <div class="ai-panel__msg ai-panel__msg--assistant">
+                  <div class="ai-panel__bubble ai-panel__bubble--typing">GEAR Assistant is thinking…</div>
+                </div>
+              }
+            </div>
+          }
+
+        </div>
+
+        <!-- Input bar -->
+        <div class="ai-panel__input-row">
           <textarea
+            class="ai-panel__textarea"
             [(ngModel)]="chatInput"
             (keydown)="onFollowUpKeydown($event)"
             rows="1"
-            placeholder="Ask a follow-up question about these results…"
+            placeholder="Ask a follow-up question…"
             aria-label="Ask a follow-up question"
-            [disabled]="aiLoading"
+            [disabled]="aiLoading || chatLoading"
           ></textarea>
           <button
             type="button"
-            class="btn btn-primary btn-sm"
+            class="btn btn-primary btn-sm ai-panel__send-btn"
             (click)="sendFollowUp()"
             [disabled]="chatLoading || aiLoading || !chatInput.trim()"
-            aria-label="Send follow-up"
+            aria-label="Send"
           >
             <i class="fas fa-paper-plane"></i>
           </button>
         </div>
+
       </div>
     }
   </div>
 
-  <div class="global-search-data-container">
-    <app-table visibleColumnStorageKey="global-search" [tableCols]="tableCols" reportStyle="neutral" exportName="Global Search" tableType="globalSearch" (rowClickEvent)="onRowClick($event)"></app-table>
-  </div>
+  <!-- Backdrop — click to exit full overlay -->
+  @if (chatExpanded) {
+    <div class="ai-panel__backdrop" (click)="toggleExpanded()" aria-hidden="true"></div>
+  }
+
 </div>
