@@ -50,7 +50,7 @@
                       <i class="fas fa-info-circle"></i>
                     </span>
                   </label>
-                  <span>{{detailsData.ATODate | date : "longDate"}}</span>
+                  <span>{{detailsData.ATODate | date : "longDate" : "UTC"}}</span>
                 </div>
                 <div class="data">
                   <label class="data-label">
@@ -60,7 +60,7 @@
                       <i class="fas fa-info-circle"></i>
                     </span>
                     </label>
-                    <span>{{detailsData.RenewalDate | date : "longDate"}}</span>
+                    <span>{{detailsData.RenewalDate | date : "longDate" : "UTC"}}</span>
                   </div>
                   <!-- <div class="data">
                     <label class="data-label">
@@ -228,7 +228,7 @@
       <span [title]="getTooltip('Inactive Date')" role="tooltip"> Inactive Date <i class="fas fa-info-circle"></i>
     </span>
   </td>
-  <td>{{detailsData.InactiveDate | date : "longDate"}}</td>
+  <td>{{detailsData.InactiveDate | date : "longDate" : "UTC"}}</td>
 </tr>
 }
 </table>

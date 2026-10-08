@@ -7,14 +7,22 @@ export const RecordsColumns: Column[] = [
         header: 'GSA Number',
         isSortable: true
       }, {
-        field: 'Record_Item_header',
-        header: 'Record header',
+        field: 'Record_Item_Title',
+        header: 'Record Title',
         isSortable: true
       }, {
         field: 'Description',
         header: 'Description',
         isSortable: false,
-        showColumn: false,
+        formatter: formatDescription
+      }, {
+        field: 'FY_Retention_Years',
+        header: 'Retention Years',
+        isSortable: true
+      }, {
+        field: 'Retention_Instructions',
+        header: 'Retention Instructions',
+        isSortable: false,
         formatter: formatDescription
       }, {
         field: 'Record_Status',
@@ -27,13 +35,9 @@ export const RecordsColumns: Column[] = [
         showColumn: false,
         isSortable: true
       }, {
-        field: 'Retention_Instructions',
-        header: 'Retention Instructions',
-        isSortable: false,
-        formatter: formatDescription
-      }, {
         field: 'Legal_Disposition_Authority',
         header: 'Disposition Authority (DA)',
+        showColumn: false,
         isSortable: true
       }, {
         field: 'Type_Disposition',
@@ -43,6 +47,7 @@ export const RecordsColumns: Column[] = [
       }, {
         field: 'Date_DA_Approved',
         header: 'DA Approval Date',
+        showColumn: false,
         isSortable: true
       }, {
         field: 'Disposition_Notes',
@@ -58,14 +63,11 @@ export const RecordsColumns: Column[] = [
       }, {
         field: 'PII',
         header: 'PII',
+        showColumn: false,
         isSortable: true
       }, {
         field: 'CUI',
         header: 'CUI',
-        isSortable: true
-      }, {
-        field: 'FY_Retention_Years',
-        header: 'Retention Years',
         showColumn: false,
         isSortable: true
       }
