@@ -1,16 +1,12 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Column } from '@common/table-classes';
 import { AnalyticsService } from '@services/analytics/analytics.service';
 import { ApiService } from '@services/apis/api.service';
 
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
-import {
-  ChatbotService,
-  ChatMessage,
-} from '@services/chatbot/chatbot.service';
+import { ChatbotService } from '@services/chatbot/chatbot.service';
 
 @Component({
     selector: 'global-search',
@@ -24,23 +20,6 @@ export class GlobalSearchComponent implements OnInit {
   tableData: any[] = [];
   tableDataOriginal: any[] = [];
 
-  // AI overview + follow-up chat state
-  public aiOverview: string = '';
-  public aiOverviewHtml: SafeHtml = '';
-  public aiLoading: boolean = false;
-  // Each Q&A exchange is stored as a pair so the template can render separate sections
-  public chatPairs: { question: string; answer: string | null; askedAt: string; answeredAt: string | null }[] = [];
-  public chatInput: string = '';
-  public chatLoading: boolean = false;
-  public chatMinimized: boolean = false;
-  public chatExpanded: boolean = false;
-  public overviewTime: string = '';
-  public unreadCount: number = 0;
-  public copiedIndex: number = -1;
-  public showScrollTop: boolean = false;
-
-  @ViewChild('threadContainer') private threadContainer?: ElementRef;
-
   constructor(
     private sharedService: SharedService,
     private tableService: TableService,
@@ -48,8 +27,7 @@ export class GlobalSearchComponent implements OnInit {
     private router: Router,
     private apiService: ApiService,
     private analyticsService: AnalyticsService,
-    private chatbotService: ChatbotService,
-    private sanitizer: DomSanitizer
+    private chatbotService: ChatbotService
   ) { }
 
   tableCols: Column[] = [];
@@ -91,17 +69,6 @@ export class GlobalSearchComponent implements OnInit {
 
       if(params && params['keyword']) {
         this.searchKW = params['keyword'];
-        // Reset AI state for the new search term
-        this.aiOverview = '';
-        this.aiOverviewHtml = '';
-        this.chatPairs = [];
-        this.chatInput = '';
-        this.chatMinimized = false;
-        this.chatExpanded = false;
-        this.overviewTime = '';
-        this.unreadCount = 0;
-        this.copiedIndex = -1;
-        this.showScrollTop = false;
         // const urlSearchParams = new URLSearchParams(this.searchKW);
         // this.apiService.getGlobalSearchResults(encodeURIComponent(this.searchKW.replace(/'/g, '%27'))).subscribe(s => {
         this.apiService.getGlobalSearchResults(encodeURIComponent(this.searchKW)).subscribe(s => {
@@ -110,202 +77,16 @@ export class GlobalSearchComponent implements OnInit {
           this.tableService.updateReportTableDataReadyStatus(true);
           this.tableData = sorted;
           this.tableDataOriginal = sorted;
-
-          // Request the AI overview for this term using the results just loaded
-          this.loadAiOverview(this.searchKW, sorted);
         });
         // Log GA4 event
         this.analyticsService.logSearchEvent(this.searchKW);
+
+        // Feed the search term to the global chatbot: open it and pre-fill the
+        // input so the user can ask the GEAR Assistant about this term. The
+        // results table above is independent of the chatbot.
+        this.chatbotService.seedPrompt(this.searchKW);
       }
     });
-  }
-
-  /** Fetch a short AI overview of the search term given the results. */
-  private loadAiOverview(searchKW: string, results: any[]): void {
-    this.aiLoading = true;
-    this.aiOverview = '';
-    this.aiOverviewHtml = '';
-    this.chatbotService.getSearchOverview(searchKW, results || []).subscribe((res) => {
-      this.aiOverview = res && res.reply ? res.reply : '';
-      this.aiOverviewHtml = this.renderMarkdown(this.aiOverview);
-      this.overviewTime = this.formatTime(new Date());
-      this.aiLoading = false;
-    });
-  }
-
-  /**
-   * Convert the AI assistant's lightweight markdown (**bold**, *italics*,
-   * `code`, and - / • bullet lists) into sanitized HTML for display. Input is
-   * HTML-escaped first so model output cannot inject markup.
-   */
-  public renderMarkdown(text: string): SafeHtml {
-    const escaped = this.escapeHtml(text || '');
-
-    // Split into lines so we can turn bullet runs into <ul> lists.
-    const lines = escaped.split(/\r?\n/);
-    const htmlParts: string[] = [];
-    let inList = false;
-
-    const closeList = () => {
-      if (inList) {
-        htmlParts.push('</ul>');
-        inList = false;
-      }
-    };
-
-    for (const rawLine of lines) {
-      const line = rawLine.trim();
-      const bulletMatch = line.match(/^(?:[-*•]|\d+\.)\s+(.*)$/);
-      if (bulletMatch) {
-        if (!inList) {
-          htmlParts.push('<ul>');
-          inList = true;
-        }
-        htmlParts.push('<li>' + this.applyInlineFormatting(bulletMatch[1]) + '</li>');
-      } else if (line.length === 0) {
-        closeList();
-      } else {
-        closeList();
-        htmlParts.push('<p>' + this.applyInlineFormatting(line) + '</p>');
-      }
-    }
-    closeList();
-
-    return this.sanitizer.bypassSecurityTrustHtml(htmlParts.join(''));
-  }
-
-  /** Apply inline markdown (bold, italics, inline code) on already-escaped text. */
-  private applyInlineFormatting(text: string): string {
-    return text
-      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-      .replace(/(^|[^*])\*([^*]+)\*(?!\*)/g, '$1<em>$2</em>')
-      .replace(/`([^`]+)`/g, '<code>$1</code>');
-  }
-
-  /** Escape HTML special characters so model output cannot inject markup. */
-  private escapeHtml(text: string): string {
-    return text
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
-  }
-
-  /** Send a follow-up question after the overview; grounded via chat tools. */
-  public sendFollowUp(): void {
-    const text = this.chatInput.trim();
-    if (!text || this.chatLoading) {
-      return;
-    }
-
-    // Build history from previous pairs + overview context
-    const history: ChatMessage[] = [];
-    if (this.aiOverview) {
-      history.push({
-        role: 'assistant',
-        content: `Overview for search "${this.searchKW}": ${this.aiOverview}`,
-      });
-    }
-    for (const pair of this.chatPairs) {
-      history.push({ role: 'user', content: pair.question });
-      if (pair.answer) {
-        history.push({ role: 'assistant', content: pair.answer });
-      }
-    }
-
-    // Auto-expand to full overlay on the first follow-up question
-    if (this.chatPairs.length === 0) {
-      this.chatExpanded = true;
-      this.chatMinimized = false;
-    }
-
-    // Add a new pending pair (answer = null until response arrives)
-    this.chatPairs.push({ question: text, answer: null, askedAt: this.formatTime(new Date()), answeredAt: null });
-    this.chatInput = '';
-    this.chatLoading = true;
-    this.scrollThreadToBottom();
-
-    this.chatbotService.sendMessage(text, history).subscribe((res) => {
-      const reply =
-        res && typeof res.reply === 'string' && res.reply.trim().length > 0
-          ? res.reply
-          : 'Sorry, I could not generate a response. The AI service may be temporarily unavailable — please try again.';
-      // Fill in the answer for the last pair
-      this.chatPairs[this.chatPairs.length - 1].answer = reply;
-      this.chatPairs[this.chatPairs.length - 1].answeredAt = this.formatTime(new Date());
-      this.chatLoading = false;
-      // Increment unread badge if panel is minimised
-      if (this.chatMinimized) {
-        this.unreadCount++;
-      }
-      this.scrollThreadToBottom();
-    });
-  }
-
-  private scrollThreadToBottom(): void {
-    setTimeout(() => {
-      if (this.threadContainer) {
-        this.threadContainer.nativeElement.scrollTop =
-          this.threadContainer.nativeElement.scrollHeight;
-      }
-    }, 50);
-  }
-
-  public scrollThreadToTop(): void {
-    if (this.threadContainer) {
-      this.threadContainer.nativeElement.scrollTop = 0;
-    }
-  }
-
-  public onThreadScroll(): void {
-    if (this.threadContainer) {
-      this.showScrollTop = this.threadContainer.nativeElement.scrollTop > 80;
-    }
-  }
-
-  public onInputChange(): void {
-    // triggered by (input) — Angular's [(ngModel)] handles the value,
-    // this is a hook for future use (e.g. auto-resize textarea)
-  }
-
-  public copyToClipboard(text: string | null, index: number): void {
-    if (!text) return;
-    navigator.clipboard.writeText(text).then(() => {
-      this.copiedIndex = index;
-      setTimeout(() => { this.copiedIndex = -1; }, 2000);
-    }).catch(() => {});
-  }
-
-  public isErrorReply(answer: string | null): boolean {
-    if (!answer) return false;
-    return answer.startsWith('Sorry,');
-  }
-
-  private formatTime(date: Date): string {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  }
-
-  public onFollowUpKeydown(event: KeyboardEvent): void {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      this.sendFollowUp();
-    }
-  }
-
-  /** Toggle the floating assistant window between expanded and minimized. */
-  public toggleChatMinimized(): void {
-    this.chatMinimized = !this.chatMinimized;
-    if (!this.chatMinimized) {
-      this.unreadCount = 0;
-    }
-  }
-
-  /** Toggle full-page expanded mode. */
-  public toggleExpanded(): void {
-    this.chatExpanded = !this.chatExpanded;
-    // Ensure body is visible when expanding
-    if (this.chatExpanded) {
-      this.chatMinimized = false;
-    }
   }
 
   public onRowClick(e: any): void {
