@@ -1,18 +1,22 @@
-<!-- GEAR Assistant chat: replaces the global search box in the top navbar. -->
+<!-- GEAR Assistant: a global, always-available chatbot shown bottom-right on
+     every view. The global search feeds it a prompt via ChatbotService.seed$. -->
 <div class="gear-chatbot">
   <button
     type="button"
-    class="btn btn-light btn-sm gear-chatbot-toggle"
+    class="gear-chatbot-toggle"
     (click)="toggle()"
     aria-haspopup="dialog"
     [attr.aria-expanded]="open"
     aria-label="Open GEAR Assistant"
   >
-    <i class="fas fa-comments mr-1"></i> Ask GEAR
+    <i class="fas fa-wand-sparkles mr-1"></i> Ask GEAR
+    @if (!open && unreadCount > 0) {
+      <span class="gear-chatbot-unread">{{ unreadCount }}</span>
+    }
   </button>
 
   @if (open) {
-    <div class="gear-chatbot-panel shadow-lg" role="dialog" aria-label="GEAR Assistant">
+    <div class="gear-chatbot-panel shadow-lg" [class.expanded]="expanded" role="dialog" aria-label="GEAR Assistant">
       <div class="gear-chatbot-header">
         <span><i class="fas fa-robot mr-2"></i>GEAR Assistant</span>
         <div>
@@ -28,29 +32,58 @@
           <button
             type="button"
             class="btn btn-sm btn-link text-white"
-            (click)="toggle()"
-            aria-label="Close"
-            title="Close"
+            (click)="toggleExpanded()"
+            [attr.aria-label]="expanded ? 'Shrink window' : 'Expand window'"
+            [title]="expanded ? 'Shrink window' : 'Expand window'"
           >
-            <i class="fas fa-times"></i>
+            <i class="fas" [class.fa-compress-alt]="expanded" [class.fa-expand-alt]="!expanded"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-link text-white"
+            (click)="minimize()"
+            aria-label="Minimize"
+            title="Minimize"
+          >
+            <i class="fas fa-minus"></i>
           </button>
         </div>
       </div>
 
       <div class="gear-chatbot-messages" #scrollContainer>
-        @if (messages.length === 0) {
+        @if (pairs.length === 0 && !loading) {
           <div class="gear-chatbot-empty">
-            Ask about GSA systems, technologies, capabilities, investments, and more.
+            Ask about GSA systems, technologies, capabilities, investments, records schedules, and more.
           </div>
         }
-        @for (msg of messages; track $index) {
-          <div
-            class="gear-chatbot-message"
-            [class.user]="msg.role === 'user'"
-            [class.assistant]="msg.role === 'assistant'"
-          >
-            <div class="bubble">{{ msg.content }}</div>
+        @for (pair of pairs; track $index) {
+          <!-- User question -->
+          <div class="gear-chatbot-message user">
+            <div class="bubble">
+              {{ pair.question }}
+              <div class="gear-chatbot-time">{{ pair.askedAt }}</div>
+            </div>
           </div>
+          <!-- Assistant answer -->
+          @if (pair.answer) {
+            <div class="gear-chatbot-message assistant">
+              <div
+                class="bubble"
+                [class.error]="isErrorReply(pair.answer)"
+                [innerHTML]="renderMarkdown(pair.answer)"
+              ></div>
+              <button
+                type="button"
+                class="gear-chatbot-copy"
+                (click)="copyToClipboard(pair.answer, $index)"
+                [title]="copiedIndex === $index ? 'Copied!' : 'Copy answer'"
+                aria-label="Copy answer"
+              >
+                <i class="fas" [class.fa-check]="copiedIndex === $index" [class.fa-copy]="copiedIndex !== $index"></i>
+              </button>
+              <div class="gear-chatbot-time assistant">{{ pair.answeredAt }}</div>
+            </div>
+          }
         }
         @if (loading) {
           <div class="gear-chatbot-message assistant">
@@ -67,6 +100,7 @@
           placeholder="Ask GEAR a question…"
           aria-label="Message to GEAR Assistant"
           [disabled]="loading"
+          maxlength="500"
         ></textarea>
         <button
           type="button"

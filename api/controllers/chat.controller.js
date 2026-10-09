@@ -3,7 +3,6 @@ const rateLimit = require('express-rate-limit');
 
 const {
   runChat,
-  runSearchOverview,
 } = require(path.join('..', '..', 'mcp', 'chat-orchestrator'));
 
 /**
@@ -37,36 +36,6 @@ exports.chat = async (req, res) => {
     return res.status(200).json({ reply, toolCalls });
   } catch (err) {
     console.error('Chat error:', err);
-    const status = err.status === 429 ? 429 : 502;
-    const msg =
-      err.status === 429
-        ? 'The AI service is rate-limited or over budget. Please try again later.'
-        : 'The GEAR Assistant is temporarily unavailable.';
-    return res.status(status).json({ message: msg });
-  }
-};
-
-/**
- * POST /api/chat/overview
- * Body: { searchKW: string, results: any[] }
- * Returns a short AI overview of the search term given the GEAR results.
- */
-exports.overview = async (req, res) => {
-  try {
-    const searchKW = req.body && req.body.searchKW;
-    const results = (req.body && req.body.results) || [];
-
-    if (typeof searchKW !== 'string' || searchKW.trim().length === 0) {
-      return res.status(400).json({ message: 'A non-empty "searchKW" is required.' });
-    }
-    if (!Array.isArray(results)) {
-      return res.status(400).json({ message: '"results" must be an array.' });
-    }
-
-    const { reply } = await runSearchOverview(searchKW, results);
-    return res.status(200).json({ reply });
-  } catch (err) {
-    console.error('Overview error:', err);
     const status = err.status === 429 ? 429 : 502;
     const msg =
       err.status === 429

@@ -196,6 +196,41 @@ function cleanEntityName(raw) {
 }
 
 /**
+ * Detect "which records schedules / how long must <X> retain ... " style
+ * questions and extract the business-system name. These are answered
+ * deterministically by find_system -> get_system_records_schedules.
+ * Returns the cleaned entity name or null.
+ */
+function detectRecordsScheduleQuestion(message) {
+  const msg = String(message || '');
+  const mentionsRecords = /\brecords?\s+schedule|\brecords?\s+management|\bretain(?:ed|s|ing)?\b|\bretention\b|\bdispos(?:e|al|ition)|\brecords?\b/i.test(
+    msg
+  );
+  if (!mentionsRecords) return null;
+
+  const patterns = [
+    // which records schedules does the <X> system have to abide by
+    /\bwhich\s+records?\s+schedules?\s+(?:does|do|must)\s+(?:the\s+)?(.+?)\s+(?:system\s+)?(?:have\s+to\s+)?(?:abide|follow|comply|adhere|use|retain)\b/i,
+    /\bwhat\s+records?\s+schedules?\s+(?:does|do|apply\s+to|must)\s+(?:the\s+)?(.+?)(?:\?|$)/i,
+    // how long does <X> have to retain / keep a ... record
+    /\bhow\s+long\s+(?:does|do|must)\s+(?:the\s+)?(.+?)\s+(?:have\s+to\s+|need\s+to\s+)?(?:retain|keep|hold|store)\b/i,
+    // records schedules for/of <X>
+    /\brecords?\s+schedules?\s+(?:for|of|that\s+apply\s+to)\s+(?:the\s+)?(.+?)(?:\?|$)/i,
+    // retention/disposition requirements for <X>
+    /\b(?:retention|records?\s+management|disposition)\s+(?:requirements?|rules?|obligations?)\s+(?:for|of)\s+(?:the\s+)?(.+?)(?:\?|$)/i,
+  ];
+
+  for (const re of patterns) {
+    const m = msg.match(re);
+    if (m && m[1]) {
+      const name = cleanEntityName(m[1]);
+      if (name) return name;
+    }
+  }
+  return null;
+}
+
+/**
  * Run a full chat turn.
  * @param {Array<{role:string,content:string}>} history Prior user/assistant messages.
  * @param {string} userMessage The new user message.
@@ -270,6 +305,60 @@ async function runChat(history, userMessage) {
       }
     } catch (err) {
       console.error('[chat] fast-path error, falling back to tool loop:', err.message);
+      // Fall through to the normal loop below.
+    }
+  }
+
+  // Deterministic fast-path: records schedules / retention questions are
+  // answered by find_system -> get_system_records_schedules.
+  const recordsIntent = detectRecordsScheduleQuestion(userMessage);
+  if (recordsIntent) {
+    try {
+      const found = await runTool('find_system', { name: recordsIntent });
+      const best = found && found.bestMatch;
+      if (best && best.Id) {
+        const schedules = await runTool('get_system_records_schedules', {
+          id: best.Id,
+        });
+        console.error(
+          '[chat] fast-path records: system=%s(%s) rows=%s',
+          best.Name,
+          best.Id,
+          schedules && schedules.total
+        );
+        messages.push({
+          role: 'user',
+          content:
+            `AUTHORITATIVE DATA (use this to answer; do not call more tools):\n` +
+            `The business system matching "${recordsIntent}" is "${best.Name}" (${best.Type}).\n` +
+            `The records schedules this system must abide by (from GSA's Records Management inventory) are:\n` +
+            `${JSON.stringify(schedules, null, 2)}\n` +
+            `Answer the user's question using ONLY this data:\n` +
+            `- If the user asks WHICH records schedules apply, state the system name and list each schedule by its Record_Item_Title as a bulleted list.\n` +
+            `- If the user asks HOW LONG a type of record must be retained (or what to do with it afterward), identify the schedule(s) whose Record_Item_Title/Description best match the record type the user described, and summarize the Retention_Instructions (and FY_Retention_Years / disposition) for those schedule(s) in plain language.\n` +
+            `- If the list is empty, say no records schedules are recorded for that system.\n` +
+            `ALWAYS end your answer with this exact caveat on its own line: "Note: Do not base any records retention or destruction decisions on this tool without first confirming with GSA's Records Management team (records@gsa.gov)."\n` +
+            `Do not mention websites, software, or raw JSON/field names.`,
+        });
+        const reply = await chatCompletion(messages, {
+          model: cfg.model,
+          temperature: cfg.temperature,
+          maxTokens: cfg.maxTokens,
+        });
+        const result = {
+          reply: cleanFinalAnswer(reply),
+          toolCalls: [
+            { name: 'find_system', arguments: { name: recordsIntent } },
+            { name: 'get_system_records_schedules', arguments: { id: best.Id } },
+          ],
+        };
+        if (isFirstTurn) {
+          promptCache.save(userMessage, 'chat', result.reply, result.toolCalls).catch(() => {});
+        }
+        return result;
+      }
+    } catch (err) {
+      console.error('[chat] records fast-path error, falling back to tool loop:', err.message);
       // Fall through to the normal loop below.
     }
   }
@@ -353,110 +442,5 @@ function sanitizeHistory(history) {
     .map((m) => ({ role: m.role, content: m.content.slice(0, 8000) }));
 }
 
-/**
- * Produce a short AI overview of a global-search term in the context of the
- * results already returned by GEAR's search. The search results are passed in
- * directly (from the same query the results table uses) so we do not spend an
- * extra tool round-trip. Returns a concise natural-language summary.
- *
- * @param {string} searchKW The user's search term.
- * @param {Array} results The GEAR global-search result rows.
- * @returns {Promise<{reply:string}>}
- */
-async function runSearchOverview(searchKW, results) {
-  const cfg = loadConfig();
-
-  // Cache lookup for search overviews — keyword-based, 7-day TTL.
-  const cachedOverview = await promptCache.lookup(searchKW, 'overview');
-  if (cachedOverview) {
-    console.error('[overview] cache HIT — skipping USAi call');
-    return { reply: cachedOverview.reply };
-  }
-
-  // If the search term is actually a "what software does <X> use" question,
-  // answer it authoritatively (find_system -> get_system_software) instead of
-  // just summarizing the raw search rows (which are website-biased and lead the
-  // model to say "I will need to query the system's inventory"). This makes the
-  // first overview match what the user wanted without a second prompt.
-  const softwareIntent = detectSystemSoftwareQuestion(searchKW);
-  if (softwareIntent) {
-    try {
-      const found = await runTool('find_system', { name: softwareIntent });
-      const best = found && found.bestMatch;
-      if (best && best.Id) {
-        const software = await runTool('get_system_software', { id: best.Id });
-        console.error(
-          '[overview] fast-path software: system=%s(%s) rows=%s',
-          best.Name,
-          best.Id,
-          software && software.total
-        );
-        const sysContent = [
-          ...cfg.systemPrompts,
-          '',
-          'You are generating a brief overview to display above a search results table.',
-        ].join('\n');
-        const reply = await chatCompletion(
-          [
-            { role: 'system', content: sysContent },
-            {
-              role: 'user',
-              content:
-                `AUTHORITATIVE DATA (use this to answer; do not say you need to query anything):\n` +
-                `The business system matching "${softwareIntent}" is "${best.Name}" (${best.Type}).\n` +
-                `Its IT standards (software products) recorded in GEAR are:\n` +
-                `${JSON.stringify(software, null, 2)}\n` +
-                `Answer the question "What software does ${softwareIntent} use?" using ONLY this data: state the system name, then list each software product by Name (include Status/compliance if present) as a bulleted list. If the list is empty, say no software is recorded for that system. Keep it concise. Do not mention websites or search results.`,
-            },
-          ],
-          { model: cfg.model, temperature: cfg.temperature, maxTokens: cfg.maxTokens }
-        );
-        const overviewReply = cleanFinalAnswer(reply);
-        promptCache.save(searchKW, 'overview', overviewReply, []).catch(() => {});
-        return { reply: overviewReply };
-      }
-    } catch (err) {
-      console.error(
-        '[overview] fast-path error, falling back to summary:',
-        err.message
-      );
-      // Fall through to the generic summary below.
-    }
-  }
-
-  const rows = Array.isArray(results) ? results.slice(0, 30) : [];
-  const compact = rows.map((r) => ({
-    Name: r.Name,
-    Type: r.GEAR_Type_Display || r.GEAR_Type,
-    Status: r.Status,
-    Description:
-      typeof r.Description === 'string' ? r.Description.slice(0, 300) : r.Description,
-  }));
-
-  const systemContent = [
-    ...cfg.systemPrompts,
-    '',
-    'You are generating a brief overview to display above a search results table.',
-    'Summarize what the search term appears to refer to within GEAR, and characterize the results (how many, what kinds of entities, notable items). Be concise: 2-4 short sentences or a few bullet points.',
-    'Only use the provided results data; do not invent entities. If there are no results, say the search returned no matches and suggest refining the term.',
-  ].join('\n');
-
-  const userContent =
-    `Search term: "${searchKW}"\n\n` +
-    `GEAR search results (JSON, up to 30 rows of ${rows.length} shown):\n` +
-    JSON.stringify(compact);
-
-  const reply = await chatCompletion(
-    [
-      { role: 'system', content: systemContent },
-      { role: 'user', content: userContent.slice(0, 12000) },
-    ],
-    { model: cfg.model, temperature: cfg.temperature, maxTokens: cfg.maxTokens }
-  );
-
-  promptCache.save(searchKW, 'overview', reply, []).catch(() => {});
-  return { reply };
-}
-
-module.exports = { runChat, runSearchOverview, loadConfig };
+module.exports = { runChat, loadConfig };
 
