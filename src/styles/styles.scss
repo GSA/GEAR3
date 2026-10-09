@@ -356,6 +356,41 @@ a.position-absolute.float-right {
   display: block !important;
 }
 
+/* Make the bold "Data source:" / "Definition:" labels a light gray that stays
+   readable against the dark tooltip background */
+.p-tooltip .tooltip-label,
+.p-tooltip-text .tooltip-label {
+  color: #d1d5db !important;
+}
+
+/* Widen helper-text tooltips, shrink the text, and allow long descriptions to scroll */
+.p-tooltip .p-tooltip-text {
+  max-width: min(32rem, 90vw) !important;
+  width: max-content;
+  max-height: 60vh;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+  box-sizing: border-box;
+  font-size: 0.8rem;
+  line-height: 1.3;
+  text-align: left;
+}
+
+/* Keep header helper tooltips inside the viewport so right-edge columns
+   don't render their text off the right side of the screen. */
+.gear-help-tooltip {
+  max-width: min(32rem, 92vw) !important;
+}
+.gear-help-tooltip.p-tooltip,
+.gear-help-tooltip .p-tooltip-text {
+  max-width: min(32rem, 92vw) !important;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+}
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 

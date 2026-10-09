@@ -23,7 +23,7 @@
             <div class="main-data-container">
               <div class="data">
                 <label class="data-label">
-                  <span [title]="getTooltip('Status')" role="tooltip">
+                  <span [pTooltip]="getTooltip('Status')" [escape]="false" role="tooltip">
                     Status
                     <i class="fas fa-info-circle"></i>
                   </span>
@@ -34,7 +34,7 @@
             </div>
             <div class="data">
               <label class="data-label">
-                  <span [title]="getTooltip('FIPS Impact Level')" role="tooltip">
+                  <span [pTooltip]="getTooltip('FIPS Impact Level')" [escape]="false" role="tooltip">
                     <i class="fas fa-shield-alt"></i>
                     FIPS Impact Level
                     <i class="fas fa-info-circle"></i>
@@ -44,7 +44,7 @@
               </div>
               <div class="data">
                 <label class="data-label">
-                    <span [title]="getTooltip('ATO Date')" role="tooltip">
+                    <span [pTooltip]="getTooltip('ATO Date')" [escape]="false" role="tooltip">
                       <i class="fas fa-calendar-alt"></i>
                       ATO Date
                       <i class="fas fa-info-circle"></i>
@@ -54,7 +54,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('Renewal Date')" role="tooltip">
+                    <span [pTooltip]="getTooltip('Renewal Date')" [escape]="false" role="tooltip">
                       <i class="fas fa-calendar-check"></i>
                       Renewal Date
                       <i class="fas fa-info-circle"></i>
@@ -71,7 +71,7 @@
                     </div> -->
                     <div class="data">
                       <label class="data-label">
-                          <span [title]="getTooltip('PII')" role="tooltip">
+                          <span [pTooltip]="getTooltip('PII')" [escape]="false" role="tooltip">
                             <i class="fas fa-user-shield"></i>
                             PII
                             <i class="fas fa-info-circle"></i>
@@ -81,7 +81,7 @@
                       </div>
                       <div class="data">
                         <label class="data-label">
-                            <span [title]="getTooltip('CUI')" role="tooltip">
+                            <span [pTooltip]="getTooltip('CUI')" [escape]="false" role="tooltip">
                               <i class="fas fa-lock"></i>
                               CUI
                               <i class="fas fa-info-circle"></i>
@@ -91,7 +91,7 @@
                         </div>
                         <div class="data-full">
                           <label class="data-label">
-                            <span [title]="getTooltip('Description')" role="tooltip">
+                            <span [pTooltip]="getTooltip('Description')" [escape]="false" role="tooltip">
                               Description
                               <i class="fas fa-info-circle"></i>
                             </span>
@@ -108,7 +108,7 @@
                         @if (isFieldPopulated(detailsData.SystemLevel)) {
                           <tr>
                             <td>
-                              <span [title]="getTooltip('System Level')" role="tooltip"> System Level <i class="fas fa-info-circle"></i>
+                              <span [pTooltip]="getTooltip('System Level')" [escape]="false" role="tooltip"> System Level <i class="fas fa-info-circle"></i>
                             </span>
                           </td>
                           <td>{{detailsData.SystemLevel}}</td>
@@ -117,7 +117,7 @@
                       @if (isFieldPopulated(detailsData.SharedService)) {
                         <tr>
                           <td>
-                            <span [title]="getTooltip('Shared Service')" role="tooltip"> Shared Service <i class="fas fa-info-circle"></i>
+                            <span [pTooltip]="getTooltip('Shared Service')" [escape]="false" role="tooltip"> Shared Service <i class="fas fa-info-circle"></i>
                           </span>
                         </td>
                         <td>{{detailsData.SharedService}}</td>
@@ -126,7 +126,7 @@
                     @if (isFieldPopulated(detailsData.RespOrg)) {
                       <tr>
                         <td>
-                          <span [title]="getTooltip('Responsible Org')" role="tooltip"> Responsible Organization <i class="fas fa-info-circle"></i>
+                          <span [pTooltip]="getTooltip('Responsible Org')" [escape]="false" role="tooltip"> Responsible Organization <i class="fas fa-info-circle"></i>
                         </span>
                       </td>
                       <td>{{detailsData.RespOrg}}</td>
@@ -135,7 +135,7 @@
                   @if (isFieldPopulated(detailsData.BusOrg)) {
                     <tr>
                       <td>
-                        <span [title]="getTooltip('Business Organization')" role="tooltip"> Business Organization <i class="fas fa-info-circle"></i>
+                        <span [pTooltip]="getTooltip('Business Organization')" [escape]="false" role="tooltip"> Business Organization <i class="fas fa-info-circle"></i>
                       </span>
                     </td>
                     <td>{{detailsData.BusOrg}}</td>
@@ -144,7 +144,7 @@
                 @if (isFieldPopulated(detailsData.FISMASystemIdentifier)) {
                   <tr>
                     <td>
-                      <span [title]="getTooltip('FISMA System Identifier')" role="tooltip"> FISMA System Identifier <i class="fas fa-info-circle"></i>
+                      <span [pTooltip]="getTooltip('FISMA System Identifier')" [escape]="false" role="tooltip"> FISMA System Identifier <i class="fas fa-info-circle"></i>
                     </span>
                   </td>
                   <td>{{detailsData.FISMASystemIdentifier}}</td>
@@ -153,7 +153,7 @@
               @if (isFieldPopulated(detailsData.ATOType)) {
                 <tr>
                   <td>
-                    <span [title]="getTooltip('ATO Type')" role="tooltip"> ATO Type <i class="fas fa-info-circle"></i>
+                    <span [pTooltip]="getTooltip('ATO Type')" [escape]="false" role="tooltip"> ATO Type <i class="fas fa-info-circle"></i>
                   </span>
                 </td>
                 <td>{{detailsData.ATOType}}</td>
@@ -162,7 +162,7 @@
             @if (isFieldPopulated(detailsData.CloudYN)) {
               <tr>
                 <td>
-                  <span [title]="getTooltip('Cloud Hosted?')" role="tooltip"> Cloud Hosted <i class="fas fa-info-circle"></i>
+                  <span [pTooltip]="getTooltip('Cloud Hosted?')" [escape]="false" role="tooltip"> Cloud Hosted <i class="fas fa-info-circle"></i>
                 </span>
               </td>
               <td>{{detailsData.CloudYN}}</td>
@@ -171,7 +171,7 @@
           @if (isFieldPopulated(detailsData.CSP)) {
             <tr>
               <td>
-                <span [title]="getTooltip('Hosting Provider')" role="tooltip"> Hosting Provider <i class="fas fa-info-circle"></i>
+                <span [pTooltip]="getTooltip('Hosting Provider')" [escape]="false" role="tooltip"> Hosting Provider <i class="fas fa-info-circle"></i>
               </span>
             </td>
             <td>{{detailsData.CSP}}</td>
@@ -180,7 +180,7 @@
         @if (isFieldPopulated(detailsData.ServiceType)) {
           <tr>
             <td>
-              <span [title]="getTooltip('Cloud Service Type')" role="tooltip"> Service Type <i class="fas fa-info-circle"></i>
+              <span [pTooltip]="getTooltip('Cloud Service Type')" [escape]="false" role="tooltip"> Service Type <i class="fas fa-info-circle"></i>
             </span>
           </td>
           <td>{{detailsData.ServiceType}}</td>
@@ -189,7 +189,7 @@
       @if (isFieldPopulated(detailsData.FedContractorLoc)) {
         <tr>
           <td>
-            <span [title]="getTooltip('Fed/Contractor Location')" role="tooltip"> Fed/Contractor Location <i class="fas fa-info-circle"></i>
+            <span [pTooltip]="getTooltip('Fed or Contractor System')" [escape]="false" role="tooltip"> Fed/Contractor Location <i class="fas fa-info-circle"></i>
           </span>
         </td>
         <td>{{detailsData.FedContractorLoc}}</td>
@@ -198,7 +198,7 @@
     @if (isFieldPopulated(detailsData.Reportable)) {
       <tr>
         <td>
-          <span [title]="getTooltip('FISMA Reportable')" role="tooltip"> Reportable <i class="fas fa-info-circle"></i>
+          <span [pTooltip]="getTooltip('FISMA Reportable')" [escape]="false" role="tooltip"> Reportable <i class="fas fa-info-circle"></i>
         </span>
       </td>
       <td>{{detailsData.Reportable}}</td>
@@ -207,7 +207,7 @@
   @if (isFieldPopulated(detailsData.ParentName)) {
     <tr>
       <td>
-        <span [title]="getTooltip('Parent System')" role="tooltip"> Parent System <i class="fas fa-info-circle"></i>
+        <span [pTooltip]="getTooltip('Parent System')" [escape]="false" role="tooltip"> Parent System <i class="fas fa-info-circle"></i>
       </span>
     </td>
     <td>{{detailsData.ParentName}}</td>
@@ -216,7 +216,7 @@
 @if (isFieldPopulated(detailsData.SubSystem_Tag)) {
   <tr>
     <td>
-      <span [title]="getTooltip('Sub System Tag')" role="tooltip"> Sub System Tag <i class="fas fa-info-circle"></i>
+      <span [pTooltip]="getTooltip('Sub System Tag')" [escape]="false" role="tooltip"> Sub System Tag <i class="fas fa-info-circle"></i>
     </span>
   </td>
   <td>{{detailsData.SubSystem_Tag}}</td>
@@ -225,7 +225,7 @@
 @if (isFieldPopulated(detailsData.InactiveDate)) {
   <tr>
     <td>
-      <span [title]="getTooltip('Inactive Date')" role="tooltip"> Inactive Date <i class="fas fa-info-circle"></i>
+      <span [pTooltip]="getTooltip('Inactive Date')" [escape]="false" role="tooltip"> Inactive Date <i class="fas fa-info-circle"></i>
     </span>
   </td>
   <td>{{detailsData.InactiveDate | date : "longDate" : "UTC"}}</td>
@@ -245,7 +245,7 @@
       <div class="main-data-container poc-main-data">
         <div class="data">
           <label class="data-label">
-            <span [title]="getTooltip('Authorizing Official')" role="tooltip">
+            <span [pTooltip]="getTooltip('Authorizing Official')" [escape]="false" role="tooltip">
               Authorizing Official
               <i class="fas fa-info-circle"></i>
             </span>
@@ -254,7 +254,7 @@
         </div>
         <div class="data">
           <label class="data-label">
-            <span [title]="getTooltip('System Owner')" role="tooltip">
+            <span [pTooltip]="getTooltip('System Owner')" [escape]="false" role="tooltip">
               System Owner
               <i class="fas fa-info-circle"></i>
             </span>
@@ -263,7 +263,7 @@
         </div>
         <div class="data">
           <label class="data-label">
-            <span [title]="getTooltip('ISSM')" role="tooltip">
+            <span [pTooltip]="getTooltip('ISSM')" [escape]="false" role="tooltip">
               ISSM
               <i class="fas fa-info-circle"></i>
             </span>
@@ -272,7 +272,7 @@
         </div>
         <div class="data">
           <label class="data-label">
-            <span [title]="getTooltip('ISSO')" role="tooltip">
+            <span [pTooltip]="getTooltip('ISSO')" [escape]="false" role="tooltip">
               ISSO
               <i class="fas fa-info-circle"></i>
             </span>
@@ -281,7 +281,7 @@
         </div>
         <div class="data">
           <label class="data-label">
-            <span [title]="getTooltip('Contracting Officer')" role="tooltip">
+            <span [pTooltip]="getTooltip('Contracting Officer')" [escape]="false" role="tooltip">
               Contracting Officer
               <i class="fas fa-info-circle"></i>
             </span>
@@ -290,7 +290,7 @@
         </div>
         <div class="data">
           <label class="data-label">
-            <span [title]="getTooltip('Contracting Officer Representative')" role="tooltip">
+            <span [pTooltip]="getTooltip('Contracting Officer Representative')" [escape]="false" role="tooltip">
               Contracting Officer Representative
               <i class="fas fa-info-circle"></i>
             </span>
@@ -299,7 +299,7 @@
         </div>
         <div class="data">
           <label class="data-label">
-            <span [title]="getTooltip('Business POC')" role="tooltip">
+            <span [pTooltip]="getSystemsTooltip('Business POC')" [escape]="false" role="tooltip">
               Business POC
               <i class="fas fa-info-circle"></i>
             </span>
@@ -308,7 +308,7 @@
         </div>
         <div class="data">
           <label class="data-label">
-            <span [title]="getTooltip('Technical POC')" role="tooltip">
+            <span [pTooltip]="getSystemsTooltip('Technical POC')" [escape]="false" role="tooltip">
               Technical POC
               <i class="fas fa-info-circle"></i>
             </span>

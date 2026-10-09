@@ -43,7 +43,7 @@
               <div class="data-wrapper">
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('Alias/Acronym')" role="tooltip">
+                    <span [pTooltip]="getTooltip('Alias/Acronym')" [escape]="false" role="tooltip">
                       Alias/Acronym
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -54,7 +54,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('Status')" role="tooltip">
+                    <span [pTooltip]="getTooltip('Status')" [escape]="false" role="tooltip">
                       Status
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -65,7 +65,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('System Level')" role="tooltip">
+                    <span [pTooltip]="getTooltip('System Level')" [escape]="false" role="tooltip">
                       System Level
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -76,7 +76,7 @@
                 </div>
                 <div class="data-full">
                   <label class="data-label">
-                    <span [title]="getTooltip('Description')" role="tooltip">
+                    <span [pTooltip]="getTooltip('Description')" [escape]="false" role="tooltip">
                       Description
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -85,7 +85,7 @@
                 </div>
                 <div class="data-full">
                   <label class="data-label">
-                    <span [title]="getTooltip('Budget Alias')" role="tooltip">
+                    <span [pTooltip]="getTooltip('Budget Alias')" [escape]="false" role="tooltip">
                       Budget Alias
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -94,7 +94,7 @@
                 </div>
                 <div class="data-full">
                   <label class="data-label">
-                    <span [title]="getTooltip('Related Artifacts')" role="tooltip">
+                    <span [pTooltip]="getTooltip('Related Artifacts')" [escape]="false" role="tooltip">
                       Related Artifacts
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -120,7 +120,7 @@
               <div class="data-wrapper">
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('Business Org')" role="tooltip">
+                    <span [pTooltip]="getTooltip('Business Org')" [escape]="false" role="tooltip">
                       Business Org
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -131,7 +131,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('ATO Type')" role="tooltip">
+                    <span [pTooltip]="getTooltip('ATO Type')" [escape]="false" role="tooltip">
                       ATO Type
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -142,7 +142,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('CUI')" role="tooltip">
+                    <span [pTooltip]="getTooltip('CUI')" [escape]="false" role="tooltip">
                       CUI
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -153,7 +153,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('Responsible IT Org')" role="tooltip">
+                    <span [pTooltip]="getTooltip('Responsible IT Org')" [escape]="false" role="tooltip">
                       Responsible IT Org
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -164,7 +164,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('ATO Date')" role="tooltip">
+                    <span [pTooltip]="getTooltip('ATO Date')" [escape]="false" role="tooltip">
                       ATO Date
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -176,7 +176,7 @@
                 <div class="data"></div>
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('Cloud Service Type')" role="tooltip">
+                    <span [pTooltip]="getTooltip('Cloud Service Type')" [escape]="false" role="tooltip">
                       Cloud Service Type
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -187,7 +187,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('Renewal Date')" role="tooltip">
+                    <span [pTooltip]="getTooltip('Renewal Date')" [escape]="false" role="tooltip">
                       Renewal Date
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -198,7 +198,7 @@
                 </div>
               </div>
               <div class="sub-content full-width">
-                <span class="sub-header">Point of Contacts</span>
+                <span class="sub-header">Points of Contact</span>
                 <table>
                   <tr>
                     <th>Role</th>
@@ -208,7 +208,12 @@
                   </tr>
                   @for (poc of splitPOCs; track poc) {
                     <tr>
-                      <td> {{ poc.type }} </td>
+                      <td>
+                        <span [pTooltip]="getTooltip(poc.type)" [escape]="false" role="tooltip">
+                          {{ poc.type }}
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </td>
                       <td> {{ poc.name }} </td>
                       <td>
                         <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{poc.email}}" target="_blank" rel="noopener">{{ poc.email }}</a>
@@ -220,11 +225,11 @@
               </div>
               <div class="sub-content full-width">
                 <span class="sub-header">Related Business Capabilities</span>
-                <app-table visibleColumnStorageKey="systems-related-business-capabilities" defaultSortField="Name" [localTableData]="sysCapabilitiesData" [isLocal]="true" [tableCols]="relatedCapabilitiesCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="capabilities" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onCapRowClick($event)"></app-table>
+                <app-table visibleColumnStorageKey="systems-related-business-capabilities" defaultSortField="Name" [localTableData]="sysCapabilitiesData" [isLocal]="true" [tableCols]="relatedCapabilitiesCols" [attrDefs]="capabilitiesAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="capabilities" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onCapRowClick($event)"></app-table>
               </div>
               <div class="sub-content full-width">
                 <span class="sub-header">System Time Report</span>
-                <app-table visibleColumnStorageKey="systems-system-time" defaultSortField="System Name" [localTableData]="systemTimeData" [isLocal]="true" [tableCols]="systemTimeCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onTimeRowClick($event)"></app-table>
+                <app-table visibleColumnStorageKey="systems-system-time" defaultSortField="System Name" [localTableData]="systemTimeData" [isLocal]="true" [tableCols]="systemTimeCols" [attrDefs]="timeAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onTimeRowClick($event)"></app-table>
               </div>
             </div>
           </div>
@@ -237,7 +242,7 @@
               <div class="data-wrapper">
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('Cloud Hosted?')" role="tooltip">
+                    <span [pTooltip]="getTooltip('Cloud Hosted?')" [escape]="false" role="tooltip">
                       Cloud Enabled?
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -248,7 +253,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('Hosting Provider')" role="tooltip">
+                    <span [pTooltip]="getTooltip('Hosting Provider')" [escape]="false" role="tooltip">
                       Hosting Provider
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -259,7 +264,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('Complete FISMA Assessment for Current FY')" role="tooltip">
+                    <span [pTooltip]="getTooltip('Complete FISMA Assessment for Current FY')" [escape]="false" role="tooltip">
                       Complete FISMA Assessment for Current FY
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -270,7 +275,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('FIPS Impact Level')" role="tooltip">
+                    <span [pTooltip]="getTooltip('FIPS Impact Level')" [escape]="false" role="tooltip">
                       FIPS Impact Level
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -281,7 +286,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('Gov\'t-Wide Shared Service')" role="tooltip">
+                    <span [pTooltip]="getTooltip('Gov\'t-Wide Shared Service')" [escape]="false" role="tooltip">
                       Gov't-Wide Shared Service
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -292,7 +297,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('FISMA System Identifier')" role="tooltip">
+                    <span [pTooltip]="getTooltip('FISMA System Identifier')" [escape]="false" role="tooltip">
                       FISMA System Identifier
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -303,7 +308,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('Cloud Service Type')" role="tooltip">
+                    <span [pTooltip]="getTooltip('Cloud Service Type')" [escape]="false" role="tooltip">
                       Service Type
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -314,7 +319,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('PII Indicator')" role="tooltip">
+                    <span [pTooltip]="getTooltip('PII Indicator')" [escape]="false" role="tooltip">
                       PII Indicator
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -326,7 +331,7 @@
               </div>
               <div class="sub-content full-width">
                 <span class="sub-header">Related Technology</span>
-                <app-table visibleColumnStorageKey="systems-related-technology" defaultSortField="Name" [localTableData]="sysTechnologiesData" [isLocal]="true" [tableCols]="relatedTechnologyCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="itStandards" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRelatedTechRowClick($event)"></app-table>
+                <app-table visibleColumnStorageKey="systems-related-technology" defaultSortField="Name" [localTableData]="sysTechnologiesData" [isLocal]="true" [tableCols]="relatedTechnologyCols" [attrDefs]="technologyAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="itStandards" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRelatedTechRowClick($event)"></app-table>
               </div>
             </div>
           </div>
@@ -339,7 +344,7 @@
               <div class="sub-content full-width">
                 <span class="sub-header">Related Records</span>
                 @if(sysRecordsData && sysRecordsData.length > 0) {
-                  <app-table visibleColumnStorageKey="systems-related-records" defaultSortField="GSA_Number" [localTableData]="sysRecordsData" [isLocal]="true" [tableCols]="recordsCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="records" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRelatedRecordsRowClick($event)"></app-table>
+                  <app-table visibleColumnStorageKey="systems-related-records" defaultSortField="GSA_Number" [localTableData]="sysRecordsData" [isLocal]="true" [tableCols]="recordsCols" [attrDefs]="recordsAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="records" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRelatedRecordsRowClick($event)"></app-table>
                 } @else {
                   <span>Contact Records Management (records@gsa.gov) for a more detailed analysis of records associated with this system.</span>
                 }
@@ -354,7 +359,7 @@
             <div class="main-data-container">
               <div class="sub-content full-width">
                 <span class="sub-header">Related Websites</span>
-                <app-table visibleColumnStorageKey="systems-related-websites" defaultSortField="domain" [localTableData]="sysWebsitesData" [isLocal]="true" [tableCols]="websiteCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="website" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRelatedWebsitesRowClick($event)"></app-table>
+                <app-table visibleColumnStorageKey="systems-related-websites" defaultSortField="domain" [localTableData]="sysWebsitesData" [isLocal]="true" [tableCols]="websiteCols" [attrDefs]="websitesAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="website" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRelatedWebsitesRowClick($event)"></app-table>
               </div>
             </div>
           </div>

@@ -40,7 +40,7 @@
             <!-- IMPORTANT INFO -->
             <div class="overview-container">
               <div class="overview-item">
-                <div class="overview-item-title" [title]="getTooltip('Status')" role="tooltip">
+                <div class="overview-item-title" [pTooltip]="getTooltip('Status')" [escape]="false" role="tooltip">
                   <i class="fa fa-info-circle"></i>
                   <span class="heading">Status</span>
                 </div>
@@ -50,7 +50,7 @@
                 </div>
               </div>
               <div class="overview-item">
-                <div class="overview-item-title" [title]="getTooltip('Approved Versions')">
+                <div class="overview-item-title" [pTooltip]="getTooltip('Approved Versions')" [escape]="false">
                   <i class="fa fa-question-circle"></i>
                   <span class="heading">Approved Versions</span>
                 </div>
@@ -67,7 +67,7 @@
                 }
               </div>
               <div class="overview-item">
-                <div class="overview-item-title" [title]="getTooltip('Approval Expiration Date')" role="tooltip">
+                <div class="overview-item-title" [pTooltip]="getTooltip('Approval Expiration Date')" [escape]="false" role="tooltip">
                   <i class="fa fa-calendar-alt"></i>
                   <span class="heading">Approval Expires</span>
                 </div>
@@ -79,7 +79,7 @@
                 </div>
               </div>
               <div class="overview-item">
-                <div class="overview-item-title" [title]="getTooltip('Software Release Name')" >
+                <div class="overview-item-title" [pTooltip]="getTooltip('Software Release Name')" [escape]="false" >
                   <i class="fa fa-info-circle"></i>
                   <span class="heading">Software Release Name</span>
                 </div>
@@ -88,7 +88,7 @@
                 </div>
               </div>
               <div class="overview-item">
-                <div class="overview-item-title" [title]="getTooltip('Also Known As')" role="tooltip">
+                <div class="overview-item-title" [pTooltip]="getTooltip('Also Known As')" [escape]="false" role="tooltip">
                   <i class="fa fa-info-circle"></i>
                   <span class="heading">Also Known As</span>
                 </div>
@@ -97,7 +97,7 @@
                 </div>
               </div>
               <div class="overview-item">
-                <div class="overview-item-title" [title]="getTooltip('508 Compliance')" role="tooltip">
+                <div class="overview-item-title" [pTooltip]="getTooltip('508 Compliance')" [escape]="false" role="tooltip">
                   <i class="fa fa-universal-access"></i>
                   <span class="heading">508 Compliance</span>
                 </div>
@@ -109,7 +109,7 @@
                 </div>
               </div>
               <div class="overview-item">
-                <div class="overview-item-title" [title]="getTooltip('POC')" role="tooltip">
+                <div class="overview-item-title" [pTooltip]="getTooltip('POC')" [escape]="false" role="tooltip">
                   <i class="fa fa-user"></i>
                   <span class="heading">POC</span>
                 </div>
@@ -118,7 +118,7 @@
                 </div>
               </div>
               <div class="overview-item">
-                <div class="overview-item-title" [title]="getTooltip('Operating Systems')" role="tooltip">
+                <div class="overview-item-title" [pTooltip]="getTooltip('Operating Systems')" [escape]="false" role="tooltip">
                   <i class="fa fa-info-circle"></i>
                   <span class="heading">Operating System(s)</span>
                 </div>
@@ -127,7 +127,7 @@
                 </div>
               </div>
               <div class="overview-item">
-                <div class="overview-item-title" [title]="getTooltip('Deployment Type')" role="tooltip">
+                <div class="overview-item-title" [pTooltip]="getTooltip('Deployment Type')" [escape]="false" role="tooltip">
                   <i class="fa fa-shipping-fast"></i>
                   <span class="heading">Deployment Type</span>
                 </div>
@@ -142,7 +142,7 @@
             <!-- DESCRIPTION -->
             <div class="overview-container m2">
               <div class="overview-item">
-                <div class="overview-item-title" [title]="getTooltip('Description')" role="tooltip">
+                <div class="overview-item-title" [pTooltip]="getTooltip('Description')" [escape]="false" role="tooltip">
                   <i class="fa fa-info-circle"></i>
                   <span class="heading">Description</span>
                 </div>
@@ -162,7 +162,7 @@
             <!-- COMMENTS -->
             <div class="overview-container">
               <div class="overview-item">
-                <div class="overview-item-title" [title]="getTooltip('Comments')" role="tooltip">
+                <div class="overview-item-title" [pTooltip]="getTooltip('Comments')" [escape]="false" role="tooltip">
                   <i class="fa fa-tag"></i>
                   <span class="heading">Comments</span>
                 </div>
@@ -207,7 +207,7 @@
                 @if (isFieldPopulated(itStandard.ManufacturerName)) {
                   <tr>
                     <td>
-                      <i class="fas fa-toolbox"></i><span [title]="getTooltip('Manufacturer Name')" role="tooltip">Manufacturer</span>
+                      <i class="fas fa-toolbox"></i><span [pTooltip]="getTooltip('Manufacturer Name')" [escape]="false" role="tooltip">Manufacturer</span>
                     </td>
                     <td>{{ itStandard.ManufacturerName }}</td>
                   </tr>
@@ -215,7 +215,7 @@
                 @if (isFieldPopulated(itStandard.SoftwareProductName)) {
                   <tr>
                     <td>
-                      <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software Product Name')" role="tooltip">Product</span>
+                      <i class="fas fa-toolbox"></i><span [pTooltip]="getTooltip('Software Product Name')" [escape]="false" role="tooltip">Product</span>
                     </td>
                     <td>{{ itStandard.SoftwareProductName }}</td>
                   </tr>
@@ -223,7 +223,7 @@
                 @if (isFieldPopulated(itStandard.SoftwareVersionName)) {
                   <tr>
                     <td>
-                      <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software Version Name')" role="tooltip">Version</span>
+                      <i class="fas fa-toolbox"></i><span [pTooltip]="getTooltip('Software Version Name')" [escape]="false" role="tooltip">Version</span>
                     </td>
                     <td>{{ itStandard.SoftwareVersionName }}</td>
                   </tr>
@@ -231,65 +231,65 @@
                 @if (isFieldPopulated(itStandard.EndOfLifeDate)) {
                   <tr>
                     <td>
-                      <i class="fas fa-toolbox"></i><span [title]="getTooltip('Software End of Life Date')" role="tooltip">Vendor End of Life Date</span>
+                      <i class="fas fa-toolbox"></i><span [pTooltip]="getTooltip('Software End of Life Date')" [escape]="false" role="tooltip">Vendor End of Life Date</span>
                     </td>
                     <td>{{ itStandard.EndOfLifeDate | date : "MMMM d, y" }}</td>
                   </tr>
                 }
                 @if (isFieldPopulated(itStandard.Category)) {
                   <tr>
-                    <td><i class="far fa-list-alt"></i><span [title]="getTooltip('Category')" role="tooltip">Category</span>
+                    <td><i class="far fa-list-alt"></i><span [pTooltip]="getTooltip('Category')" [escape]="false" role="tooltip">Category</span>
                   </td>
                   <td>{{ itStandard.Category }}</td>
                 </tr>
               }
               @if (isFieldPopulated(itStandard.DeploymentType)) {
                 <tr>
-                  <td><i class="fas fa-shipping-fast"></i><span [title]="getTooltip('Deployment Type')" role="tooltip">Deployment Type</span>
+                  <td><i class="fas fa-shipping-fast"></i><span [pTooltip]="getTooltip('Deployment Type')" [escape]="false" role="tooltip">Deployment Type</span>
                 </td>
                 <td>{{ itStandard.DeploymentType }}</td>
               </tr>
             }
             @if (isFieldPopulated(itStandard.StandardType)) {
               <tr>
-                <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Standard Type')" role="tooltip">Standard Type</span>
+                <td><i class="fas fa-info-circle"></i><span [pTooltip]="getTooltip('Standard Type')" [escape]="false" role="tooltip">Standard Type</span>
               </td>
               <td>{{ itStandard.StandardType }}</td>
             </tr>
           }
          <!--  @if (isFieldPopulated(itStandard.attestation_required)) {
             <tr>
-              <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Attestation Required')" role="tooltip">Attestation Required</span></td>
+              <td><i class="fas fa-info-circle"></i><span [pTooltip]="getTooltip('Attestation Required')" [escape]="false" role="tooltip">Attestation Required</span></td>
               <td>{{ itStandard.attestation_required }}</td>
             </tr>
           }
           @if (isFieldPopulated(itStandard.attestation_link)) {
             <tr>
-              <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Attestation Link')" role="tooltip">Attestation Link</span></td>
+              <td><i class="fas fa-info-circle"></i><span [pTooltip]="getTooltip('Attestation Link')" [escape]="false" role="tooltip">Attestation Link</span></td>
               <td>{{ itStandard.attestation_link }}</td>
             </tr>
           } -->
           @if (isFieldPopulated(itStandard.fedramp)) {
             <tr>
-              <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('FedRAMP')" role="tooltip">FedRAMP</span></td>
+              <td><i class="fas fa-info-circle"></i><span [pTooltip]="getTooltip('FedRAMP')" [escape]="false" role="tooltip">FedRAMP</span></td>
               <td>{{ itStandard.fedramp | yesno }}</td>
             </tr>
           }
           @if (isFieldPopulated(itStandard.open_source)) {
             <tr>
-              <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Open Source')" role="tooltip">Open Source</span></td>
+              <td><i class="fas fa-info-circle"></i><span [pTooltip]="getTooltip('Open Source')" [escape]="false" role="tooltip">Open Source</span></td>
               <td>{{ itStandard.open_source | yesno }}</td>
             </tr>
           }
           @if (isFieldPopulated(itStandard.RITM)) {
             <tr>
-              <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('Requested Item (RITM)')" role="tooltip">Requested Item (RITM)</span></td>
+              <td><i class="fas fa-info-circle"></i><span [pTooltip]="getTooltip('Requested Item (RITM)')" [escape]="false" role="tooltip">Requested Item (RITM)</span></td>
               <td>{{ itStandard.RITM }}</td>
             </tr>
           }
           @if (isFieldPopulated(itStandard.ReferenceDocument)) {
             <tr>
-              <td><i class="far fa-comment"></i><span [title]="getTooltip('Reference Document')" role="tooltip">Reference Document</span></td>
+              <td><i class="far fa-comment"></i><span [pTooltip]="getTooltip('Reference Document')" [escape]="false" role="tooltip">Reference Document</span></td>
               <td>
                 <a [hidden]="!itStandard.ReferenceDocument" href="{{ itStandard.ReferenceDocument }}"
                   target="_blank" rel="noopener">
@@ -300,7 +300,7 @@
           }
           @if (isFieldPopulated(itStandard.AppBundleIds)) {
             <tr>
-              <td><i class="fas fa-info-circle"></i><span [title]="getTooltip('App Bundle Ids')" role="tooltip">App Bundle IDs</span></td>
+              <td><i class="fas fa-info-circle"></i><span [pTooltip]="getTooltip('App Bundle Ids')" [escape]="false" role="tooltip">App Bundle IDs</span></td>
               <td [innerHtml]="renderListFromCsvString(itStandard.AppBundleIds)"></td>
             </tr>
           }

@@ -7,6 +7,7 @@ import { Website } from '@api/models/websites.model';
 import { Column } from '@common/table-classes';
 import { RelatedWebsitesColumns } from '@common/table-columns/related-websites';
 import { ApiService } from '@services/apis/api.service';
+import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 
 @Component({
@@ -27,10 +28,12 @@ export class WebsiteServiceCategoryDetailsContentComponent implements OnInit {
   public isDataReady: boolean = false;
 
   public attrDefinitions = <DataDictionary[]>[];
+  public websitesAttrDefinitions = <DataDictionary[]>[];
 
   constructor(
     private route: ActivatedRoute,
     private apiService: ApiService,
+    private sharedService: SharedService,
     private tableService: TableService,
     private router: Router
   ) {
@@ -47,6 +50,13 @@ export class WebsiteServiceCategoryDetailsContentComponent implements OnInit {
     .subscribe((data: DataDictionary[]) => {
       this.attrDefinitions = data;
   });
+
+    // Get attribute definitions for the related websites table
+    this.apiService.getDataDictionaryByReportName('GSA Websites')
+    .subscribe((data: DataDictionary[]) => {
+      this.websitesAttrDefinitions = data;
+      this.relatedWebsitesTableCols = this.buildRelatedWebsitesCols(data);
+  });
   }
 
   public onRowClick(data: Website): void {
@@ -56,10 +66,27 @@ export class WebsiteServiceCategoryDetailsContentComponent implements OnInit {
   }
 
   public getTooltip (name: string): string {
-    const def = this.attrDefinitions.find(def => def.Term === name);
-    if(def){
-      return def.TermDefinition;
-    }
-    return '';
+    return this.sharedService.getTooltip(this.attrDefinitions, name);
+  }
+
+  // The Related Websites table uses the 'GSA Websites' data dictionary. Set an
+  // explicit titleTooltip on each column using the correct Term for the field
+  // (some headers differ from their dictionary Term).
+  private buildRelatedWebsitesCols(websitesDefs: DataDictionary[]): Column[] {
+    const termByField: { [field: string]: string } = {
+      website_id: 'Website Id',
+      domain: 'Domain',
+      site_owner_email: 'Website Manager',
+      office: 'Office',
+      sub_office: 'Sub-Office',
+      production_status: 'Status'
+    };
+    return RelatedWebsitesColumns.map(col => {
+      const term = termByField[col.field];
+      if (term) {
+        return { ...col, titleTooltip: this.sharedService.getTooltip(websitesDefs, term) };
+      }
+      return { ...col };
+    });
   }
 }
