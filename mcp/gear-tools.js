@@ -178,6 +178,68 @@ async function listWebsites() {
   return capResults(data, 100);
 }
 
+/** Project a records-schedule row down to the fields useful for retention answers. */
+function slimRecordSchedule(r) {
+  return {
+    Record_Item_Title: r.Record_Item_Title,
+    Description: r.Description,
+    Retention_Instructions: r.Retention_Instructions,
+    FY_Retention_Years: r.FY_Retention_Years,
+    Type_Disposition: r.Type_Disposition,
+    Disposition_Notes: r.Disposition_Notes,
+    Legal_Disposition_Authority: r.Legal_Disposition_Authority,
+    RG: r.RG,
+    GSA_Number: r.GSA_Number,
+    Record_Status: r.Record_Status,
+    PII: r.PII,
+    CUI: r.CUI,
+  };
+}
+
+/**
+ * Get the records schedules a business system must abide by. Looks up the
+ * records associated with a system (via /systems/get/:id/records), then fetches
+ * each full records-schedule detail (via /records/get/:id) so the result
+ * contains the schedule name (Record_Item_Title), Description, and
+ * Retention_Instructions. Always obtain the system id from find_system first.
+ */
+async function getSystemRecordsSchedules({ id, limit }) {
+  if (!id) throw new Error('id is required');
+  const related = await gearApiGet(
+    `/systems/get/${encodeURIComponent(id)}/records`
+  );
+  const rows = Array.isArray(related) ? related : [];
+
+  // Collect the distinct record-schedule IDs mapped to this system.
+  const recordIds = [];
+  for (const row of rows) {
+    const rid = row.obj_records_Id;
+    if (rid != null && !recordIds.includes(rid)) recordIds.push(rid);
+  }
+
+  const cap = limit || 50;
+  const idsToFetch = recordIds.slice(0, cap);
+
+  // Fetch each schedule's full detail. /records/get/:id returns an array of
+  // matching rows (usually one), so we flatten.
+  const schedules = [];
+  for (const rid of idsToFetch) {
+    try {
+      const detail = await gearApiGet(`/records/get/${encodeURIComponent(rid)}`);
+      const detailRows = Array.isArray(detail) ? detail : detail ? [detail] : [];
+      for (const d of detailRows) schedules.push(slimRecordSchedule(d));
+    } catch (err) {
+      schedules.push({ Record_Item_Title: null, error: `Could not load record ${rid}: ${err.message}` });
+    }
+  }
+
+  return {
+    rows: schedules,
+    truncated: recordIds.length > idsToFetch.length,
+    total: recordIds.length,
+  };
+}
+
 /** Project an IT standard row down to the fields useful for approval answers. */
 function slimItStandard(t) {
   return {
@@ -346,6 +408,23 @@ const tools = [
       required: ['id', 'relation'],
     },
     handler: getSystemRelated,
+  },
+  {
+    name: 'get_system_records_schedules',
+    description:
+      "Get the records schedules a BUSINESS SYSTEM must abide by, by its GEAR ID. Looks up the records associated with the system and returns each records schedule's name (Record_Item_Title), Description, Retention_Instructions, retention period (FY_Retention_Years), and disposition. Use this to answer questions about which records schedules apply to a system, how long a type of record must be retained, and what to do with it afterward. Always obtain the id from find_system first.",
+    parameters: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', description: 'The GEAR ID of the business system.' },
+        limit: {
+          type: 'number',
+          description: 'Maximum number of records schedules to fetch (default 50).',
+        },
+      },
+      required: ['id'],
+    },
+    handler: getSystemRecordsSchedules,
   },
   {
     name: 'list_capabilities',

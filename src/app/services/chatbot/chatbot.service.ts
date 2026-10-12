@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { SharedService } from '@services/shared/shared.service';
@@ -23,10 +23,26 @@ export interface ChatResponse {
 export class ChatbotService {
   private chatUrl: string = this.sharedService.internalURLFmt('/api/chat');
 
+  /**
+   * Emits a prompt that the global chatbot widget should open with and
+   * pre-fill (e.g. the global search term). The widget subscribes to this so
+   * any component can seed a question without owning its own chat panel.
+   */
+  private seedSubject = new Subject<string>();
+  public seed$ = this.seedSubject.asObservable();
+
   constructor(
     private http: HttpClient,
     private sharedService: SharedService
   ) {}
+
+  /**
+   * Open the global chatbot and pre-fill its input with `prompt`. Used by the
+   * global search so searching feeds the chatbot without a separate panel.
+   */
+  seedPrompt(prompt: string): void {
+    this.seedSubject.next(prompt);
+  }
 
   sendMessage(message: string, history: ChatMessage[]): Observable<ChatResponse> {
     const httpOptions = {
@@ -42,26 +58,6 @@ export class ChatbotService {
           })
         )
       );
-  }
-
-  /**
-   * Get a short AI overview of a search term given the GEAR search results.
-   * `results` is the same array the results table renders.
-   */
-  getSearchOverview(
-    searchKW: string,
-    results: any[]
-  ): Observable<ChatResponse> {
-    const httpOptions = {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-    };
-    return this.http
-      .post<ChatResponse>(
-        `${this.chatUrl}/overview`,
-        { searchKW, results },
-        httpOptions
-      )
-      .pipe(catchError(this.handleError<ChatResponse>('POST Chat Overview', null)));
   }
 
   private handleError<T>(operation = 'operation', result?: T) {

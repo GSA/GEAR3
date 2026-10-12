@@ -3,23 +3,25 @@
 @use "./filter-tabs.scss";
 
 // Override font-display for icon fonts to avoid render-blocking (Lighthouse: Font display)
-// fa-brands, fa-solid, primeicons all default to 'block'; swap reduces FCP delay
+// fa-brands, fa-solid, primeicons all default to 'block'; swap reduces FCP delay.
+// Point at the Font Awesome 6 package webfonts (same files the bundled all.min.css
+// uses) so we don't emit a second copy to a colliding media/ path.
 @font-face {
-  font-family: 'Font Awesome 5 Free';
+  font-family: 'Font Awesome 6 Free';
   font-style: normal;
   font-weight: 900;
   font-display: swap;
-  src: url('../assets/fontawesome-free-5.13.0-web/webfonts/fa-solid-900.woff2') format('woff2'),
-       url('../assets/fontawesome-free-5.13.0-web/webfonts/fa-solid-900.woff') format('woff');
+  src: url('../../node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2') format('woff2'),
+       url('../../node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf') format('truetype');
 }
 
 @font-face {
-  font-family: 'Font Awesome 5 Brands';
+  font-family: 'Font Awesome 6 Brands';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('../assets/fontawesome-free-5.13.0-web/webfonts/fa-brands-400.woff2') format('woff2'),
-       url('../assets/fontawesome-free-5.13.0-web/webfonts/fa-brands-400.woff') format('woff');
+  src: url('../../node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.woff2') format('woff2'),
+       url('../../node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.ttf') format('truetype');
 }
 
 @font-face {
