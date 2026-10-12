@@ -530,11 +530,7 @@ export class SystemsComponent implements OnInit, OnDestroy {
   }
 
   getTooltip (name: string): string {
-    const def = this.attributeDefs.find(def => def.Term === name);
-    if(def){
-      return def.TermDefinition;
-    }
-    return '';
+    return this.sharedService.getTooltip(this.attributeDefs, name);
   }
 
   private buildDistinctColorDomain(count: number): string[] {

@@ -95,11 +95,11 @@
                 <th [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.isSortable ? true : false" [class]="col.class">
                   <div class="d-flex align-items-center table-heading">
                     @if (!col.titleTooltip) {
-                      <span [title]="getTooltip(col.header)" >{{ col.header }}</span>
+                      <span [pTooltip]="getTooltip(col.header)" [escape]="false" tooltipPosition="top" tooltipStyleClass="gear-help-tooltip" [appendTo]="'body'">{{ col.header }}</span>
                     }
                     <!-- Table tooltip override for definitions that don't match the col.header property -->
                     @if (col.titleTooltip) {
-                      <span [title]="col.titleTooltip">{{ col.header }}</span>
+                      <span [pTooltip]="col.titleTooltip" [escape]="false" tooltipPosition="top" tooltipStyleClass="gear-help-tooltip" [appendTo]="'body'">{{ col.header }}</span>
                     }
                     <!-- <span *ngIf="showFilters"><p-columnFilter type="text" [field]="col.field" display="menu" /></span> -->
                     @if (col.isSortable) {

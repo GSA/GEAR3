@@ -36,7 +36,7 @@
               <div class="data-wrapper">
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('Organization Name')" role="tooltip">
+                    <span [pTooltip]="getTooltip('Organization Name')" [escape]="false" role="tooltip">
                       Display Name
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -58,7 +58,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('SSO Name')" role="tooltip">
+                    <span [pTooltip]="getTooltip('SSO Name')" [escape]="false" role="tooltip">
                       SSO Name
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -69,7 +69,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('Two Letter Org')" role="tooltip">
+                    <span [pTooltip]="getTooltip('Two Letter Org')" [escape]="false" role="tooltip">
                       Two Letter Org
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -80,7 +80,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [title]="getTooltip('Parent Organization')" role="tooltip">
+                    <span [pTooltip]="getTooltip('Parent Organization')" [escape]="false" role="tooltip">
                       Parent Organization
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -100,7 +100,7 @@
             <div class="main-data-container">
               <div class="sub-content full-width">
                 <span class="sub-header">Business Systems</span>
-                <app-table visibleColumnStorageKey="organizations-business-systems" defaultSortField="Name" [isLocal]="true" [localTableData]="businessSystems" [tableCols]="businessSystemsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="systems" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onSystemRowClick($event)"></app-table>
+                <app-table visibleColumnStorageKey="organizations-business-systems" defaultSortField="Name" [isLocal]="true" [localTableData]="businessSystems" [tableCols]="businessSystemsTableCols" [attrDefs]="systemsAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="systems" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onSystemRowClick($event)"></app-table>
               </div>
             </div>
           </div>
@@ -124,7 +124,7 @@
             <div class="main-data-container">
               <div class="sub-content full-width">
                 <span class="sub-header">Child Organizations</span>
-                <app-table visibleColumnStorageKey="organizations-child-orgs" defaultSortField="Name" [isLocal]="true" [localTableData]="childOrgs" [tableCols]="childOrgsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="organizations" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onOrgRowClick($event)"></app-table>
+                <app-table visibleColumnStorageKey="organizations-child-orgs" defaultSortField="Name" [isLocal]="true" [localTableData]="childOrgs" [tableCols]="childOrgsTableCols" [attrDefs]="attrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="organizations" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onOrgRowClick($event)"></app-table>
               </div>
             </div>
           </div>

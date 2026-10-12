@@ -29,7 +29,7 @@
               <div class="data-wrapper">
                 <div class="data-full">
                   <label class="data-label">
-                    <span [title]="getTooltip('Description')" role="tooltip">
+                    <span [pTooltip]="getTooltip('Description')" [escape]="false" role="tooltip">
                       Description
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -40,7 +40,7 @@
                 </div>
                 <div class="data-full">
                   <label class="data-label">
-                    <span [title]="getTooltip('Level')" role="tooltip">
+                    <span [pTooltip]="getTooltip('Level')" [escape]="false" role="tooltip">
                       Level
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -72,7 +72,7 @@
             <div class="main-data-container">
               <div class="sub-content full-width">
                 <span class="sub-header">Supporting Systems</span>
-                <app-table visibleColumnStorageKey="capabilities-supporting-systems" defaultSortField="DisplayName" [tableCols]="supportingSystemsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="systems" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onSystemRowClick($event)"></app-table>
+                <app-table visibleColumnStorageKey="capabilities-supporting-systems" defaultSortField="DisplayName" [tableCols]="supportingSystemsTableCols" [attrDefs]="systemsAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="systems" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onSystemRowClick($event)"></app-table>
               </div>
             </div>
           </div>
