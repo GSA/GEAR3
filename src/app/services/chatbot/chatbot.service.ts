@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of, Subject } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { Observable, of, Subject, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { SharedService } from '@services/shared/shared.service';
@@ -51,19 +51,13 @@ export class ChatbotService {
     return this.http
       .post<ChatResponse>(this.chatUrl, { message, history }, httpOptions)
       .pipe(
-        catchError(
-          this.handleError<ChatResponse>('POST Chat', {
-            reply:
-              'Sorry, the GEAR Assistant is temporarily unavailable. Please try again.',
-          })
-        )
+        catchError((error: HttpErrorResponse) => {
+          if (error.status === 429) {
+            return of({ reply: 'Sorry, the AI service is currently rate-limited. Please wait a moment and try again.' } as ChatResponse);
+          }
+          console.log(`Failed POST Chat Call: ${error.message}`);
+          return of({ reply: 'Sorry, the GEAR Assistant is temporarily unavailable. Please try again.' } as ChatResponse);
+        })
       );
-  }
-
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      console.log(`Failed ${operation} Call: ${error.message}`);
-      return of(result as T);
-    };
   }
 }

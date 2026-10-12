@@ -1,5 +1,4 @@
 import {
-  AfterViewChecked,
   Component,
   ElementRef,
   HostListener,
@@ -15,12 +14,16 @@ import {
   ChatMessage,
 } from '@services/chatbot/chatbot.service';
 
+const SESSION_KEY = 'gear_chatbot_pairs';
+
 /** A single question/answer exchange rendered in the thread. */
 interface ChatPair {
   question: string;
   answer: string | null;
   askedAt: string;
   answeredAt: string | null;
+  askedMs: number;
+  answeredMs: number | null;
 }
 
 @Component({
@@ -29,7 +32,7 @@ interface ChatPair {
   styleUrls: ['./chatbot.component.css'],
   standalone: false,
 })
-export class ChatbotComponent implements OnInit, OnDestroy, AfterViewChecked {
+export class ChatbotComponent implements OnInit, OnDestroy {
   public open = false;
   public expanded = false;
   public inputText = '';
@@ -37,11 +40,15 @@ export class ChatbotComponent implements OnInit, OnDestroy, AfterViewChecked {
   public pairs: ChatPair[] = [];
   public unreadCount = 0;
   public copiedIndex = -1;
+  public showScrollTop = false;
+  public atTop = false;
+  public relativeTimeTick = 0; // incremented every minute to refresh relative times
 
   private seedSub?: Subscription;
-  private shouldScroll = false;
+  private tickInterval?: ReturnType<typeof setInterval>;
 
   @ViewChild('scrollContainer') private scrollContainer?: ElementRef;
+  @ViewChild('inputTextarea') private inputTextareaRef?: ElementRef;
 
   constructor(
     private chatbotService: ChatbotService,
@@ -50,6 +57,17 @@ export class ChatbotComponent implements OnInit, OnDestroy, AfterViewChecked {
   ) {}
 
   ngOnInit(): void {
+    // Restore persisted conversation from sessionStorage.
+    try {
+      const stored = sessionStorage.getItem(SESSION_KEY);
+      if (stored) {
+        this.pairs = JSON.parse(stored);
+      }
+    } catch (_) {}
+
+    // Refresh relative timestamps every 60 seconds.
+    this.tickInterval = setInterval(() => { this.relativeTimeTick++; }, 60_000);
+
     // When any part of the app (e.g. the global search) seeds a prompt, open
     // the chatbot and pre-fill the input. The user presses Send to ask.
     this.seedSub = this.chatbotService.seed$.subscribe((prompt) => {
@@ -61,15 +79,22 @@ export class ChatbotComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   ngOnDestroy(): void {
     this.seedSub?.unsubscribe();
+    if (this.tickInterval) clearInterval(this.tickInterval);
   }
 
   /**
    * Minimize the panel when the user clicks anywhere outside the chatbot. The
    * conversation is preserved; only the panel is hidden.
    */
+  private _ignoreNextOutsideClick = false;
+
   @HostListener('document:mousedown', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     if (!this.open) {
+      return;
+    }
+    if (this._ignoreNextOutsideClick) {
+      this._ignoreNextOutsideClick = false;
       return;
     }
     const target = event.target as Node;
@@ -103,8 +128,30 @@ export class ChatbotComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   /** Toggle between the compact and the larger expanded panel size. */
   toggleExpanded(): void {
+    this._ignoreNextOutsideClick = true;
     this.expanded = !this.expanded;
-    this.shouldScroll = true;
+    this.scrollToBottom();
+  }
+
+  onScroll(): void {
+    if (this.scrollContainer) {
+      const scrollTop = this.scrollContainer.nativeElement.scrollTop;
+      this.showScrollTop = scrollTop > 200;
+      this.atTop = scrollTop < 20;
+    }
+  }
+
+  scrollToTop(): void {
+    if (this.scrollContainer) {
+      this.scrollContainer.nativeElement.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  jumpToInput(): void {
+    this.scrollToBottom();
+    setTimeout(() => {
+      this.inputTextareaRef?.nativeElement?.focus();
+    }, 120);
   }
 
   onKeydown(event: KeyboardEvent): void {
@@ -129,35 +176,55 @@ export class ChatbotComponent implements OnInit, OnDestroy, AfterViewChecked {
       }
     }
 
+    const now = Date.now();
     this.pairs.push({
       question: text,
       answer: null,
-      askedAt: this.formatTime(new Date()),
+      askedAt: this.formatTime(new Date(now)),
       answeredAt: null,
+      askedMs: now,
+      answeredMs: null,
     });
     this.inputText = '';
+    this.autoResizeTextarea();
     this.loading = true;
-    this.shouldScroll = true;
+    this.scrollToBottom();
 
-    this.chatbotService.sendMessage(text, history).subscribe((res) => {
-      const reply =
-        res && typeof res.reply === 'string' && res.reply.trim().length > 0
-          ? res.reply
-          : 'Sorry, I could not generate a response. The AI service may be temporarily unavailable — please try again.';
-      const last = this.pairs[this.pairs.length - 1];
-      last.answer = reply;
-      last.answeredAt = this.formatTime(new Date());
-      this.loading = false;
-      this.shouldScroll = true;
-      if (!this.open) {
-        this.unreadCount++;
-      }
+    this.chatbotService.sendMessage(text, history).subscribe({
+      next: (res) => {
+        const reply =
+          res && typeof res.reply === 'string' && res.reply.trim().length > 0
+            ? res.reply
+            : 'Sorry, I could not generate a response. The AI service may be temporarily unavailable — please try again.';
+        const last = this.pairs[this.pairs.length - 1];
+        const answeredMs = Date.now();
+        last.answer = reply;
+        last.answeredAt = this.formatTime(new Date(answeredMs));
+        last.answeredMs = answeredMs;
+        this.loading = false;
+        this.persistPairs();
+        this.scrollToBottom();
+        if (!this.open) {
+          this.unreadCount++;
+        }
+      },
+      error: () => {
+        const last = this.pairs[this.pairs.length - 1];
+        const answeredMs = Date.now();
+        last.answer = 'Sorry, a network error occurred. Please check your connection and try again.';
+        last.answeredAt = this.formatTime(new Date(answeredMs));
+        last.answeredMs = answeredMs;
+        this.loading = false;
+        this.persistPairs();
+        this.scrollToBottom();
+      },
     });
   }
 
   clear(): void {
     this.pairs = [];
     this.inputText = '';
+    try { sessionStorage.removeItem(SESSION_KEY); } catch (_) {}
   }
 
   public copyToClipboard(text: string | null, index: number): void {
@@ -230,28 +297,48 @@ export class ChatbotComponent implements OnInit, OnDestroy, AfterViewChecked {
     return text
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 
   private formatTime(date: Date): string {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 
-  ngAfterViewChecked(): void {
-    if (this.shouldScroll) {
-      this.scrollToBottom();
-      this.shouldScroll = false;
-    }
+  /** Returns a relative label like "just now", "5 min ago", "2 hr ago", "3 days ago". */
+  public relativeTime(ms: number | null): string {
+    if (!ms) return '';
+    // reading relativeTimeTick forces Angular to re-evaluate when tick fires
+    void this.relativeTimeTick;
+    const diff = Math.floor((Date.now() - ms) / 1000);
+    if (diff < 60) return 'just now';
+    if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)} hr ago`;
+    return `${Math.floor(diff / 86400)} day${Math.floor(diff / 86400) > 1 ? 's' : ''} ago`;
+  }
+
+  public autoResizeTextarea(): void {
+    const el = this.inputTextareaRef?.nativeElement;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+  }
+
+  private persistPairs(): void {
+    try {
+      // Cap at 20 most recent pairs to avoid sessionStorage size limits.
+      const toStore = this.pairs.slice(-20);
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify(toStore));
+    } catch (_) {}
   }
 
   private scrollToBottom(): void {
-    try {
+    setTimeout(() => {
       if (this.scrollContainer) {
         this.scrollContainer.nativeElement.scrollTop =
           this.scrollContainer.nativeElement.scrollHeight;
       }
-    } catch (_) {
-      /* no-op */
-    }
+    }, 0);
   }
 }

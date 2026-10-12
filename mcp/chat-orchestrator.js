@@ -238,6 +238,7 @@ function detectRecordsScheduleQuestion(message) {
  */
 async function runChat(history, userMessage) {
   const cfg = loadConfig();
+  const t0 = Date.now();
 
   // Cache lookup: only cache single-turn questions (no prior history) since
   // follow-up questions depend on context and should not be cached.
@@ -286,20 +287,23 @@ async function runChat(history, userMessage) {
             `${JSON.stringify(software, null, 2)}\n` +
             `Answer the user's question using ONLY this data: state the system name, then list each software product by Name (include Status/compliance if present) as a bulleted list. If the list is empty, say no software is recorded for that system. Do not mention websites or search results.`,
         });
-        const reply = await chatCompletion(messages, {
+        const { content: replyRaw, responseTimeMs: rt1, tokensUsed: tok1 } = await chatCompletion(messages, {
           model: cfg.model,
           temperature: cfg.temperature,
           maxTokens: cfg.maxTokens,
         });
         const result = {
-          reply: cleanFinalAnswer(reply),
+          reply: cleanFinalAnswer(replyRaw),
           toolCalls: [
             { name: 'find_system', arguments: { name: softwareIntent } },
             { name: 'get_system_software', arguments: { id: best.Id } },
           ],
         };
         if (isFirstTurn) {
-          promptCache.save(userMessage, 'chat', result.reply, result.toolCalls).catch(() => {});
+          promptCache.save(userMessage, 'chat', result.reply, result.toolCalls, {
+            responseTimeMs: Date.now() - t0,
+            tokensUsed: tok1,
+          }).catch(() => {});
         }
         return result;
       }
@@ -340,20 +344,23 @@ async function runChat(history, userMessage) {
             `ALWAYS end your answer with this exact caveat on its own line: "Note: Do not base any records retention or destruction decisions on this tool without first confirming with GSA's Records Management team (records@gsa.gov)."\n` +
             `Do not mention websites, software, or raw JSON/field names.`,
         });
-        const reply = await chatCompletion(messages, {
+        const { content: replyRaw2, responseTimeMs: rt2, tokensUsed: tok2 } = await chatCompletion(messages, {
           model: cfg.model,
           temperature: cfg.temperature,
           maxTokens: cfg.maxTokens,
         });
         const result = {
-          reply: cleanFinalAnswer(reply),
+          reply: cleanFinalAnswer(replyRaw2),
           toolCalls: [
             { name: 'find_system', arguments: { name: recordsIntent } },
             { name: 'get_system_records_schedules', arguments: { id: best.Id } },
           ],
         };
         if (isFirstTurn) {
-          promptCache.save(userMessage, 'chat', result.reply, result.toolCalls).catch(() => {});
+          promptCache.save(userMessage, 'chat', result.reply, result.toolCalls, {
+            responseTimeMs: Date.now() - t0,
+            tokensUsed: tok2,
+          }).catch(() => {});
         }
         return result;
       }
@@ -364,20 +371,25 @@ async function runChat(history, userMessage) {
   }
 
   const toolCalls = [];
+  let totalTokens = 0;
 
   for (let i = 0; i < cfg.maxToolIterations; i++) {
-    const content = await chatCompletion(messages, {
+    const { content, tokensUsed } = await chatCompletion(messages, {
       model: cfg.model,
       temperature: cfg.temperature,
       maxTokens: cfg.maxTokens,
     });
+    if (tokensUsed) totalTokens += tokensUsed;
 
     const call = parseToolCall(content);
     if (!call) {
       console.error('[chat] final answer (no tool call). iter=%d', i);
       const finalReply = cleanFinalAnswer(content);
       if (isFirstTurn) {
-        promptCache.save(userMessage, 'chat', finalReply, toolCalls).catch(() => {});
+        promptCache.save(userMessage, 'chat', finalReply, toolCalls, {
+          responseTimeMs: Date.now() - t0,
+          tokensUsed: totalTokens || null,
+        }).catch(() => {});
       }
       return { reply: finalReply, toolCalls };
     }
@@ -410,7 +422,7 @@ async function runChat(history, userMessage) {
   }
 
   // Ran out of iterations; ask for a final answer using what we have.
-  const finalContent = await chatCompletion(
+  const { content: finalContent, tokensUsed: tokFinal } = await chatCompletion(
     [
       ...messages,
       {
@@ -421,9 +433,13 @@ async function runChat(history, userMessage) {
     ],
     { model: cfg.model, temperature: cfg.temperature, maxTokens: cfg.maxTokens }
   );
+  if (tokFinal) totalTokens += tokFinal;
   const finalReply = cleanFinalAnswer(finalContent);
   if (isFirstTurn) {
-    promptCache.save(userMessage, 'chat', finalReply, toolCalls).catch(() => {});
+    promptCache.save(userMessage, 'chat', finalReply, toolCalls, {
+      responseTimeMs: Date.now() - t0,
+      tokensUsed: totalTokens || null,
+    }).catch(() => {});
   }
   return { reply: finalReply, toolCalls };
 }

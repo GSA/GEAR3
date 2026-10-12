@@ -1,19 +1,20 @@
 /**
  * Prompt cache backed by gear_log.ai_log in MySQL.
  *
- * Schema used:
- *   gear_log.ai_log (id INT AUTO_INCREMENT, DTG TIMESTAMP, event LONGTEXT)
- *
- * The `event` column stores a JSON string:
- *   {
- *     "type":        "chat" | "overview",
- *     "prompt_hash": "<sha256 hex>",
- *     "prompt":      "<normalized prompt>",
- *     "reply":       "<cached reply text>",
- *     "tool_calls":  [...]   // only for type=chat
- *   }
+ * Schema (new columns added):
+ *   gear_log.ai_log (
+ *     id            INT AUTO_INCREMENT,
+ *     DTG           TIMESTAMP,
+ *     event         LONGTEXT,      -- JSON metadata (type, prompt_hash, tool_calls)
+ *     Prompt        LONGTEXT,      -- raw normalized prompt text
+ *     Response      LONGTEXT,      -- AI reply text
+ *     Response_Time VARCHAR(64),   -- e.g. "1234ms"
+ *     Tokens_Used   VARCHAR(64)    -- e.g. "512"
+ *   )
  *
  * Cache TTL: 7 days. Entries older than 7 days are ignored and replaced.
+ * Similarity lookup: exact hash match first; new rows also stored in Prompt
+ * column so a future FULLTEXT index can do fuzzy matching.
  */
 
 const path = require('path');
@@ -87,10 +88,11 @@ async function lookup(prompt, type) {
 
     const db = getPool();
     const [rows] = await db.execute(
-      `SELECT id, event FROM gear_log.ai_log
+      `SELECT id, event, Response FROM gear_log.ai_log
        WHERE JSON_UNQUOTE(JSON_EXTRACT(event, '$.prompt_hash')) = ?
          AND JSON_UNQUOTE(JSON_EXTRACT(event, '$.type')) = ?
          AND DTG >= ?
+         AND Response IS NOT NULL
        ORDER BY DTG DESC
        LIMIT 1`,
       [hash, type, cutoff]
@@ -98,63 +100,81 @@ async function lookup(prompt, type) {
 
     if (!rows || rows.length === 0) return null;
 
-    const entry = JSON.parse(rows[0].event);
-    if (!entry || !entry.reply) return null;
+    // Prefer the dedicated Response column; fall back to event JSON for
+    // rows written before the schema migration.
+    let reply = rows[0].Response || null;
+    let toolCalls = [];
 
-    // Fire-and-forget: log this as a cache hit event.
-    logEvent(db, `ai_cache_hit:${type}:${hash.slice(0, 16)}`).catch(() => {});
+    if (!reply) {
+      try {
+        const entry = JSON.parse(rows[0].event);
+        reply = entry && entry.reply ? entry.reply : null;
+        toolCalls = entry && entry.tool_calls ? entry.tool_calls : [];
+      } catch (_) {
+        return null;
+      }
+    } else {
+      try {
+        const entry = JSON.parse(rows[0].event);
+        toolCalls = entry && entry.tool_calls ? entry.tool_calls : [];
+      } catch (_) {}
+    }
+
+    if (!reply) return null;
 
     console.error('[prompt-cache] HIT type=%s hash=%s', type, hash.slice(0, 16));
-    return { reply: entry.reply, toolCalls: entry.tool_calls || [] };
+    return { reply, toolCalls };
   } catch (err) {
-    // Cache errors must never break the chat flow.
     console.error('[prompt-cache] lookup error:', err.message);
     return null;
   }
 }
 
 /**
- * Save a prompt + reply to the cache.
+ * Save a prompt + reply to the cache, including perf metrics.
  *
  * @param {string} prompt
  * @param {'chat'|'overview'} type
  * @param {string} reply
- * @param {Array} toolCalls
+ * @param {Array}  toolCalls
+ * @param {object} [metrics]
+ * @param {number} [metrics.responseTimeMs]  Wall-clock ms for the full AI call
+ * @param {number} [metrics.tokensUsed]      Total tokens from usage.total_tokens
  */
-async function save(prompt, type, reply, toolCalls) {
+async function save(prompt, type, reply, toolCalls, metrics = {}) {
   try {
     const normalized = normalize(prompt);
     const hash = hashPrompt(normalized);
     const db = getPool();
 
-    const entry = JSON.stringify({
+    const event = JSON.stringify({
       type,
       prompt_hash: hash,
-      prompt: normalized,
-      reply,
       tool_calls: toolCalls || [],
     });
 
+    const responseTime = metrics.responseTimeMs != null
+      ? `${metrics.responseTimeMs}ms`
+      : null;
+
+    const tokensUsed = metrics.tokensUsed != null
+      ? String(metrics.tokensUsed)
+      : null;
+
     await db.execute(
-      `INSERT INTO gear_log.ai_log (DTG, event) VALUES (NOW(), ?)`,
-      [entry]
+      `INSERT INTO gear_log.ai_log (DTG, event, Prompt, Response, Response_Time, Tokens_Used)
+       VALUES (NOW(), ?, ?, ?, ?, ?)`,
+      [event, normalized, reply, responseTime, tokensUsed]
     );
 
-    console.error('[prompt-cache] SAVED type=%s hash=%s', type, hash.slice(0, 16));
+    console.error(
+      '[prompt-cache] SAVED type=%s hash=%s time=%s tokens=%s',
+      type, hash.slice(0, 16), responseTime, tokensUsed
+    );
   } catch (err) {
     console.error('[prompt-cache] save error:', err.message);
   }
 }
 
-/**
- * Insert a plain audit event into gear_log.event table.
- * Used internally for cache-hit logging.
- */
-async function logEvent(db, eventText) {
-  await db.execute(
-    `INSERT INTO gear_log.event (event, DTG) VALUES (?, NOW())`,
-    [eventText]
-  );
-}
-
 module.exports = { lookup, save, normalize };
+

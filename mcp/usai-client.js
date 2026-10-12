@@ -26,7 +26,7 @@ const USAI_CHAT_PATH = '/api/v1/chat/completions';
  * @param {number} [opts.temperature]
  * @param {number} [opts.maxTokens]
  * @param {number} [opts.timeoutMs]
- * @returns {Promise<string>} assistant message content
+ * @returns {Promise<{content:string, responseTimeMs:number, tokensUsed:number|null}>}
  */
 async function chatCompletion(messages, opts = {}) {
   const apiKey = process.env.AI_CERT;
@@ -43,6 +43,7 @@ async function chatCompletion(messages, opts = {}) {
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), opts.timeoutMs || 60000);
+  const startTime = Date.now();
 
   try {
     const res = await fetch(`${USAI_API_BASE}${USAI_CHAT_PATH}`, {
@@ -69,6 +70,7 @@ async function chatCompletion(messages, opts = {}) {
     }
 
     const data = await res.json();
+    const responseTimeMs = Date.now() - startTime;
     const content = extractContent(data);
     if (typeof content !== 'string') {
       console.error(
@@ -77,7 +79,12 @@ async function chatCompletion(messages, opts = {}) {
       );
       throw new Error('USAi API returned an unexpected response shape.');
     }
-    return content;
+
+    const tokensUsed = data && data.usage
+      ? (data.usage.total_tokens ?? data.usage.completion_tokens ?? null)
+      : null;
+
+    return { content, responseTimeMs, tokensUsed };
   } finally {
     clearTimeout(timer);
   }
