@@ -15,6 +15,8 @@ import {
 } from '@services/chatbot/chatbot.service';
 
 const SESSION_KEY = 'gear_chatbot_pairs';
+const TYPEWRITER_INTERVAL_MS = 12;
+const TYPEWRITER_MAX_TICKS = 100;
 
 /** A single question/answer exchange rendered in the thread. */
 interface ChatPair {
@@ -46,6 +48,8 @@ export class ChatbotComponent implements OnInit, OnDestroy {
 
   private seedSub?: Subscription;
   private tickInterval?: ReturnType<typeof setInterval>;
+  private typingAnswers = new Map<ChatPair, string>();
+  private typewriterTimers = new Map<ChatPair, ReturnType<typeof setInterval>>();
 
   @ViewChild('scrollContainer') private scrollContainer?: ElementRef;
   @ViewChild('inputTextarea') private inputTextareaRef?: ElementRef;
@@ -80,6 +84,7 @@ export class ChatbotComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.seedSub?.unsubscribe();
     if (this.tickInterval) clearInterval(this.tickInterval);
+    this.clearTypewriterTimers();
   }
 
   /**
@@ -201,6 +206,7 @@ export class ChatbotComponent implements OnInit, OnDestroy {
         last.answer = reply;
         last.answeredAt = this.formatTime(new Date(answeredMs));
         last.answeredMs = answeredMs;
+        this.typewriteAnswer(last, reply);
         this.loading = false;
         this.persistPairs();
         this.scrollToBottom();
@@ -214,6 +220,7 @@ export class ChatbotComponent implements OnInit, OnDestroy {
         last.answer = 'Sorry, a network error occurred. Please check your connection and try again.';
         last.answeredAt = this.formatTime(new Date(answeredMs));
         last.answeredMs = answeredMs;
+        this.typewriteAnswer(last, last.answer);
         this.loading = false;
         this.persistPairs();
         this.scrollToBottom();
@@ -222,9 +229,44 @@ export class ChatbotComponent implements OnInit, OnDestroy {
   }
 
   clear(): void {
+    this.clearTypewriterTimers();
     this.pairs = [];
     this.inputText = '';
     try { sessionStorage.removeItem(SESSION_KEY); } catch (_) {}
+  }
+
+  public visibleAnswer(pair: ChatPair): string {
+    return this.typingAnswers.get(pair) ?? pair.answer ?? '';
+  }
+
+  private typewriteAnswer(pair: ChatPair, answer: string): void {
+    this.typingAnswers.set(pair, '');
+    let visibleLength = 0;
+    const charsPerTick = Math.max(1, Math.ceil(answer.length / TYPEWRITER_MAX_TICKS));
+    const timer = setInterval(() => {
+      const shouldFollow = this.isScrolledToBottom();
+      visibleLength = Math.min(visibleLength + charsPerTick, answer.length);
+      this.typingAnswers.set(pair, answer.slice(0, visibleLength));
+
+      if (visibleLength >= answer.length) {
+        clearInterval(timer);
+        this.typewriterTimers.delete(pair);
+        this.typingAnswers.delete(pair);
+      }
+
+      if (shouldFollow) {
+        this.scrollToBottom();
+      }
+    }, TYPEWRITER_INTERVAL_MS);
+    this.typewriterTimers.set(pair, timer);
+  }
+
+  private clearTypewriterTimers(): void {
+    for (const timer of this.typewriterTimers.values()) {
+      clearInterval(timer);
+    }
+    this.typewriterTimers.clear();
+    this.typingAnswers.clear();
   }
 
   public copyToClipboard(text: string | null, index: number): void {
@@ -340,5 +382,11 @@ export class ChatbotComponent implements OnInit, OnDestroy {
           this.scrollContainer.nativeElement.scrollHeight;
       }
     }, 0);
+  }
+
+  private isScrolledToBottom(): boolean {
+    const container = this.scrollContainer?.nativeElement;
+    return !!container &&
+      container.scrollHeight - container.scrollTop - container.clientHeight < 40;
   }
 }
