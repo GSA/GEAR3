@@ -114,7 +114,7 @@
                 <div
                   class="bubble"
                   [class.error]="isErrorReply(pair.answer)"
-                  [innerHTML]="renderMarkdown(pair.answer)"
+                  [innerHTML]="renderMarkdown(visibleAnswer(pair))"
                 ></div>
                 <div class="gear-chatbot-message__footer">
                   <span class="gear-chatbot-time" [title]="pair.answeredAt ?? ''">{{ relativeTime(pair.answeredMs) }}</span>
