@@ -8,6 +8,17 @@
     <div class="title-container">
       <span class="title">{{detailsData.Name}}</span>
     </div>
+    @if (showIssoBanner) {
+      <div class="systems-isso-banner" role="note">
+        <i class="fas fa-info-circle" aria-hidden="true"></i>
+        @if (issoEmail) {
+          <span>Contact the system's ISSO for data updates: <a [href]="'mailto:' + issoEmail" target="_blank" rel="noopener">{{issoEmail}}</a></span>
+        } @else {
+          <span>Contact the system's ISSO for data updates.</span>
+        }
+        <button type="button" class="systems-isso-banner-close" (click)="showIssoBanner = false" aria-label="Dismiss banner">&#x2715;</button>
+      </div>
+    }
     <div class="content-container">
       <ul class="nav nav-tabs">
         <li class="nav-item">
