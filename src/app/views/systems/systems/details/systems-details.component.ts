@@ -36,6 +36,7 @@ export class SystemsDetailsComponent implements OnInit {
   public systemId: number = null;
   public detailsData: System;
   public isDataReady: boolean = false;
+  public showIssoBanner: boolean = true;
   public systemTimeData: TIME[] = [];
   public sysCapabilitiesData: Capability[] = [];
   public sysTechnologiesData: ITStandards[] = [];
@@ -65,6 +66,7 @@ export class SystemsDetailsComponent implements OnInit {
   public websitesAttrDefinitions = <DataDictionary[]>[];
 
   public splitPOCs: any = {};
+  public issoEmail: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -139,6 +141,7 @@ export class SystemsDetailsComponent implements OnInit {
           this.sysSubsystemsData = systemSubsystems;
 
           this.splitPOCs = this.splitPOCInfo(this.detailsData.POC);
+          this.issoEmail = this.getFirstIssoEmail(this.detailsData.ISSO);
         },
         error: (err) => console.log('Failed to load page data', err),
         complete: () => this.isDataReady = true
@@ -358,6 +361,14 @@ export class SystemsDetailsComponent implements OnInit {
       });
     }
     return pocs;
+  }
+
+  private getFirstIssoEmail(issoData: string): string {
+    if (!issoData) {
+      return '';
+    }
+    const pocs = this.splitPOCInfo(issoData);
+    return pocs.length > 0 ? pocs[0].email : '';
   }
 
   public onCapRowClick(data: Capability): void {
