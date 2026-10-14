@@ -1,0 +1,202 @@
+<!-- GEAR Assistant: a global, always-available chatbot shown bottom-right on
+     every view. The global search feeds it a prompt via ChatbotService.seed$. -->
+<div class="gear-chatbot">
+
+  <!-- Toggle button — compact pill when closed, full-width footer bar when open -->
+  <button
+    type="button"
+    class="gear-chatbot-toggle"
+    [class.gear-chatbot-toggle--open]="open"
+    [class.gear-chatbot-toggle--expanded]="expanded"
+    (click)="toggle()"
+    aria-haspopup="dialog"
+    [attr.aria-expanded]="open"
+    aria-label="Open GEAR Assistant"
+  >
+    <span class="gear-chatbot-toggle__icon">
+      <i class="fas" [class.fa-robot]="!open" [class.fa-chevron-down]="open"></i>
+    </span>
+    <span class="gear-chatbot-toggle__label">
+      {{ open ? 'GEAR Assistant' : 'Ask GEAR' }}
+    </span>
+    @if (!open && unreadCount > 0) {
+      <span class="gear-chatbot-unread">{{ unreadCount }}</span>
+    }
+    @if (open) {
+      <span class="gear-chatbot-toggle__close-hint">close</span>
+    }
+  </button>
+
+  <!-- Chat panel -->
+  @if (open) {
+    <div class="gear-chatbot-panel" [class.expanded]="expanded" role="dialog" aria-label="GEAR Assistant">
+
+      <!-- Header -->
+      <div class="gear-chatbot-header">
+        <div class="gear-chatbot-header__identity">
+          <div class="gear-chatbot-header__avatar">
+            <i class="fas fa-robot"></i>
+          </div>
+          <div class="gear-chatbot-header__meta">
+            <span class="gear-chatbot-header__name">GEAR Assistant</span>
+            <span class="gear-chatbot-header__status">
+              <span class="gear-chatbot-header__dot"></span>
+              {{ loading ? 'Thinking…' : 'Online' }}
+            </span>
+          </div>
+        </div>
+        <div class="gear-chatbot-header__actions">
+          <button
+            type="button"
+            class="gear-chatbot-header__btn"
+            (click)="clear()"
+            title="Clear conversation"
+            aria-label="Clear conversation"
+          ><i class="fas fa-trash-alt"></i></button>
+          <button
+            type="button"
+            class="gear-chatbot-header__btn"
+            (click)="toggleExpanded()"
+            [title]="expanded ? 'Shrink' : 'Expand'"
+            [attr.aria-label]="expanded ? 'Shrink window' : 'Expand window'"
+          ><i class="fas" [class.fa-compress-alt]="expanded" [class.fa-expand-alt]="!expanded"></i></button>
+          <button
+            type="button"
+            class="gear-chatbot-header__btn"
+            (click)="minimize()"
+            title="Minimize"
+            aria-label="Minimize"
+          ><i class="fas fa-minus"></i></button>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div class="gear-chatbot-messages" #scrollContainer (scroll)="onScroll()">
+
+        <!-- Jump-to-input banner: only when AT TOP and questions exist and not loading -->
+        @if (atTop && pairs.length > 0 && !loading) {
+          <div class="gear-chatbot-new-q-bar">
+            <button
+              type="button"
+              class="gear-chatbot-new-q-btn"
+              (click)="jumpToInput()"
+              aria-label="New question"
+            >
+              <i class="fas fa-arrow-down"></i> New question
+            </button>
+          </div>
+        }
+
+        @if (pairs.length === 0 && !loading) {
+          <div class="gear-chatbot-empty">
+            <i class="fas fa-robot gear-chatbot-empty__icon"></i>
+            <p>Ask about GSA systems, technologies, capabilities, investments, records schedules, and more.</p>
+          </div>
+        }
+
+        @for (pair of pairs; track $index) {
+          <!-- Q label -->
+          <div class="gear-chatbot-qlabel">Q{{ $index + 1 }}</div>
+
+          <!-- User question -->
+          <div class="gear-chatbot-message user">
+            <div class="bubble">{{ pair.question }}</div>
+            <div class="gear-chatbot-time" [title]="pair.askedAt">{{ relativeTime(pair.askedMs) }}</div>
+          </div>
+
+          <!-- Assistant answer -->
+          @if (pair.answer) {
+            <div class="gear-chatbot-message assistant">
+              <div class="gear-chatbot-message__avatar">
+                <i class="fas fa-robot"></i>
+              </div>
+              <div class="gear-chatbot-message__body">
+                <div
+                  class="bubble"
+                  [class.error]="isErrorReply(pair.answer)"
+                  [innerHTML]="renderMarkdown(visibleAnswer(pair))"
+                ></div>
+                <div class="gear-chatbot-message__footer">
+                  <span class="gear-chatbot-time" [title]="pair.answeredAt ?? ''">{{ relativeTime(pair.answeredMs) }}</span>
+                  <button
+                    type="button"
+                    class="gear-chatbot-copy"
+                    (click)="copyToClipboard(pair.answer, $index)"
+                    [title]="copiedIndex === $index ? 'Copied!' : 'Copy answer'"
+                    aria-label="Copy answer"
+                  >
+                    <i class="fas" [class.fa-check]="copiedIndex === $index" [class.fa-copy]="copiedIndex !== $index"></i>
+                    {{ copiedIndex === $index ? 'Copied' : 'Copy' }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+        }
+
+        @if (loading) {
+          <div class="gear-chatbot-message assistant">
+            <div class="gear-chatbot-message__avatar">
+              <i class="fas fa-robot"></i>
+            </div>
+            <div class="gear-chatbot-message__body">
+              <div class="bubble typing">
+                <span class="gear-chatbot-dot"></span>
+                <span class="gear-chatbot-dot"></span>
+                <span class="gear-chatbot-dot"></span>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Scroll-to-top: only shown when scrolled down AND questions exist -->
+        @if (showScrollTop && pairs.length > 0) {
+          <div class="gear-chatbot-scroll-top-wrap">
+            <button
+              type="button"
+              class="gear-chatbot-scroll-top"
+              (click)="scrollToTop()"
+              title="Scroll to top"
+              aria-label="Scroll to top"
+            >
+              <i class="fas fa-chevron-up"></i> Back to top
+            </button>
+          </div>
+        }
+      </div>
+
+      <!-- Input bar -->
+      <div class="gear-chatbot-input">
+        <div class="gear-chatbot-input__wrap">
+          <textarea
+            #inputTextarea
+            [(ngModel)]="inputText"
+            (keydown)="onKeydown($event)"
+            (input)="autoResizeTextarea()"
+            rows="1"
+            placeholder="Ask GEAR a question…"
+            aria-label="Message to GEAR Assistant"
+            [disabled]="loading"
+            maxlength="500"
+          ></textarea>
+          <div class="gear-chatbot-input__meta">
+            <span class="gear-chatbot-input__hint"><kbd>Enter</kbd> to send &nbsp;·&nbsp; <kbd>Shift+Enter</kbd> for newline</span>
+            <span class="gear-chatbot-input__count" [class.warn]="inputText.length >= 450">{{ inputText.length }}/500</span>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="gear-chatbot-send"
+          (click)="send()"
+          [disabled]="loading || !inputText.trim()"
+          aria-label="Send"
+          title="Send (Enter)"
+        >
+          <i class="fas fa-paper-plane"></i>
+          @if (expanded) { <span class="gear-chatbot-send__label">Send</span> }
+        </button>
+      </div>
+
+    </div>
+  }
+</div>
