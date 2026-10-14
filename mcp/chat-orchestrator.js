@@ -22,6 +22,7 @@ const path = require('path');
 const { tools, runTool } = require('./gear-tools');
 const { chatCompletion } = require('./usai-client');
 const promptCache = require('./prompt-cache');
+const { lookup: cacheGet, save: cacheSave, log: cacheLog } = promptCache;
 
 const CONFIG_PATH = path.join(__dirname, 'chat-config.json');
 
@@ -243,8 +244,9 @@ async function runChat(history, userMessage) {
   // Cache lookup: only cache single-turn questions (no prior history) since
   // follow-up questions depend on context and should not be cached.
   const isFirstTurn = !history || history.length === 0;
+  const turnIndex = isFirstTurn ? 0 : Math.floor((history.length) / 2);
   if (isFirstTurn) {
-    const cached = await promptCache.lookup(userMessage, 'chat');
+    const cached = await cacheGet(userMessage, 'chat');
     if (cached) {
       console.error('[chat] cache HIT — skipping USAi call');
       return cached;
@@ -300,9 +302,15 @@ async function runChat(history, userMessage) {
           ],
         };
         if (isFirstTurn) {
-          promptCache.save(userMessage, 'chat', result.reply, result.toolCalls, {
+          cacheSave(userMessage, 'chat', result.reply, result.toolCalls, {
             responseTimeMs: Date.now() - t0,
             tokensUsed: tok1,
+          }).catch(() => {});
+        } else {
+          cacheLog(userMessage, 'chat', result.reply, result.toolCalls, {
+            responseTimeMs: Date.now() - t0,
+            tokensUsed: tok1,
+            turnIndex,
           }).catch(() => {});
         }
         return result;
@@ -357,9 +365,15 @@ async function runChat(history, userMessage) {
           ],
         };
         if (isFirstTurn) {
-          promptCache.save(userMessage, 'chat', result.reply, result.toolCalls, {
+          cacheSave(userMessage, 'chat', result.reply, result.toolCalls, {
             responseTimeMs: Date.now() - t0,
             tokensUsed: tok2,
+          }).catch(() => {});
+        } else {
+          cacheLog(userMessage, 'chat', result.reply, result.toolCalls, {
+            responseTimeMs: Date.now() - t0,
+            tokensUsed: tok2,
+            turnIndex,
           }).catch(() => {});
         }
         return result;
@@ -386,9 +400,15 @@ async function runChat(history, userMessage) {
       console.error('[chat] final answer (no tool call). iter=%d', i);
       const finalReply = cleanFinalAnswer(content);
       if (isFirstTurn) {
-        promptCache.save(userMessage, 'chat', finalReply, toolCalls, {
+        cacheSave(userMessage, 'chat', finalReply, toolCalls, {
           responseTimeMs: Date.now() - t0,
           tokensUsed: totalTokens || null,
+        }).catch(() => {});
+      } else {
+        cacheLog(userMessage, 'chat', finalReply, toolCalls, {
+          responseTimeMs: Date.now() - t0,
+          tokensUsed: totalTokens || null,
+          turnIndex,
         }).catch(() => {});
       }
       return { reply: finalReply, toolCalls };
@@ -436,9 +456,15 @@ async function runChat(history, userMessage) {
   if (tokFinal) totalTokens += tokFinal;
   const finalReply = cleanFinalAnswer(finalContent);
   if (isFirstTurn) {
-    promptCache.save(userMessage, 'chat', finalReply, toolCalls, {
+    cacheSave(userMessage, 'chat', finalReply, toolCalls, {
       responseTimeMs: Date.now() - t0,
       tokensUsed: totalTokens || null,
+    }).catch(() => {});
+  } else {
+    cacheLog(userMessage, 'chat', finalReply, toolCalls, {
+      responseTimeMs: Date.now() - t0,
+      tokensUsed: totalTokens || null,
+      turnIndex,
     }).catch(() => {});
   }
   return { reply: finalReply, toolCalls };
