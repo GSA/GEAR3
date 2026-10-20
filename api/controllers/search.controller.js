@@ -1,8 +1,13 @@
 const ctrl = require('./base.controller');
+const SqlString = require('sqlstring');
 
 // Need to update this to a view in the database for gear_schema like cowboy_ods once everything is transitioned over to the new schema
 exports.searchAll = (req, res) => {
   var searchKW = decodeURIComponent(req.params.kw);
+  // Escape the term before interpolation: an apostrophe in a natural-language
+  // query (e.g. "our agency's brand") otherwise terminates the SQL string
+  // literal and fails the whole search with HTTP 501.
+  var searchKWSafe = SqlString.escape(searchKW);
   var query = `SELECT * FROM (
     -- Subsystems from FISMA
     SELECT
@@ -14,13 +19,13 @@ exports.searchAll = (req, res) => {
         'Business Systems & Subsystems Report' AS \`GEAR_Type_Display\`,
         '{}' AS \`Other\`,
         -- Weighted Relevance: Give a 'Name' match 5x the score of a 'Description' match
-        (MATCH(systems.\`ex:System_Name\`) AGAINST ('${searchKW}' IN BOOLEAN MODE) * 5) +
-        (MATCH(systems.\`ex:Description\`) AGAINST ('${searchKW}' IN BOOLEAN MODE)) AS \`relevance\`
+        (MATCH(systems.\`ex:System_Name\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE) * 5) +
+        (MATCH(systems.\`ex:Description\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE)) AS \`relevance\`
     FROM
         gear_schema.obj_fisma_archer AS systems
     WHERE
         systems.\`ex:SystemLevel\` = 'SubSystem' AND
-        MATCH(systems.\`ex:System_Name\`, systems.\`ex:Description\`) AGAINST ('${searchKW}' IN BOOLEAN MODE)
+        MATCH(systems.\`ex:System_Name\`, systems.\`ex:Description\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE)
 
     UNION
 
@@ -33,14 +38,14 @@ exports.searchAll = (req, res) => {
         'FISMA' AS \`GEAR_Type\`,
         'Security -> FISMA Systems Inventory' AS \`GEAR_Type_Display\`,
         '{}' AS \`Other\`,
-        (MATCH(fisma.\`ex:System_Name\`) AGAINST ('${searchKW}' IN BOOLEAN MODE) * 5) +
-        (MATCH(fisma.\`ex:Description\`) AGAINST ('${searchKW}' IN BOOLEAN MODE)) AS \`relevance\`
+        (MATCH(fisma.\`ex:System_Name\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE) * 5) +
+        (MATCH(fisma.\`ex:Description\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE)) AS \`relevance\`
     FROM
         gear_schema.obj_fisma_archer AS fisma
     WHERE
         (fisma.\`ex:SystemLevel\` = 'System') AND
         (fisma.\`ex:Status\` <> 'Pending') AND
-        MATCH(fisma.\`ex:System_Name\`, fisma.\`ex:Description\`) AGAINST ('${searchKW}' IN BOOLEAN MODE)
+        MATCH(fisma.\`ex:System_Name\`, fisma.\`ex:Description\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE)
 
     UNION
 
@@ -53,13 +58,13 @@ exports.searchAll = (req, res) => {
         'Technology' AS \`GEAR_Type\`,
         'Technologies -> IT Standards List' AS \`GEAR_Type_Display\`,
         JSON_OBJECT('Vendor', tech.\`Vendor_Standard_Organization\`, 'Comments', tech.\`Comments\`) AS \`Other\`,
-        (MATCH(tech.\`softwareReleaseName\`, tech.\`Keyname\`) AGAINST ('${searchKW}' IN BOOLEAN MODE) * 5) +
-        (MATCH(tech.\`Description\`) AGAINST ('${searchKW}' IN BOOLEAN MODE)) AS \`relevance\`
+        (MATCH(tech.\`softwareReleaseName\`, tech.\`Keyname\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE) * 5) +
+        (MATCH(tech.\`Description\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE)) AS \`relevance\`
     FROM
         obj_technology AS tech
     LEFT JOIN obj_technology_status ON tech.obj_technology_status_Id = obj_technology_status.Id
     WHERE
-        MATCH(tech.\`softwareReleaseName\`, tech.\`Keyname\`, tech.\`Description\`) AGAINST ('${searchKW}' IN BOOLEAN MODE)
+        MATCH(tech.\`softwareReleaseName\`, tech.\`Keyname\`, tech.\`Description\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE)
 
     UNION
 
@@ -72,12 +77,12 @@ exports.searchAll = (req, res) => {
         'Capability' AS \`GEAR_Type\`,
         'GSA Enterprise -> Business Capability List' AS \`GEAR_Type_Display\`,
         '{}' AS \`Other\`,
-        (MATCH(cap.\`Capability_Name\`) AGAINST ('${searchKW}' IN BOOLEAN MODE) * 5) +
-        (MATCH(cap.\`Description\`) AGAINST ('${searchKW}' IN BOOLEAN MODE)) AS \`relevance\`
+        (MATCH(cap.\`Capability_Name\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE) * 5) +
+        (MATCH(cap.\`Description\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE)) AS \`relevance\`
     FROM
         gear_schema.obj_capability AS cap
     WHERE
-        MATCH(cap.\`Capability_Name\`, cap.\`Description\`) AGAINST ('${searchKW}' IN BOOLEAN MODE)
+        MATCH(cap.\`Capability_Name\`, cap.\`Description\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE)
 
     UNION
 
@@ -90,12 +95,12 @@ exports.searchAll = (req, res) => {
         'Organization' AS \`GEAR_Type\`,
         'GSA Enterprise -> Organization List' AS \`GEAR_Type_Display\`,
         '{}' AS \`Other\`,
-        (MATCH(org.\`Organization_Id\`) AGAINST ('${searchKW}' IN BOOLEAN MODE) * 5) +
-        (MATCH(org.\`Organization_Name\`) AGAINST ('${searchKW}' IN BOOLEAN MODE)) AS \`relevance\`
+        (MATCH(org.\`Organization_Id\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE) * 5) +
+        (MATCH(org.\`Organization_Name\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE)) AS \`relevance\`
     FROM
         gear_schema.obj_organization AS org
     WHERE
-        MATCH(org.\`Organization_Id\`, org.\`Organization_Name\`) AGAINST ('${searchKW}' IN BOOLEAN MODE)
+        MATCH(org.\`Organization_Id\`, org.\`Organization_Name\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE)
 
     UNION
 
@@ -108,12 +113,12 @@ exports.searchAll = (req, res) => {
         'Investment' AS \`GEAR_Type\`,
         'IT Strategy -> IT Investments' AS \`GEAR_Type_Display\`,
         '{}' AS \`Other\`,
-        (MATCH(invest.\`Investment_Name\`) AGAINST ('${searchKW}' IN BOOLEAN MODE) * 5) +
-        (MATCH(invest.\`Description\`) AGAINST ('${searchKW}' IN BOOLEAN MODE)) AS \`relevance\`
+        (MATCH(invest.\`Investment_Name\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE) * 5) +
+        (MATCH(invest.\`Description\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE)) AS \`relevance\`
     FROM
         gear_schema.obj_investments as invest
     WHERE
-        MATCH(invest.\`Investment_Name\`, invest.\`Description\`) AGAINST ('${searchKW}' IN BOOLEAN MODE)
+        MATCH(invest.\`Investment_Name\`, invest.\`Description\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE)
 
     UNION
 
@@ -126,12 +131,12 @@ exports.searchAll = (req, res) => {
         'Website' AS \`GEAR_Type\`,
         'Business Systems -> GSA Websites' AS \`GEAR_Type_Display\`,
         '{}' AS \`Other\`,
-        (MATCH(web.\`domain\`) AGAINST ('${searchKW}' IN BOOLEAN MODE) * 5) +
-        (MATCH(web.\`notes\`) AGAINST ('${searchKW}' IN BOOLEAN MODE)) AS \`relevance\`
+        (MATCH(web.\`domain\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE) * 5) +
+        (MATCH(web.\`notes\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE)) AS \`relevance\`
     FROM
         gear_schema.obj_websites as web
     WHERE
-        MATCH(web.\`domain\`, web.\`notes\`) AGAINST ('${searchKW}' IN BOOLEAN MODE)
+        MATCH(web.\`domain\`, web.\`notes\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE)
 
     UNION
 
@@ -144,12 +149,12 @@ exports.searchAll = (req, res) => {
         'TRM' AS \`GEAR_Type\`,
         'Technology Reference Model' AS \`GEAR_Type_Display\`,
         '{}' AS \`Other\`,
-        (MATCH(trm.\`TRM_Name\`) AGAINST ('${searchKW}' IN BOOLEAN MODE) * 5) +
-        (MATCH(trm.\`Description\`) AGAINST ('${searchKW}' IN BOOLEAN MODE)) AS \`relevance\`
+        (MATCH(trm.\`TRM_Name\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE) * 5) +
+        (MATCH(trm.\`Description\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE)) AS \`relevance\`
     FROM
         gear_schema.obj_TRM as trm
     WHERE
-        MATCH(trm.\`TRM_Name\`, trm.\`Description\`) AGAINST ('${searchKW}' IN BOOLEAN MODE)
+        MATCH(trm.\`TRM_Name\`, trm.\`Description\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE)
 
 ) AS \`final_results\`
 WHERE \`relevance\` > 0

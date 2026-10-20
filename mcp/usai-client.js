@@ -1,5 +1,6 @@
 /**
- * Thin client for the USAi Chat Completions API (OpenAI-compatible).
+ * Thin client for the USAi Chat Completions and Embeddings APIs
+ * (OpenAI-compatible).
  *
  * Auth: the API key is read from the AI_CERT environment variable and sent as a
  * Bearer token. The base URL defaults to https://api.gsa.usai.gov and can be
@@ -18,6 +19,11 @@ require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
 const USAI_API_BASE = process.env.USAI_API_BASE || 'https://api.gsa.usai.gov';
 const USAI_CHAT_PATH = '/api/v1/chat/completions';
+const USAI_EMBEDDINGS_PATH = '/api/v1/embeddings';
+
+/** Embedding model and its fixed output dimensionality. */
+const EMBEDDING_MODEL = process.env.USAI_EMBEDDING_MODEL || 'cohere_english_v3';
+const EMBEDDING_DIMENSIONS = Number(process.env.USAI_EMBEDDING_DIMENSIONS || 1024);
 
 /**
  * @param {Array<{role:string,content:string}>} messages
@@ -34,11 +40,48 @@ async function chatCompletion(messages, opts = {}) {
     throw new Error('USAi API key missing: set AI_CERT in the environment.');
   }
 
+  const includeTemperature =
+    typeof opts.temperature === 'number' && !modelRejectsTemperature(opts.model);
+
+  try {
+    return await postChatCompletion(messages, opts, apiKey, includeTemperature);
+  } catch (err) {
+    // Newer models (GPT 5.6+, Claude Sonnet 5+) reject `temperature` outright
+    // with HTTP 400 rather than ignoring it. Remember the model and retry once
+    // without it, so changing chat-config.json's model never hard-fails.
+    if (includeTemperature && isTemperatureRejection(err)) {
+      TEMPERATURE_UNSUPPORTED.add(opts.model);
+      console.error(
+        '[usai] model %s rejects temperature; retrying without it',
+        opts.model
+      );
+      return postChatCompletion(messages, opts, apiKey, false);
+    }
+    throw err;
+  }
+}
+
+/** Models known to reject `temperature`, learned at runtime. */
+const TEMPERATURE_UNSUPPORTED = new Set();
+
+function modelRejectsTemperature(model) {
+  return TEMPERATURE_UNSUPPORTED.has(model);
+}
+
+function isTemperatureRejection(err) {
+  return (
+    err &&
+    err.status === 400 &&
+    /temperature/i.test(err.message || '')
+  );
+}
+
+async function postChatCompletion(messages, opts, apiKey, includeTemperature) {
   const body = {
     model: opts.model,
     messages,
   };
-  if (typeof opts.temperature === 'number') body.temperature = opts.temperature;
+  if (includeTemperature) body.temperature = opts.temperature;
   if (typeof opts.maxTokens === 'number') body.max_tokens = opts.maxTokens;
 
   const controller = new AbortController();
@@ -128,4 +171,131 @@ function extractContent(data) {
   return undefined;
 }
 
-module.exports = { chatCompletion, USAI_API_BASE };
+/**
+ * Embed one or more texts via the USAi embeddings endpoint.
+ *
+ * `inputType` matters: Cohere models produce asymmetric embeddings, so corpus
+ * text must be embedded as 'search_document' and user queries as
+ * 'search_query'. USAi defaults to 'search_document' when the field is omitted,
+ * so query-time callers must pass 'search_query' explicitly or retrieval
+ * quality silently degrades.
+ *
+ * Retries on 429 and 5xx with linear backoff. A 4xx other than 429 is a bad
+ * request (e.g. an input Cohere refuses) and is thrown immediately so callers
+ * can isolate the offending item.
+ *
+ * @param {string[]} inputs
+ * @param {object} opts
+ * @param {'search_document'|'search_query'} [opts.inputType]
+ * @param {string} [opts.model]
+ * @param {number} [opts.timeoutMs]
+ * @param {number} [opts.maxRetries]
+ * @returns {Promise<{vectors:number[][], tokensUsed:number, responseTimeMs:number}>}
+ */
+async function embed(inputs, opts = {}) {
+  const apiKey = process.env.AI_CERT;
+  if (!apiKey) {
+    throw new Error('USAi API key missing: set AI_CERT in the environment.');
+  }
+  if (!Array.isArray(inputs) || inputs.length === 0) {
+    throw new Error('embed() requires a non-empty array of input strings.');
+  }
+
+  const body = {
+    model: opts.model || EMBEDDING_MODEL,
+    input: inputs,
+  };
+  if (opts.inputType) body.input_type = opts.inputType;
+
+  const maxRetries = opts.maxRetries != null ? opts.maxRetries : 4;
+  const startTime = Date.now();
+  let lastErr = null;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), opts.timeoutMs || 60000);
+    try {
+      const res = await fetch(`${USAI_API_BASE}${USAI_EMBEDDINGS_PATH}`, {
+        method: 'POST',
+        headers: {
+          accept: 'application/json',
+          'content-type': 'application/json',
+          authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      });
+
+      if (res.status === 429 || res.status >= 500) {
+        lastErr = new Error(`USAi embeddings HTTP ${res.status}`);
+        lastErr.status = res.status;
+        lastErr.retryable = true;
+        await sleep(1000 * (attempt + 1));
+        continue;
+      }
+
+      if (!res.ok) {
+        let detail = '';
+        try {
+          detail = JSON.stringify(await res.json());
+        } catch (_) {
+          detail = await res.text().catch(() => '');
+        }
+        const err = new Error(`USAi embeddings HTTP ${res.status}: ${detail}`);
+        err.status = res.status;
+        throw err;
+      }
+
+      const data = await res.json();
+      if (!data || !Array.isArray(data.data)) {
+        throw new Error('USAi embeddings returned an unexpected response shape.');
+      }
+
+      // The API may return items out of order; `index` is authoritative.
+      const vectors = new Array(inputs.length);
+      data.data.forEach((item, i) => {
+        const pos = typeof item.index === 'number' ? item.index : i;
+        vectors[pos] = item.embedding;
+      });
+      if (vectors.some((v) => !Array.isArray(v))) {
+        throw new Error(
+          `USAi embeddings returned ${data.data.length} vectors for ${inputs.length} inputs.`
+        );
+      }
+
+      return {
+        vectors,
+        tokensUsed: (data.usage && data.usage.total_tokens) || 0,
+        responseTimeMs: Date.now() - startTime,
+      };
+    } catch (err) {
+      if (err.name === 'AbortError') {
+        lastErr = new Error('USAi embeddings request timed out.');
+        lastErr.retryable = true;
+        await sleep(1000 * (attempt + 1));
+        continue;
+      }
+      if (err.retryable) {
+        lastErr = err;
+        continue;
+      }
+      throw err;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  throw lastErr || new Error('USAi embeddings failed after retries.');
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+module.exports = {
+  chatCompletion,
+  embed,
+  EMBEDDING_MODEL,
+  EMBEDDING_DIMENSIONS,
+  USAI_API_BASE,
+};

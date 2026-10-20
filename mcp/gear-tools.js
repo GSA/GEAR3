@@ -10,7 +10,18 @@
  *  - Each tool has a JSON-schema-style definition compatible with the OpenAI
  *    Chat Completions "tools" format, which is also what MCP tool inputSchemas use.
  *  - Results are trimmed/capped to keep token usage reasonable.
+ *  - Retrieval is hybrid: keyword FULLTEXT results from /api/search/:kw are
+ *    combined with semantic (vector) results and exact identifier/name matching
+ *    by ./hybrid-search.js. Set GEAR_SEMANTIC_SEARCH=true to enable the
+ *    semantic arm; when disabled or unavailable, behavior falls back to the
+ *    keyword-only ordering this layer has always used.
  */
+
+const {
+  hybridSearch,
+  lookupByIdentifier,
+  isSemanticEnabled,
+} = require('./hybrid-search');
 
 const GEAR_API_BASE =
   process.env.GEAR_API_BASE || `http://localhost:${process.env.PORT || 3000}/api`;
@@ -58,14 +69,37 @@ async function searchGear({ keyword, limit }) {
   if (!keyword || typeof keyword !== 'string') {
     throw new Error('keyword is required');
   }
+  const max = limit || DEFAULT_RESULT_LIMIT;
+
+  // A bare GEAR ID is answered deterministically; FULLTEXT cannot match
+  // numeric identifiers at all.
+  const byId = await lookupByIdentifier(keyword);
+  if (byId.length) {
+    return { ...capResults(byId, max), strategy: 'exact_id' };
+  }
+
   const data = await gearApiGet(`/search/${encodeURIComponent(keyword)}`);
-  return capResults(data, limit || DEFAULT_RESULT_LIMIT);
+  const keywordRows = Array.isArray(data) ? data : [];
+
+  const { rows, strategy, semanticUsed } = await hybridSearch({
+    keyword,
+    limit: max,
+    keywordRows,
+  });
+
+  return { ...capResults(rows, max), strategy, semanticUsed };
 }
 
 /**
  * Find the single business system (GEAR_Type System or FISMA) that best matches
  * a name, using name-aware ranking rather than the DB's loose full-text
  * relevance (which can surface unrelated systems for multi-word queries).
+ *
+ * When semantic search is enabled, the candidate pool is widened with vector
+ * matches so a system can still be found from a description-style phrase
+ * ("the system for lease proposals") rather than only its literal name. The
+ * name-aware score below always takes precedence over semantic rank.
+ *
  * Returns the best match plus a few alternates so the model can disambiguate.
  */
 async function findSystem({ name }) {
@@ -74,7 +108,18 @@ async function findSystem({ name }) {
   }
   const term = name.toLowerCase().trim();
   const data = await gearApiGet(`/search/${encodeURIComponent(name)}`);
-  const rows = Array.isArray(data) ? data : [];
+  const keywordRows = Array.isArray(data) ? data : [];
+
+  let rows = keywordRows;
+  if (isSemanticEnabled()) {
+    const hybrid = await hybridSearch({
+      keyword: name,
+      limit: 50,
+      keywordRows,
+      entityTypes: ['System', 'FISMA'],
+    });
+    rows = hybrid.rows;
+  }
 
   const systems = rows.filter(
     (r) => r.GEAR_Type === 'System' || r.GEAR_Type === 'FISMA'
@@ -323,14 +368,14 @@ const tools = [
   {
     name: 'search_gear',
     description:
-      'Full-text search across all GEAR entities (systems, subsystems, FISMA systems, technologies/IT standards, capabilities, organizations, investments, websites, and TRM). Returns matching items with their name, description, status, and GEAR_Type. Use this first when the user asks about anything by name or keyword.',
+      'Search across all GEAR entities (systems, subsystems, FISMA systems, technologies/IT standards, capabilities, organizations, investments, websites, and TRM). Combines keyword matching with semantic (meaning-based) matching, so plain-English descriptions work as well as exact names - e.g. "system for tracking help desk tickets" will find relevant systems even if they do not contain those words. A bare numeric GEAR ID returns that exact record. Returns matching items with their name, description, status, and GEAR_Type. Use this first when the user asks about anything by name, keyword, or description.',
     parameters: {
       type: 'object',
       properties: {
         keyword: {
           type: 'string',
           description:
-            'The search term(s). Supports MySQL boolean full-text syntax (e.g. +cloud -legacy).',
+            'The search term(s), a natural-language description of what is wanted, or a GEAR ID.',
         },
         limit: {
           type: 'number',
