@@ -111,17 +111,17 @@
         
         & .quick-view-expiring-text-container {
           & .expire-icon {
-            color: #8a4300;
+            color: var(--primary-color);
             padding-right: 0.25rem;
           }
   
           & .expire-text {
             font-size: 0.875rem;
             font-weight: 400;
-            color: #8a4300;
+            color: var(--primary-color);
   
             & a {
-              color: #8a4300;
+              color: var(--primary-color);
             }
 
             &.multi-line-expire-text {
@@ -139,10 +139,10 @@
               text-decoration-line: underline;
               cursor: pointer;
               width: fit-content;
-              transition: transform 120ms ease, filter 120ms ease;
+              transition: color 120ms ease, transform 120ms ease;
 
               &:hover {
-                filter: brightness(0.9);
+                color: var(--primary-color-hover);
               }
 
               &:active {
