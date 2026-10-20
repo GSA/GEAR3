@@ -19,6 +19,9 @@
     "build-dev": "npm run clean-build && ng build --output-path=public --configuration=development --output-hashing=all",
     "serve-api": "node server.js",
     "mcp": "node mcp/gear-mcp-server.js",
+    "embeddings:rebuild": "node mcp/embedding-cli.js rebuild",
+    "embeddings:refresh": "node mcp/embedding-cli.js refresh",
+    "embeddings:stats": "node mcp/embedding-cli.js stats",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

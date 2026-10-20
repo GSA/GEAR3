@@ -617,3 +617,37 @@ if (process.env.TOUCHPOINTS_CRON) {
 } else {
   console.warn('TOUCHPOINTS_CRON env variable not set — skipping cron job.');
 }
+
+// -------------------------------------------------------------------------------------------------
+// CRON JOBS: GEAR Assistant semantic search index (see mcp/embedding-pipeline.js)
+//
+// Two schedules with different jobs:
+//   EMBEDDING_DELTA_CRON    — every few minutes. Hashes searchable text and
+//     re-embeds only changed records, so edits made during the day (e.g. an IT
+//     standard's approval status) are searchable within minutes.
+//   EMBEDDING_REBUILD_CRON  — nightly, after the data loaders above finish.
+//     Re-embeds everything into a staging table and swaps it in, reconciling
+//     anything the delta sweep could not detect.
+//
+// Both are no-ops unless GEAR_SEMANTIC_SEARCH=true.
+if (process.env.GEAR_SEMANTIC_SEARCH === 'true') {
+  const embeddingPipeline = require('./mcp/embedding-pipeline.js');
+
+  if (process.env.EMBEDDING_DELTA_CRON) {
+    cron.schedule(process.env.EMBEDDING_DELTA_CRON, async () => {
+      await embeddingPipeline.runDeltaRefresh();
+    });
+  } else {
+    console.warn('EMBEDDING_DELTA_CRON env variable not set — skipping cron job.');
+  }
+
+  if (process.env.EMBEDDING_REBUILD_CRON) {
+    cron.schedule(process.env.EMBEDDING_REBUILD_CRON, async () => {
+      await embeddingPipeline.runFullRebuild();
+    });
+  } else {
+    console.warn('EMBEDDING_REBUILD_CRON env variable not set — skipping cron job.');
+  }
+} else {
+  console.warn('GEAR_SEMANTIC_SEARCH is not "true" — semantic search disabled, embedding cron jobs skipped.');
+}
