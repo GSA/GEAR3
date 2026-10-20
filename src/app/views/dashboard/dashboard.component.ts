@@ -442,18 +442,22 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public getFismaPastDueLabel(): string {
-    return `${this.itemLabel(this.fismaPastDue || 0)} past due`;
+    const count = this.fismaPastDue || 0;
+    return `${count} active system${count === 1 ? '' : 's'} past ${count === 1 ? 'its' : 'their'} ATO renewal date`;
   }
 
   public getFismaExpiringSoonLabel(): string {
-    return `${this.itemLabel(this.fismaExpiringThisWeek || 0)} expiring within 7 days`;
+    const count = this.fismaExpiringThisWeek || 0;
+    return `${count} system${count === 1 ? '' : 's'}' ATO renewal date${count === 1 ? '' : 's'} within 7 days`;
   }
 
   public getStandardsPastDueLabel(): string {
-    return `${this.itemLabel(this.standardsPastDue || 0)} past due`;
+    const count = this.standardsPastDue || 0;
+    return `${count} software entr${count === 1 ? 'y' : 'ies'} past ${count === 1 ? 'its' : 'their'} approval date`;
   }
 
   public getStandardsExpiringSoonLabel(): string {
-    return `${this.itemLabel(this.standardsExpiringThisWeek || 0)} expiring within 7 days`;
+    const count = this.standardsExpiringThisWeek || 0;
+    return `${count} software entr${count === 1 ? 'y' : 'ies'} expiring within 7 days`;
   }
 }
