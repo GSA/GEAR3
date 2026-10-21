@@ -61,6 +61,29 @@ function capResults(rows, limit = DEFAULT_RESULT_LIMIT) {
   return { rows: capped, truncated: total > limit, total };
 }
 
+/**
+ * Angular route segment for each GEAR entity type, used to build in-app deep
+ * links. Routes are hash-based (see app-routing.module.ts useHash), so links
+ * are relative and resolve in any environment while opening in the same tab.
+ */
+const GEAR_ROUTE_BY_TYPE = {
+  System: 'systems',
+  FISMA: 'FISMA',
+  Technology: 'it_standards',
+  Capability: 'capabilities',
+  Organization: 'organizations',
+  Investment: 'investments',
+  Website: 'websites',
+  Record: 'records_mgmt',
+};
+
+/** Build an in-app GEAR deep link for an entity, or null if the type has none. */
+function gearUrlFor(entityType, id) {
+  const route = GEAR_ROUTE_BY_TYPE[entityType];
+  if (!route || id == null || id === '') return null;
+  return `#/${route}/${encodeURIComponent(id)}`;
+}
+
 /* ------------------------------------------------------------------ *
  * Tool implementations
  * ------------------------------------------------------------------ */
@@ -71,11 +94,16 @@ async function searchGear({ keyword, limit }) {
   }
   const max = limit || DEFAULT_RESULT_LIMIT;
 
+  // Attach an in-app deep link to every hit so answers can cite records the
+  // user can click through to, instead of describing how to navigate there.
+  const withLinks = (rows) =>
+    rows.map((r) => ({ ...r, GearUrl: gearUrlFor(r.GEAR_Type, r.Id) }));
+
   // A bare GEAR ID is answered deterministically; FULLTEXT cannot match
   // numeric identifiers at all.
   const byId = await lookupByIdentifier(keyword);
   if (byId.length) {
-    return { ...capResults(byId, max), strategy: 'exact_id' };
+    return { ...capResults(withLinks(byId), max), strategy: 'exact_id' };
   }
 
   const data = await gearApiGet(`/search/${encodeURIComponent(keyword)}`);
@@ -87,7 +115,20 @@ async function searchGear({ keyword, limit }) {
     keywordRows,
   });
 
-  return { ...capResults(rows, max), strategy, semanticUsed };
+  const capped = capResults(withLinks(rows), max);
+  return {
+    ...capped,
+    strategy,
+    semanticUsed,
+    // Approval questions need get_software_approval: it reports the exact
+    // status and attaches the complete set of approved alternatives, which a
+    // search result cannot.
+    note:
+      'Link each record you cite using its GearUrl in markdown link form. ' +
+      'If the user asked whether a software product is approved, call ' +
+      'get_software_approval for that product rather than answering from these ' +
+      'search results.',
+  };
 }
 
 /**
@@ -287,7 +328,9 @@ async function getSystemRecordsSchedules({ id, limit }) {
 
 /** Project an IT standard row down to the fields useful for approval answers. */
 function slimItStandard(t) {
+  const id = t.ID != null ? t.ID : t.Id;
   return {
+    Id: id,
     Name: t.SoftwareReleaseName || t.Name,
     Status: t.Status,
     Category: t.Category,
@@ -297,29 +340,51 @@ function slimItStandard(t) {
     ComplianceStatus: t.ComplianceStatus,
     ApprovalExpirationDate: t.ApprovalExpirationDate,
     EndOfLifeDate: t.EndOfLifeDate,
+    // Deep link to this record in the GEAR portal. Relative + hash-routed so it
+    // resolves correctly in every environment and opens in the same tab.
+    GearUrl: gearUrlFor('Technology', id),
   };
 }
 
 /**
  * Look up an IT standard (software product) in the IT Standards List and report
- * its approval status at GSA. Matches on name (case-insensitive substring) and
- * returns the matching entries plus their Status (Approved, Denied, Retired,
- * Pilot, Proposed, Exception, etc.).
+ * its approval status at GSA.
+ *
+ * Matching is token-based (every word of the query must appear somewhere in the
+ * product's name, product name, or manufacturer), not a single substring.
+ * Inventory names interleave manufacturer, product, and version — e.g. "Google
+ * Google Cloud Platform Looker 22 (22.18)" — so a substring search for "Google
+ * Looker" finds nothing even though the product is present. That false negative
+ * made the assistant report a Denied product as never submitted for review.
  */
 async function getSoftwareApproval({ name, limit }) {
   if (!name || typeof name !== 'string') {
     throw new Error('name is required');
   }
-  const term = name.toLowerCase().trim();
   const data = await gearApiGet('/it_standards');
   const rows = Array.isArray(data) ? data : [];
 
-  const matches = rows.filter((t) => {
-    const n = (t.SoftwareReleaseName || t.Name || '').toLowerCase();
-    const p = (t.SoftwareProductName || '').toLowerCase();
-    const m = (t.ManufacturerName || '').toLowerCase();
-    return n.includes(term) || p.includes(term) || m.includes(term);
-  });
+  const term = name.toLowerCase().trim();
+  const tokens = term.split(/\s+/).filter((w) => w.length > 1);
+
+  const haystack = (t) =>
+    [
+      t.SoftwareReleaseName || t.Name || '',
+      t.SoftwareProductName || '',
+      t.ManufacturerName || '',
+    ]
+      .join(' ')
+      .toLowerCase();
+
+  // Exact substring first (highest confidence), then all-tokens-present.
+  const substringMatches = rows.filter((t) => haystack(t).includes(term));
+  const matches = substringMatches.length
+    ? substringMatches
+    : rows.filter((t) => {
+        if (!tokens.length) return false;
+        const h = haystack(t);
+        return tokens.every((w) => h.includes(w));
+      });
 
   // Prefer non-retired, then Approved first, for readability.
   const rank = (s) => {
@@ -332,7 +397,170 @@ async function getSoftwareApproval({ name, limit }) {
   };
   matches.sort((a, b) => rank(a) - rank(b));
 
-  return capResults(matches.map(slimItStandard), limit || 15);
+  const capped = capResults(matches.map(slimItStandard), limit || 15);
+
+  // When the product exists but is not usable, attach approved alternatives
+  // from GEAR itself. Left to its own knowledge the model recommends plausible
+  // market leaders that are Denied, Retired, or absent from GEAR entirely
+  // (observed for Looker: Power BI = Denied, Qlik = Retired, Sisense = not in
+  // inventory), which is worse than giving no alternatives at all.
+  const best = capped.rows[0];
+  const bestStatus = String((best && best.Status) || '').toLowerCase();
+  const notUsable = best && ['denied', 'retired', 'exception'].includes(bestStatus);
+
+  let alternatives = [];
+  let alternativesBasis = null;
+  if (notUsable) {
+    const matchedIds = new Set(matches.map((m) => String(m.ID != null ? m.ID : m.Id)));
+    const rawBest = matches[0] || best;
+    const result = await findApprovedAlternatives(rawBest, rows, matchedIds);
+    alternatives = result.alternatives;
+    alternativesBasis = result.basis;
+  }
+
+  let note;
+  if (capped.total === 0) {
+    note =
+      `No IT standard matching "${name}" was found in the inventory. Tell the user it has not been ` +
+      `submitted for review (SRR); do not state an approval status and do not recommend specific ` +
+      `alternatives unless you call list_approved_software to get real ones.`;
+  } else if (notUsable) {
+    note =
+      `"${best.Name}" has Status "${best.Status}" and is NOT approved for use. ` +
+      `Link to its GEAR record using the markdown link [${best.Name}](${best.GearUrl}) so the user can ` +
+      `review the listing, and point them to the IT Standards team at ` +
+      `[it-standards@gsa.gov](mailto:it-standards@gsa.gov) for questions about the decision. ` +
+      (alternatives.length
+        ? `Then recommend approved alternatives from "approvedAlternatives" below (selected by ` +
+          `${alternativesBasis}) - these are ALL the Approved products GEAR classifies in the same ` +
+          `TRM categories, so present them all rather than a subset, each linked with its own GearUrl. ` +
+          `Do NOT recommend any product that is not in that list; products you may think of from general ` +
+          `knowledge are frequently Denied, Retired, or absent from GEAR.`
+        : `No Approved product with similar capability was found, so say that no approved alternative exists ` +
+          `in the inventory rather than naming products from your own knowledge.`);
+  } else {
+    note =
+      `These are the inventory entries matching "${name}". Report the Status exactly as given, and link ` +
+      `each product to its GEAR record using its GearUrl in markdown link form.`;
+  }
+
+  return {
+    ...capped,
+    ...(notUsable ? { approvedAlternatives: alternatives } : {}),
+    itStandardsContact: 'it-standards@gsa.gov',
+    note,
+  };
+}
+
+/**
+ * Find every Approved IT standard that shares a TRM category with the given
+ * product, so alternatives are complete rather than a sample.
+ *
+ * Two paths, in order:
+ *  1. The product's own TRM categories, read from its Category field (which
+ *     /api/it_standards derives from TRM mappings).
+ *  2. When the product has no TRM mapping at all — true for Looker and many
+ *     others — the TRM categories whose descriptions are semantically closest
+ *     to the product, then every Approved product mapped to those categories.
+ *
+ * Path 2 matters because the earlier implementation fell back to raw product
+ * similarity, which returned an arbitrary top-N of loosely related software and
+ * silently omitted genuine peers such as "Strategy One Workstation".
+ *
+ * @returns {Promise<{alternatives:Array<object>, basis:string|null}>}
+ */
+async function findApprovedAlternatives(product, allRows, excludeIds) {
+  const isApproved = (t) => String(t.Status || '').toLowerCase() === 'approved';
+  const idOf = (t) => String(t.ID != null ? t.ID : t.Id);
+
+  // ── Path 1: the product's own TRM categories ──────────────────────────────
+  const ownCategories = String(product.Category || '')
+    .split(',')
+    .map((c) => c.trim())
+    .filter(Boolean);
+
+  if (ownCategories.length) {
+    const wanted = ownCategories.map((c) => c.toLowerCase());
+    const matched = allRows.filter((t) => {
+      if (!isApproved(t) || excludeIds.has(idOf(t))) return false;
+      const cats = String(t.Category || '')
+        .split(',')
+        .map((c) => c.trim().toLowerCase());
+      return cats.some((c) => wanted.includes(c));
+    });
+    if (matched.length) {
+      return {
+        alternatives: matched.map(slimItStandard),
+        basis: `shared TRM categor${ownCategories.length > 1 ? 'ies' : 'y'} (${ownCategories.join(', ')})`,
+      };
+    }
+  }
+
+  // ── Path 2: semantically nearest TRM categories ───────────────────────────
+  if (!isSemanticEnabled()) return { alternatives: [], basis: null };
+  try {
+    const { embed } = require('./usai-client');
+    const vectorStore = require('./vector-store');
+
+    // Describe the product's capability, not just its brand name: the
+    // description carries the words ("reports and dashboards") that match a
+    // TRM category, while a brand name alone matches the same vendor's
+    // unrelated products.
+    const query = [product.Name, product.SoftwareProductName, product.Description]
+      .filter(Boolean)
+      .join(' ')
+      .slice(0, 1200);
+    if (!query.trim()) return { alternatives: [], basis: null };
+
+    const { vectors } = await embed([query], { inputType: 'search_query' });
+    const trmHits = await vectorStore.search(vectors[0], {
+      limit: 8,
+      minScore: 0.3,
+      entityTypes: ['TRM'],
+    });
+    if (!trmHits.length) return { alternatives: [], basis: null };
+
+    // Keep only categories close to the best match. Absolute cosine scores sit
+    // in a narrow band here (~0.32-0.39), so a flat floor admits weak matches:
+    // for Looker the 7th-ranked category was "Search Engines", which would have
+    // offered Google Search and Westlaw as BI alternatives.
+    const topScore = trmHits[0].score;
+    const nearest = trmHits.filter((h) => h.score >= topScore * 0.95);
+
+    const seen = new Set();
+    const alternatives = [];
+    const usedCategories = [];
+    for (const hit of nearest) {
+      let related;
+      try {
+        related = await gearApiGet(
+          `/trm/get/relatedITStandards/${encodeURIComponent(hit.entityId)}`
+        );
+      } catch (err) {
+        continue;
+      }
+      const relatedRows = Array.isArray(related) ? related : [];
+      const approved = relatedRows.filter(
+        (t) => isApproved(t) && !excludeIds.has(idOf(t)) && !seen.has(idOf(t))
+      );
+      if (!approved.length) continue;
+      usedCategories.push(hit.name);
+      for (const t of approved) {
+        seen.add(idOf(t));
+        alternatives.push({ ...slimItStandard(t), TrmCategory: hit.name });
+      }
+    }
+
+    return {
+      alternatives,
+      basis: usedCategories.length
+        ? `the TRM categor${usedCategories.length > 1 ? 'ies' : 'y'} closest to this product (${usedCategories.join(', ')})`
+        : null,
+    };
+  } catch (err) {
+    console.error('[gear-tools] alternatives lookup failed:', err.message);
+    return { alternatives: [], basis: null };
+  }
 }
 
 /**
