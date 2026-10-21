@@ -127,9 +127,39 @@ automatically falls back to keyword-only search.
 
 `search_gear`, `find_system`, `get_system`, `get_system_related`,
 `get_system_software`, `get_system_records_schedules`, `get_software_approval`,
-`list_approved_software`, `list_capabilities`, `list_investments`,
+`list_approved_software`, `list_software_by_category`, `find_trm_category`,
+`get_trm_software`, `list_capabilities`, `list_investments`,
 `list_organizations`, `list_it_standards`, `list_websites`.
 All are read-only and call the existing GEAR controllers.
+
+### Authoritative category listings
+
+Questions of the form "what <kind of> software is in the inventory?" must be
+answered from GEAR's curated Technology Reference Model mappings, not from
+keyword search. `list_software_by_category` resolves a technology type (e.g.
+"low code/no code", "web server", "programming language") to its TRM category
+and returns the complete set of IT standards GEAR classifies under it, via
+`/api/trm/get/relatedITStandards/:id`.
+
+Keyword search is actively wrong for these questions: searching "low code no
+code" returns editors, scanners, and CI tools whose descriptions merely contain
+those words, and models then present them as category members.
+
+Two safeguards back this up, because prompt instructions alone did not hold:
+
+- `list_software_by_category` is a **single call** that resolves the category
+  and fetches its software together. An earlier find-then-get pair let the model
+  skip the second step and substitute a keyword search.
+- `chat-orchestrator.js` **blocks** `search_gear`, `list_it_standards`, and
+  `list_approved_software` for the rest of the turn once an authoritative tool
+  has returned rows (see `AUTHORITATIVE_TOOLS` / `BROAD_SEARCH_TOOLS` in
+  `gear-tools.js`). The blocked call returns an explanatory stub instead of
+  running, so unrelated products never enter the context to be merged in.
+
+TRM categories are hierarchical (Domain > Area > Category). Software is mapped
+at the Category level, so requesting an Area sets `includeChildren` to roll up
+its children. Category names are singular in the data ("Programming Language"),
+so matching also compares a singularized form of the query.
 
 ## Semantic (vector) search
 
@@ -226,6 +256,68 @@ detects a model mismatch and re-embeds affected rows automatically.
 embedded as `search_document` and queries as `search_query`; USAi defaults to
 `search_document` when `input_type` is omitted, so omitting it at query time
 silently degrades retrieval quality.
+
+## Logging and response review
+
+Chat interactions are logged to `gear_log.ai_log`, which doubles as the prompt
+cache's L2 store. Two columns make that log usable for analytics:
+
+| Column | Values | Meaning |
+| --- | --- | --- |
+| `Source` | `user` / `developer` / `test` | Where the prompt came from |
+| `Correct` | `correct` / `partial` / `incorrect` | Review verdict; `NULL` = unreviewed |
+| `Review_Notes` | free text | Why the verdict was given |
+| `Reviewed_DTG` | timestamp | When it was reviewed |
+
+`Source` is resolved per message by `resolveSource()` in `prompt-cache.js`:
+
+1. a **`dev!` message prefix** marks that single turn as `developer`;
+2. otherwise explicit `GEAR_AI_LOG_SOURCE` (`user` | `developer` | `test`);
+3. otherwise `ENVIRONMENT`/`NODE_ENV` of `development`/`dev`/`local`/`test`
+   implies `developer`;
+4. default is `user`.
+
+Defaulting to `user` means a misconfigured production server still records real
+traffic rather than silently discarding it. Set `GEAR_AI_LOG_SOURCE=test` for
+benchmark or scripted runs so they stay out of usage analytics.
+
+**The `dev!` prefix** lets a developer tag a single question as testing even
+against a production deployment — type `dev! what software does GEAR use` in the
+chatbot. The prefix is case-insensitive, stripped before the model and the log
+see it, and never stored, so the logged prompt stays directly comparable to the
+same question asked by a real user.
+
+Cache lookups are **scoped to the same `Source`**, so a test or local-dev reply
+is never served to a production user — and local prompt tuning gets a fresh
+model call instead of a stale cached answer for the same question.
+
+Cache hits are logged too (`Event.cache_hit = true`, no token cost). They were
+previously returned without logging, which meant the most-repeated questions
+were the least visible in the data.
+
+Analytics queries:
+
+```sql
+-- Real user traffic only
+SELECT DTG, Prompt, Correct FROM gear_log.ai_log
+WHERE Source = 'user' ORDER BY DTG DESC;
+
+-- Known-bad responses worth fixing
+SELECT Prompt, Review_Notes FROM gear_log.ai_log
+WHERE Source = 'user' AND Correct IN ('incorrect','partial');
+```
+
+### Regression questions
+
+`gear_log.ai_eval_question` holds one row per question with the answer a correct
+reply must contain, the expected tool chain, and `Must_Not_Contain` for known
+hallucinations (e.g. `Flosum` for the low-code/no-code question). It is separate
+from `ai_log` because `ai_log` has many responses per question, while the gold
+answer belongs to the question.
+
+Schema changes are recorded in
+[`api/queries/DDL/2026-10-21_ai_log_review_columns.sql`](../api/queries/DDL/2026-10-21_ai_log_review_columns.sql)
+and must be applied once per environment.
 
 ## Security notes
 

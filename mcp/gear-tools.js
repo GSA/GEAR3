@@ -356,6 +356,229 @@ async function listApprovedSoftware({ category, limit }) {
 }
 
 /* ------------------------------------------------------------------ *
+ * Technology Reference Model (TRM)
+ * ------------------------------------------------------------------ */
+
+/** Project a TRM category row down to the fields useful for the model. */
+function slimTrmCategory(t) {
+  return {
+    Id: t.Id,
+    Name: t.Name,
+    Area: t.Area,
+    Domain: t.Domain,
+    Level: t.Level,
+    Type: t.Type,
+    ParentId: t.ParentId,
+    Description: t.Description,
+  };
+}
+
+/**
+ * Find Technology Reference Model categories matching a technology type or
+ * concept (e.g. "low code/no code", "web server", "container orchestration").
+ *
+ * Ranking prefers exact and acronym-style name matches, then partial name
+ * matches, then description matches, so "LCNC" and "low code" both resolve to
+ * the "Low-code/no-code (LCNC) Platform" category.
+ */
+async function findTrmCategory(args = {}) {
+  // The orchestrator drives tool use through a prompted JSON protocol with no
+  // schema validation, so models sometimes invent a plausible parameter name.
+  // Accept the common aliases rather than erroring and falling back to keyword
+  // search, which produces wrong category listings.
+  const name =
+    args.name || args.technology_type || args.technologyType ||
+    args.category || args.type || args.keyword;
+  if (!name || typeof name !== 'string') {
+    throw new Error('name is required');
+  }
+  const data = await gearApiGet('/trm');
+  const rows = Array.isArray(data) ? data : [];
+
+  const term = name.toLowerCase().trim();
+  // Compare ignoring separators so "low code", "low-code" and "lowcode" match.
+  const loose = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  // TRM category names are singular ("Programming Language"), but users ask in
+  // the plural. Without this, "programming languages" misses that category and
+  // falls through to a weaker description match on a different one.
+  const singular = (s) =>
+    String(s || '')
+      .split(/\s+/)
+      .map((w) => w.replace(/(?:ies)$/, 'y').replace(/(?:sses|shes|ches|xes)$/, (m) => m.slice(0, -2)).replace(/(?<=[a-z]{2})s$/, ''))
+      .join(' ');
+  const looseTerm = loose(term);
+  const looseSingularTerm = loose(singular(term));
+
+  const score = (t) => {
+    const n = String(t.Name || '').toLowerCase();
+    const ln = loose(n);
+    const lsn = loose(singular(n));
+    const d = String(t.Description || '').toLowerCase();
+    if (!n) return 0;
+    if (n === term || ln === looseTerm) return 6;
+    if (lsn === looseSingularTerm) return 6;
+    // acronym in parentheses, e.g. "Low-code/no-code (LCNC) Platform"
+    const esc = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    if (new RegExp(`\\(${esc}\\)`, 'i').test(n)) return 5;
+    if (ln.startsWith(looseTerm) || lsn.startsWith(looseSingularTerm)) return 4;
+    if (looseTerm.length >= 3 && (ln.includes(looseTerm) || lsn.includes(looseSingularTerm))) return 3;
+    if (d.includes(term)) return 1;
+    return 0;
+  };
+
+  const ranked = rows
+    .map((t, i) => ({ t, i, s: score(t) }))
+    .filter((e) => e.s > 0)
+    // Prefer the most specific (deepest) category when scores tie, since
+    // Level 3 Categories carry the actual software mappings.
+    .sort((a, b) => b.s - a.s || Number(b.t.Level || 0) - Number(a.t.Level || 0) || a.i - b.i)
+    .map((e) => slimTrmCategory(e.t));
+
+  return {
+    bestMatch: ranked[0] || null,
+    alternates: ranked.slice(1, 5),
+    totalMatches: ranked.length,
+    // The orchestrator's prompted tool protocol gives the model no enforced
+    // control flow, so state the required next call in the payload itself.
+    nextStep: ranked.length
+      ? `Now call get_trm_software with id="${ranked[0].Id}"${
+          ranked[0].Type === 'Area' ? ' and includeChildren=true' : ''
+        } to get the authoritative software list. Do not use search_gear for this.`
+      : 'No TRM category matched. Tell the user GEAR has no TRM category for this technology type; do not substitute keyword search results as a category listing.',
+  };
+}
+
+/**
+ * Answer "what <kind of> software is in the inventory" in a single call.
+ *
+ * Resolves a technology type to its TRM category and returns that category's
+ * authoritative software list together. This is deliberately one tool rather
+ * than a find-then-get pair: the orchestrator drives tool use through a
+ * prompted JSON protocol with no enforced control flow, so a two-step chain
+ * lets the model substitute a keyword search for the second step and report
+ * products that GEAR does not actually classify under the category.
+ */
+async function listSoftwareByCategory(args = {}) {
+  const type =
+    args.type || args.name || args.technology_type || args.technologyType ||
+    args.category || args.keyword;
+  if (!type || typeof type !== 'string') {
+    throw new Error('type is required (the kind of software, e.g. "low code/no code")');
+  }
+
+  const match = await findTrmCategory({ name: type });
+  if (!match.bestMatch) {
+    return {
+      requestedType: type,
+      trmCategory: null,
+      rows: [],
+      total: 0,
+      truncated: false,
+      note:
+        `GEAR has no Technology Reference Model category matching "${type}". ` +
+        `Tell the user that GEAR does not classify software under that technology type, ` +
+        `and do NOT present keyword search results as if they were an authoritative category listing.`,
+    };
+  }
+
+  const result = await getTrmSoftware({
+    id: match.bestMatch.Id,
+    // TRM Areas (Level 2) hold their software on child Categories (Level 3).
+    includeChildren: match.bestMatch.Type === 'Area',
+    limit: args.limit,
+  });
+
+  return {
+    requestedType: type,
+    ...result,
+    alternateCategories: match.alternates,
+  };
+}
+
+/**
+ * Get the software products / IT standards that GEAR authoritatively maps to a
+ * Technology Reference Model category, by category id.
+ *
+ * Reads GEAR's curated technology-to-TRM mappings rather than inferring
+ * membership from names or descriptions, so results cannot include products
+ * that are not actually classified under that category.
+ *
+ * TRM categories are hierarchical (Domain > Area > Category). Requesting an
+ * Area also returns the software mapped to its child Categories when
+ * includeChildren is true.
+ */
+async function getTrmSoftware(args = {}) {
+  const id = args.id != null && args.id !== '' ? args.id : args.trmId;
+  const includeChildren = args.includeChildren === true || args.includeChildren === 'true';
+  const limit = args.limit;
+  if (id == null || id === '') throw new Error('id is required');
+
+  const detail = await gearApiGet(`/trm/get/${encodeURIComponent(id)}`);
+  const detailRows = Array.isArray(detail) ? detail : detail ? [detail] : [];
+  const category = detailRows.length ? slimTrmCategory(detailRows[0]) : null;
+  if (!category) {
+    throw new Error(`No TRM category found with id ${id}`);
+  }
+
+  const idsToFetch = [{ id: String(id), name: category.Name }];
+
+  if (includeChildren) {
+    const all = await gearApiGet('/trm');
+    const allRows = Array.isArray(all) ? all : [];
+    for (const row of allRows) {
+      if (String(row.ParentId) === String(id)) {
+        idsToFetch.push({ id: String(row.Id), name: row.Name });
+      }
+    }
+  }
+
+  const seen = new Set();
+  const software = [];
+  const errors = [];
+  for (const entry of idsToFetch) {
+    try {
+      const related = await gearApiGet(
+        `/trm/get/relatedITStandards/${encodeURIComponent(entry.id)}`
+      );
+      const relatedRows = Array.isArray(related) ? related : [];
+      for (const t of relatedRows) {
+        const key = String(t.ID != null ? t.ID : t.Id);
+        if (seen.has(key)) continue;
+        seen.add(key);
+        software.push({ ...slimItStandard(t), TrmCategory: entry.name });
+      }
+    } catch (err) {
+      errors.push({ trmCategory: entry.name, error: err.message });
+    }
+  }
+
+  // Approved first so usable options lead; Retired last.
+  const rank = (s) => {
+    const status = (s.Status || '').toLowerCase();
+    if (status === 'approved') return 0;
+    if (status === 'pilot' || status === 'proposed') return 1;
+    if (status === 'denied' || status === 'exception') return 2;
+    if (status === 'retired') return 4;
+    return 3;
+  };
+  software.sort((a, b) => rank(a) - rank(b));
+
+  const capped = capResults(software, limit || 100);
+  return {
+    trmCategory: category,
+    categoriesSearched: idsToFetch.map((e) => e.name),
+    ...capped,
+    // State the completeness guarantee explicitly: the model must not pad this
+    // list with products it believes are related.
+    note:
+      `This is the complete and authoritative list of IT standards mapped to the TRM ` +
+      `categor${idsToFetch.length > 1 ? 'ies' : 'y'} ${idsToFetch.map((e) => `"${e.name}"`).join(', ')} ` +
+      `in GEAR (${software.length} total). Do not add any other products to this list.`,
+    ...(errors.length ? { errors } : {}),
+  };
+}
+
+/* ------------------------------------------------------------------ *
  * Tool registry: definitions + handlers
  * ------------------------------------------------------------------ */
 
@@ -544,9 +767,87 @@ const tools = [
     },
     handler: listApprovedSoftware,
   },
+  {
+    name: 'list_software_by_category',
+    description:
+      'Answer "what <KIND of> software is in the inventory?" - e.g. "what low code/no code software do we have", "what web servers are in the inventory", "which programming languages are approved". Resolves the technology TYPE to GEAR\'s Technology Reference Model category and returns the COMPLETE, AUTHORITATIVE list of software GEAR classifies under it. ALWAYS use this tool (never search_gear) for questions about a type/class/category of software. The returned list is exhaustive: report exactly the products in "rows" and NEVER add any other product, however related it seems. If trmCategory is null, GEAR has no such category - say so rather than substituting search results.',
+    parameters: {
+      type: 'object',
+      properties: {
+        type: {
+          type: 'string',
+          description:
+            'The kind of software being asked about (e.g. "low code/no code", "LCNC", "web server", "programming language", "defect tracking").',
+        },
+        limit: {
+          type: 'number',
+          description: 'Maximum number of software products to return (default 100).',
+        },
+      },
+      required: ['type'],
+    },
+    handler: listSoftwareByCategory,
+  },
+  {
+    name: 'find_trm_category',
+    description:
+      'Find the Technology Reference Model (TRM) category matching a TYPE of technology, returning the category record itself (id, name, area, domain, description) without its software list. Use this only when the user asks about the TRM structure or a category definition; to list the software in a category, use list_software_by_category instead.',
+    parameters: {
+      type: 'object',
+      properties: {
+        name: {
+          type: 'string',
+          description:
+            'The technology type, category name, or acronym to find (e.g. "low code/no code", "LCNC", "web server").',
+        },
+      },
+      required: ['name'],
+    },
+    handler: findTrmCategory,
+  },
+  {
+    name: 'get_trm_software',
+    description:
+      'Get the COMPLETE, AUTHORITATIVE list of software products / IT standards that GEAR classifies under a specific Technology Reference Model category id. Prefer list_software_by_category, which resolves the category from a plain technology type in one step; use this only when you already have a TRM category id. The returned list is exhaustive for that category: report exactly these products and NEVER add other products you believe belong to the category. Set includeChildren=true when the category Type is \'Area\'.',
+    parameters: {
+      type: 'object',
+      properties: {
+        id: {
+          type: 'string',
+          description: 'The TRM category id (from find_trm_category bestMatch.Id).',
+        },
+        includeChildren: {
+          type: 'boolean',
+          description:
+            'Also include software mapped to child categories of this TRM category (useful for Level 2 Areas). Default false.',
+        },
+        limit: {
+          type: 'number',
+          description: 'Maximum number of software products to return (default 100).',
+        },
+      },
+      required: ['id'],
+    },
+    handler: getTrmSoftware,
+  },
 ];
 
 const toolsByName = Object.fromEntries(tools.map((t) => [t.name, t]));
+
+/**
+ * Tools whose results are a complete, curated list for the question asked.
+ * The orchestrator blocks follow-up keyword searches once one of these has
+ * answered, so a broad search cannot pad an authoritative list with unrelated
+ * products. See chat-orchestrator.js.
+ */
+const AUTHORITATIVE_TOOLS = new Set(['list_software_by_category', 'get_trm_software']);
+
+/** Broad/lexical lookups that must not be used to extend an authoritative list. */
+const BROAD_SEARCH_TOOLS = new Set([
+  'search_gear',
+  'list_it_standards',
+  'list_approved_software',
+]);
 
 /**
  * Execute a tool by name with the given arguments.
@@ -575,5 +876,7 @@ module.exports = {
   toolsByName,
   runTool,
   toOpenAiTools,
+  AUTHORITATIVE_TOOLS,
+  BROAD_SEARCH_TOOLS,
   GEAR_API_BASE,
 };

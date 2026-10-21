@@ -8,19 +8,29 @@
  *        FULLTEXT index on Prompt column enables similarity search so
  *        near-duplicate questions can hit the cache too.
  *
- * Schema:
- *   gear_log.ai_log (
- *     id            INT AUTO_INCREMENT,
- *     DTG           TIMESTAMP,
- *     event         LONGTEXT,      -- JSON: type, prompt_hash, tool_calls, follow_up, turn_index
- *     Prompt        LONGTEXT,      -- normalized prompt text  (FULLTEXT indexed)
- *     Response      LONGTEXT,      -- AI reply text
- *     Response_Time VARCHAR(64),   -- e.g. "1234ms"
- *     Tokens_Used   VARCHAR(64)    -- e.g. "512"
- *   )
+ * Schema (gear_log.ai_log):
+ *   Id            INT AUTO_INCREMENT
+ *   DTG           TIMESTAMP
+ *   Event         LONGTEXT    -- JSON: type, prompt_hash, tool_calls, follow_up, turn_index
+ *   Prompt        LONGTEXT    -- normalized prompt text (FULLTEXT indexed as ft_prompt)
+ *   Response      LONGTEXT    -- AI reply text
+ *   Response_Time VARCHAR(100)
+ *   Tokens_Used   VARCHAR(100)
+ *   Source        ENUM('user','developer','test')      -- where the prompt came from
+ *   Correct       ENUM('correct','partial','incorrect') -- human review verdict, NULL until reviewed
+ *   Review_Notes  VARCHAR(500)
+ *   Reviewed_DTG  TIMESTAMP
  *
- * Run once in MySQL to add the FULLTEXT index (if not already present):
- *   ALTER TABLE gear_log.ai_log ADD FULLTEXT INDEX ft_prompt (Prompt);
+ * Source tagging keeps production analytics separable from development noise.
+ * It is resolved per write by resolveSource(): a per-message override wins
+ * (the "dev!" chat prefix), then an explicit GEAR_AI_LOG_SOURCE, then
+ * ENVIRONMENT/NODE_ENV=development implies 'developer', and the default is
+ * 'user'. Defaulting to 'user' means a misconfigured server keeps real traffic
+ * rather than silently discarding it.
+ *
+ * Cache lookups are scoped to the same Source so a benchmark or local-dev reply
+ * is never served to a production user, and so local prompt-tuning gets a fresh
+ * model call instead of a stale cached answer.
  */
 
 const path = require('path');
@@ -66,6 +76,58 @@ function getPool() {
 const CACHE_TTL_DAYS = 7;
 
 /**
+ * Prefix a developer can type into the chatbot to tag their prompt as
+ * development testing, even when running against a production deployment.
+ * Stripped from the message before it reaches the model, and never stored.
+ */
+const DEV_PREFIX_PATTERN = /^\s*dev!\s*/i;
+
+/**
+ * True when a chat message carries the explicit developer prefix.
+ * @param {string} text
+ */
+function hasDevPrefix(text) {
+  return DEV_PREFIX_PATTERN.test(String(text || ''));
+}
+
+/**
+ * Remove the developer prefix so the model sees only the real question.
+ * @param {string} text
+ */
+function stripDevPrefix(text) {
+  return String(text || '').replace(DEV_PREFIX_PATTERN, '');
+}
+
+/**
+ * Where the current process's prompts come from.
+ *
+ * Resolution order:
+ *   1. A per-message override (the "dev!" chat prefix) — set by the caller.
+ *   2. Explicit GEAR_AI_LOG_SOURCE (benchmarks and scripts set 'test').
+ *   3. A development ENVIRONMENT/NODE_ENV implies 'developer'.
+ *   4. Default 'user', so an unconfigured production server still records real
+ *      traffic rather than silently discarding it.
+ *
+ * @param {'user'|'developer'|'test'} [override] Per-message source.
+ * @returns {'user'|'developer'|'test'}
+ */
+function resolveSource(override) {
+  const forced = String(override || '').toLowerCase().trim();
+  if (forced === 'user' || forced === 'developer' || forced === 'test') {
+    return forced;
+  }
+  const explicit = String(process.env.GEAR_AI_LOG_SOURCE || '').toLowerCase().trim();
+  if (explicit === 'user' || explicit === 'developer' || explicit === 'test') {
+    return explicit;
+  }
+  const env = String(process.env.ENVIRONMENT || process.env.NODE_ENV || '').toLowerCase();
+  if (env === 'development' || env === 'dev' || env === 'local' || env === 'test') {
+    return 'developer';
+  }
+  return 'user';
+}
+
+/**
  * Normalize a prompt so minor variations (case, extra spaces, punctuation)
  * map to the same cache key.
  * @param {string} text
@@ -95,18 +157,22 @@ function hashPrompt(normalized) {
  *
  * @param {string} prompt  Raw user prompt or search keyword.
  * @param {'chat'|'overview'} type
+ * @param {object} [opts]
+ * @param {'user'|'developer'|'test'} [opts.source] Per-message source override.
  * @returns {Promise<{reply:string, toolCalls:Array}|null>}
  */
-async function lookup(prompt, type) {
+async function lookup(prompt, type, opts = {}) {
   try {
     const normalized = normalize(prompt);
     const hash = hashPrompt(normalized);
+    const source = resolveSource(opts.source);
 
     // ── L1 check ──────────────────────────────────────────────────────────
-    const l1Key = `${type}:${hash}`;
+    // Source is part of the key so a dev/test reply cannot be served to a user.
+    const l1Key = `${source}:${type}:${hash}`;
     const l1Hit = l1.get(l1Key);
     if (l1Hit) {
-      console.error('[prompt-cache] L1 HIT type=%s hash=%s', type, hash.slice(0, 16));
+      console.error('[prompt-cache] L1 HIT source=%s type=%s hash=%s', source, type, hash.slice(0, 16));
       return l1Hit;
     }
 
@@ -116,22 +182,23 @@ async function lookup(prompt, type) {
 
     // 1. Exact hash match (fast path — uses prompt_hash in event JSON).
     const [exactRows] = await db.execute(
-      `SELECT event, Response FROM gear_log.ai_log
-       WHERE JSON_UNQUOTE(JSON_EXTRACT(event, '$.prompt_hash')) = ?
-         AND JSON_UNQUOTE(JSON_EXTRACT(event, '$.type')) = ?
-         AND (JSON_EXTRACT(event, '$.follow_up') IS NULL OR JSON_EXTRACT(event, '$.follow_up') = false)
+      `SELECT Event AS event, Response FROM gear_log.ai_log
+       WHERE JSON_UNQUOTE(JSON_EXTRACT(Event, '$.prompt_hash')) = ?
+         AND JSON_UNQUOTE(JSON_EXTRACT(Event, '$.type')) = ?
+         AND (JSON_EXTRACT(Event, '$.follow_up') IS NULL OR JSON_EXTRACT(Event, '$.follow_up') = false)
+         AND Source = ?
          AND DTG >= ?
          AND Response IS NOT NULL
        ORDER BY DTG DESC
        LIMIT 1`,
-      [hash, type, cutoff]
+      [hash, type, source, cutoff]
     );
 
     if (exactRows && exactRows.length > 0) {
       const result = _extractResult(exactRows[0]);
       if (result) {
         l1.set(l1Key, result); // populate L1
-        console.error('[prompt-cache] L2 exact HIT type=%s hash=%s', type, hash.slice(0, 16));
+        console.error('[prompt-cache] L2 exact HIT source=%s type=%s hash=%s', source, type, hash.slice(0, 16));
         return result;
       }
     }
@@ -140,25 +207,26 @@ async function lookup(prompt, type) {
     //    Requires: ALTER TABLE gear_log.ai_log ADD FULLTEXT INDEX ft_prompt (Prompt);
     try {
       const [ftRows] = await db.execute(
-        `SELECT event, Response,
+        `SELECT Event AS event, Response,
                 MATCH(Prompt) AGAINST (? IN NATURAL LANGUAGE MODE) AS score
          FROM gear_log.ai_log
          WHERE MATCH(Prompt) AGAINST (? IN NATURAL LANGUAGE MODE)
-           AND JSON_UNQUOTE(JSON_EXTRACT(event, '$.type')) = ?
-           AND (JSON_EXTRACT(event, '$.follow_up') IS NULL OR JSON_EXTRACT(event, '$.follow_up') = false)
+           AND JSON_UNQUOTE(JSON_EXTRACT(Event, '$.type')) = ?
+           AND (JSON_EXTRACT(Event, '$.follow_up') IS NULL OR JSON_EXTRACT(Event, '$.follow_up') = false)
+           AND Source = ?
            AND DTG >= ?
            AND Response IS NOT NULL
          ORDER BY score DESC
          LIMIT 1`,
-        [normalized, normalized, type, cutoff]
+        [normalized, normalized, type, source, cutoff]
       );
 
       if (ftRows && ftRows.length > 0 && ftRows[0].score > 0) {
         const result = _extractResult(ftRows[0]);
         if (result) {
           l1.set(l1Key, result); // populate L1
-          console.error('[prompt-cache] L2 FULLTEXT HIT type=%s hash=%s score=%s',
-            type, hash.slice(0, 16), ftRows[0].score.toFixed(3));
+          console.error('[prompt-cache] L2 FULLTEXT HIT source=%s type=%s hash=%s score=%s',
+            source, type, hash.slice(0, 16), ftRows[0].score.toFixed(3));
           return result;
         }
       }
@@ -198,6 +266,7 @@ function _extractResult(row) {
  * @param {object} [metrics]
  * @param {number} [metrics.responseTimeMs]
  * @param {number} [metrics.tokensUsed]
+ * @param {'user'|'developer'|'test'} [metrics.source] Per-message source override.
  */
 async function save(prompt, type, reply, toolCalls, metrics = {}) {
   return _write(prompt, type, reply, toolCalls, metrics, false);
@@ -216,6 +285,7 @@ async function save(prompt, type, reply, toolCalls, metrics = {}) {
  * @param {number} [metrics.responseTimeMs]
  * @param {number} [metrics.tokensUsed]
  * @param {number} [metrics.turnIndex]  0-based index in conversation
+ * @param {'user'|'developer'|'test'} [metrics.source] Per-message source override.
  */
 async function log(prompt, type, reply, toolCalls, metrics = {}) {
   return _write(prompt, type, reply, toolCalls, metrics, true);
@@ -228,6 +298,7 @@ async function _write(prompt, type, reply, toolCalls, metrics, isFollowUp) {
   try {
     const normalized = normalize(prompt);
     const hash = hashPrompt(normalized);
+    const source = resolveSource(metrics.source);
     const db = getPool();
 
     const event = JSON.stringify({
@@ -236,6 +307,7 @@ async function _write(prompt, type, reply, toolCalls, metrics, isFollowUp) {
       tool_calls: toolCalls || [],
       follow_up: isFollowUp || false,
       turn_index: metrics.turnIndex ?? null,
+      cache_hit: metrics.cacheHit || false,
     });
 
     const responseTime = metrics.responseTimeMs != null
@@ -247,27 +319,55 @@ async function _write(prompt, type, reply, toolCalls, metrics, isFollowUp) {
       : null;
 
     await db.execute(
-      `INSERT INTO gear_log.ai_log (DTG, event, Prompt, Response, Response_Time, Tokens_Used)
-       VALUES (NOW(), ?, ?, ?, ?, ?)`,
-      [event, normalized, reply, responseTime, tokensUsed]
+      `INSERT INTO gear_log.ai_log
+         (DTG, Event, Prompt, Response, Response_Time, Tokens_Used, Source)
+       VALUES (NOW(), ?, ?, ?, ?, ?, ?)`,
+      [event, normalized, reply, responseTime, tokensUsed, source]
     );
 
     // Populate L1 for first-turn entries so the very next identical request
     // is served from memory without touching MySQL.
     if (!isFollowUp) {
-      const l1Key = `${type}:${hash}`;
+      const l1Key = `${source}:${type}:${hash}`;
       l1.set(l1Key, { reply, toolCalls: toolCalls || [] });
     }
 
     console.error(
-      '[prompt-cache] %s type=%s hash=%s time=%s tokens=%s',
+      '[prompt-cache] %s source=%s type=%s hash=%s time=%s tokens=%s',
       isFollowUp ? 'LOGGED' : 'SAVED',
-      type, hash.slice(0, 16), responseTime, tokensUsed
+      source, type, hash.slice(0, 16), responseTime, tokensUsed
     );
   } catch (err) {
     console.error('[prompt-cache] write error:', err.message);
   }
 }
 
-module.exports = { lookup, save, log, normalize };
+/**
+ * Record that a prompt was answered from cache.
+ *
+ * Cache hits previously returned without logging, so repeat questions — the
+ * best signal of what users actually care about — were invisible in analytics
+ * and real engagement was undercounted. These rows carry cache_hit=true in
+ * Event and no token cost.
+ *
+ * @param {string} prompt
+ * @param {'chat'|'overview'} type
+ * @param {string} reply
+ * @param {Array}  toolCalls
+ * @param {object} [metrics]
+ */
+async function logCacheHit(prompt, type, reply, toolCalls, metrics = {}) {
+  return _write(prompt, type, reply, toolCalls, { ...metrics, cacheHit: true }, true);
+}
+
+module.exports = {
+  lookup,
+  save,
+  log,
+  logCacheHit,
+  normalize,
+  resolveSource,
+  hasDevPrefix,
+  stripDevPrefix,
+};
 

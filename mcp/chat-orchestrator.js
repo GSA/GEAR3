@@ -19,10 +19,10 @@
 const fs = require('fs');
 const path = require('path');
 
-const { tools, runTool } = require('./gear-tools');
+const { tools, runTool, AUTHORITATIVE_TOOLS, BROAD_SEARCH_TOOLS } = require('./gear-tools');
 const { chatCompletion } = require('./usai-client');
 const promptCache = require('./prompt-cache');
-const { lookup: cacheGet, save: cacheSave, log: cacheLog } = promptCache;
+const { lookup: cacheGet, save: cacheSave, log: cacheLog, logCacheHit, hasDevPrefix, stripDevPrefix } = promptCache;
 
 const CONFIG_PATH = path.join(__dirname, 'chat-config.json');
 
@@ -241,14 +241,31 @@ async function runChat(history, userMessage) {
   const cfg = loadConfig();
   const t0 = Date.now();
 
+  // A leading "dev!" marks the message as developer testing, even against a
+  // production deployment. The prefix is stripped before the model or the log
+  // sees it, so the stored prompt stays comparable to the same question asked
+  // by a real user.
+  const isDevPrompt = hasDevPrefix(userMessage);
+  const sourceOverride = isDevPrompt ? 'developer' : undefined;
+  if (isDevPrompt) {
+    userMessage = stripDevPrefix(userMessage);
+    console.error('[chat] dev! prefix detected — logging this turn as source=developer');
+  }
+
   // Cache lookup: only cache single-turn questions (no prior history) since
   // follow-up questions depend on context and should not be cached.
   const isFirstTurn = !history || history.length === 0;
   const turnIndex = isFirstTurn ? 0 : Math.floor((history.length) / 2);
   if (isFirstTurn) {
-    const cached = await cacheGet(userMessage, 'chat');
+    const cached = await cacheGet(userMessage, 'chat', { source: sourceOverride });
     if (cached) {
       console.error('[chat] cache HIT — skipping USAi call');
+      // Log the hit so repeat questions still appear in analytics; without this
+      // the most-asked questions are the ones least visible in the data.
+      logCacheHit(userMessage, 'chat', cached.reply, cached.toolCalls, {
+        responseTimeMs: Date.now() - t0,
+        source: sourceOverride,
+      }).catch(() => {});
       return cached;
     }
   }
@@ -305,12 +322,14 @@ async function runChat(history, userMessage) {
           cacheSave(userMessage, 'chat', result.reply, result.toolCalls, {
             responseTimeMs: Date.now() - t0,
             tokensUsed: tok1,
+            source: sourceOverride,
           }).catch(() => {});
         } else {
           cacheLog(userMessage, 'chat', result.reply, result.toolCalls, {
             responseTimeMs: Date.now() - t0,
             tokensUsed: tok1,
             turnIndex,
+            source: sourceOverride,
           }).catch(() => {});
         }
         return result;
@@ -368,12 +387,14 @@ async function runChat(history, userMessage) {
           cacheSave(userMessage, 'chat', result.reply, result.toolCalls, {
             responseTimeMs: Date.now() - t0,
             tokensUsed: tok2,
+            source: sourceOverride,
           }).catch(() => {});
         } else {
           cacheLog(userMessage, 'chat', result.reply, result.toolCalls, {
             responseTimeMs: Date.now() - t0,
             tokensUsed: tok2,
             turnIndex,
+            source: sourceOverride,
           }).catch(() => {});
         }
         return result;
@@ -386,6 +407,11 @@ async function runChat(history, userMessage) {
 
   const toolCalls = [];
   let totalTokens = 0;
+  // Set once a tool has returned a curated, complete list (e.g. a TRM category's
+  // software). Prompt instructions alone did not reliably stop models from
+  // following such a result with a broad keyword search and then merging the
+  // two, which reports products GEAR does not classify in that category.
+  let authoritativeAnswer = null;
 
   for (let i = 0; i < cfg.maxToolIterations; i++) {
     const { content, tokensUsed } = await chatCompletion(messages, {
@@ -403,12 +429,14 @@ async function runChat(history, userMessage) {
         cacheSave(userMessage, 'chat', finalReply, toolCalls, {
           responseTimeMs: Date.now() - t0,
           tokensUsed: totalTokens || null,
+          source: sourceOverride,
         }).catch(() => {});
       } else {
         cacheLog(userMessage, 'chat', finalReply, toolCalls, {
           responseTimeMs: Date.now() - t0,
           tokensUsed: totalTokens || null,
           turnIndex,
+          source: sourceOverride,
         }).catch(() => {});
       }
       return { reply: finalReply, toolCalls };
@@ -419,10 +447,35 @@ async function runChat(history, userMessage) {
     // Execute the requested tool.
     messages.push({ role: 'assistant', content });
     let toolResult;
-    try {
-      toolResult = await runTool(call.name, call.arguments);
-    } catch (err) {
-      toolResult = { error: err.message };
+
+    if (authoritativeAnswer && BROAD_SEARCH_TOOLS.has(call.name)) {
+      // Refuse the broadening call instead of running it, so its results never
+      // enter the context and cannot be blended into the curated list.
+      console.error(
+        '[chat] blocked %s after authoritative %s result',
+        call.name, authoritativeAnswer
+      );
+      toolResult = {
+        blocked: true,
+        reason:
+          `${call.name} was not run. ${authoritativeAnswer} already returned the complete, ` +
+          `authoritative answer for this question. Answer now using only those rows; ` +
+          `do not add any other products.`,
+      };
+    } else {
+      try {
+        toolResult = await runTool(call.name, call.arguments);
+        if (
+          AUTHORITATIVE_TOOLS.has(call.name) &&
+          toolResult &&
+          !toolResult.error &&
+          Array.isArray(toolResult.rows)
+        ) {
+          authoritativeAnswer = call.name;
+        }
+      } catch (err) {
+        toolResult = { error: err.message };
+      }
     }
     toolCalls.push({ name: call.name, arguments: call.arguments });
 
@@ -459,12 +512,14 @@ async function runChat(history, userMessage) {
     cacheSave(userMessage, 'chat', finalReply, toolCalls, {
       responseTimeMs: Date.now() - t0,
       tokensUsed: totalTokens || null,
+      source: sourceOverride,
     }).catch(() => {});
   } else {
     cacheLog(userMessage, 'chat', finalReply, toolCalls, {
       responseTimeMs: Date.now() - t0,
       tokensUsed: totalTokens || null,
       turnIndex,
+      source: sourceOverride,
     }).catch(() => {});
   }
   return { reply: finalReply, toolCalls };
