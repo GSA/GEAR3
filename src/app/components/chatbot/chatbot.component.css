@@ -476,11 +476,32 @@
   margin-left: 4px;
 }
 
-/* ─── Markdown content inside bubbles ──────────────────────────────────── */
-.bubble p      { margin: 0 0 6px 0; }
-.bubble p:last-child { margin-bottom: 0; }
-.bubble ul     { margin: 4px 0; padding-left: 18px; }
-.bubble code   { background: #eef1f5; border-radius: 3px; padding: 1px 4px; font-size: 0.83em; }
+/* ─── Markdown content inside bubbles ──────────────────────────────────────
+   These elements are injected via [innerHTML] by renderMarkdown(), so Angular's
+   emulated encapsulation never stamps them with this component's _ngcontent
+   attribute and the scoped selectors above cannot match them. ::ng-deep pierces
+   that scoping; it stays bounded because every rule is prefixed with a
+   .gear-chatbot class that exists only in this component. (The pre-existing
+   p/ul/code rules had the same problem and were silently inert.) */
+::ng-deep .gear-chatbot-messages .bubble p { margin: 0 0 6px 0; }
+::ng-deep .gear-chatbot-messages .bubble p:last-child { margin-bottom: 0; }
+::ng-deep .gear-chatbot-messages .bubble ul { margin: 4px 0; padding-left: 18px; }
+::ng-deep .gear-chatbot-messages .bubble code {
+  background: #eef1f5;
+  border-radius: 3px;
+  padding: 1px 4px;
+  font-size: 0.83em;
+}
+::ng-deep .gear-chatbot-messages .bubble a {
+  color: var(--primary-color, #005ea2);
+  text-decoration: underline;
+}
+::ng-deep .gear-chatbot-messages .bubble a:hover,
+::ng-deep .gear-chatbot-messages .bubble a:focus-visible {
+  color: var(--primary-color-hover, #005592);
+}
+/* Assistant links sit on a light bubble; user links on the dark bubble need contrast. */
+::ng-deep .gear-chatbot-messages .gear-chatbot-message.user .bubble a { color: #fff; }
 
 /* ─── Input bar ─────────────────────────────────────────────────────────── */
 .gear-chatbot-input {
