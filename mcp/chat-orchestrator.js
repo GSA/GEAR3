@@ -12,6 +12,12 @@
  *   3. We repeat until the model returns a normal (non-tool) answer or we hit
  *      maxToolIterations.
  *
+ * The model-chosen JSON only ever selects a tool from ./gear-tools.js, all of
+ * which are read-only. A prompt cannot cause a write to GEAR data: the only
+ * writes in this path are this orchestrator's own cache/log rows in
+ * `gear_log.ai_log`, and ./db-guard.js blocks any statement aimed at
+ * `gear_acl` or `gear_schema`.
+ *
  * The model + system prompts are read from chat-config.json and hot-reloaded on
  * every request (cheap file read) so they can be tweaked without a restart.
  */
@@ -19,7 +25,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const { tools, runTool, AUTHORITATIVE_TOOLS, BROAD_SEARCH_TOOLS } = require('./gear-tools');
+const { tools, runTool, AUTHORITATIVE_TOOLS, BROAD_SEARCH_TOOLS, GEAR_ROUTE_BY_TYPE } = require('./gear-tools');
 const { chatCompletion } = require('./usai-client');
 const promptCache = require('./prompt-cache');
 const { lookup: cacheGet, save: cacheSave, log: cacheLog, logCacheHit, hasDevPrefix, stripDevPrefix } = promptCache;
@@ -130,6 +136,50 @@ function parseToolCall(content) {
   return null;
 }
 
+/**
+ * Force GEAR record links back to the relative, hash-based form.
+ *
+ * Tools hand the model relative GearUrls ("#/it_standards/7186") and the
+ * prompt forbids adding a hostname, but models still emit absolute URLs such
+ * as "https://gear.gsa.gov#/it_standards/7186" some of the time. Those work in
+ * production by coincidence and break in every other environment (dev1,
+ * staging, localhost), so the hostname is stripped here rather than left to
+ * prompt compliance.
+ *
+ * Two passes, deliberately different in strictness:
+ *   1. Any absolute URL containing "#/<route>/<id>" is rewritten. The hash
+ *      route is an Angular SPA path that cannot meaningfully appear on a
+ *      third-party site, so the host does not matter — this also catches
+ *      environment hosts like dev1.ea.gsa.gov.
+ *   2. An absolute URL with a plain "/<route>/<id>" path is rewritten only on
+ *      a GSA/GEAR host, because a bare path like "/systems/123" is not
+ *      distinctive enough to rewrite on an arbitrary domain.
+ *
+ * Genuine external links (GSA policy pages, USAi docs, mailto:) are untouched.
+ */
+function normalizeGearLinks(text) {
+  const routes = Object.values(GEAR_ROUTE_BY_TYPE).join('|');
+  const tail = `(?:${routes})\\/[^\\s)"'\\]]+`;
+  // Characters that end a URL in markdown or prose.
+  const stop = '[^\\s)"\'\\]]*';
+
+  let out = String(text || '');
+
+  // Pass 1: absolute URL carrying an Angular hash route.
+  out = out.replace(
+    new RegExp(`https?:\\/\\/${stop}#\\/${tail}`, 'gi'),
+    (match) => match.slice(match.indexOf('#/'))
+  );
+
+  // Pass 2: absolute URL on a GEAR/GSA host with a plain route path.
+  out = out.replace(
+    new RegExp(`https?:\\/\\/[^\\s)"'\\]]*(?:gear|\\.gsa\\.gov)[^\\s)"'\\]]*?\\/(${tail})`, 'gi'),
+    (match, path) => `#/${path}`
+  );
+
+  return out;
+}
+
 /** Remove any stray JSON / tool-protocol artifacts from a final prose answer. */
 function cleanFinalAnswer(content) {
   let text = String(content || '').trim();
@@ -142,7 +192,7 @@ function cleanFinalAnswer(content) {
     .split('\n')
     .filter((line) => !/^\s*\{.*tool_(call|result|code).*\}\s*$/i.test(line))
     .join('\n');
-  return text.trim();
+  return normalizeGearLinks(text.trim());
 }
 
 /**
@@ -260,13 +310,17 @@ async function runChat(history, userMessage) {
     const cached = await cacheGet(userMessage, 'chat', { source: sourceOverride });
     if (cached) {
       console.error('[chat] cache HIT — skipping USAi call');
+      // Normalize on the way out as well as on the way in: entries saved
+      // before link normalization existed (or by an older deployment) still
+      // hold absolute URLs that would break outside production.
+      const reply = normalizeGearLinks(cached.reply);
       // Log the hit so repeat questions still appear in analytics; without this
       // the most-asked questions are the ones least visible in the data.
-      logCacheHit(userMessage, 'chat', cached.reply, cached.toolCalls, {
+      logCacheHit(userMessage, 'chat', reply, cached.toolCalls, {
         responseTimeMs: Date.now() - t0,
         source: sourceOverride,
       }).catch(() => {});
-      return cached;
+      return { ...cached, reply };
     }
   }
 
@@ -539,5 +593,5 @@ function sanitizeHistory(history) {
     .map((m) => ({ role: m.role, content: m.content.slice(0, 8000) }));
 }
 
-module.exports = { runChat, loadConfig };
+module.exports = { runChat, loadConfig, normalizeGearLinks };
 
