@@ -363,8 +363,7 @@ function slimItStandard(t) {
 }
 
 /**
- * Look up an IT standard (software product) in the IT Standards List and report
- * its approval status at GSA.
+ * Match IT standard rows against a product name query, best match first.
  *
  * Matching is token-based (every word of the query must appear somewhere in the
  * product's name, product name, or manufacturer), not a single substring.
@@ -372,15 +371,17 @@ function slimItStandard(t) {
  * Google Cloud Platform Looker 22 (22.18)" — so a substring search for "Google
  * Looker" finds nothing even though the product is present. That false negative
  * made the assistant report a Denied product as never submitted for review.
+ *
+ * Ordering puts rows whose own name matches the query ahead of rows that
+ * matched only on manufacturer, then prefers usable statuses. Searching
+ * "Tableau" otherwise surfaced "Logshark" — a Tableau Software product whose
+ * name lacks the word — as the headline match, which also drove the wrong TRM
+ * category when selecting alternatives.
+ *
+ * @returns {{matches: Array<object>, term: string}}
  */
-async function getSoftwareApproval({ name, limit }) {
-  if (!name || typeof name !== 'string') {
-    throw new Error('name is required');
-  }
-  const data = await gearApiGet('/it_standards');
-  const rows = Array.isArray(data) ? data : [];
-
-  const term = name.toLowerCase().trim();
+function matchItStandards(rows, name) {
+  const term = String(name).toLowerCase().trim();
   const tokens = term.split(/\s+/).filter((w) => w.length > 1);
 
   const haystack = (t) =>
@@ -402,6 +403,15 @@ async function getSoftwareApproval({ name, limit }) {
         return tokens.every((w) => h.includes(w));
       });
 
+  const nameHaystack = (t) =>
+    [t.SoftwareReleaseName || t.Name || '', t.SoftwareProductName || '']
+      .join(' ')
+      .toLowerCase();
+  const nameMatches = (t) => {
+    const h = nameHaystack(t);
+    return h.includes(term) || (tokens.length > 0 && tokens.every((w) => h.includes(w)));
+  };
+
   // Prefer non-retired, then Approved first, for readability.
   const rank = (s) => {
     const status = (s.Status || '').toLowerCase();
@@ -411,7 +421,28 @@ async function getSoftwareApproval({ name, limit }) {
     if (status === 'retired') return 4;
     return 3;
   };
-  matches.sort((a, b) => rank(a) - rank(b));
+
+  const sorted = [...matches].sort((a, b) => {
+    const byName = (nameMatches(a) ? 0 : 1) - (nameMatches(b) ? 0 : 1);
+    if (byName !== 0) return byName;
+    return rank(a) - rank(b);
+  });
+
+  return { matches: sorted, term };
+}
+
+/**
+ * Look up an IT standard (software product) in the IT Standards List and report
+ * its approval status at GSA.
+ */
+async function getSoftwareApproval({ name, limit }) {
+  if (!name || typeof name !== 'string') {
+    throw new Error('name is required');
+  }
+  const data = await gearApiGet('/it_standards');
+  const rows = Array.isArray(data) ? data : [];
+
+  const { matches } = matchItStandards(rows, name);
 
   const capped = capResults(matches.map(slimItStandard), limit || 15);
 
@@ -428,7 +459,7 @@ async function getSoftwareApproval({ name, limit }) {
   let alternativesBasis = null;
   if (notUsable) {
     const matchedIds = new Set(matches.map((m) => String(m.ID != null ? m.ID : m.Id)));
-    const rawBest = matches[0] || best;
+    const rawBest = pickCategorizedReference(matches) || best;
     const result = await findApprovedAlternatives(rawBest, rows, matchedIds);
     alternatives = result.alternatives;
     alternativesBasis = result.basis;
@@ -475,8 +506,127 @@ async function getSoftwareApproval({ name, limit }) {
 }
 
 /**
+ * Choose which matched row to classify by.
+ *
+ * Prefer the best match that actually carries a TRM Category: many inventory
+ * rows have none (e.g. "Salesforce Tableau Reader 2026.x"), and classifying by
+ * an uncategorized row sends alternatives down the semantic fallback, which for
+ * that row matched "File Manager and Viewer" and offered WinZip and Acrobat as
+ * Tableau alternatives.
+ */
+function pickCategorizedReference(matches) {
+  return (
+    matches.find((m) => String(m.Category || '').trim().length > 0) || matches[0]
+  );
+}
+
+/**
+ * Find Approved software in GEAR with capability similar to a named product,
+ * whatever that product's own status is.
+ *
+ * Separate from getSoftwareApproval, which only attaches alternatives when the
+ * searched product is unusable. A user asking "what's an alternative to
+ * Tableau?" is asking a capability question, not a status question, and
+ * Tableau is Approved — so that path returned nothing and the assistant fell
+ * back to declining. Peers come from the product's own deepest TRM category,
+ * so they are GEAR's classification rather than the model's opinion.
+ */
+async function findSimilarApprovedSoftware({ name, limit }) {
+  if (!name || typeof name !== 'string') {
+    throw new Error('name is required');
+  }
+  const data = await gearApiGet('/it_standards');
+  const rows = Array.isArray(data) ? data : [];
+
+  const { matches } = matchItStandards(rows, name);
+  if (!matches.length) {
+    return {
+      rows: [],
+      total: 0,
+      truncated: false,
+      searchedFor: name,
+      enterpriseArchitectureContact: 'ea@gsa.gov',
+      note:
+        `No IT standard matching "${name}" was found in the inventory, so GEAR has no classification ` +
+        `to find peers from. Say the product is not in the inventory and do not name alternatives from ` +
+        `your own knowledge. Offer to look up a different product, and refer the user to the Enterprise ` +
+        `Architecture team at [ea@gsa.gov](mailto:ea@gsa.gov) for an alternatives analysis.`,
+    };
+  }
+
+  const reference = pickCategorizedReference(matches);
+  const referenceName = reference.SoftwareReleaseName || reference.Name || name;
+  const referenceStatus = reference.Status || 'Unknown';
+
+  // Exclude every row that matched the user's product so its own versions are
+  // not offered back as alternatives to itself.
+  const matchedIds = new Set(
+    matches.map((m) => String(m.ID != null ? m.ID : m.Id))
+  );
+  const { alternatives, basis } = await findApprovedAlternatives(
+    reference,
+    rows,
+    matchedIds
+  );
+
+  const capped = capResults(alternatives, limit || 40);
+
+  // The note must not claim completeness when the list was capped: the model
+  // is told elsewhere that authoritative lists are exhaustive, and saying so
+  // about a truncated list would make it assert something false.
+  const completeness = capped.truncated
+    ? `These are ${capped.rows.length} of the ${capped.total} Approved products GEAR classifies ` +
+      `alongside "${referenceName}" (by ${basis}). Say that more exist than you are listing.`
+    : `These are ALL the Approved products GEAR classifies alongside "${referenceName}" (by ${basis}). ` +
+      `This is the complete, authoritative peer set - present every row.`;
+
+  return {
+    ...capped,
+    searchedFor: name,
+    referenceProduct: { Name: referenceName, Status: referenceStatus },
+    basis,
+    enterpriseArchitectureContact: 'ea@gsa.gov',
+    note: capped.total
+      ? `${completeness} Link each product with its own GearUrl in markdown link form, and never add ` +
+        `a product that is not in "rows", including from your own knowledge of the market. Mention ` +
+        `that "${referenceName}" itself is ${referenceStatus} in GEAR. If the user says none of these ` +
+        `fit, refer them to the Enterprise Architecture team at [ea@gsa.gov](mailto:ea@gsa.gov) for a ` +
+        `formal alternatives analysis.`
+      : `GEAR has no other Approved products classified alongside "${referenceName}". Say so plainly ` +
+        `rather than naming products from your own knowledge, and refer the user to the Enterprise ` +
+        `Architecture team at [ea@gsa.gov](mailto:ea@gsa.gov) for an alternatives analysis.`,
+  };
+}
+
+/**
+ * Cached map of TRM category name (lower-cased) to its hierarchy Level, so
+ * alternatives can be drawn from the most specific category a product carries.
+ */
+let trmLevelsCache = null;
+
+async function getTrmLevels() {
+  if (trmLevelsCache) return trmLevelsCache;
+  const rows = await gearApiGet('/trm');
+  const map = new Map();
+  for (const r of Array.isArray(rows) ? rows : []) {
+    const name = String(r.Name || '').trim().toLowerCase();
+    if (name) map.set(name, Number(r.Level) || 0);
+  }
+  trmLevelsCache = map;
+  return map;
+}
+
+/**
  * Find every Approved IT standard that shares a TRM category with the given
  * product, so alternatives are complete rather than a sample.
+ *
+ * Categories are tried deepest-first. A product typically carries one category
+ * per TRM level — Tableau Desktop is in "Business Intelligence Platforms"
+ * (Level 3), "Business Intelligence and Data Warehouse Platforms" (Level 2),
+ * and "Information Management Technologies" (Level 1) — and matching on all of
+ * them at once returns everything in the broad Domain (60 products, including
+ * unrelated records and search tools) rather than the product's true peers (14).
+ * Broader levels are used only when the deeper one yields nothing.
  *
  * Two paths, in order:
  *  1. The product's own TRM categories, read from its Category field (which
@@ -495,26 +645,47 @@ async function findApprovedAlternatives(product, allRows, excludeIds) {
   const isApproved = (t) => String(t.Status || '').toLowerCase() === 'approved';
   const idOf = (t) => String(t.ID != null ? t.ID : t.Id);
 
-  // ── Path 1: the product's own TRM categories ──────────────────────────────
+  // ── Path 1: the product's own TRM categories, most specific first ─────────
   const ownCategories = String(product.Category || '')
     .split(',')
     .map((c) => c.trim())
     .filter(Boolean);
 
   if (ownCategories.length) {
-    const wanted = ownCategories.map((c) => c.toLowerCase());
-    const matched = allRows.filter((t) => {
-      if (!isApproved(t) || excludeIds.has(idOf(t))) return false;
-      const cats = String(t.Category || '')
-        .split(',')
-        .map((c) => c.trim().toLowerCase());
-      return cats.some((c) => wanted.includes(c));
-    });
-    if (matched.length) {
-      return {
-        alternatives: matched.map(slimItStandard),
-        basis: `shared TRM categor${ownCategories.length > 1 ? 'ies' : 'y'} (${ownCategories.join(', ')})`,
-      };
+    let levels = new Map();
+    try {
+      levels = await getTrmLevels();
+    } catch (err) {
+      // Without levels, fall back to treating all of the product's categories
+      // as one tier rather than failing outright.
+      console.error('[gear-tools] TRM level lookup failed:', err.message);
+    }
+
+    // Group the product's categories by depth, deepest first.
+    const byLevel = new Map();
+    for (const c of ownCategories) {
+      const level = levels.get(c.toLowerCase()) || 0;
+      if (!byLevel.has(level)) byLevel.set(level, []);
+      byLevel.get(level).push(c);
+    }
+    const tiers = [...byLevel.keys()].sort((a, b) => b - a);
+
+    for (const level of tiers) {
+      const tierCategories = byLevel.get(level);
+      const wanted = tierCategories.map((c) => c.toLowerCase());
+      const matched = allRows.filter((t) => {
+        if (!isApproved(t) || excludeIds.has(idOf(t))) return false;
+        const cats = String(t.Category || '')
+          .split(',')
+          .map((c) => c.trim().toLowerCase());
+        return cats.some((c) => wanted.includes(c));
+      });
+      if (matched.length) {
+        return {
+          alternatives: matched.map(slimItStandard),
+          basis: `shared TRM categor${tierCategories.length > 1 ? 'ies' : 'y'} (${tierCategories.join(', ')})`,
+        };
+      }
     }
   }
 
@@ -1018,6 +1189,27 @@ const tools = [
     handler: listApprovedSoftware,
   },
   {
+    name: 'find_similar_approved_software',
+    description:
+      'Answer "what is a good alternative to <PRODUCT>?", "what else is like <PRODUCT>?", or "what can I use instead of <PRODUCT>?" for a named software product. Looks up the product in the IT Standards List, reads the Technology Reference Model category GEAR classifies it under, and returns the COMPLETE list of Approved products GEAR classifies alongside it. Use this whenever the user wants alternatives or comparable software, whatever the named product\'s own approval status is - it works for Approved products too, not only Denied/Retired ones. The returned list is exhaustive and authoritative: report exactly the products in "rows" and NEVER add a product from your own knowledge of the market.',
+    parameters: {
+      type: 'object',
+      properties: {
+        name: {
+          type: 'string',
+          description:
+            'The software product the user wants alternatives to (e.g. "Tableau", "Looker").',
+        },
+        limit: {
+          type: 'number',
+          description: 'Maximum number of alternatives to return (default 40).',
+        },
+      },
+      required: ['name'],
+    },
+    handler: findSimilarApprovedSoftware,
+  },
+  {
     name: 'list_software_by_category',
     description:
       'Answer "what <KIND of> software is in the inventory?" - e.g. "what low code/no code software do we have", "what web servers are in the inventory", "which programming languages are approved". Resolves the technology TYPE to GEAR\'s Technology Reference Model category and returns the COMPLETE, AUTHORITATIVE list of software GEAR classifies under it. ALWAYS use this tool (never search_gear) for questions about a type/class/category of software. The returned list is exhaustive: report exactly the products in "rows" and NEVER add any other product, however related it seems. If trmCategory is null, GEAR has no such category - say so rather than substituting search results.',
@@ -1090,7 +1282,11 @@ const toolsByName = Object.fromEntries(tools.map((t) => [t.name, t]));
  * answered, so a broad search cannot pad an authoritative list with unrelated
  * products. See chat-orchestrator.js.
  */
-const AUTHORITATIVE_TOOLS = new Set(['list_software_by_category', 'get_trm_software']);
+const AUTHORITATIVE_TOOLS = new Set([
+  'list_software_by_category',
+  'get_trm_software',
+  'find_similar_approved_software',
+]);
 
 /** Broad/lexical lookups that must not be used to extend an authoritative list. */
 const BROAD_SEARCH_TOOLS = new Set([
@@ -1129,4 +1325,5 @@ module.exports = {
   AUTHORITATIVE_TOOLS,
   BROAD_SEARCH_TOOLS,
   GEAR_API_BASE,
+  GEAR_ROUTE_BY_TYPE,
 };
