@@ -34,8 +34,56 @@ const {
   isSemanticEnabled,
 } = require('./hybrid-search');
 
-const GEAR_API_BASE =
-  process.env.GEAR_API_BASE || `http://localhost:${process.env.PORT || 3000}/api`;
+/**
+ * Resolve the base URL the tool layer uses to call GEAR's own /api endpoints.
+ *
+ * Resolved per call rather than once at module load, because server.js only
+ * learns its internal loopback port after it starts listening — which happens
+ * well after this module is first required.
+ *
+ * Order of precedence:
+ *   1. GEAR_API_BASE — explicit override.
+ *   2. GEAR_INTERNAL_API_PORT — the loopback port server.js opens when IIS
+ *      hands the app a named pipe instead of a TCP port (see server.js).
+ *   3. PORT, but only when it is a plain number. Under iisnode PORT is a named
+ *      pipe such as "\\.\pipe\7f3a9c21-iisnode", and interpolating that
+ *      produced the unusable URL "http://localhost:\\.\pipe\...-iisnode/api",
+ *      so every tool call failed with "fetch failed" while the site itself
+ *      worked fine.
+ *   4. localhost:3000, the local-development default.
+ *
+ * Note that pointing this at the public HTTPS hostname is NOT a fix on GSA
+ * infrastructure: those certificates are issued by GSA's internal CA, which
+ * Node does not trust (it ships its own CA bundle and ignores the OS store),
+ * so TLS verification fails with UNABLE_TO_GET_ISSUER_CERT_LOCALLY. Keep this
+ * on loopback HTTP.
+ */
+let warnedAboutPort = false;
+
+function resolveGearApiBase() {
+  if (process.env.GEAR_API_BASE) return process.env.GEAR_API_BASE;
+
+  const internalPort = process.env.GEAR_INTERNAL_API_PORT;
+  if (internalPort && /^\d+$/.test(String(internalPort))) {
+    return `http://127.0.0.1:${internalPort}/api`;
+  }
+
+  const port = process.env.PORT;
+  if (port && /^\d+$/.test(String(port))) {
+    return `http://localhost:${port}/api`;
+  }
+
+  if (port && !warnedAboutPort) {
+    warnedAboutPort = true;
+    console.error(
+      '[gear-tools] PORT is not a TCP port (%s) - this is normal under IIS/iisnode. ' +
+        'Falling back to http://localhost:3000/api. Set GEAR_API_BASE, or let server.js ' +
+        'provide GEAR_INTERNAL_API_PORT, so AI tools can reach the GEAR API.',
+      JSON.stringify(String(port))
+    );
+  }
+  return 'http://localhost:3000/api';
+}
 
 const DEFAULT_RESULT_LIMIT = 25;
 
@@ -51,7 +99,7 @@ const DEFAULT_RESULT_LIMIT = 25;
  * @param {number} timeoutMs
  */
 async function gearApiGet(path, timeoutMs = 15000) {
-  const url = `${GEAR_API_BASE}${path}`;
+  const url = `${resolveGearApiBase()}${path}`;
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
@@ -64,6 +112,13 @@ async function gearApiGet(path, timeoutMs = 15000) {
       throw new Error(`GEAR API ${path} returned HTTP ${res.status}`);
     }
     return await res.json();
+  } catch (err) {
+    // Surface the URL actually attempted: a bare "fetch failed" gave no clue
+    // that the base URL itself was malformed.
+    const cause = err && err.cause && (err.cause.code || err.cause.message);
+    throw new Error(
+      `GEAR API request failed: GET ${url}${cause ? ` (${cause})` : ''}: ${err.message}`
+    );
   } finally {
     clearTimeout(timer);
   }
@@ -1324,6 +1379,6 @@ module.exports = {
   toOpenAiTools,
   AUTHORITATIVE_TOOLS,
   BROAD_SEARCH_TOOLS,
-  GEAR_API_BASE,
+  resolveGearApiBase,
   GEAR_ROUTE_BY_TYPE,
 };

@@ -62,6 +62,35 @@ mcp/hybrid-search.js ──► mcp/vector-store.js  (gear_log.search_vectors)
   (no restart).
 - **Optional overrides** (`.env`): `USAI_API_BASE`, `GEAR_API_BASE`.
 
+### How tools reach the GEAR API (IIS / iisnode)
+
+The tool layer calls GEAR's own `/api` endpoints over HTTP, so it needs a URL
+for the server it is running inside. Under **IIS with iisnode** that is not
+obvious: IIS sets `PORT` to a named pipe (e.g. `\\.\pipe\7f3a9c21-iisnode`),
+not a TCP port. The old code interpolated it directly and produced
+`http://localhost:\\.\pipe\7f3a9c21-iisnode/api`, so every tool call failed
+with a bare `fetch failed` while the site itself worked normally. Note that
+`PORT=3000` in `.env` does **not** help — dotenv never overwrites a variable
+IIS has already set.
+
+`server.js` therefore opens a second listener for the same Express app on a
+random **loopback-only** TCP port (`127.0.0.1`) whenever the main listener is a
+pipe, and publishes it as `GEAR_INTERNAL_API_PORT`. `mcp/gear-tools.js`
+resolves its base URL per request, in this order:
+
+1. `GEAR_API_BASE`, if set.
+2. `GEAR_INTERNAL_API_PORT` → `http://127.0.0.1:<port>/api`.
+3. `PORT`, but only when it is numeric.
+4. `http://localhost:3000/api`.
+
+**Do not set `GEAR_API_BASE` to the public hostname** (`https://ea.gsa.gov/api`
+or `https://dev1.ea.gsa.gov/api`). GSA's certificates are issued by an internal
+CA that Node does not trust — Node ships its own CA bundle and ignores the
+Windows certificate store — so TLS fails with
+`UNABLE_TO_GET_ISSUER_CERT_LOCALLY` even though browsers and `curl` are fine.
+If you need to override, use a loopback URL such as
+`http://127.0.0.1:<port>/api`.
+
 The configured model is **`claude_4_5_haiku`** (Haiku 4.5). It was selected by
 benchmarking candidate models through the real orchestrator (full system prompt,
 real tool loop) against graded questions with known answers from GEAR's own
