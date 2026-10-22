@@ -52,6 +52,17 @@ export class ChatbotComponent implements OnInit, OnDestroy {
   private tickInterval?: ReturnType<typeof setInterval>;
   private typingAnswers = new Map<ChatPair, string>();
   private typewriterTimers = new Map<ChatPair, ReturnType<typeof setInterval>>();
+  /**
+   * Memoized markdown render, keyed by the exact source text.
+   *
+   * renderMarkdown() is called from the template, and bypassSecurityTrustHtml()
+   * returns a new object every call. Angular compares [innerHTML] by reference,
+   * so an unmemoized call makes every change-detection pass look like a change
+   * and rebuild the bubble's DOM. That destroyed and recreated each anchor
+   * roughly every 58ms, so a real click (mousedown -> mouseup across frames)
+   * never completed even though the href was correct.
+   */
+  private renderedMarkdown = new Map<string, SafeHtml>();
 
   @ViewChild('scrollContainer') private scrollContainer?: ElementRef;
   @ViewChild('inputTextarea') private inputTextareaRef?: ElementRef;
@@ -307,11 +318,19 @@ export class ChatbotComponent implements OnInit, OnDestroy {
 
   /**
    * Convert the AI assistant's lightweight markdown (**bold**, *italics*,
-   * `code`, and - / • bullet lists) into sanitized HTML for display. Input is
-   * HTML-escaped first so model output cannot inject markup.
+   * `code`, [links](url), and - / • bullet lists) into sanitized HTML for
+   * display. Input is HTML-escaped first so model output cannot inject markup.
+   *
+   * The result is memoized by source text so repeated change-detection passes
+   * receive the SAME SafeHtml reference and Angular leaves the rendered DOM
+   * alone — see renderedMarkdown for why that matters.
    */
   public renderMarkdown(text: string): SafeHtml {
-    const escaped = this.escapeHtml(text || '');
+    const source = text || '';
+    const cached = this.renderedMarkdown.get(source);
+    if (cached) return cached;
+
+    const escaped = this.escapeHtml(source);
     const lines = escaped.split(/\r?\n/);
     const htmlParts: string[] = [];
     let inList = false;
@@ -341,15 +360,53 @@ export class ChatbotComponent implements OnInit, OnDestroy {
     }
     closeList();
 
-    return this.sanitizer.bypassSecurityTrustHtml(htmlParts.join(''));
+    const rendered = this.sanitizer.bypassSecurityTrustHtml(htmlParts.join(''));
+
+    // The typewriter effect calls this once per frame with a growing prefix, so
+    // bound the cache rather than retaining every intermediate string.
+    if (this.renderedMarkdown.size > 200) this.renderedMarkdown.clear();
+    this.renderedMarkdown.set(source, rendered);
+    return rendered;
   }
 
-  /** Apply inline markdown (bold, italics, inline code) on already-escaped text. */
+  /** Apply inline markdown (links, bold, italics, inline code) on already-escaped text. */
   private applyInlineFormatting(text: string): string {
     return text
+      .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (match, label, href) =>
+        this.renderLink(label, href)
+      )
       .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
       .replace(/(^|[^*])\*([^*]+)\*(?!\*)/g, '$1<em>$2</em>')
       .replace(/`([^`]+)`/g, '<code>$1</code>');
+  }
+
+  /**
+   * Render a markdown link as an anchor, allowing only safe schemes.
+   *
+   * The link text comes from the model, so the URL is whitelisted rather than
+   * trusted: in-app hash routes, same-origin paths, mailto, and absolute http(s).
+   * Anything else (javascript:, data:, etc.) renders as plain text.
+   *
+   * In-app links deliberately open in the same tab so a GEAR record replaces
+   * the current view behind the chatbot; external links get a new tab.
+   */
+  private renderLink(label: string, href: string): string {
+    // escapeHtml() has already run, so & appears as &amp; in the captured URL.
+    let url = href.replace(/&amp;/g, '&');
+
+    // Models frequently prepend a host to the relative in-app links we supply
+    // (e.g. "https://gear.gsa.gov#/it_standards/3381"). Normalize those back to
+    // the hash route so navigation stays in-app and works in every environment.
+    url = url.replace(/^https?:\/\/[^/#]+\/?(?=#\/)/i, '');
+
+    const isInApp = url.startsWith('#/') || url.startsWith('/');
+    const isMail = /^mailto:/i.test(url);
+    const isHttp = /^https?:\/\//i.test(url);
+
+    if (!isInApp && !isMail && !isHttp) return label;
+
+    const target = isHttp ? ' target="_blank" rel="noopener noreferrer"' : '';
+    return `<a href="${url}"${target}>${label}</a>`;
   }
 
   /** Escape HTML special characters so model output cannot inject markup. */
