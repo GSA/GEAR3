@@ -354,6 +354,48 @@
   background: #f0f4f8;
 }
 
+/* ─── Feedback thumbs ───────────────────────────────────────────────────── */
+.gear-chatbot-feedback {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 2px;
+}
+.gear-chatbot-feedback__btn {
+  background: none;
+  border: 1px solid #e2e8f0;
+  border-radius: 5px;
+  color: #8895a7;
+  cursor: pointer;
+  font-size: 0.72rem;
+  width: 26px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.gear-chatbot-feedback__btn:hover {
+  color: #2e7d32;
+  border-color: #2e7d32;
+  background: #f0faf1;
+}
+.gear-chatbot-feedback__btn--down:hover {
+  color: #c62828;
+  border-color: #c62828;
+  background: #fff5f5;
+}
+.gear-chatbot-feedback__btn.active {
+  color: #2e7d32;
+  border-color: #2e7d32;
+  background: #e8f5e9;
+}
+.gear-chatbot-feedback__btn--down.active {
+  color: #c62828;
+  border-color: #c62828;
+  background: #ffebee;
+}
+
 /* ─── New question jump bar ─────────────────────────────────────────────── */
 .gear-chatbot-new-q-bar {
   display: flex;

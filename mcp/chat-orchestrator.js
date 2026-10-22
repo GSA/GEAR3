@@ -249,7 +249,7 @@ async function runChat(history, userMessage) {
     const cached = await cacheGet(userMessage, 'chat');
     if (cached) {
       console.error('[chat] cache HIT — skipping USAi call');
-      return cached;
+      return { reply: cached.reply, toolCalls: cached.toolCalls, logId: cached.logId ?? null };
     }
   }
 
@@ -302,10 +302,11 @@ async function runChat(history, userMessage) {
           ],
         };
         if (isFirstTurn) {
-          cacheSave(userMessage, 'chat', result.reply, result.toolCalls, {
+          const logId = await cacheSave(userMessage, 'chat', result.reply, result.toolCalls, {
             responseTimeMs: Date.now() - t0,
             tokensUsed: tok1,
-          }).catch(() => {});
+          }).catch(() => null);
+          result.logId = logId;
         } else {
           cacheLog(userMessage, 'chat', result.reply, result.toolCalls, {
             responseTimeMs: Date.now() - t0,
@@ -365,10 +366,11 @@ async function runChat(history, userMessage) {
           ],
         };
         if (isFirstTurn) {
-          cacheSave(userMessage, 'chat', result.reply, result.toolCalls, {
+          const logId = await cacheSave(userMessage, 'chat', result.reply, result.toolCalls, {
             responseTimeMs: Date.now() - t0,
             tokensUsed: tok2,
-          }).catch(() => {});
+          }).catch(() => null);
+          result.logId = logId;
         } else {
           cacheLog(userMessage, 'chat', result.reply, result.toolCalls, {
             responseTimeMs: Date.now() - t0,
@@ -399,11 +401,12 @@ async function runChat(history, userMessage) {
     if (!call) {
       console.error('[chat] final answer (no tool call). iter=%d', i);
       const finalReply = cleanFinalAnswer(content);
+      let logId = null;
       if (isFirstTurn) {
-        cacheSave(userMessage, 'chat', finalReply, toolCalls, {
+        logId = await cacheSave(userMessage, 'chat', finalReply, toolCalls, {
           responseTimeMs: Date.now() - t0,
           tokensUsed: totalTokens || null,
-        }).catch(() => {});
+        }).catch(() => null);
       } else {
         cacheLog(userMessage, 'chat', finalReply, toolCalls, {
           responseTimeMs: Date.now() - t0,
@@ -411,7 +414,7 @@ async function runChat(history, userMessage) {
           turnIndex,
         }).catch(() => {});
       }
-      return { reply: finalReply, toolCalls };
+      return { reply: finalReply, toolCalls, logId };
     }
 
     console.error('[chat] tool_call:', call.name, JSON.stringify(call.arguments));
@@ -455,11 +458,12 @@ async function runChat(history, userMessage) {
   );
   if (tokFinal) totalTokens += tokFinal;
   const finalReply = cleanFinalAnswer(finalContent);
+  let finalLogId = null;
   if (isFirstTurn) {
-    cacheSave(userMessage, 'chat', finalReply, toolCalls, {
+    finalLogId = await cacheSave(userMessage, 'chat', finalReply, toolCalls, {
       responseTimeMs: Date.now() - t0,
       tokensUsed: totalTokens || null,
-    }).catch(() => {});
+    }).catch(() => null);
   } else {
     cacheLog(userMessage, 'chat', finalReply, toolCalls, {
       responseTimeMs: Date.now() - t0,
@@ -467,7 +471,7 @@ async function runChat(history, userMessage) {
       turnIndex,
     }).catch(() => {});
   }
-  return { reply: finalReply, toolCalls };
+  return { reply: finalReply, toolCalls, logId: finalLogId };
 }
 
 /** Keep only well-formed user/assistant turns and cap length. */

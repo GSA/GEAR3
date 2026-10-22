@@ -116,12 +116,13 @@ async function lookup(prompt, type) {
 
     // 1. Exact hash match (fast path — uses prompt_hash in event JSON).
     const [exactRows] = await db.execute(
-      `SELECT event, Response FROM gear_log.ai_log
+      `SELECT id, event, Response FROM gear_log.ai_log
        WHERE JSON_UNQUOTE(JSON_EXTRACT(event, '$.prompt_hash')) = ?
          AND JSON_UNQUOTE(JSON_EXTRACT(event, '$.type')) = ?
          AND (JSON_EXTRACT(event, '$.follow_up') IS NULL OR JSON_EXTRACT(event, '$.follow_up') = false)
          AND DTG >= ?
          AND Response IS NOT NULL
+         AND (Feedback IS NULL OR Feedback != 'down')
        ORDER BY DTG DESC
        LIMIT 1`,
       [hash, type, cutoff]
@@ -140,7 +141,7 @@ async function lookup(prompt, type) {
     //    Requires: ALTER TABLE gear_log.ai_log ADD FULLTEXT INDEX ft_prompt (Prompt);
     try {
       const [ftRows] = await db.execute(
-        `SELECT event, Response,
+        `SELECT id, event, Response,
                 MATCH(Prompt) AGAINST (? IN NATURAL LANGUAGE MODE) AS score
          FROM gear_log.ai_log
          WHERE MATCH(Prompt) AGAINST (? IN NATURAL LANGUAGE MODE)
@@ -148,6 +149,7 @@ async function lookup(prompt, type) {
            AND (JSON_EXTRACT(event, '$.follow_up') IS NULL OR JSON_EXTRACT(event, '$.follow_up') = false)
            AND DTG >= ?
            AND Response IS NOT NULL
+           AND (Feedback IS NULL OR Feedback != 'down')
          ORDER BY score DESC
          LIMIT 1`,
         [normalized, normalized, type, cutoff]
@@ -176,7 +178,7 @@ async function lookup(prompt, type) {
   }
 }
 
-/** Extract { reply, toolCalls } from a DB row. */
+/** Extract { reply, toolCalls, logId } from a DB row. */
 function _extractResult(row) {
   let reply = row.Response || null;
   let toolCalls = [];
@@ -185,7 +187,7 @@ function _extractResult(row) {
     if (!reply && entry && entry.reply) reply = entry.reply;
     if (entry && entry.tool_calls) toolCalls = entry.tool_calls;
   } catch (_) {}
-  return reply ? { reply, toolCalls } : null;
+  return reply ? { reply, toolCalls, logId: row.id ?? null } : null;
 }
 
 /**
@@ -246,28 +248,54 @@ async function _write(prompt, type, reply, toolCalls, metrics, isFollowUp) {
       ? String(metrics.tokensUsed)
       : null;
 
-    await db.execute(
+    const [insertResult] = await db.execute(
       `INSERT INTO gear_log.ai_log (DTG, event, Prompt, Response, Response_Time, Tokens_Used)
        VALUES (NOW(), ?, ?, ?, ?, ?)`,
       [event, normalized, reply, responseTime, tokensUsed]
     );
+    const insertedId = insertResult ? insertResult.insertId : null;
 
     // Populate L1 for first-turn entries so the very next identical request
     // is served from memory without touching MySQL.
     if (!isFollowUp) {
       const l1Key = `${type}:${hash}`;
-      l1.set(l1Key, { reply, toolCalls: toolCalls || [] });
+      l1.set(l1Key, { reply, toolCalls: toolCalls || [], logId: insertedId });
     }
 
+    return insertedId;
+
     console.error(
-      '[prompt-cache] %s type=%s hash=%s time=%s tokens=%s',
+      '[prompt-cache] %s type=%s hash=%s time=%s tokens=%s id=%s',
       isFollowUp ? 'LOGGED' : 'SAVED',
-      type, hash.slice(0, 16), responseTime, tokensUsed
+      type, hash.slice(0, 16), responseTime, tokensUsed, insertedId
     );
   } catch (err) {
     console.error('[prompt-cache] write error:', err.message);
   }
+  return null;
 }
 
-module.exports = { lookup, save, log, normalize };
+/**
+ * Record feedback (thumbs up/down) for a logged response.
+ * @param {number} id  The ai_log row id.
+ * @param {'up'|'down'} feedback
+ */
+async function saveFeedback(id, feedback) {
+  try {
+    const db = getPool();
+    await db.execute(
+      `UPDATE gear_log.ai_log SET Feedback = ? WHERE id = ?`,
+      [feedback, id]
+    );
+    // Invalidate L1 cache for this entry if it was thumbed down
+    // (we cannot easily reverse-lookup the key here, but the lookup
+    // query already filters Feedback='down' from MySQL, so L1 expiry
+    // in 10 min is acceptable.)
+    console.error('[prompt-cache] FEEDBACK id=%s feedback=%s', id, feedback);
+  } catch (err) {
+    console.error('[prompt-cache] saveFeedback error:', err.message);
+  }
+}
+
+module.exports = { lookup, save, log, normalize, saveFeedback };
 

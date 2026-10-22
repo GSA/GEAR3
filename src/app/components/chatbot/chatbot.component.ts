@@ -26,6 +26,8 @@ interface ChatPair {
   answeredAt: string | null;
   askedMs: number;
   answeredMs: number | null;
+  logId: number | null;
+  feedback: 'up' | 'down' | null;
 }
 
 @Component({
@@ -189,6 +191,8 @@ export class ChatbotComponent implements OnInit, OnDestroy {
       answeredAt: null,
       askedMs: now,
       answeredMs: null,
+      logId: null,
+      feedback: null,
     });
     this.inputText = '';
     this.autoResizeTextarea();
@@ -206,6 +210,7 @@ export class ChatbotComponent implements OnInit, OnDestroy {
         last.answer = reply;
         last.answeredAt = this.formatTime(new Date(answeredMs));
         last.answeredMs = answeredMs;
+        last.logId = res.logId ?? null;
         this.typewriteAnswer(last, reply);
         this.loading = false;
         this.persistPairs();
@@ -280,6 +285,19 @@ export class ChatbotComponent implements OnInit, OnDestroy {
         }, 2000);
       })
       .catch(() => {});
+  }
+
+  public submitFeedback(pair: ChatPair, value: 'up' | 'down'): void {
+    if (pair.feedback === value) return; // already voted
+    if (!pair.logId) {
+      // No logId (follow-up turn or error) — track session-only feedback
+      pair.feedback = value;
+      this.persistPairs();
+      return;
+    }
+    pair.feedback = value;
+    this.persistPairs();
+    this.chatbotService.sendFeedback(pair.logId, value).subscribe();
   }
 
   public isErrorReply(answer: string | null): boolean {

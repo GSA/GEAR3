@@ -5,6 +5,8 @@ const {
   runChat,
 } = require(path.join('..', '..', 'mcp', 'chat-orchestrator'));
 
+const { saveFeedback } = require(path.join('..', '..', 'mcp', 'prompt-cache'));
+
 /**
  * Dedicated rate limiter for the chat endpoint to protect the USAi budget
  * (USAi enforces 3 chat calls/sec/key and a weekly cost cap). One user turn can
@@ -17,9 +19,27 @@ exports.chatRateLimiter = rateLimit({
 });
 
 /**
- * POST /api/chat
- * Body: { message: string, history?: [{role, content}] }
+ * PATCH /api/chat/feedback
+ * Body: { logId: number, feedback: 'up' | 'down' }
  */
+exports.feedback = async (req, res) => {
+  try {
+    const { logId, feedback } = req.body || {};
+
+    if (!logId || !Number.isInteger(Number(logId)) || Number(logId) <= 0) {
+      return res.status(400).json({ message: 'A valid numeric "logId" is required.' });
+    }
+    if (feedback !== 'up' && feedback !== 'down') {
+      return res.status(400).json({ message: '"feedback" must be "up" or "down".' });
+    }
+
+    await saveFeedback(Number(logId), feedback);
+    return res.status(200).json({ ok: true });
+  } catch (err) {
+    console.error('Feedback error:', err);
+    return res.status(500).json({ message: 'Failed to save feedback.' });
+  }
+};
 exports.chat = async (req, res) => {
   try {
     const message = req.body && req.body.message;
@@ -32,8 +52,8 @@ exports.chat = async (req, res) => {
       return res.status(400).json({ message: 'Message is too long.' });
     }
 
-    const { reply, toolCalls } = await runChat(history, message);
-    return res.status(200).json({ reply, toolCalls });
+    const { reply, toolCalls, logId } = await runChat(history, message);
+    return res.status(200).json({ reply, toolCalls, logId: logId ?? null });
   } catch (err) {
     console.error('Chat error:', err);
     const status = err.status === 429 ? 429 : 502;

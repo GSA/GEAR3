@@ -13,6 +13,7 @@ export interface ChatMessage {
 export interface ChatResponse {
   reply: string;
   toolCalls?: { name: string; arguments: any }[];
+  logId?: number | null;
 }
 
 /**
@@ -59,5 +60,14 @@ export class ChatbotService {
           return of({ reply: 'Sorry, the GEAR Assistant is temporarily unavailable. Please try again.' } as ChatResponse);
         })
       );
+  }
+
+  sendFeedback(logId: number, feedback: 'up' | 'down'): Observable<void> {
+    const httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+    };
+    return this.http
+      .patch<void>(`${this.chatUrl}/feedback`, { logId, feedback }, httpOptions)
+      .pipe(catchError(() => of(undefined)));
   }
 }
