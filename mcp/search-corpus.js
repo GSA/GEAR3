@@ -14,6 +14,12 @@
  * instead of modified-date columns because most GEAR tables have none —
  * only obj_technology and obj_TRM have an auto-updating ChangeDTG, and
  * obj_fisma_archer has no change column at all.
+ *
+ * READ-ONLY: this is the one place in the AI layer that touches `gear_schema`,
+ * GEAR's system of record, and every statement below must stay a SELECT. The
+ * pool passed to loadCorpus() is wrapped read-only by ./db-guard.js (see
+ * ./embedding-pipeline.js), so a write added here fails fast rather than
+ * reaching the database. Nothing in this file may reference `gear_acl`.
  */
 
 const crypto = require('crypto');
@@ -22,7 +28,9 @@ const crypto = require('crypto');
  * One entry per searchable entity type.
  *  - type:        stored entity_type, also the GEAR_Type used by search results
  *  - typeDisplay: human-readable location, mirrors search.controller.js
- *  - sql:         must return Id, Name, Description (Status optional)
+ *  - sql:         must return Id, Name, Description (Status optional).
+ *                 Read-only SELECT statements only; no user input is
+ *                 interpolated, and none may be.
  */
 const SOURCES = [
   {

@@ -23,6 +23,7 @@
     "embeddings:refresh": "node mcp/embedding-cli.js refresh",
     "embeddings:stats": "node mcp/embedding-cli.js stats",
     "test": "ng test",
+    "test:mcp": "node --test mcp/test/",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },

@@ -4,9 +4,20 @@
  * These tool functions are the single source of truth for how AI features
  * (both the MCP server and the /api/chat orchestrator) read GEAR data.
  *
+ * READ-ONLY BY DESIGN. Every tool here is a data-retrieval tool, and no tool
+ * may ever mutate GEAR data in response to a user prompt. Writes performed
+ * anywhere in the AI layer are confined to the `gear_log` schema (AI
+ * interaction logs and the search-vector index) and are enforced at runtime by
+ * ./db-guard.js. `gear_acl` (authentication/authorization) and `gear_schema`
+ * (GEAR's system of record) must never be written to by this layer. If a new
+ * tool ever needs to change GEAR data, it belongs behind GEAR Manager's
+ * authenticated, audited endpoints — not here.
+ *
  * Design decisions:
  *  - Tools call the existing GEAR /api HTTP endpoints (never raw model-generated
  *    SQL) so all existing controller logic, caching, and business rules apply.
+ *  - Only HTTP GET is used (see gearApiGet below); there is deliberately no
+ *    POST/PUT/DELETE helper in this module.
  *  - Each tool has a JSON-schema-style definition compatible with the OpenAI
  *    Chat Completions "tools" format, which is also what MCP tool inputSchemas use.
  *  - Results are trimmed/capped to keep token usage reasonable.
@@ -31,6 +42,11 @@ const DEFAULT_RESULT_LIMIT = 25;
 /**
  * Small fetch wrapper with a timeout. Uses the global fetch available in
  * Node.js >= 18 (this project requires >= 20).
+ *
+ * GET-only on purpose: this is the AI layer's single door to GEAR's API, so
+ * hard-coding the method keeps every tool read-only. Do not add a mutating
+ * counterpart here.
+ *
  * @param {string} path API path beginning with "/"
  * @param {number} timeoutMs
  */
@@ -423,7 +439,9 @@ async function getSoftwareApproval({ name, limit }) {
     note =
       `No IT standard matching "${name}" was found in the inventory. Tell the user it has not been ` +
       `submitted for review (SRR); do not state an approval status and do not recommend specific ` +
-      `alternatives unless you call list_approved_software to get real ones.`;
+      `alternatives unless you call list_approved_software to get real ones. If the user then asks ` +
+      `for product recommendations or an alternatives analysis, refer them to the Enterprise ` +
+      `Architecture team at [ea@gsa.gov](mailto:ea@gsa.gov) instead of naming products yourself.`;
   } else if (notUsable) {
     note =
       `"${best.Name}" has Status "${best.Status}" and is NOT approved for use. ` +
@@ -437,7 +455,10 @@ async function getSoftwareApproval({ name, limit }) {
           `Do NOT recommend any product that is not in that list; products you may think of from general ` +
           `knowledge are frequently Denied, Retired, or absent from GEAR.`
         : `No Approved product with similar capability was found, so say that no approved alternative exists ` +
-          `in the inventory rather than naming products from your own knowledge.`);
+          `in the inventory rather than naming products from your own knowledge.`) +
+      ` If the user says these alternatives will not meet their needs or asks for options outside the ` +
+      `inventory, refer them to the Enterprise Architecture team at [ea@gsa.gov](mailto:ea@gsa.gov) ` +
+      `for alternatives analysis; do not name products from general knowledge.`;
   } else {
     note =
       `These are the inventory entries matching "${name}". Report the Status exactly as given, and link ` +
@@ -448,6 +469,7 @@ async function getSoftwareApproval({ name, limit }) {
     ...capped,
     ...(notUsable ? { approvedAlternatives: alternatives } : {}),
     itStandardsContact: 'it-standards@gsa.gov',
+    enterpriseArchitectureContact: 'ea@gsa.gov',
     note,
   };
 }

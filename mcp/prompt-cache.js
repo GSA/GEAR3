@@ -41,6 +41,8 @@ const asyncMysql = require('mysql2/promise');
 const LRU = require('lru-cache');
 const fs = require('fs');
 
+const { guardPool } = require('./db-guard');
+
 // ─── L1: in-process LRU cache ────────────────────────────────────────────────
 // Key: "<type>:<hash>", Value: { reply, toolCalls }
 const L1_MAX = 200;           // max entries
@@ -51,6 +53,12 @@ const l1 = new LRU({ max: L1_MAX, maxAge: L1_TTL_MS });
 // ─── L2: MySQL connection pool ───────────────────────────────────────────────
 
 // Re-use the same SSL certs as the main app.
+//
+// `database: 'gear_log'` is a security boundary, not just a convenience: the
+// AI layer writes only to gear_log, never to gear_acl or gear_schema. The pool
+// is wrapped by ./db-guard.js, which refuses any statement targeting another
+// schema, so this restriction holds even if a future cache or feedback feature
+// adds new SQL here.
 const dbConfig = {
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -68,7 +76,10 @@ let pool = null;
 
 function getPool() {
   if (!pool) {
-    pool = asyncMysql.createPool(dbConfig);
+    pool = guardPool(asyncMysql.createPool(dbConfig), {
+      defaultSchema: 'gear_log',
+      label: 'prompt-cache',
+    });
   }
   return pool;
 }

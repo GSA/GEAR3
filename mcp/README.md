@@ -46,6 +46,8 @@ mcp/hybrid-search.js ──► mcp/vector-store.js  (gear_log.search_vectors)
 | `mcp/search-corpus.js` | Which GEAR records are searchable and how they become embeddable text. |
 | `mcp/embedding-pipeline.js` | Delta refresh (every few minutes) + nightly full rebuild. |
 | `mcp/embedding-cli.js` | `rebuild` / `refresh` / `stats` / `query` commands. |
+| `mcp/db-guard.js` | Enforces "the AI layer may only write to `gear_log`" at runtime. |
+| `mcp/test/db-guard.test.js` | Unit tests for that guard (`npm run test:mcp`). |
 | `api/routes/chat.routes.js`, `api/controllers/chat.controller.js` | `POST /api/chat`. |
 | `src/app/services/chatbot/chatbot.service.ts` | Angular client for `/api/chat`. |
 | `src/app/components/chatbot/*` | Chat widget (replaces global search). |
@@ -320,6 +322,57 @@ Schema changes are recorded in
 and must be applied once per environment.
 
 ## Security notes
+
+### Write boundary: the AI layer may only write to `gear_log`
+
+This is a hard invariant of the GEAR Assistant:
+
+> No user prompt may ever cause a change to GEAR's data. The AI layer's only
+> writes are to the **`gear_log`** schema (AI interaction logs and the
+> search-vector index). It must **never** write to **`gear_acl`**
+> (authentication/authorization) or **`gear_schema`** (GEAR's system of
+> record), and it has no reason to read `gear_acl` at all.
+
+Data changes belong exclusively to GEAR Manager's authenticated, audited
+endpoints. Three independent layers hold the line:
+
+1. **No write path exists from a prompt.** Every tool in `mcp/gear-tools.js`
+   reaches GEAR through `gearApiGet()`, which is GET-only; there is deliberately
+   no POST/PUT/DELETE helper in that module. The model never emits SQL — it only
+   picks a tool name from that read-only set.
+2. **Runtime guard (`mcp/db-guard.js`).** The AI layer does hold real MySQL
+   pools (`prompt-cache` → `gear_log.ai_log`, `vector-store` →
+   `gear_log.search_vectors`), and they authenticate as the same
+   full-privilege `DB_USER` as the rest of the app. Both pools, plus the
+   read-only corpus pool in `mcp/embedding-pipeline.js`, are wrapped by
+   `db-guard`, which inspects every statement before it reaches MySQL and
+   throws `DbGuardViolation` (`code: 'EGEARDBGUARD'`) on anything that would
+   write outside `gear_log` or reference `gear_acl`. It is deny-by-default:
+   multi-statement payloads, comment/quote obfuscation, `CALL` (stored
+   procedures can reach any schema), `GRANT`/`REVOKE`, and any write whose
+   target cannot be positively identified are all refused. Violations are
+   logged to stderr with the offending SQL.
+3. **Least-privilege DB grant (recommended follow-up).** The strongest control
+   is one the application cannot bypass. Give the AI layer its own MySQL user
+   and point `.env` at it, so even a bug cannot write outside `gear_log`:
+
+   ```sql
+   CREATE USER 'gear_ai'@'%' IDENTIFIED BY '<strong-password>' REQUIRE X509;
+   GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX
+     ON gear_log.* TO 'gear_ai'@'%';   -- DDL is needed by the vector-index rebuild
+   GRANT SELECT ON gear_schema.* TO 'gear_ai'@'%';  -- read-only, for embeddings
+   -- Deliberately no grant of any kind on gear_acl.
+   ```
+
+   This is a DBA task and is **not** yet applied; until it is, layer 2 is the
+   active enforcement.
+
+Run `npm run test:mcp` to exercise the guard. `mcp/test/db-guard.test.js`
+asserts both directions: today's legitimate `gear_log` writes are allowed, and
+writes to `gear_schema`, any access to `gear_acl`, obfuscated multi-statement
+payloads, and unverifiable write verbs are blocked.
+
+### Other notes
 
 - The chatbot/MCP tools **never** run model-generated SQL; they only call
   existing GEAR `/api` endpoints.

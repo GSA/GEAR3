@@ -12,6 +12,12 @@
  *   3. We repeat until the model returns a normal (non-tool) answer or we hit
  *      maxToolIterations.
  *
+ * The model-chosen JSON only ever selects a tool from ./gear-tools.js, all of
+ * which are read-only. A prompt cannot cause a write to GEAR data: the only
+ * writes in this path are this orchestrator's own cache/log rows in
+ * `gear_log.ai_log`, and ./db-guard.js blocks any statement aimed at
+ * `gear_acl` or `gear_schema`.
+ *
  * The model + system prompts are read from chat-config.json and hot-reloaded on
  * every request (cheap file read) so they can be tweaked without a restart.
  */
