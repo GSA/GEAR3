@@ -11,7 +11,7 @@
     (click)="toggle()"
     aria-haspopup="dialog"
     [attr.aria-expanded]="open"
-    aria-label="Open GEAR Assistant"
+    [attr.aria-label]="open ? 'Close GEAR Assistant' : 'Open GEAR Assistant'"
   >
     <span class="gear-chatbot-toggle__icon">
       <i class="fas" [class.fa-robot]="!open" [class.fa-chevron-down]="open"></i>
@@ -71,7 +71,7 @@
       </div>
 
       <!-- Messages -->
-      <div class="gear-chatbot-messages" #scrollContainer (scroll)="onScroll()">
+      <div class="gear-chatbot-messages" #scrollContainer (scroll)="onScroll()" aria-live="polite" aria-label="Conversation">
 
         <!-- Jump-to-input banner: only when AT TOP and questions exist and not loading -->
         @if (atTop && pairs.length > 0 && !loading) {
@@ -128,6 +128,26 @@
                     <i class="fas" [class.fa-check]="copiedIndex === $index" [class.fa-copy]="copiedIndex !== $index"></i>
                     {{ copiedIndex === $index ? 'Copied' : 'Copy' }}
                   </button>
+                  @if (!isErrorReply(pair.answer) && showFeedbackFor($index)) {
+                    <div class="gear-chatbot-feedback" role="group" aria-label="Rate this response">
+                      <button
+                        type="button"
+                        class="gear-chatbot-feedback__btn"
+                        [class.active]="pair.feedback === 'up'"
+                        (click)="submitFeedback(pair, 'up')"
+                        title="Helpful"
+                        aria-label="Thumbs up"
+                      ><i class="fas fa-thumbs-up"></i></button>
+                      <button
+                        type="button"
+                        class="gear-chatbot-feedback__btn gear-chatbot-feedback__btn--down"
+                        [class.active]="pair.feedback === 'down'"
+                        (click)="submitFeedback(pair, 'down')"
+                        title="Not helpful"
+                        aria-label="Thumbs down"
+                      ><i class="fas fa-thumbs-down"></i></button>
+                    </div>
+                  }
                 </div>
               </div>
             </div>
@@ -149,17 +169,17 @@
           </div>
         }
 
-        <!-- Scroll-to-top: only shown when scrolled down AND questions exist -->
+        <!-- Scroll-to-top: only shown when scrolling upward and more than 200px from top -->
         @if (showScrollTop && pairs.length > 0) {
           <div class="gear-chatbot-scroll-top-wrap">
             <button
               type="button"
               class="gear-chatbot-scroll-top"
               (click)="scrollToTop()"
-              title="Scroll to top"
+              title="Back to top"
               aria-label="Scroll to top"
             >
-              <i class="fas fa-chevron-up"></i> Back to top
+              <i class="fas fa-arrow-up"></i> Back to top
             </button>
           </div>
         }

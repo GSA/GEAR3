@@ -277,7 +277,7 @@ async function lookup(prompt, type, opts = {}) {
     //    and treating them as cache sources would make every hit renew the
     //    entry's DTG, so a cached answer could never age out or be retired.
     const [exactRows] = await db.execute(
-      `SELECT Event AS event, Response FROM gear_log.ai_log
+      `SELECT id, Event AS event, Response FROM gear_log.ai_log
        WHERE JSON_UNQUOTE(JSON_EXTRACT(Event, '$.prompt_hash')) = ?
          AND JSON_UNQUOTE(JSON_EXTRACT(Event, '$.type')) = ?
          AND (JSON_EXTRACT(Event, '$.follow_up') IS NULL OR JSON_EXTRACT(Event, '$.follow_up') = false)
@@ -285,6 +285,7 @@ async function lookup(prompt, type, opts = {}) {
          AND Source = ?
          AND DTG >= ?
          AND Response IS NOT NULL
+         AND (Feedback IS NULL OR Feedback != 'down')
        ORDER BY DTG DESC
        LIMIT 1`,
       [hash, type, source, cutoff]
@@ -305,7 +306,7 @@ async function lookup(prompt, type, opts = {}) {
     //    FULLTEXT relevance alone is not a safe reuse signal.
     try {
       const [ftRows] = await db.execute(
-        `SELECT Event AS event, Prompt, Response,
+        `SELECT id, Event AS event, Prompt, Response,
                 MATCH(Prompt) AGAINST (? IN NATURAL LANGUAGE MODE) AS score
          FROM gear_log.ai_log
          WHERE MATCH(Prompt) AGAINST (? IN NATURAL LANGUAGE MODE)
@@ -315,6 +316,7 @@ async function lookup(prompt, type, opts = {}) {
            AND Source = ?
            AND DTG >= ?
            AND Response IS NOT NULL
+           AND (Feedback IS NULL OR Feedback != 'down')
          ORDER BY score DESC
          LIMIT 5`,
         [normalized, normalized, type, source, cutoff]
@@ -353,7 +355,7 @@ async function lookup(prompt, type, opts = {}) {
   }
 }
 
-/** Extract { reply, toolCalls } from a DB row. */
+/** Extract { reply, toolCalls, logId } from a DB row. */
 function _extractResult(row) {
   let reply = row.Response || null;
   let toolCalls = [];
@@ -362,7 +364,7 @@ function _extractResult(row) {
     if (!reply && entry && entry.reply) reply = entry.reply;
     if (entry && entry.tool_calls) toolCalls = entry.tool_calls;
   } catch (_) {}
-  return reply ? { reply, toolCalls } : null;
+  return reply ? { reply, toolCalls, logId: row.id ?? null } : null;
 }
 
 /**
@@ -427,27 +429,53 @@ async function _write(prompt, type, reply, toolCalls, metrics, isFollowUp) {
       ? String(metrics.tokensUsed)
       : null;
 
-    await db.execute(
+    const [insertResult] = await db.execute(
       `INSERT INTO gear_log.ai_log
          (DTG, Event, Prompt, Response, Response_Time, Tokens_Used, Source)
        VALUES (NOW(), ?, ?, ?, ?, ?, ?)`,
       [event, normalized, reply, responseTime, tokensUsed, source]
     );
+    const insertedId = insertResult ? insertResult.insertId : null;
 
     // Populate L1 for first-turn entries so the very next identical request
     // is served from memory without touching MySQL.
     if (!isFollowUp) {
       const l1Key = `${source}:${type}:${hash}`;
-      l1.set(l1Key, { reply, toolCalls: toolCalls || [] });
+      l1.set(l1Key, { reply, toolCalls: toolCalls || [], logId: insertedId });
     }
 
     console.error(
-      '[prompt-cache] %s source=%s type=%s hash=%s time=%s tokens=%s',
+      '[prompt-cache] %s source=%s type=%s hash=%s time=%s tokens=%s id=%s',
       isFollowUp ? 'LOGGED' : 'SAVED',
-      source, type, hash.slice(0, 16), responseTime, tokensUsed
+      source, type, hash.slice(0, 16), responseTime, tokensUsed, insertedId
     );
+
+    return insertedId;
   } catch (err) {
     console.error('[prompt-cache] write error:', err.message);
+  }
+  return null;
+}
+
+/**
+ * Record feedback (thumbs up/down) for a logged response.
+ * @param {number} id  The ai_log row id.
+ * @param {'up'|'down'} feedback
+ */
+async function saveFeedback(id, feedback) {
+  try {
+    const db = getPool();
+    await db.execute(
+      `UPDATE gear_log.ai_log SET Feedback = ? WHERE id = ?`,
+      [feedback, id]
+    );
+    // Invalidate L1 cache for this entry if it was thumbed down
+    // (we cannot easily reverse-lookup the key here, but the lookup
+    // query already filters Feedback='down' from MySQL, so L1 expiry
+    // in 10 min is acceptable.)
+    console.error('[prompt-cache] FEEDBACK id=%s feedback=%s', id, feedback);
+  } catch (err) {
+    console.error('[prompt-cache] saveFeedback error:', err.message);
   }
 }
 
@@ -479,5 +507,6 @@ module.exports = {
   hasDevPrefix,
   stripDevPrefix,
   promptSimilarity,
+  saveFeedback,
 };
 

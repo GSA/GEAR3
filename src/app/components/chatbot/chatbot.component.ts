@@ -33,6 +33,8 @@ interface ChatPair {
   answeredAt: string | null;
   askedMs: number;
   answeredMs: number | null;
+  logId: number | null;
+  feedback: 'up' | 'down' | null;
 }
 
 @Component({
@@ -51,6 +53,9 @@ export class ChatbotComponent implements OnInit, OnDestroy {
   public copiedIndex = -1;
   public showScrollTop = false;
   public atTop = false;
+  public scrolledIntoHistory = false;
+  private _lastScrollTop = 0;
+  private _scrollUpTimer?: ReturnType<typeof setTimeout>;
   public relativeTimeTick = 0; // incremented every minute to refresh relative times
 
   private seedSub?: Subscription;
@@ -105,6 +110,7 @@ export class ChatbotComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.seedSub?.unsubscribe();
     if (this.tickInterval) clearInterval(this.tickInterval);
+    if (this._scrollUpTimer) clearTimeout(this._scrollUpTimer);
     this.clearTypewriterTimers();
   }
 
@@ -212,6 +218,8 @@ export class ChatbotComponent implements OnInit, OnDestroy {
       answeredAt: null,
       askedMs: now,
       answeredMs: null,
+      logId: null,
+      feedback: null,
     });
     this.inputText = '';
     this.autoResizeTextarea();
@@ -229,6 +237,7 @@ export class ChatbotComponent implements OnInit, OnDestroy {
         last.answer = reply;
         last.answeredAt = this.formatTime(new Date(answeredMs));
         last.answeredMs = answeredMs;
+        last.logId = res.logId ?? null;
         this.typewriteAnswer(last, reply);
         this.loading = false;
         this.persistPairs();
@@ -305,6 +314,24 @@ export class ChatbotComponent implements OnInit, OnDestroy {
       .catch(() => {});
   }
 
+  public submitFeedback(pair: ChatPair, value: 'up' | 'down'): void {
+    if (pair.feedback === value) return; // already voted
+    if (!pair.logId) {
+      pair.feedback = value;
+      this.persistPairs();
+      return;
+    }
+    pair.feedback = value;
+    this.persistPairs();
+    this.chatbotService.sendFeedback(pair.logId, value).subscribe();
+  }
+
+  /** Show feedback buttons only once the answer is fully typed out. */
+  public showFeedbackFor(index: number): boolean {
+    const pair = this.pairs[index];
+    return !!pair && !this.typingAnswers.has(pair);
+  }
+
   public isErrorReply(answer: string | null): boolean {
     if (!answer) return false;
     return answer.startsWith('Sorry,');
@@ -357,8 +384,12 @@ export class ChatbotComponent implements OnInit, OnDestroy {
     const rendered = this.sanitizer.bypassSecurityTrustHtml(htmlParts.join(''));
 
     // The typewriter effect calls this once per frame with a growing prefix, so
-    // bound the cache rather than retaining every intermediate string.
-    if (this.renderedMarkdown.size > 200) this.renderedMarkdown.clear();
+    // bound the cache. Evict the oldest entry (insertion order) rather than
+    // clearing all at once, which would thrash completed-message entries.
+    if (this.renderedMarkdown.size >= 200) {
+      const oldest = this.renderedMarkdown.keys().next().value;
+      if (oldest !== undefined) this.renderedMarkdown.delete(oldest);
+    }
     this.renderedMarkdown.set(source, rendered);
     return rendered;
   }
@@ -440,7 +471,14 @@ export class ChatbotComponent implements OnInit, OnDestroy {
     try {
       // Cap at 20 most recent pairs to avoid sessionStorage size limits.
       const toStore = this.pairs.slice(-20);
-      sessionStorage.setItem(SESSION_KEY, JSON.stringify(toStore));
+      const serialized = JSON.stringify(toStore);
+      // Guard against QuotaExceededError by catching and retrying with fewer pairs.
+      try {
+        sessionStorage.setItem(SESSION_KEY, serialized);
+      } catch (quotaErr) {
+        // Retry with only the 5 most recent pairs to fit within quota.
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify(this.pairs.slice(-5)));
+      }
     } catch (_) {}
   }
 
