@@ -32,18 +32,37 @@ const { lookup: cacheGet, save: cacheSave, log: cacheLog, logCacheHit, hasDevPre
 
 const CONFIG_PATH = path.join(__dirname, 'chat-config.json');
 
-/** Read (and lightly validate) the chat config on each call. */
+/** Cached config and the mtime it was loaded from, for hot-reload on change. */
+let _configCache = null;
+let _configMtime = 0;
+
+/** Read (and lightly validate) the chat config; reloads only when the file changes. */
 function loadConfig() {
-  const raw = fs.readFileSync(CONFIG_PATH, 'utf8');
-  const cfg = JSON.parse(raw);
-  return {
-    model: cfg.model || 'gemini-2.5-flash-lite',
-    temperature: typeof cfg.temperature === 'number' ? cfg.temperature : 0.2,
-    maxTokens: typeof cfg.maxTokens === 'number' ? cfg.maxTokens : 1024,
-    maxToolIterations:
-      typeof cfg.maxToolIterations === 'number' ? cfg.maxToolIterations : 5,
-    systemPrompts: Array.isArray(cfg.systemPrompts) ? cfg.systemPrompts : [],
-  };
+  try {
+    const stat = fs.statSync(CONFIG_PATH);
+    const mtime = stat.mtimeMs;
+    if (_configCache && mtime === _configMtime) return _configCache;
+    const raw = fs.readFileSync(CONFIG_PATH, 'utf8');
+    const cfg = JSON.parse(raw);
+    _configMtime = mtime;
+    _configCache = {
+      model: cfg.model || 'gemini-2.5-flash-lite',
+      temperature: typeof cfg.temperature === 'number' ? cfg.temperature : 0.2,
+      maxTokens: typeof cfg.maxTokens === 'number' ? cfg.maxTokens : 1024,
+      maxToolIterations:
+        typeof cfg.maxToolIterations === 'number' ? cfg.maxToolIterations : 5,
+      systemPrompts: Array.isArray(cfg.systemPrompts) ? cfg.systemPrompts : [],
+    };
+    return _configCache;
+  } catch (err) {
+    // If the file is temporarily unreadable (mid-write), fall back to the last
+    // good config rather than crashing mid-request.
+    if (_configCache) {
+      console.error('[chat] loadConfig error (using cached config):', err.message);
+      return _configCache;
+    }
+    throw err;
+  }
 }
 
 /** Build the tool-usage instructions appended to the system prompt. */
@@ -310,10 +329,9 @@ async function runChat(history, userMessage) {
     const cached = await cacheGet(userMessage, 'chat', { source: sourceOverride });
     if (cached) {
       console.error('[chat] cache HIT — skipping USAi call');
-      return { reply: cached.reply, toolCalls: cached.toolCalls, logId: cached.logId ?? null };
-      // Normalize on the way out as well as on the way in: entries saved
-      // before link normalization existed (or by an older deployment) still
-      // hold absolute URLs that would break outside production.
+      // Normalize on the way out: entries saved before link normalization
+      // existed (or by an older deployment) may hold absolute URLs that break
+      // outside production.
       const reply = normalizeGearLinks(cached.reply);
       // Log the hit so repeat questions still appear in analytics; without this
       // the most-asked questions are the ones least visible in the data.

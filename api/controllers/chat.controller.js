@@ -5,7 +5,7 @@ const {
   runChat,
 } = require(path.join('..', '..', 'mcp', 'chat-orchestrator'));
 
-const { saveFeedback } = require(path.join('..', '..', 'mcp', 'prompt-cache'));
+const { saveFeedback, log: cacheLog } = require(path.join('..', '..', 'mcp', 'prompt-cache'));
 
 /**
  * Dedicated rate limiter for the chat endpoint to protect the USAi budget
@@ -43,7 +43,7 @@ exports.feedback = async (req, res) => {
 exports.chat = async (req, res) => {
   try {
     const message = req.body && req.body.message;
-    const history = (req.body && req.body.history) || [];
+    const rawHistory = (req.body && req.body.history) || [];
 
     if (typeof message !== 'string' || message.trim().length === 0) {
       return res.status(400).json({ message: 'A non-empty "message" is required.' });
@@ -52,10 +52,28 @@ exports.chat = async (req, res) => {
       return res.status(400).json({ message: 'Message is too long.' });
     }
 
+    // Validate history at the controller boundary before passing deeper.
+    if (!Array.isArray(rawHistory)) {
+      return res.status(400).json({ message: '"history" must be an array.' });
+    }
+    if (rawHistory.length > 40) {
+      return res.status(400).json({ message: '"history" is too long.' });
+    }
+    const history = rawHistory.filter(
+      (m) => m && typeof m.role === 'string' && typeof m.content === 'string'
+    );
+
     const { reply, toolCalls, logId } = await runChat(history, message);
     return res.status(200).json({ reply, toolCalls, logId: logId ?? null });
   } catch (err) {
     console.error('Chat error:', err);
+    // Log the failure so error patterns are visible in analytics.
+    try {
+      const message = req.body && req.body.message;
+      if (typeof message === 'string' && message.trim().length > 0) {
+        cacheLog(message, 'chat', null, [], { source: undefined }).catch(() => {});
+      }
+    } catch (_) {}
     const status = err.status === 429 ? 429 : 502;
     const msg =
       err.status === 429

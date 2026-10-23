@@ -17,6 +17,13 @@ const path = require('path');
 // (e.g. a standalone script). No-op if the vars are already set.
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
+// Validate the API key at module load time so a missing key surfaces
+// immediately on startup rather than failing mid-request.
+if (!process.env.AI_CERT) {
+  console.error('[usai-client] FATAL: AI_CERT environment variable is not set. ' +
+    'The GEAR Assistant will not function. Set AI_CERT in your .env file.');
+}
+
 const USAI_API_BASE = process.env.USAI_API_BASE || 'https://api.gsa.usai.gov';
 const USAI_CHAT_PATH = '/api/v1/chat/completions';
 const USAI_EMBEDDINGS_PATH = '/api/v1/embeddings';

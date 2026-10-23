@@ -326,9 +326,10 @@ export class ChatbotComponent implements OnInit, OnDestroy {
     this.chatbotService.sendFeedback(pair.logId, value).subscribe();
   }
 
-  /** Show feedback buttons only when scrolled into history (not at the live bottom) */
+  /** Show feedback buttons only once the answer is fully typed out. */
   public showFeedbackFor(index: number): boolean {
-    return true;
+    const pair = this.pairs[index];
+    return !!pair && !this.typingAnswers.has(pair);
   }
 
   public isErrorReply(answer: string | null): boolean {
@@ -383,8 +384,12 @@ export class ChatbotComponent implements OnInit, OnDestroy {
     const rendered = this.sanitizer.bypassSecurityTrustHtml(htmlParts.join(''));
 
     // The typewriter effect calls this once per frame with a growing prefix, so
-    // bound the cache rather than retaining every intermediate string.
-    if (this.renderedMarkdown.size > 200) this.renderedMarkdown.clear();
+    // bound the cache. Evict the oldest entry (insertion order) rather than
+    // clearing all at once, which would thrash completed-message entries.
+    if (this.renderedMarkdown.size >= 200) {
+      const oldest = this.renderedMarkdown.keys().next().value;
+      if (oldest !== undefined) this.renderedMarkdown.delete(oldest);
+    }
     this.renderedMarkdown.set(source, rendered);
     return rendered;
   }
@@ -466,7 +471,14 @@ export class ChatbotComponent implements OnInit, OnDestroy {
     try {
       // Cap at 20 most recent pairs to avoid sessionStorage size limits.
       const toStore = this.pairs.slice(-20);
-      sessionStorage.setItem(SESSION_KEY, JSON.stringify(toStore));
+      const serialized = JSON.stringify(toStore);
+      // Guard against QuotaExceededError by catching and retrying with fewer pairs.
+      try {
+        sessionStorage.setItem(SESSION_KEY, serialized);
+      } catch (quotaErr) {
+        // Retry with only the 5 most recent pairs to fit within quota.
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify(this.pairs.slice(-5)));
+      }
     } catch (_) {}
   }
 

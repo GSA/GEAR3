@@ -214,6 +214,8 @@
 .gear-chatbot-messages::-webkit-scrollbar-track { background: transparent; }
 .gear-chatbot-messages::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 4px; }
 .gear-chatbot-messages::-webkit-scrollbar-thumb:hover { background: #000; }
+/* Firefox */
+.gear-chatbot-messages { scrollbar-width: thin; scrollbar-color: #1a1a1a transparent; }
 
 /* ─── Empty state ───────────────────────────────────────────────────────── */
 .gear-chatbot-empty {
@@ -617,3 +619,20 @@
   box-shadow: none;
 }
 
+/* ─── Reduced motion ────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .gear-chatbot-toggle,
+  .gear-chatbot-panel,
+  .gear-chatbot-scroll-top,
+  .gear-chatbot-send,
+  .gear-chatbot-header__btn,
+  .gear-chatbot-feedback__btn {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+  .gear-chatbot-dot {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}

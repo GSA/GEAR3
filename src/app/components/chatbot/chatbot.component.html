@@ -11,7 +11,7 @@
     (click)="toggle()"
     aria-haspopup="dialog"
     [attr.aria-expanded]="open"
-    aria-label="Open GEAR Assistant"
+    [attr.aria-label]="open ? 'Close GEAR Assistant' : 'Open GEAR Assistant'"
   >
     <span class="gear-chatbot-toggle__icon">
       <i class="fas" [class.fa-robot]="!open" [class.fa-chevron-down]="open"></i>
@@ -71,7 +71,7 @@
       </div>
 
       <!-- Messages -->
-      <div class="gear-chatbot-messages" #scrollContainer (scroll)="onScroll()">
+      <div class="gear-chatbot-messages" #scrollContainer (scroll)="onScroll()" aria-live="polite" aria-label="Conversation">
 
         <!-- Jump-to-input banner: only when AT TOP and questions exist and not loading -->
         @if (atTop && pairs.length > 0 && !loading) {

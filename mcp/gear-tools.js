@@ -325,9 +325,21 @@ async function listOrganizations() {
   return capResults(data, 200);
 }
 
-async function listItStandards() {
+/** In-process cache for the full /it_standards list to avoid re-fetching on every approval/alternatives call. */
+let itStandardsCache = null;
+let itStandardsCacheTs = 0;
+
+async function fetchItStandardsRows() {
+  if (itStandardsCache && Date.now() - itStandardsCacheTs < REF_CACHE_TTL_MS) return itStandardsCache;
   const data = await gearApiGet('/it_standards');
-  return capResults(data, 100);
+  itStandardsCache = Array.isArray(data) ? data : [];
+  itStandardsCacheTs = Date.now();
+  return itStandardsCache;
+}
+
+async function listItStandards() {
+  const rows = await fetchItStandardsRows();
+  return capResults(rows, 100);
 }
 
 async function listWebsites() {
@@ -494,8 +506,7 @@ async function getSoftwareApproval({ name, limit }) {
   if (!name || typeof name !== 'string') {
     throw new Error('name is required');
   }
-  const data = await gearApiGet('/it_standards');
-  const rows = Array.isArray(data) ? data : [];
+  const rows = await fetchItStandardsRows();
 
   const { matches } = matchItStandards(rows, name);
 
@@ -590,8 +601,7 @@ async function findSimilarApprovedSoftware({ name, limit }) {
   if (!name || typeof name !== 'string') {
     throw new Error('name is required');
   }
-  const data = await gearApiGet('/it_standards');
-  const rows = Array.isArray(data) ? data : [];
+  const rows = await fetchItStandardsRows();
 
   const { matches } = matchItStandards(rows, name);
   if (!matches.length) {
@@ -653,14 +663,20 @@ async function findSimilarApprovedSoftware({ name, limit }) {
   };
 }
 
+/** TTL for in-process reference data caches (5 minutes). */
+const REF_CACHE_TTL_MS = 5 * 60 * 1000;
+
 /**
  * Cached map of TRM category name (lower-cased) to its hierarchy Level, so
  * alternatives can be drawn from the most specific category a product carries.
+ * Invalidated after REF_CACHE_TTL_MS so TRM data changes are visible without
+ * a server restart.
  */
 let trmLevelsCache = null;
+let trmLevelsCacheTs = 0;
 
 async function getTrmLevels() {
-  if (trmLevelsCache) return trmLevelsCache;
+  if (trmLevelsCache && Date.now() - trmLevelsCacheTs < REF_CACHE_TTL_MS) return trmLevelsCache;
   const rows = await gearApiGet('/trm');
   const map = new Map();
   for (const r of Array.isArray(rows) ? rows : []) {
@@ -668,6 +684,7 @@ async function getTrmLevels() {
     if (name) map.set(name, Number(r.Level) || 0);
   }
   trmLevelsCache = map;
+  trmLevelsCacheTs = Date.now();
   return map;
 }
 
@@ -817,8 +834,7 @@ async function findApprovedAlternatives(product, allRows, excludeIds) {
  * Useful for suggesting approved alternatives with similar capability.
  */
 async function listApprovedSoftware({ category, limit }) {
-  const data = await gearApiGet('/it_standards');
-  const rows = Array.isArray(data) ? data : [];
+  const rows = await fetchItStandardsRows();
   const cat = (category || '').toLowerCase().trim();
 
   const approved = rows.filter((t) => {
