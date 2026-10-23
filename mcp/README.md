@@ -46,6 +46,8 @@ mcp/hybrid-search.js ──► mcp/vector-store.js  (gear_log.search_vectors)
 | `mcp/search-corpus.js` | Which GEAR records are searchable and how they become embeddable text. |
 | `mcp/embedding-pipeline.js` | Delta refresh (every few minutes) + nightly full rebuild. |
 | `mcp/embedding-cli.js` | `rebuild` / `refresh` / `stats` / `query` commands. |
+| `mcp/db-guard.js` | Enforces "the AI layer may only write to `gear_log`" at runtime. |
+| `mcp/test/db-guard.test.js` | Unit tests for that guard (`npm run test:mcp`). |
 | `api/routes/chat.routes.js`, `api/controllers/chat.controller.js` | `POST /api/chat`. |
 | `src/app/services/chatbot/chatbot.service.ts` | Angular client for `/api/chat`. |
 | `src/app/components/chatbot/*` | Chat widget (replaces global search). |
@@ -59,6 +61,35 @@ mcp/hybrid-search.js ──► mcp/vector-store.js  (gear_log.search_vectors)
   `"systemPrompts"` to tweak behavior. Changes take effect on the next request
   (no restart).
 - **Optional overrides** (`.env`): `USAI_API_BASE`, `GEAR_API_BASE`.
+
+### How tools reach the GEAR API (IIS / iisnode)
+
+The tool layer calls GEAR's own `/api` endpoints over HTTP, so it needs a URL
+for the server it is running inside. Under **IIS with iisnode** that is not
+obvious: IIS sets `PORT` to a named pipe (e.g. `\\.\pipe\7f3a9c21-iisnode`),
+not a TCP port. The old code interpolated it directly and produced
+`http://localhost:\\.\pipe\7f3a9c21-iisnode/api`, so every tool call failed
+with a bare `fetch failed` while the site itself worked normally. Note that
+`PORT=3000` in `.env` does **not** help — dotenv never overwrites a variable
+IIS has already set.
+
+`server.js` therefore opens a second listener for the same Express app on a
+random **loopback-only** TCP port (`127.0.0.1`) whenever the main listener is a
+pipe, and publishes it as `GEAR_INTERNAL_API_PORT`. `mcp/gear-tools.js`
+resolves its base URL per request, in this order:
+
+1. `GEAR_API_BASE`, if set.
+2. `GEAR_INTERNAL_API_PORT` → `http://127.0.0.1:<port>/api`.
+3. `PORT`, but only when it is numeric.
+4. `http://localhost:3000/api`.
+
+**Do not set `GEAR_API_BASE` to the public hostname** (`https://ea.gsa.gov/api`
+or `https://dev1.ea.gsa.gov/api`). GSA's certificates are issued by an internal
+CA that Node does not trust — Node ships its own CA bundle and ignores the
+Windows certificate store — so TLS fails with
+`UNABLE_TO_GET_ISSUER_CERT_LOCALLY` even though browsers and `curl` are fine.
+If you need to override, use a loopback URL such as
+`http://127.0.0.1:<port>/api`.
 
 The configured model is **`claude_4_5_haiku`** (Haiku 4.5). It was selected by
 benchmarking candidate models through the real orchestrator (full system prompt,
@@ -320,6 +351,57 @@ Schema changes are recorded in
 and must be applied once per environment.
 
 ## Security notes
+
+### Write boundary: the AI layer may only write to `gear_log`
+
+This is a hard invariant of the GEAR Assistant:
+
+> No user prompt may ever cause a change to GEAR's data. The AI layer's only
+> writes are to the **`gear_log`** schema (AI interaction logs and the
+> search-vector index). It must **never** write to **`gear_acl`**
+> (authentication/authorization) or **`gear_schema`** (GEAR's system of
+> record), and it has no reason to read `gear_acl` at all.
+
+Data changes belong exclusively to GEAR Manager's authenticated, audited
+endpoints. Three independent layers hold the line:
+
+1. **No write path exists from a prompt.** Every tool in `mcp/gear-tools.js`
+   reaches GEAR through `gearApiGet()`, which is GET-only; there is deliberately
+   no POST/PUT/DELETE helper in that module. The model never emits SQL — it only
+   picks a tool name from that read-only set.
+2. **Runtime guard (`mcp/db-guard.js`).** The AI layer does hold real MySQL
+   pools (`prompt-cache` → `gear_log.ai_log`, `vector-store` →
+   `gear_log.search_vectors`), and they authenticate as the same
+   full-privilege `DB_USER` as the rest of the app. Both pools, plus the
+   read-only corpus pool in `mcp/embedding-pipeline.js`, are wrapped by
+   `db-guard`, which inspects every statement before it reaches MySQL and
+   throws `DbGuardViolation` (`code: 'EGEARDBGUARD'`) on anything that would
+   write outside `gear_log` or reference `gear_acl`. It is deny-by-default:
+   multi-statement payloads, comment/quote obfuscation, `CALL` (stored
+   procedures can reach any schema), `GRANT`/`REVOKE`, and any write whose
+   target cannot be positively identified are all refused. Violations are
+   logged to stderr with the offending SQL.
+3. **Least-privilege DB grant (recommended follow-up).** The strongest control
+   is one the application cannot bypass. Give the AI layer its own MySQL user
+   and point `.env` at it, so even a bug cannot write outside `gear_log`:
+
+   ```sql
+   CREATE USER 'gear_ai'@'%' IDENTIFIED BY '<strong-password>' REQUIRE X509;
+   GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX
+     ON gear_log.* TO 'gear_ai'@'%';   -- DDL is needed by the vector-index rebuild
+   GRANT SELECT ON gear_schema.* TO 'gear_ai'@'%';  -- read-only, for embeddings
+   -- Deliberately no grant of any kind on gear_acl.
+   ```
+
+   This is a DBA task and is **not** yet applied; until it is, layer 2 is the
+   active enforcement.
+
+Run `npm run test:mcp` to exercise the guard. `mcp/test/db-guard.test.js`
+asserts both directions: today's legitimate `gear_log` writes are allowed, and
+writes to `gear_schema`, any access to `gear_acl`, obfuscated multi-statement
+payloads, and unverifiable write verbs are blocked.
+
+### Other notes
 
 - The chatbot/MCP tools **never** run model-generated SQL; they only call
   existing GEAR `/api` endpoints.

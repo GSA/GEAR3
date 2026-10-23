@@ -18,6 +18,13 @@ const SESSION_KEY = 'gear_chatbot_pairs';
 const TYPEWRITER_INTERVAL_MS = 12;
 const TYPEWRITER_MAX_TICKS = 100;
 
+/**
+ * Bounds for re-pinning the thread to the bottom while the panel's size is
+ * still animating (`.gear-chatbot-panel` transitions over 250ms).
+ */
+const SCROLL_SETTLE_MAX_MS = 450;
+const SCROLL_SETTLE_STABLE_FRAMES = 3;
+
 /** A single question/answer exchange rendered in the thread. */
 interface ChatPair {
   question: string;
@@ -94,6 +101,9 @@ export class ChatbotComponent implements OnInit, OnDestroy {
       this.open = true;
       this.unreadCount = 0;
       this.inputText = prompt || '';
+      // Same as toggle(): a freshly opened panel starts at the top, so show
+      // the newest message instead.
+      this.scrollToBottom(true);
     });
   }
 
@@ -137,6 +147,9 @@ export class ChatbotComponent implements OnInit, OnDestroy {
     this.open = !this.open;
     if (this.open) {
       this.unreadCount = 0;
+      // The panel is removed from the DOM while minimized, so it is rebuilt
+      // scrolled to the top. Restore the view to the newest message.
+      this.scrollToBottom(true);
     } else {
       this.expanded = false;
     }
@@ -152,34 +165,12 @@ export class ChatbotComponent implements OnInit, OnDestroy {
   toggleExpanded(): void {
     this._ignoreNextOutsideClick = true;
     this.expanded = !this.expanded;
-    this.scrollToBottom();
+    // Resizing the panel re-flows the thread, so let the height settle.
+    this.scrollToBottom(true);
   }
 
   onScroll(): void {
-    if (this.scrollContainer) {
-      const scrollTop = this.scrollContainer.nativeElement.scrollTop;
-      const scrollingUp = scrollTop < this._lastScrollTop;
-      this._lastScrollTop = scrollTop;
-      this.atTop = scrollTop < 20;
-
-      // Track whether the user has scrolled up enough to be reviewing history.
-      const el = this.scrollContainer.nativeElement;
-      const distFromBottom = el.scrollHeight - el.clientHeight - scrollTop;
-      this.scrolledIntoHistory = distFromBottom > 150;
-
-      // Show back-to-top whenever the user is more than 200px from the top.
-      // Hide it only when they scroll back close to the bottom (within 150px).
-      // The timer only applies when actively scrolling upward to trigger it initially.
-      if (scrollTop > 200) {
-        this.showScrollTop = true;
-        if (this._scrollUpTimer) {
-          clearTimeout(this._scrollUpTimer);
-          this._scrollUpTimer = undefined;
-        }
-      } else {
-        this.showScrollTop = false;
-      }
-    }
+    this.syncScrollFlags();
   }
 
   scrollToTop(): void {
@@ -189,7 +180,9 @@ export class ChatbotComponent implements OnInit, OnDestroy {
   }
 
   jumpToInput(): void {
-    this.scrollToBottom();
+    // Leaving the top removes the "New question" banner, which changes the
+    // thread's height mid-scroll, so settle on the real bottom.
+    this.scrollToBottom(true);
     setTimeout(() => {
       this.inputTextareaRef?.nativeElement?.focus();
     }, 120);
@@ -477,13 +470,59 @@ export class ChatbotComponent implements OnInit, OnDestroy {
     } catch (_) {}
   }
 
-  private scrollToBottom(): void {
-    setTimeout(() => {
-      if (this.scrollContainer) {
-        this.scrollContainer.nativeElement.scrollTop =
-          this.scrollContainer.nativeElement.scrollHeight;
+  /**
+   * Scroll the thread to the newest message.
+   *
+   * @param settle Set when the thread's geometry is still changing, which is
+   *   true for every path that reveals or resizes the panel: it is destroyed
+   *   while minimized, `.gear-chatbot-panel` animates its size over 250ms, and
+   *   `syncScrollFlags()` itself adds/removes the top banner and the
+   *   "Back to top" button. A single jump in those cases lands short of the
+   *   real bottom, so the position is re-pinned each frame until the measured
+   *   height stops moving. Streaming calls act on a stable container and use
+   *   the cheap single jump, preserving the smooth CSS follow-along.
+   */
+  private scrollToBottom(settle = false): void {
+    const pin = () => {
+      const el = this.scrollContainer?.nativeElement;
+      if (!el) return null;
+      // 'instant' overrides the element's CSS scroll-behavior: during a settle
+      // the smooth animation would visibly crawl up from the top.
+      if (settle) {
+        el.scrollTo({ top: el.scrollHeight, behavior: 'instant' });
+      } else {
+        el.scrollTop = el.scrollHeight;
       }
-    }, 0);
+      this.syncScrollFlags();
+      return el.scrollHeight;
+    };
+
+    if (!settle) {
+      requestAnimationFrame(pin);
+      return;
+    }
+
+    const deadline = Date.now() + SCROLL_SETTLE_MAX_MS;
+    let lastHeight = -1;
+    let stableFrames = 0;
+    const step = () => {
+      const height = pin();
+      if (height === null) return;
+      stableFrames = height === lastHeight ? stableFrames + 1 : 0;
+      lastHeight = height;
+      if (stableFrames < SCROLL_SETTLE_STABLE_FRAMES && Date.now() < deadline) {
+        requestAnimationFrame(step);
+      }
+    };
+    requestAnimationFrame(step);
+  }
+
+  /** Recompute the scroll-affordance flags from the container's position. */
+  private syncScrollFlags(): void {
+    const el = this.scrollContainer?.nativeElement;
+    if (!el) return;
+    this.showScrollTop = el.scrollTop > 200;
+    this.atTop = el.scrollTop < 20;
   }
 
   private isScrolledToBottom(): boolean {

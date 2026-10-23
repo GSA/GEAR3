@@ -451,6 +451,40 @@ server.on('error', onError);
 server.on('listening', onListening);
 
 /*
+ * Internal loopback listener for the AI tool layer.
+ *
+ * Under IIS/iisnode the main server listens on a named pipe, not a TCP port,
+ * so mcp/gear-tools.js has no address it can fetch GEAR's own /api endpoints
+ * from. Pointing it at the public hostname does not work either: GSA's
+ * certificates are issued by an internal CA that Node does not trust, so TLS
+ * verification fails. This opens a second listener for the SAME Express app on
+ * a loopback-only TCP port and advertises it via GEAR_INTERNAL_API_PORT.
+ *
+ * Bound to 127.0.0.1, so it is not reachable off the box. Skipped entirely
+ * when the main listener is already TCP (local development) or when
+ * GEAR_API_BASE is set explicitly.
+*/
+if (typeof port === 'string' && !process.env.GEAR_API_BASE) {
+  const internalServer = http.createServer(app);
+  internalServer.listen(0, '127.0.0.1', () => {
+    const internalPort = internalServer.address().port;
+    process.env.GEAR_INTERNAL_API_PORT = String(internalPort);
+    console.log(
+      'Internal API loopback listening on 127.0.0.1:' + internalPort +
+      ' (for AI tool layer; main listener is pipe ' + port + ')'
+    );
+  });
+  internalServer.on('error', (err) => {
+    // Non-fatal: the site keeps serving, but AI tools will not reach the API.
+    console.error(
+      'Internal API loopback failed to start (%s). GEAR Assistant tools will be ' +
+      'unable to reach the GEAR API; set GEAR_API_BASE to a loopback URL instead.',
+      err.message
+    );
+  });
+}
+
+/*
  * Event listener for HTTP server "error" event.
 */
 function onError(error) {

@@ -27,6 +27,14 @@ const db = require('../api/db');
 const { loadCorpus } = require('./search-corpus');
 const { embed, EMBEDDING_MODEL } = require('./usai-client');
 const vectorStore = require('./vector-store');
+const { readOnlyPool } = require('./db-guard');
+
+/**
+ * The corpus loader reads GEAR's system of record (`gear_schema`) through the
+ * application's shared pool. That pool can write, so it is wrapped read-only
+ * here: the AI layer must never modify gear_schema, only read from it.
+ */
+const corpusPool = readOnlyPool(db.promisePool, 'search-corpus');
 
 /** Documents per embeddings request. Measured safe and efficient at 96. */
 const BATCH_SIZE = Number(process.env.GEAR_EMBED_BATCH_SIZE || 96);
@@ -111,7 +119,7 @@ async function runFullRebuild() {
   const startedAt = Date.now();
 
   try {
-    const { documents, skipped, errors } = await loadCorpus(db.promisePool);
+    const { documents, skipped, errors } = await loadCorpus(corpusPool);
     if (errors.length) {
       console.error('[embedding-pipeline] corpus source errors:', JSON.stringify(errors));
     }
@@ -192,7 +200,7 @@ async function runDeltaRefresh() {
 
   try {
     const [{ documents, errors }, stored] = await Promise.all([
-      loadCorpus(db.promisePool),
+      loadCorpus(corpusPool),
       vectorStore.loadStoredHashes(),
     ]);
     if (errors.length) {

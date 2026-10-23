@@ -7,6 +7,12 @@
  * the GEAR portal's data. The same tool layer is reused by the web chatbot's
  * /api/chat orchestrator.
  *
+ * Every registered tool is read-only: the tools call GEAR's /api GET endpoints
+ * and never modify GEAR data in response to a prompt. The AI layer's only
+ * writes are to the `gear_log` schema (interaction logs, search-vector index),
+ * enforced at runtime by ./db-guard.js. `gear_acl` and `gear_schema` are never
+ * written to.
+ *
  * Transport: stdio. Start it via `node mcp/gear-mcp-server.js` or through the
  * .vscode/mcp.json configuration.
  *

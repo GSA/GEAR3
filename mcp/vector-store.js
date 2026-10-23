@@ -25,6 +25,7 @@ require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 const asyncMysql = require('mysql2/promise');
 
 const { EMBEDDING_DIMENSIONS } = require('./usai-client');
+const { guardPool } = require('./db-guard');
 
 const VECTOR_SCHEMA = 'gear_log';
 const VECTOR_TABLE = 'search_vectors';
@@ -40,21 +41,29 @@ let pool = null;
 /**
  * Dedicated pool for gear_log, mirroring prompt-cache.js so the vector store
  * works both inside the API server and in standalone cron/CLI processes.
+ *
+ * `database: VECTOR_SCHEMA` ('gear_log') is a security boundary: this is the
+ * only schema the AI layer may write to. The pool is wrapped by ./db-guard.js,
+ * which refuses statements targeting gear_acl or gear_schema, so the vector
+ * store cannot reach GEAR's system of record even as this file evolves.
  */
 function getPool() {
   if (!pool) {
-    pool = asyncMysql.createPool({
-      host: process.env.DB_HOST,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASS,
-      database: VECTOR_SCHEMA,
-      port: 3306,
-      ssl: {
-        ca: fs.readFileSync(path.join(__dirname, '..', 'certs', 'ca.pem')),
-        key: fs.readFileSync(path.join(__dirname, '..', 'certs', 'client-key.pem')),
-        cert: fs.readFileSync(path.join(__dirname, '..', 'certs', 'client-cert.pem')),
-      },
-    });
+    pool = guardPool(
+      asyncMysql.createPool({
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database: VECTOR_SCHEMA,
+        port: 3306,
+        ssl: {
+          ca: fs.readFileSync(path.join(__dirname, '..', 'certs', 'ca.pem')),
+          key: fs.readFileSync(path.join(__dirname, '..', 'certs', 'client-key.pem')),
+          cert: fs.readFileSync(path.join(__dirname, '..', 'certs', 'client-cert.pem')),
+        },
+      }),
+      { defaultSchema: VECTOR_SCHEMA, label: 'vector-store' }
+    );
   }
   return pool;
 }
