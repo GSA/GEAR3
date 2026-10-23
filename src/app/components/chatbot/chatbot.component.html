@@ -128,7 +128,7 @@
                     <i class="fas" [class.fa-check]="copiedIndex === $index" [class.fa-copy]="copiedIndex !== $index"></i>
                     {{ copiedIndex === $index ? 'Copied' : 'Copy' }}
                   </button>
-                  @if (!isErrorReply(pair.answer)) {
+                  @if (!isErrorReply(pair.answer) && showFeedbackFor($index)) {
                     <div class="gear-chatbot-feedback" role="group" aria-label="Rate this response">
                       <button
                         type="button"
@@ -169,17 +169,17 @@
           </div>
         }
 
-        <!-- Scroll-to-top: only shown when scrolled down AND questions exist -->
+        <!-- Scroll-to-top: only shown when scrolling upward and more than 200px from top -->
         @if (showScrollTop && pairs.length > 0) {
           <div class="gear-chatbot-scroll-top-wrap">
             <button
               type="button"
               class="gear-chatbot-scroll-top"
               (click)="scrollToTop()"
-              title="Scroll to top"
+              title="Back to top"
               aria-label="Scroll to top"
             >
-              <i class="fas fa-chevron-up"></i> Back to top
+              <i class="fas fa-arrow-up"></i> Back to top
             </button>
           </div>
         }

@@ -260,13 +260,14 @@ async function runChat(history, userMessage) {
     const cached = await cacheGet(userMessage, 'chat', { source: sourceOverride });
     if (cached) {
       console.error('[chat] cache HIT — skipping USAi call');
+      return { reply: cached.reply, toolCalls: cached.toolCalls, logId: cached.logId ?? null };
       // Log the hit so repeat questions still appear in analytics; without this
       // the most-asked questions are the ones least visible in the data.
       logCacheHit(userMessage, 'chat', cached.reply, cached.toolCalls, {
         responseTimeMs: Date.now() - t0,
         source: sourceOverride,
       }).catch(() => {});
-      return { reply: cached.reply, toolCalls: cached.toolCalls, logId: cached.logId ?? null };
+      return cached;
     }
   }
 
@@ -435,12 +436,12 @@ async function runChat(history, userMessage) {
           source: sourceOverride,
         }).catch(() => null);
       } else {
-        cacheLog(userMessage, 'chat', finalReply, toolCalls, {
+        logId = await cacheLog(userMessage, 'chat', finalReply, toolCalls, {
           responseTimeMs: Date.now() - t0,
           tokensUsed: totalTokens || null,
           turnIndex,
           source: sourceOverride,
-        }).catch(() => {});
+        }).catch(() => null);
       }
       return { reply: finalReply, toolCalls, logId };
     }
@@ -519,12 +520,12 @@ async function runChat(history, userMessage) {
       source: sourceOverride,
     }).catch(() => null);
   } else {
-    cacheLog(userMessage, 'chat', finalReply, toolCalls, {
+    finalLogId = await cacheLog(userMessage, 'chat', finalReply, toolCalls, {
       responseTimeMs: Date.now() - t0,
       tokensUsed: totalTokens || null,
       turnIndex,
       source: sourceOverride,
-    }).catch(() => {});
+    }).catch(() => null);
   }
   return { reply: finalReply, toolCalls, logId: finalLogId };
 }

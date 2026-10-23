@@ -496,5 +496,6 @@ module.exports = {
   hasDevPrefix,
   stripDevPrefix,
   promptSimilarity,
+  saveFeedback,
 };
 

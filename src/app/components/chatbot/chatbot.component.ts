@@ -46,6 +46,9 @@ export class ChatbotComponent implements OnInit, OnDestroy {
   public copiedIndex = -1;
   public showScrollTop = false;
   public atTop = false;
+  public scrolledIntoHistory = false;
+  private _lastScrollTop = 0;
+  private _scrollUpTimer?: ReturnType<typeof setTimeout>;
   public relativeTimeTick = 0; // incremented every minute to refresh relative times
 
   private seedSub?: Subscription;
@@ -97,6 +100,7 @@ export class ChatbotComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.seedSub?.unsubscribe();
     if (this.tickInterval) clearInterval(this.tickInterval);
+    if (this._scrollUpTimer) clearTimeout(this._scrollUpTimer);
     this.clearTypewriterTimers();
   }
 
@@ -154,8 +158,27 @@ export class ChatbotComponent implements OnInit, OnDestroy {
   onScroll(): void {
     if (this.scrollContainer) {
       const scrollTop = this.scrollContainer.nativeElement.scrollTop;
-      this.showScrollTop = scrollTop > 200;
+      const scrollingUp = scrollTop < this._lastScrollTop;
+      this._lastScrollTop = scrollTop;
       this.atTop = scrollTop < 20;
+
+      // Track whether the user has scrolled up enough to be reviewing history.
+      const el = this.scrollContainer.nativeElement;
+      const distFromBottom = el.scrollHeight - el.clientHeight - scrollTop;
+      this.scrolledIntoHistory = distFromBottom > 150;
+
+      // Show back-to-top whenever the user is more than 200px from the top.
+      // Hide it only when they scroll back close to the bottom (within 150px).
+      // The timer only applies when actively scrolling upward to trigger it initially.
+      if (scrollTop > 200) {
+        this.showScrollTop = true;
+        if (this._scrollUpTimer) {
+          clearTimeout(this._scrollUpTimer);
+          this._scrollUpTimer = undefined;
+        }
+      } else {
+        this.showScrollTop = false;
+      }
     }
   }
 
@@ -301,7 +324,6 @@ export class ChatbotComponent implements OnInit, OnDestroy {
   public submitFeedback(pair: ChatPair, value: 'up' | 'down'): void {
     if (pair.feedback === value) return; // already voted
     if (!pair.logId) {
-      // No logId (follow-up turn or error) — track session-only feedback
       pair.feedback = value;
       this.persistPairs();
       return;
@@ -309,6 +331,11 @@ export class ChatbotComponent implements OnInit, OnDestroy {
     pair.feedback = value;
     this.persistPairs();
     this.chatbotService.sendFeedback(pair.logId, value).subscribe();
+  }
+
+  /** Show feedback buttons only when scrolled into history (not at the live bottom) */
+  public showFeedbackFor(index: number): boolean {
+    return true;
   }
 
   public isErrorReply(answer: string | null): boolean {
