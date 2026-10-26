@@ -241,8 +241,18 @@ async function loadStoredHashes() {
 /** Drop and recreate the staging table, ready for a full rebuild. */
 async function beginFullRebuild() {
   const db = getPool();
-  await db.query(`DROP TABLE IF EXISTS ${QUALIFIED_STAGING}`);
-  await db.query(createTableSql(QUALIFIED_STAGING));
+  
+  // In dev, drop and recreate; in prod where app lacks permissions, truncate the existing table.
+  try {
+    await db.query(`TRUNCATE TABLE ${QUALIFIED_STAGING}`);
+  } catch (err) {
+    if (err.code === 'ER_NO_SUCH_TABLE') {
+      // Table doesn't exist yet; create it from scratch
+      await db.query(createTableSql(QUALIFIED_STAGING));
+    } else {
+      throw err;
+    }
+  }
 }
 
 /**
