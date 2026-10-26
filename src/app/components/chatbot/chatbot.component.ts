@@ -242,6 +242,7 @@ export class ChatbotComponent implements OnInit, OnDestroy {
         this.loading = false;
         this.persistPairs();
         this.scrollToBottom();
+        this.syncScrollFlags();
         if (!this.open) {
           this.unreadCount++;
         }
@@ -256,6 +257,7 @@ export class ChatbotComponent implements OnInit, OnDestroy {
         this.loading = false;
         this.persistPairs();
         this.scrollToBottom();
+        this.syncScrollFlags();
       },
     });
   }
@@ -533,7 +535,11 @@ export class ChatbotComponent implements OnInit, OnDestroy {
   private syncScrollFlags(): void {
     const el = this.scrollContainer?.nativeElement;
     if (!el) return;
-    this.showScrollTop = el.scrollTop > 200;
+    // Show "back to top" only when the user has scrolled up away from the
+    // bottom — not just because they're 200px in. We hide it while loading
+    // (answer populating) and while the input is focused / being typed in.
+    const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 40;
+    this.showScrollTop = !atBottom && el.scrollTop > 200 && !this.loading;
     this.atTop = el.scrollTop < 20;
   }
 

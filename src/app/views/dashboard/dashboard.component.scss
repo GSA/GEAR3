@@ -136,10 +136,18 @@
               display: flex;
               align-items: center;
               gap: 0.25rem;
-              text-decoration-line: underline;
               cursor: pointer;
               width: fit-content;
               transition: color 120ms ease, transform 120ms ease;
+
+              & span {
+                text-decoration: underline;
+              }
+
+              & .expire-icon {
+                display: inline-block;
+                text-decoration: none;
+              }
 
               &:hover {
                 color: var(--primary-color-hover);
