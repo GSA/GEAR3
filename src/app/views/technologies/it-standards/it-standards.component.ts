@@ -75,6 +75,10 @@ export class ItStandardsComponent implements OnInit {
 
     if(this.selectedTab === 'All') {
       // no status filter needed
+    } else if (this.selectedTab === 'ApprovedDenied') {
+      this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
+        return x.Status === 'Approved' || x.Status === 'Denied' || x.Status === 'Approved with conditions';
+      });
     } else if (this.selectedTab === 'Other') {
       this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
         return x.Status !== 'Approved' && x.Status !== 'Denied' && x.Status !== 'Retired' && x.Status !== 'Approved with conditions';
@@ -109,7 +113,11 @@ export class ItStandardsComponent implements OnInit {
 
     // Always re-derive the tab-filtered set from the full dataset
     this.itStandardsDataTabFilterted = this.itStandardsData;
-    if (this.selectedTab === 'Other') {
+    if (this.selectedTab === 'ApprovedDenied') {
+      this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
+        return x.Status === 'Approved' || x.Status === 'Denied' || x.Status === 'Approved with conditions';
+      });
+    } else if (this.selectedTab === 'Other') {
       this.itStandardsDataTabFilterted = this.itStandardsDataTabFilterted.filter(x => {
         return x.Status !== 'Approved' && x.Status !== 'Denied' && x.Status !== 'Retired' && x.Status !== 'Approved with conditions';
       });
@@ -165,7 +173,11 @@ export class ItStandardsComponent implements OnInit {
         });
       }
     } else if (hasTab) {
-      this.router.navigate(['/it_standards/status', tab], { replaceUrl: true });
+      if (tab === 'ApprovedDenied') {
+        this.router.navigate(['/it_standards'], { replaceUrl: true, queryParams: { tab: 'ApprovedDenied' } });
+      } else {
+        this.router.navigate(['/it_standards/status', tab], { replaceUrl: true });
+      }
     } else {
       this.router.navigate(['/it_standards'], { replaceUrl: true });
     }
@@ -215,7 +227,9 @@ export class ItStandardsComponent implements OnInit {
     }
     if (routeParams['status']) {
       const status = routeParams['status'];
-      this.selectedTab = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+      this.selectedTab = status === 'ApprovedDenied'
+        ? 'ApprovedDenied'
+        : status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
     }
 
    this.route.queryParams.subscribe(params => {
