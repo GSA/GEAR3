@@ -328,15 +328,18 @@ export class SharedService {
   //// Description formattter
   public formatDescription(value: any, row: any) {
     if (!value) return '';
-    else return '<span class="description-wrap">' + value + "</span>";
+    const cleaned = String(value).replace(/[\r\n]+/g, ' ');
+    return '<span class="description-wrap">' + cleaned + '</span>';
   };
   public formatDescriptionShorter(value: any, row: any) {
     if (!value) return '';
-    else return '<span class="description-wrap-short">' + value + "</span>";
+    const cleaned = String(value).replace(/[\r\n]+/g, ' ');
+    return '<span class="description-wrap-short">' + cleaned + '</span>';
   };
   public formatDescriptionLite(value: any, row: any) {
     if (!value) return '-';
-    else return '<span class="description-wrap-lite">' + value + "</span>";
+    const cleaned = String(value).replace(/[\r\n]+/g, ' ');
+    return '<span class="description-wrap-lite">' + cleaned + '</span>';
   };
 
   //// Status Formatter
