@@ -80,13 +80,13 @@ export class FismaComponent implements OnInit {
       field: 'ATODate',
       header: 'ATO Date',
       isSortable: true,
-      formatter: this.sharedService.dateFormatter,
+      formatter: this.sharedService.utcDateFormatter,
     },
     {
       field: 'RenewalDate',
       header: 'Renewal Date',
       isSortable: true,
-      formatter: this.sharedService.dateFormatter,
+      formatter: this.sharedService.utcDateFormatter,
     },
     {
       field: 'ATOType',

@@ -32,6 +32,7 @@ export class CapabilitiesDetailsComponent implements OnInit {
   public isSupportingSystemsTabActive: boolean = false;
 
   public attrDefinitions = <DataDictionary[]>[];
+  public systemsAttrDefinitions = <DataDictionary[]>[];
 
   public relatedOrgsTableCols: Column[] = [
     {
@@ -225,15 +226,52 @@ export class CapabilitiesDetailsComponent implements OnInit {
         .subscribe((data: DataDictionary[]) => {
           this.attrDefinitions = data;
       });
+
+      // Get attribute definitions for the supporting systems table
+      this.apiService.getDataDictionaryByReportName('Business Systems')
+        .subscribe((data: DataDictionary[]) => {
+          this.systemsAttrDefinitions = data;
+          this.supportingSystemsTableCols = this.buildSupportingSystemsCols(data);
+      });
     });
   }
 
   public getTooltip (name: string): string {
-    const def = this.attrDefinitions.find(def => def.Term === name);
-    if(def){
-      return def.TermDefinition;
-    }
-    return '';
+    return this.sharedService.getTooltip(this.attrDefinitions, name);
+  }
+
+  // The Supporting Systems table uses the 'Business Systems' data dictionary.
+  // Set an explicit titleTooltip on each column using the correct Term for the
+  // field (some headers differ from their dictionary Term).
+  private buildSupportingSystemsCols(systemsDefs: DataDictionary[]): Column[] {
+    const termByField: { [field: string]: string } = {
+      ID: 'ID',
+      DisplayName: 'Alias/Acronym',
+      Name: 'System Name',
+      Description: 'Description',
+      SystemLevel: 'System Level',
+      Status: 'Status',
+      RespOrg: 'Responsible IT Org',
+      BusOrgSymbolAndName: 'SSO/CXO',
+      BusOrg: 'Business Org',
+      ParentName: 'Parent System',
+      CSP: 'Hosting Provider',
+      CloudYN: 'Cloud Hosted?',
+      ServiceType: 'Cloud Service Type',
+      AO: 'Authorizing Official',
+      SO: 'System Owner',
+      BusPOC: 'Business POC',
+      TechPOC: 'Technical POC',
+      DataSteward: 'Data Steward',
+      FISMASystemIdentifier: 'FISMA System Identifier'
+    };
+    return this.supportingSystemsTableCols.map(col => {
+      const term = termByField[col.field];
+      if (term) {
+        return { ...col, titleTooltip: this.sharedService.getTooltip(systemsDefs, term) };
+      }
+      return { ...col };
+    });
   }
 
   public onTabClick(tabName: string, event: Event): void {

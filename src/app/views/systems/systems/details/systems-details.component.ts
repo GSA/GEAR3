@@ -36,6 +36,7 @@ export class SystemsDetailsComponent implements OnInit {
   public systemId: number = null;
   public detailsData: System;
   public isDataReady: boolean = false;
+  public showIssoBanner: boolean = true;
   public systemTimeData: TIME[] = [];
   public sysCapabilitiesData: Capability[] = [];
   public sysTechnologiesData: ITStandards[] = [];
@@ -58,8 +59,14 @@ export class SystemsDetailsComponent implements OnInit {
   public relatedSystemsCols: Column[] = RelatedSystemsCols;
 
   public attrDefinitions = <DataDictionary[]>[];
+  public capabilitiesAttrDefinitions = <DataDictionary[]>[];
+  public timeAttrDefinitions = <DataDictionary[]>[];
+  public technologyAttrDefinitions = <DataDictionary[]>[];
+  public recordsAttrDefinitions = <DataDictionary[]>[];
+  public websitesAttrDefinitions = <DataDictionary[]>[];
 
   public splitPOCs: any = {};
+  public issoEmail: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -86,7 +93,13 @@ export class SystemsDetailsComponent implements OnInit {
         this.apiService.getSysWebsites(this.systemId),
         this.apiService.getSysSubsystems(this.systemId),
         this.apiService.getRecords(),
-        this.apiService.getWebsites()
+        this.apiService.getWebsites(),
+        this.apiService.getDataDictionaryByReportName('Business Capabilities'),
+        this.apiService.getDataDictionaryByReportName('TIME Report'),
+        this.apiService.getDataDictionaryByReportName('IT Standards List'),
+        this.apiService.getDataDictionaryByReportName('Records Management'),
+        this.apiService.getDataDictionaryByReportName('GSA Websites'),
+        this.apiService.getDataDictionaryByReportName('TRM')
       ]).subscribe({
         next: ([
           dataDictionaryBS,
@@ -98,9 +111,21 @@ export class SystemsDetailsComponent implements OnInit {
           systemWebsites,
           systemSubsystems,
           records,
-          websites
+          websites,
+          dataDictionaryCapabilities,
+          dataDictionaryTime,
+          dataDictionaryTechnology,
+          dataDictionaryRecords,
+          dataDictionaryWebsites,
+          dataDictionaryTrm
         ]) => {
           this.attrDefinitions = dataDictionaryBS;
+          this.capabilitiesAttrDefinitions = dataDictionaryCapabilities;
+          this.timeAttrDefinitions = dataDictionaryTime;
+          this.technologyAttrDefinitions = dataDictionaryTechnology;
+          this.recordsAttrDefinitions = dataDictionaryRecords;
+          this.websitesAttrDefinitions = dataDictionaryWebsites;
+          this.relatedTechnologyCols = this.buildRelatedTechnologyCols(dataDictionaryTechnology, dataDictionaryTrm);
           this.detailsData = systemDetails;
           this.previousRouteService.setCurrentPageTitle(systemDetails.Name);
           this.systemTimeData = systemTIME;
@@ -116,6 +141,7 @@ export class SystemsDetailsComponent implements OnInit {
           this.sysSubsystemsData = systemSubsystems;
 
           this.splitPOCs = this.splitPOCInfo(this.detailsData.POC);
+          this.issoEmail = this.getFirstIssoEmail(this.detailsData.ISSO);
         },
         error: (err) => console.log('Failed to load page data', err),
         complete: () => this.isDataReady = true
@@ -270,11 +296,32 @@ export class SystemsDetailsComponent implements OnInit {
   }
 
   public getTooltip (name: string): string {
-    const def = this.attrDefinitions.find(def => def.Term === name);
-    if(def){
-      return def.TermDefinition;
-    }
-    return '';
+    return this.sharedService.getTooltip(this.attrDefinitions, name);
+  }
+
+  // The Related Technology table headers don't match the data dictionary Terms
+  // for the 'IT Standards List' report, so set an explicit titleTooltip on each
+  // column using the correct Term (matching the IT Standards report). The
+  // "Software Category" column's definition lives in the 'TRM' report under the
+  // "Technology Category Report" term.
+  private buildRelatedTechnologyCols(techDefs: DataDictionary[], trmDefs: DataDictionary[]): Column[] {
+    const termByField: { [field: string]: string } = {
+      Name: 'IT Standard Name',
+      Description: 'Description',
+      Fedramp: 'FedRAMP',
+      OpenSource: 'Open Source',
+      RITM: 'Requested Item (RITM)'
+    };
+    return RelatedTechnologiesColumns.map(col => {
+      if (col.field === 'Category') {
+        return { ...col, titleTooltip: this.sharedService.getTooltip(trmDefs, 'Technology Category Report') };
+      }
+      const term = termByField[col.field];
+      if (term) {
+        return { ...col, titleTooltip: this.sharedService.getTooltip(techDefs, term) };
+      }
+      return { ...col };
+    });
   }
 
     public editSystem(): void {
@@ -314,6 +361,14 @@ export class SystemsDetailsComponent implements OnInit {
       });
     }
     return pocs;
+  }
+
+  private getFirstIssoEmail(issoData: string): string {
+    if (!issoData) {
+      return '';
+    }
+    const pocs = this.splitPOCInfo(issoData);
+    return pocs.length > 0 ? pocs[0].email : '';
   }
 
   public onCapRowClick(data: Capability): void {

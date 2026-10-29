@@ -21,14 +21,14 @@
           <div class="expire-text multi-line-expire-text" [ngClass]="{'neutral-text': getFismaExpiryAlertCount() === 0}">
             @if ((fismaPastDue || 0) > 0) {
               <span class="expire-link-line" tabindex="0" (click)="viewPastDueFisma()" (keydown.enter)="viewPastDueFisma()" (keydown.space)="viewPastDueFisma()">
-                <i class="expire-icon fas fa-exclamation-triangle"></i>
-                {{ getFismaPastDueLabel() }}
+                <i class="expire-icon fas fa-clock"></i>
+                <span>{{ getFismaPastDueLabel() }}</span>
               </span>
             }
             @if ((fismaExpiringThisWeek || 0) > 0) {
               <span class="expire-link-line" tabindex="0" (click)="viewExpiringFisma()" (keydown.enter)="viewExpiringFisma()" (keydown.space)="viewExpiringFisma()">
-                <i class="expire-icon fas fa-exclamation-triangle"></i>
-                {{ getFismaExpiringSoonLabel() }}
+                <i class="expire-icon fas fa-calendar"></i>
+                <span>{{ getFismaExpiringSoonLabel() }}</span>
               </span>
             }
             @if (getFismaExpiryAlertCount() === 0) {
@@ -50,12 +50,12 @@
         </div>
         <span class="quick-view-text">Decommissioned Business Systems/Subsystems (Last 6 months)</span>
         <div class="quick-view-expiring-text-container" [ngClass]="{'neutral-message': (decommissionedSystemsLastMonth || 0) === 0}">
-          @if ((decommissionedSystemsLastMonth || 0) > 0) {
-            <i class="expire-icon fas fa-exclamation-triangle"></i>
-          }
           <span class="expire-text" [ngClass]="{'positive-expire-text' : decommissionedSystemsLastMonth > 0, 'neutral-text': (decommissionedSystemsLastMonth || 0) === 0}">
             @if ((decommissionedSystemsLastMonth || 0) > 0) {
-              <span tabindex="0" (click)="viewDecommissionedSystems()" (keydown.enter)="viewDecommissionedSystems()" (keydown.space)="viewDecommissionedSystems()">{{ decommissionedSystemsLastMonth || 0 }} items decommissioned in last month</span>
+              <span class="expire-link-line" tabindex="0" (click)="viewDecommissionedSystems()" (keydown.enter)="viewDecommissionedSystems()" (keydown.space)="viewDecommissionedSystems()">
+                <i class="expire-icon fas fa-calendar"></i>
+                <span>{{ decommissionedSystemsLastMonth || 0 }} items decommissioned in last month</span>
+              </span>
             }
             @if ((decommissionedSystemsLastMonth || 0) === 0) {
               <span>No items decommissioned in last month</span>
@@ -79,14 +79,14 @@
           <div class="expire-text multi-line-expire-text" [ngClass]="{'neutral-text': getStandardsExpiryAlertCount() === 0}">
             @if ((standardsPastDue || 0) > 0) {
               <span class="expire-link-line" tabindex="0" (click)="viewPastDueITStandards()" (keydown.enter)="viewPastDueITStandards()" (keydown.space)="viewPastDueITStandards()">
-                <i class="expire-icon fas fa-exclamation-triangle"></i>
-                {{ getStandardsPastDueLabel() }}
+                <i class="expire-icon fas fa-clock"></i>
+                <span>{{ getStandardsPastDueLabel() }}</span>
               </span>
             }
             @if ((standardsExpiringThisWeek || 0) > 0) {
               <span class="expire-link-line" tabindex="0" (click)="viewExpiringITStandards()" (keydown.enter)="viewExpiringITStandards()" (keydown.space)="viewExpiringITStandards()">
-                <i class="expire-icon fas fa-exclamation-triangle"></i>
-                {{ getStandardsExpiringSoonLabel() }}
+                <i class="expire-icon fas fa-calendar"></i>
+                <span>{{ getStandardsExpiringSoonLabel() }}</span>
               </span>
             }
             @if (getStandardsExpiryAlertCount() === 0) {
@@ -108,12 +108,12 @@
         </div>
         <span class="quick-view-text">Retired IT Standards (Last 6 months)</span>
         <div class="quick-view-expiring-text-container" [ngClass]="{'neutral-message': (retiredITStandardsLast7Days || 0) === 0}">
-          @if ((retiredITStandardsLast7Days || 0) > 0) {
-            <i class="expire-icon fas fa-exclamation-triangle"></i>
-          }
           <span class="expire-text" [ngClass]="{'positive-expire-text' : retiredITStandardsLast7Days > 0, 'neutral-text': (retiredITStandardsLast7Days || 0) === 0}">
             @if ((retiredITStandardsLast7Days || 0) > 0) {
-              <span tabindex="0" (click)="viewRecentRetiredITStandards()" (keydown.enter)="viewRecentRetiredITStandards()" (keydown.space)="viewRecentRetiredITStandards()">{{ retiredITStandardsLast7Days || 0 }} items retired in last 7 days</span>
+              <span class="expire-link-line" tabindex="0" (click)="viewRecentRetiredITStandards()" (keydown.enter)="viewRecentRetiredITStandards()" (keydown.space)="viewRecentRetiredITStandards()">
+                <i class="expire-icon fas fa-calendar"></i>
+                <span>{{ retiredITStandardsLast7Days || 0 }} items retired in last 7 days</span>
+              </span>
             }
             @if ((retiredITStandardsLast7Days || 0) === 0) {
               <span>No items retired in last 7 days</span>

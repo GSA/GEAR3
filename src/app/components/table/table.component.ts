@@ -701,10 +701,6 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public getTooltip (name: string): string {
-    const def = this.attrDefs.find(def => def.Term === name);
-    if(def){
-      return def.TermDefinition;
-    }
-    return '';
+    return this.sharedService.getTooltip(this.attrDefs, name);
   }
 }

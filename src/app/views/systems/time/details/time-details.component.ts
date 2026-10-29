@@ -17,6 +17,7 @@ import { ITStandards } from '@api/models/it-standards.model';
 import { Record } from '@api/models/records.model';
 import { Website } from '@api/models/websites.model';
 import { DataDictionary } from '@api/models/data-dictionary.model';
+import { forkJoin } from 'rxjs';
 
 @Component({
     selector: 'time-details',
@@ -55,6 +56,11 @@ export class TimeDetailsComponent implements OnInit {
   public splitPOCs: any = {};
 
   public attrDefinitions = <DataDictionary[]>[];
+  public capabilitiesAttrDefinitions = <DataDictionary[]>[];
+  public timeAttrDefinitions = <DataDictionary[]>[];
+  public technologyAttrDefinitions = <DataDictionary[]>[];
+  public recordsAttrDefinitions = <DataDictionary[]>[];
+  public websitesAttrDefinitions = <DataDictionary[]>[];
 
   constructor(
     private route: ActivatedRoute,
@@ -110,15 +116,64 @@ export class TimeDetailsComponent implements OnInit {
           this.attrDefinitions = data;
       });
 
+      // Get attribute definitions for the related tables
+      this.apiService.getDataDictionaryByReportName('Business Capabilities')
+        .subscribe((data: DataDictionary[]) => {
+          this.capabilitiesAttrDefinitions = data;
+      });
+
+      this.apiService.getDataDictionaryByReportName('TIME Report')
+        .subscribe((data: DataDictionary[]) => {
+          this.timeAttrDefinitions = data;
+      });
+
+      this.apiService.getDataDictionaryByReportName('Records Management')
+        .subscribe((data: DataDictionary[]) => {
+          this.recordsAttrDefinitions = data;
+      });
+
+      this.apiService.getDataDictionaryByReportName('GSA Websites')
+        .subscribe((data: DataDictionary[]) => {
+          this.websitesAttrDefinitions = data;
+      });
+
+      forkJoin({
+        techDefs: this.apiService.getDataDictionaryByReportName('IT Standards List'),
+        trmDefs: this.apiService.getDataDictionaryByReportName('TRM')
+      }).subscribe(({ techDefs, trmDefs }) => {
+        this.technologyAttrDefinitions = techDefs;
+        this.relatedTechnologyCols = this.buildRelatedTechnologyCols(techDefs, trmDefs);
+      });
+
     });
   }
 
   public getTooltip (name: string): string {
-    const def = this.attrDefinitions.find(def => def.Term === name);
-    if(def){
-      return def.TermDefinition;
-    }
-    return '';
+    return this.sharedService.getTooltip(this.attrDefinitions, name);
+  }
+
+  // The Related Technology table headers don't match the data dictionary Terms
+  // for the 'IT Standards List' report, so set an explicit titleTooltip on each
+  // column using the correct Term. The "Software Category" column's definition
+  // lives in the 'TRM' report under the "Technology Category Report" term.
+  private buildRelatedTechnologyCols(techDefs: DataDictionary[], trmDefs: DataDictionary[]): Column[] {
+    const termByField: { [field: string]: string } = {
+      Name: 'IT Standard Name',
+      Description: 'Description',
+      Fedramp: 'FedRAMP',
+      OpenSource: 'Open Source',
+      RITM: 'Requested Item (RITM)'
+    };
+    return RelatedTechnologiesColumns.map(col => {
+      if (col.field === 'Category') {
+        return { ...col, titleTooltip: this.sharedService.getTooltip(trmDefs, 'Technology Category Report') };
+      }
+      const term = termByField[col.field];
+      if (term) {
+        return { ...col, titleTooltip: this.sharedService.getTooltip(techDefs, term) };
+      }
+      return { ...col };
+    });
   }
 
   public getStatusClass(status: string): string {
