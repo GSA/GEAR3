@@ -67,6 +67,11 @@ export class SidebarV2Component {
 
   public toggleSidebar(): void {
     this.isSidebarExpanded = !this.isSidebarExpanded;
+    if (!this.isSidebarExpanded) {
+      this.activeMenu = null;
+      const focused = document.activeElement as HTMLElement;
+      if (focused) focused.blur();
+    }
   }
 
   public onMenuToggle(menuKey: string): void {
