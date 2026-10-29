@@ -14,7 +14,7 @@
             </div>
             <span class="quick-view-number">{{ fismaExpiringThisQuarter || 0 }}</span>
           </div>
-          <a (click)="viewAllFisma()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllFisma()" (keydown.space)="viewAllFisma()">View All</a>
+          <a (click)="viewAllFisma()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllFisma()" (keydown.space)="viewAllFisma()">View All FISMA Systems</a>
         </div>
         <span class="quick-view-text">FISMA Systems Expiring by {{ getExpiringDate() }}</span>
         <div class="quick-view-expiring-text-container" [ngClass]="{'neutral-message': getFismaExpiryAlertCount() === 0}">
@@ -46,7 +46,7 @@
             </div>
             <span class="quick-view-number">{{ decommissionedSystemsLast6Months || 0 }}</span>
           </div>
-          <a (click)="viewAllSystems()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllSystems()" (keydown.space)="viewAllSystems()">View All</a>
+          <a (click)="viewAllSystems()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllSystems()" (keydown.space)="viewAllSystems()">View All Business Systems</a>
         </div>
         <span class="quick-view-text">Decommissioned Business Systems/Subsystems (Last 6 months)</span>
         <div class="quick-view-expiring-text-container" [ngClass]="{'neutral-message': (decommissionedSystemsLastMonth || 0) === 0}">
@@ -72,7 +72,7 @@
             </div>
             <span class="quick-view-number">{{ standardsExpiringThisQuarter || 0 }}</span>
           </div>
-          <a (click)="viewAllITStandards()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllITStandards()" (keydown.space)="viewAllITStandards()">View All</a>
+          <a (click)="viewAllITStandards()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllITStandards()" (keydown.space)="viewAllITStandards()">View All IT Standards</a>
         </div>
         <span class="quick-view-text">IT Standards Expiring by {{ getExpiringDate() }}</span>
         <div class="quick-view-expiring-text-container" [ngClass]="{'neutral-message': getStandardsExpiryAlertCount() === 0}">
@@ -104,7 +104,7 @@
             </div>
             <span class="quick-view-number">{{ retiredITStandardsLast6Months || 0 }}</span>
           </div>
-          <a (click)="viewAllITStandards()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllITStandards()" (keydown.space)="viewAllITStandards()">View All</a>
+          <a (click)="viewAllITStandards()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllITStandards()" (keydown.space)="viewAllITStandards()">View All IT Standards</a>
         </div>
         <span class="quick-view-text">Retired IT Standards (Last 6 months)</span>
         <div class="quick-view-expiring-text-container" [ngClass]="{'neutral-message': (retiredITStandardsLast7Days || 0) === 0}">
@@ -129,7 +129,7 @@
           <span class="dashboard-card-title-text">Quick Links</span>
         </div>
         <div class="item-body">
-          <a routerLink="/it_standards">Approved/denied software</a>
+          <a routerLink="/it_standards">Software Inventory</a>
           <a routerLink="/FISMA">Active FISMA systems</a>
           <a routerLink="/systems">Business systems/subsystems</a>
           <a routerLink="/org_chart">GSA org chart</a>
@@ -143,7 +143,7 @@
     <div class="bar-chart-item" [ngClass]="{'rotated-labels': shouldRotateLabels}">
       <div class="item-header">
         <h3 class="header-text">Hosting Platforms</h3>
-        <a (click)="viewAllSystems()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllSystems()" (keydown.space)="viewAllSystems()">View All</a>
+        <a (click)="viewAllSystems()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllSystems()" (keydown.space)="viewAllSystems()">View All Business Systems</a>
       </div>
       <div class="bar-chart-content">
         <ngx-charts-bar-vertical

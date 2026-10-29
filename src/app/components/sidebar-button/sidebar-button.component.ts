@@ -24,10 +24,12 @@ export class SidebarButtonComponent implements OnChanges {
 
   
     constructor(
-        private router: Router,
+        public router: Router,
         private analyticsService: AnalyticsService
     ) {
     }
+
+    public get router_ref(): Router { return this.router; }
 
     public ngOnChanges(changes: SimpleChanges): void {
         if(changes && changes.isSidebarExpanded) {
@@ -71,6 +73,18 @@ export class SidebarButtonComponent implements OnChanges {
 
     public hasChildren(): boolean {
         return this.buttonChildren && this.buttonChildren.length > 0;
+    }
+
+    public get isActive(): boolean {
+        if (this.buttonRoute) {
+            return this.router.url === this.buttonRoute;
+        }
+        if (this.hasChildren()) {
+            return this.buttonChildren.some(child =>
+                child.route && this.router.url.startsWith(child.route)
+            );
+        }
+        return false;
     }
 
 }

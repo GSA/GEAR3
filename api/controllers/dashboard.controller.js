@@ -19,25 +19,25 @@ exports.getDashboardSummary = async (req, res) => {
       cloudAdoptionRate,
     ] = await Promise.all([
       promisePool.query(`
-        SELECT COUNT(*) AS Total
+        SELECT COUNT(DISTINCT fisma.\`ex:GEAR_ID\`) AS Total
         FROM obj_fisma_archer AS fisma
-        WHERE fisma.\`ex:ATO_Expiration_Date\` >= CURDATE()
-          AND fisma.\`ex:ATO_Expiration_Date\` <= DATE_ADD(CURDATE(), INTERVAL 3 MONTH)
+        WHERE fisma.\`ex:ATO_Expiration_Date\` >= DATE(CONVERT_TZ(NOW(), 'UTC', 'America/New_York'))
+          AND fisma.\`ex:ATO_Expiration_Date\` <= DATE_ADD(DATE(CONVERT_TZ(NOW(), 'UTC', 'America/New_York')), INTERVAL 3 MONTH)
           AND fisma.\`ex:SystemLevel\` = 'System'
           AND (fisma.\`ex:Status\` = 'Active' OR fisma.\`ex:Status\` = 'Pending')`),
 
       promisePool.query(`
-        SELECT COUNT(*) AS Total
+        SELECT COUNT(DISTINCT fisma.\`ex:GEAR_ID\`) AS Total
         FROM obj_fisma_archer AS fisma
-        WHERE fisma.\`ex:ATO_Expiration_Date\` >= CURDATE()
-          AND fisma.\`ex:ATO_Expiration_Date\` <= DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+        WHERE fisma.\`ex:ATO_Expiration_Date\` >= DATE(CONVERT_TZ(NOW(), 'UTC', 'America/New_York'))
+          AND fisma.\`ex:ATO_Expiration_Date\` <= DATE_ADD(DATE(CONVERT_TZ(NOW(), 'UTC', 'America/New_York')), INTERVAL 7 DAY)
           AND fisma.\`ex:SystemLevel\` = 'System'
           AND (fisma.\`ex:Status\` = 'Active' OR fisma.\`ex:Status\` = 'Pending')`),
 
       promisePool.query(`
-        SELECT COUNT(*) AS Total
+        SELECT COUNT(DISTINCT fisma.\`ex:GEAR_ID\`) AS Total
         FROM obj_fisma_archer AS fisma
-        WHERE fisma.\`ex:ATO_Expiration_Date\` < CURDATE()
+        WHERE fisma.\`ex:ATO_Expiration_Date\` < DATE(CONVERT_TZ(NOW(), 'UTC', 'America/New_York'))
           AND fisma.\`ex:SystemLevel\` = 'System'
           AND (fisma.\`ex:Status\` = 'Active' OR fisma.\`ex:Status\` = 'Pending')`),
 
