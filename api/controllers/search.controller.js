@@ -104,24 +104,6 @@ exports.searchAll = (req, res) => {
 
     UNION
 
-    -- Investments
-    SELECT
-        invest.\`Investment_Id\` AS \`Id\`,
-        invest.\`Investment_Name\` AS \`Name\`,
-        invest.\`Description\` AS \`Description\`,
-        invest.\`Investment_Status_Name\` AS \`Status\`,
-        'Investment' AS \`GEAR_Type\`,
-        'IT Strategy -> IT Investments' AS \`GEAR_Type_Display\`,
-        '{}' AS \`Other\`,
-        (MATCH(invest.\`Investment_Name\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE) * 5) +
-        (MATCH(invest.\`Description\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE)) AS \`relevance\`
-    FROM
-        gear_schema.obj_investments as invest
-    WHERE
-        MATCH(invest.\`Investment_Name\`, invest.\`Description\`) AGAINST (${searchKWSafe} IN BOOLEAN MODE)
-
-    UNION
-
     -- Websites
     SELECT
         web.\`id\` AS \`Id\`,
