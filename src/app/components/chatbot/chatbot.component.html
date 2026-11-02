@@ -31,6 +31,12 @@
   @if (open) {
     <div class="gear-chatbot-panel" [class.expanded]="expanded" role="dialog" aria-label="GEAR Assistant">
 
+      <!-- TO ENABLE CHATBOT: remove this banner -->
+      <div class="gear-chatbot-coming-soon-banner">
+        <i class="fas fa-info-circle"></i>
+        This feature is currently unavailable &mdash; coming soon in a future release.
+      </div>
+
       <!-- Header -->
       <div class="gear-chatbot-header">
         <div class="gear-chatbot-header__identity">
