@@ -76,7 +76,11 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              "optimization": true,
+              "optimization": {
+                "scripts": true,
+                "styles": true,
+                "fonts": { "inline": false }
+              },
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
@@ -101,7 +105,11 @@
                   "with": "src/environments/environment.staging.ts"
                 }
               ],
-              "optimization": true,
+              "optimization": {
+                "scripts": true,
+                "styles": true,
+                "fonts": { "inline": false }
+              },
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
@@ -120,7 +128,11 @@
               ]
             },
             "development": {
-              "optimization": true,
+              "optimization": {
+                "scripts": true,
+                "styles": true,
+                "fonts": { "inline": false }
+              },
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,

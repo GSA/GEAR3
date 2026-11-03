@@ -285,6 +285,7 @@ async function lookup(prompt, type, opts = {}) {
          AND Source = ?
          AND DTG >= ?
          AND Response IS NOT NULL
+         AND CHAR_LENGTH(TRIM(Response)) > 0
          AND (Feedback IS NULL OR Feedback != 'down')
        ORDER BY DTG DESC
        LIMIT 1`,
@@ -316,6 +317,7 @@ async function lookup(prompt, type, opts = {}) {
            AND Source = ?
            AND DTG >= ?
            AND Response IS NOT NULL
+           AND CHAR_LENGTH(TRIM(Response)) > 0
            AND (Feedback IS NULL OR Feedback != 'down')
          ORDER BY score DESC
          LIMIT 5`,
@@ -364,7 +366,9 @@ function _extractResult(row) {
     if (!reply && entry && entry.reply) reply = entry.reply;
     if (entry && entry.tool_calls) toolCalls = entry.tool_calls;
   } catch (_) {}
-  return reply ? { reply, toolCalls, logId: row.id ?? null } : null;
+  // A whitespace-only Response is a failed turn, not a reusable answer.
+  if (typeof reply !== 'string' || reply.trim().length === 0) return null;
+  return { reply, toolCalls, logId: row.id ?? null };
 }
 
 /**
@@ -421,6 +425,8 @@ async function _write(prompt, type, reply, toolCalls, metrics, isFollowUp) {
       cache_hit: metrics.cacheHit || false,
     });
 
+    const hasReply = typeof reply === 'string' && reply.trim().length > 0;
+
     const responseTime = metrics.responseTimeMs != null
       ? `${metrics.responseTimeMs}ms`
       : null;
@@ -438,16 +444,20 @@ async function _write(prompt, type, reply, toolCalls, metrics, isFollowUp) {
     const insertedId = insertResult ? insertResult.insertId : null;
 
     // Populate L1 for first-turn entries so the very next identical request
-    // is served from memory without touching MySQL.
-    if (!isFollowUp) {
+    // is served from memory without touching MySQL. An empty reply is never
+    // cached: a failed turn (e.g. a content-filtered completion) is still
+    // logged for analytics, but caching it would replay the failure for every
+    // identical question until the entry aged out.
+    if (!isFollowUp && hasReply) {
       const l1Key = `${source}:${type}:${hash}`;
       l1.set(l1Key, { reply, toolCalls: toolCalls || [], logId: insertedId });
     }
 
     console.error(
-      '[prompt-cache] %s source=%s type=%s hash=%s time=%s tokens=%s id=%s',
-      isFollowUp ? 'LOGGED' : 'SAVED',
-      source, type, hash.slice(0, 16), responseTime, tokensUsed, insertedId
+      '[prompt-cache] %s source=%s type=%s hash=%s time=%s tokens=%s id=%s%s',
+      isFollowUp ? 'LOGGED' : hasReply ? 'SAVED' : 'LOGGED (empty reply, not cached)',
+      source, type, hash.slice(0, 16), responseTime, tokensUsed, insertedId,
+      hasReply ? '' : ' reply=EMPTY'
     );
 
     return insertedId;
