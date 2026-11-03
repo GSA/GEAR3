@@ -215,6 +215,25 @@ function cleanFinalAnswer(content) {
 }
 
 /**
+ * Guard against returning a blank answer to the user.
+ *
+ * `cleanFinalAnswer` strips tool-protocol artifacts, so a model reply that was
+ * nothing but a stray protocol fragment can reduce to an empty string. Failing
+ * here makes the controller return an error (and log it) instead of handing the
+ * frontend an empty `reply`, which it can only render as a generic
+ * "could not generate a response" message.
+ */
+function assertNonEmptyReply(reply, model, stage) {
+  if (typeof reply === 'string' && reply.trim().length > 0) return;
+  console.error('[chat] EMPTY final reply after cleanup: model=%s stage=%s', model, stage);
+  const err = new Error(
+    `The model (${model}) produced no usable answer text at the ${stage} stage.`
+  );
+  err.emptyCompletion = true;
+  throw err;
+}
+
+/**
  * Detect a "what software / tech stack / IT standards does <X> use" question and
  * extract <X>. Returns the system name string, or null if not that intent.
  * This drives a deterministic fast-path so the model cannot wander to the
@@ -391,6 +410,7 @@ async function runChat(history, userMessage) {
             { name: 'get_system_software', arguments: { id: best.Id } },
           ],
         };
+        assertNonEmptyReply(result.reply, cfg.model, 'software fast-path');
         if (isFirstTurn) {
           const logId = await cacheSave(userMessage, 'chat', result.reply, result.toolCalls, {
             responseTimeMs: Date.now() - t0,
@@ -457,6 +477,7 @@ async function runChat(history, userMessage) {
             { name: 'get_system_records_schedules', arguments: { id: best.Id } },
           ],
         };
+        assertNonEmptyReply(result.reply, cfg.model, 'records fast-path');
         if (isFirstTurn) {
           const logId = await cacheSave(userMessage, 'chat', result.reply, result.toolCalls, {
             responseTimeMs: Date.now() - t0,
@@ -500,6 +521,7 @@ async function runChat(history, userMessage) {
     if (!call) {
       console.error('[chat] final answer (no tool call). iter=%d', i);
       const finalReply = cleanFinalAnswer(content);
+      assertNonEmptyReply(finalReply, cfg.model, 'tool loop');
       let logId = null;
       if (isFirstTurn) {
         logId = await cacheSave(userMessage, 'chat', finalReply, toolCalls, {
@@ -584,6 +606,7 @@ async function runChat(history, userMessage) {
   );
   if (tokFinal) totalTokens += tokFinal;
   const finalReply = cleanFinalAnswer(finalContent);
+  assertNonEmptyReply(finalReply, cfg.model, 'final wrap-up');
   let finalLogId = null;
   if (isFirstTurn) {
     finalLogId = await cacheSave(userMessage, 'chat', finalReply, toolCalls, {
