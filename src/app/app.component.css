@@ -43,3 +43,31 @@
   text-decoration: underline;
   cursor: pointer;
 }
+
+.info-banner .countdown-highlight {
+  display: inline-block;
+  background-color: #ff8c42;
+  color: #1a1a1a;
+  font-weight: 800;
+  padding: 0.1rem 0.5rem;
+  border-radius: 1rem;
+  letter-spacing: 0.02em;
+  animation: countdown-pulse 2s ease-in-out infinite;
+}
+
+@keyframes countdown-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 140, 66, 0.6);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 6px rgba(255, 140, 66, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .info-banner .countdown-highlight {
+    animation: none;
+  }
+}

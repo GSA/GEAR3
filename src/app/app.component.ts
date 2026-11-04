@@ -7,7 +7,7 @@ declare var $: any;
 declare var gtag: Function;
 
 // August 28, 2026 at 11:59 PM EST (UTC-4)
-const COUNTDOWN_TARGET = new Date('2026-08-29T03:59:00Z');
+const COUNTDOWN_TARGET = new Date('2026-11-06T05:00:00Z');
 
 @Component({
   standalone: false,
