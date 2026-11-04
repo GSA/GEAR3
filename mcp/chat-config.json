@@ -1,5 +1,5 @@
 {
-  "model": "gemini-3.8-flash",
+  "model": "claude_4_5_haiku",
   "temperature": 0.2,
   "maxTokens": 1024,
   "maxToolIterations": 5,

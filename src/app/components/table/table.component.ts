@@ -125,7 +125,6 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   matchModeOptions: SelectItem[];
 
   isDataReady: boolean = false;
-  isSearchLoading: boolean = false;
 
   tableSearchControl = new FormControl('');
   private tableSearchSubscription?: Subscription;
@@ -157,11 +156,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
       .subscribe((searchValue: string) => {
         // Only trigger search reset when value becomes empty (manual clearing)
         if (!searchValue || searchValue.trim() === '') {
-          this.isSearchLoading = true;
-          setTimeout(() => {
-            this.onTableSearch('');
-            this.isSearchLoading = false;
-          }, 0);
+          this.onTableSearch('');
         }
     });
 
@@ -599,12 +594,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   clearSearch(): void {
-    this.isSearchLoading = true;
-    this.tableSearchControl.setValue('', { emitEvent: false });
-    setTimeout(() => {
-      this.onTableSearch('');
-      this.isSearchLoading = false;
-    }, 0);
+    this.tableSearchControl.setValue('', { emitEvent: true });
   }
 
   private updateOriginalData() {
