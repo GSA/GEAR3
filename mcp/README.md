@@ -107,8 +107,20 @@ chains, approval lookups, and refusal of invented systems.
 
 Cost is measured, not list price: this app sends ~6,700 input tokens and makes
 ~1.8 USAi calls per question, because the system prompt is large and each tool
-result is replayed as another full-context turn. `gemini-2.5-flash-lite` scored
-equally well and is ~12× cheaper again if budget pressure increases.
+result is replayed as another full-context turn.
+
+**Do not use the Gemini 3.x Flash models (`gemini-3.8-flash`,
+`gemini-3.5-flash`) with this app.** They return HTTP 200 with
+`finish_reason: "content_filter"` and a null `content` for essentially every
+request that carries GEAR's system prompt — the filter fires on the system
+prompt's instruction style (tool-protocol and "never show tool output /
+translate tool results" directives), not on the user's question. Measured with
+the real prompt: 9/9 requests blocked on `gemini-3.8-flash` versus 0/9 on
+`claude_4_5_haiku`. The same questions succeed on Gemini 3.8 Flash with a
+trivial system prompt, so the symptom only appears in-app. Note also that
+`gemini-2.5-flash-lite` and `claude_4_5_sonnet` now return
+`403 model_blocked_globally` from USAi; verify any candidate against the models
+endpoint and a real prompt before configuring it.
 
 **Note on `temperature`:** newer models (the GPT 5.6 family, Claude Sonnet 5)
 reject the `temperature` parameter with HTTP 400 rather than ignoring it.
@@ -116,6 +128,12 @@ reject the `temperature` parameter with HTTP 400 rather than ignoring it.
 swapping `"model"` never hard-fails. Some models are listed in USAi's pricing
 table but not served by the API — call the models endpoint below to confirm what
 is actually selectable.
+
+**Empty completions are treated as failures.** `usai-client.js` throws when a
+200 response carries no answer text, logging the model, `finish_reason`, and
+token usage. `prompt-cache.js` still records the turn for analytics but never
+caches an empty reply and never serves one from the cache, so a blocked or
+truncated answer cannot be replayed to later users.
 
 To confirm exact model ids, call the USAi models endpoint:
 

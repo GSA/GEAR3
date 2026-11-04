@@ -39,7 +39,7 @@ const EMBEDDING_DIMENSIONS = Number(process.env.USAI_EMBEDDING_DIMENSIONS || 102
  * @param {number} [opts.temperature]
  * @param {number} [opts.maxTokens]
  * @param {number} [opts.timeoutMs]
- * @returns {Promise<{content:string, responseTimeMs:number, tokensUsed:number|null}>}
+ * @returns {Promise<{content:string, responseTimeMs:number, tokensUsed:number|null, finishReason:string|null}>}
  */
 async function chatCompletion(messages, opts = {}) {
   const apiKey = process.env.AI_CERT;
@@ -130,11 +130,39 @@ async function postChatCompletion(messages, opts, apiKey, includeTemperature) {
       throw new Error('USAi API returned an unexpected response shape.');
     }
 
+    const choice = data && Array.isArray(data.choices) ? data.choices[0] : null;
+    const finishReason = (choice && choice.finish_reason) || null;
+
+    // A 200 response can still carry no answer text: USAi returns
+    // finish_reason 'content_filter' with a null content field when a safety
+    // filter blocks the completion, and models can also stop with empty
+    // content. Treat that as a failure here rather than letting an empty
+    // string flow on as if it were an answer — otherwise the caller caches it
+    // and the user sees a generic "could not generate a response" message with
+    // nothing in the logs explaining why.
+    if (content.trim().length === 0) {
+      console.error(
+        '[usai] EMPTY completion content: model=%s finish_reason=%s usage=%s',
+        opts.model,
+        finishReason,
+        JSON.stringify((data && data.usage) || null)
+      );
+      const err = new Error(
+        `USAi returned no answer text (model=${opts.model}, finish_reason=${finishReason}).` +
+          (finishReason === 'content_filter'
+            ? ' The completion was blocked by a content filter.'
+            : '')
+      );
+      err.finishReason = finishReason;
+      err.emptyCompletion = true;
+      throw err;
+    }
+
     const tokensUsed = data && data.usage
       ? (data.usage.total_tokens ?? data.usage.completion_tokens ?? null)
       : null;
 
-    return { content, responseTimeMs, tokensUsed };
+    return { content, responseTimeMs, tokensUsed, finishReason };
   } finally {
     clearTimeout(timer);
   }

@@ -78,7 +78,9 @@ exports.chat = async (req, res) => {
     const msg =
       err.status === 429
         ? 'The AI service is rate-limited or over budget. Please try again later.'
-        : 'The GEAR Assistant is temporarily unavailable.';
+        : err.finishReason === 'content_filter'
+          ? 'The AI service blocked its own response for this question. Please rephrase and try again.'
+          : 'The GEAR Assistant is temporarily unavailable.';
     return res.status(status).json({ message: msg });
   }
 };
