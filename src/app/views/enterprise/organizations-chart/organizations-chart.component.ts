@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, OnDestroy, AfterViewInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
@@ -23,7 +23,7 @@ interface OrgTree {
     styleUrls: ['./organizations-chart.component.scss'],
     standalone: false
 })
-export class OrganizationsChartComponent implements OnInit {
+export class OrganizationsChartComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('orgChart') public graphContainer: ElementRef;
   private orgs: any[] = [];
   private root: any = {};
@@ -63,9 +63,10 @@ export class OrganizationsChartComponent implements OnInit {
     private router: Router
   ) {}
 
-  ngOnInit(): void {
-    this.getOrgData();
+  private viewInitialized: boolean = false;
+  private dataPending: boolean = false;
 
+  ngOnInit(): void {
     // Restore search term when returning via breadcrumb or browser back navigation
     this.route.queryParams.subscribe((params) => {
       const term = params['tableSearchTerm'] || this.getSearchTermFromHistory();
@@ -84,6 +85,17 @@ export class OrganizationsChartComponent implements OnInit {
         });
       }
     });
+  }
+
+  ngAfterViewInit(): void {
+    this.viewInitialized = true;
+    this.getOrgData();
+  }
+
+  ngOnDestroy(): void {
+    if (this.graphContainer?.nativeElement) {
+      d3.select(this.graphContainer.nativeElement).selectAll('svg').remove();
+    }
   }
 
   // Create Org Chart
@@ -204,6 +216,9 @@ export class OrganizationsChartComponent implements OnInit {
 
     // Set margins
     const element = this.graphContainer.nativeElement;
+
+    // Clear any existing SVG before re-drawing (fixes blank chart on route navigation)
+    d3.select(element).selectAll('svg').remove();
     var width = 3250 - element.offsetWidth - margin.left - margin.right;
     var height = 1200 - element.offsetHeight - margin.top - margin.bottom;
 

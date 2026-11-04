@@ -81,10 +81,15 @@ export class SidebarButtonComponent implements OnChanges {
         }
         if (this.hasChildren()) {
             return this.buttonChildren.some(child =>
-                child.route && this.router.url.startsWith(child.route)
+                child.route && this.isChildActive(child.route)
             );
         }
         return false;
+    }
+
+    public isChildActive(route: string): boolean {
+        const url = this.router.url.split('?')[0];
+        return url === route || url.startsWith(route + '/') || url.startsWith(route + '?');
     }
 
 }
