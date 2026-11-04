@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 
-import { Component, ElementRef, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
@@ -27,7 +27,7 @@ interface CapTree {
     styleUrls: ['./capabilities-model.component.scss'],
     standalone: false
 })
-export class CapabilitiesModelComponent implements OnInit, AfterViewInit {
+export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('busCapGraph') public graphContainer: ElementRef | undefined;
   private caps: any[] = [];
   private root: any = {};
@@ -93,8 +93,6 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit {
       }
     });
 
-    this.getCapData();
-
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {
       var detailCapID = params['capID'];
@@ -112,9 +110,18 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit {
 
     // Attach mouse event listeners for dragging
     capDetail.on('mousedown', (event) => this.dragStart(event));
-    d3.select(document).on('mousemove', (event) => this.drag(event));
-    d3.select(document).on('mouseup', (event) => this.dragEnd(event));
+    d3.select(document).on('mousemove.capModel', (event) => this.drag(event));
+    d3.select(document).on('mouseup.capModel', (event) => this.dragEnd(event));
 
+    this.getCapData();
+  }
+
+  ngOnDestroy(): void {
+    d3.select(document).on('mousemove.capModel', null);
+    d3.select(document).on('mouseup.capModel', null);
+    if (this.graphContainer) {
+      d3.select(this.graphContainer.nativeElement).selectAll('svg').remove();
+    }
   }
 
   // Create Capability Model Graph
@@ -247,8 +254,11 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit {
 
     // Set margins
     const element = this.graphContainer.nativeElement;
-    var width = 3250 - element.offsetWidth - margin.left - margin.right;
-    var height = 1200 - element.offsetHeight - margin.top - margin.bottom;
+    // Remove any previously rendered SVG to avoid duplicates on re-navigation
+    d3.select(element).selectAll('svg').remove();
+
+    var width = 3250 - margin.left - margin.right;
+    var height = 1200 - margin.top - margin.bottom;
 
     // Set tree mapping object
     this.treemap = d3.tree().size([height, width]);
