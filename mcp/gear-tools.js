@@ -1397,4 +1397,5 @@ module.exports = {
   BROAD_SEARCH_TOOLS,
   resolveGearApiBase,
   GEAR_ROUTE_BY_TYPE,
+  gearUrlFor,
 };

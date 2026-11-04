@@ -18,6 +18,15 @@
  * `gear_log.ai_log`, and ./db-guard.js blocks any statement aimed at
  * `gear_acl` or `gear_schema`.
  *
+ * Taxonomy-gap telemetry: a few fast-paths below also fire a non-blocking
+ * signal (see ./taxonomy-gap-signals.js) when they notice something that
+ * might indicate a gap in the TRM or Business Capability taxonomies - e.g. a
+ * searched product has no TRM mapping. These calls are NEVER awaited on the
+ * response path (always `.catch(() => {})` and otherwise ignored) so they add
+ * zero latency and cannot fail a user's turn. All the actual reasoning about
+ * whether a gap is real happens later, fully decoupled, in the nightly
+ * mcp/taxonomy-gap-analyzer.js batch job.
+ *
  * The model + system prompts are read from chat-config.json and hot-reloaded on
  * every request (cheap file read) so they can be tweaked without a restart.
  */
@@ -29,6 +38,7 @@ const { tools, runTool, AUTHORITATIVE_TOOLS, BROAD_SEARCH_TOOLS, GEAR_ROUTE_BY_T
 const { chatCompletion } = require('./usai-client');
 const promptCache = require('./prompt-cache');
 const { lookup: cacheGet, save: cacheSave, log: cacheLog, logCacheHit, hasDevPrefix, stripDevPrefix } = promptCache;
+const { recordSignal } = require('./taxonomy-gap-signals');
 
 const CONFIG_PATH = path.join(__dirname, 'chat-config.json');
 
@@ -320,6 +330,50 @@ function detectRecordsScheduleQuestion(message) {
 }
 
 /**
+ * Detect "what is an alternative/substitute to <PRODUCT>" style questions and
+ * extract the product name. These are answered deterministically by
+ * find_similar_approved_software, which returns TRM category peers regardless
+ * of whether the product itself is in the inventory.
+ * Returns the cleaned product name string, or null if not that intent.
+ */
+function detectAlternativeSoftwareQuestion(userMessage) {
+  const msg = String(userMessage || '').trim();
+  if (!msg) return null;
+
+  // Must mention alternative / substitute / comparable / replacement.
+  const mentionsAlternative =
+    /\b(?:alternative|substitute|replacement|comparable|instead|equivalent|like|similar)\b/i.test(msg);
+  if (!mentionsAlternative) return null;
+
+  // Patterns like:
+  //   what is an approved alternative to <X>
+  //   what can I use instead of <X>
+  //   what is comparable to <X>
+  //   what's a good substitute for <X>
+  //   what else is like <X>
+  const patterns = [
+    // "alternative/substitute/replacement to/for <X>"
+    /\b(?:alternative|substitute|replacement|equivalent)\s+(?:to|for)\s+(?:the\s+)?(.+?)(?:\?|$)/i,
+    // "what can I use instead of <X>"
+    /\bwhat\s+(?:can\s+i\s+)?use\s+(?:instead|in place)\s+of\s+(?:the\s+)?(.+?)(?:\?|$)/i,
+    // "what is comparable to/like <X>"
+    /\b(?:comparable|like|similar)\s+to\s+(?:the\s+)?(.+?)(?:\?|$)/i,
+    // "what else is like <X>"
+    /\bwhat\s+else\s+is\s+(?:like|comparable to)\s+(?:the\s+)?(.+?)(?:\?|$)/i,
+    // "approved alternative to <X>"
+    /\bapproved\s+(?:alternative|substitute|replacement|equivalent)\s+(?:to|for)\s+(?:the\s+)?(.+?)(?:\?|$)/i,
+  ];
+
+  for (const re of patterns) {
+    const m = msg.match(re);
+    if (m && m[1]) {
+      return cleanEntityName(m[1]);
+    }
+  }
+  return null;
+}
+
+/**
  * Run a full chat turn.
  * @param {Array<{role:string,content:string}>} history Prior user/assistant messages.
  * @param {string} userMessage The new user message.
@@ -501,6 +555,149 @@ async function runChat(history, userMessage) {
     }
   }
 
+  // Deterministic fast-path: alternative software questions are answered by
+  // find_similar_approved_software, which identifies the TRM categories a
+  // product belongs to and returns all approved peers, regardless of whether
+  // the product itself is in the inventory.
+  const alternativeIntent = detectAlternativeSoftwareQuestion(userMessage);
+  if (alternativeIntent) {
+    try {
+      const alternatives = await runTool('find_similar_approved_software', {
+        name: alternativeIntent,
+      });
+      console.error(
+        '[chat] fast-path alternatives: product=%s(%s) rows=%s basis=%s',
+        alternatives.referenceProduct?.Name || alternativeIntent,
+        alternatives.searchedFor,
+        alternatives && alternatives.total,
+        alternatives.basis
+      );
+
+      // Zero-latency taxonomy-gap telemetry (never awaited): capture a signal
+      // using only data this tool call already returned, so the nightly
+      // mcp/taxonomy-gap-analyzer.js batch job can later investigate whether
+      // the TRM taxonomy is actually missing a category - no extra lookups or
+      // reasoning happen here on the response path.
+      if (!alternatives.referenceProduct) {
+        // The searched product does not exist in the IT Standards inventory
+        // at all - a candidate SRR/intake gap, not a taxonomy gap per se, but
+        // still useful signal for the nightly job to correlate against
+        // repeated searches for the same unlisted product.
+        recordSignal({
+          signalType: 'technology_not_in_inventory',
+          queryText: userMessage,
+          entityName: alternativeIntent,
+          source: sourceOverride,
+        }).catch(() => {});
+      } else if (!alternatives.basis) {
+        // The product IS in the inventory but carries no TRM category at all
+        // (own-category path and semantic-nearest-category path both found
+        // nothing) - a strong candidate for "this product should have a TRM
+        // mapping, and possibly the TRM taxonomy itself needs a new category
+        // to classify it under."
+        recordSignal({
+          signalType: 'technology_incomplete_trm_mapping',
+          queryText: userMessage,
+          entityType: 'Technology',
+          entityName: alternatives.referenceProduct.Name,
+          context: { status: alternatives.referenceProduct.Status },
+          source: sourceOverride,
+        }).catch(() => {});
+      }
+
+      // Build a comprehensive prompt that covers all possible outcomes:
+      // 1. Product found + approved alternatives exist
+      // 2. Product found + no approved alternatives exist
+      // 3. Product not in inventory
+      // In all cases, ask clarifying questions about use case and requirements.
+      let promptContent = '';
+
+      if (!alternatives.rows || alternatives.rows.length === 0) {
+        // No approved alternatives found (product not in inventory or no peers)
+        promptContent = `AUTHORITATIVE DATA (use this to answer; do not call more tools):\n` +
+          `The product "${alternatives.searchedFor}" was searched in GEAR's IT Standards inventory.\n` +
+          `Result: ${alternatives.note}\n\n` +
+          `IMPORTANT: The user asked for an alternative/substitute/comparable product. Your job is to:\n` +
+          `1. Plainly state that GEAR has no approved alternatives for "${alternatives.searchedFor}" (and explain why if the product isn't in the inventory).\n` +
+          `2. Ask clarifying questions to understand the user's specific business problem and requirements:\n` +
+          `   - What capabilities or features from "${alternatives.searchedFor}" are they trying to use? (e.g., dashboarding, data integration, ETL, BI, analytics, reporting)\n` +
+          `   - What specific business problem are they trying to solve?\n` +
+          `   - What data sources or systems do they need to connect to?\n` +
+          `   - Are there any constraints (budget, performance, security, integration needs)?\n` +
+          `3. After understanding their needs, offer to:\n` +
+          `   - Search GEAR for approved products in relevant categories (e.g., Business Intelligence, ETL, Data Integration)\n` +
+          `   - Check the approval status of a specific product they have in mind\n` +
+          `4. Refer them to the Enterprise Architecture team at ea@gsa.gov for a formal alternatives analysis if GEAR's inventory doesn't meet their needs.`;
+      } else {
+        // Approved alternatives found - present them with context about TRM categories
+        const alternativesList = alternatives.rows
+          .map((alt) => `- ${alt.Name} (${alt.Status || 'Approved'}) - ${alt.GearUrl ? `[View in GEAR](${alt.GearUrl})` : ''}`)
+          .join('\n');
+
+        promptContent = `AUTHORITATIVE DATA (use this to answer; do not call more tools):\n` +
+          `The product "${alternatives.referenceProduct?.Name || alternatives.searchedFor}" is ${alternatives.referenceProduct?.Status || 'Unknown Status'} in GEAR.\n` +
+          `Basis for alternatives: ${alternatives.basis}\n` +
+          `GEAR has identified ${alternatives.total} approved alternative(s) in the same Technology Reference Model category:\n\n` +
+          `${alternativesList}\n\n` +
+          `${alternatives.truncated ? `Note: There are ${alternatives.total} total alternatives; these are the first ${alternatives.rows.length} shown.\n\n` : ''}` +
+          `YOUR RESPONSE:\n` +
+          `1. Explain that GEAR classifies "${alternatives.referenceProduct?.Name || alternatives.searchedFor}" in the ${alternatives.basis}.\n` +
+          `2. Present ALL the approved alternatives listed above with their GearUrl links.\n` +
+          `3. Ask clarifying questions to help narrow down the best fit:\n` +
+          `   - What specific capabilities from "${alternatives.referenceProduct?.Name || alternatives.searchedFor}" are most important? (e.g., dashboarding, ETL, data integration, reporting)\n` +
+          `   - What's the primary business problem they're trying to solve?\n` +
+          `   - Are there any specific data sources, systems, or integration requirements?\n` +
+          `   - Are there constraints on budget, performance, security, or compliance?\n` +
+          `4. Once you understand their needs better, offer to:\n` +
+          `   - Search for approved products in additional related TRM categories\n` +
+          `   - Check approval status of a specific product they suggest\n` +
+          `   - Refer them to ea@gsa.gov for a formal alternatives analysis if GEAR's inventory doesn't meet their needs\n` +
+          `\nNEVER recommend or name products from your own knowledge that are not in GEAR's inventory. Only present GEAR's approved alternatives.`;
+      }
+
+      messages.push({
+        role: 'user',
+        content: promptContent,
+      });
+
+      const { content: replyRaw3, responseTimeMs: rt3, tokensUsed: tok3 } = await chatCompletion(messages, {
+        model: cfg.model,
+        temperature: cfg.temperature,
+        maxTokens: cfg.maxTokens,
+      });
+
+      const result = {
+        reply: cleanFinalAnswer(replyRaw3),
+        toolCalls: [
+          {
+            name: 'find_similar_approved_software',
+            arguments: { name: alternativeIntent },
+          },
+        ],
+      };
+      assertNonEmptyReply(result.reply, cfg.model, 'alternatives fast-path');
+      if (isFirstTurn) {
+        const logId = await cacheSave(userMessage, 'chat', result.reply, result.toolCalls, {
+          responseTimeMs: Date.now() - t0,
+          tokensUsed: tok3,
+          source: sourceOverride,
+        }).catch(() => null);
+        result.logId = logId;
+      } else {
+        cacheLog(userMessage, 'chat', result.reply, result.toolCalls, {
+          responseTimeMs: Date.now() - t0,
+          tokensUsed: tok3,
+          turnIndex,
+          source: sourceOverride,
+        }).catch(() => {});
+      }
+      return result;
+    } catch (err) {
+      console.error('[chat] alternatives fast-path error, falling back to tool loop:', err.message);
+      // Fall through to the normal loop below.
+    }
+  }
+
   const toolCalls = [];
   let totalTokens = 0;
   // Set once a tool has returned a curated, complete list (e.g. a TRM category's
@@ -570,6 +767,53 @@ async function runChat(history, userMessage) {
           Array.isArray(toolResult.rows)
         ) {
           authoritativeAnswer = call.name;
+        }
+        // Zero-latency taxonomy-gap telemetry (never awaited): capture using
+        // only this tool's own result, so these generic tool-loop calls get
+        // the same gap detection as the deterministic fast-paths above. No
+        // extra lookups or reasoning happen here - that is the nightly
+        // mcp/taxonomy-gap-analyzer.js batch job's responsibility.
+        if (
+          call.name === 'get_system_related' &&
+          call.arguments &&
+          call.arguments.relation === 'capabilities' &&
+          toolResult &&
+          !toolResult.error &&
+          Array.isArray(toolResult.rows) &&
+          toolResult.rows.length === 0
+        ) {
+          recordSignal({
+            signalType: 'system_no_capability_mapping',
+            queryText: userMessage,
+            entityType: 'System',
+            entityId: call.arguments.id,
+            source: sourceOverride,
+          }).catch(() => {});
+        }
+        if (
+          call.name === 'find_trm_category' &&
+          toolResult &&
+          !toolResult.error &&
+          toolResult.bestMatch === null
+        ) {
+          recordSignal({
+            signalType: 'trm_category_not_found_for_query',
+            queryText: userMessage,
+            entityName: call.arguments && (call.arguments.name || call.arguments.type),
+            source: sourceOverride,
+          }).catch(() => {});
+        } else if (
+          call.name === 'list_software_by_category' &&
+          toolResult &&
+          !toolResult.error &&
+          toolResult.trmCategory === null
+        ) {
+          recordSignal({
+            signalType: 'trm_category_not_found_for_query',
+            queryText: userMessage,
+            entityName: call.arguments && (call.arguments.name || call.arguments.type),
+            source: sourceOverride,
+          }).catch(() => {});
         }
       } catch (err) {
         toolResult = { error: err.message };
