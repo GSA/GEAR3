@@ -43,4 +43,13 @@ export class TopbarComponent {
     return this.sharedService.loggedIn;
   }
 
+  public openFeedbackSurvey(): void {
+    const url = 'https://feedback.gsa.gov/jfe/form/SV_1FHaqcMEjIa9hPM';
+    const width = 800;
+    const height = 700;
+    const left = Math.round(window.screenX + (window.outerWidth - width) / 2);
+    const top = Math.round(window.screenY + (window.outerHeight - height) / 2);
+    window.open(url, 'FeedbackSurvey', `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`);
+  }
+
 }

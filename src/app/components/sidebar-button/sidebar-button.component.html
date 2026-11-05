@@ -10,7 +10,7 @@
 </div>
 <div class="sidebar-children-container" [ngClass]="{'expanded' : isButtonExpanded}">
   @for (child of buttonChildren; track child) {
-    <div class="sidebar-button-child" (keyup)="onChildKeyUp($event, child)" (click)="onChildButtonClick(child)" tabindex="0" role="link" [attr.aria-label]="child.text" [ngClass]="{'active': child.route && router.url.startsWith(child.route)}">
+    <div class="sidebar-button-child" (keyup)="onChildKeyUp($event, child)" (click)="onChildButtonClick(child)" tabindex="0" role="link" [attr.aria-label]="child.text" [ngClass]="{'active': child.route && isChildActive(child.route)}">
       <div class="sidebar-button-text">
         {{child.text}}
       </div>

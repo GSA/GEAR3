@@ -21,7 +21,8 @@ export class SidebarV2Component {
 
   public itStrategyChildren: SidebarButtonChild[] = [
     { text: 'IT Directives', href: 'https://insite.gsa.gov/directives-library/staff-offices?staff_office=GSA%20IT' },
-    { text: 'IT Investments', route: '/investments' }
+    // IT Investments — hidden from sidebar nav (Nov 2026). Uncomment below to restore:
+    // { text: 'IT Investments', route: '/investments' }
   ];
   public gsaEnterpriseChildren: SidebarButtonChild[] = [
     { text: 'Business Capability Model', route: '/capabilities_model' },
@@ -32,7 +33,8 @@ export class SidebarV2Component {
   ];
   public businessSystemsChildren: SidebarButtonChild[] = [
     { text: 'Business Systems & Subsystems', route: '/systems' },
-    { text: 'TIME Report', route: '/systems_TIME' },
+    // TIME Report — hidden from sidebar nav (Nov 2026). Uncomment below to restore:
+    // { text: 'TIME Report', route: '/systems_TIME' },
     { text: 'Records Management', route: '/records_mgmt' },
     { text: 'GSA Websites', route: '/websites' }
   ];
@@ -44,8 +46,9 @@ export class SidebarV2Component {
     { text: 'IT Standards List', route: '/it_standards' },
     { text: 'Technology Category List', route: '/tech_categories' },
     { text: 'Technology Category Model', route: '/tech_categories_model' },
-    { text: 'IT Bricks', route: '/it_bricks' },
-    { text: 'IT Bricks (Executive)', route: '/it_bricks_executive' },
+    // IT Bricks & IT Bricks (Executive) — hidden from sidebar nav (Nov 2026). Uncomment below to restore:
+    // { text: 'IT Bricks', route: '/it_bricks' },
+    // { text: 'IT Bricks (Executive)', route: '/it_bricks_executive' },
     { text: 'IT Standards Approval Process', href: 'https://sites.google.com/a/gsa.gov/it_standards/software-approvals#h.vioogtbleinq', icon: 'fas fa-external-link-alt' }
   ];
   public enterpriseArchitectureChildren: SidebarButtonChild[] = [

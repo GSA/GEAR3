@@ -1,5 +1,5 @@
-import { Component, OnInit, HostListener, AfterViewInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, HostListener, AfterViewInit, ChangeDetectorRef, OnDestroy, NgZone } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
 import { Column } from '@common/table-classes';
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
@@ -155,8 +155,33 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private sharedService: SharedService,
     private router: Router,
     private cdr: ChangeDetectorRef,
-    private analyticsService: AnalyticsService
-  ) { }
+    private analyticsService: AnalyticsService,
+    private ngZone: NgZone
+  ) {
+    // Re-measure charts whenever Angular navigation ends on this page
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.ngZone.runOutsideAngular(() => {
+          // Fire a synthetic resize so ngx-charts recalculates its own dimensions,
+          // then follow up with our own measurement.
+          setTimeout(() => {
+            window.dispatchEvent(new Event('resize'));
+            this.ngZone.run(() => {
+              this.updateChartViews();
+              this.cdr.detectChanges();
+            });
+          }, 150);
+          setTimeout(() => {
+            window.dispatchEvent(new Event('resize'));
+            this.ngZone.run(() => {
+              this.updateChartViews();
+              this.cdr.detectChanges();
+            });
+          }, 400);
+        });
+      }
+    });
+  }
 
   public ngOnInit(): void {
     // Single aggregated call replaces 9 separate dashboard metric requests
@@ -187,6 +212,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.attrDefinitions = definitions;
       this.isDataReady = true;
+      // Charts can only be measured after isDataReady renders their containers.
+      // Defer one tick so Angular flushes the @if block into the DOM first.
+      setTimeout(() => {
+        this.updateChartViews();
+        this.cdr.detectChanges();
+      }, 50);
     });
 
     this.apiService.getRecentITStandards(this.recentITStandardAmount).subscribe(standards => {
@@ -204,6 +235,20 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.updateChartViews();
       this.cdr.detectChanges();
     }, 0);
+
+    // Re-measure after a longer delay to handle cases where navigating
+    // from another route leaves the layout still settling (e.g. sidebar animation).
+    setTimeout(() => {
+      this.updateChartViews();
+      this.cdr.detectChanges();
+    }, 300);
+
+    // Final safety re-measure for slow navigations
+    setTimeout(() => {
+      this.updateChartViews();
+      this.cdr.detectChanges();
+    }, 800);
+
     this.setupResizeObserver();
   }
 

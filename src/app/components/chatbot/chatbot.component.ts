@@ -469,6 +469,8 @@ export class ChatbotComponent implements OnInit, OnDestroy {
     el.style.height = Math.min(el.scrollHeight, 120) + 'px';
   }
 
+
+
   private persistPairs(): void {
     try {
       // Cap at 20 most recent pairs to avoid sessionStorage size limits.
