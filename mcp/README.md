@@ -48,6 +48,10 @@ mcp/hybrid-search.js ──► mcp/vector-store.js  (gear_log.search_vectors)
 | `mcp/embedding-cli.js` | `rebuild` / `refresh` / `stats` / `query` commands. |
 | `mcp/db-guard.js` | Enforces "the AI layer may only write to `gear_log`" at runtime. |
 | `mcp/test/db-guard.test.js` | Unit tests for that guard (`npm run test:mcp`). |
+| `mcp/taxonomy-gap-signals.js` | Zero-latency, fire-and-forget capture of taxonomy-gap observations during chat (`gear_log.taxonomy_gap_signal`). |
+| `mcp/taxonomy-gap-analyzer.js` | Nightly batch job: structural scan + signal processing + USAi reasoning, writes advisory rows to `gear_log.taxonomy_gap_recommendation`. |
+| `mcp/taxonomy-gap-cli.js` | `run` / `stats` commands for on-demand triggering (`npm run taxonomy-gaps:run`). |
+| `mcp/test/taxonomy-gap-analyzer.test.js` | Unit tests for the analyzer's pure SQL-builder functions. |
 | `api/routes/chat.routes.js`, `api/controllers/chat.controller.js` | `POST /api/chat`. |
 | `src/app/services/chatbot/chatbot.service.ts` | Angular client for `/api/chat`. |
 | `src/app/components/chatbot/*` | Chat widget (replaces global search). |
@@ -305,6 +309,50 @@ detects a model mismatch and re-embeds affected rows automatically.
 embedded as `search_document` and queries as `search_query`; USAi defaults to
 `search_document` when `input_type` is omitted, so omitting it at query time
 silently degrades retrieval quality.
+
+## Taxonomy-gap recommendations
+
+While answering questions, the chatbot can notice signs that GEAR's TRM or
+Business Capability taxonomies - or their mappings to IT standards / business
+systems - have a gap: a searched product carries no TRM category, a business
+system has no Business Capability mapping, or a "what `<type>` software"
+question resolves to no TRM category at all. This is surfaced as advisory,
+human-reviewed rows in `gear_log.taxonomy_gap_recommendation` - never applied
+automatically, and never written to `gear_schema` by the AI layer (`db-guard.js`
+blocks that regardless of what a recommendation's draft SQL says).
+
+**Two-tier design, so this adds zero latency to chat responses:**
+
+1. **Inline signal capture** (`mcp/taxonomy-gap-signals.js`) — a few
+   deterministic fast-paths and generic tool calls in `chat-orchestrator.js`
+   fire a non-blocking `INSERT` into `gear_log.taxonomy_gap_signal` using only
+   data already in hand (no extra lookups, no USAi call). Every call site
+   chains `.catch(() => {})` and is never awaited on the response path, exactly
+   like the existing `cacheLog()`/`cacheSave()` pattern — a slow or failing
+   write here cannot delay or fail a user's turn.
+2. **Nightly batch job** (`mcp/taxonomy-gap-analyzer.js`) — runs fully
+   decoupled from any request, via `TAXONOMY_GAP_ANALYSIS_CRON` (see
+   `server.js`) or on demand with `npm run taxonomy-gaps:run`. It:
+   - Reads the day's unprocessed signals from `gear_log.taxonomy_gap_signal`.
+   - Runs its own structural scan directly against `gear_schema` (read-only,
+     via `readOnlyPool`): Approved IT standards with zero TRM mapping, active
+     business-application systems with zero Business Capability mapping, and
+     exact-duplicate-named TRM categories / Business Capabilities.
+   - For each mapping gap, asks USAi to choose the best-fitting *existing*
+     node, or — only when nothing existing fits — to nominate a new node and
+     an *existing* parent for it. The model never writes SQL; it returns a
+     small structured decision that is validated against the real candidate
+     list, then turned into `Proposed_SQL` deterministically using the
+     verified `gear_schema` column names documented at the top of the file.
+   - Writes `Status='pending'` rows to `gear_log.taxonomy_gap_recommendation`
+     for a GEAR Manager admin to review and, if appropriate, run through
+     GEAR's authenticated, audited path.
+
+`npm run taxonomy-gaps:stats` reports pending signal/recommendation counts.
+`mcp/test/taxonomy-gap-analyzer.test.js` unit-tests the pure SQL-builder
+functions (no database or USAi call needed) and includes a test proving every
+builder's output is rejected by `db-guard.js` if an AI-layer pool ever tried to
+execute it.
 
 ## Logging and response review
 
