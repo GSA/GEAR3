@@ -1,30 +1,22 @@
-<!-- GEAR Assistant: a global, always-available chatbot shown bottom-right on
-     every view. The global search feeds it a prompt via ChatbotService.seed$. -->
+<!-- GEAR Assistant availability teaser, shown bottom-right on every view. -->
 <div class="gear-chatbot">
 
-  <!-- Toggle button — compact pill when closed, full-width footer bar when open -->
+  <!-- Disabled launcher keeps the upcoming assistant visible without opening chat. -->
   <button
     type="button"
     class="gear-chatbot-toggle"
-    [class.gear-chatbot-toggle--open]="open"
-    [class.gear-chatbot-toggle--expanded]="expanded"
-    (click)="toggle()"
-    aria-haspopup="dialog"
-    [attr.aria-expanded]="open"
-    [attr.aria-label]="open ? 'Close GEAR Assistant' : 'Open GEAR Assistant'"
+    disabled
+    aria-label="GEAR Assistant chatbot coming soon"
+    title="GEAR Assistant chatbot coming soon"
   >
     <span class="gear-chatbot-toggle__icon">
-      <i class="fas" [class.fa-robot]="!open" [class.fa-chevron-down]="open"></i>
+      <i class="fas fa-robot"></i>
     </span>
-    <span class="gear-chatbot-toggle__label">
-      {{ open ? 'GEAR Assistant' : 'Ask GEAR' }}
+    <span class="gear-chatbot-toggle__label">GEAR Assistant</span>
+    <span class="gear-chatbot-toggle__badge">
+      <span class="gear-chatbot-toggle__status-dot"></span>
+      Coming soon
     </span>
-    @if (!open && unreadCount > 0) {
-      <span class="gear-chatbot-unread">{{ unreadCount }}</span>
-    }
-    @if (open) {
-      <span class="gear-chatbot-toggle__close-hint">close</span>
-    }
   </button>
 
   <!-- Chat panel -->
