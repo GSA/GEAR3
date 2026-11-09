@@ -159,7 +159,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
       });
 
       // Set Second-Level Children
-      this.capTree.children.forEach((firstLevelCap) => {
+      this.capTree.children.forEach((firstLevelCap: any) => {
         this.caps.forEach((cap) => {
           if (cap.Parent == firstLevelCap.name) {
             firstLevelCap.children.push({
@@ -175,8 +175,8 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
       });
 
       // Set Third-Level Children
-      this.capTree.children.forEach((firstLevelCap) => {
-        firstLevelCap.children.forEach((secondLevelCap) => {
+      this.capTree.children.forEach((firstLevelCap: any) => {
+        firstLevelCap.children.forEach((secondLevelCap: any) => {
           this.caps.forEach((cap) => {
             if (cap.Parent == secondLevelCap.name) {
               secondLevelCap.children.push({
@@ -193,9 +193,9 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
       });
 
       // Set Fourth-Level Children
-      this.capTree.children.forEach((firstLevelCap) => {
-        firstLevelCap.children.forEach((secondLevelCap) => {
-          secondLevelCap.children.forEach((thirdLevelCap) => {
+      this.capTree.children.forEach((firstLevelCap: any) => {
+        firstLevelCap.children.forEach((secondLevelCap: any) => {
+          secondLevelCap.children.forEach((thirdLevelCap: any) => {
             this.caps.forEach((cap) => {
               if (cap.Parent == thirdLevelCap.name) {
                 thirdLevelCap.children.push({
@@ -213,10 +213,10 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
       });
 
       // Set Fifth-Level Children
-      this.capTree.children.forEach((firstLevelCap) => {
-        firstLevelCap.children.forEach((secondLevelCap) => {
-          secondLevelCap.children.forEach((thirdLevelCap) => {
-            thirdLevelCap.children.forEach((fourthLevelCap) => {
+      this.capTree.children.forEach((firstLevelCap: any) => {
+        firstLevelCap.children.forEach((secondLevelCap: any) => {
+          secondLevelCap.children.forEach((thirdLevelCap: any) => {
+            thirdLevelCap.children.forEach((fourthLevelCap: any) => {
               this.caps.forEach((cap) => {
                 if (cap.Parent == fourthLevelCap.name) {
                   fourthLevelCap.children.push({
@@ -253,7 +253,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
     var i: number = 0;
 
     // Set margins
-    const element = this.graphContainer.nativeElement;
+    const element = this.graphContainer?.nativeElement;
 
     // Remove any previously rendered SVG to avoid duplicates on re-navigation
     d3.select(element).selectAll('svg').remove();
@@ -274,17 +274,17 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
     // Set root with hierarchy tree
-    this.root = d3.hierarchy(this.capTree, function (d) {
+    this.root = d3.hierarchy(this.capTree, function (d: any) {
       return d.children;
     });
     this.root.x0 = height / 2;
     this.root.y0 = 0;
-    this.root.descendants().forEach((d, i) => {
+    this.root.descendants().forEach((d: any, i: number) => {
       d.id = i;
     }); // Set ids for each node
 
     // Sort Nodes
-    this.root.sort(function (a, b) {
+    this.root.sort(function (a: any, b: any) {
       return a.data.referenceNum.localeCompare(b.data.referenceNum);
     });
     // console.log("Root: ", this.root);  // Debug
@@ -295,7 +295,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
   } // End of createGraph
 
   // Toggle children
-  private toggle(d) {
+  private toggle(d: any) {
     if (d.children) {
       d._children = d.children;
       d.children = null;
@@ -306,7 +306,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
   }
 
   // Collapse the node and all it's children
-  private collapse = (d) => {
+  private collapse = (d: any) => {
     if (d.children) {
       d._children = d.children;
       d._children.forEach(this.collapse);
@@ -314,7 +314,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
     }
   };
 
-  private update = (event, source) => {
+  private update = (event: any, source: any) => {
     // Transition timing in milliseconds
     var duration = event && event.altKey ? 5000 : 300;
 
@@ -327,14 +327,14 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
 
     // Normalize for fixed-depth.
     //// Change static number to expand or contract graph
-    nodes.forEach(function (d) {
+    nodes.forEach(function (d: any) {
       d.y = d.depth * 280;
     });
 
     // ****************** Nodes section ***************************
 
     // Update the nodes
-    var node = this.vis.selectAll('g.node').data(nodes, function (d) {
+    var node = this.vis.selectAll('g.node').data(nodes, function (d: any) {
       return d.id;
     });
 
@@ -350,7 +350,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
       // Toggle children on click and re-render
       .on(
         'click',
-        function (event, d) {
+        function (this: any, event: any, d: any) {
           // console.log("Clicked Node: ", d);  // Debug
           this.toggle(d);
           this.update(event, d);
@@ -362,12 +362,12 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
       .append('circle')
       .attr('class', 'node')
       .attr('r', 1e-6)
-      .style('fill', function (d) {
+      .style('fill', function (d: any) {
         return d._children ? 'lightsteelblue' : '#fff';
       })
       .style(
         'stroke',
-        function (d) {
+        function (this: any, d: any) {
           if (d.selected) {
             return this.highlightColor;
           } else {
@@ -381,7 +381,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
     nodeEnter
       .append('text')
       // Adjust x coordinate when at end of tree
-      .attr('x', function (d) {
+      .attr('x', function (d: any) {
         return d.children || d._children ? -15 : 15;
       })
 
@@ -389,18 +389,18 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
       .attr('dy', '0.35em')
 
       // Anchor text at middle with children and at start without
-      .attr('text-anchor', function (d) {
+      .attr('text-anchor', function (d: any) {
         return d.children || d._children ? 'end' : 'start';
       })
 
       // Display node name for text
-      .text(function (d) {
+      .text(function (d: any) {
         return d.data.name;
       })
       .attr('font-size', '0.75rem')
       .attr(
         'fill',
-        function (d) {
+        function (this: any, d: any) {
           if (d.selected) {
             return this.highlightColor;
           } else {
@@ -423,7 +423,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
     nodeUpdate
       .transition()
       .duration(duration)
-      .attr('transform', function (d) {
+      .attr('transform', function (d: any) {
         return 'translate(' + d.y + ',' + d.x + ')';
       });
 
@@ -431,7 +431,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
     nodeUpdate
       .select('circle.node')
       .attr('r', 6)
-      .style('fill', function (d) {
+      .style('fill', function (d: any) {
         if (d._children) {
           return 'lightsteelblue';
         } else {
@@ -440,7 +440,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
       })
       .style(
         'stroke',
-        function (d) {
+        function (this: any, d: any) {
           if (d.selected) {
             return this.highlightColor;
           } else {
@@ -453,7 +453,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
       // Show detail card on hoverover
       .on(
         'mouseenter',
-        function (d) {
+        function (this: any, d: any) {
           d3.select('#capDetail')
             .style('visibility', 'visible') // Show detail card
             .style('opacity', '1')
@@ -470,7 +470,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
           // console.log("Hovered Node: ", d);  // Debug
           this.selectedCap = d.currentTarget.__data__.data; // Save selected node id for links
 
-          function handleClick() {
+          function handleClick(this: any) {
             // Grab data for selected node
             this.apiService
               .getOneCap(this.selectedCap.identity)
@@ -509,7 +509,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
       .exit()
       .transition()
       .duration(duration)
-      .attr('transform', function (d) {
+      .attr('transform', function (d: any) {
         return 'translate(' + source.y + ',' + source.x + ')';
       })
       .remove();
@@ -523,7 +523,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
     // ****************** links section ***************************
 
     // Update the links...
-    var link = this.vis.selectAll('path.link').data(links, function (d) {
+    var link = this.vis.selectAll('path.link').data(links, function (d: any) {
       return d.id;
     });
 
@@ -532,14 +532,14 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
       .enter()
       .insert('path', 'g')
       .attr('class', 'link')
-      .attr('d', function (d) {
+      .attr('d', function (d: any) {
         var o = { x: source.x0, y: source.y0 };
         return diagonal(o, o);
       })
       .attr('fill', 'none')
       .attr(
         'stroke',
-        function (d) {
+        function (this: any, d: any) {
           if (d.selected) {
             return this.highlightColor;
           } else {
@@ -556,12 +556,12 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
     linkUpdate
       .transition()
       .duration(duration)
-      .attr('d', function (d) {
+      .attr('d', function (d: any) {
         return diagonal(d, d.parent);
       })
       .attr(
         'stroke',
-        function (d) {
+        function (this: any, d: any) {
           if (d.selected) {
             return this.highlightColor;
           } else {
@@ -575,20 +575,20 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
       .exit()
       .transition()
       .duration(duration)
-      .attr('d', function (d) {
+      .attr('d', function (d: any) {
         var o = { x: source.x, y: source.y };
         return diagonal(o, o);
       })
       .remove();
 
     // Store the old positions for transition.
-    nodes.forEach(function (d) {
+    nodes.forEach(function (d: any) {
       d.x0 = d.x;
       d.y0 = d.y;
     });
 
     // Creates a curved (diagonal) path from parent to the child nodes
-    function diagonal(s, d) {
+    function diagonal(s: any, d: any) {
       var path = `M ${s.y} ${s.x}
                   C ${(s.y + d.y) / 2} ${s.x},
                     ${(s.y + d.y) / 2} ${d.x},
@@ -599,7 +599,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
 
     // When close window is clicked
     var capClose = d3.select('#capDetailClose');
-    capClose.on('click', function (d) {
+    capClose.on('click', function (d: any) {
       d3.select('#capDetail')
         .style('visibility', 'hidden')
         .style('opacity', '0');
@@ -607,7 +607,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
     });
   }; // End of update
 
-  public search = (event) => {
+  public search = (event: any) => {
     // Clear and reset tree between searches
     this.clearSearch();
 
@@ -618,7 +618,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
       var term = this.searchKey.toUpperCase();
 
       // Reset variables
-      var paths = [];
+      var paths: any[] = [];
 
       // Search through all children
       this.root.children.forEach(searchChildren, term);
@@ -633,7 +633,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
         alert(this.searchKey + ' not found!');
       }
 
-      function searchChildren(d) {
+      function searchChildren(this: any, d: any) {
         d.selected = false;
         var patt = new RegExp('\\b' + this, 'i');
 
@@ -654,7 +654,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
         else if (d._children) d._children.forEach(searchChildren, this);
       }
 
-      function openPaths(paths) {
+      function openPaths(paths: any[]) {
         for (var index = 0; index < paths.length; index++) {
           paths[index].selected = true;
 
@@ -693,7 +693,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
   }
 
     // Method to handle mouse down event
-    dragStart(event): void {
+    dragStart(event: any): void {
       this.dragging = true;
       this.initialMouseX = event.clientX;
       this.initialMouseY = event.clientY;
@@ -706,7 +706,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
     }
 
     // Method to handle mouse move event
-    drag(event): void {
+    drag(event: any): void {
       if (this.dragging) {
         const dx = event.clientX - this.initialMouseX;
         const dy = event.clientY - this.initialMouseY;
@@ -723,7 +723,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
     }
 
     // Method to handle mouse up event
-    dragEnd(event): void {
+    dragEnd(event: any): void {
       this.dragging = false;
       d3.select(this.elementRef.nativeElement).select('#capDetail').classed('grabbing', false);
     }
