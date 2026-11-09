@@ -28,9 +28,13 @@
 .table-responsive-container {
   display: flex;
   flex-direction: column;
-  height: 100%;
   min-height: 0;
   width: 90vw;
+
+  // Offset used when pinning the sticky header to the top of the viewport.
+  // The banner + top navbar are fixed, so pin the header just below them using
+  // the shared --gear-header-offset variable (falls back to 0).
+  --gear-table-sticky-offset: var(--gear-header-offset, 0px);
 
   @media (max-width: 1575px) {
     width: 90vw;
@@ -48,28 +52,36 @@
   @media (max-width: 1220px) {
     width: 86vw;
   }
-  
+
   .p-datatable {
     flex: 1;
     display: flex;
     flex-direction: column;
     min-height: 0;
-    
-    .p-datatable-wrapper {
-      flex: 1;
-      overflow: auto;
+
+    // Only the virtual-scroll (pagination-off) mode keeps its own inner scroll
+    // container. In paginated mode the table flows with the page scroll bar.
+    &.p-datatable-scrollable {
+      .p-datatable-wrapper,
+      .p-datatable-table-container {
+        flex: 1;
+        overflow: auto;
+      }
     }
-    
+
     .p-paginator {
       flex-shrink: 0;
     }
   }
 }
 
+// Inner-scroll height caps only apply to the virtual-scroll (pagination-off)
+// mode so small viewports still get a bounded scroll area there.
 @media (max-height: 768px) {
   .table-responsive-container {
-    .p-datatable {
-      .p-datatable-wrapper {
+    .p-datatable.p-datatable-scrollable {
+      .p-datatable-wrapper,
+      .p-datatable-table-container {
         max-height: 400px;
       }
     }
@@ -78,8 +90,9 @@
 
 @media (max-height: 600px) {
   .table-responsive-container {
-    .p-datatable {
-      .p-datatable-wrapper {
+    .p-datatable.p-datatable-scrollable {
+      .p-datatable-wrapper,
+      .p-datatable-table-container {
         max-height: 300px;
       }
     }
@@ -104,8 +117,9 @@
 
 @media (max-width: 480px) {
   .table-responsive-container {
-    .p-datatable {
-      .p-datatable-wrapper {
+    .p-datatable.p-datatable-scrollable {
+      .p-datatable-wrapper,
+      .p-datatable-table-container {
         max-height: 350px;
       }
     }
@@ -129,7 +143,25 @@
         background-color: #fff;
         padding: 0.6rem;
         padding-top: 0;
-        overflow-y: auto;
+    }
+
+    // PrimeNG always sets `overflow: auto` inline on the table container, which
+    // turns it into a scroll container and makes the sticky header/paginator pin
+    // to the container edges instead of the viewport. In the default paginated
+    // mode we want the table to flow with the page's scrollbar, so force the
+    // container to overflow visibly (sticky then resolves against the page).
+    .p-datatable:not(.p-datatable-scrollable) {
+        .p-datatable-table-container {
+            overflow: visible !important;
+        }
+    }
+
+    // Only the inner-scroll (virtual scroll / pagination-off) mode manages its
+    // own scrollbar.
+    .p-datatable.p-datatable-scrollable {
+        .p-datatable-wrapper {
+            overflow-y: auto;
+        }
     }
 
     .p-datatable {
@@ -139,11 +171,14 @@
         line-height: 21px;
         display: flex;
         flex-direction: column;
-        height: 100%;
+
+        &.p-datatable-scrollable {
+            height: 100%;
+        }
 
         .p-datatable-thead {
             position: sticky;
-            top: 0;
+            top: var(--gear-table-sticky-offset, 0px);
             z-index: 10;
             background-color: #fff;
             transition: all ease 0.3s;

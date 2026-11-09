@@ -113,7 +113,8 @@
 
                         & th {
                             text-transform: capitalize;
-                            padding: 1rem 8rem;
+                            padding: 1rem 2rem;
+                            white-space: nowrap;
 
                             &:first-child {
                                 padding-left: .5rem;
@@ -121,7 +122,7 @@
                         }
 
                         & td {
-                            padding: 1rem 8rem;
+                            padding: 1rem 2rem;
 
                             &:first-child {
                                 padding-left: .5rem;
