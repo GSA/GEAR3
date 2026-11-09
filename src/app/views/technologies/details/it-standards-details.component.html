@@ -142,6 +142,15 @@
               </div>
               <div class="data-full">
                 <label class="data-label">
+                  <span [pTooltip]="getTooltip('Operating Systems')" [escape]="false" role="tooltip">
+                    Operating System
+                    <i class="fas fa-info-circle"></i>
+                  </span>
+                </label>
+                <span>{{detailsData.OperatingSystems}}</span>
+              </div>
+              <div class="data-full">
+                <label class="data-label">
                   <span [pTooltip]="getTooltip('Conditions/Restrictions')" [escape]="false" role="tooltip">
                     Conditions/Restrictions
                     <i class="fas fa-info-circle"></i>
