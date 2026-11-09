@@ -1,5 +1,5 @@
 import { Component, EventEmitter, HostListener, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { Table, TableLazyLoadEvent, TableRowSelectEvent } from 'primeng/table';
+import { Table, TablePageEvent, TableLazyLoadEvent, TableRowSelectEvent } from 'primeng/table';
 import { Column, ExportColumn, TwoDimArray, FilterButton, ColumnFilter } from '../../common/table-classes';
 import { SharedService } from '@services/shared/shared.service';
 import { CookieService } from '@services/shared/cookie.service';
@@ -41,7 +41,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
   // An optional function to use for exporting the data
   // instead of the built in export function
-  @Input() exportFunction: Function = null;
+  @Input() exportFunction: Function | null = null;
 
   // Inputs for showing/hiding specific toolbar items
   // as well as the entire toolbar itself
@@ -82,16 +82,16 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   // Row click event
   @Output() rowClickEvent = new EventEmitter<any>();
 
-  @ViewChild(Table) private dt: Table;
+  @ViewChild(Table) private dt!: Table;
 
   @HostListener('window:resize', ['$event'])
-  onResize(event) {
+  onResize(event: UIEvent) {
     this.setScreenHeight();
     this.adjustTableHeight();
   }
 
   @HostListener('window:orientationchange', ['$event'])
-  onOrientationChange(event) {
+  onOrientationChange(event: Event) {
     setTimeout(() => {
       this.setScreenHeight();
       this.adjustTableHeight();
@@ -122,7 +122,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
   activeTableData: any[] = [];
 
-  matchModeOptions: SelectItem[];
+  matchModeOptions: SelectItem[] = [];
 
   isDataReady: boolean = false;
 
@@ -153,7 +153,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     // Search is now triggered by Enter key, not by value changes
     // But we still need to handle when search is manually cleared
     this.tableSearchSubscription = this.tableSearchControl.valueChanges
-      .subscribe((searchValue: string) => {
+      .subscribe((searchValue: string | null) => {
         // Only trigger search reset when value becomes empty (manual clearing)
         if (!searchValue || searchValue.trim() === '') {
           this.onTableSearch('');
@@ -404,7 +404,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  pageChange(event) {
+  pageChange(event: TablePageEvent) {
     this.first = event.first;
     this.rows = event.rows;
   }
@@ -461,7 +461,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
   private navigateByType(type: string, data: any) {
     const currentRoute = this.router.url;
-    const navigationMap = {
+    const navigationMap: Record<string, { route: string; id: string; context: string }> = {
       'Investment': { route: '/investments', id: 'ID', context: '/capabilities/' },
       'investments': { route: '/investments', id: 'ID', context: '/capabilities/' },
       'Capability': { route: '/capabilities', id: 'ID', context: '/systems/' },
@@ -659,7 +659,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
   exportSanitizedData() {
     if(this.exportFunction) {
-      this.dt.exportFunction();
+      this.dt.exportFunction?.();
     } else {
       const sanitizedData = JSON.parse(JSON.stringify(this.tableData));
 
@@ -678,7 +678,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  escapeCsvField(field) {
+  escapeCsvField(field: unknown) {
     const stringField = String(field); 
   
     const escapedField = stringField.replace(/"/g, '""');

@@ -38,7 +38,7 @@ export class TableService {
   private reportTableDataReadySubject = new BehaviorSubject<boolean>(false);
   reportTableDataReady$ = this.reportTableDataReadySubject.asObservable();
 
-  reportDataTableFilterKey: string = null;
+  reportDataTableFilterKey: string | null = null;
 
   // Systems Related Table Options
   public relSysTableOptions: {} = this.createTableOptions({
@@ -803,7 +803,7 @@ export class TableService {
     this.updateReportTableData(filteredData);
   }
 
-  public updateReportDataTableFilterKey(key: string) {
+  public updateReportDataTableFilterKey(key: string | null) {
     this.reportDataTableFilterKey = key;
   }
 

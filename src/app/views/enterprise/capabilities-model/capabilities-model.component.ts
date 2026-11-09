@@ -254,6 +254,7 @@ export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDest
 
     // Set margins
     const element = this.graphContainer.nativeElement;
+
     // Remove any previously rendered SVG to avoid duplicates on re-navigation
     d3.select(element).selectAll('svg').remove();
 

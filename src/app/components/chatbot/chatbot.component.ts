@@ -201,10 +201,6 @@ export class ChatbotComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // TO ENABLE CHATBOT: remove the two lines below
-    this.showComingSoon(text);
-    return;
-
     // Build history from previous pairs before adding the new question.
     const history: ChatMessage[] = [];
     for (const pair of this.pairs) {
@@ -473,25 +469,7 @@ export class ChatbotComponent implements OnInit, OnDestroy {
     el.style.height = Math.min(el.scrollHeight, 120) + 'px';
   }
 
-  /** Temporary stub — TO ENABLE CHATBOT: delete this method entirely. */
-  private showComingSoon(text: string): void {
-    const now = Date.now();
-    this.pairs.push({
-      question: text,
-      answer: 'This feature is currently unavailable. Coming soon in a future release.',
-      askedAt: this.formatTime(new Date(now)),
-      answeredAt: this.formatTime(new Date(now)),
-      askedMs: now,
-      answeredMs: now,
-      logId: null,
-      feedback: null,
-    });
-    this.inputText = '';
-    this.autoResizeTextarea();
-    this.persistPairs();
-    this.scrollToBottom();
-    this.syncScrollFlags();
-  }
+
 
   private persistPairs(): void {
     try {

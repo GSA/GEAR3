@@ -685,3 +685,26 @@ if (process.env.GEAR_SEMANTIC_SEARCH === 'true') {
 } else {
   console.warn('GEAR_SEMANTIC_SEARCH is not "true" — semantic search disabled, embedding cron jobs skipped.');
 }
+
+// -------------------------------------------------------------------------------------------------
+// CRON JOB: GEAR Assistant taxonomy-gap analysis (see mcp/taxonomy-gap-analyzer.js)
+//
+// Runs nightly, after the embedding rebuild above. All the "thinking" for
+// taxonomy-gap recommendations happens here - reading signals the chatbot
+// captured inline (zero latency, fire-and-forget - see
+// mcp/taxonomy-gap-signals.js), running its own structural scan of
+// gear_schema, and calling USAi to decide mapping targets - fully decoupled
+// from any user request, so chat responses are never slowed down by this.
+// Writes land only in gear_log.taxonomy_gap_recommendation as pending,
+// advisory rows for a human GEAR Manager admin to review; nothing here is
+// ever applied to gear_schema automatically.
+//
+// Also runnable on demand: `node mcp/taxonomy-gap-cli.js run`.
+if (process.env.TAXONOMY_GAP_ANALYSIS_CRON) {
+  const taxonomyGapAnalyzer = require('./mcp/taxonomy-gap-analyzer.js');
+  cron.schedule(process.env.TAXONOMY_GAP_ANALYSIS_CRON, async () => {
+    await taxonomyGapAnalyzer.runNightlyAnalysis();
+  });
+} else {
+  console.warn('TAXONOMY_GAP_ANALYSIS_CRON env variable not set — skipping cron job.');
+}

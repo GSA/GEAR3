@@ -104,19 +104,6 @@
   to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-/* ─── Coming Soon Banner (TO ENABLE CHATBOT: remove this block) ─────────── */
-.gear-chatbot-coming-soon-banner {
-  background: #fff3cd;
-  color: #7a5200;
-  border-bottom: 1px solid #ffc107;
-  padding: 8px 14px;
-  font-size: 0.78rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
 /* ─── Header ────────────────────────────────────────────────────────────── */
 .gear-chatbot-header {
   background: linear-gradient(135deg, var(--primary, #0b4778) 0%, #1565c0 100%);
