@@ -2,6 +2,25 @@
   display: flex;
   flex-direction: column;
 
+  // Banner + top navbar stay fixed to the top of the viewport while the rest
+  // of the page scrolls underneath them.
+  & app-banner,
+  & app-topbar {
+    position: sticky;
+    z-index: 1000;
+  }
+
+  & app-banner {
+    top: 0;
+  }
+
+  & app-topbar {
+    // Sits directly below the banner. --gear-banner-height is kept in sync with
+    // the banner's rendered height (see styles.scss) so the navbar never
+    // overlaps it even when the banner's "Here's how you know" panel expands.
+    top: var(--gear-banner-height, 22px);
+  }
+
   & .content-container {
     display: flex;
     flex-direction: row;

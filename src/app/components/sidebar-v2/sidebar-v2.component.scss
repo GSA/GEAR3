@@ -6,9 +6,11 @@
     width: var(--closed-sidebar-width);
     background-color: var(--neutral-white-color);
     transition: width 0.25s ease-in-out;
+    // Stick below the fixed banner + top navbar so the sidebar scrolls into
+    // place beneath them instead of underneath them.
     position: sticky;
-    top: 0;
-    height: 100vh;
+    top: var(--gear-header-offset, 0px);
+    height: calc(100vh - var(--gear-header-offset, 0px));
 
     &.expanded {
         width: var(--open-sidebar-width);

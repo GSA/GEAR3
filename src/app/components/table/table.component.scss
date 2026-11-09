@@ -32,10 +32,9 @@
   width: 90vw;
 
   // Offset used when pinning the sticky header to the top of the viewport.
-  // Falls back to 0 so the header pins to the very top; if the banner/top
-  // navbar are ever made fixed, set --gear-table-sticky-offset globally to
-  // their combined height and the header will pin just below them.
-  --gear-table-sticky-offset: 0px;
+  // The banner + top navbar are fixed, so pin the header just below them using
+  // the shared --gear-header-offset variable (falls back to 0).
+  --gear-table-sticky-offset: var(--gear-header-offset, 0px);
 
   @media (max-width: 1575px) {
     width: 90vw;
