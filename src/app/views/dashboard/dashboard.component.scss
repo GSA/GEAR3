@@ -48,7 +48,7 @@
           display: flex;
           flex-direction: row;
           justify-content: space-between;
-          margin-bottom: 1rem;
+          margin-bottom: 0.25rem;
 
           & .number-icon-container {
             display: flex;
@@ -82,6 +82,24 @@
               font-size: 1.5rem;
               font-weight: 600;
               color: var(--neutral-black-color-dark);
+
+              &.clickable-number {
+                cursor: pointer;
+                text-decoration: underline;
+                text-decoration-color: transparent;
+                transition: color 120ms ease, text-decoration-color 120ms ease;
+
+                &:hover {
+                  color: var(--primary-color);
+                  text-decoration-color: currentColor;
+                }
+
+                &:focus-visible {
+                  outline: 2px solid rgba(0, 95, 204, 0.45);
+                  outline-offset: 2px;
+                  border-radius: 2px;
+                }
+              }
             }
           }
           
@@ -106,6 +124,7 @@
           font-size: 0.875rem;
           font-weight: 400;
           color: var(--neutral-black-color-dark);
+          margin-bottom: 0.75rem;
         }
 
         
@@ -128,7 +147,7 @@
               display: flex;
               flex-direction: column;
               align-items: flex-start;
-              gap: 0.15rem;
+              gap: 0.75rem;
               width: 100%;
             }
 

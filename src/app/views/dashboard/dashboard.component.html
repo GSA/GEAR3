@@ -12,7 +12,7 @@
             <div class="icon-container">
               <i class="quick-view-icon fas fa-shield-alt" [ngClass]="{'zero-value': (fismaExpiringThisQuarter || 0) === 0}"></i>
             </div>
-            <span class="quick-view-number">{{ fismaExpiringThisQuarter || 0 }}</span>
+            <span class="quick-view-number clickable-number" tabindex="0" (click)="viewExpiringFismaThisQuarter()" (keydown.enter)="viewExpiringFismaThisQuarter()" (keydown.space)="viewExpiringFismaThisQuarter()">{{ fismaExpiringThisQuarter || 0 }}</span>
           </div>
           <a (click)="viewAllFisma()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllFisma()" (keydown.space)="viewAllFisma()">View All FISMA Systems</a>
         </div>
@@ -44,7 +44,7 @@
             <div class="icon-container">
               <i class="quick-view-icon fas fa-laptop" [ngClass]="{'zero-value': (decommissionedSystemsLast6Months || 0) === 0}"></i>
             </div>
-            <span class="quick-view-number">{{ decommissionedSystemsLast6Months || 0 }}</span>
+            <span class="quick-view-number clickable-number" tabindex="0" (click)="viewDecommissionedSystemsLast6Months()" (keydown.enter)="viewDecommissionedSystemsLast6Months()" (keydown.space)="viewDecommissionedSystemsLast6Months()">{{ decommissionedSystemsLast6Months || 0 }}</span>
           </div>
           <a (click)="viewAllSystems()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllSystems()" (keydown.space)="viewAllSystems()">View All Business Systems</a>
         </div>
@@ -70,7 +70,7 @@
             <div class="icon-container">
               <i class="quick-view-icon fas fa-microchip" [ngClass]="{'zero-value': (standardsExpiringThisQuarter || 0) === 0}"></i>
             </div>
-            <span class="quick-view-number">{{ standardsExpiringThisQuarter || 0 }}</span>
+            <span class="quick-view-number clickable-number" tabindex="0" (click)="viewExpiringITStandardsThisQuarter()" (keydown.enter)="viewExpiringITStandardsThisQuarter()" (keydown.space)="viewExpiringITStandardsThisQuarter()">{{ standardsExpiringThisQuarter || 0 }}</span>
           </div>
           <a (click)="viewAllITStandards()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllITStandards()" (keydown.space)="viewAllITStandards()">View All IT Standards</a>
         </div>
@@ -102,7 +102,7 @@
             <div class="icon-container">
               <i class="quick-view-icon fas fa-microchip" [ngClass]="{'zero-value': (retiredITStandardsLast6Months || 0) === 0}"></i>
             </div>
-            <span class="quick-view-number">{{ retiredITStandardsLast6Months || 0 }}</span>
+            <span class="quick-view-number clickable-number" tabindex="0" (click)="viewRetiredITStandardsLast6Months()" (keydown.enter)="viewRetiredITStandardsLast6Months()" (keydown.space)="viewRetiredITStandardsLast6Months()">{{ retiredITStandardsLast6Months || 0 }}</span>
           </div>
           <a (click)="viewAllITStandards()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllITStandards()" (keydown.space)="viewAllITStandards()">View All IT Standards</a>
         </div>
@@ -133,6 +133,7 @@
           <a routerLink="/FISMA">Active FISMA systems</a>
           <a routerLink="/systems">Business systems/subsystems</a>
           <a routerLink="/org_chart">GSA org chart</a>
+          <a href="https://sites.google.com/a/gsa.gov/it_standards/software-approvals#h.vioogtbleinq" target="_blank" rel="noopener">IT Standards Approval Process <i class="fas fa-external-link-alt"></i></a>
           <a href="https://gsa.github.io/GEAR-Documentation/api-docs/" target="_blank" rel="noopener">API Documentation <i class="fas fa-external-link-alt"></i></a>
         </div>
       </div>
