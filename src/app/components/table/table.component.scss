@@ -215,15 +215,6 @@
         }
     }
 
-    // When sticky header is disabled, pin the header to the top of the table's
-    // own scroll container (offset 0) instead of to the page/viewport. In the
-    // pagination-off (virtual scroll) mode the header lives inside a dedicated
-    // scroll container, so it must stay sticky there to keep aligned above the
-    // rows rather than scrolling with the page.
-    .no-sticky-header .p-datatable .p-datatable-thead {
-        top: 0;
-    }
-
     .p-datatable .p-datatable-header {
         border: none;
         background-color: #fff;
