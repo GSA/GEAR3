@@ -80,6 +80,11 @@ export class GlobalSearchComponent implements OnInit {
         });
         // Log GA4 event
         this.analyticsService.logSearchEvent(this.searchKW);
+
+        // Feed the search term to the global chatbot: open it and pre-fill the
+        // input so the user can ask the GEAR Assistant about this term. The
+        // results table above is independent of the chatbot.
+        this.chatbotService.seedPrompt(this.searchKW);
       }
     });
   }

@@ -191,12 +191,10 @@
                   }
                 </table>
               </div>
-              <!-- System TIME REPORT section — hidden (Nov 2026). Remove comment tags below to restore:
               <div class="sub-content full-width">
                 <span class="sub-header">System TIME REPORT</span>
                 <app-table visibleColumnStorageKey="time-system-time" defaultSortField="Name" [localTableData]="systemTimeData" [isLocal]="true" [tableCols]="systemTimeCols" [attrDefs]="timeAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral"></app-table>
               </div>
-              -->
               <div class="sub-content full-width">
                 <span class="sub-header">Related Business Capabilities</span>
                 <app-table visibleColumnStorageKey="time-related-business-capabilities" defaultSortField="Name" [localTableData]="sysCapabilitiesData" [isLocal]="true" [tableCols]="relatedCapabilitiesCols" [attrDefs]="capabilitiesAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onCapRowClick($event)"></app-table>
