@@ -55,6 +55,9 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   // Show/hide pagination
   @Input() showPagination: boolean = true;
 
+  // Disable the sticky (pinned) table header
+  @Input() stickyHeader: boolean = true;
+
   // Default sort inputs order is either 1 or -1
   // for ascending and descending respectively
   @Input() defaultSortField: string = '';

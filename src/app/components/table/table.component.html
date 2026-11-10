@@ -1,5 +1,5 @@
 @if (isDataReady) {
-  <div class="table-responsive-container">
+  <div class="table-responsive-container" [class.no-sticky-header]="!stickyHeader">
     <div class="d-flex justify-content-between">
       <div></div>
       <div>
