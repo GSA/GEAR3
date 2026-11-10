@@ -59,7 +59,7 @@ exports.sendLogQuery = (event, user, msg, response) => {
 function buildQuery(conn, query, msg, response, postProcessFunc = null, params = null) {
   const callback = (error, data) => {
     if (error) {
-      console.log(`DB Query Error while executing ${msg}: `, error);
+      console.log('DB Query Error while executing %s: ', msg, error);
       response.status(501).json({
         message: error.message || `DB Query Error while executing ${msg}`,
       });
@@ -98,7 +98,7 @@ function buildLogQuery(conn, event, user, msg, response) {
   //
   conn.query(query, [event, user], (error, data) => {
     if (error) {
-      console.log(`DB Log Event Query Error while executing ${msg}: `, error);
+      console.log('DB Log Event Query Error while executing %s: ', msg, error);
       return { message: error.message || `DB Query Error while executing ${msg}`, };
     } else {
       //console.log("Event Logged");  // Debug
@@ -116,7 +116,7 @@ async function buildLogQueryAsync(conn, event, user, msg) {
     return JSON.stringify(data);
   }
   catch (error) {
-    console.log(`DB Log Event Query Error while executing ${msg}: `, error);
+    console.log('DB Log Event Query Error while executing %s: ', msg, error);
     return { message: error.message || `DB Query Error while executing ${msg}`, };
   }
 }
