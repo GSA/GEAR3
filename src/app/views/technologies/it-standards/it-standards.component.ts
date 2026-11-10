@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 
@@ -19,6 +19,7 @@ import { Column } from '@common/table-classes';
     selector: 'it-standards',
     templateUrl: './it-standards.component.html',
     styleUrls: ['./it-standards.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ItStandardsComponent implements OnInit {

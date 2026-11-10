@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -16,6 +16,7 @@ import { TRM } from '@api/models/trm.model';
     selector: 'tech-categories',
     templateUrl: './tech-categories.component.html',
     styleUrls: ['./tech-categories.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class TechCategoriesComponent implements OnInit {

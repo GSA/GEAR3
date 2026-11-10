@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Column } from '@common/table-classes';
 import { AnalyticsService } from '@services/analytics/analytics.service';
@@ -12,6 +12,7 @@ import { ChatbotService } from '@services/chatbot/chatbot.service';
     selector: 'global-search',
     templateUrl: './global-search.component.html',
     styleUrls: ['./global-search.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class GlobalSearchComponent implements OnInit {

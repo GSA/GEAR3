@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
@@ -11,6 +11,7 @@ import { DataDictionary } from '@api/models/data-dictionary.model';
     selector: 'records-management-details',
     templateUrl: './records-management-details.component.html',
     styleUrls: ['./records-management-details.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class RecordsManagementDetailsComponent implements OnInit {

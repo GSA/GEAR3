@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Service_Category } from '@api/models/service-category.model';
 import { WebsiteServiceCategory } from '@api/models/website-service-category.model';
@@ -10,6 +10,7 @@ import { PreviousRouteService } from '@services/previous-route/previous-route.se
     selector: 'website-service-category-details',
     templateUrl: './website-service-category-details.component.html',
     styleUrls: ['./website-service-category-details.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class WebsiteServiceCategoryDetailsComponent implements OnInit {

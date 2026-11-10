@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -18,6 +18,7 @@ import { DataDictionary } from '@api/models/data-dictionary.model';
     selector: 'time',
     templateUrl: './time.component.html',
     styleUrls: ['./time.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class TimeComponent implements OnInit {

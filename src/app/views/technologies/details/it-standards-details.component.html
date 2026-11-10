@@ -391,7 +391,7 @@
         <div class="systems-container">
           <div class="overall-data-container">
             <div class="main-data-container">
-              <app-table visibleColumnStorageKey="it-standards-related-systems" defaultSortField="Name"  [localTableData]="relatedSystems" [isLocal]="true" [tableCols]="relatedSystemsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="systems" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRelatedSystemsRowClick($event)"></app-table>
+              <app-table visibleColumnStorageKey="it-standards-related-systems" defaultSortField="Name"  [localTableData]="relatedSystems" [isLocal]="true" [tableCols]="relatedSystemsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="systems" [contextSystemName]="$safeNavigationMigration(detailsData?.Name)" (rowClickEvent)="onRelatedSystemsRowClick($event)"></app-table>
             </div>
           </div>
         </div>

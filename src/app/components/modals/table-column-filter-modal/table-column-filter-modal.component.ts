@@ -6,6 +6,7 @@ import {
   OnInit,
   OnChanges,
   AfterViewInit,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { Column } from '../../../common/table-classes';
 import { FilterMatchMode } from 'primeng/api';
@@ -20,6 +21,7 @@ export interface ColumnFilter {
   selector: 'table-column-filter-modal',
   templateUrl: './table-column-filter-modal.component.html',
   styleUrls: ['./table-column-filter-modal.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
 export class TableColumnFilterModalComponent

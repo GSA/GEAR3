@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { Table, TableLazyLoadEvent, TableRowSelectEvent } from 'primeng/table';
 import { Column, ExportColumn, TwoDimArray, FilterButton, ColumnFilter } from '../../common/table-classes';
 import { SharedService } from '@services/shared/shared.service';
@@ -17,6 +17,7 @@ import { DataDictionary } from '@api/models/data-dictionary.model';
     selector: 'app-table',
     templateUrl: './table.component.html',
     styleUrls: ['./table.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 

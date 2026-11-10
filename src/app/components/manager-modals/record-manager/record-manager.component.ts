@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 import { Globals } from '@common/globals';
@@ -15,6 +15,7 @@ declare var $: any;
     selector: 'record-manager',
     templateUrl: './record-manager.component.html',
     styleUrls: ['./record-manager.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class RecordManagerComponent implements OnInit {

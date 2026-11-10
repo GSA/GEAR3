@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -16,6 +16,7 @@ import { DataDictionary } from '@api/models/data-dictionary.model';
     selector: 'websites',
     templateUrl: './websites.component.html',
     styleUrls: ['./websites.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class WebsitesComponent implements OnInit {

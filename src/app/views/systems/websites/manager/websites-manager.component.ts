@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Capability } from '@api/models/capabilities.model';
@@ -19,6 +19,7 @@ declare var $: any;
     selector: 'websites-manager',
     templateUrl: './websites-manager.component.html',
     styleUrls: ['./websites-manager.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class WebsitesManagerComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataDictionary } from '@api/models/data-dictionary.model';
 import { ITStandards } from '@api/models/it-standards.model';
@@ -15,6 +15,7 @@ import { forkJoin } from 'rxjs';
     selector: 'tech-categories-details',
     templateUrl: './tech-categories-details.component.html',
     styleUrls: ['./tech-categories-details.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class TechCategoriesDetailsComponent implements OnInit {

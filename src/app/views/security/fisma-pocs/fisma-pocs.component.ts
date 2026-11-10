@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
@@ -13,6 +13,7 @@ import { DataDictionary } from '@api/models/data-dictionary.model';
     selector: 'fisma-pocs',
     templateUrl: './fisma-pocs.component.html',
     styleUrls: ['./fisma-pocs.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class FismaPocsComponent implements OnInit {

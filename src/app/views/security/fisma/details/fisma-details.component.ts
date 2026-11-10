@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DataDictionary } from '@api/models/data-dictionary.model';
 import { FISMA } from '@api/models/fisma.model';
@@ -11,6 +11,7 @@ import { PreviousRouteService } from '@services/previous-route/previous-route.se
     selector: 'fisma-details',
     templateUrl: './fisma-details.component.html',
     styleUrls: ['./fisma-details.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class FismaDetailsComponent implements OnInit {

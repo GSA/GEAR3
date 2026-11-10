@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataDictionary } from '@api/models/data-dictionary.model';
 import { Investment } from '@api/models/investments.model';
@@ -13,6 +13,7 @@ import { PreviousRouteService } from '@services/previous-route/previous-route.se
     selector: 'investments-details',
     templateUrl: './investments-details.component.html',
     styleUrls: ['./investments-details.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class InvestmentsDetailsComponent implements OnInit {

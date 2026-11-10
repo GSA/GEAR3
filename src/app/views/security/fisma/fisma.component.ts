@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
@@ -14,6 +14,7 @@ import { DataDictionary } from '@api/models/data-dictionary.model';
     selector: 'fisma',
     templateUrl: './fisma.component.html',
     styleUrls: ['./fisma.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class FismaComponent implements OnInit {

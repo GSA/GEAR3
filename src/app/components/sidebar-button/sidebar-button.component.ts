@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { SidebarButtonChild } from '@common/sidebar-classes';
@@ -8,6 +8,7 @@ import { AnalyticsService } from '@services/analytics/analytics.service';
     selector: 'app-sidebar-button',
     templateUrl: './sidebar-button.component.html',
     styleUrls: ['./sidebar-button.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class SidebarButtonComponent implements OnChanges {

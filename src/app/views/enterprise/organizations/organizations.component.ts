@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
@@ -13,6 +13,7 @@ import { DataDictionary } from '@api/models/data-dictionary.model';
     selector: 'organizations',
     templateUrl: './organizations.component.html',
     styleUrls: ['./organizations.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class OrganizationsComponent implements OnInit {

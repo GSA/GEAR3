@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { formatDate } from '@angular/common';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
@@ -21,6 +21,7 @@ declare var $: any;
     selector: 'it-standards-manager',
     templateUrl: './it-standards-manager.component.html',
     styleUrls: ['./it-standards-manager.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ItStandardsManagerComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ApiService } from '@services/apis/api.service';
 
 import { SharedService } from '@services/shared/shared.service';
@@ -11,6 +11,7 @@ import { TableService } from '@services/tables/table.service';
     selector: 'data-dictionary',
     templateUrl: './data-dictionary.component.html',
     styleUrls: ['./data-dictionary.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class DataDictionaryComponent implements OnInit {

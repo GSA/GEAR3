@@ -1,10 +1,11 @@
-import { Component, ElementRef, HostListener } from '@angular/core';
+import { Component, ElementRef, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import { SidebarButtonChild } from '@common/sidebar-classes';
 
 @Component({
     selector: 'app-sidebar-v2',
     templateUrl: './sidebar-v2.component.html',
     styleUrls: ['./sidebar-v2.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class SidebarV2Component {

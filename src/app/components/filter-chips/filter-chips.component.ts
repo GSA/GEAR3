@@ -1,9 +1,10 @@
-import { Component, EventEmitter, ViewChild, ElementRef, Input, OnChanges, Output, Renderer2, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, ViewChild, ElementRef, Input, OnChanges, Output, Renderer2, SimpleChanges, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
     selector: 'app-filter-chips',
     templateUrl: './filter-chips.component.html',
     styleUrls: ['./filter-chips.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class FilterChipsComponent implements OnChanges {

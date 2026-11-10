@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { Column } from '@common/table-classes';
 import { TableService } from '@services/tables/table.service';
@@ -9,6 +9,7 @@ import * as accessFormsData from '../../../../../assets/statics/accessforms.json
     selector: 'forms',
     templateUrl: './forms.component.html',
     styleUrls: ['./forms.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class FormsComponent implements OnInit {
