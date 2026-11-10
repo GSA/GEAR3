@@ -53,7 +53,7 @@
                         </label>
                       </td>
                       <td>
-                        <select class="form-select form-select-sm" [ngModel]="columnFilters[column.field]?.matchMode"
+                        <select class="form-select form-select-sm" [ngModel]="$safeNavigationMigration(columnFilters[column.field]?.matchMode)"
                           (ngModelChange)="columnFilters[column.field].matchMode = $event">
                           @for (option of matchModeOptions; track option) {
                             <option [value]="option.value">
@@ -64,7 +64,7 @@
                       </td>
                       <td>
                         <input type="text" class="form-control form-control-sm"
-                          [ngModel]="columnFilters[column.field]?.value"
+                          [ngModel]="$safeNavigationMigration(columnFilters[column.field]?.value)"
                           (ngModelChange)="columnFilters[column.field].value = $event"
                           [placeholder]="'Filter ' + getColumnLabel(column.field)"
                           [attr.aria-label]="'Filter ' + getColumnLabel(column.field)" />

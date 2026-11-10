@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -13,6 +13,7 @@ declare var $: any;
     selector: 'organizations-modal',
     templateUrl: './organizations-modal.component.html',
     styleUrls: ['./organizations-modal.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class OrganizationsModalComponent implements OnInit {

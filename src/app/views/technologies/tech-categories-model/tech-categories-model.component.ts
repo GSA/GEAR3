@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
@@ -25,6 +25,7 @@ interface TRMTree {
     selector: 'tech-categories-model',
     templateUrl: './tech-categories-model.component.html',
     styleUrls: ['./tech-categories-model.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class TechCategoriesModelComponent implements OnInit {

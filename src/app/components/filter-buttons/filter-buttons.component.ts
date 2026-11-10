@@ -1,10 +1,11 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, ChangeDetectionStrategy } from '@angular/core';
 import { FilterButton, TwoDimArray } from '@common/table-classes';
 
 @Component({
     selector: 'app-filter-buttons',
     templateUrl: './filter-buttons.component.html',
     styleUrls: ['./filter-buttons.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 

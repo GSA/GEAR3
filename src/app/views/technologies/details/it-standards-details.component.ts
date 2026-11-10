@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataDictionary } from '@api/models/data-dictionary.model';
 import { AppBundle } from '@api/models/it-standards-app-bundle.model';
@@ -15,6 +15,7 @@ import { PreviousRouteService } from '@services/previous-route/previous-route.se
     selector: 'it-standards',
     templateUrl: './it-standards-details.component.html',
     styleUrls: ['./it-standards-details.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class ItStandardsDetailsComponent implements OnInit {

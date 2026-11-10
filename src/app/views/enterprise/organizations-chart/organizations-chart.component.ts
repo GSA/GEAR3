@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 
-import { Component, ElementRef, OnInit, OnDestroy, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, OnDestroy, AfterViewInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
@@ -21,6 +21,7 @@ interface OrgTree {
     selector: 'organizations-chart',
     templateUrl: './organizations-chart.component.html',
     styleUrls: ['./organizations-chart.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class OrganizationsChartComponent implements OnInit, AfterViewInit, OnDestroy {

@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 
-import { Component, ElementRef, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
@@ -25,6 +25,7 @@ interface CapTree {
     selector: 'capabilities-model',
     templateUrl: './capabilities-model.component.html',
     styleUrls: ['./capabilities-model.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDestroy {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Capability } from '@api/models/capabilities.model';
@@ -19,6 +19,7 @@ declare var $: any;
     selector: 'records-management-manager',
     templateUrl: './records-management-manager.component.html',
     styleUrls: ['./records-management-manager.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class RecordsManagementManagerComponent implements OnInit {

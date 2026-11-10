@@ -1,9 +1,10 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
     selector: 'gear-model',
     templateUrl: './gear-model.component.html',
     styleUrls: ['./gear-model.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class GearModelComponent implements OnInit {

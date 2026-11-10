@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, AfterViewInit, ChangeDetectorRef, OnDestroy, NgZone } from '@angular/core';
+import { Component, OnInit, HostListener, AfterViewInit, ChangeDetectorRef, OnDestroy, NgZone, ChangeDetectionStrategy } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { Column } from '@common/table-classes';
 import { ApiService } from '@services/apis/api.service';
@@ -12,6 +12,7 @@ import { DataDictionary } from '@api/models/data-dictionary.model';
     selector: 'dashboard',
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {

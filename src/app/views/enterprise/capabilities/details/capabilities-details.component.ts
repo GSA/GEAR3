@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Capability } from '@api/models/capabilities.model';
 import { DataDictionary } from '@api/models/data-dictionary.model';
@@ -15,6 +15,7 @@ import { PreviousRouteService } from '@services/previous-route/previous-route.se
     selector: 'capabilities-details',
     templateUrl: './capabilities-details.component.html',
     styleUrls: ['./capabilities-details.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class CapabilitiesDetailsComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -25,6 +25,7 @@ import { DataDictionary } from '@api/models/data-dictionary.model';
     selector: 'systems',
     templateUrl: './systems.component.html',
     styleUrls: ['./systems.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class SystemsComponent implements OnInit, OnDestroy {

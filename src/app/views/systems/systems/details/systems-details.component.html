@@ -236,7 +236,7 @@
               </div>
               <div class="sub-content full-width">
                 <span class="sub-header">Related Business Capabilities</span>
-                <app-table visibleColumnStorageKey="systems-related-business-capabilities" defaultSortField="Name" [localTableData]="sysCapabilitiesData" [isLocal]="true" [tableCols]="relatedCapabilitiesCols" [attrDefs]="capabilitiesAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="capabilities" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onCapRowClick($event)"></app-table>
+                <app-table visibleColumnStorageKey="systems-related-business-capabilities" defaultSortField="Name" [localTableData]="sysCapabilitiesData" [isLocal]="true" [tableCols]="relatedCapabilitiesCols" [attrDefs]="capabilitiesAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="capabilities" [contextSystemName]="$safeNavigationMigration(detailsData?.Name)" (rowClickEvent)="onCapRowClick($event)"></app-table>
               </div>
               <div class="sub-content full-width">
                 <span class="sub-header">System TIME REPORT</span>
@@ -342,7 +342,7 @@
               </div>
               <div class="sub-content full-width">
                 <span class="sub-header">Related Technology</span>
-                <app-table visibleColumnStorageKey="systems-related-technology" defaultSortField="Name" [localTableData]="sysTechnologiesData" [isLocal]="true" [tableCols]="relatedTechnologyCols" [attrDefs]="technologyAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="itStandards" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRelatedTechRowClick($event)"></app-table>
+                <app-table visibleColumnStorageKey="systems-related-technology" defaultSortField="Name" [localTableData]="sysTechnologiesData" [isLocal]="true" [tableCols]="relatedTechnologyCols" [attrDefs]="technologyAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="itStandards" [contextSystemName]="$safeNavigationMigration(detailsData?.Name)" (rowClickEvent)="onRelatedTechRowClick($event)"></app-table>
               </div>
             </div>
           </div>
@@ -355,7 +355,7 @@
               <div class="sub-content full-width">
                 <span class="sub-header">Related Records</span>
                 @if(sysRecordsData && sysRecordsData.length > 0) {
-                  <app-table visibleColumnStorageKey="systems-related-records" defaultSortField="GSA_Number" [localTableData]="sysRecordsData" [isLocal]="true" [tableCols]="recordsCols" [attrDefs]="recordsAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="records" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRelatedRecordsRowClick($event)"></app-table>
+                  <app-table visibleColumnStorageKey="systems-related-records" defaultSortField="GSA_Number" [localTableData]="sysRecordsData" [isLocal]="true" [tableCols]="recordsCols" [attrDefs]="recordsAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="records" [contextSystemName]="$safeNavigationMigration(detailsData?.Name)" (rowClickEvent)="onRelatedRecordsRowClick($event)"></app-table>
                 } @else {
                   <span>Contact Records Management (records@gsa.gov) for a more detailed analysis of records associated with this system.</span>
                 }
@@ -370,7 +370,7 @@
             <div class="main-data-container">
               <div class="sub-content full-width">
                 <span class="sub-header">Related Websites</span>
-                <app-table visibleColumnStorageKey="systems-related-websites" defaultSortField="domain" [localTableData]="sysWebsitesData" [isLocal]="true" [tableCols]="websiteCols" [attrDefs]="websitesAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="website" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRelatedWebsitesRowClick($event)"></app-table>
+                <app-table visibleColumnStorageKey="systems-related-websites" defaultSortField="domain" [localTableData]="sysWebsitesData" [isLocal]="true" [tableCols]="websiteCols" [attrDefs]="websitesAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="website" [contextSystemName]="$safeNavigationMigration(detailsData?.Name)" (rowClickEvent)="onRelatedWebsitesRowClick($event)"></app-table>
               </div>
             </div>
           </div>
@@ -382,7 +382,7 @@
             <div class="main-data-container">
               <div class="sub-content full-width">
                 <span class="sub-header">Related Subsystems</span>
-                <app-table visibleColumnStorageKey="systems-related-subsystems" defaultSortField="Name" [localTableData]="sysSubsystemsData" [isLocal]="true" [tableCols]="relatedSystemsCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="accessForms" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRelatedSubsystemsRowClick($event)"></app-table>
+                <app-table visibleColumnStorageKey="systems-related-subsystems" defaultSortField="Name" [localTableData]="sysSubsystemsData" [isLocal]="true" [tableCols]="relatedSystemsCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="accessForms" [contextSystemName]="$safeNavigationMigration(detailsData?.Name)" (rowClickEvent)="onRelatedSubsystemsRowClick($event)"></app-table>
               </div>
             </div>
           </div>

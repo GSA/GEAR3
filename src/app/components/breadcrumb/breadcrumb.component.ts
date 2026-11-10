@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavEntry, PreviousRouteService } from '@services/previous-route/previous-route.service';
 
@@ -38,6 +38,7 @@ const ROUTE_META: Record<string, RouteMeta> = {
     selector: 'app-breadcrumb',
     templateUrl: './breadcrumb.component.html',
     styleUrls: ['./breadcrumb.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class BreadcrumbComponent implements OnInit {

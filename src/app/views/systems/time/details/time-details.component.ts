@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { System } from '@api/models/systems.model';
 import { TIME } from '@api/models/systime.model';
@@ -23,6 +23,7 @@ import { forkJoin } from 'rxjs';
     selector: 'time-details',
     templateUrl: './time-details.component.html',
     styleUrls: ['./time-details.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class TimeDetailsComponent implements OnInit {

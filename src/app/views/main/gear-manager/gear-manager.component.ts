@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { SharedService } from '../../../services/shared/shared.service';
 import { Router } from '@angular/router';
 
@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
     selector: 'gear-manager',
     templateUrl: './gear-manager.component.html',
     styleUrls: ['./gear-manager.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class GearManagerComponent implements OnInit {

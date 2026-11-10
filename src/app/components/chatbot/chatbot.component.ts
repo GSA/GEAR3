@@ -5,6 +5,7 @@ import {
   OnDestroy,
   OnInit,
   ViewChild,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
@@ -41,6 +42,7 @@ interface ChatPair {
   selector: 'gear-chatbot',
   templateUrl: './chatbot.component.html',
   styleUrls: ['./chatbot.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
 export class ChatbotComponent implements OnInit, OnDestroy {

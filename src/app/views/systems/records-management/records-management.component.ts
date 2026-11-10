@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
@@ -23,6 +23,7 @@ import { DataDictionary } from '@api/models/data-dictionary.model';
             transition('true <=> false', animate('500ms ease-in-out')),
         ]),
     ],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class RecordsManagementComponent implements OnInit {

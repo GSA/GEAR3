@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -17,6 +17,7 @@ declare var $: any;
     selector: 'websites-modal',
     templateUrl: './websites-modal.component.html',
     styleUrls: ['./websites-modal.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class WebsitesModalComponent implements OnInit {

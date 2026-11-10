@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Column } from '@common/table-classes';
 
 import * as glossaryData from '../../../../../assets/statics/glossary.json';
@@ -8,6 +8,7 @@ import { TableService } from '@services/tables/table.service';
     selector: 'glossary',
     templateUrl: './glossary.component.html',
     styleUrls: ['./glossary.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class GlossaryComponent implements OnInit {

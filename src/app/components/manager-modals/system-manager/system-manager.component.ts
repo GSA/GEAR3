@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 import { Globals } from '@common/globals';
@@ -15,6 +15,7 @@ declare var $: any;
     selector: 'system-manager',
     templateUrl: './system-manager.component.html',
     styleUrls: ['./system-manager.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class SystemManagerComponent implements OnInit {

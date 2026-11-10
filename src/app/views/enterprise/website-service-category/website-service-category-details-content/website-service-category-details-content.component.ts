@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataDictionary } from '@api/models/data-dictionary.model';
 import { Service_Category } from '@api/models/service-category.model';
@@ -14,6 +14,7 @@ import { TableService } from '@services/tables/table.service';
     selector: 'website-service-category-details-content',
     templateUrl: './website-service-category-details-content.component.html',
     styleUrls: ['./website-service-category-details-content.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class WebsiteServiceCategoryDetailsContentComponent implements OnInit {

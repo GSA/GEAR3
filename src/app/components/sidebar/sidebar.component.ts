@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AnalyticsService } from '@services/analytics/analytics.service';
 import { SharedService } from '@services/shared/shared.service';
@@ -7,6 +7,7 @@ import { SharedService } from '@services/shared/shared.service';
     selector: 'app-sidebar',
     templateUrl: './sidebar.component.html',
     styleUrls: ['./sidebar.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class SidebarComponent implements OnInit {

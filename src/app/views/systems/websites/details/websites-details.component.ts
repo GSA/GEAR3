@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { System } from '@api/models/systems.model';
 import { Column } from '@common/table-classes';
@@ -18,6 +18,7 @@ import { DataDictionary } from '@api/models/data-dictionary.model';
     selector: 'websites-details',
     templateUrl: './websites-details.component.html',
     styleUrls: ['./websites-details.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class WebsitesDetailsComponent implements OnInit {

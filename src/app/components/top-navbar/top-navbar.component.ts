@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, Renderer2, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { environment } from '@environments/environment';
@@ -12,6 +12,7 @@ declare var $: any;
     selector: 'top-navbar',
     templateUrl: './top-navbar.component.html',
     styleUrls: ['./top-navbar.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class TopNavbarComponent implements AfterViewInit {

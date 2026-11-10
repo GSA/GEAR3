@@ -1,9 +1,10 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
     selector: 'framework',
     templateUrl: './framework.component.html',
     styleUrls: ['./framework.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class FrameworkComponent implements OnInit {

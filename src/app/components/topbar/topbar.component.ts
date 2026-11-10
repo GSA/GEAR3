@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { SharedService } from '@services/shared/shared.service';
 import { environment } from '@environments/environment';
@@ -8,6 +8,7 @@ import { AnalyticsService } from '@services/analytics/analytics.service';
     selector: 'app-topbar',
     templateUrl: './topbar.component.html',
     styleUrls: ['./topbar.component.scss'],
+    changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
 export class TopbarComponent implements AfterViewInit, OnDestroy {
