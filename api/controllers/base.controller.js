@@ -24,7 +24,10 @@ exports.getApiToken = async (req, res) => {
 
   //let [rows, fields] = await sql_promise.query(`CALL gear_acl.verifyJwt ('${req.headers.requester}', '${req.headers.apitoken}');`);
 
-  let [rows, fields] = await connPromisePool.query(`select count(*) as sessions_cnt from gear_acl.logins where email = '${req.headers.requester}' and jwt = '${req.headers.apitoken}';`);
+  let [rows, fields] = await connPromisePool.query(
+    'select count(*) as sessions_cnt from gear_acl.logins where email = ? and jwt = ?;',
+    [req.headers.requester, req.headers.apitoken]
+  );
 
   return rows[0].sessions_cnt;
 
@@ -33,8 +36,8 @@ exports.getApiToken = async (req, res) => {
   //return response;
 }
 
-exports.sendQuery = (query, msg, response, postProcessFunc = null) => {
-  return buildQuery(sql, query, msg, response, postProcessFunc);
+exports.sendQuery = (query, msg, response, postProcessFunc = null, params = null) => {
+  return buildQuery(sql, query, msg, response, postProcessFunc, params);
 };
 
 exports.sendLogQuery = (event, user, msg, response) => {
@@ -53,8 +56,8 @@ exports.sendLogQuery = (event, user, msg, response) => {
  * @param {string} msg - A description of the query that will be printed if an error occurs
  * @return {object} - query results as JSON
  */
-function buildQuery(conn, query, msg, response, postProcessFunc = null) {
-  conn.query(query, (error, data) => {
+function buildQuery(conn, query, msg, response, postProcessFunc = null, params = null) {
+  const callback = (error, data) => {
     if (error) {
       console.log(`DB Query Error while executing ${msg}: `, error);
       response.status(501).json({
@@ -67,7 +70,14 @@ function buildQuery(conn, query, msg, response, postProcessFunc = null) {
       }
       response.status(200).json(data);
     }
-  });
+  };
+
+  // Use placeholder binding when params are supplied so user input is escaped by the driver.
+  if (params) {
+    conn.query(query, params, callback);
+  } else {
+    conn.query(query, callback);
+  }
 
   return response;
 }
@@ -82,11 +92,11 @@ function buildQuery(conn, query, msg, response, postProcessFunc = null) {
  */
 function buildLogQuery(conn, event, user, msg, response) {
   // 
-  var query = `insert into gear_log.event (Event, User, DTG) values ('${event}', '${user}', now());`;
-  console.log(query);
+  var query = 'insert into gear_log.event (Event, User, DTG) values (?, ?, now());';
+  console.log(query, [event, user]);
 
   //
-  conn.query(query, (error, data) => {
+  conn.query(query, [event, user], (error, data) => {
     if (error) {
       console.log(`DB Log Event Query Error while executing ${msg}: `, error);
       return { message: error.message || `DB Query Error while executing ${msg}`, };
@@ -99,10 +109,10 @@ function buildLogQuery(conn, event, user, msg, response) {
 
 async function buildLogQueryAsync(conn, event, user, msg) {
   // 
-  var query = `insert into gear_log.event (Event, User, DTG) values ('${event}', '${user}', now());`;
-  console.log(query);
+  var query = 'insert into gear_log.event (Event, User, DTG) values (?, ?, now());';
+  console.log(query, [event, user]);
   try {
-    await conn.promise().query(query);
+    await conn.promise().query(query, [event, user]);
     return JSON.stringify(data);
   }
   catch (error) {
@@ -2348,7 +2358,7 @@ exports.importTechCatlogData = async (data, response) => {
       }
 
       // ... log to event table
-      sql.query(`insert into gear_log.event (Event, User, DTG) values ('${logMessage}', '${requester}', now());`, (err, result) => {
+      sql.query('insert into gear_log.event (Event, User, DTG) values (?, ?, now());', [logMessage, requester], (err, result) => {
         if (err) {
           logger(`${getLogHeader()}`, `failed to log event`, err, errorLogFileName);
         }
