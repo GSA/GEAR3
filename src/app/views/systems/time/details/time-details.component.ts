@@ -1,0 +1,292 @@
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { System } from '@api/models/systems.model';
+import { TIME } from '@api/models/systime.model';
+import { Column } from '@common/table-classes';
+import { SystemTimeColumns } from '@common/table-columns/system-time';
+import { RelatedCapabilitiesColumns } from '@common/table-columns/related-capabilities';
+import { ApiService } from '@services/apis/api.service';
+import { SharedService } from '@services/shared/shared.service';
+import { TableService } from '@services/tables/table.service';
+import { PreviousRouteService } from '@services/previous-route/previous-route.service';
+import { RelatedTechnologiesColumns } from '@common/table-columns/related-technologies';
+import { RecordsColumns } from '@common/table-columns/records';
+import { WebsitesColumns } from '@common/table-columns/websites';
+import { Capability } from '@api/models/capabilities.model';
+import { ITStandards } from '@api/models/it-standards.model';
+import { Record } from '@api/models/records.model';
+import { Website } from '@api/models/websites.model';
+import { DataDictionary } from '@api/models/data-dictionary.model';
+import { forkJoin } from 'rxjs';
+
+@Component({
+    selector: 'time-details',
+    templateUrl: './time-details.component.html',
+    styleUrls: ['./time-details.component.scss'],
+    standalone: false
+})
+export class TimeDetailsComponent implements OnInit {
+
+  STATUS_STATES = {
+    active: 'Active',
+    inactive: 'Inactive'
+  };
+
+  public systemId: number = null;
+  public detailsData: System;
+  public isDataReady: boolean = false;
+  public systemTimeData: TIME[] = [];
+  public sysCapabilitiesData: Capability[] = [];
+  public sysTechnologiesData: ITStandards[] = [];
+  public sysRecordsData: Record[] = [];
+  public sysWebsitesData: Website[] = [];
+
+  public isOverviewTabActive: boolean = true;
+  public isBusinessTabActive: boolean = false;
+  public isTechnicalTabActive: boolean = false;
+  public isRecordsTabActive: boolean = false;
+  public isWebsitesTabActive: boolean = false;
+
+  public systemTimeCols: Column[] = SystemTimeColumns;
+  public relatedCapabilitiesCols: Column[] = RelatedCapabilitiesColumns;
+  public relatedTechnologyCols: Column[] = RelatedTechnologiesColumns;
+  public recordsCols: Column[] = RecordsColumns;
+  public websiteCols: Column[] = WebsitesColumns;
+
+  public splitPOCs: any = {};
+
+  public attrDefinitions = <DataDictionary[]>[];
+  public capabilitiesAttrDefinitions = <DataDictionary[]>[];
+  public timeAttrDefinitions = <DataDictionary[]>[];
+  public technologyAttrDefinitions = <DataDictionary[]>[];
+  public recordsAttrDefinitions = <DataDictionary[]>[];
+  public websitesAttrDefinitions = <DataDictionary[]>[];
+
+  constructor(
+    private route: ActivatedRoute,
+    private apiService: ApiService,
+    private sharedService: SharedService,
+    public tableService: TableService,
+    private router: Router,
+    private previousRouteService: PreviousRouteService
+  ) {
+  }
+
+  public ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      this.systemId = +params.get('sysID');
+
+      // Get system details
+      this.apiService.getOneSys(this.systemId).subscribe(s => {
+        this.detailsData = s;
+        this.previousRouteService.setCurrentPageTitle(s.Name);
+        this.splitPOCs = this.splitPOCInfo(this.detailsData.POC);
+        this.isDataReady = true;
+      });
+
+      this.apiService.getSysTIME(this.systemId).subscribe(sysTime => {
+        this.systemTimeData = sysTime;
+      });
+
+      this.apiService.getSysCapabilities(this.systemId).subscribe(sysCaps => {
+        this.sysCapabilitiesData = sysCaps
+      });
+
+      this.apiService.getSysITStandards(this.systemId).subscribe(sysTech => {
+        this.sysTechnologiesData = sysTech;
+      });
+
+      this.apiService.getSysRecords(this.systemId).subscribe((mappings: any[]) => {
+        this.apiService.getRecords().subscribe((records: any[]) => {
+          const recordIds = new Set(mappings.map(({ obj_records_Id }) => obj_records_Id));
+          this.sysRecordsData = records.filter(({ Rec_ID }) => recordIds.has(parseInt(Rec_ID)));
+        });
+      });
+
+      this.apiService.getSysWebsites(this.systemId).subscribe((mappings: any[]) => {
+        this.apiService.getWebsites().subscribe((websites: any[]) => {
+          const websiteIds = new Set(mappings.map(({ obj_websites_Id }) => obj_websites_Id));
+          this.sysWebsitesData = websites.filter(({ website_id }) => websiteIds.has(parseInt(website_id)));
+        });
+      });
+
+      // Get attribute definition list
+      this.apiService.getDataDictionaryByReportName('Business Systems')
+        .subscribe((data: DataDictionary[]) => {
+          this.attrDefinitions = data;
+      });
+
+      // Get attribute definitions for the related tables
+      this.apiService.getDataDictionaryByReportName('Business Capabilities')
+        .subscribe((data: DataDictionary[]) => {
+          this.capabilitiesAttrDefinitions = data;
+      });
+
+      this.apiService.getDataDictionaryByReportName('TIME Report')
+        .subscribe((data: DataDictionary[]) => {
+          this.timeAttrDefinitions = data;
+      });
+
+      this.apiService.getDataDictionaryByReportName('Records Management')
+        .subscribe((data: DataDictionary[]) => {
+          this.recordsAttrDefinitions = data;
+      });
+
+      this.apiService.getDataDictionaryByReportName('GSA Websites')
+        .subscribe((data: DataDictionary[]) => {
+          this.websitesAttrDefinitions = data;
+      });
+
+      forkJoin({
+        techDefs: this.apiService.getDataDictionaryByReportName('IT Standards List'),
+        trmDefs: this.apiService.getDataDictionaryByReportName('TRM')
+      }).subscribe(({ techDefs, trmDefs }) => {
+        this.technologyAttrDefinitions = techDefs;
+        this.relatedTechnologyCols = this.buildRelatedTechnologyCols(techDefs, trmDefs);
+      });
+
+    });
+  }
+
+  public getTooltip (name: string): string {
+    return this.sharedService.getTooltip(this.attrDefinitions, name);
+  }
+
+  // The Related Technology table headers don't match the data dictionary Terms
+  // for the 'IT Standards List' report, so set an explicit titleTooltip on each
+  // column using the correct Term. The "Software Category" column's definition
+  // lives in the 'TRM' report under the "Technology Category Report" term.
+  private buildRelatedTechnologyCols(techDefs: DataDictionary[], trmDefs: DataDictionary[]): Column[] {
+    const termByField: { [field: string]: string } = {
+      Name: 'IT Standard Name',
+      Description: 'Description',
+      Fedramp: 'FedRAMP',
+      OpenSource: 'Open Source',
+      RITM: 'Requested Item (RITM)'
+    };
+    return RelatedTechnologiesColumns.map(col => {
+      if (col.field === 'Category') {
+        return { ...col, titleTooltip: this.sharedService.getTooltip(trmDefs, 'Technology Category Report') };
+      }
+      const term = termByField[col.field];
+      if (term) {
+        return { ...col, titleTooltip: this.sharedService.getTooltip(techDefs, term) };
+      }
+      return { ...col };
+    });
+  }
+
+  public getStatusClass(status: string): string {
+    if(status === this.STATUS_STATES.active) {
+      return 'status-green';
+    } else if(status === this.STATUS_STATES.inactive) {
+      return 'status-red';
+    } else {
+      return 'status-yellow';
+    }
+  }
+
+  public onTabClick(tabName: string, event: Event): void {
+    event.preventDefault();
+    switch (tabName) {
+      case 'overview':
+        this.isOverviewTabActive = true;
+        this.isBusinessTabActive = false;
+        this.isTechnicalTabActive = false;
+        this.isRecordsTabActive = false;
+        this.isWebsitesTabActive = false;
+        break;
+      case 'business':
+        this.isOverviewTabActive = false;
+        this.isBusinessTabActive = true;
+        this.isTechnicalTabActive = false;
+        this.isRecordsTabActive = false;
+        this.isWebsitesTabActive = false;
+        break;
+      case 'technical':
+        this.isOverviewTabActive = false;
+        this.isBusinessTabActive = false;
+        this.isTechnicalTabActive = true;
+        this.isRecordsTabActive = false;
+        this.isWebsitesTabActive = false;
+        break;
+      case 'records':
+        this.isOverviewTabActive = false;
+        this.isBusinessTabActive = false;
+        this.isTechnicalTabActive = false;
+        this.isRecordsTabActive = true;
+        this.isWebsitesTabActive = false;
+        break;
+      case 'websites':
+        this.isOverviewTabActive = false;
+        this.isBusinessTabActive = false;
+        this.isTechnicalTabActive = false;
+        this.isRecordsTabActive = false;
+        this.isWebsitesTabActive = true;
+        break;
+      default:
+        break;
+    }
+  }
+
+  public getRelatedArtifacts(): string {
+    return this.tableService.renderRelArtifacts(this.detailsData.RelatedArtifacts);
+  }
+
+  public getPOCList(): any[] {
+    return this.tableService.renderPOCInfoTable(this.detailsData.POC);
+  }
+
+  public onCapRowClick(data: Capability): void {
+    this.router.navigate(['capabilities', data.ID], {
+      queryParams: { fromPrevious: this.detailsData.Name }
+    });
+  }
+
+  public onRelatedTechRowClick(data: ITStandards): void {
+    this.router.navigate(['it_standards', data.ID], {
+      queryParams: { fromPrevious: this.detailsData.Name }
+    });
+  }
+
+  public onRelatedRecordsRowClick(data: Record): void {
+    this.router.navigate(['records_mgmt', data.Rec_ID], {
+      queryParams: { fromPrevious: this.detailsData.Name }
+    });
+  }
+
+  public onRelatedWebsitesRowClick(data: Website): void {
+    this.router.navigate(['websites', data.website_id], {
+      queryParams: { fromPrevious: this.detailsData.Name }
+    });
+  }
+
+  private splitPOCInfo(p) {
+    let poc = null;
+    let poc1 = null;
+    let pocs = [];
+
+    if (p) {
+      poc1 = p.split('*');
+      poc1 = poc1.map((poctype, tmpObj) => {
+        poctype = poctype.split(':');
+        poc = poctype[1].split('; ');
+        for (var i = 0; i < poc.length; i++) {
+          var pieces = poc[i].split(',');
+          tmpObj = null;
+          if (pieces[0] !== ''){
+                tmpObj = {
+                  type: poctype[0],
+                  name: pieces[0],
+                  phone: pieces[2],
+                  email: pieces[1]
+                };
+                pocs.push(tmpObj);
+          }
+          
+        }
+      });
+    }
+    return pocs;
+  }
+}

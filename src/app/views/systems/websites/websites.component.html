@@ -1,118 +1,41 @@
-<div class="card">
-  <div class="card-header text-white bg-danger text-center">
-    <h3 class="card-title col-12 mb-0">
-      <span>
-        <i class="far fa-folder-open mr-2"></i>
-        GSA Websites
-      </span>
-    </h3>
-
-    <!-- GEAR Manager Access -->
-    @if (!sharedService.loggedIn) {
-      <a
-        class="btn btn-sm btn-info text-white shadow mngr-btn d-flex align-items-center justify-content-center"
-        routerLink="/gear_manager"
-        aria-label="GEAR Manager Login"
-        (click)="sharedService.setRedirectPath()"
-        >
-        <span class="mr-2">GEAR Manager Login</span
-          ><i class="fa fa-sign-in-alt fa-2x"></i>
-        </a>
+<div class="websites-container">
+  <div class="websites-title-container">
+    <h2>GSA Websites</h2>
+    <div class="websites-title-right-button-container">
+      @if (!isLoggedIn()) {
+        <app-button buttonText="GEAR Manager Login" (buttonClick)="sharedService.setRedirectPath()"></app-button>
       }
-      @if (sharedService.loggedIn) {
-        <a
-          class="btn btn-sm btn-danger text-white shadow mngr-btn d-flex align-items-center justify-content-center"
-          routerLink="/websites"
-          aria-label="GEAR Manager Logout"
-          (click)="sharedService.logoutManager()"
-          >
-          <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
-        </a>
+      @if (isLoggedIn()) {
+        <app-button buttonText="Logout" buttonStyle="error" (buttonClick)="sharedService.logoutManager()"></app-button>
       }
-
-      <!-- Help Button -->
-      <a
-        tabindex="0"
-        class="btn btn-sm btn-info text-white shadow help-btn d-flex align-items-center justify-content-center"
-        role="button"
-        data-bs-toggle="popover"
-        data-bs-trigger="focus"
-        data-bs-placement="auto"
-        data-bs-html="true"
-        title="Help Using this Table"
-      data-bs-content="<b>Details:</b> Left click on a row within the table to view additional details.
-      <br><br>
-      <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
-      <br><br>
-      <b>Export:</b> Export data by clicking on the <i class='fas fa-download'></i> icon and selecting the format that meets 
-      your needs.
-      <br><br>
-      <b>Search:</b> Perform a filtered search across all fields in the displayed data. Hit the 'Enter' button on your 
-      keyboard to execute. Click the <i class='far fa-trash-alt'></i> icon to clear the search box. 
-      Search within specific columns by clicking on the <i class='fas fa-angle-down'></i> icon. 
-      <br><br>
-      <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
-      <i class='fas fa-caret-square-down'></i> icon to display everything on one page."
-    >
-      <span class="mr-2">More Help</span
-      ><i class="far fa-question-circle fa-2x"></i>
-    </a>
-
-  </div>
-  <div class="row">
-    <!-- Filters -->
-    <div class="mx-auto pt-3">
-      <span class="my-auto mr-3">Filter Buttons:</span>
-      <button
-        role="button"
-            name="websitesDecommissioned"
-            class="btn btn-primary"
-            (click)="showDecommissioned()"
-            >
-            Decommissioned
-          </button>
-          <button
-            role="button"
-            name="websitesRedirectBtn"
-            class="btn btn-primary"
-            (click)="showRedirect()"
-            >
-            Redirects
-          </button>
-          <button
-            role="button"
-            name="websitesExternalBtn"
-            class="btn btn-primary"
-            (click)="showExternal()"
-            >
-            External
-          </button>
-
-          <button
-            role="button"
-            name="sysBttn"
-            class="btn btn-outline-primary ml-3"
-            (click)="resetTableFilters()"
-            [hidden]="!filteredTable"
-            >
-            Back to Production Sites
-          </button>
-
-          <!-- Website Definition Popover -->
-          <a tabindex="0" class="btn btn-sm btn-info text-white position-absolute float-right w-11" role="button"
-            data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="auto" data-bs-html="true" title=""
-      data-bs-content="This report represents GSA's inventory of public-facing websites (i.e. accessible to the general public 
-      and not behind any authentication or firewall). This report can be used to better understand how the public views and interacts with GSA's
-      business services, offerings, and information. This data is imported from the  
-      <a href='https://touchpoints.app.cloud.gov/admin/websites' target='_blank' rel='noopener'>Touchpoints websites inventory</a>
-      as well as from the Enterprise Digital Experience (EDX) team's 
-      <a href='https://github.com/GSA/EDX/tree/main/Tools/edxcli' target='_blank' rel='noopener'>ecxcli website scans</a>.">
-      Website definition
-      </a>
+      <app-page-help-button></app-page-help-button>
     </div>
   </div>
-  <div class="card-body card-text">
-    <!-- Main Table -->
-    <table id="websitesTable" aria-label="The GSA websites table provides a list of public-facing GSA websites and information about each site."></table>
+  <div class="websites-definition-container">
+    <p class="websites-definition-text">
+      This report lists GSA’s public-facing websites that are available to anyone online without a login or firewall. It helps teams understand how the public accesses and interacts with GSA services and information. The data comes from the <a href='https://touchpoints.app.cloud.gov/admin/websites' target='_blank' rel='noopener'>Touchpoints</a> website inventory and website scans.
+    </p>
+    </div>
+    <div class="websites-data-container">
+      <app-table visibleColumnStorageKey="websites-report" defaultSortField="domain" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)">
+        <div class="filter-tabs-container" filterTabs>
+          <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')" (keyup)="onKeyUp($event, 'All')" tabindex="0">
+            <span class="filter-tab-text">All</span>
+            <span class="filter-tab-number first">{{filterTotals?.AllTotal}}</span>
+          </div>
+          <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Decommissioned')}" (click)="onSelectTab('Decommissioned')" (keyup)="onKeyUp($event, 'Decommissioned')" tabindex="0">
+            <span class="filter-tab-text">Decommissioned</span>
+            <span class="filter-tab-number second">{{filterTotals?.DecommissionedTotal}}</span>
+          </div>
+          <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Redirects')}" (click)="onSelectTab('Redirects')" (keyup)="onKeyUp($event, 'Redirects')" tabindex="0">
+            <span class="filter-tab-text">Redirects</span>
+            <span class="filter-tab-number third">{{filterTotals?.RedirectsTotal}}</span>
+          </div>
+          <div class="filter-tab" [ngClass]="{'selected': isTabSelected('External')}" (click)="onSelectTab('External')" (keyup)="onKeyUp($event, 'External')" tabindex="0">
+            <span class="filter-tab-text">External</span>
+            <span class="filter-tab-number fourth">{{filterTotals?.ExternalTotal}}</span>
+          </div>
+        </div>
+      </app-table>
+    </div>
   </div>
-</div>

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
@@ -9,347 +8,405 @@ import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
 
 import { Investment } from '@api/models/investments.model';
+import { FilterButton, Column, TwoDimArray } from '../../../common/table-classes';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 
 // Declare jQuery symbol
-declare var $: any;
+// declare var $: any;
 
 @Component({
-standalone: false,
-  selector: 'investments',
-  templateUrl: './investments.component.html',
-  styleUrls: ['./investments.component.css'],
+    selector: 'investments',
+    templateUrl: './investments.component.html',
+    styleUrls: ['./investments.component.scss'],
+    standalone: false
 })
 export class InvestmentsComponent implements OnInit {
-  row: Object = <any>{};
-  filteredTable: boolean = false;
-  filterTitle: string = '';
-  nonEliminatedTypes: any[] = ['11: No Change in Status', '10: New', '01: Upgraded from non-major to major IT Investment', '04: Consolidation of Investments'];
-  eliminatedTypes: any[] = ['06: Eliminated by funding', 'Eliminated by omission', '09: Eliminated by reorganization'];
+
+  public tableCols: Column[] = [];
+  public selectedTab: string = 'All';
+  public filterTotals: any = null;
+
+  public itInvestmentsData: Investment[] = [];
+  public itInvesmentsDataTabFilterted: Investment[] = [];
+
+  public attrDefinitions: DataDictionary[] = [];
+
+  // row: Object = <any>{};
+  // filteredTable: boolean = false;
+  // filterTitle: string = '';
+  // nonEliminatedTypes: any[] = ['11: No Change in Status', '10: New', '01: Upgraded from non-major to major IT Investment', '04: Consolidation of Investments'];
+  // eliminatedTypes: any[] = ['06: Eliminated by funding', 'Eliminated by omission', '09: Eliminated by reorganization'];
 
   vizData: any[] = [];
   vizLabel: string = 'Total Current IT Investments';
   colorScheme: {} = {
-    domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5'],
+    domain: ['#1F77B4', '#D97706', '#8B5CF6', '#0F766E', '#6B7280', '#A16207'],
   };
 
   constructor(
     private apiService: ApiService,
-    private location: Location,
     private modalService: ModalsService,
     private route: ActivatedRoute,
-    private router: Router,
     public sharedService: SharedService,
     private tableService: TableService,
-    private titleService: Title
+    private titleService: Title,
+    private router: Router
   ) {
-    this.modalService.currentInvest.subscribe((row) => (this.row = row));
+    // this.modalService.currentInvest.subscribe((row) => (this.row = row));
   }
 
-  // Investment Table Options
-  tableOptions: {} = this.tableService.createTableOptions({
-    advancedSearch: true,
-    idTable: 'InvestTable',
-    classes: 'table-hover table-dark clickable-table',
-    showColumns: true,
-    showExport: true,
-    exportFileName: 'GSA_IT_Investments',
-    exportIgnoreColumn:[],
-    headerStyle: 'bg-success',
-    pagination: true,
-    search: true,
-    sortName: 'Name',
-    sortOrder: 'asc',
-    showToggle: true,
-    url: this.apiService.investUrl,
-  });
+  public onSelectTab(tabName: string): void {
+    this.selectedTab = tabName;
+    this.itInvesmentsDataTabFilterted = this.itInvestmentsData;
 
-  // Investments Main Table Columns
-  columnDefs: any[] = [
-    {
-      field: 'Name',
-      title: 'Investment Name',
-      sortable: true,
-    },
-    {
-      field: 'Description',
-      title: 'Description',
-      sortable: true,
-      visible: true,
-      formatter: this.sharedService.formatDescription
-    },
-    {
-      field: 'Type',
-      title: 'Type',
-      sortable: true,
-    },
-    {
-      field: 'IT_Portfolio',
-      title: 'Part of IT Portfolio',
-      sortable: true,
-    },
-    {
-      field: 'Budget_Year',
-      title: 'Budget Year',
-      sortable: true,
-    },
-    {
-      field: 'InvManager',
-      title: 'Investment Manager',
-      sortable: true,
-      formatter: this.sharedService.noneProvidedFormatter,
-    },
-    {
-      field: 'Status',
-      title: 'Status',
-      sortable: true,
-    },
-    {
-      field: 'Start_Year',
-      title: 'Start Year',
-      sortable: true,
-      visible: false,
-    },
-    {
-      field: 'End_Year',
-      title: 'End Year',
-      sortable: true,
-      visible: false,
-    },
-    {
-      field: 'PSA',
-      title: 'Primary Service Area',
-      sortable: true,
-      visible: false,
-    },
-    {
-      field: 'Cloud_Alt',
-      title: 'Cloud Alt. Evaluation',
-      sortable: true,
-      visible: false,
-    },
-    {
-      field: 'Comments',
-      title: 'Comments',
-      sortable: true,
-      visible: false,
-    },
-    {
-      field: 'UII',
-      title: 'Investment UII',
-      sortable: true,
-      visible: false,
-    },
-    {
-      field: 'Updated_Date',
-      title: 'Updated Date',
-      sortable: true,
-      visible: false,
-      formatter: this.sharedService.dateFormatter,
-    },
-  ];
+    if(this.selectedTab === 'All') {
+      this.itInvesmentsDataTabFilterted = this.itInvestmentsData;
+      this.tableCols = this.defaultCols;
+    } else if (this.selectedTab === 'Current Year') {
+      this.itInvesmentsDataTabFilterted = this.itInvestmentsData;
+      this.tableCols = this.CYcolumnDefs;
+    } else if (this.selectedTab === 'Previous Year') {
+      this.itInvesmentsDataTabFilterted = this.itInvestmentsData;
+      this.tableCols = this.PYcolumnDefs;
+    } else if (this.selectedTab === 'Budget Year') {
+      this.itInvesmentsDataTabFilterted = this.itInvestmentsData;
+      this.tableCols = this.BYcolumnDefs;
+    } else if(this.selectedTab === 'Eliminated') {
+      this.itInvesmentsDataTabFilterted = this.itInvestmentsData.filter(s => {
+        return s.Status.includes('Eliminated');
+      });
+      this.tableCols = this.defaultCols;
+    }
+    this.tableService.updateReportTableData(this.itInvesmentsDataTabFilterted);
+    // this.tableService.updateReportTableDataReadyStatus(true);
+  }
+  
+  public onKeyUp(e: KeyboardEvent, tabName: string) {
+    if(e.key === ' ' || e.key === 'Enter') {
+      this.onSelectTab(tabName);
+    }
+  }
+
+  public isTabSelected(tabName: string): boolean {
+    return this.selectedTab === tabName;
+  }
+
+  defaultCols: Column[] = [];
 
   // Previous Year Investments Table Columns
-  PYcolumnDefs: any[] = [
-    {
-      field: 'UII',
-      title: 'Investment UII',
-      sortable: true,
-      visible: false,
-    },
-    {
-      field: 'Name',
-      title: 'Investment Name',
-      sortable: true,
-    },
-    {
-      field: 'Total_Spend_PY',
-      title: 'Total IT Spending ($ M): PY',
-      sortable: true,
-    },
-    {
-      field: 'DME_Agency_Fund_PY',
-      title: 'DME Agency Funding ($ M): PY',
-      sortable: true,
-    },
-    {
-      field: 'DME_Contributions_PY',
-      title: 'DME Contributions ($ M): PY',
-      sortable: true,
-    },
-    {
-      field: 'OnM_Agency_Fund_PY',
-      title: 'O&M Agency Funding ($ M): PY',
-      sortable: true,
-    },
-    {
-      field: 'OnM_Contributions_PY',
-      title: 'O&M Contributions ($ M): PY',
-      sortable: true,
-    },
-  ];
+  PYcolumnDefs: Column[] = [];
 
   // Current Year Investments Table Columns
-  CYcolumnDefs: any[] = [
-    {
-      field: 'UII',
-      title: 'Investment UII',
-      sortable: true,
-      visible: false,
-    },
-    {
-      field: 'Name',
-      title: 'Investment Name',
-      sortable: true,
-    },
-    {
-      field: 'Total_Spend_CY',
-      title: 'Total IT Spending ($ M): CY',
-      sortable: true,
-    },
-    {
-      field: 'DME_Agency_Fund_CY',
-      title: 'DME Agency Funding ($ M): CY',
-      sortable: true,
-    },
-    {
-      field: 'DME_Contributions_CY',
-      title: 'DME Contributions ($ M): CY',
-      sortable: true,
-    },
-    {
-      field: 'OnM_Agency_Fund_CY',
-      title: 'O&M Agency Funding ($ M): CY',
-      sortable: true,
-    },
-    {
-      field: 'OnM_Contributions_CY',
-      title: 'O&M Contributions ($ M): CY',
-      sortable: true,
-    },
-  ];
+  CYcolumnDefs: Column[] = [];
 
   // Budget Year Investments Table Columns
-  BYcolumnDefs: any[] = [
-    {
-      field: 'UII',
-      title: 'Investment UII',
-      sortable: true,
-      visible: false,
-    },
-    {
-      field: 'Name',
-      title: 'Investment Name',
-      sortable: true,
-    },
-    {
-      field: 'Total_Spend_BY',
-      title: 'Total IT Spending ($ M): BY',
-      sortable: true,
-    },
-    {
-      field: 'DME_Agency_Fund_BY',
-      title: 'DME Agency Funding ($ M): BY',
-      sortable: true,
-    },
-    {
-      field: 'DME_Contributions_BY',
-      title: 'DME Contributions ($ M): BY',
-      sortable: true,
-    },
-    {
-      field: 'DME_Budget_Auth_BY',
-      title: 'DME Budget Authority Agency Funding ($ M): BY',
-      sortable: true,
-    },
-    {
-      field: 'OnM_Agency_Fund_BY',
-      title: 'O&M Agency Funding ($ M): BY',
-      sortable: true,
-    },
-    {
-      field: 'OnM_Contributions_BY',
-      title: 'O&M Contributions ($ M): BY',
-      sortable: true,
-    },
-    {
-      field: 'OnM_Budget_Auth_BY',
-      title: 'O&M Budget Authority Agency Funding ($ M): BY',
-      sortable: true,
-    },
-  ];
+  BYcolumnDefs: Column[] = [];
 
   ngOnInit(): void {
-    // Enable popovers
-    $(function () {
-      $('[data-bs-toggle="popover"]').popover();
+    // // Enable popovers
+    // $(function () {
+    //   $('[data-bs-toggle="popover"]').popover();
+    // });
+
+    this.apiService.getDataDictionaryByReportName('IT Investments').subscribe(defs => {
+      this.attrDefinitions = defs
+
+      this.defaultCols = [
+        {
+          field: 'Name',
+          header: 'Investment Name',
+          isSortable: true,
+        },
+        {
+          field: 'Description',
+          header: 'Description',
+          isSortable: true,
+          showColumn: true,
+          formatter: this.sharedService.formatDescription
+        },
+        {
+          field: 'Type',
+          header: 'Type',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Investment Type')
+        },
+        {
+          field: 'IT_Portfolio',
+          header: 'Part of IT Portfolio',
+          isSortable: true,
+        },
+        {
+          field: 'Budget_Year',
+          header: 'Budget Year',
+          isSortable: true,
+        },
+        {
+          field: 'InvManager',
+          header: 'Investment Manager',
+          isSortable: true,
+          formatter: this.sharedService.noneProvidedFormatter,
+        },
+        {
+          field: 'Status',
+          header: 'Status',
+          isSortable: true,
+        },
+        {
+          field: 'Start_Year',
+          header: 'Start Year',
+          isSortable: true,
+          showColumn: false,
+        },
+        {
+          field: 'End_Year',
+          header: 'End Year',
+          isSortable: true,
+          showColumn: false,
+        },
+        {
+          field: 'PSA',
+          header: 'Primary Service Area',
+          isSortable: true,
+          showColumn: false,
+        },
+        {
+          field: 'Cloud_Alt',
+          header: 'Cloud Alt. Evaluation',
+          isSortable: true,
+          showColumn: false,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Cloud Alternatives Evaluation')
+        },
+        {
+          field: 'Comments',
+          header: 'Comments',
+          isSortable: true,
+          showColumn: false,
+        },
+        {
+          field: 'UII',
+          header: 'Investment UII',
+          isSortable: true,
+          showColumn: false,
+        },
+        {
+          field: 'Updated_Date',
+          header: 'Updated Date',
+          isSortable: true,
+          showColumn: false,
+          formatter: this.sharedService.dateFormatter,
+        },
+      ];
+
+      this.PYcolumnDefs = [
+        {
+          field: 'UII',
+          header: 'Investment UII',
+          isSortable: true,
+          showColumn: false,
+        },
+        {
+          field: 'Name',
+          header: 'Investment Name',
+          isSortable: true,
+        },
+        {
+          field: 'Total_Spend_PY',
+          header: 'Total IT Spending ($ M): PY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Total IT Spending (PY) ($ M)')
+        },
+        {
+          field: 'DME_Agency_Fund_PY',
+          header: 'DME Agency Funding ($ M): PY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'DME PY Agency Funding ($ M)')
+        },
+        {
+          field: 'DME_Contributions_PY',
+          header: 'DME Contributions ($ M): PY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'DME PY Contributions ($ M)')
+        },
+        {
+          field: 'OnM_Agency_Fund_PY',
+          header: 'O&M Agency Funding ($ M): PY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'O&M PY Agency Funding ($ M)')
+        },
+        {
+          field: 'OnM_Contributions_PY',
+          header: 'O&M Contributions ($ M): PY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'O&M PY Contributions ($ M)')
+        },
+      ];
+
+      this.CYcolumnDefs = [
+        {
+          field: 'UII',
+          header: 'Investment UII',
+          isSortable: true,
+          showColumn: false,
+        },
+        {
+          field: 'Name',
+          header: 'Investment Name',
+          isSortable: true,
+        },
+        {
+          field: 'Total_Spend_CY',
+          header: 'Total IT Spending ($ M): CY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Total IT Spending (CY) ($ M)')
+        },
+        {
+          field: 'DME_Agency_Fund_CY',
+          header: 'DME Agency Funding ($ M): CY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'DME CY Agency Funding ($ M)')
+        },
+        {
+          field: 'DME_Contributions_CY',
+          header: 'DME Contributions ($ M): CY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'DME CY Contributions ($ M)')
+        },
+        {
+          field: 'OnM_Agency_Fund_CY',
+          header: 'O&M Agency Funding ($ M): CY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'O&M CY Agency Funding ($ M)')
+        },
+        {
+          field: 'OnM_Contributions_CY',
+          header: 'O&M Contributions ($ M): CY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'O&M CY Contributions ($ M)')
+        },
+      ];
+
+      this.BYcolumnDefs = [
+        {
+          field: 'UII',
+          header: 'Investment UII',
+          isSortable: true,
+          showColumn: false,
+        },
+        {
+          field: 'Name',
+          header: 'Investment Name',
+          isSortable: true,
+        },
+        {
+          field: 'Total_Spend_BY',
+          header: 'Total IT Spending ($ M): BY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'Total IT Spending (BY) ($ M)')
+        },
+        {
+          field: 'DME_Agency_Fund_BY',
+          header: 'DME Agency Funding ($ M): BY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'DME BY Agency Funding ($ M)')
+        },
+        {
+          field: 'DME_Contributions_BY',
+          header: 'DME Contributions ($ M): BY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'DME BY Contributions ($ M)')
+        },
+        {
+          field: 'DME_Budget_Auth_BY',
+          header: 'DME Budget Authority Agency Funding ($ M): BY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'DME BY Budget Authority Agency Funding ($ M)')
+        },
+        {
+          field: 'OnM_Agency_Fund_BY',
+          header: 'O&M Agency Funding ($ M): BY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'O&M BY Agency Funding ($ M)')
+        },
+        {
+          field: 'OnM_Contributions_BY',
+          header: 'O&M Contributions ($ M): BY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'O&M BY Contributions ($ M)')
+        },
+        {
+          field: 'OnM_Budget_Auth_BY',
+          header: 'O&M Budget Authority Agency Funding ($ M): BY',
+          isSortable: true,
+          titleTooltip: this.sharedService.getTooltip(this.attrDefinitions, 'DME BY Budget Authority Agency Funding ($ M)')
+        },
+      ];
+
+      this.tableCols = this.defaultCols;
     });
 
-    $('#investTable').bootstrapTable(
-      $.extend(this.tableOptions, {
-        columns: this.columnDefs,
-        data: [],
-      })
-    );
+    this.apiService.getInvestments().subscribe(i => {
+      this.tableService.updateReportTableData(i);
+      this.tableService.updateReportTableDataReadyStatus(true);
+      this.itInvestmentsData = i;
+      this.itInvesmentsDataTabFilterted = i;
 
-    const self = this;
-    $(document).ready(() => {
-      // Filter to only non-eliminated investments
-      $('#investTable').bootstrapTable('filterBy', {
-        Status: this.nonEliminatedTypes,
-      });
-
-      // Method to handle click events on the Investments table
-      $('#investTable').on(
-        'click-row.bs.table',
-        function (e, row) {
-          this.tableService.investTableClick(row);
-        }.bind(this)
-      );
-
-      //Enable table sticky header
-      self.sharedService.enableStickyHeader("investTable");
-    });
-
-    // Get Investment data for visuals
-    this.apiService.getInvestments().subscribe((data: any[]) => {
-      // Get counts by Investment Type
-      var counts = data.reduce((p, c) => {
-        var name = c.Type;
+      // Build chart data from the already-fetched investments array
+      const counts: Record<string, number> = i.reduce((p: Record<string, number>, c) => {
+        const name = c.Type;
         if (!p.hasOwnProperty(name)) {
           p[name] = 0;
         }
-        // Only count if not eliminated
         if (c.Status.includes('Eliminated') == false) p[name]++;
         return p;
       }, {});
-
-      // Resolve the counts into an object and sort by value
       this.vizData = Object.keys(counts)
-        .map((k) => {
-          return { name: k, value: counts[k] };
-        })
-        .sort(function (a, b) {
-          return b.value - a.value;
-        });
-
-      // console.log(this.vizData);  // Debug
+        .map(k => ({ name: k, value: counts[k] }))
+        .sort((a, b) => b.value - a.value);
     });
 
-    // Method to open details modal when referenced directly via URL
-    this.route.params.subscribe((params) => {
-      var detailInvestID = params['investID'];
-      if (detailInvestID) {
-        this.titleService.setTitle(
-          `${this.titleService.getTitle()} - ${detailInvestID}`
-        );
-        this.apiService
-          .getOneInvest(detailInvestID)
-          .subscribe((data: any[]) => {
-            this.tableService.investTableClick(data[0]);
-          });
-      }
+    this.apiService.getITInvestmentsFilterTotals().subscribe(t => {
+      this.filterTotals = t;
     });
+
+    // // Method to open details modal when referenced directly via URL
+    // this.route.params.subscribe((params) => {
+    //   var detailInvestID = params['investID'];
+    //   if (detailInvestID) {
+    //     this.titleService.setTitle(
+    //       `${this.titleService.getTitle()} - ${detailInvestID}`
+    //     );
+    //     this.apiService
+    //       .getOneInvest(detailInvestID)
+    //       .subscribe((data: any[]) => {
+    //         this.tableService.investTableClick(data[0]);
+    //       });
+    //   }
+    // });
   }
+
+  // onFilterEvent(filter: string) {
+  //   if(filter === 'Eliminated') {
+  //     this.tableCols = this.defaultCols;
+  //     // Hide visualization
+  //     $('#investViz').collapse('hide');
+  //   } else if(filter === 'Previous Year $') {
+  //     this.tableCols = this.PYcolumnDefs;
+  //     // Hide visualization
+  //     $('#investViz').collapse('hide');
+  //   } else if(filter === 'Current Year $') {
+  //     this.tableCols = this.CYcolumnDefs;
+  //     // Hide visualization
+  //     $('#investViz').collapse('hide');
+  //   } else if(filter === 'Budget Year $') {
+  //     this.tableCols = this.BYcolumnDefs;
+  //     // Hide visualization
+  //     $('#investViz').collapse('hide');
+  //   } else {
+  //     this.tableCols = this.defaultCols;
+  //     // Show visualization
+  //     $('#investViz').collapse('show');
+  //   }
+  // }
 
   getAriaLabel(data: { name: string, value: number }[]): string {
     const total = data.reduce((acc, cur) => acc + cur.value, 0);
@@ -361,125 +418,48 @@ export class InvestmentsComponent implements OnInit {
     }
   }
 
-  // Update table from filter buttons
-  eliminatedFilter() {
-    this.sharedService.disableStickyHeader("investTable");
-    this.filteredTable = true; // Filters are on, expose main table button
-    this.filterTitle = 'Eliminated';
-
-    // Hide visualization when on eliminated items
-    $('#investViz').collapse('hide');
-
-    $('#investTable').bootstrapTable('filterBy', {
-      Status: this.eliminatedTypes,
+  public onRowClick(e: any) {
+    const searchTerm: string = e.tableSearchString || '';
+    this.router.navigate(['/investments', e.ID], {
+        queryParams: { tableSearchTerm: searchTerm }
     });
-    $('#investTable').bootstrapTable('refreshOptions', {
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt(
-          'GSA_Eliminated_IT_Investments'
-        ),
-      },
-    });
-    this.sharedService.enableStickyHeader("investTable");
   }
 
-  previousYearFilter() {
-    this.sharedService.disableStickyHeader("investTable");
-    this.filteredTable = true; // Filters are on, expose main table button
-    this.filterTitle = 'Previous Year';
+  // onSelect(chartData): void {
+  //   this.sharedService.disableStickyHeader("investTable");
+  //   this.filteredTable = true; // Filters are on, expose main table button
+  //   this.filterTitle = chartData.name;
 
-    // Hide visualization
-    $('#investViz').collapse('hide');
+  //   // Filter by Type clicked on visualization
+  //   $('#investTable').bootstrapTable('filterBy', {
+  //     Status: this.nonEliminatedTypes,
+  //     Type: chartData.name,
+  //   });
+  //   $('#investTable').bootstrapTable('refreshOptions', {
+  //     exportOptions: {
+  //       fileName: this.sharedService.fileNameFmt(
+  //         'GSA_IT_Investments-' + chartData.name
+  //       ),
+  //     },
+  //   });
+  //   this.sharedService.enableStickyHeader("investTable");
+  // }
 
-    $('#investTable').bootstrapTable('filterBy', {});
-    $('#investTable').bootstrapTable('refreshOptions', {
-      columns: this.PYcolumnDefs,
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt(
-          'GSA_Previous_Year_IT_Investments'
-        ),
-      },
-    });
-    this.sharedService.enableStickyHeader("investTable");
-  }
+  // onFilterClick(filterButtons: FilterButton[]) {
+  //   this.tableData = this.tableDataOriginal;
+  //   // this.tableService.filterButtonClick(filterButtons, this.tableData);
+  //   filterButtons.forEach(f => {
+  //     if(f.filters &&  f.filters.length > 0) {
+  //       this.tableService.filterButtonClick(filterButtons, this.tableData);
+  //     }
+  //     this.onFilterEvent(f.buttonText);
+  //   });
+  // }
 
-  currentYearFilter() {
-    this.sharedService.disableStickyHeader("investTable");
-    this.filteredTable = true; // Filters are on, expose main table button
-    this.filterTitle = 'Current Year';
-
-    // Hide visualization when on eliminated items
-    $('#investViz').collapse('hide');
-
-    $('#investTable').bootstrapTable('filterBy', {});
-    $('#investTable').bootstrapTable('refreshOptions', {
-      columns: this.CYcolumnDefs,
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt(
-          'GSA_Current_Year_IT_Investments'
-        ),
-      },
-    });
-    this.sharedService.enableStickyHeader("investTable");
-  }
-
-  budgetYearFilter() {
-    this.sharedService.disableStickyHeader("investTable");
-    this.filteredTable = true; // Filters are on, expose main table button
-    this.filterTitle = 'Budget Year';
-
-    // Hide visualization
-    $('#investViz').collapse('hide');
-
-    $('#investTable').bootstrapTable('filterBy', {});
-    $('#investTable').bootstrapTable('refreshOptions', {
-      columns: this.BYcolumnDefs,
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt(
-          'GSA_Budget_Year_IT_Investments'
-        ),
-      },
-    });
-    this.sharedService.enableStickyHeader("investTable");
-  }
-
-  backToMainInvest() {
-    this.sharedService.disableStickyHeader("investTable");
-    this.filteredTable = false; // Hide main button
-    this.filterTitle = '';
-
-    $('#investViz').collapse('show');
-
-    // Remove filters and back to default
-    $('#investTable').bootstrapTable('filterBy', {
-      Status: this.nonEliminatedTypes,
-    });
-    $('#investTable').bootstrapTable('refreshOptions', {
-      columns: this.columnDefs,
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt('GSA_IT_Investments'),
-      },
-    });
-    this.sharedService.enableStickyHeader("investTable");
-  }
-
-  onSelect(chartData): void {
-    this.sharedService.disableStickyHeader("investTable");
-    this.filteredTable = true; // Filters are on, expose main table button
-    this.filterTitle = chartData.name;
-
-    // Filter by Type clicked on visualization
-    $('#investTable').bootstrapTable('filterBy', {
-      Status: this.nonEliminatedTypes,
-      Type: chartData.name,
-    });
-    $('#investTable').bootstrapTable('refreshOptions', {
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt(
-          'GSA_IT_Investments-' + chartData.name
-        ),
-      },
-    });
-    this.sharedService.enableStickyHeader("investTable");
-  }
+  // onFilterResetClick() {
+  //   $('#investViz').collapse('show');
+  //   this.tableCols = this.defaultCols;
+  //   this.tableData = this.tableDataOriginal;
+  //   this.tableService.updateReportTableData(this.tableDataOriginal);
+  // }
 }

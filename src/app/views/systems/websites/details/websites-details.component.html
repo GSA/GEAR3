@@ -1,0 +1,392 @@
+@if (isDataReady) {
+  <div class="websites-details-container">
+    <div class="breadcrumb-container">
+      <app-breadcrumb>
+        <span currentPageName>{{detailsData?.domain}}</span>
+      </app-breadcrumb>
+    </div>
+    <div class="title-container">
+      <span class="title">{{detailsData.domain}}</span>
+    </div>
+    <div class="content-container">
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="isOverviewTabActive" (click)="onTabClick('overview', $event)" href="#overview">Overview</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="isRelatedSystemsTabActive" (click)="onTabClick('relatedSystems', $event)" href="#relatedSystems">Related Systems</a>
+        </li>
+      </ul>
+      @if (isOverviewTabActive) {
+        <div class="tab-container">
+          <div class="overall-data-container">
+            <div class="main-data-container">
+              <div class="data-wrapper">
+                  <div class="data">
+                    <label class="data-label">
+                      <span [pTooltip]="getTooltip('Status')" [escape]="false" role="tooltip">
+                        Status
+                        <i class="fas fa-info-circle"></i>
+                      </span>
+                    </label>
+                    <span>
+                      <span>{{detailsData.production_status}}</span>
+                    </span>
+                  </div>
+                  <div class="data">
+                    <label class="data-label">
+                      <span [pTooltip]="getTooltip('Type of Site')" [escape]="false" role="tooltip">
+                        Type of Site
+                        <i class="fas fa-info-circle"></i>
+                      </span>
+                    </label>
+                    <span>
+                      <span>{{detailsData.type_of_site}}</span>
+                    </span>
+                  </div>
+                  <div class="data">
+                    <label class="data-label">
+                      <span [pTooltip]="getTooltip('Recent Screenshots')" [escape]="false" role="tooltip">
+                        Recent Screenshots
+                        <i class="fas fa-info-circle"></i>
+                      </span>
+                    </label>
+                    @if (!inProduction()) {
+                      <span class="alert alert-warning" role="alert">
+                        Websites that are not in a production status or are
+                        considered infrastructure do not contain screenshots
+                      </span>
+                    }
+                    @if (hasScanDate()) {
+                      <span>
+                        <span>{{websiteScan.scan_date | date : "mediumDate"}}</span>
+                      </span>
+                    }
+                  </div>
+                </div>
+                @if (hasImages()) {
+                  <div class="website-scan-image-container">
+                    <img [src]="getDesktopImg()" [alt]="getDesktopImgAltText()" class="shadow image-one" loading="lazy" />
+                    <img [src]="getMobileImg()" [alt]="getMobileImgAltText()" class="shadow image-two" loading="lazy" />
+                  </div>
+                } @else {
+                  <div class="website-scan-image-container">
+                    <img src="../../../../../assets/website-screenshots/desktop.png" alt="no desktop screenshot found" class="shadow image-one" loading="lazy" />
+                    <img src="../../../../../assets/website-screenshots/mobile.png" alt="no mobile screenshot found" class="shadow image-two" loading="lazy" />
+                  </div>
+                }
+
+            </div>
+            <div class="sub-content">
+              @if (hasServiceCategories()) {
+                <h4>Service Categories</h4>
+                <div class="service-category-container">
+                  <p-accordion>
+                    @for (sc of websiteServiceCategories; track sc; let i = $index) {
+                      <p-accordion-panel [value]="$index">
+                        <p-accordion-header>
+                          {{sc.name}}
+                        </p-accordion-header>
+                        <p-accordion-content>
+                          <website-service-category-details-content-lite [data]="sc" [websiteName]="detailsData.domain"></website-service-category-details-content-lite>
+                        </p-accordion-content>
+                      </p-accordion-panel>
+                    }
+                  </p-accordion>
+                </div>
+              }
+              <div class="additional-info-container">
+                <div class="main-data-container">
+                  <h4>Additional Information</h4>
+                  <div class="data-wrapper">
+                    <div class="data">
+                      <label class="data-label">
+                        <span [pTooltip]="getTooltip('Office')" [escape]="false" role="tooltip">
+                          Office
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
+                      <span>
+                        <span>{{detailsData.office || 'N/A'}}</span>
+                      </span>
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span [pTooltip]="getTooltip('Sub-office')" [escape]="false" role="tooltip">
+                          Sub Office
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
+                      <span>
+                        <span>{{detailsData.sub_office || 'N/A'}}</span>
+                      </span>
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span [pTooltip]="getTooltip('Website Manager')" [escape]="false" role="tooltip">
+                          Website Manager
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
+                      <span>
+                        <span>{{detailsData.site_owner_email || 'N/A'}}</span>
+                      </span>
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span [pTooltip]="getTooltip('Contact Email')" [escape]="false" role="tooltip">
+                          Contact Email
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
+                      <span>
+                        <span>{{detailsData.contact_email || 'N/A'}}</span>
+                      </span>
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span [pTooltip]="getTooltip('Redirect URL')" [escape]="false" role="tooltip">
+                          Redirect URL
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
+                      <span>
+                        <span>{{detailsData.redirects_to || 'N/A'}}</span>
+                      </span>
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span [pTooltip]="getTooltip('Required by Law/Policy?')" [escape]="false" role="tooltip">
+                          Required By Law/Policy?
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
+                      <span>
+                        <span>{{detailsData.required_by_law_or_policy || 'N/A'}}</span>
+                      </span>
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span [pTooltip]="getTooltip('DAP Enabled')" [escape]="false" role="tooltip">
+                          DAP Enabled
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
+                      <span>
+                        <span>{{detailsData.has_dap || 'N/A'}}</span>
+                      </span>
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span [pTooltip]="getTooltip('Current USWDS Score')" [escape]="false" role="tooltip">
+                          Current USWDS Score
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
+                      <span>
+                        <span>{{detailsData.uswds || 'N/A'}}</span>
+                      </span>
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span [pTooltip]="getTooltip('Mobile Friendly?')" [escape]="false" role="tooltip">
+                          Mobile Friendly?
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
+                      <span>
+                        <span>{{detailsData.mobile_friendly || 'N/A'}}</span>
+                      </span>
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span [pTooltip]="getTooltip('Has Search?')" [escape]="false" role="tooltip">
+                          Has Search?
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
+                      <span>
+                        <span>{{detailsData.has_search || 'N/A'}}</span>
+                      </span>
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span [pTooltip]="getTooltip('HTTPS Enabled')" [escape]="false" role="tooltip">
+                          HTTPS Enabled
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
+                      <span>
+                        <span>{{detailsData.https || 'N/A'}}</span>
+                      </span>
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span [pTooltip]="getTooltip('Hosting Platform')" [escape]="false" role="tooltip">
+                          Hosting Platform
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
+                      <span>
+                        <span>{{detailsData.hosting_platform || 'N/A'}}</span>
+                      </span>
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span [pTooltip]="getTooltip('Content Management Platform')" [escape]="false" role="tooltip">
+                          Content Management Platform
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
+                      <span>
+                        <span>{{detailsData.cms_platform || 'N/A'}}</span>
+                      </span>
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span [pTooltip]="getTooltip('Repository URL')" [escape]="false" role="tooltip">
+                          Repository URL
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
+                      <span>
+                        <span>{{detailsData.repository_url || 'N/A'}}</span>
+                      </span>
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span [pTooltip]="getTooltip('Target Decommission Date')" [escape]="false" role="tooltip">
+                          Target Decommission Date
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
+                      <span>
+                        <span>{{(detailsData.target_decommission_date | date:'shortDate') || 'N/A'}}</span>
+                      </span>
+                    </div>
+                    <div class="data">
+                      <label class="data-label">
+                        <span [pTooltip]="getTooltip('Sitemap URL')" [escape]="false" role="tooltip">
+                          Sitemap URL
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </label>
+                      <span>
+                        <span>{{detailsData.sitemap_url || 'N/A'}}</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="chart-container">
+                <h4>EDX Compiled Indicator</h4>
+                <div class="row mb-3">
+                  <div class="col-auto">
+                    <div>
+                      <svg class="website-chart" style="display: block; margin: 0 auto" id="graph"
+                        height="100" width="100" viewBox="0 0 100 100"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <title>
+                          Coxcomb chart showing website strengths and weaknesses
+                          on a 0 to 1 scale with 1 being the highest value. Scores
+                          are as follows: Customer Centricity:
+                          {{ detailsData.customer_centricity }}, Required Links:
+                          {{ detailsData.required_links }}, Mobile Performance:
+                          {{ detailsData.mobile_performance }}, Accessibility:
+                          {{ detailsData.accessibility }}, Google Analytics:
+                          {{ detailsData.google_analytics }}, USWDS:
+                          {{ detailsData.uswds }}
+                        </title>
+                        <g class="background">
+                          <circle cx="50" cy="50" r="50" pathLength="100" />
+                        </g>
+                        <g id="website-chart" class="graph">
+                                            <circle cx="50" cy="50" class="one" ngClass="{{
+                                            detailsData.customer_centricity === '0.00'
+                                              ? 'zeroValue'
+                                              : ''
+                                          }}" transform="rotate(-90 50 50)"
+                            [style.--value]="detailsData.customer_centricity" [style.--max]="1" />
+                                            <circle cx="50" cy="50" class="two" ngClass="{{
+                                            detailsData.required_links === '0.00' ? 'zeroValue' : ''
+                                          }}" transform="rotate(-30 50 50)"
+                              [style.--value]="detailsData.required_links" [style.--max]="1" />
+                                            <circle cx="50" cy="50" class="three" ngClass="{{
+                                            detailsData.mobile_performance === '0.00'
+                                              ? 'zeroValue'
+                                              : ''
+                                          }}" transform="rotate(30 50 50)"
+                                [style.--value]="detailsData.mobile_performance" [style.--max]="1" />
+                                            <circle cx="50" cy="50" class="four" ngClass="{{
+                                            detailsData.accessibility === '0.00' ? 'zeroValue' : ''
+                                          }}" transform="rotate(90 50 50)" [style.--value]="detailsData.accessibility"
+                                  [style.--max]="1" />
+                                            <circle cx="50" cy="50" class="five" ngClass="{{
+                                            detailsData.google_analytics === '0.00'
+                                              ? 'zeroValue'
+                                              : ''
+                                          }}" transform="rotate(150 50 50)"
+                                    [style.--value]="detailsData.google_analytics" [style.--max]="1" />
+                                            <circle cx="50" cy="50" class="six" ngClass="{{
+                                            detailsData.uswds === '0.00' ? 'zeroValue' : ''
+                                          }}" transform="rotate(210 50 50)" [style.--value]="detailsData.uswds"
+                                      [style.--max]="1" />
+                                    </g>
+                                  </svg>
+                                </div>
+                              </div>
+                              <div class="col-8">
+                                <p>
+                                  The following charts show the relative strengths and
+                                  weaknesses of each website across 6 areas.
+                                </p>
+                                <p>
+                                  A gray semi-circle appears when data is unavailable for the
+                                  website in that particular category.
+                                </p>
+                                <div class="row">
+                                  <div class="col-12 col-md-4 mb-2">
+                                    <span class="legend one"></span>Customer Centricity
+                                  </div>
+                                  <div class="col-12 col-md-4 mb-2">
+                                    <span class="legend two"></span>Required Links
+                                  </div>
+                                  <div class="col-12 col-md-4 mb-2">
+                                    <span class="legend three"></span>Mobile Performance
+                                  </div>
+                                  <div class="col-12 col-md-4 mb-2">
+                                    <span class="legend four"></span>Accessibility (AMP)
+                                  </div>
+                                  <div class="col-12 col-md-4 mb-2">
+                                    <span class="legend five"></span>Google Analytics
+                                  </div>
+                                  <div class="col-12 col-md-4 mb-2">
+                                    <span class="legend six"></span>USWDS
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                  @if (isRelatedSystemsTabActive) {
+                    <div class="tab-container">
+                      <div class="overall-data-container">
+                        <div class="main-data-container">
+                          <div class="sub-content full-width">
+                            <span class="sub-header">Related Systems</span>
+                            <app-table visibleColumnStorageKey="websites-related-systems" defaultSortField="Name" [localTableData]="relatedSystemsData" [isLocal]="true" [tableCols]="relatedSystemsCols"
+                            [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="systems" (rowClickEvent)="onRelatedSystemsRowClick($event)"></app-table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                  @if (isLoggedIn()) {
+                    <app-button [buttonText]="'Edit'" buttonStyle="outline" (buttonClick)="editWebsite()"></app-button>
+                  }
+                </div>
+              </div>
+            }

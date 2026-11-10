@@ -1,0 +1,73 @@
+.it-investments-container {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 1.5rem;
+
+    & .it-investments-title-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+         margin-bottom: 1rem;
+
+        h2{
+            margin-bottom: 0;
+        }
+    }
+
+    & .it-investments-definition-container {
+        padding: 1rem;
+         background-color: #fff;
+         border-radius: 0.3rem;
+
+        & .it-investments-definition-text {
+            display: block;
+            overflow: visible;
+            margin-bottom: .5rem;
+
+            a {
+                color: #005ea2;
+                text-decoration: underline;
+
+                &:hover,
+                &:focus {
+                    color: #1a4480;
+                    text-decoration-thickness: 2px;
+                }
+            }
+        }
+    }
+
+    & .investments-graph-container {
+
+        & .investments-graph {
+            width: 95%;
+            height: 300px;
+        }
+    }
+
+    & .it-investments-data-container {
+        display: flex;
+        flex-direction: column;
+        padding: 1rem 0;
+
+        & .filter-tabs-container {
+            & .filter-tab {
+                &:nth-child(odd) .filter-tab-number {
+                    background-color: #005ea2;
+                }
+
+                &:nth-child(even) .filter-tab-number {
+                    background-color: #6b7280;
+                }
+
+                &.selected:nth-child(odd) .filter-tab-number {
+                    background-color: #1a4480;
+                }
+
+                &.selected:nth-child(even) .filter-tab-number {
+                    background-color: #4b5563;
+                }
+            }
+        }
+    }
+}

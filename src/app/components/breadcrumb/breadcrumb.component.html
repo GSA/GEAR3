@@ -1,0 +1,13 @@
+@if (topLevelName) {
+  <span class="breadcrumb-text">{{topLevelName}}</span>
+  <span class="breadcrumb-separator">></span>
+}
+@if (previousLevelName) {
+  <span class="breadcrumb-text">
+    <a (click)="onBack()">{{previousLevelName}}</a>
+  </span>
+  <span class="breadcrumb-separator">></span>
+}
+<span class="breadcrumb-text">
+  <ng-content select="[currentPageName]"></ng-content>
+</span>

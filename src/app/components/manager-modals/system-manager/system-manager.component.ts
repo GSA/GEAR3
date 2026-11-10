@@ -12,10 +12,10 @@ import { TableService } from "@services/tables/table.service";
 declare var $: any;
 
 @Component({
-standalone: false,
-  selector: 'system-manager',
-  templateUrl: './system-manager.component.html',
-  styleUrls: ['./system-manager.component.css']
+    selector: 'system-manager',
+    templateUrl: './system-manager.component.html',
+    styleUrls: ['./system-manager.component.css'],
+    standalone: false
 })
 export class SystemManagerComponent implements OnInit {
 

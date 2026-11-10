@@ -13,10 +13,10 @@ import { DataDictionary } from '@api/models/data-dictionary.model';
 declare var $: any;
 
 @Component({
-standalone: false,
-  selector: 'it-standards-modal',
-  templateUrl: './it-standards-modal.component.html',
-  styleUrls: ['./it-standards-modal.component.scss']
+    selector: 'it-standards-modal',
+    templateUrl: './it-standards-modal.component.html',
+    styleUrls: ['./it-standards-modal.component.scss'],
+    standalone: false
 })
 export class ItStandardsModalComponent implements OnInit {
 
@@ -103,11 +103,7 @@ export class ItStandardsModalComponent implements OnInit {
   }
 
   getTooltip (name: string): string {
-    const def = this.attrDefinitions.find(def => def.Term === name);
-    if(def){
-      return def.TermDefinition;
-    }
-    return '';
+    return this.sharedService.getTooltip(this.attrDefinitions, name);
   }
 
   getStatusIconColor(status: string) {
@@ -196,7 +192,7 @@ export class ItStandardsModalComponent implements OnInit {
         html += `<li>${l}</li>`;
       });
     }
-    
+
     return html;
   }
 

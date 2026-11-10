@@ -17,7 +17,7 @@ export class ITStandards {
   public Comments: string = null;
   public old_Id: string = null;
   public POCorg: string = null;
-  public ReferenceDocuments: string = null;
+  public ReferenceDocument: string = null;
   public Manufacturer: string = null;
   public SoftwareProduct: string = null;
   public SoftwareVersion: string = null;
@@ -26,9 +26,11 @@ export class ITStandards {
   public SoftwareProductName: string = null;
   public SoftwareVersionName: string = null;
   public SoftwareReleaseName: string = null;
+  public StatusId: number = null;
   public Status: string = null;
   public CriticalReview: string = null;
-  public Deploymenttype: string = null;
+  public CSCRMReview: string = null;
+  public DeploymentType: string = null;
   public StandardType: string = null;
   public POC: string = null;
   public Category: string = null;
@@ -36,6 +38,13 @@ export class ITStandards {
   public EndOfLifeDate: Date = null;
   public ApprovedVersions: string = null;
   public OperatingSystems: number[] = null;
-  public ApBundleIds: AppBundle[] = null;
+  public AppBundleIds: AppBundle[] = null;
   public ManufacturerSoftwareProductName: string = null;
+  public DateCreated: Date = null;
+  public ComplianceStatus: string = null;
+  public ExceptionLink: string = null;
+  public ChangeDTG: Date = null;
+  public ConditionsRestrictions: string = null;
+  public AlsoKnownAs: string = null;
+  public CreateDTG: Date = null;
 }

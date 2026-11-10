@@ -1,18 +1,27 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit } from '@angular/core';
 
 @Component({
-standalone: false,
-  selector: 'framework',
-  templateUrl: './framework.component.html',
-  styleUrls: ['./framework.component.css']
+    selector: 'framework',
+    templateUrl: './framework.component.html',
+    styleUrls: ['./framework.component.scss'],
+    standalone: false
 })
 export class FrameworkComponent implements OnInit {
 
-  pdfHeight = 1000;
+  public pdfWidth = 0;
+  public pdfHeight = 0;
 
-  constructor() { }
+  constructor(private el: ElementRef) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
+    let parentElement = this.el.nativeElement.parentElement;
+    while (parentElement && !parentElement.classList.contains('site-container')) {
+      parentElement = parentElement.parentElement;
+    }
+    if (parentElement) {
+      this.pdfWidth = parentElement.offsetWidth - 200;
+      this.pdfHeight = parentElement.offsetHeight - 250;
+    }
   }
 
 }

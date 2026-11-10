@@ -71,3 +71,8 @@ tech_catalog_data
 googleauthentication
 googleauthentication.exe
 *gear_google_credentials.json
+
+# Chatbot debug files
+.high-vulns.json
+.phase2-backups/
+.phase2-logs/

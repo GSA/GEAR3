@@ -3,6 +3,7 @@ const ctrl = require('./base.controller');
 const fs = require('fs');
 const path = require('path');
 const { Guid } = require('typescript-guid');
+const { escape } = require('mysql2');
 
 const queryPath = '../queries/';
 
@@ -10,6 +11,21 @@ exports.findAll = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
     ` WHERE obj_standard_type.Keyname LIKE 'Software'
       AND obj_technology_status.Keyname NOT LIKE 'Not yet submitted'
+      GROUP BY tech.Id
+      ORDER BY IFNULL(tech.softwareReleaseName, tech.Keyname);`;
+
+  res = ctrl.sendQuery(query, 'IT Standards', res); //removed sendQuery_cowboy reference
+};
+
+exports.getStandardsLite = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards-lite.sql')).toString();
+  res = ctrl.sendQuery(query, 'IT Standards Lite', res);
+};
+
+exports.findAllApproved = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
+    ` WHERE obj_standard_type.Keyname LIKE 'Software'
+      AND obj_technology_status.Keyname = 'Approved'
       GROUP BY tech.Id
       ORDER BY IFNULL(tech.softwareReleaseName, tech.Keyname);`;
 
@@ -26,9 +42,15 @@ exports.findAllNoFilter = (req, res) => {
 };
 
 exports.findOne = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
-    ` WHERE tech.Id = ${req.params.id.replace(/\D/g, "")};`;
-  res = ctrl.sendQuery(query, 'individual IT Standard', res); //removed sendQuery_cowboy reference
+  let id = req.params.id.trim();
+  if(/^\d+$/.test(id)) {
+    var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
+      ` WHERE tech.Id = ${id};`;
+
+    res = ctrl.sendQuery(query, "individual IT Standard", res);
+  } else {
+    res.status(404).json({message: "ID not found"});
+  }
 };
 
 exports.findLatest = (req, res) => {
@@ -49,20 +71,25 @@ exports.updatedWithinWeek = (req, res) => {
 };
 
 exports.findSystems = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
+  let id = req.params.id.trim();
+  if(/^\d+$/.test(id)) {
+    var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
     ` LEFT JOIN zk_systems_subsystems_technology_xml AS mappings ON systems.\`ex:GEAR_ID\` = mappings.\`ex:obj_systems_subsystems_Id\`
       LEFT JOIN obj_technology AS tech                                ON mappings.\`ex:obj_technology_Id\` = tech.Id
 
-      WHERE tech.Id = ${req.params.id.replace(/\D/g, "")} GROUP BY systems.\`ex:GEAR_ID\`;`; //removed LEFT JOIN cowboy_ods.obj_technology reference
+      WHERE tech.Id = ${id} GROUP BY systems.\`ex:GEAR_ID\`;`;
 
-  res = ctrl.sendQuery(query, 'systems using IT Standard', res);
+    res = ctrl.sendQuery(query, 'systems using IT Standard', res);
+  } else {
+    res.status(404).json({message: "ID not found"});
+  }
 };
 
 exports.update = (req, res) => {
   ctrl.getApiToken (req, res)
   .then((response) => {
     if (response === 1) {
-      let techId = req.params.id.replace(/\D/g, "");
+      let techId = req.params.id;
       let data = req.body;
       let query = '';
       
@@ -78,7 +105,6 @@ exports.update = (req, res) => {
       } else {
         query += updateITStandardRelease(techId, data.tcSoftwareRelease);
       }
-      
 
       // Update POCs
       query += removeSavedPOCs(techId);
@@ -145,13 +171,13 @@ exports.create = (req, res) => {
 };
 
 exports.createAdvanced = (req, res) => {
+  let data = req.body;
+  let techId = req.params.id;
+  let query = '';
+
   ctrl.getApiToken (req, res)
   .then((response) => {
     if (response === 1) {
-      let data = req.body;
-      let techId = req.params.id.replace(/\D/g, "");;
-      let query = '';
-
       // Update Technopedia Fields
       query += saveCustomManufacturer(techId, data.tcManufacturer);
       query += saveCustomSoftwareProduct(techId, data.tcSoftwareProduct, data.tcManufacturer);
@@ -161,7 +187,6 @@ exports.createAdvanced = (req, res) => {
       } else {
         query += updateITStandardRelease(techId, data.tcSoftwareRelease);
       }
-      
 
       // Update POCs
       query += removeSavedPOCs(techId);
@@ -195,7 +220,7 @@ exports.createAdvanced = (req, res) => {
         });
       }
 
-      var logStatement = `insert into gear_log.event (Event, User, DTG) values ('create IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
+      var logStatement = `insert into gear_log.event (Event, User, DTG) values (${escape('create IT Standard: ' + query.replace(/'/g, ''))}, ${escape(req.headers.requester)}, now());`;
       res = ctrl.sendQuery(query + ' ' + logStatement, 'create IT Standard', res); //removed sendQuery_cowboy reference
     } else {
       res.status(502).json({
@@ -229,16 +254,22 @@ exports.findStatuses = (req, res) => {
   res = ctrl.sendQuery(query, 'IT Standard Statuses', res); //removed sendQuery_cowboy reference
 };
 
+exports.findTypes = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standard_types.sql')).toString();
+
+  res = ctrl.sendQuery(query, 'IT Standard Types', res); //removed sendQuery_cowboy reference
+};
+
 exports.findCriticalReviews = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standard_critical_reviews.sql')).toString();
 
   res = ctrl.sendQuery(query, 'IT Standard Critical Reviews', res);
 };
 
-exports.findTypes = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standard_types.sql')).toString();
+exports.findCSCRMReviews = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standard_c_scrm_reviews.sql')).toString();
 
-  res = ctrl.sendQuery(query, 'IT Standard Types', res); //removed sendQuery_cowboy reference
+  res = ctrl.sendQuery(query, 'IT Standard C-SCRM Reviews', res);
 };
 
 exports.findAttestationStatusTypes = (req, res) => {
@@ -271,46 +302,46 @@ exports.getAllOperatingSystems = (req, res) => {
 
 exports.getAppBundles = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_it-standard_app_bundles.sql`)).toString() +
-  ` WHERE matchBundle.obj_technology_Id = ${req.params.id.replace(/\D/g, "")});`;
+  ` WHERE matchBundle.obj_technology_Id = ?);`;
 
-  res = ctrl.sendQuery(query, 'App Bundles', res);
+  res = ctrl.sendQuery(query, 'App Bundles', res, null, [req.params.id]);
 }
 
 // Remove and Save Categories
 function removeSavedCategories(techId) {
-  return `DELETE FROM zk_technology_standard_category WHERE obj_technology_Id=${techId};`;
+  return `DELETE FROM zk_technology_TRM WHERE obj_technology_Id=${escape(techId)};`;
 }
 function saveCategories(techId, categoryId) {
-  return `INSERT INTO zk_technology_standard_category (obj_standard_category_Id, obj_technology_Id) VALUES (${categoryId}, ${techId});`;
+  return `INSERT INTO zk_technology_TRM (obj_TRM_Id, obj_technology_Id) VALUES (${escape(categoryId)}, ${escape(techId)});`;
 }
 
 // Remove and Save POCs
 function removeSavedPOCs(techId) {
-  return `DELETE FROM zk_technology_poc WHERE obj_technology_Id=${techId};`;
+  return `DELETE FROM zk_technology_poc WHERE obj_technology_Id=${escape(techId)};`;
 }
 function savePOCs(techId, pocName) {
-  return `INSERT INTO zk_technology_poc (obj_technology_Id, obj_ldap_SamAccountName) VALUES (${techId}, '${pocName}');`;
+  return `INSERT INTO zk_technology_poc (obj_technology_Id, obj_ldap_SamAccountName) VALUES (${escape(techId)}, ${escape(String(pocName))});`;
 }
 
 // Remove and Save OS
 function removeSavedOS(techId) {
-  return `DELETE FROM zk_technology_operating_system WHERE obj_technology_Id=${techId}; `;
+  return `DELETE FROM zk_technology_operating_system WHERE obj_technology_Id=${escape(techId)}; `;
 }
 function saveOS(techId, osId) {
-  return `INSERT INTO zk_technology_operating_system (obj_operating_system_Id, obj_technology_Id) VALUES (${osId}, ${techId});`;
+  return `INSERT INTO zk_technology_operating_system (obj_operating_system_Id, obj_technology_Id) VALUES (${escape(osId)}, ${escape(techId)});`;
 }
 
 // Remove and Save App Bundles
 function removeSavedAppBundles(techId) {
   let deletionString = '';
-  deletionString += `DELETE FROM zk_technology_app_bundle WHERE obj_technology_Id=${techId};`;
-  deletionString += `DELETE FROM obj_technology_app_bundle WHERE Id=${techId};`;
+  deletionString += `DELETE FROM zk_technology_app_bundle WHERE obj_technology_Id=${escape(techId)};`;
+  deletionString += `DELETE FROM obj_technology_app_bundle WHERE Id=${escape(techId)};`;
   return deletionString;
 }
 function saveAppBundles(techId, appBundle) {
   let saveString = '';
-  saveString += `INSERT INTO obj_technology_app_bundle (Keyname) VALUES ('${appBundle.Name}'); `;
-  saveString += `INSERT INTO zk_technology_app_bundle (obj_technology_app_bundle_Id, obj_technology_Id) VALUES (LAST_INSERT_ID(), ${techId}); `;
+  saveString += `INSERT INTO obj_technology_app_bundle (Keyname) VALUES (${escape(String(appBundle.Name))}); `;
+  saveString += `INSERT INTO zk_technology_app_bundle (obj_technology_app_bundle_Id, obj_technology_Id) VALUES (LAST_INSERT_ID(), ${escape(techId)}); `;
   return saveString;
 }
 
@@ -322,22 +353,22 @@ function saveCustomManufacturer(techId, manufacturer) {
     queryString = `UPDATE 
                     obj_technology
                   SET
-                    manufacturer = '${manufacturer.id}',
-                    manufacturerName = '${manufacturer.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
+                    manufacturer = ${escape(String(manufacturer.id))},
+                    manufacturerName = ${escape(manufacturer.name)}
                   WHERE
-                    Id = ${techId};`;
+                    Id = ${escape(techId)};`;
   } else {
     let guid = Guid.create().toString();
     queryString += `INSERT INTO obj_manufacturer
                       (id, name, createdDate)
-                    VALUES ('${guid}', '${manufacturer.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}', NOW());`;
+                    VALUES ('${guid}', ${escape(manufacturer.name)}, NOW());`;
     queryString += `UPDATE 
                       obj_technology
                     SET
                       manufacturer = '${guid}',
-                      manufacturerName = '${manufacturer.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
+                      manufacturerName = ${escape(manufacturer.name)}
                     WHERE
-                      Id = ${techId};`;
+                      Id = ${escape(techId)};`;
   }
 
   return queryString;
@@ -350,22 +381,22 @@ function saveCustomSoftwareProduct(techId, softwareProduct, manufacturer) {
     queryString = `UPDATE 
                     obj_technology
                   SET
-                    softwareProduct = '${softwareProduct.id}',
-                    softwareProductName = '${softwareProduct.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
+                    softwareProduct = ${escape(String(softwareProduct.id))},
+                    softwareProductName = ${escape(softwareProduct.name)}
                   WHERE
-                    Id = ${techId};`;
+                    Id = ${escape(techId)};`;
   } else {
     let guid = Guid.create().toString();
     queryString += `INSERT INTO obj_software_product
                       (id, name, createdDate, manufacturer_id)
-                    VALUES ('${guid}', '${softwareProduct.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}', NOW(), '${manufacturer.id}');`;
+                    VALUES ('${guid}', ${escape(softwareProduct.name)}, NOW(), ${escape(String(manufacturer.id))});`;
     queryString += `UPDATE 
                       obj_technology
                     SET
                       softwareProduct = '${guid}',
-                      softwareProductName = '${softwareProduct.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
+                      softwareProductName = ${escape(softwareProduct.name)}
                     WHERE
-                      Id = ${techId};`;
+                      Id = ${escape(techId)};`;
   }
 
   return queryString;
@@ -378,22 +409,22 @@ function saveCustomSoftwareVersion(techId, softwareVersion, softwareProduct) {
     queryString = `UPDATE 
                     obj_technology
                   SET
-                    softwareVersion = '${softwareVersion.id}',
-                    softwareVersionName = '${softwareVersion.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
+                    softwareVersion = ${escape(String(softwareVersion.id))},
+                    softwareVersionName = ${escape(softwareVersion.name)}
                   WHERE
-                    Id = ${techId};`;
+                    Id = ${escape(techId)};`;
   } else {
     let guid = Guid.create().toString();
     queryString += `INSERT INTO obj_software_version
                       (id, name, createdDate, software_product_id)
-                    VALUES ('${guid}', '${softwareVersion.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}', NOW(), '${softwareProduct.id}');`;
+                    VALUES ('${guid}', ${escape(softwareVersion.name)}, NOW(), ${escape(String(softwareProduct.id))});`;
     queryString += `UPDATE 
                       obj_technology
                     SET
                       softwareVersion = '${guid}',
-                      softwareVersionName = '${softwareVersion.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
+                      softwareVersionName = ${escape(softwareVersion.name)}
                     WHERE
-                      Id = ${techId};`;
+                      Id = ${escape(techId)};`;
   }
 
   return queryString;
@@ -406,22 +437,22 @@ function saveCustomSoftwareRelease(techId, softwareRelease, softwareVersion) {
     queryString = `UPDATE 
                     obj_technology
                   SET
-                    softwareRelease = '${softwareRelease.id}',
-                    softwareReleaseName = '${softwareRelease.application.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
+                    softwareRelease = ${escape(String(softwareRelease.id))},
+                    softwareReleaseName = ${escape(softwareRelease.application)}
                   WHERE
-                    Id = ${techId};`;
+                    Id = ${escape(techId)};`;
   } else if(softwareRelease && !softwareRelease.id) {
     let guid = Guid.create().toString();
     queryString += `INSERT INTO obj_software_release
                       (id, name, createdDate, software_version_id)
-                    VALUES ('${guid}', '${softwareRelease.application.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}', NOW(), '${softwareVersion.id}');`;
+                    VALUES ('${guid}', ${escape(softwareRelease.application)}, NOW(), ${escape(String(softwareVersion.id))});`;
     queryString += `UPDATE 
                       obj_technology
                     SET
                       softwareRelease = '${guid}',
-                      softwareReleaseName = '${softwareRelease.application.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
+                      softwareReleaseName = ${escape(softwareRelease.application)}
                     WHERE
-                      Id = ${techId};`;
+                      Id = ${escape(techId)};`;
   }
 
   return queryString;
@@ -429,36 +460,43 @@ function saveCustomSoftwareRelease(techId, softwareRelease, softwareVersion) {
 
 function updateITStandardRelease(techId, softwareRelease) {
   let queryString = '';
+  if (!softwareRelease || softwareRelease.application === undefined || softwareRelease.application === null) {
+    return queryString;
+  }
   queryString = `UPDATE 
                   obj_technology
                 SET
-                  softwareReleaseName = '${softwareRelease.application}'
+                  softwareReleaseName = ${escape(softwareRelease.application)}
                 WHERE
-                  Id = ${techId};`;
+                  Id = ${escape(techId)};`;
   return queryString;
 }
 
 function generateKeyname(data) {
   let keyname = '';
   if(!data.tcSoftwareRelease ||
-     (data.tcSoftwareRelease && data.tcSoftwareRelease.application === '') ||
-     (data.tcSoftwareRelease && data.tcSoftwareRelease.application === 'null') || 
-     (data.tcSoftwareRelease && data.tcSoftwareRelease.application === 'NULL')
-  ) {
-    if(!data.itStandName) {
+    (data.tcSoftwareRelease && data.tcSoftwareRelease.application === '') ||
+    (data.tcSoftwareRelease && data.tcSoftwareRelease.application === 'null') || 
+    (data.tcSoftwareRelease && data.tcSoftwareRelease.application === 'NULL')
+ ) {
+    if(!data.itStandAlsoKnownAs) {
       res.status(500).json({
         message: "IT Standards name missing from API payload."
       });
       return;
     } else {
-      keyname = data.itStandName;
+      keyname = data.itStandAlsoKnownAs;
     }
   } else {
     keyname = data.tcSoftwareRelease.application;
   }
-
-  keyname = keyname.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'").trim();
+  keyname = keyname.trim();
   return keyname;
+}
+
+function textOrNull(content) {
+  if (!content || content === 'NULL' || content === 'null') return null;
+  return content;
 }
 
 function normalizeFormBooleanValues(booleanValue) {
@@ -478,49 +516,45 @@ function updateData(techId, data) {
   // data.itStandOpenSource = normalizeFormBooleanValues(data.itStandOpenSource);
   // data.itStandGoldImg = normalizeFormBooleanValues(data.itStandGoldImg);
   // data.itStandReqAtte = normalizeFormBooleanValues(data.itStandReqAtte);
-
-  data.itStandDesc = ctrl.setNullEmptyTextHandler(data.itStandDesc);
-  data.itStandAprvExp = ctrl.setNullEmptyTextHandler(data.itStandAprvExp);
-  data.itStandRefDocs = ctrl.setNullEmptyTextHandler(data.itStandRefDocs);
-  data.itStandApprovedVersions = ctrl.setNullEmptyTextHandler(data.itStandApprovedVersions);
-  data.itStandVendorOrg = ctrl.setNullEmptyTextHandler(data.itStandVendorOrg);
-  data.itStandAtteLink = ctrl.setNullEmptyTextHandler(data.itStandAtteLink);
-  data.itStandGoldComment = ctrl.setNullEmptyTextHandler(data.itStandGoldComment);
-  data.itStandRITM = ctrl.setNullEmptyTextHandler(data.itStandRITM);
-  data.itStandComments = ctrl.setNullEmptyTextHandler(data.itStandComments);
-
-  data.tcEndOfLifeDate = ctrl.setNullEmptyTextHandler(data.tcEndOfLifeDate);
-
+  if (data.itStandCSCRMReview === undefined || data.itStandCSCRMReview === null || data.itStandCSCRMReview === '') {
+    data.itStandCSCRMReview = null;
+  }
   if (data.itStandCriticalReview === undefined || data.itStandCriticalReview === null || data.itStandCriticalReview === '') {
     data.itStandCriticalReview = null;
   }
 
+  data.tcEndOfLifeDate = ctrl.setNullEmptyTextHandler(data.tcEndOfLifeDate);
+
   return `UPDATE obj_technology
           SET
-            obj_technology_status_Id          = ${data.itStandStatus},
-            Keyname                           = '${keyname}',
-            approvedVersions                  = ${data.itStandApprovedVersions},
-            Description                       = ${data.itStandDesc},
-            obj_standard_type_Id              = ${data.itStandType},
-            obj_508_compliance_status_Id      = ${data.itStand508},
-            obj_technology_critical_review_Id = ${data.itStandCriticalReview},
-            Available_through_Myview          = '${data.itStandMyView}',
-            Vendor_Standard_Organization      = ${data.itStandVendorOrg},
-            obj_deployment_type_Id            = ${data.itStandDeployment},
-            Approved_Status_Expiration_Date   = ${data.itStandAprvExp},
-            attestation_required              = ${data.itStandReqAtte},
-            attestation_link                  = ${data.itStandAtteLink},
-            fedramp                           = '${data.itStandFedramp}',
-            open_source                       = '${data.itStandOpenSource}',
-            Gold_Image                        = '${data.itStandGoldImg}',
-            Gold_Image_Comment                = ${data.itStandGoldComment},
-            RITM                              = ${data.itStandRITM},
-            Comments                          = ${data.itStandComments},
-            Reference_documents               = ${data.itStandRefDocs},
-            ChangeAudit                       = '${data.auditUser}',
+            obj_technology_status_Id          = ${escape(data.itStandStatus)},
+            Keyname                           = ${escape(String(keyname))},
+            approvedVersions                  = ${escape(textOrNull(data.itStandApprovedVersions))},
+            Description                       = ${escape(textOrNull(data.itStandDesc))},
+            obj_standard_type_Id              = ${escape(data.itStandType)},
+            obj_508_compliance_status_Id      = ${escape(data.itStand508)},
+            obj_technology_critical_review_Id = ${escape(data.itStandCriticalReview)},
+            obj_technology_cscrm_review_Id    = ${escape(data.itStandCSCRMReview)},
+            \`508_exception_link\`            = ${escape(textOrNull(data.itStand508ExceptionLink))},
+            Available_through_Myview          = ${escape(String(data.itStandMyView))},
+            Vendor_Standard_Organization      = ${escape(textOrNull(data.itStandVendorOrg))},
+            obj_deployment_type_Id            = ${escape(data.itStandDeployment)},
+            Approved_Status_Expiration_Date   = ${escape(textOrNull(data.itStandAprvExp))},
+            attestation_required              = ${escape(data.itStandReqAtte)},
+            attestation_link                  = ${escape(textOrNull(data.itStandAtteLink))},
+            fedramp                           = ${escape(String(data.itStandFedramp))},
+            open_source                       = ${escape(String(data.itStandOpenSource))},
+            Gold_Image                        = ${escape(String(data.itStandGoldImg))},
+            Gold_Image_Comment                = ${escape(textOrNull(data.itStandGoldComment))},
+            RITM                              = ${escape(textOrNull(data.itStandRITM))},
+            Comments                          = ${escape(textOrNull(data.itStandComments))},
+            Reference_documents               = ${escape(textOrNull(data.itStandRefDocs))},
+            ChangeAudit                       = ${escape(String(data.auditUser))},
             ChangeDTG                         = NOW(),
-            endOfLifeDate                     = ${endOfLifeDateFragment}
-          WHERE Id = ${techId};`;
+            endOfLifeDate                     = ${endOfLifeDateFragment},
+            Conditions_Restrictions           = ${escape(textOrNull(data.itStandConditionsRestrictions))},
+            AlsoKnownAs                       = ${escape(textOrNull(data.itStandAlsoKnownAs))}
+          WHERE Id = ${escape(techId)};`;
 }
 
 function saveData(data) {
@@ -532,17 +566,9 @@ function saveData(data) {
   // data.itStandOpenSource = normalizeFormBooleanValues(data.itStandOpenSource);
   // data.itStandGoldImg = normalizeFormBooleanValues(data.itStandGoldImg);
   // data.itStandReqAtte = normalizeFormBooleanValues(data.itStandReqAtte);
-
-  data.itStandDesc = ctrl.setNullEmptyTextHandler(data.itStandDesc);
-  data.itStandAprvExp = ctrl.setNullEmptyTextHandler(data.itStandAprvExp);
-  data.itStandRefDocs = ctrl.setNullEmptyTextHandler(data.itStandRefDocs);
-  data.itStandApprovedVersions = ctrl.setNullEmptyTextHandler(data.itStandApprovedVersions);
-  data.itStandVendorOrg = ctrl.setNullEmptyTextHandler(data.itStandVendorOrg);
-  data.itStandAtteLink = ctrl.setNullEmptyTextHandler(data.itStandAtteLink);
-  data.itStandGoldComment = ctrl.setNullEmptyTextHandler(data.itStandGoldComment);
-  data.itStandRITM = ctrl.setNullEmptyTextHandler(data.itStandRITM);
-  data.itStandComments = ctrl.setNullEmptyTextHandler(data.itStandComments);
-
+  if (data.itStandCSCRMReview === undefined || data.itStandCSCRMReview === null || data.itStandCSCRMReview === '') {
+    data.itStandCSCRMReview = null;
+  }
   if (data.itStandCriticalReview === undefined || data.itStandCriticalReview === null || data.itStandCriticalReview === '') {
     data.itStandCriticalReview = null;
   }
@@ -555,6 +581,8 @@ function saveData(data) {
             obj_standard_type_Id,
             obj_508_compliance_status_Id,
             obj_technology_critical_review_Id,
+            obj_technology_cscrm_review_Id,
+            \`508_exception_link\`,
             Available_through_Myview,
             Vendor_Standard_Organization,
             obj_deployment_type_Id,
@@ -568,28 +596,138 @@ function saveData(data) {
             RITM,
             Comments,
             Reference_documents,
-            endOfLifeDate
+            endOfLifeDate,
+            Conditions_Restrictions,
+            AlsoKnownAs,
+            CreateAudit,
+            CreateDTG,
+            ChangeAudit,
+            ChangeDTG
           ) VALUES (
-           ${data.itStandStatus},
-           '${keyname}',
-           ${data.itStandApprovedVersions},
-           ${data.itStandDesc},
-           ${data.itStandType},
-           ${data.itStand508},
-           ${data.itStandCriticalReview},
-           '${data.itStandMyView}',
-           ${data.itStandVendorOrg},
-           ${data.itStandDeployment},
-           ${data.itStandAprvExp},
-           ${data.itStandReqAtte},
-           ${data.itStandAtteLink},
-           '${data.itStandFedramp}',
-           '${data.itStandOpenSource}',
-           '${data.itStandGoldImg}',
-           ${data.itStandGoldComment},
-           ${data.itStandRITM},
-           ${data.itStandComments},
-           ${data.itStandRefDocs},
-           ${endOfLifeDateFragment}
+           ${escape(data.itStandStatus)},
+           ${escape(String(keyname))},
+           ${escape(textOrNull(data.itStandApprovedVersions))},
+           ${escape(textOrNull(data.itStandDesc))},
+           ${escape(data.itStandType)},
+           ${escape(data.itStand508)},
+           ${escape(data.itStandCriticalReview)},
+           ${escape(data.itStandCSCRMReview)},
+           ${escape(textOrNull(data.itStand508ExceptionLink))},
+           ${escape(String(data.itStandMyView))},
+           ${escape(textOrNull(data.itStandVendorOrg))},
+           ${escape(data.itStandDeployment)},
+           ${escape(textOrNull(data.itStandAprvExp))},
+           ${escape(data.itStandReqAtte)},
+           ${escape(textOrNull(data.itStandAtteLink))},
+           ${escape(String(data.itStandFedramp))},
+           ${escape(String(data.itStandOpenSource))},
+           ${escape(String(data.itStandGoldImg))},
+           ${escape(textOrNull(data.itStandGoldComment))},
+           ${escape(textOrNull(data.itStandRITM))},
+           ${escape(textOrNull(data.itStandComments))},
+           ${escape(textOrNull(data.itStandRefDocs))},
+           ${endOfLifeDateFragment},
+           ${escape(textOrNull(data.itStandConditionsRestrictions))},
+           ${escape(textOrNull(data.itStandAlsoKnownAs))},
+           ${escape(String(data.auditUser))},
+           NOW(),
+           ${escape(String(data.auditUser))},
+           NOW()
           );`;
 }
+
+exports.getRecent = (req, res) => {
+  var numberOfRecords = Number(req.params.records);
+  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards_recent.sql')).toString() +
+    ` GROUP BY tech.Id
+      ORDER BY tech.CreateDTG DESC LIMIT ${numberOfRecords};`;
+
+  res = ctrl.sendQuery(query, `latest ${numberOfRecords} IT Standard`, res);
+};
+
+exports.getExpiringQuarter = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_it-standards_expiring_quarter.sql`)).toString();
+
+  res = ctrl.sendQuery(query, `Expiring IT standards this quarter`, res);
+};
+
+exports.getExpiringWeek = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_it-standards_expiring_week.sql`)).toString();
+
+  res = ctrl.sendQuery(query, `Expiring IT standards this week`, res);
+};
+
+exports.getPastDue = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_it-standards_past_due.sql`)).toString();
+
+  res = ctrl.sendQuery(query, `Past due IT standards`, res);
+};
+
+exports.getRetiredTotals = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_it-standards_retired_totals.sql`)).toString();
+
+  res = ctrl.sendQuery(query, `Retired IT standard totals`, res);
+};
+
+exports.getRelatedTRMS = (req, res) => {
+  let id = req.params.id.trim();
+  if(/^\d+$/.test(id)) {
+    var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_it-standards_related_trms.sql`)).toString() +
+  ` WHERE tech.Id = ${id};`;
+
+  res = ctrl.sendQuery(query, `IT standard related TRMs`, res);
+  } else {
+    res.status(404).json({message: "ID not found"});
+  }
+};
+
+exports.getFilterTotals = (req, res) => {
+  var filterQueryBase = 'AND (';
+  var filterQuery = '';
+  var filterQueryEnd  = ')';
+  var filterQueryFull = '';
+  if(req.params.filters && req.params.filters.length > 0) {
+    var filters = req.params.filters.split(',');
+
+    for(i = 0; i < filters.length; i++) {
+      if(i === 0) {
+        filterQuery += `obj_deployment_type.Keyname = ${escape(filters[i])}`;
+      } else {
+        filterQuery += ` OR obj_deployment_type.Keyname = ${escape(filters[i])}`;
+      }
+    }
+
+    filterQueryFull = filterQueryBase + filterQuery + filterQueryEnd;
+  }
+
+  var allQuery = '';
+  if(!filterQueryFull) {
+    allQuery = '*';
+  } else {
+    allQuery = `CASE WHEN (${filterQuery}) THEN 1 ELSE NULL END`;
+  }
+
+  var query = `SELECT COUNT(CASE WHEN obj_technology_status.Keyname = 'Approved' ${filterQueryFull} THEN 1
+                  ELSE NULL
+                END) AS ApprovedTotal,
+                COUNT(CASE WHEN obj_technology_status.Keyname = 'Denied' ${filterQueryFull} THEN 1
+                  ELSE NULL
+                END) AS DeniedTotal,
+                COUNT(CASE WHEN obj_technology_status.Keyname = 'Retired' ${filterQueryFull} THEN 1
+                  ELSE NULL
+                END) AS RetiredTotal,
+                COUNT(CASE WHEN (obj_technology_status.Keyname != 'Approved' 
+                            AND obj_technology_status.Keyname != 'Denied' 
+                            AND obj_technology_status.Keyname != 'Retired') ${filterQueryFull} THEN 1
+                     ELSE NULL
+              END) AS OtherTotal,
+                COUNT(${allQuery}) AS AllTotal
+              FROM obj_technology AS tech
+              LEFT JOIN obj_technology_status   ON tech.obj_technology_status_Id = obj_technology_status.Id
+              LEFT JOIN obj_standard_type       ON tech.obj_standard_type_Id = obj_standard_type.Id
+              LEFT JOIN obj_deployment_type     ON tech.obj_deployment_type_Id = obj_deployment_type.Id
+              WHERE obj_standard_type.Keyname LIKE 'Software'
+              AND obj_technology_status.Keyname NOT LIKE 'Not yet submitted'`;
+
+  res = ctrl.sendQuery(query, `IT Standards filter totals`, res);
+};

@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { switchMap, take } from 'rxjs/operators';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
@@ -9,34 +11,61 @@ import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
 
 import { System } from '@api/models/systems.model';
+import { Column, FilterButton, TwoDimArray } from '../../../common/table-classes';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 
 // Declare D3 & Sankey library
-declare var d3: any;
-import * as d3Sankey from 'd3-sankey';
+// declare var d3: any;
+// import * as d3Sankey from 'd3-sankey';
 
-// Declare jQuery symbol
-declare var $: any;
+// // Declare jQuery symbol
+// declare var $: any;
 
 @Component({
-standalone: false,
-  selector: 'systems',
-  templateUrl: './systems.component.html',
-  styleUrls: ['./systems.component.css'],
+    selector: 'systems',
+    templateUrl: './systems.component.html',
+    styleUrls: ['./systems.component.scss'],
+    standalone: false
 })
-export class SystemsComponent implements OnInit {
-  row: Object = <any>{};
+export class SystemsComponent implements OnInit, OnDestroy {
+  // row: Object = <any>{};
   filteredTable: boolean = false;
   filterTitle: string = '';
-  interfaces: any[] = [];
-  cloudTable: boolean = false;
-  inactiveTable: boolean = false;
-  pendingTable: boolean = false;
+  // interfaces: any[] = [];
+  // cloudTable: boolean = false;
+  // inactiveTable: boolean = false;
+  // pendingTable: boolean = false;
 
   vizData: any[] = [];
   vizLabel: string = 'Total Active Systems';
-  colorScheme: {} = {
-    domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5'],
+  colorScheme: { domain: string[] } = {
+    domain: []
   };
+
+  private readonly chartColors: string[] = [
+    '#0D47A1', '#D97706', '#6A1B9A', '#0F766E', '#C2410C', '#2563EB',
+    '#8E24AA', '#A16207', '#334155', '#0E7490', '#5B21B6', '#B45309',
+    '#1D4ED8', '#134E4A', '#7C3AED', '#92400E', '#155E75', '#0369A1',
+    '#4A148C', '#2F4B7C', '#6D28D9', '#1565C0', '#1E40AF', '#0B3B91'
+  ];
+
+  public tableCols: Column[] = [];
+  public selectedTab: string = '';
+  public filterTotals: any = null;
+
+  public systemsData: System[] = [];
+  public systemsDataTabFilterted: System[] = [];
+
+  // custom filter queryParams values
+  public monthsDecommissioned: number = 0;
+  public cloudBasedFilterValue: string | null = null;
+  public cspName: string = '';
+
+  public attributeDefs: DataDictionary[] = [];
+  public  defaultTableCols: Column[] = [];
+  public inactiveColumnDefs: Column[] = [];
+
+  private queryParamsSub: Subscription | null = null;
 
   constructor(
     private apiService: ApiService,
@@ -48,296 +77,412 @@ export class SystemsComponent implements OnInit {
     private tableService: TableService,
     private titleService: Title
   ) {
-    this.modalService.currentSys.subscribe((row) => (this.row = row));
+    // this.modalService.currentSys.subscribe((row) => (this.row = row));
   }
 
-  //active table export ignore column indices
-  activeExportIgnoreColumn = [];
-  //inactive table export ignore column indices
-  inactiveExportIgnoreColumn = [];
-  
-  // Systems Table Options
-  tableOptions: {} = this.tableService.createTableOptions({
-    advancedSearch: true,
-    idTable: 'SystemTable',
-    classes: 'table-hover table-dark clickable-table',
-    showColumns: true,
-    showExport: true,
-    exportFileName: 'GSA_Systems_SubSystems',
-    exportIgnoreColumn: this.activeExportIgnoreColumn,
-    headerStyle: 'bg-danger',
-    pagination: true,
-    search: true,
-    sortName: 'Name',
-    sortOrder: 'asc',
-    showToggle: true,
-    url: this.apiService.sysUrl,
-  });
+  public onSelectTab(tabName: string): void {
+    this.selectedTab = tabName;
+    this.filteredTable = false;
+    this.filterTitle = '';
+    this.systemsDataTabFilterted = [];
 
-  // Systems Table Columns
-  columnDefs: any[] = [
-    {
-      field: 'ID',
-      title: 'ID',
-      sortable: true,
-      visible: false,
-    },
-    {
-      field: 'DisplayName',
-      title: 'Alias/Acronym',
-      sortable: true,
-    },
-    {
-      field: 'Name',
-      title: 'System Name',
-      sortable: true,
-    },
-    {
-      field: 'Description',
-      title: 'Description',
-      sortable: true,
-      visible: true,
-      formatter: this.sharedService.formatDescription
-    },
-    {
-      field: 'SystemLevel',
-      title: 'System Level',
-      sortable: true,
-    },
-    {
-      field: 'Status',
-      title: 'Status',
-      sortable: true,
-    },
-    {
-      field: 'RespOrg',
-      title: 'Responsible Org',
-      sortable: true,
-    },
-    {
-      field: 'BusOrgSymbolAndName',
-      title: 'SSO/CXO',
-      sortable: true,
-    },
-    {
-      field: 'BusOrg',
-      title: 'Business Org',
-      sortable: true,
-    },
-    {
-      field: 'ParentName',
-      title: 'Parent System',
-      sortable: true,
-      visible: false,
-    },
-    {
-      field: 'CSP',
-      title: 'Hosting Provider',
-      sortable: true,
-      visible: false,
-    },
-    {
-      field: 'CloudYN',
-      title: 'Cloud Hosted?',
-      sortable: true,
-      visible: false,
-    },
-    {
-      field: 'ServiceType',
-      title: 'Cloud Service Type',
-      sortable: true,
-      visible: false,
-    },
-    {
-      field: 'AO',
-      title: 'Authorizing Official',
-      sortable: true,
-      visible: false,
-      formatter: this.sharedService.pocStringNameFormatter,
-    },
-    {
-      field: 'SO',
-      title: 'System Owner',
-      sortable: true,
-      visible: false,
-      formatter: this.sharedService.pocStringNameFormatter,
-    },
-    {
-      field: 'BusPOC',
-      title: 'Business POC',
-      sortable: true,
-      visible: false,
-      formatter: this.sharedService.pocStringNameFormatter,
-    },
-    {
-      field: 'TechPOC',
-      title: 'Technical POC',
-      sortable: true,
-      visible: false,
-      formatter: this.sharedService.pocStringNameFormatter,
-    },
-    {
-      field: 'DataSteward',
-      title: 'Data Steward',
-      sortable: true,
-      visible: false,
-      formatter: this.sharedService.pocStringNameFormatter,
-    },
-    {
-      field: 'FISMASystemIdentifier',
-      title: 'FISMA System Identifier',
-      sortable: true,
-      visible: false
-    },
-  ];
+    if(this.selectedTab === 'All') {
+      this.systemsDataTabFilterted = this.systemsData.filter(s => {
+        return s.Status === 'Active' && s.BusApp === 'Yes';
+      });
+      this.tableCols = this.defaultTableCols;
+    } else if (this.selectedTab === 'Cloud Enabled') {
+      this.systemsDataTabFilterted = this.systemsData.filter(s => {
+        return s.Status === 'Active' && s.BusApp === 'Yes' && s.CloudYN === 'Yes';
+      });
+      this.tableCols = this.defaultTableCols;
+    } else if (this.selectedTab === 'Inactive') {
+      this.systemsDataTabFilterted = this.systemsData.filter(s => {
+        return s.Status === 'Inactive' && s.BusApp === 'Yes';
+      });
+      this.tableCols = this.inactiveColumnDefs;
+    }
+    this.tableService.updateReportTableData(this.systemsDataTabFilterted);
+    //this.tableService.updateReportTableDataReadyStatus(true);
+  }
 
-  // Inactive Column Defs
-  inactiveColumnDefs: any[] = [
-    {
-      field: 'Name',
-      title: 'System Name',
-      sortable: true,
-    },
-    {
-      field: 'Description',
-      title: 'Description',
-      sortable: true,
-      visible: true,
-      formatter: this.sharedService.formatDescription
-    },
-    {
-      field: 'SystemLevel',
-      title: 'System Level',
-      sortable: true,
-    },
-    {
-      field: 'Status',
-      title: 'Status',
-      sortable: true,
-    },
-    {
-      field: 'RespOrg',
-      title: 'Responsible Org',
-      sortable: true,
-    },
-    {
-      field: 'BusOrg',
-      title: 'Business Org',
-      sortable: true,
-    },
-    {
-      field: 'CSP',
-      title: 'Cloud Server Provider',
-      sortable: true,
-      visible: false,
-    },
-    {
-      field: 'CloudYN',
-      title: 'Cloud Hosted?',
-      sortable: true,
-      visible: false,
-    },
-    {
-      field: 'AO',
-      title: 'Authorizing Official',
-      sortable: true,
-      visible: false,
-      formatter: this.sharedService.pocStringNameFormatter,
-    },
-    {
-      field: 'SO',
-      title: 'System Owner',
-      sortable: true,
-      visible: false,
-      formatter: this.sharedService.pocStringNameFormatter,
-    },
-    {
-      field: 'InactiveDate',
-      title: 'Inactive Date',
-      sortable: true,
-      formatter: this.sharedService.dateFormatter,
-    },
-  ];
+  public onKeyUp(e: KeyboardEvent, tabName: string) {
+    if(e.key === ' ' || e.key === 'Enter') {
+      this.onSelectTab(tabName);
+    }
+  }
+
+  public isTabSelected(tabName: string): boolean {
+    return this.selectedTab === tabName;
+  }
 
   ngOnInit(): void {
-    // Enable popovers
-    $(function () {
-      $('[data-bs-toggle="popover"]').popover();
-    });
-
-    // Set JWT when logged into GEAR Manager when returning from secureAuth
+    // // Set JWT when logged into GEAR Manager when returning from secureAuth
     this.sharedService.setJWTonLogIn();
 
-    $('#systemTable').bootstrapTable(
-      $.extend(this.tableOptions, {
-        columns: this.columnDefs,
-        data: [],
-      })
-    );
+    this.apiService.getDataDictionaryByReportName('Business Systems').subscribe(defs => {
+      this.attributeDefs = defs;
 
-    const self = this;
-    $(document).ready(() => {
-      // Filter to only active systems
-      $('#systemTable').bootstrapTable('filterBy', {
-        Status: 'Active',
-        BusApp: 'Yes',
-      });
-
-      // Method to handle click events on the Systems table
-      $('#systemTable').on(
-        'click-row.bs.table',
-        function (e, row) {
-          this.tableService.systemsTableClick(row);
-          // this.getInterfaceData(row.ID);
-        }.bind(this)
-      );
-
-      //Enable table sticky header
-      self.sharedService.enableStickyHeader("systemTable");
+      this.defaultTableCols = [
+        {
+          field: 'ID',
+          header: 'ID',
+          isSortable: true,
+          showColumn: false,
+          titleTooltip: this.getTooltip('ID')
+        },
+        {
+          field: 'DisplayName',
+          header: 'Alias / Acronym',
+          isSortable: true,
+          titleTooltip: this.getTooltip('Alias/Acronym')
+        },
+        {
+          field: 'Name',
+          header: 'System Name',
+          isSortable: true,
+          titleTooltip: this.getTooltip('System Name')
+        },
+        {
+          field: 'Description',
+          header: 'Description',
+          isSortable: true,
+          showColumn: true,
+          formatter: this.sharedService.formatDescriptionShorter,
+          titleTooltip: this.getTooltip('Description')
+        },
+        {
+          field: 'SystemLevel',
+          header: 'System Level',
+          isSortable: true,
+          titleTooltip: this.getTooltip('System Level')
+        },
+        {
+          field: 'Status',
+          header: 'Status',
+          isSortable: true,
+          titleTooltip: this.getTooltip('Status')
+        },
+        {
+          field: 'RespOrg',
+          header: 'Responsible Org',
+          isSortable: true,
+          titleTooltip: this.getTooltip('Responsible IT Org')
+        },
+        {
+          field: 'BusOrgSymbolAndName',
+          header: 'SSO/CXO',
+          isSortable: true,
+          titleTooltip: this.getTooltip('SSO/CXO')
+        },
+        {
+          field: 'BusOrg',
+          header: 'Business Org',
+          isSortable: true,
+          titleTooltip: this.getTooltip('Business Org')
+        },
+        {
+          field: 'ParentName',
+          header: 'Parent System',
+          isSortable: true,
+          showColumn: false,
+          titleTooltip: this.getTooltip('Parent System')
+        },
+        {
+          field: 'CSP',
+          header: 'Hosting Provider',
+          isSortable: true,
+          showColumn: false,
+          titleTooltip: this.getTooltip('Hosting Provider')
+        },
+        {
+          field: 'CloudYN',
+          header: 'Cloud Hosted?',
+          isSortable: true,
+          showColumn: false,
+          titleTooltip: this.getTooltip('Cloud Hosted?')
+        },
+        {
+          field: 'ServiceType',
+          header: 'Cloud Service Type',
+          isSortable: true,
+          showColumn: false,
+          titleTooltip: this.getTooltip('Cloud Service Type')
+        },
+        {
+          field: 'AO',
+          header: 'Authorizing Official',
+          isSortable: true,
+          showColumn: false,
+          formatter: this.sharedService.pocStringNameFormatter,
+          titleTooltip: this.getTooltip('Authorizing Official')
+        },
+        {
+          field: 'SO',
+          header: 'System Owner',
+          isSortable: true,
+          showColumn: false,
+          formatter: this.sharedService.pocStringNameFormatter,
+          titleTooltip: this.getTooltip('System Owner')
+        },
+        {
+          field: 'BusPOC',
+          header: 'Business POC',
+          isSortable: true,
+          showColumn: false,
+          formatter: this.sharedService.pocStringNameFormatter,
+          titleTooltip: this.getTooltip('Business POC')
+        },
+        {
+          field: 'TechPOC',
+          header: 'Technical POC',
+          isSortable: true,
+          showColumn: false,
+          formatter: this.sharedService.pocStringNameFormatter,
+          titleTooltip: this.getTooltip('Technical POC')
+        },
+        {
+          field: 'DataSteward',
+          header: 'Data Steward',
+          isSortable: true,
+          showColumn: false,
+          formatter: this.sharedService.pocStringNameFormatter,
+          titleTooltip: this.getTooltip('Data Steward')
+        },
+        {
+          field: 'FISMASystemIdentifier',
+          header: 'FISMA System Identifier',
+          isSortable: true,
+          showColumn: false,
+          titleTooltip: this.getTooltip('FISMA System Identifier')
+        },
+        {
+          field: 'BudgetAlias',
+          header: 'Budget Alias',
+          isSortable: true,
+          showColumn: false,
+          titleTooltip: this.getTooltip('Budget Alias')
+        },
+      ];
+    
+      // Inactive Column Defs
+      this.inactiveColumnDefs = [
+        {
+          field: 'Name',
+          header: 'System Name',
+          isSortable: true,
+          titleTooltip: this.getTooltip('System Name')
+        },
+        {
+          field: 'Description',
+          header: 'Description',
+          isSortable: true,
+          showColumn: true,
+          formatter: this.sharedService.formatDescription,
+          titleTooltip: this.getTooltip('Description')
+        },
+        {
+          field: 'SystemLevel',
+          header: 'System Level',
+          isSortable: true,
+          titleTooltip: this.getTooltip('System Level')
+        },
+        {
+          field: 'Status',
+          header: 'Status',
+          isSortable: true,
+          titleTooltip: this.getTooltip('Status')
+        },
+        {
+          field: 'RespOrg',
+          header: 'Responsible Org',
+          isSortable: true,
+          titleTooltip: this.getTooltip('Responsible IT Org')
+        },
+        {
+          field: 'BusOrg',
+          header: 'Business Org',
+          isSortable: true,
+          titleTooltip: this.getTooltip('Business Org')
+        },
+        {
+          field: 'CSP',
+          header: 'Cloud Server Provider',
+          isSortable: true,
+          showColumn: false,
+          titleTooltip: this.getTooltip('Hosting Provider')
+        },
+        {
+          field: 'CloudYN',
+          header: 'Cloud Hosted?',
+          isSortable: true,
+          showColumn: false,
+          titleTooltip: this.getTooltip('	Cloud Hosted?')
+        },
+        {
+          field: 'AO',
+          header: 'Authorizing Official',
+          isSortable: true,
+          showColumn: false,
+          formatter: this.sharedService.pocStringNameFormatter,
+          titleTooltip: this.getTooltip('	Authorizing Official')
+        },
+        {
+          field: 'SO',
+          header: 'System Owner',
+          isSortable: true,
+          showColumn: false,
+          formatter: this.sharedService.pocStringNameFormatter,
+          titleTooltip: this.getTooltip('System Owner')
+        },
+        {
+          field: 'InactiveDate',
+          header: 'Inactive Date',
+          isSortable: true,
+          formatter: this.sharedService.utcDateFormatter,
+          titleTooltip: this.getTooltip('Inactive Date')
+        },
+      ];
     });
 
-    // Get System data for visuals
-    this.apiService.getSystems().subscribe((data: any[]) => {
-      // Get counts by SSO
-      var counts = data.reduce((p, c) => {
-        var name = c.BusOrgSymbolAndName;
-        if (
-          !p.hasOwnProperty(name) &&
-          c.Status == 'Active' &&
-          c.BusApp == 'Yes'
-        ) {
+    // Subscribe to query param changes and re-apply filtering every time navigation
+    // brings the user back to this page (even when the component is reused via
+    // onSameUrlNavigation:'reload'). Using switchMap guarantees that if the params
+    // change before getSystems responds, the stale request is cancelled.
+    this.queryParamsSub = this.route.queryParams.pipe(
+      switchMap(params => {
+        // Snapshot the params so they are available when getSystems resolves.
+        const tabParam = params['tab'] || '';
+        const decommParam = params['decommissionedWithinMonths'];
+        const cloudBasedParam = params['cloudBased'] || null;
+        const cspParam = params['systemCSP'] || '';
+
+        this.selectedTab = tabParam;
+        this.monthsDecommissioned = decommParam ? +decommParam : 0;
+        this.cloudBasedFilterValue = cloudBasedParam;
+        this.cspName = cspParam;
+
+        // getSystems is cached – this just gets the cached replay.
+        return this.apiService.getSystems().pipe(take(1));
+      })
+    ).subscribe(systems => {
+      this.systemsData = systems;
+
+      // Build chart data from the already-fetched systems array
+      const counts = systems.reduce((p, c) => {
+        const name = c.BusOrgSymbolAndName;
+        if (!p.hasOwnProperty(name) && c.Status == 'Active' && c.BusApp == 'Yes') {
           p[name] = 0;
         }
-        // Only count if Status is Active
         if (c.Status == 'Active' && c.BusApp == 'Yes') p[name]++;
         return p;
       }, {});
-
-      // Resolve the counts into an object and sort by value
       this.vizData = Object.keys(counts)
-        .map((k) => {
-          return { name: k, value: counts[k] };
-        })
-        .sort(function (a, b) {
-          return b.value - a.value;
-        });
+        .map(k => ({ name: k, value: counts[k] }))
+        .sort((a, b) => b.value - a.value);
+      this.colorScheme = { domain: this.buildDistinctColorDomain(this.vizData.length) };
 
-      // console.log(this.vizData);  // Debug
-    });
-
-    // Method to open details modal when referenced directly via URL
-    this.route.params.subscribe((params) => {
-      var detailSysID = params['sysID'];
-      if (detailSysID) {
-        this.titleService.setTitle(
-          `${this.titleService.getTitle()} - ${detailSysID}`
-        );
-        this.apiService.getOneSys(detailSysID).subscribe((data: any[]) => {
-          this.tableService.systemsTableClick(data[0]);
-          // this.getInterfaceData(row.ID);
+      if (this.monthsDecommissioned > 0) {
+        const now = new Date(); // Current date and time
+        now.setUTCHours(0, 0, 0, 0);
+        const decommWithin = new Date();
+        decommWithin.setMonth(now.getMonth() - this.monthsDecommissioned); // number of months set in the url
+        decommWithin.setUTCHours(0, 0, 0, 0);
+        const expiringFiltered: System[] = [];
+        systems.forEach(s => {
+          let expDate = new Date(s.InactiveDate);
+          if(s.InactiveDate && (expDate <= now && expDate >= decommWithin) && (s.Status === 'Inactive' && s.BusApp === 'Yes')) {
+            expiringFiltered.push(s);
+          }
         });
+        this.tableCols = this.defaultTableCols;
+        this.tableService.updateReportTableData(expiringFiltered);
+        this.tableService.updateReportTableDataReadyStatus(true);
+      } else if (this.cloudBasedFilterValue) {
+        const cloudBasedFilterValue = this.cloudBasedFilterValue as string;
+        const notCloudBasedFiltered: System[] = [];
+        systems.forEach(s => {
+          if(s.CloudYN && cloudBasedFilterValue){ 
+            if((s.CloudYN.toLocaleLowerCase() === cloudBasedFilterValue.toLocaleLowerCase()) && s.Status == 'Active' && s.BusApp == 'Yes') {
+              notCloudBasedFiltered.push(s);
+            }
+          }
+        });
+        this.tableCols = this.defaultTableCols;
+        this.tableService.updateReportTableData(notCloudBasedFiltered);
+        this.tableService.updateReportTableDataReadyStatus(true);
+      } else if (this.cspName) {
+        const cspFiltered: System[] = [];
+        systems.forEach(s => {
+          if(s.CSP) {
+            if(this.cspName.toLocaleLowerCase() === 'aws') {
+              if((s.CSP.toLocaleLowerCase() === 'aws (govcloud)' ||
+                 s.CSP.toLocaleLowerCase() === 'aws' ||
+                 s.CSP.toLocaleLowerCase() === 'fedramp aws east/west') &&
+                 s.Status == 'Active' && s.BusApp == 'Yes') {
+                cspFiltered.push(s);
+              }
+            } else if(s.CSP.toLocaleLowerCase() === this.cspName.toLocaleLowerCase() && s.Status == 'Active' && s.BusApp == 'Yes') {
+              cspFiltered.push(s);
+            }
+          }
+        });
+        this.tableCols = this.defaultTableCols;
+        this.tableService.updateReportTableData(cspFiltered);
+        this.tableService.updateReportTableDataReadyStatus(true);
+      } else { 
+        // Apply tab filter based on selectedTab
+        this.selectedTab = this.selectedTab || 'All';
+        this.onSelectTab(this.selectedTab);
+        this.tableService.updateReportTableDataReadyStatus(true);
       }
     });
+
+    this.apiService.getSystemsFilterTotals().subscribe(t => {
+      this.filterTotals = t;
+    });
+
+
+
+    // // Method to open details modal when referenced directly via URL
+    // this.route.params.subscribe((params) => {
+    //   var detailSysID = params['sysID'];
+    //   if (detailSysID) {
+    //     this.titleService.setTitle(
+    //       `${this.titleService.getTitle()} - ${detailSysID}`
+    //     );
+    //     this.apiService.getOneSys(detailSysID).subscribe((data: any[]) => {
+    //       this.tableService.systemsTableClick(data[0]);
+    //       // this.getInterfaceData(row.ID);
+    //     });
+    //   }
+    // });
+  }
+
+  public ngOnDestroy(): void {
+    if (this.queryParamsSub) {
+      this.queryParamsSub.unsubscribe();
+    }
+  }
+
+  // onFilterEvent(filter: string) {
+  //     if(filter === 'Inactive') {
+  //       this.tableCols = this.inactiveColumnDefs;
+  //       // Hide visualization when on alternative filters
+  //       $('#sysViz').collapse('hide');
+  //     } else if(filter === 'Cloud Enabled'){
+  //       this.tableCols = this.defaultTableCols;
+  //       // Hide visualization when on alternative filters
+  //       $('#sysViz').collapse('hide');
+  //     } else {
+  //       this.tableCols = this.defaultTableCols;
+  //       // Hide visualization when on alternative filters
+  //       $('#sysViz').collapse('show');
+  //     }
+  // }
+
+  public isLoggedIn(): boolean {
+    return this.sharedService.loggedIn;
   }
 
   getAriaLabel(data: { name: string, value: number }[]): string {
@@ -350,324 +495,51 @@ export class SystemsComponent implements OnInit {
     }
   }
 
-  // Update table from filter buttons if only filtering ONE column. Not currently used in business systems report.
-  changeFilter(field: string, term: string) {
-    this.sharedService.disableStickyHeader("systemTable");
-    this.filteredTable = true; // Filters are on, expose main table button
-    var filter = {};
-    filter[field] = term;
-    var title = '';
-    var activeColDef = this.columnDefs;
-    var exportIgnoreColumn = this.activeExportIgnoreColumn;
+  public onRowClick(e: any) {
+    const searchTerm: string = e.tableSearchString || '';
+    this.router.navigate(['/systems', e.ID], {
+      queryParams: { tableSearchTerm: searchTerm }
+    });
+  }
 
-    // Hide visualization when on alternative filters
-    $('#sysViz').collapse('hide');
+  onSelect(chartData: any): void {
+  this.sharedService.disableStickyHeader("systemTable");
+  this.filteredTable = true;
+  this.filterTitle = chartData.name;
 
-    $('#systemTable').bootstrapTable('filterBy', filter);
-    switch (field) {
-      case 'CloudYN':
-        title = 'Cloud Enabled GSA';
-        break;
-      case 'Status':
-        title = term + ' GSA';
-        activeColDef = this.inactiveColumnDefs;
-        exportIgnoreColumn = this.inactiveExportIgnoreColumn;
-        break;
+  let filtered = this.systemsData.filter(s =>
+    s.Status === 'Active' &&
+    s.BusApp === 'Yes' &&
+    s.BusOrgSymbolAndName === chartData.name
+  );
+
+  if (this.selectedTab === 'Cloud Enabled') {
+    filtered = filtered.filter(s => s.CloudYN === 'Yes');
+  } else if (this.selectedTab === 'Inactive') {
+    filtered = this.systemsData.filter(s =>
+      s.Status === 'Inactive' &&
+      s.BusApp === 'Yes' &&
+      s.BusOrgSymbolAndName === chartData.name
+    );
+  }
+
+  this.systemsDataTabFilterted = filtered;
+  this.tableService.updateReportTableData(this.systemsDataTabFilterted);
+  this.tableService.updateReportTableDataReadyStatus(true);
+  this.sharedService.enableStickyHeader("systemTable");
+  }
+
+  getTooltip (name: string): string {
+    return this.sharedService.getTooltip(this.attributeDefs, name);
+  }
+
+  private buildDistinctColorDomain(count: number): string[] {
+    const domain: string[] = [];
+
+    for (let index = 0; index < count; index++) {
+      domain.push(this.chartColors[index % this.chartColors.length]);
     }
-    $('#systemTable').bootstrapTable('refreshOptions', {
-      columns: activeColDef,
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt(
-          `GSA_${title.replace(' ', '_')}_Systems`
-        ),
-        ignoreColumn: exportIgnoreColumn
-      },
-    });
-    this.filterTitle = title;
-    this.sharedService.enableStickyHeader("systemTable");
+
+    return domain;
   }
-
-  //The following is adapted from fisma.component.ts to filter on multiple columns of data rather than one
-  // Update table to Cloud Business Systems
-  showCloud() {
-    $('#systemTable').floatThead('destroy');
-    this.filteredTable = true; // Expose main table button after "Cloud Enabled" button is pressed
-    this.filterTitle = 'Cloud GSA';
-
-    // Hide visualization when on alternative filters
-    $('#sysViz').collapse('hide');
-
-    // Change columns, filename, and url
-    $('#systemTable').bootstrapTable('refreshOptions', {
-      columns: this.columnDefs,
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt('GSA_Cloud_Business_Systems'),
-        ignoreColumn:this.activeExportIgnoreColumn
-      },
-    });
-
-    // Filter to only "Cloud" Business Systems/Subsystems
-    $('#systemTable').bootstrapTable('filterBy', {
-      Status: ['Active'],
-      BusApp: 'Yes',
-      CloudYN: 'Yes',
-    });
-    this.sharedService.enableStickyHeader("systemTable");
-  }
-
-  // Update table to Inactive Business Systems
-  showInactive() {
-    this.sharedService.disableStickyHeader("systemTable");
-    this.filteredTable = true; // Expose main table button after "Inactive" button is pressed
-    this.filterTitle = 'Inactive GSA';
-
-    // Hide visualization when on alternative filters
-    $('#sysViz').collapse('hide');
-
-    // Change columns, filename, and url
-    $('#systemTable').bootstrapTable('refreshOptions', {
-      columns: this.columnDefs,
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt(
-          'GSA_Inactive_Business_Systems'
-        ),
-        ignoreColumn: this.inactiveExportIgnoreColumn
-      },
-    });
-
-    // Filter to only "Inactive" Business Systems/Subsystems
-    $('#systemTable').bootstrapTable('filterBy', {
-      Status: ['Inactive'],
-      BusApp: 'Yes',
-    });
-    this.sharedService.enableStickyHeader("systemTable");
-  }
-
-  // Update table to Pending Business Systems
-  showPending() {
-    this.sharedService.disableStickyHeader("systemTable");
-    this.filteredTable = true; // Expose main table button after "Pending" button is pressed
-    this.filterTitle = 'Pending GSA';
-
-    // Hide visualization when on alternative filters
-    $('#sysViz').collapse('hide');
-
-    // Change columns, filename, and url
-    $('#systemTable').bootstrapTable('refreshOptions', {
-      columns: this.columnDefs,
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt(
-          'GSA_Pending_Business_Systems'
-        ),
-        ignoreColumn: this.activeExportIgnoreColumn
-      },
-    });
-
-    // Filter to only "Pending" Business Systems/Subsystems
-    $('#systemTable').bootstrapTable('filterBy', {
-      Status: ['Pending'], //,
-      //Commenting out BusApp: 'Yes' since pending systems need to be reviewed by EA and Security of whether they are a business system.
-      //BusApp: 'Yes'
-    });
-    this.sharedService.enableStickyHeader("systemTable");
-  }
-  //The preceding code is adapted from fisma.component.ts to filter on multiple columns of data rather than one
-
-  backToMainSys() {
-    this.sharedService.disableStickyHeader("systemTable");
-    this.filteredTable = false; // Hide main button
-
-    $('#sysViz').collapse('show');
-
-    // Remove filters and back to default
-    $('#systemTable').bootstrapTable('filterBy', {
-      Status: 'Active',
-      BusApp: 'Yes',
-    });
-    $('#systemTable').bootstrapTable('refreshOptions', {
-      columns: this.columnDefs,
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt('GSA_Systems_SubSystems'),
-        ignoreColumn:this.activeExportIgnoreColumn
-      },
-    });
-    this.sharedService.enableStickyHeader("systemTable");
-  }
-
-  onSelect(chartData): void {
-    this.sharedService.disableStickyHeader("systemTable");
-    this.filteredTable = true; // Filters are on, expose main table button
-    this.filterTitle = chartData.name;
-
-    // Filter by RespOrg clicked on visualization
-    $('#systemTable').bootstrapTable('filterBy', {
-      Status: ['Active'],
-      BusApp: 'Yes',
-      BusOrgSymbolAndName: chartData.name,
-    });
-    $('#systemTable').bootstrapTable('refreshOptions', {
-      exportOptions: {
-        fileName: this.sharedService.fileNameFmt(
-          'GSA_Systems_SubSystems-' + chartData.name
-        ),
-      },
-    });
-    this.sharedService.enableStickyHeader("systemTable");
-  }
-
-  //   private getInterfaceData(sysID: number) {
-  //     this.apiService.getOneDataFlow(sysID).subscribe((data: any[]) => {
-  //       this.interfaces = data;
-  //       this.modalService.updateDetails(this.interfaces, 'data-flow');
-  //       if (this.interfaces.length) this.createDataFlowChart(sysID);  // If there is interface data, create the flow chart
-  //     });
-  //   }
-
-  //   private createDataFlowChart(sysID: number) {
-  //     // console.log(sysID, this.interfaces);  // Debug
-
-  //     var CONTAINER_ID = '#dataFlowChart',
-  //       SVG_ID = 'dataflowSVG',
-  //       units = "Connections",
-
-  //       // Set the dimensions and margins of the graph
-  //       margin = { top: 20, right: 20, bottom: 20, left: 20 },
-  //       width = 960,
-  //       height = 500,
-  //       nodeWidth = 36,
-  //       nodePadding = 40;
-
-  //     if (document.getElementById(SVG_ID)) {
-  //       return false;
-  //     };
-
-  //     // Make sure element is empty first
-  //     d3.select(CONTAINER_ID + "> svg").remove();
-
-  //     // Append the svg object to the body of the page
-  //     var svg = d3.select(CONTAINER_ID).append("svg")
-  //       .attr('width', width)
-  //       .attr('height', height);
-
-  //     var g = svg.append("g")
-  //       .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-
-  //     // Format variables
-  //     var formatNumber = d3.format(",.0f"),    // zero decimal places
-  //       format = function (d) { return formatNumber(d) + " " + units; },
-  //       color = d3.scaleOrdinal()
-  //         .range(['#9dc6d8', '#00b3ca', '#7dd0b6', '#1d4e89',
-  //           '#d2b29b', '#e38690', '#f69256', '#ead98b', '#965251',
-  //           '#c6cccc', '#e5dfef', '#fbdce0', '#cbefe7', '#fffdce',
-  //           '#d7ffdd',
-  //         ]);
-
-  //     // Set the sankey diagram properties
-  //     var sankey = d3Sankey.sankey()
-  //       .nodeWidth(nodeWidth)
-  //       .nodePadding(nodePadding)
-  //       .size([width - margin.left - margin.right,
-  //       height - margin.top - margin.bottom])
-  //       .nodeId(function (d: any) {
-  //         return d.name;
-  //       });
-
-  //     var link = g.append("g")
-  //       .attr("class", "link")
-  //       .selectAll("path");
-
-  //     var node = g.append("g")
-  //       .attr("class", "node")
-  //       .selectAll("g");
-
-  //     // load the data
-  //     //set up graph in same style as original example but empty
-  //     var graph = {
-  //       "nodes": [],
-  //       "links": []
-  //     };
-
-  //     this.interfaces.forEach(function (d) {
-  //       graph.nodes.push({
-  //         "name": d.srcApp,
-  //         "id": d.srcAppID
-  //       });
-  //       graph.nodes.push({
-  //         "name": d.destApp,
-  //         "id": d.destAppID
-  //       });
-  //       graph.links.push({
-  //         "source": d.srcApp,
-  //         "target": d.destApp,
-  //         "sourceId": d.srcAppID,
-  //         "targetId": d.destAppID,
-  //         "value": 1
-  //       });
-  //     });
-
-  //     // return only the distinct / unique nodes
-  //     graph.nodes = Array.from(new Set(graph.nodes.map(node => node.name)))
-  //       .map(name => {
-  //         return graph.nodes.find(node => node.name === name)
-  //       });
-
-  //     // console.log("graph: ", graph);  // Debug
-
-  //     sankey(graph);
-
-  //     // Add in the links
-  //     link = link.data(graph.links)
-  //       .enter().append("path")
-  //       .attr("d", d3Sankey.sankeyLinkHorizontal())
-  //       .style("fill", "none")
-  //       // Change path color by target
-  //       .style("stroke", function (d: any) {
-  //         return d.color = color(d.targetId);
-  //       })
-  //       .style("stroke-opacity", 0.7)
-  //       // Path width is default or width if value is valid
-  //       .style("stroke-width", function (d: any) {
-  //         return Math.max(15, d.width);
-  //       });
-
-  //     // Add the link titles
-  //     link.append("title")
-  //       .text(function (d: any) {
-  //         return d.source.name + " → " +
-  //           d.target.name + "\n" + format(d.value)
-  //       });
-
-  //     // Add in the nodes
-  //     node = node.data(graph.nodes)
-  //       .enter().append("g")
-  //       .on("click", function (d: any) {
-  //         //Open new modal when selecting app on interface graphic
-  //         $('#sysDetail').modal('hide');
-
-  //         // Route to new app detail
-  //         window.location.href = `#/systems/${d.id}`;
-  //         window.location.reload();
-  //       }.bind(this));
-
-  //     // add the rectangles for the nodes
-  //     node.append("rect")
-  //       .attr("x", function (d) { return d.x0; }) //Use original sankey defined positions
-  //       .attr("y", function (d) { return d.y0 - (Math.max(30, d.height) / 2); }) //Use force defined positions
-  //       .attr("height", function (d) { return Math.max(30, d.height); })
-  //       .attr("width", function (d) { return d.x1 - d.x0; })
-  //       .style("fill", function (d) { return color(d.id); })
-  //       .style("opacity", 0.5)
-  //       .style("stroke", "white");
-
-  //     // add in the title for the nodes
-  //     node.append("text")
-  //       .attr("x", function (d) { return d.x0 - 6; })
-  //       .attr("y", function (d) { return d.y0 + ((d.y1 - d.y0) / 2); })
-  //       .attr("dy", "0.35em")
-  //       .attr("text-anchor", "end")
-  //       .text(function (d) { return d.name; })
-  //       .filter(function (d) { return d.x0 < width / 2; })
-  //       .attr("x", function (d) { return d.x1 + 6; })
-  //       .attr("text-anchor", "start");
-  //   }
 }

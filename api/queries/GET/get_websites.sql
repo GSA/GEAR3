@@ -1,5 +1,5 @@
 SELECT
-	id			              AS Website_ID,
+	id			              AS website_id,
   domain,
   office,
   sub_office,

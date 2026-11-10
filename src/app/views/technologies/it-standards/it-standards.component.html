@@ -1,96 +1,53 @@
-<div class="card">
-  <div class="card-header text-white bg-teal text-center">
-    <!-- Title -->
-    <h3 class="card-title col-12 mb-0">
-      <span>
-        <i class="fas fa-microchip mr-2"></i>
-        <span [hidden]="filteredTable">All GSA </span>
-        <span [hidden]="!filteredTable" [innerHTML]="filterTitle"></span>
-        IT Standards
-      </span>
-    </h3>
-
-    <!-- GEAR Manager Access -->
-    @if (!sharedService.loggedIn) {
-      <a class="btn btn-sm btn-info text-white shadow mngr-btn d-flex align-items-center justify-content-center"
-        routerLink="/gear_manager" aria-label="GEAR Manager Login"
-        (click)="sharedService.setRedirectPath()">
-        <span class="mr-2">GEAR Manager Login</span><i class="fa fa-sign-in-alt fa-2x"></i>
-      </a>
+<div class="it-standards-container">
+  <div class="it-standards-title-container">
+    <h2>All GSA IT Standards</h2>
+    @if (isLoggedIn()) {
+      <app-button buttonText="Create New" (buttonClick)="onCreateNew()"></app-button>
     }
-    @if (sharedService.loggedIn) {
-      <a class="btn btn-sm btn-danger text-white shadow mngr-btn d-flex align-items-center justify-content-center"
-        routerLink="/it_standards" aria-label="GEAR Manager Logout"
-        (click)="sharedService.logoutManager()">
-        <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
-      </a>
-    }
-
-    <!-- Help Button -->
-    <a tabindex="0"
-      class="btn btn-sm btn-info text-white shadow help-btn d-flex align-items-center justify-content-center"
-      role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="auto" data-bs-html="true"
-      title="Help Using this Table" data-bs-content="<b>Details:</b> Left click on a row within the table to view additional details.
-        <br><br>
-        <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
-        <br><br>
-        <b>Export:</b> Export data by clicking on the <i class='fas fa-download'></i> icon and selecting the format that meets 
-        your needs.
-        <br><br>
-        <b>Search:</b> Perform a filtered search across all fields in the displayed data. Hit the 'Enter' button on your 
-        keyboard to execute. Click the <i class='far fa-trash-alt'></i> icon to clear the search box. 
-        Search within specific columns by clicking on the <i class='fas fa-angle-down'></i> icon. 
-        <br><br>
-        <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
-        <i class='fas fa-caret-square-down'></i> icon to display everything on one page.">
-      <span class="mr-2">More Help</span><i class="far fa-question-circle fa-2x"></i>
-    </a>
-  </div>
-
-  <div class="card-body card-text justify-content-center">
-    <div class="row w-100">
-      <!-- Add Button -->
-      <button role="button" name="addITStandBttn" aria-label="Add IT Standard" class="btn bg-teal text-white position-absolute ml-3"
-        (click)="createITStand()" [hidden]="!sharedService.loggedIn">
-        <i class="fas fa-plus"></i>
-      </button>
-
-      <!-- IT-Standard Definition Popover -->
-      <a tabindex="0" class="btn btn-sm btn-info text-white position-absolute float-right w-11" role="button"
-        data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="auto" data-bs-html="true" title=""
-        data-bs-content="The IT Standards inventory is the official GSA repository of software products/versions. 
-        This inventory can be used to determine which software has been reviewed and approved, ensuring that users are only requesting 
-        and using software that has been approved by IT Security. The Chief Technology Office (CTO) is responsible for managing 
-        the process and ensuring IT Standards are reviewed for use within GSA. 
-        For more information, please see the 
-        <a href='https://sites.google.com/a/gsa.gov/it_standards/it-standards' target='_blank' rel='noopener'>IT Standards site</a>">
-        IT-Standards definition
-      </a>
-
-      <!-- Filters -->
-      <div class="mx-auto">
-        <span class="my-auto mr-3">Filter Buttons:</span>
-        <button role="button" name="itMobileBttn" class="btn btn-primary" [ngClass]="{'it-standards-filter-button-active': isFilterActive('DeploymentType', 'Mobile')}"
-        (click)="changeFilter('DeploymentType', 'Mobile')">Mobile</button>
-        <button role="button" name="itDesktopBttn" class="btn btn-primary" [ngClass]="{'it-standards-filter-button-active': isFilterActive('DeploymentType', 'Desktop')}"
-        (click)="changeFilter('DeploymentType', 'Desktop')">Desktop</button>
-        <button role="button" name="itServerBttn" class="btn btn-primary" [ngClass]="{'it-standards-filter-button-active': isFilterActive('DeploymentType', 'Server')}"
-        (click)="changeFilter('DeploymentType', 'Server')">Server</button>
-
-        <button role="button" name="itApprovedBttn" class="btn btn-primary ml-3" [ngClass]="{'it-standards-filter-button-active': isFilterActive('Status', 'Approved')}"
-        (click)="changeFilter('Status', 'Approved')">Approved</button>
-        <button role="button" name="itDeniedBttn" class="btn btn-primary" [ngClass]="{'it-standards-filter-button-active': isFilterActive('Status', 'Denied')}"
-        (click)="changeFilter('Status', 'Denied')">Denied</button>
-        <button role="button" name="itRetiredBttn" class="btn btn-primary" [ngClass]="{'it-standards-filter-button-active': isFilterActive('Status', 'Retired')}"
-        (click)="changeFilter('Status', 'Retired')">Retired</button>
-
-        <button role="button" name="itBttn" class="btn btn-primary ml-3" (click)="backToMainIT()"
-          [hidden]="!filteredTable">
-        Reset Filters</button>
-      </div>
+    <div class="it-standards-title-right-button-container">
+      @if (!isLoggedIn()) {
+        <app-button buttonText="GEAR Manager Login" (buttonClick)="sharedService.setRedirectPath()"></app-button>
+      }
+      @if (isLoggedIn()) {
+        <app-button buttonText="Logout" buttonStyle="error" (buttonClick)="sharedService.logoutManager()"></app-button>
+      }
+      <app-page-help-button></app-page-help-button>
     </div>
-
-    <!-- Main Table -->
-    <table id="itStandardsTable" aria-label="The IT Standards Inventory provides a list of software and additional details about whether that software has been approved for use, when its approval ends, etc. This table is useful in understanding which software is approved for use at the Agency and, if the software is not listed, which software will have to be requested via the Software Review Request process."></table>
   </div>
-</div>
+  <div class="it-standards-definition-container">
+    <p class="it-standards-definition-text">
+      The IT Standards Inventory is GSA’s repository for approved software. It ensures users access only IT Security-authorized products. For more details, visit the <a href='https://sites.google.com/a/gsa.gov/it_standards/it-standards' target='_blank' rel='noopener'>IT Standards site</a>.
+    </p>
+    </div>
+    <div class="it-standards-data-container">
+      <app-filter-chips [chips]="filterChips" [initialChips]="selectedChips" dropdownName="Deployment Types" (chipSelect)="onFilterChipSelect($event)"></app-filter-chips>
+      @if (filterTotals) {
+        <div>
+          <app-table visibleColumnStorageKey="it-standards-report" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" defaultSortField="Name" (rowClickEvent)="onRowClick($event)">
+            <div class="filter-tabs-container" filterTabs>
+              <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')" (keyup)="onKeyUp($event, 'All')" tabindex="0">
+                <span class="filter-tab-text">All</span>
+                <span class="filter-tab-number first">{{filterTotals.AllTotal}}</span>
+              </div>
+              <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Approved')}" (click)="onSelectTab('Approved')" (keyup)="onKeyUp($event, 'Approved')" tabindex="0" title="IT Standards status — software that has been reviewed and authorized for use at the Agency by IT Security.">
+                <span class="filter-tab-text">Approved</span>
+                <span class="filter-tab-number second">{{filterTotals.ApprovedTotal}}</span>
+              </div>
+              <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Denied')}" (click)="onSelectTab('Denied')" (keyup)="onKeyUp($event, 'Denied')" tabindex="0" title="IT Standards status — software that has been reviewed and is not authorized for use at the Agency.">
+                <span class="filter-tab-text">Denied</span>
+                <span class="filter-tab-number third">{{filterTotals.DeniedTotal}}</span>
+              </div>
+              <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Retired')}" (click)="onSelectTab('Retired')" (keyup)="onKeyUp($event, 'Retired')" tabindex="0" title="IT Standards status — software that was previously approved but is no longer authorized for use.">
+                <span class="filter-tab-text">Retired</span>
+                <span class="filter-tab-number fourth">{{filterTotals.RetiredTotal}}</span>
+              </div>
+              <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Other')}" (click)="onSelectTab('Other')" (keyup)="onKeyUp($event, 'Other')" tabindex="0">
+                <span class="filter-tab-text">Other</span>
+                <span class="filter-tab-number fifth">{{filterTotals.OtherTotal}}</span>
+              </div>
+            </div>
+          </app-table>
+        </div>
+      }
+    </div>
+  </div>

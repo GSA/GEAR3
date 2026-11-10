@@ -4,6 +4,8 @@ const express = require("express");
 const rateLimit = require("express-rate-limit");
 
 const cap = require(routesPath + "capabilities.routes");
+const chat = require(routesPath + "chat.routes");
+const dashboard = require(routesPath + "dashboard.routes");
 const dataFlow = require(routesPath + "dataflow.routes");
 const fisma = require(routesPath + "fisma.routes");
 const googleAuth = require(routesPath + "google.routes");
@@ -22,6 +24,8 @@ const techCatalog = require(routesPath + "tech-catalog.routes");
 const websites = require(routesPath + "websites.routes");
 const techAttributeDefinitions = require(routesPath + "tech-attribute-definitions.routes");
 const dataDictionary = require(routesPath + "data-dictionary.routes");
+const cloudAdoptionRate = require(routesPath + "cloud-adoption-rate.routes");
+const trm = require(routesPath + "trm.routes");
 
 const router = express.Router();
 let limiter = rateLimit({
@@ -29,7 +33,46 @@ let limiter = rateLimit({
   max: 15000, // 15000 requests
 });
 router.use(limiter);
+
+/**
+ * Cache-Control middleware for read-only GET endpoints.
+ * Dashboard summary and slow aggregate endpoints: 5 min (300s).
+ * All other GET API responses: 60s stale-while-revalidate.
+ * Mutations (POST/PUT/DELETE) are never cached.
+ */
+router.use((req, res, next) => {
+  if (req.method === 'GET') {
+    const noCachePaths = [
+      '/it_standards',
+    ];
+    const isNoCache = noCachePaths.some(p => req.path.startsWith(p));
+    if (isNoCache) {
+      res.set('Cache-Control', 'no-store');
+      next();
+      return;
+    }
+
+    const longCachePaths = [
+      '/dashboard_summary',
+      '/cloud_adoption_rate',
+      '/data_dictionary',
+      '/attribute_definitions',
+    ];
+    const isLongCache = longCachePaths.some(p => req.path.startsWith(p));
+    if (isLongCache) {
+      res.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=60');
+    } else {
+      res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=30');
+    }
+  } else {
+    res.set('Cache-Control', 'no-store');
+  }
+  next();
+});
+
 router.use("/capabilities", cap);
+router.use("/chat", chat);
+router.use("/dashboard_summary", dashboard);
 router.use("/data_flow", dataFlow);
 router.use("/fisma", fisma);
 router.use("/googleAuth", googleAuth);
@@ -48,5 +91,7 @@ router.use("/tech_catalog", techCatalog);
 router.use("/websites", websites);
 router.use("/attribute_definitions", techAttributeDefinitions);
 router.use("/data_dictionary", dataDictionary);
+router.use("/cloud_adoption_rate", cloudAdoptionRate);
+router.use("/trm", trm);
 
 module.exports = router;

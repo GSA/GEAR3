@@ -11,10 +11,10 @@ import { TableService } from '@services/tables/table.service';
 declare var $: any;
 
 @Component({
-standalone: false,
-  selector: 'website-service-category-modal',
-  templateUrl: './website-service-category-modal.component.html',
-  styleUrls: ['./website-service-category-modal.component.css'],
+    selector: 'website-service-category-modal',
+    templateUrl: './website-service-category-modal.component.html',
+    styleUrls: ['./website-service-category-modal.component.css'],
+    standalone: false
 })
 export class WebsiteServiceCategoryModalComponent implements OnInit {
   websiteServiceCategory = <any>{};
@@ -38,7 +38,7 @@ export class WebsiteServiceCategoryModalComponent implements OnInit {
       showColumns: false,
       showExport: true,
       exportFileName: null,
-      headerStyle: 'bg-royal-blue',
+      headerStyle: 'bg-royal-blue text-white',
       pagination: false,
       search: true,
       sortName: 'domain',
@@ -89,10 +89,11 @@ export class WebsiteServiceCategoryModalComponent implements OnInit {
       }
     );
 
-    $('#websiteServiceCategoryWebsites').bootstrapTable({
-      columns: this.serviceCategoryWebsitesColumnDefs,
-      data: [],
-    });
+    $('#websiteServiceCategoryWebsites').bootstrapTable(
+      $.extend(this.serviceCategoryWebsitesTableOptions, {
+        columns: this.serviceCategoryWebsitesColumnDefs,
+        data: [],
+    }));
 
     const self = this;
     $(document).ready(() => {

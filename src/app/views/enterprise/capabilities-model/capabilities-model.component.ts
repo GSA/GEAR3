@@ -1,10 +1,11 @@
 import * as d3 from 'd3';
 
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, ElementRef, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
+import { PreviousRouteService } from '@services/previous-route/previous-route.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
@@ -21,13 +22,13 @@ interface CapTree {
 }
 
 @Component({
-standalone: false,
-  selector: 'capabilities-model',
-  templateUrl: './capabilities-model.component.html',
-  styleUrls: ['./capabilities-model.component.css'],
+    selector: 'capabilities-model',
+    templateUrl: './capabilities-model.component.html',
+    styleUrls: ['./capabilities-model.component.scss'],
+    standalone: false
 })
-export class CapabilitiesModelComponent implements OnInit {
-  @ViewChild('busCapGraph') public graphContainer: ElementRef;
+export class CapabilitiesModelComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('busCapGraph') public graphContainer: ElementRef | undefined;
   private caps: any[] = [];
   private root: any = {};
   private rootCap: string = 'Manage GSA';
@@ -49,8 +50,18 @@ export class CapabilitiesModelComponent implements OnInit {
   // Save selected node id
   private selectedCap: any;
 
-  public searchKey: string;
-  private finalSearchPath;
+  public searchKey: string = '';
+  private finalSearchPath: any = null;
+  private pendingSearchKey: string | null = null;
+
+  private getSearchTermFromHistory(): string | null {
+    const prevUrl = this.previousRouteService.getPreviousEntry()?.url ?? null;
+    if (!prevUrl) return null;
+    const path = prevUrl.split('?')[0];
+    if (!path.startsWith('/capabilities/')) return null;
+    const qs = prevUrl.split('?')[1] ?? '';
+    return new URLSearchParams(qs).get('tableSearchTerm');
+  }
 
   constructor(
     private apiService: ApiService,
@@ -59,7 +70,9 @@ export class CapabilitiesModelComponent implements OnInit {
     private sharedService: SharedService,
     private tableService: TableService,
     private titleService: Title,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private previousRouteService: PreviousRouteService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -71,13 +84,20 @@ export class CapabilitiesModelComponent implements OnInit {
     // Set JWT when logged into GEAR Manager when returning from secureAuth
     this.sharedService.setJWTonLogIn();
 
-    this.getCapData();
+    // Restore search term when returning via breadcrumb or browser back navigation
+    this.route.queryParams.subscribe((params) => {
+      const term = params['tableSearchTerm'] || this.getSearchTermFromHistory();
+      if (term) {
+        this.searchKey = term;
+        this.pendingSearchKey = term;
+      }
+    });
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {
       var detailCapID = params['capID'];
       if (detailCapID) {
-        this.apiService.getOneCap(detailCapID).subscribe((data: any[]) => {
+        this.apiService.getOneCap(detailCapID).subscribe((data: any) => {
           this.tableService.capsTableClick(data[0]);
         });
       }
@@ -90,8 +110,18 @@ export class CapabilitiesModelComponent implements OnInit {
 
     // Attach mouse event listeners for dragging
     capDetail.on('mousedown', (event) => this.dragStart(event));
-    d3.select(document).on('mousemove', (event) => this.drag(event));
-    d3.select(document).on('mouseup', (event) => this.dragEnd(event));
+    d3.select(document).on('mousemove.capModel', (event) => this.drag(event));
+    d3.select(document).on('mouseup.capModel', (event) => this.dragEnd(event));
+
+    this.getCapData();
+  }
+
+  ngOnDestroy(): void {
+    d3.select(document).on('mousemove.capModel', null);
+    d3.select(document).on('mouseup.capModel', null);
+    if (this.graphContainer) {
+      d3.select(this.graphContainer.nativeElement).selectAll('svg').remove();
+    }
   }
 
   // Create Capability Model Graph
@@ -207,6 +237,13 @@ export class CapabilitiesModelComponent implements OnInit {
       // console.log("CapTree: ", this.capTree);  // Debug
       // Create graph after retrieving data and computing tree
       this.createGraph();
+
+      // Restore pending search if user navigated back with a search term
+      if (this.pendingSearchKey) {
+        this.searchKey = this.pendingSearchKey;
+        this.pendingSearchKey = null;
+        this.search({ key: 'Enter' });
+      }
     });
   } // End of getCapData
 
@@ -217,8 +254,11 @@ export class CapabilitiesModelComponent implements OnInit {
 
     // Set margins
     const element = this.graphContainer.nativeElement;
-    var width = 1750 - element.offsetWidth - margin.left - margin.right;
-    var height = 1200 - element.offsetHeight - margin.top - margin.bottom;
+    // Remove any previously rendered SVG to avoid duplicates on re-navigation
+    d3.select(element).selectAll('svg').remove();
+
+    var width = 3250 - margin.left - margin.right;
+    var height = 1200 - margin.top - margin.bottom;
 
     // Set tree mapping object
     this.treemap = d3.tree().size([height, width]);
@@ -433,9 +473,12 @@ export class CapabilitiesModelComponent implements OnInit {
             // Grab data for selected node
             this.apiService
               .getOneCap(this.selectedCap.identity)
-              .subscribe((data: any[]) => {
-                  var capData = data[0];
-                  this.tableService.capsTableClick(capData);
+              .subscribe((data: any) => {
+                  // var capData = data[0];
+                  // this.tableService.capsTableClick(capData);
+                  const qp: Record<string, any> = { fromPrevious: 'GSA Capabilities Model', originRoute: '/capabilities_model' };
+                  if (this.searchKey) { qp['tableSearchTerm'] = this.searchKey; }
+                  this.router.navigate(['capabilities', data.ID], { queryParams: qp });
                 }
               )
           }
@@ -683,4 +726,5 @@ export class CapabilitiesModelComponent implements OnInit {
       this.dragging = false;
       d3.select(this.elementRef.nativeElement).select('#capDetail').classed('grabbing', false);
     }
-}
+
+  }

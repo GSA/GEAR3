@@ -1,0 +1,95 @@
+import { Component, ElementRef, HostListener } from '@angular/core';
+import { SidebarButtonChild } from '@common/sidebar-classes';
+
+@Component({
+    selector: 'app-sidebar-v2',
+    templateUrl: './sidebar-v2.component.html',
+    styleUrls: ['./sidebar-v2.component.scss'],
+    standalone: false
+})
+export class SidebarV2Component {
+
+  public isSidebarExpanded: boolean = false;
+  public activeMenu: string | null = null;
+
+  @HostListener('document:mousemove', ['$event'])
+  onMouseMove(event: MouseEvent) {
+    if(!this.eRef.nativeElement.contains(event.target)) {
+      this.isSidebarExpanded = false;
+    }
+  }
+
+  public itStrategyChildren: SidebarButtonChild[] = [
+    { text: 'IT Directives', href: 'https://insite.gsa.gov/directives-library/staff-offices?staff_office=GSA%20IT' },
+    // IT Investments — hidden from sidebar nav (Nov 2026). Uncomment below to restore:
+    // { text: 'IT Investments', route: '/investments' }
+  ];
+  public gsaEnterpriseChildren: SidebarButtonChild[] = [
+    { text: 'Business Capability Model', route: '/capabilities_model' },
+    { text: 'Business Capability List', route: '/capabilities' },
+    { text: 'Organization Chart', route: '/org_chart' },
+    { text: 'Organization List', route: '/organizations' },
+    { text: 'Website Service Category List', route: '/website_service_category' }
+  ];
+  public businessSystemsChildren: SidebarButtonChild[] = [
+    { text: 'Business Systems & Subsystems', route: '/systems' },
+    // TIME Report — hidden from sidebar nav (Nov 2026). Uncomment below to restore:
+    // { text: 'TIME Report', route: '/systems_TIME' },
+    { text: 'Records Management', route: '/records_mgmt' },
+    { text: 'GSA Websites', route: '/websites' }
+  ];
+  public securityChildren: SidebarButtonChild[] = [
+    { text: 'FISMA Systems Inventory', route: '/FISMA' },
+    { text: 'FISMA System POCs', route: '/FISMA_POC' }
+  ];
+  public technologiesChildren: SidebarButtonChild[] = [
+    { text: 'IT Standards List', route: '/it_standards' },
+    { text: 'Technology Category List', route: '/tech_categories' },
+    { text: 'Technology Category Model', route: '/tech_categories_model' },
+    // IT Bricks & IT Bricks (Executive) — hidden from sidebar nav (Nov 2026). Uncomment below to restore:
+    // { text: 'IT Bricks', route: '/it_bricks' },
+    // { text: 'IT Bricks (Executive)', route: '/it_bricks_executive' },
+    { text: 'IT Standards Approval Process', href: 'https://sites.google.com/a/gsa.gov/it_standards/software-approvals#h.vioogtbleinq', icon: 'fas fa-external-link-alt' }
+  ];
+  public enterpriseArchitectureChildren: SidebarButtonChild[] = [
+    { text: 'EA Team', href: 'https://sites.google.com/gsa.gov/enterprisearchitecture/about-us', icon: 'fas fa-external-link-alt' },
+    { text: 'GEAR Model Diagram', route: '/gear_model' }
+  ];
+  public additionalInfoChildren: SidebarButtonChild[] = [
+    { text: 'Access Forms', route: '/forms' },
+    { text: 'Glossary', route: '/glossary' },
+    { text: 'Data Dictionary', route: '/data_dictionary' },
+    { text: 'API Documentation', href: 'https://gsa.github.io/GEAR-Documentation/api-docs/', icon: 'fas fa-external-link-alt' },
+    { text: 'About GEAR', route: '/about/overview' },
+    { text: 'Data Strategy', route: '/about/data' },
+    { text: 'Systems Rationalization', route: '/about/sysRat' }
+  ];
+  
+  constructor(private eRef: ElementRef) {
+  }
+
+  public toggleSidebar(): void {
+    this.isSidebarExpanded = !this.isSidebarExpanded;
+    if (!this.isSidebarExpanded) {
+      this.activeMenu = null;
+      const focused = document.activeElement as HTMLElement;
+      if (focused) focused.blur();
+    }
+  }
+
+  public onMenuToggle(menuKey: string): void {
+    this.activeMenu = this.activeMenu === menuKey ? null : menuKey;
+  }
+
+  public onKeyUp(e: KeyboardEvent, menuKey: string): void {
+    if(e.key === ' ' || e.key === 'Enter') {
+      this.onMenuToggle(menuKey);
+    }
+  }
+
+  public onRouteChange(): void {
+    // this.isSidebarExpanded = false;
+  }
+  
+}
+

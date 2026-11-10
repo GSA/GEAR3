@@ -1,6 +1,7 @@
 var dotenv = require('dotenv').config();  // .env Credentials
 
-const bodyParser = require('body-parser'),
+const compression = require('compression'),
+  bodyParser = require('body-parser'),
   cors = require('cors'),
   express = require('express'),
   fs = require('fs'),
@@ -10,7 +11,6 @@ const bodyParser = require('body-parser'),
 
   dbCredentials = require("./api/db.js").dbCredentials,
   jsonwebtoken = require('jsonwebtoken'),
-  jwt = require('express-jwt'),
   mysql = require('mysql2'),
   passport = require('passport'),
   passportJWT = require("passport-jwt"),
@@ -26,6 +26,7 @@ const bodyParser = require('body-parser'),
   JWTStrategy = passportJWT.Strategy;
 
   const pocJobHandler = require('./api/cron-jobs/poc-job-handler.js');
+  const pocCsvJobHandler = require('./api/cron-jobs/poc-csv-handler.js');
   const cloudJobHandler = require('./api/cron-jobs/cloud-adoption-handler.js');
   const tpiJobHandler = require('./api/cron-jobs/tpi-job-handler.js');
 
@@ -79,17 +80,39 @@ passport.use(new JWTStrategy({
   }
 ));
 
+const browserBuildPath = path.join(__dirname, 'public', 'browser');
+
+const staticAssetOptions = {
+  etag: true,
+  lastModified: true,
+  setHeaders: (res, servedPath) => {
+    if (servedPath.endsWith('index.html')) {
+      res.setHeader('Cache-Control', 'no-cache');
+      return;
+    }
+
+    const normalizedPath = servedPath.replace(/\\/g, '/');
+    const isFingerprintedAsset = /-(?:[A-Z0-9]{8,})\.(?:js|css)$/.test(normalizedPath);
+
+    if (isFingerprintedAsset) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    }
+  }
+};
+
 
 /********************************************************************
 LOAD EXPRESSJS MIDDLEWARE
 ********************************************************************/
 const app = express()
+  .use(compression())
   .use(cors())
   .use(bodyParser.json({ limit: '50mb' }))
-  .use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
+  .use(bodyParser.urlencoded({ limit: '50mb', extended: false }))
   .use(passport.initialize())
-  .use(express.static(path.join(__dirname, 'public', 'browser')))
-  .enable('trust proxy');  // For expressJS to know we're behind a proxy when deployed
+  .use(express.static(browserBuildPath, staticAssetOptions))
+  .enable('trust proxy');
+app.set('trust proxy', 1); // Trust only the first proxy hop (load balancer/CDN)
 
 
 /********************************************************************
@@ -143,12 +166,12 @@ app.get('/verify',
     // get the GSAGEARAPIT cookie value
     const apiToken = cookies.GSAGEARAPIT;
     if (apiToken) {
-      const query = `select count(*) as cnt from gear_acl.logins where email = '${userName}' and jwt = '${apiToken}' and date_add(expireDate, interval 1 day) > now();`;
+      const query = 'select count(*) as cnt from gear_acl.logins where email = ? and jwt = ? and date_add(expireDate, interval 1 day) > now();';
       // query the database for the api token
       const db = mysql.createConnection(dbCredentials);
       db.connect();
       //console.log('query = ', query); // debug
-      db.query(query,
+      db.query(query, [userName, apiToken],
         (err, results, fields) => {
           if (err) {
             // send the error to the client
@@ -171,6 +194,64 @@ app.get('/verify',
     }
   }
 );
+
+app.get('/checkGearManagerAccess',
+  (req, res, next) => {
+    const headers = req.headers;
+    // get ALL cookie from the request
+    const pairs = String(headers.cookie).split(';');
+    const cookies = {};
+    // parse the cookies into an object
+    for (let i = 0; i < pairs.length; i++) {
+      const pair = pairs[i].split('=');
+      cookies[(pair[0] + '').trim()] = unescape(pair.slice(1).join('='));
+    }
+    
+    // get the GSAGEARManUN cookie value
+    const userName = cookies.GSAGEARManUN;
+    // get the GSAGEARAPIT cookie value
+    const apiToken = cookies.GSAGEARAPIT;
+    
+    if (!apiToken || !userName) {
+      res.status(401).json({ 
+        hasAccess: false, 
+        message: 'No authentication credentials found',
+        error: 'You do not have the appropriate role in GEAR to access GEAR Manager. If you have a business need to edit/add data to the IT Standards list, please request access to GEAR Manager.'
+      });
+      return;
+    }
+    
+    const query = 'select count(*) as cnt from gear_acl.logins where email = ? and jwt = ? and date_add(expireDate, interval 1 day) > now();';
+    const db = mysql.createConnection(dbCredentials);
+    db.connect();
+    
+    db.query(query, [userName, apiToken],
+      (err, results, fields) => {
+        if (err) {
+          res.status(500).json({ 
+            hasAccess: false, 
+            message: 'Database error',
+            error: 'An error occurred while checking your access. Please try again.'
+          });
+        } else {
+          if (results[0].cnt === 1) {
+            res.status(200).json({ 
+              hasAccess: true, 
+              message: 'Access granted',
+              user: userName
+            });
+          } else {
+            res.status(401).json({ 
+              hasAccess: false, 
+              message: 'Invalid or expired token',
+              error: 'You do not have the appropriate role in GEAR to access GEAR Manager. If you have a business need to edit/add data to the IT Standards list, please request access to GEAR Manager.'
+            });
+          }
+        }
+      }
+    );
+  }
+);
 app.post('/logout', (req, res) => {
   const headers = req.headers;
   // remove ALL cookies from the response
@@ -190,7 +271,7 @@ app.post('/logout', (req, res) => {
   // log the logout to log.event
   const db = mysql.createConnection(dbCredentials);
   db.connect();
-  db.query(`insert into gear_log.event (Event, User, DTG) values ('GEAR Manager - Logged Out', '${userName}', now());`);
+  db.query('insert into gear_log.event (Event, User, DTG) values (?, ?, now());', ['GEAR Manager - Logged Out', userName]);
   // send the response with no cookies
   res.status(200).json({ message: 'logged out' });
 });
@@ -203,11 +284,11 @@ app.post(samlConfig.path,
     const samlProfile = req.user;
     const db = mysql.createConnection(dbCredentials);
     db.connect();
-    db.query(`CALL gear_acl.get_user_perms('${samlProfile.nameID}');`,
+    db.query('CALL gear_acl.get_user_perms(?);', [samlProfile.nameID],
       (err, results, fields) => {
         if (err) {
           // log error returned by get_user_perms() to log.event
-          db.query(`insert into gear_log.event (Event, User, DTG) values ('GEAR Manager - Login Error', '${samlProfile.nameID}', now());`);
+          db.query('insert into gear_log.event (Event, User, DTG) values (?, ?, now());', ['GEAR Manager - Login Error', samlProfile.nameID]);
           
           // send the error to the client
           res.status(500);
@@ -219,10 +300,44 @@ app.post(samlConfig.path,
 
           if (results[0].length === 0) {
             // log user not found to log.event
-            db.query(`insert into gear_log.event (Event, User, DTG) values ('GEAR Manager - Unable to Verify User', '${samlProfile.nameID}', now());`);
+            db.query('insert into gear_log.event (Event, User, DTG) values (?, ?, now());', ['GEAR Manager - Unable to Verify User', samlProfile.nameID]);
             
-            userLookupStatus = `Unable to verify user, <strong>${samlProfile.nameID}</strong><br/><a href="${process.env.SAML_ENTRY_POINT}">TRY AGAIN</a>`;
-            html = `<html><body style="font-family:sans-serif;"><p>${userLookupStatus}</p></body></html>`;
+            // Create a more user-friendly error page that redirects back to GEAR Manager
+            html = `
+<html>
+<head>
+  <title>Access Denied - GEAR Manager</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; background-color: #f8f9fa; }
+    .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .error-header { color: #dc3545; font-size: 24px; margin-bottom: 20px; }
+    .error-message { color: #856404; background-color: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+    .btn { display: inline-block; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 10px 5px; }
+    .btn-primary { background-color: #17a2b8; color: white; }
+    .btn-secondary { background-color: #6c757d; color: white; }
+    .btn:hover { opacity: 0.9; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="error-header">
+      <i class="fas fa-exclamation-triangle"></i> Access Denied
+    </div>
+    <div class="error-message">
+      <strong>User: ${samlProfile.nameID}</strong><br><br>
+      You do not have the appropriate role in GEAR to access GEAR Manager. If you have a business need to edit/add data to the IT Standards list, please request access to GEAR Manager.
+    </div>
+    <div style="text-align: center;">
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSdmvOEESbKRJ5z4GnOw9hMqWIAI8m5H8I0-tB4zU3mc3aeYPA/viewform?usp=sf_link" class="btn btn-primary" target="_blank">
+        Request Access to GEAR Manager
+      </a>
+      <a href="/#/gear_manager" class="btn btn-secondary">
+        Return to GEAR Manager
+      </a>
+    </div>
+  </div>
+</body>
+</html>`;
             res.status(401);
             res.send(html);
             return false;
@@ -247,7 +362,7 @@ app.post(samlConfig.path,
           const apiToken = CryptoJS.AES.encrypt(`${jwt.auditID}`, key);
 
           // set the JWT in the database
-          db.query(`CALL gear_acl.setJwt ('${jwt.auditID}', '${apiToken}');`,
+          db.query('CALL gear_acl.setJwt (?, ?);', [jwt.auditID, `${apiToken}`],
           (err) => {
             if (err) {
               console.log(err);
@@ -274,7 +389,7 @@ app.post(samlConfig.path,
 `
           
           // Log GEAR Manager login
-          db.query(`insert into gear_log.event (Event, User, DTG) values ('GEAR Manager - Successful Login', '${samlProfile.nameID}', now());`);
+          db.query('insert into gear_log.event (Event, User, DTG) values (?, ?, now());', ['GEAR Manager - Successful Login', samlProfile.nameID]);
 
           // set the cookie expiration date
           let date = new Date();
@@ -316,14 +431,13 @@ app.post(samlConfig.path,
 //  DONE WITH PASSPORT
 /*******************************************************************/
 
-
 /********************************************************************
 REDIRECT ROOT TO GEAR "read only" (aka "angular") app
 ********************************************************************/
 app.get('*', function (req, res) {
-  res.sendFile(path.join(__dirname, 'public', 'browser', 'index.html'));
+  res.setHeader('Cache-Control', 'no-cache');
+  res.sendFile(path.join(browserBuildPath, 'index.html'));
 });
-
 
 /********************************************************************
 START SERVER
@@ -335,6 +449,40 @@ server.listen(port, function () {
 })
 server.on('error', onError);
 server.on('listening', onListening);
+
+/*
+ * Internal loopback listener for the AI tool layer.
+ *
+ * Under IIS/iisnode the main server listens on a named pipe, not a TCP port,
+ * so mcp/gear-tools.js has no address it can fetch GEAR's own /api endpoints
+ * from. Pointing it at the public hostname does not work either: GSA's
+ * certificates are issued by an internal CA that Node does not trust, so TLS
+ * verification fails. This opens a second listener for the SAME Express app on
+ * a loopback-only TCP port and advertises it via GEAR_INTERNAL_API_PORT.
+ *
+ * Bound to 127.0.0.1, so it is not reachable off the box. Skipped entirely
+ * when the main listener is already TCP (local development) or when
+ * GEAR_API_BASE is set explicitly.
+*/
+if (typeof port === 'string' && !process.env.GEAR_API_BASE) {
+  const internalServer = http.createServer(app);
+  internalServer.listen(0, '127.0.0.1', () => {
+    const internalPort = internalServer.address().port;
+    process.env.GEAR_INTERNAL_API_PORT = String(internalPort);
+    console.log(
+      'Internal API loopback listening on 127.0.0.1:' + internalPort +
+      ' (for AI tool layer; main listener is pipe ' + port + ')'
+    );
+  });
+  internalServer.on('error', (err) => {
+    // Non-fatal: the site keeps serving, but AI tools will not reach the API.
+    console.error(
+      'Internal API loopback failed to start (%s). GEAR Assistant tools will be ' +
+      'unable to reach the GEAR API; set GEAR_API_BASE to a loopback URL instead.',
+      err.message
+    );
+  });
+}
 
 /*
  * Event listener for HTTP server "error" event.
@@ -378,7 +526,6 @@ function onListening() {
  * Function to get FISMA info from ServiceNow API
  * everyday at 20:00 Eastern Time
 */
-
 const cron = require('node-cron');
 const fetch = require("node-fetch");
 let base64 = require('base-64');
@@ -431,28 +578,57 @@ const putData = async data => {
   };
 }; */
 
+// -------------------------------------------------------------------------------------------------
+// Function to create POC csv file every Wednesday at 4:00 AM ET and place the file into scripts/pocs
+if (process.env.POC_CSV_CRON) {
+  cron.schedule(process.env.POC_CSV_CRON, async () => {
+    await pocCsvJobHandler.runPocCsvJob();
+  });
+} else {
+  console.warn('POC_CSV_CRON env variable not set — skipping cron job.');
+}
+// -------------------------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------------------------
 // Function to load POC data every Wednesday at 5:00 AM ET from the csv file in scripts/pocs
 const { consoleTestResultHandler } = require('tslint/lib/test.js');
-
-cron.schedule(process.env.POC_CRON, async () => { //PRODUCTION
-  await pocJobHandler.runPocJob();
-});
+if (process.env.POC_CRON) {
+  cron.schedule(process.env.POC_CRON, async () => { //PRODUCTION
+    await pocJobHandler.runPocJob();
+  });
+} else {
+  console.warn('POC_CRON env variable not set — skipping cron job.');
+}
 
 // -------------------------------------------------------------------------------------------------
 // Function to Insert calculated cloud adoption rate based on obj_fisma_archer data every day at 10:20 PM ET
-
-cron.schedule(process.env.CLOUD_ADOPTION_CRON, async () => { //PRODUCTION
-  await cloudJobHandler.runCloudAdoptionJob();
-});
+if (process.env.CLOUD_ADOPTION_CRON) {
+  cron.schedule(process.env.CLOUD_ADOPTION_CRON, async () => { //PRODUCTION
+    await cloudJobHandler.runCloudAdoptionJob();
+  });
+} else {
+  console.warn('CLOUD_ADOPTION_CRON env variable not set — skipping cron job.');
+}
 
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Google Sheets API - Update All Related Records (runs every weekday at 11:00 PM)
-cron.schedule(process.env.RECORDS_CRON, async () => { 
-  await googleApiService.saveToken().catch(console.error);
-  await cronCtrl.runUpdateAllRelatedRecordsJob();
-});
+if (process.env.RECORDS_CRON) {
+  cron.schedule(process.env.RECORDS_CRON, async () => { 
+    await googleApiService.saveToken().catch(console.error);
+    await cronCtrl.runUpdateAllRelatedRecordsJob();
+  });
+} else {
+  console.warn('RECORDS_CRON env variable not set — skipping cron job.');
+}
+
+// CRON JOB: FISMA data -> Google Sheets
+if (process.env.FISMA_SHEET_CRON) {
+  cron.schedule(process.env.FISMA_SHEET_CRON, async () => {
+    await cronCtrl.runFismaSheetJob();
+  });
+} else {
+  console.warn('FISMA_SHEET_CRON env variable not set — skipping cron job.');
+}
 /* 
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Tech Catalog Daily Import
@@ -468,6 +644,44 @@ cron.schedule(process.env.TECH_CATALOG_CRON2, () => {
 // -------------------------------------------------------------------------------------------------
 */
 // CRON JOB: Touchpoints API - Update Websites (runs every day at 11:05 PM)
-cron.schedule(process.env.TOUCHPOINTS_CRON, async () => { 
-  await tpiJobHandler.runTouchpointImportJob();
-});
+if (process.env.TOUCHPOINTS_CRON) {
+  cron.schedule(process.env.TOUCHPOINTS_CRON, async () => { 
+    await tpiJobHandler.runTouchpointImportJob();
+  });
+} else {
+  console.warn('TOUCHPOINTS_CRON env variable not set — skipping cron job.');
+}
+
+// -------------------------------------------------------------------------------------------------
+// CRON JOBS: GEAR Assistant semantic search index (see mcp/embedding-pipeline.js)
+//
+// Two schedules with different jobs:
+//   EMBEDDING_DELTA_CRON    — every few minutes. Hashes searchable text and
+//     re-embeds only changed records, so edits made during the day (e.g. an IT
+//     standard's approval status) are searchable within minutes.
+//   EMBEDDING_REBUILD_CRON  — nightly, after the data loaders above finish.
+//     Re-embeds everything into a staging table and swaps it in, reconciling
+//     anything the delta sweep could not detect.
+//
+// Both are no-ops unless GEAR_SEMANTIC_SEARCH=true.
+if (process.env.GEAR_SEMANTIC_SEARCH === 'true') {
+  const embeddingPipeline = require('./mcp/embedding-pipeline.js');
+
+  if (process.env.EMBEDDING_DELTA_CRON) {
+    cron.schedule(process.env.EMBEDDING_DELTA_CRON, async () => {
+      await embeddingPipeline.runDeltaRefresh();
+    });
+  } else {
+    console.warn('EMBEDDING_DELTA_CRON env variable not set — skipping cron job.');
+  }
+
+  if (process.env.EMBEDDING_REBUILD_CRON) {
+    cron.schedule(process.env.EMBEDDING_REBUILD_CRON, async () => {
+      await embeddingPipeline.runFullRebuild();
+    });
+  } else {
+    console.warn('EMBEDDING_REBUILD_CRON env variable not set — skipping cron job.');
+  }
+} else {
+  console.warn('GEAR_SEMANTIC_SEARCH is not "true" — semantic search disabled, embedding cron jobs skipped.');
+}

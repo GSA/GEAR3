@@ -1,0 +1,18 @@
+<div class="button-container">
+  <button class="button" [ngClass]="buttonStyle" (click)="onButtonClick($event)" [disabled]="disabled">
+    @if (isButtonDropdown()) {
+      <i class="fas fa-chevron-down"></i>
+    }
+    {{buttonText}}
+    @if (buttonIcon) {
+      <i class="button-icon" [ngClass]="buttonIcon"></i>
+    }
+  </button>
+  <div class="button-dropdown-container">
+    @if (isButtonDropdown() && isDropdownOpen) {
+      <ul class="button-dropdown-menu">
+        <ng-content></ng-content>
+      </ul>
+    }
+  </div>
+</div>

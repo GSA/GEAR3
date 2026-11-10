@@ -1,0 +1,168 @@
+@if (isDataReady) {
+  <div class="records-management-details-container">
+    <div class="breadcrumb-container">
+      <app-breadcrumb>
+        <span currentPageName>{{detailsData.Record_Item_Title}}</span>
+      </app-breadcrumb>
+    </div>
+    <div class="title-container">
+      <span class="title">{{detailsData.Record_Item_Title}}</span>
+    </div>
+    <div class="content-container">
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" href="#overview">Overview</a>
+        </li>
+      </ul>
+      <div class="tab-container">
+        <div class="overall-data-container">
+          <div class="main-data-container">
+            <div class="data-holder">
+              <div class="data-full">
+                <label class="data-label">
+                  <span [pTooltip]="getTooltip('Description')" [escape]="false" role="tooltip">
+                    Description
+                    <i class="fas fa-info-circle"></i>
+                  </span>
+                </label>
+                <span>{{detailsData.Description}}</span>
+              </div>
+              <div class="data-full">
+                <label class="data-label">
+                  <span [pTooltip]="getTooltip('Retention Instructions')" [escape]="false" role="tooltip">
+                    Retention Instructions
+                    <i class="fas fa-info-circle"></i>
+                  </span>
+                </label>
+                <span>
+                  <span>{{detailsData.Retention_Instructions}}</span>
+                </span>
+              </div>
+              <div class="data-full">
+                <label class="data-label">
+                  <span [pTooltip]="getTooltip('Disposition Notes')" [escape]="false" role="tooltip">
+                    Disposition Notes
+                    <i class="fas fa-info-circle"></i>
+                  </span>
+                </label>
+                <span>
+                  <span>{{detailsData.Disposition_Notes}}</span>
+                </span>
+              </div>
+            </div>
+            <div class="sub-content">
+              <table>
+                <tr>
+                  <th>Attribute</th>
+                  <th>Value</th>
+                </tr>
+                <tr>
+                  <td>
+                    <span [pTooltip]="getTooltip('CUI')" [escape]="false" role="tooltip">
+                      CUI
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </td>
+                  <td>{{ detailsData.CUI }}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span [pTooltip]="getTooltip('Retention Years')" [escape]="false" role="tooltip">
+                      Retention Years
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </td>
+                  <td>{{ detailsData.FY_Retention_Years }}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span [pTooltip]="getTooltip('Disposition Authority (DA)')" [escape]="false" role="tooltip">
+                      Disposition Authority
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </td>
+                  <td>{{ detailsData.Legal_Disposition_Authority }}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span [pTooltip]="getTooltip('DA Approval Date')" [escape]="false" role="tooltip">
+                      DA Approval Date
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </td>
+                  <td>{{ detailsData.Date_DA_Approved }}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span [pTooltip]="getTooltip('Disposition Type')" [escape]="false" role="tooltip">
+                      Disposition Type
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </td>
+                  <td>{{ detailsData.Type_Disposition }}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span [pTooltip]="getTooltip('FP Category')" [escape]="false" role="tooltip">
+                      FP Category
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </td>
+                  <td>{{ detailsData.FP_Category }}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span [pTooltip]="getTooltip('GSA Number')" [escape]="false" role="tooltip">
+                      GSA Number
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </td>
+                  <td>{{ detailsData.GSA_Number }}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span [pTooltip]="getTooltip('PII')" [escape]="false" role="tooltip">
+                      PII
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </td>
+                  <td>{{ detailsData.PII }}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span [pTooltip]="getTooltip('Record Group')" [escape]="false" role="tooltip">
+                      Record Group
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </td>
+                  <td>{{ detailsData.RG }}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span [pTooltip]="getTooltip('Record ID')" [escape]="false" role="tooltip">
+                      Record ID
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </td>
+                  <td>{{ detailsData.Rec_ID }}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span [pTooltip]="getTooltip('Status')" [escape]="false" role="tooltip">
+                      Status
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </td>
+                  <td>{{ detailsData.Record_Status }}</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      @if (isLoggedIn()) {
+        <app-button [buttonText]="'Edit'" buttonStyle="outline" (buttonClick)="editRecord()"></app-button>
+      }
+    </div>
+  </div>
+}

@@ -12,6 +12,9 @@ router.route('/get/:id')
 router.route('/get/:id/systems/')
   .get(investmentCtrl.findSystems);
 
+router.route('/filter_totals')
+  .get(investmentCtrl.getFilterTotals);
+
 // router.route('/latest')
 //   .get(investmentCtrl.findLatest);
 

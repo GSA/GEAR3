@@ -9,6 +9,7 @@ export class FISMA {
   public FIPS_Impact_Level: string;
   public ATODate: Date;
   public ATOType: Date;
+  public ATOExpirationDate: Date;
   public RenewalDate: Date;
   public ComplFISMA: string;
   public PII: string;

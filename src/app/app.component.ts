@@ -1,103 +1,92 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { distinctUntilChanged, filter } from 'rxjs/operators';
+import { AnalyticsService } from '@services/analytics/analytics.service';
+import { SharedService } from '@services/shared/shared.service';
 
 // Declare jQuery symbol
 declare var $: any;
-declare var gtag: Function;
-
-// August 28, 2026 at 11:59 PM EST (UTC-4)
-const COUNTDOWN_TARGET = new Date('2026-11-06T05:00:00Z');
 
 @Component({
-  standalone: false,
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
+    standalone: false
 })
-export class AppComponent implements OnInit, OnDestroy {
-  constructor(private router: Router) {
+export class AppComponent implements OnInit {
+  constructor(
+    private router: Router,
+    private sharedService: SharedService,
+    private analyticsService: AnalyticsService
+  ) {
     this.router.events.subscribe(event => {
       // Send page_view event to GA
       if (event instanceof NavigationEnd) {
-          gtag('event', 'page_view', { 'page_path': event.urlAfterRedirects });
+        this.analyticsService.logPageViewEvent(event.urlAfterRedirects);
       }
     });
   }
 
   title = 'gear3';
-  countdown: string = '';
-  private countdownInterval: any;
 
   ngOnInit() {
     // Pad main Module by how big the top navbar is
-    $(document).ready(this.setNavOffsets);
-    $(window).resize(this.setNavOffsets);
-
-    this.updateCountdown();
-    this.countdownInterval = setInterval(() => this.updateCountdown(), 1000);
+    // $(document).ready(this.setNavOffsets);
+    // $(window).resize(this.setNavOffsets);
   }
 
-  ngOnDestroy() {
-    if (this.countdownInterval) {
-      clearInterval(this.countdownInterval);
-    }
-  }
+  // setNavOffsets() {
+  //   // Top Navbar Offset
+  //   let mainElem: HTMLElement = document.getElementById('mainModule');
+  //   let topNavElem: HTMLElement = document.getElementById('topNav');
+  //   let appBannerElem: HTMLElement = document.getElementById('appBanner');
+  //   mainElem.style['padding-top'] = `${topNavElem.offsetHeight + appBannerElem.offsetHeight}px`;
 
-  private updateCountdown(): void {
-    const now = new Date();
-    const diff = COUNTDOWN_TARGET.getTime() - now.getTime();
+  //   // SideNavbar Offset
+  //   let footerElem: HTMLElement = document.getElementById('footer');
+  //   let sideNavElem: any = document.getElementsByTagName('p-sidebar')[0];
+  //   sideNavElem.style['height'] = `${window.innerHeight - topNavElem.offsetHeight - footerElem.offsetHeight + 10}px`;
+  // }
 
-    if (diff <= 0) {
-      this.countdown = '0d 0h 0m 0s';
-      clearInterval(this.countdownInterval);
-      return;
-    }
-
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-    this.countdown = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-  }
-
-  setNavOffsets() {
-    // Top Navbar Offset
-    let mainElem: HTMLElement = document.getElementById('mainModule');
-    let topNavElem: HTMLElement = document.getElementById('topNav');
-    let appBannerElem: HTMLElement = document.getElementById('appBanner');
-    // mainElem.style['padding-top'] = `${topNavElem.offsetHeight + appBannerElem.offsetHeight}px`;
-
-    // SideNavbar Offset
-    // let footerElem: HTMLElement = document.getElementById('footer');
-    // let sideNavElem: any = document.getElementsByTagName('ng-sidebar-container')[0];
-    // sideNavElem.style['height'] = `${window.innerHeight - topNavElem.offsetHeight - footerElem.offsetHeight}px`;
-  }
-
-  showPopup(url, title, w, h) {
-     const dualScreenLeft = window.screenLeft !==  undefined ? window.screenLeft : window.screenX;
-     const dualScreenTop = window.screenTop !==  undefined   ? window.screenTop  : window.screenY;
+  // showPopup(url, title, w, h) {
+  //    const dualScreenLeft = window.screenLeft !==  undefined ? window.screenLeft : window.screenX;
+  //    const dualScreenTop = window.screenTop !==  undefined   ? window.screenTop  : window.screenY;
  
-     const width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
-     const height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
+  //    const width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
+  //    const height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
  
-     const systemZoom = width / window.screen.availWidth;
-     const left = (width - w) / 2 / systemZoom + dualScreenLeft;
-     const top = (height - h) / 2 / systemZoom + dualScreenTop;
-     const popupWindow = window.open(url, title, 
-       `
-       scrollbars=yes,
-       width=${w / systemZoom}, 
-       height=${h / systemZoom}, 
-       top=${top}, 
-       left=${left}
-       `
-     );
+  //    const systemZoom = width / window.screen.availWidth;
+  //    const left = (width - w) / 2 / systemZoom + dualScreenLeft;
+  //    const top = (height - h) / 2 / systemZoom + dualScreenTop;
+  //    const popupWindow = window.open(url, title, 
+  //      `
+  //      scrollbars=yes,
+  //      width=${w / systemZoom}, 
+  //      height=${h / systemZoom}, 
+  //      top=${top}, 
+  //      left=${left}
+  //      `
+  //    );
  
-     if (window.focus) {
-      popupWindow.focus();
-     } 
+  //    if (window.focus) {
+  //     popupWindow.focus();
+  //    } 
+  // }
+
+
+  // onSidebarIconsMouseEnter() {
+  //   this.sharedService.openSidebar();
+  // }
+
+  // onSidebarIconsKeyDown(e: KeyboardEvent) {
+  //   if(e.key === ' ' || e.key === 'Enter' || e.key === 'Spacebar') {
+  //     this.sharedService.openSidebar();
+  //   }
+  // }
+
+  showPopup(url: string, title: string, w: number, h: number): void {
+    const left = Math.round(window.screenX + (window.outerWidth - w) / 2);
+    const top = Math.round(window.screenY + (window.outerHeight - h) / 2);
+    window.open(url, title, `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=yes`);
   }
 
 }

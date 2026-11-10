@@ -4,223 +4,69 @@ import {
   RouterModule,
   TitleStrategy,
   RouterStateSnapshot,
+  ExtraOptions,
 } from '@angular/router';
-
-// Main
-import { HomeComponent } from './views/main/home/home.component';
-import { GlobalSearchComponent } from './views/main/global-search/global-search.component';
-import { AboutComponent } from './views/main/about/about.component';
-import { AssistTechComponent } from './views/main/assist-tech/assist-tech.component';
-import { GearManagerComponent } from './views/main/gear-manager/gear-manager.component';
-
-// Strategy
-import { FrameworkComponent } from './views/strategy/framework/framework.component';
-import { InvestmentsComponent } from './views/strategy/investments/investments.component';
-
-// Enterprise
-import { CapabilitiesModelComponent } from './views/enterprise/capabilities-model/capabilities-model.component';
-import { CapabilitiesComponent } from './views/enterprise/capabilities/capabilities.component';
-import { OrganizationsChartComponent } from './views/enterprise/organizations-chart/organizations-chart.component';
-import { OrganizationsComponent } from './views/enterprise/organizations/organizations.component';
-import { WebsiteServiceCategoryComponent } from './views/enterprise/website-service-category/website-service-category.component';
-// Systems
-import { SystemsComponent } from './views/systems/systems/systems.component';
-import { TimeComponent } from './views/systems/time/time.component';
-import { RecordsManagementComponent } from './views/systems/records-management/records-management.component';
-import { WebsitesComponent } from './views/systems/websites/websites.component';
-
-// Security
-import { FismaComponent } from './views/security/fisma/fisma.component';
-import { FismaPocsComponent } from './views/security/fisma-pocs/fisma-pocs.component';
-
-// Technologies
-import { ItStandardsComponent } from './views/technologies/it-standards/it-standards.component';
-
-// Enterprise Architecture
-//import { ArtifactsComponent } from './views/architecture/artifacts/artifacts.component';
-import { EAViewComponent } from './views/architecture/ea-view/ea-view.component';
-import { GearModelComponent } from './views/architecture/gear-model/gear-model.component';
 import { Title } from '@angular/platform-browser';
-import { FormsComponent } from './views/main/forms-glossary/forms/forms.component';
-import { GlossaryComponent } from './views/main/forms-glossary/glossary/glossary.component';
-import { DataDictionaryComponent } from './views/main/data-dictionary/data-dictionary.component';
 
 const routes: Routes = [
-  { path: '', component: HomeComponent, title: 'Home' },
-  { path: 'search/:keyword', component: GlobalSearchComponent, title: 'Search' },
-  { path: 'search/:reportType/:id', component: GlobalSearchComponent, title: 'Search' },
-  { path: 'about', component: AboutComponent, title: 'About' },
-  { path: 'about/:tab', component: AboutComponent, title: 'About' },
+  // Dashboard (root)
   {
-    path: 'assist_tech',
-    component: AssistTechComponent,
-    title: 'Assistive Technology',
+    path: '',
+    loadChildren: () =>
+      import('./views/dashboard/dashboard.module').then(m => m.DashboardModule),
   },
 
+  // Main / General pages
   {
-    path: 'strategic_framework',
-    component: FrameworkComponent,
-    title: 'Strategic Framework',
-  },
-  {
-    path: 'investments',
-    component: InvestmentsComponent,
-    title: 'Investments',
-  },
-  {
-    path: 'investments/:investID',
-    component: InvestmentsComponent,
-    title: 'Investment',
+    path: '',
+    loadChildren: () =>
+      import('./views/main/main.module').then(m => m.MainModule),
   },
 
+  // Strategy
   {
-    path: 'capabilities_model',
-    component: CapabilitiesModelComponent,
-    title: 'Capabilities Model',
-  },
-  {
-    path: 'capabilities_model/:capID',
-    component: CapabilitiesModelComponent,
-    title: 'Capability Model',
-  },
-  {
-    path: 'capabilities',
-    component: CapabilitiesComponent,
-    title: 'Capabilities',
-  },
-  {
-    path: 'capabilities/:capID',
-    component: CapabilitiesComponent,
-    title: 'Capabilities',
-  },
-  {
-    path: 'org_chart',
-    component: OrganizationsChartComponent,
-    title: 'Org Chart',
-  },
-  {
-    path: 'org_chart/:orgID',
-    component: OrganizationsChartComponent,
-    title: 'Org Chart',
-  },
-  {
-    path: 'organizations',
-    component: OrganizationsComponent,
-    title: 'Organizations',
-  },
-  {
-    path: 'organizations/:orgID',
-    component: OrganizationsComponent,
-    title: 'Organization',
-  },
-  {
-    path: 'website_service_category',
-    component: WebsiteServiceCategoryComponent,
-    title: 'Website Service Categories',
-  },
-  {
-    path: 'website_service_category/:websiteServiceCategoryID',
-    component: WebsiteServiceCategoryComponent,
-    title: 'Website Service Category',
+    path: '',
+    loadChildren: () =>
+      import('./views/strategy/strategy.module').then(m => m.StrategyModule),
   },
 
-  { path: 'systems', component: SystemsComponent, title: 'Systems' },
-  { path: 'systems/:sysID', component: SystemsComponent, title: 'System' },
+  // Enterprise
   {
-    path: 'systems_TIME',
-    component: TimeComponent,
-    title: 'Systems TIME Model',
-  },
-  {
-    path: 'systems_TIME/:sysID',
-    component: TimeComponent,
-    title: 'System TIME Model',
-  },
-  {
-    path: 'records_mgmt',
-    component: RecordsManagementComponent,
-    title: 'Records Management',
-  },
-  {
-    path: 'records_mgmt/:recID',
-    component: RecordsManagementComponent,
-    title: 'Records Management',
-  },
-  { path: 'websites', component: WebsitesComponent, title: 'Websites' },
-  {
-    path: 'websites/:websiteID',
-    component: WebsitesComponent,
-    title: 'Website',
+    path: '',
+    loadChildren: () =>
+      import('./views/enterprise/enterprise.module').then(m => m.EnterpriseModule),
   },
 
-  { path: 'FISMA', component: FismaComponent, title: 'FISMA Systems' },
-  { path: 'FISMA/:fismaID', component: FismaComponent, title: 'FISMA System' },
+  // Systems
   {
-    path: 'FISMA_POC',
-    component: FismaPocsComponent,
-    title: 'FISMA Point of Contacts',
-  },
-  {
-    path: 'FISMA_POC/:fismaID',
-    component: FismaPocsComponent,
-    title: 'FISMA Point of Contact',
+    path: '',
+    loadChildren: () =>
+      import('./views/systems/systems.module').then(m => m.SystemsModule),
   },
 
+  // Security
   {
-    path: 'it_standards',
-    component: ItStandardsComponent,
-    title: 'IT Standards',
-  },
-  {
-    path: 'it_standards/:standardID',
-    component: ItStandardsComponent,
-    title: 'IT Standard',
-  },
-  {
-    path: 'it_standards/filtered/:deploymentType/:status',
-    component: ItStandardsComponent,
-    title: 'IT Standard',
-  },
-  {
-    path: 'it_standards/filtered/:deploymentType',
-    component: ItStandardsComponent,
-    title: 'IT Standard',
+    path: '',
+    loadChildren: () =>
+      import('./views/security/security.module').then(m => m.SecurityModule),
   },
 
-  //{ path: 'artifacts', component: ArtifactsComponent, title: 'Artifacts' },
-  //{ path: 'ea_view', component: EAViewComponent, title: 'EA View' }, // We need to update the EA view to be more readable before publishing
-  { path: 'gear_model', component: GearModelComponent, title: 'GEAR Model' },
-
+  // Technologies
   {
-    path: 'forms',
-    component: FormsComponent,
-    title: 'Forms',
+    path: '',
+    loadChildren: () =>
+      import('./views/technologies/technologies.module').then(m => m.TechnologiesModule),
   },
 
+  // Architecture
   {
-    path: 'glossary',
-    component: GlossaryComponent,
-    title: 'Glossary',
+    path: '',
+    loadChildren: () =>
+      import('./views/architecture/architecture.module').then(m => m.ArchitectureModule),
   },
 
-  {
-    path: 'gear_manager',
-    component: GearManagerComponent,
-    title: 'GEAR Manager',
-  },
-
-  {
-    path: 'data_dictionary',
-    component: DataDictionaryComponent,
-    title: 'Data Dictionary',
-  },
-
-  {
-    // Catch-all Redirect to Home
-    path: '**',
-    redirectTo: '',
-    pathMatch: 'full',
-  },
+  // Catch-all redirect to home
+  { path: '**', redirectTo: '', pathMatch: 'full' },
 ];
 
 @Injectable({ providedIn: 'root' })
@@ -237,11 +83,16 @@ export class TemplatePageTitleStrategy extends TitleStrategy {
   }
 }
 
+const routerOption: ExtraOptions = {
+  scrollPositionRestoration: 'enabled',
+  anchorScrolling: 'enabled',
+  useHash: true,
+  onSameUrlNavigation: 'reload'
+};
+
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, {
-    useHash: true
-}),
+    RouterModule.forRoot(routes, routerOption),
   ],
   exports: [RouterModule],
   providers: [{ provide: TitleStrategy, useClass: TemplatePageTitleStrategy }],

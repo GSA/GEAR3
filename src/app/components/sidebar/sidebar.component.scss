@@ -1,0 +1,138 @@
+.sidebar-header {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    align-content: baseline;
+    padding: .25rem .5rem;
+}
+
+.sidebar-content-wrapper {
+    margin-bottom: 200px;
+}
+
+.sidebar-link {
+    color: white;
+    font-family: Nunito Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", Segoe UI Symbol;
+    font-size: .875rem;
+    font-weight: 200;
+    letter-spacing: 1px;
+    line-height: 1.5;
+    margin: 0;
+
+    &:hover {
+        cursor: pointer;
+    }
+
+    &.it-strategy {
+        background-color: #14883c;
+        &:hover {
+            background-color: #389f5c;
+        }
+    }
+    
+    &.gsa-enterprise {
+        background-color: #2b60de;
+        &:hover {
+            background-color: #214599;
+        }
+    }
+
+    &.business-systems {
+        background-color: #ce4844;
+        &:hover {
+            background-color: #c9302c;
+        }
+    }
+    
+    &.security {
+        background-color: #aa6708;
+        &:hover {
+            background-color: #ffbe2e;
+        }
+    }
+    
+    &.technologies {
+        background-color: #008080;
+        &:hover {
+            background-color: #076464;
+        }
+    }
+    
+    &.enterprise-architecture {
+        background-color: #800080;
+        &:hover {
+            background-color: #4d024d;
+        }
+    }
+    
+    &.additional-info {
+        background-color: #027eb2;
+        &:hover {
+            background-color: #00bde3;
+        }
+    }
+
+    & .sidebar-sublink {
+        background-color: #343a40;
+        color: white;
+        margin: 0;
+        padding: 1.25rem 1rem;
+        display: block;
+        &:hover {
+            background-color: #1d2124;
+        }
+    }
+}
+
+::ng-deep .p-sidebar { 
+    border: none;
+    box-shadow: none;
+    overflow-y: auto;
+    top: 67px;
+    // background: transparent;
+
+    @media (max-width: 1121px) {
+        top: 95px;
+    }
+
+    @media (max-width: 1004px) {
+        top: 98px;
+    }
+}
+
+::ng-deep {
+
+    & .p-accordion-header-text {
+        display: none;
+    }
+
+    & .p-accordion {
+
+        & p-accordiontab .p-accordion-tab {
+            margin: 0;
+        }
+
+        & .p-accordion-header {
+            border: none;
+            border-radius: 0;
+        }
+
+        & .p-accordion-header-link {
+            font-weight: 200;
+            border: 0;
+            background: none;
+            border-radius: 0;
+            padding: 1.25rem 1rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        & .p-accordion-content {
+            background-color: #343a40;
+            width: 100%;
+            border: none;
+            padding: 0;
+            margin: 0;
+        }
+    }
+}

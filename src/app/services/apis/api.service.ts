@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { Observable, of, shareReplay } from 'rxjs';
+import { catchError, filter, map } from 'rxjs/operators';
 
 import { SharedService } from '@services/shared/shared.service';
 import { Globals } from '@common/globals';
@@ -19,10 +19,11 @@ import { InvestmentType } from '@api/models/investment-types.model';
 import { ITStandards } from '@api/models/it-standards.model';
 import { ITStandard508Status } from '@api/models/it-standards-508_statuses.model';
 import { ITStandardCategory } from '@api/models/it-standards-categories.model';
+import { ITStandardCriticalReview } from '@api/models/it-standards-critical-review.model';
+import { ITStandardCSCRMReview } from '@api/models/it-standards-c-scrm-review.model';
 import { ITStandardDeployTypes } from '@api/models/it-standards-deploy_types.model';
 import { ITStandardStatus } from '@api/models/it-standards-statuses.model';
 import { ITStandardTypes } from '@api/models/it-standards-types.model';
-import { ITStandardCriticalReview } from '@api/models/it-standards-critical-review.model';
 
 import { Organization } from '@api/models/organizations.model';
 import { Service_Category } from '@api/models/service-category.model';
@@ -46,6 +47,8 @@ import { TechAttributeDefinitions } from '@api/models/tech-attribute-definitions
 import { DataDictionary } from '@api/models/data-dictionary.model';
 import { OperatingSystem } from '@api/models/operating-systems.model';
 import { AppBundle } from '@api/models/it-standards-app-bundle.model';
+import { CloudAdoptionRate } from '@api/models/cloud-adoption-rate.model';
+import { TRM } from '@api/models/trm.model';
 
 @Injectable({
   providedIn: 'root',
@@ -102,24 +105,62 @@ export class ApiService {
   // Data Dictionary
   dataDictionaryUrl: string = this.sharedService.internalURLFmt('/api/data_dictionary');
 
+  // Cloud Adoption Rate
+  cloudAdoptionUrl: string = this.sharedService.internalURLFmt('/api/cloud_adoption_rate');
+
+  // TRM
+  trmUrl: string = this.sharedService.internalURLFmt('/api/trm');
+
+  // Dashboard Summary
+  dashboardSummaryUrl: string = this.sharedService.internalURLFmt('/api/dashboard_summary');
+
+  // Session-scoped cache for expensive list endpoints
+  private cache: Map<string, Observable<any>> = new Map();
+
   constructor(
     private globals: Globals,
     private http: HttpClient,
     private sharedService: SharedService
   ) {}
 
+  /** Invalidate a cached observable (call after any mutating operation). */
+  public invalidateCache(key: string): void {
+    this.cache.delete(key);
+  }
+
+  private getCached<T>(key: string, source: Observable<T>): Observable<T> {
+    if (!this.cache.has(key)) {
+      this.cache.set(key, source.pipe(shareReplay({ bufferSize: 1, refCount: true })));
+    }
+    return this.cache.get(key) as Observable<T>;
+  }
+
   // Calls
+  //// Dashboard Summary
+  public getDashboardSummary(): Observable<any> {
+    return this.http
+      .get<any>(this.dashboardSummaryUrl)
+      .pipe(catchError(this.handleError<any>('GET Dashboard Summary', {})));
+  }
+
+  public getHostingPlatforms(): Observable<{ CSP: string; count: number }[]> {
+    return this.getCached('hosting-platforms', this.http
+      .get<{ CSP: string; count: number }[]>(this.dashboardSummaryUrl + '/hosting_platforms')
+      .pipe(catchError(this.handleError<any[]>('GET Hosting Platforms', []))));
+  }
+
   //// Capabilities
   public getCapabilities(): Observable<Capability[]> {
-    return this.http
+    return this.getCached('capabilities', this.http
       .get<Capability[]>(this.capUrl)
-      .pipe(catchError(this.handleError<Capability[]>('GET Capabilities', [])));
+      .pipe(catchError(this.handleError<Capability[]>('GET Capabilities', []))));
   }
-  public getOneCap(id: number): Observable<Capability[]> {
+  public getOneCap(id: number): Observable<Capability> {
     return this.http
-      .get<Capability[]>(this.capUrl + '/get/' + String(id))
+      .get<Capability>(this.capUrl + '/get/' + String(id))
       .pipe(
-        catchError(this.handleError<Capability[]>('GET Capability by ID', []))
+        map(c => c[0]),
+        catchError(this.handleError<Capability>('GET Capability by ID'))
       );
   }
   public getOneCapName(name: string): Observable<Capability[]> {
@@ -135,6 +176,15 @@ export class ApiService {
       .pipe(
         catchError(
           this.handleError<Organization[]>('GET Capability Related Orgs', [])
+        )
+      );
+  }
+  public getCapSystems(id: number): Observable<System[]> {
+    return this.http
+      .get<System[]>(this.capUrl + '/get/' + String(id) + '/systems')
+      .pipe(
+        catchError(
+          this.handleError<System[]>('GET Capability Supporting Systems', [])
         )
       );
   }
@@ -177,9 +227,9 @@ export class ApiService {
 
   //// FISMA
   public getFISMA(): Observable<FISMA[]> {
-    return this.http
+    return this.getCached('fisma', this.http
       .get<FISMA[]>(this.fismaUrl)
-      .pipe(catchError(this.handleError<FISMA[]>('GET FISMA Systems', [])));
+      .pipe(catchError(this.handleError<FISMA[]>('GET FISMA Systems', []))));
   }
   public getOneFISMASys(id: number): Observable<FISMA[]> {
     return this.http
@@ -187,16 +237,51 @@ export class ApiService {
       .pipe(catchError(this.handleError<FISMA[]>('GET FISMA System', [])));
   }
 
+  public getFismaExpiringThisQuarter(): Observable<any> {
+    return this.http
+      .get<any>(this.fismaUrl + '/expiring_quarter')
+      .pipe(
+        map(r => r[0].Total),
+        catchError(this.handleError<any>(`GET FISMA expiring this quarter`)));
+  }
+
+  public getFismaExpiringThisWeek(): Observable<any> {
+    return this.http
+      .get<any>(this.fismaUrl + '/expiring_week')
+      .pipe(
+        map(r => r[0].Total),
+        catchError(this.handleError<any>(`GET FISMA expiring this week`)));
+  }
+
+  public getFismaPastDue(): Observable<any> {
+    return this.http
+      .get<any>(this.fismaUrl + '/past_due')
+      .pipe(
+        map(r => r[0].Total),
+        catchError(this.handleError<any>(`GET FISMA past due`)));
+  }
+
+  public getFismaFilterTotals(): Observable<any> {
+    return this.http
+    .get<any>(this.fismaUrl + '/filter_totals')
+    .pipe(
+      map(t => t[0]),
+      catchError(this.handleError<any>('GET FISMA Filter Totals', []))
+    );
+  }
+
   //// Investment
   public getInvestments(): Observable<Investment[]> {
-    return this.http
+    return this.getCached('investments', this.http
       .get<Investment[]>(this.investUrl)
-      .pipe(catchError(this.handleError<Investment[]>('GET Investments', [])));
+      .pipe(catchError(this.handleError<Investment[]>('GET Investments', []))));
   }
-  public getOneInvest(id: number): Observable<Investment[]> {
+  public getOneInvest(id: number): Observable<Investment> {
     return this.http
-      .get<Investment[]>(this.investUrl + '/get/' + String(id))
-      .pipe(catchError(this.handleError<Investment[]>('GET Investment', [])));
+      .get<Investment>(this.investUrl + '/get/' + String(id))
+      .pipe(
+        map(i => i[0]),
+        catchError(this.handleError<Investment>('GET Investment')));
   }
   public getLatestInvest(): Observable<Investment[]> {
     return this.http
@@ -223,6 +308,14 @@ export class ApiService {
         )
       );
   }
+  public getITInvestmentsFilterTotals(): Observable<any> {
+    return this.http
+    .get<any>(this.investUrl + '/filter_totals/')
+    .pipe(
+      map(t => t[0]),
+      catchError(this.handleError<any>('GET IT Investments Filter Totals', []))
+    );
+  }
   // public updateInvestment(id: number, data: {}): Observable<Investment[]> {
   //   if (this.globals.jwtToken) {
   //     var httpOptions = this.setHeaderOpts();
@@ -248,17 +341,32 @@ export class ApiService {
 
   //// Organizations
   public getOrganizations(): Observable<Organization[]> {
-    return this.http
+    return this.getCached('organizations', this.http
       .get<Organization[]>(this.orgUrl)
+      .pipe(catchError(this.handleError<Organization[]>('GET Organizations', []))));
+  }
+
+  public getOrganizationsPaginated(
+    page: number,
+    pageSize: number,
+    sortField: string = 'Name',
+    sortOrder: number = 1,
+    search: string = ''
+  ): Observable<{ total: number; data: Organization[] }> {
+    const params: any = { page, pageSize, sortField, sortOrder };
+    if (search) { params.search = search; }
+    return this.http
+      .get<{ total: number; data: Organization[] }>(this.orgUrl + '/paginated', { params })
       .pipe(
-        catchError(this.handleError<Organization[]>('GET Organizations', []))
+        catchError(this.handleError<{ total: number; data: Organization[] }>('GET Organizations Paginated', { total: 0, data: [] }))
       );
   }
-  public getOneOrg(id: number): Observable<Organization[]> {
+  public getOneOrg(id: string): Observable<Organization> {
     return this.http
-      .get<Organization[]>(this.orgUrl + '/get/' + String(id))
+      .get<Organization>(this.orgUrl + '/get/' + String(id))
       .pipe(
-        catchError(this.handleError<Organization[]>('GET Organization', []))
+        map(o => o[0]),
+        catchError(this.handleError<Organization>('GET Organization'))
       );
   }
   public getOrgCap(id: number): Observable<Capability[]> {
@@ -282,6 +390,24 @@ export class ApiService {
         )
       );
   }
+  public getOrgBusinessSystems(id: string): Observable<System[]> {
+    return this.http
+      .get<System[]>(this.orgUrl + '/get/' + id + '/business_systems')
+      .pipe(
+        catchError(
+          this.handleError<System[]>('GET Business Systems for Organization', [])
+        )
+      );
+  }
+  public getOrgChildOrgs(id: string): Observable<Organization[]> {
+    return this.http
+      .get<Organization[]>(this.orgUrl + '/get/' + id + '/child_orgs')
+      .pipe(
+        catchError(
+          this.handleError<Organization[]>('GET Child Organizations for Organization', [])
+        )
+      );
+  }
 
   //// POCs
   public getPOCs(): Observable<POC[]> {
@@ -301,10 +427,12 @@ export class ApiService {
       .get<Record[]>(this.recordsUrl)
       .pipe(catchError(this.handleError<Record[]>('GET Records', [])));
   }
-  public getOneRecord(id: number): Observable<Record[]> {
+  public getOneRecord(id: number): Observable<Record> {
     return this.http
-      .get<Record[]>(this.recordsUrl + '/get/' + String(id))
-      .pipe(catchError(this.handleError<Record[]>('GET Record', [])));
+      .get<Record>(this.recordsUrl + '/get/' + String(id))
+      .pipe(
+        map(r => r[0]),
+        catchError(this.handleError<Record>('GET Record')));
   }
   public getRecordSys(id: number): Observable<System[]> {
     return this.http
@@ -386,30 +514,30 @@ export class ApiService {
   }
   public getOneWebsiteServiceCategory(
     id: number
-  ): Observable<Service_Category[]> {
+  ): Observable<WebsiteServiceCategory> {
     return this.http
-      .get<Service_Category[]>(
+      .get<WebsiteServiceCategory>(
         this.websiteServiceCategoryUrl + '/get/' + String(id)
       )
       .pipe(
+        map(w => w[0]),
         catchError(
-          this.handleError<Service_Category[]>(
-            'GET Website Service Category',
-            []
+          this.handleError<WebsiteServiceCategory>(
+            'GET Website Service Category'
           )
         )
       );
   }
   public getWebsiteServiceCategoryRelatedWebsites(
     id: number
-  ): Observable<Service_Category[]> {
+  ): Observable<Website[]> {
     return this.http
-      .get<Service_Category[]>(
+      .get<Website[]>(
         this.websiteServiceCategoryUrl + '/get/' + String(id) + '/websites'
       )
       .pipe(
         catchError(
-          this.handleError<Service_Category[]>(
+          this.handleError<Website[]>(
             'GET Service Category Related Websites',
             []
           )
@@ -419,14 +547,16 @@ export class ApiService {
 
   //// Systems
   public getSystems(): Observable<System[]> {
-    return this.http
+    return this.getCached('systems', this.http
       .get<System[]>(this.sysUrl)
-      .pipe(catchError(this.handleError<System[]>('GET Systems', [])));
+      .pipe(catchError(this.handleError<System[]>('GET Systems', []))));
   }
-  public getOneSys(id: number): Observable<System[]> {
+  public getOneSys(id: number): Observable<System> {
     return this.http
-      .get<System[]>(this.sysUrl + '/get/' + String(id))
-      .pipe(catchError(this.handleError<System[]>('GET System', [])));
+      .get<System>(this.sysUrl + '/get/' + String(id))
+      .pipe(
+        map(s => s[0]),
+        catchError(this.handleError<System[]>('GET System')));
   }
   // public getChildSubSys(id: number): Observable<System[]> {
   //   return this.http.get<System[]>(this.sysUrl + '/get/' + String(id) + '/systems').pipe(
@@ -444,6 +574,50 @@ export class ApiService {
           )
         )
       );
+  }
+  public getSysSubsystems(id: number): Observable<System[]> {
+    return this.http
+      .get<System[]>(this.sysUrl + '/get/' + String(id) + '/subsystems')
+      .pipe(
+        catchError(
+          this.handleError<System[]>(
+            'GET System Related Subsystems',
+            []
+          )
+        )
+      );
+  }
+  public getSystemsFilterTotals(): Observable<any> {
+    return this.http
+    .get<any>(this.sysUrl + '/filter_totals')
+    .pipe(
+      map(t => t[0]),
+      catchError(this.handleError<any>('GET Systems Filter Totals', []))
+    );
+  }
+
+  public getDecommissionedSystemTotals(): Observable<any> {
+    return this.http
+    .get<any>(this.sysUrl + '/decommissioned_system_totals')
+    .pipe(
+      map(t => t[0]),
+      catchError(this.handleError<any>('GET Decommissioned System Totals', []))
+    );
+  }
+
+  public getRetiredStandardsTotals(): Observable<any> {
+    return this.http
+    .get<any>(this.techUrl + '/retired_standard_totals')
+    .pipe(
+      map(t => t[0]),
+      catchError(this.handleError<any>('GET Retired Standard Totals', []))
+    );
+  }
+
+  public getCloudAdoptionRate(): Observable<CloudAdoptionRate[]> {
+    return this.http
+      .get<CloudAdoptionRate[]>(this.cloudAdoptionUrl)
+      .pipe(catchError(this.handleError<CloudAdoptionRate[]>('GET Cloud Adoption Rate', [])));
   }
   public updateSystemCaps(id: number, data: {}): Observable<System[]> {
     if (this.globals.jwtToken) {
@@ -562,16 +736,40 @@ export class ApiService {
 
   //// IT-Standards
   public getITStandards(): Observable<ITStandards[]> {
-    return this.http
+    return this.getCached('it-standards', this.http
       .get<ITStandards[]>(this.techUrl)
+      .pipe(catchError(this.handleError<ITStandards[]>('GET IT Standards', []))));
+  }
+
+  public getITStandardsLite(): Observable<ITStandards[]> {
+    return this.http
+      .get<ITStandards[]>(this.techUrl + '/get/lite')
+      .pipe(
+        catchError(this.handleError<ITStandards[]>('GET IT Standards Lite', []))
+      );
+  }
+  
+  public getApprovedITStandards(): Observable<ITStandards[]> {
+    return this.http
+      .get<ITStandards[]>(this.techUrl + '/get/findAllApproved')
       .pipe(
         catchError(this.handleError<ITStandards[]>('GET IT Standards', []))
       );
   }
-  public getOneITStandard(id: number): Observable<ITStandards[]> {
+  public getITStandardsFilterTotals(filters: string[]): Observable<any> {
     return this.http
-      .get<ITStandards[]>(this.techUrl + '/get/' + String(id))
-      .pipe(catchError(this.handleError<ITStandards[]>('GET IT Standard', [])));
+    .get<any>(this.techUrl + '/filter_totals/' + filters)
+    .pipe(
+      map(t => t[0]),
+      catchError(this.handleError<any>('GET IT Standards Filter Totals', []))
+    );
+  }
+  public getOneITStandard(id: number): Observable<ITStandards> {
+    return this.http
+      .get<ITStandards>(this.techUrl + '/get/' + String(id))
+      .pipe(
+        map(s => s[0]),
+        catchError(this.handleError<ITStandards[]>('GET IT Standard', [])));
   }
   public getLatestITStand(): Observable<ITStandards[]> {
     return this.http
@@ -622,7 +820,7 @@ export class ApiService {
         )
       );
   }
-  public getOperatingSystems(): Observable<OperatingSystem[]> {
+  public getOperatingSystems(): Observable<any> {
     return this.http
       .get<OperatingSystem[]>(this.techUrl + '/operating_systems')
       .pipe(
@@ -661,6 +859,15 @@ export class ApiService {
       .pipe(
         catchError(
           this.handleError<ITStandardCriticalReview[]>('GET IT Standard Critical Reviews', [])
+        )
+      );
+  }
+  public getITStandCSCRMReviews(): Observable<ITStandardCSCRMReview[]> {
+    return this.http
+      .get<ITStandardCSCRMReview[]>(this.techUrl + '/c_scrm_reviews')
+      .pipe(
+        catchError(
+          this.handleError<ITStandardCSCRMReview[]>('GET IT Standard C-SCRM Reviews', [])
         )
       );
   }
@@ -723,16 +930,54 @@ export class ApiService {
     return this.http.post<ITStandards[]>(this.techUrl + '/create_advanced/' + String(id), formData, httpOptions);
   }
 
+  public getRecentITStandards(records: number): Observable<ITStandards[]> {
+    return this.http
+      .get<ITStandards[]>(this.techUrl + '/recent/' + String(records))
+      .pipe(catchError(this.handleError<ITStandards[]>(`GET recent ${String(records)} IT Standards`, [])));
+  }
+
+  public getITStandardsExpiringThisQuarter(): Observable<any> {
+    return this.http
+      .get<any>(this.techUrl + '/expiring_quarter')
+      .pipe(
+        map(r => r[0][0].Total),
+        catchError(this.handleError<any>(`GET IT Standards expiring this quarter`)));
+  }
+
+  public getITStandardsExpiringThisWeek(): Observable<any> {
+    return this.http
+      .get<any>(this.techUrl + '/expiring_week')
+      .pipe(
+        map(r => r[0][0].Total),
+        catchError(this.handleError<any>(`GET IT Standards expiring this week`)));
+  }
+
+  public getITStandardsPastDue(): Observable<any> {
+    return this.http
+      .get<any>(this.techUrl + '/past_due')
+      .pipe(
+        map(r => r[0][0].Total),
+        catchError(this.handleError<any>(`GET IT Standards past due`)));
+  }
+
+  public getITStandardsRelatedSystems(id: number): Observable<System[]> {
+    return this.http
+      .get<System[]>(this.techUrl + '/get/' + String(id) + '/systems')
+      .pipe(catchError(this.handleError<System[]>(`GET IT Standards related systems`, [])));
+  }
+
   //// Websites
   public getWebsites(): Observable<Website[]> {
     return this.http
       .get<Website[]>(this.websitesUrl)
       .pipe(catchError(this.handleError<Website[]>('GET Websites', [])));
   }
-  public getOneWebsite(id: number): Observable<Website[]> {
+  public getOneWebsite(id: number): Observable<Website> {
     return this.http
-      .get<Website[]>(this.websitesUrl + '/get/' + String(id))
-      .pipe(catchError(this.handleError<Website[]>('GET Website', [])));
+      .get<Website>(this.websitesUrl + '/get/' + String(id))
+      .pipe(
+        map(w => w[0]),
+        catchError(this.handleError<Website>('GET Website')));
   }
   public getWebsiteScans(id: number): Observable<WebsiteScan[]> {
     return this.http
@@ -801,6 +1046,15 @@ export class ApiService {
       );
   }
 
+  public getWebsitesFilterTotals(): Observable<any> {
+    return this.http
+    .get<any>(this.websitesUrl + '/filter_totals')
+    .pipe(
+      map(t => t[0]),
+      catchError(this.handleError<any>('GET Websites Filter Totals', []))
+    );
+  }
+
   //// Tech Catalog
   public getManufacturers(): Observable<Manufacturer[]> {
     return this.http
@@ -816,12 +1070,12 @@ export class ApiService {
       );
   }
 
-  public getAttestationStatusTypes(): Observable<AttestationStatus[]> {
+  public getAttestationStatusTypes(): Observable<any[]> {
     return this.http
-      .get<AttestationStatus[]>(this.techUrl + '/attestation_status_types')
+      .get<any[]>(this.techUrl + '/attestation_status_types')
       .pipe(
         catchError(
-          this.handleError<AttestationStatus[]>('GET Tech Catalog Attestation Status Types', [])
+          this.handleError<any[]>('GET Tech Catalog Attestation Status Types', [])
         )
       );
   }
@@ -898,12 +1152,43 @@ export class ApiService {
       .pipe(catchError(this.handleError<DataDictionary[]>('GET Data Dictionary By Report Name', [])));
   }
 
+  //// TRM
+  public getTRM(): Observable<TRM[]> {
+    return this.http
+      .get<TRM[]>(this.trmUrl)
+      .pipe(catchError(this.handleError<TRM[]>('GET TRMs', [])));
+  }
+  public getSingleTRM(id: number): Observable<TRM> {
+    return this.http
+      .get<TRM>(this.trmUrl + '/get/' + String(id))
+      .pipe(
+        map(t => t[0]),
+        catchError(this.handleError<TRM>('GET Single TRM')));
+  }
+  public getTRMRelatedITStandards(id: number): Observable<ITStandards[]> {
+    return this.http
+      .get<ITStandards[]>(this.trmUrl + '/get/relatedITStandards/' + String(id))
+      .pipe(catchError(this.handleError<ITStandards[]>('GET TRMs', [])));
+  }
+
+  public getITStandardsRelatedTRM(id: number): Observable<TRM[]> {
+    return this.http
+      .get<TRM[]>(this.techUrl + '/get/related_trms/' + String(id))
+      .pipe(catchError(this.handleError<TRM[]>('GET IT Standards Related TRMs')));
+  }
+
   //// Error Handler for calls
   private handleError<T>(operation: string = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       console.log(`Failed ${operation} Call: ${error.message}`);
       return of(result as T);
     };
+  }
+
+  public getGlobalSearchResults(kw: string): Observable<any[]> {
+    return this.http
+      .get<any[]>(this.globalSearchUrl + encodeURIComponent(kw))
+      .pipe(catchError(this.handleError<any[]>('GET Global Search Results', [])));
   }
 
   //// Set JWT into Header Options
@@ -1005,7 +1290,7 @@ export class ApiService {
         )
       );
   }
-  
+
   public getCustomSoftwareProducts(id: string): Observable<SoftwareProduct[]> {
     return this.http
       .get<SoftwareProduct[]>(this.techCatalogUrl + '/get/custom_software_products/' + id)
@@ -1022,7 +1307,7 @@ export class ApiService {
         )
       );
   }
-  
+
   public getCustomSoftwareVersions(id: string): Observable<SoftwareVersion[]> {
     return this.http
       .get<SoftwareVersion[]>(this.techCatalogUrl + '/get/custom_software_versions/' + id)

@@ -1,16 +1,14 @@
 import * as d3 from 'd3';
 
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, ElementRef, OnInit, OnDestroy, AfterViewInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
+import { PreviousRouteService } from '@services/previous-route/previous-route.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
-
-// Declare jQuery symbol
-declare var $: any;
 
 interface OrgTree {
   identity: number;
@@ -20,12 +18,12 @@ interface OrgTree {
 }
 
 @Component({
-standalone: false,
-  selector: 'organizations-chart',
-  templateUrl: './organizations-chart.component.html',
-  styleUrls: ['./organizations-chart.component.css'],
+    selector: 'organizations-chart',
+    templateUrl: './organizations-chart.component.html',
+    styleUrls: ['./organizations-chart.component.scss'],
+    standalone: false
 })
-export class OrganizationsChartComponent implements OnInit {
+export class OrganizationsChartComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('orgChart') public graphContainer: ElementRef;
   private orgs: any[] = [];
   private root: any = {};
@@ -41,33 +39,63 @@ export class OrganizationsChartComponent implements OnInit {
 
   public searchKey: string;
   private finalSearchPath;
+  private pendingSearchKey: string | null = null;
+
+  public defExpanded: boolean = false;
+
+  private getSearchTermFromHistory(): string | null {
+    const prevUrl = this.previousRouteService.getPreviousEntry()?.url ?? null;
+    if (!prevUrl) return null;
+    const path = prevUrl.split('?')[0];
+    if (!path.startsWith('/organizations/')) return null;
+    const qs = prevUrl.split('?')[1] ?? '';
+    return new URLSearchParams(qs).get('tableSearchTerm');
+  }
 
   constructor(
     private apiService: ApiService,
     private modalService: ModalsService,
+    private previousRouteService: PreviousRouteService,
     private route: ActivatedRoute,
     private sharedService: SharedService,
     private tableService: TableService,
-    private titleService: Title
+    private titleService: Title,
+    private router: Router
   ) {}
 
-  ngOnInit(): void {
-    // Enable popovers
-    $(function () {
-      $('[data-bs-toggle="popover"]').popover();
-    });
+  private viewInitialized: boolean = false;
+  private dataPending: boolean = false;
 
-    this.getOrgData();
+  ngOnInit(): void {
+    // Restore search term when returning via breadcrumb or browser back navigation
+    this.route.queryParams.subscribe((params) => {
+      const term = params['tableSearchTerm'] || this.getSearchTermFromHistory();
+      if (term) {
+        this.searchKey = term;
+        this.pendingSearchKey = term;
+      }
+    });
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {
       var detailOrgID = params['orgID'];
       if (detailOrgID) {
-        this.apiService.getOneOrg(detailOrgID).subscribe((data: any[]) => {
+        this.apiService.getOneOrg(detailOrgID).subscribe((data: any) => {
           this.tableService.orgsTableClick(data[0]);
         });
       }
     });
+  }
+
+  ngAfterViewInit(): void {
+    this.viewInitialized = true;
+    this.getOrgData();
+  }
+
+  ngOnDestroy(): void {
+    if (this.graphContainer?.nativeElement) {
+      d3.select(this.graphContainer.nativeElement).selectAll('svg').remove();
+    }
   }
 
   // Create Org Chart
@@ -171,6 +199,13 @@ export class OrganizationsChartComponent implements OnInit {
       // console.log("OrgTree: ", this.orgTree);  // Debug
       // Create graph after retrieving data and computing tree
       this.createChart();
+
+      // Restore pending search if user navigated back with a search term
+      if (this.pendingSearchKey) {
+        this.searchKey = this.pendingSearchKey;
+        this.pendingSearchKey = null;
+        this.search({ key: 'Enter' });
+      }
     });
   } // End of getOrgData
 
@@ -181,7 +216,10 @@ export class OrganizationsChartComponent implements OnInit {
 
     // Set margins
     const element = this.graphContainer.nativeElement;
-    var width = 1750 - element.offsetWidth - margin.left - margin.right;
+
+    // Clear any existing SVG before re-drawing (fixes blank chart on route navigation)
+    d3.select(element).selectAll('svg').remove();
+    var width = 3250 - element.offsetWidth - margin.left - margin.right;
     var height = 1200 - element.offsetHeight - margin.top - margin.bottom;
 
     // Set tree mapping object
@@ -404,9 +442,11 @@ export class OrganizationsChartComponent implements OnInit {
               // Grab data for selected node
               this.apiService
                 .getOneOrg(this.selectedOrg.srcElement.__data__.data.identity)
-                .subscribe((data: any[]) => {
-                  var orgData = data[0];
-                  this.tableService.orgsTableClick(orgData);
+                .subscribe((data: any) => {
+                  // this.tableService.orgsTableClick(data);
+                  const qp: Record<string, any> = { fromPrevious: 'GSA Organizations Chart', originRoute: '/org_chart' };
+                  if (this.searchKey) { qp['tableSearchTerm'] = this.searchKey; }
+                  this.router.navigate(['organizations', data.ID], { queryParams: qp });
                 });
             }.bind(this)
           );
@@ -602,5 +642,9 @@ export class OrganizationsChartComponent implements OnInit {
     // Only show first level children and render
     this.root.children.forEach(this.collapse);
     this.update(null, this.root);
+  }
+
+  public onViewAll(): void {
+    this.defExpanded = !this.defExpanded;
   }
 }

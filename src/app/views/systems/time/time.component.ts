@@ -10,16 +10,19 @@ import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
 
-// Declare jQuery symbol
-declare var $: any;
+import { Column } from '../../../common/table-classes';
+import { TIME } from '@api/models/systime.model';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 
 @Component({
-standalone: false,
-  selector: 'time',
-  templateUrl: './time.component.html',
-  styleUrls: ['./time.component.css'],
+    selector: 'time',
+    templateUrl: './time.component.html',
+    styleUrls: ['./time.component.scss'],
+    standalone: false
 })
 export class TimeComponent implements OnInit {
+  public attrDefinitions: DataDictionary[] = [];
+
   row: Object = <any>{};
 
   vizData: any[] = [];
@@ -38,6 +41,8 @@ export class TimeComponent implements OnInit {
 
   colorScheme: any;
 
+  public isDataReady: boolean = false;
+
   constructor(
     private apiService: ApiService,
     private location: Location,
@@ -55,139 +60,101 @@ export class TimeComponent implements OnInit {
     });
   }
 
-  // TIME Table Options
-  tableOptions: {} = this.tableService.createTableOptions({
-    advancedSearch: true,
-    idTable: 'TimeTable',
-    classes: 'table-hover table-dark clickable-table',
-    showColumns: true,
-    showExport: true,
-    exportFileName: 'Systems_TIME_Report',
-    headerStyle: 'bg-danger',
-    pagination: true,
-    search: true,
-    sortName: 'Name',
-    sortOrder: 'asc',
-    showToggle: true,
-    url: this.apiService.timeUrl,
-  });
+  tableData: TIME[] = [];
+  tableDataOriginal: TIME[] = [];
 
-  // TIME Table Columns
-  columnDefs: any[] = [
+  tableCols: Column[] = [
     {
       field: 'System Name',
-      title: 'System Name',
-      sortable: true,
+      header: 'System Name',
+      isSortable: true,
     },
     {
       field: 'FY',
-      title: 'FY',
-      sortable: true,
+      header: 'FY',
+      isSortable: true,
     },
     {
       field: 'TIME Designation',
-      title: 'TIME Designation',
-      sortable: true,
+      header: 'TIME Designation',
+      isSortable: true,
     },
     {
       field: 'Business Score',
-      title: 'Business Score',
-      visible: false,
-      sortable: true,
+      header: 'Business Score',
+      showColumn: false,
+      isSortable: true,
     },
     {
       field: 'Technical Score',
-      title: 'Technical Score',
-      visible: false,
-      sortable: true,
+      header: 'Technical Score',
+      showColumn: false,
+      isSortable: true,
     },
     {
       field: 'O&M Cost',
-      title: 'O&M Cost',
-      visible: false,
-      sortable: true,
+      header: 'O&M Cost',
+      showColumn: false,
+      isSortable: true,
     },
     {
       field: 'DM&E Cost',
-      title: 'DM&E Cost',
-      visible: false,
-      sortable: true,
+      header: 'DM&E Cost',
+      showColumn: false,
+      isSortable: true,
     },
     {
       field: 'Software/Hardware License Costs',
-      title: 'License Costs',
-      visible: false,
-      sortable: true,
+      header: 'License Costs',
+      showColumn: false,
+      isSortable: true,
     },
     {
       field: 'Questionnaire Last Updated',
-      title: 'Questionnaire Last Updated',
-      sortable: true,
-      visible: false,
+      header: 'Questionnaire Last Updated',
+      isSortable: true,
+      showColumn: false,
       formatter: this.sharedService.dateFormatter,
     },
     {
       field: 'POC Last Updated',
-      title: 'POC of Last Updated',
-      sortable: true,
-      visible: false,
+      header: 'POC of Last Updated',
+      isSortable: true,
+      showColumn: false,
       formatter: this.sharedService.emailFormatter,
     },
     {
       field: 'File Link',
-      title: 'File Link',
-      sortable: true,
-      visible: false,
+      header: 'File Link',
+      isSortable: true,
+      showColumn: false,
       formatter: this.sharedService.linksFormatter,
     },
     {
       field: 'System Id',
-      title: 'System Id',
-      sortable: false,
-      visible: false
+      header: 'System Id',
+      isSortable: false,
+      showColumn: false
     }
   ];
 
   ngOnInit(): void {
-    // Enable popovers
-    $(function () {
-      $('[data-bs-toggle="popover"]').popover();
-    });
+    this.apiService.getDataDictionaryByReportName('TIME Report').subscribe(defs => {
+      this.attrDefinitions = defs
+    
 
-    $('#timeTable').bootstrapTable(
-      $.extend(this.tableOptions, {
-        columns: this.columnDefs,
-        data: [],
-      })
-    );
+    this.apiService.getTIME().subscribe(t => {
+      this.tableService.updateReportTableData(t);
+      this.tableService.updateReportTableDataReadyStatus(true);
+      this.tableData = t;
+      this.tableDataOriginal = t;
 
-    const self = this;
-    $(document).ready(() => {
-      // Method to handle click events on the Systems table
-      $('#timeTable').on('click-row.bs.table', function (e, row, $element, field) {    
-        if (field !== 'File Link' ) {
-          // Grab data for system by name
-          this.apiService
-            .getOneSys(row['System Id'])
-            .subscribe((data: any[]) => {
-              this.tableService.systemsTableClick(data[0]);
-            });
-
-          // Change URL to include ID
-          this.sharedService.addIDtoURL(row, 'Id');
-        }     
-      }.bind(this));
-
-      //Enable table sticky header
-      self.sharedService.enableStickyHeader("timeTable");
-  });
-
-    // Visualization data
-    this.apiService.getTIME().subscribe((data: any[]) => {
+      // Visualization data
+    // this.apiService.getTIME().subscribe((data: any[]) => {
       var yearTimeCount = {};
 
       // Count number of each TIME value for each FY
-      data.forEach((row) => {
+      this.tableData.forEach((row) => {
         let year = row['FY'];
         let timeVal = row['TIME Designation'];
 
@@ -220,9 +187,12 @@ export class TimeComponent implements OnInit {
 
       // Set color scheme for chart
       this.colorScheme = this.colorSets.find((s) => s.name === 'vivid');
-
-      // console.log(this.vizData);  // Debug
     });
+
+    this.isDataReady = true;
+  });
+      // console.log(this.vizData);  // Debug
+    // });
 
     // Method to open details modal when referenced directly via URL
     this.route.params.subscribe((params) => {
@@ -231,7 +201,7 @@ export class TimeComponent implements OnInit {
         this.titleService.setTitle(
           `${this.titleService.getTitle()} - ${detailSysID}`
         );
-        this.apiService.getOneSys(detailSysID).subscribe((data: any[]) => {
+        this.apiService.getOneSys(detailSysID).subscribe((data: any) => {
           this.tableService.systemsTableClick(data[0]);
           // this.getInterfaceData(row.ID);
         });
@@ -240,6 +210,21 @@ export class TimeComponent implements OnInit {
   }
 
   onSelect(event) {
-    console.log(event);
+    // console.log(event);
+  }
+
+  public onDefinitionsClick(): void {
+    this.router.navigate(['/about', 'sysRat']);
+  }
+
+  public onQuestionaireClick(): void {
+    window.open('https://docs.google.com/spreadsheets/d/1cx-gi-jjHSvAD57Z0T812a0o7eJ-IWIAqlhE0ZTTMTI/edit#gid=362432297', '_blank');
+  }
+
+  public onRowClick(e: any) {
+    const searchTerm: string = e.tableSearchString || '';
+    this.router.navigate(['/systems_TIME', e['System Id']], {
+        queryParams: { tableSearchTerm: searchTerm }
+    });
   }
 }

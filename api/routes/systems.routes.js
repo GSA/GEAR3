@@ -39,4 +39,10 @@ router.route('/updateTech/:id')
 router.route('/get/:id/time')
   .get(sysCtrl.findTIME);
 
+router.route('/filter_totals')
+  .get(sysCtrl.getFilterTotals);
+
+router.route('/decommissioned_system_totals')
+  .get(sysCtrl.getDecommissionedSystemTotals);
+
 module.exports = router;

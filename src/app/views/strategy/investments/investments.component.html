@@ -1,87 +1,57 @@
-<div class="card">
-  <div class="card-header text-white bg-success text-center">
-    <h3 class="card-title col-12 mb-0">
-      <span>
-        <i class="fas fa-money-bill-wave mr-2"></i>
-        <span [hidden]="!filteredTable">{{ filterTitle }} </span>
-        <span [hidden]="filteredTable">Current IT </span>
-        Investments
-      </span>
-    </h3>
-    <!-- Help Button -->
-    <a tabindex="0"
-      class="btn btn-sm btn-info text-white shadow help-btn d-flex align-items-center justify-content-center"
-      role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="auto" data-bs-html="true"
-      title="Help Using this Table" data-bs-content="<b>Details:</b> Left click on a row within the table to view additional details.
-        <br><br>
-        <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
-        <br><br>
-        <b>Export:</b> Export data by clicking on the <i class='fas fa-download'></i> icon and selecting the format that meets 
-        your needs.
-        <br><br>
-        <b>Search:</b> Perform a filtered search across all fields in the displayed data. Hit the 'Enter' button on your 
-        keyboard to execute. Click the <i class='far fa-trash-alt'></i> icon to clear the search box. 
-        Search within specific columns by clicking on the <i class='fas fa-angle-down'></i> icon. 
-        <br><br>
-        <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
-        <i class='fas fa-caret-square-down'></i> icon to display everything on one page.">
-      <span class="mr-2">More Help</span><i class="far fa-question-circle fa-2x"></i>
-    </a>
+<div class="it-investments-container">
+  <div class="it-investments-title-container">
+    <h2>IT Investments</h2>
+    <app-page-help-button></app-page-help-button>
   </div>
-
-  <div class="card-body card-text">
-    <!-- Investment Definition Popover -->
-    <a tabindex="0" class="btn btn-sm btn-info text-white position-absolute float-right w-11" role="button"
-      data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="auto" data-bs-html="true" title=""
-      data-bs-content="Information technology investment means an expenditure of information technology
-      resources to address mission delivery and management support. This may include a
-      project or projects for the development, modernization, enhancement, or maintenance of
-      a single information technology asset or group of information technology assets with
-      related functionality, and the subsequent operation of those assets in a production
-      environment. These investments shall have a defined life cycle with start and end dates.
-      (<a href='https://obamawhitehouse.archives.gov/sites/default/files/omb/assets/OMB/circulars/a130/a130revised.pdf' 
-      target='_blank' rel='noopener'>OMB A-130, pg 31</a>)">
-      Investment Definition
-    </a>
-
-    <!-- Visualizations -->
+  <div class="it-investments-definition-container">
+    <p class="it-investments-definition-text">An IT investment is a resource expenditure 
+      to address mission delivery and management support. This includes the development, modernization, enhancement, maintenance,
+       and operation of IT assets or functional groups in a production environment. This data is imported from
+        <a href="https://access-management-gsa.folio.ecpic.gov/Authentication" target="_blank" rel="noopener">Folio</a>,
+         a Capital Planning and Investment Control (CPIC) solution that helps Agencies manage their IT Portfolios and submit 
+         required data to the OMB IT Dashboard.
+    </p>
+  </div>
+  <div class="investments-graph-container">
     <span id="investVizText" tabindex="0"
-      [attr.aria-label]="getAriaLabel(vizData)" style="visibility: hidden;">
+      [attr.aria-label]="getAriaLabel(vizData)" style="display: none;">
       Pie Chart Details
     </span>
-
-
-    <div
-      id="investViz" class="row justify-content-center collapse show" style="height: 300px;"
-      [hidden]="filterTitle == 'Inactive'">
-      <ngx-charts-advanced-pie-chart appSkipFocusPiechart [scheme]="colorScheme" [results]="vizData" [label]="vizLabel"
+    <div class="investments-graph">
+      <ngx-charts-advanced-pie-chart 
+        appSkipFocusPiechart
+        [scheme]="colorScheme"
+        [results]="vizData"
+        [label]="vizLabel"
         role="navigation"
         [ariaLabel]="getAriaLabel(vizData)"
-        tabindex="0"
-        (select)="onSelect($event)"       
-      ></ngx-charts-advanced-pie-chart>
+        tabindex="0"></ngx-charts-advanced-pie-chart>
     </div>
-
-    <div class="row w-100">
-      <!-- Filters -->
-      <div class="mx-auto">
-        <span class="my-auto mr-3">Filter Buttons:</span>
-        <button role="button" name="investEliminatedBttn" class="btn btn-primary" (click)="eliminatedFilter()"
-          [hidden]="filteredTable">Eliminated</button>
-
-        <button role="button" name="investPYBttn" class="btn btn-primary" (click)="previousYearFilter()">Previous Year
-          $</button>
-        <button role="button" name="investCYBttn" class="btn btn-primary" (click)="currentYearFilter()">Current Year
-          $</button>
-        <button role="button" name="investBYBttn" class="btn btn-primary" (click)="budgetYearFilter()">Budget Year
-          $</button>
-
-        <button role="button" name="investBttn" class="btn btn-primary ml-3" (click)="backToMainInvest()"
-          [hidden]="!filteredTable">Back to Current IT Investments</button>
+  </div>
+  <div class="it-investments-data-container">
+    <app-table visibleColumnStorageKey="investment-report" defaultSortField="Name" [attrDefs]="attrDefinitions" [tableCols]="tableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)">
+      <div class="filter-tabs-container" filterTabs>
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('All')}" (click)="onSelectTab('All')" (keyup)="onKeyUp($event, 'All')" tabindex="0">
+          <span class="filter-tab-text">All</span>
+          <span class="filter-tab-number first">{{filterTotals?.AllTotal}}</span>
+        </div>
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Current Year')}" (click)="onSelectTab('Current Year')" (keyup)="onKeyUp($event, 'Current Year')" tabindex="0">
+          <span class="filter-tab-text">Current Year</span>
+          <span class="filter-tab-number second">{{filterTotals?.AllTotal}}</span>
+        </div>
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Previous Year')}" (click)="onSelectTab('Previous Year')" (keyup)="onKeyUp($event, 'Previous Year')" tabindex="0">
+          <span class="filter-tab-text">Previous Year</span>
+          <span class="filter-tab-number third">{{filterTotals?.AllTotal}}</span>
+        </div>
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Budget Year')}" (click)="onSelectTab('Budget Year')" (keyup)="onKeyUp($event, 'Budget Year')" tabindex="0">
+          <span class="filter-tab-text">Budget Year</span>
+          <span class="filter-tab-number fourth">{{filterTotals?.AllTotal}}</span>
+        </div>
+        <div class="filter-tab" [ngClass]="{'selected': isTabSelected('Eliminated')}" (click)="onSelectTab('Eliminated')" (keyup)="onKeyUp($event, 'Eliminated')" tabindex="0">
+          <span class="filter-tab-text">Eliminated</span>
+          <span class="filter-tab-number first">{{filterTotals?.EliminatedTotal}}</span>
+        </div>
       </div>
-    </div>
-
-    <!-- Main Table -->
-    <table id="investTable" aria-label="The investments table presents a list of GSA IT Investments by name. This table is useful for understanding information about the investment, the investment manager, the status of the investment, the type of investment, etc."></table>
+    </app-table>
   </div>
 </div>

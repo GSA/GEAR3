@@ -10,10 +10,10 @@ import { TableService } from '@services/tables/table.service';
 declare var $: any;
 
 @Component({
-standalone: false,
-  selector: 'systems-modal',
-  templateUrl: './systems-modal.component.html',
-  styleUrls: ['./systems-modal.component.css']
+    selector: 'systems-modal',
+    templateUrl: './systems-modal.component.html',
+    styleUrls: ['./systems-modal.component.css'],
+    standalone: false
 })
 export class SystemsModalComponent implements OnInit {
 
@@ -259,11 +259,11 @@ export class SystemsModalComponent implements OnInit {
     sortable: true,
     visible: false,
     class: 'text-truncate'
-  },{
+  }, {
     field: 'Category',
     title: 'Software Category',
     sortable: true,
-  }, /* {
+  }, /*{
     field: 'AttestationRequired',
     title: 'Attestation Required',
     visible: false,
@@ -273,7 +273,7 @@ export class SystemsModalComponent implements OnInit {
     title: 'Attestation Link',
     visible: false,
     sortable: true,
-  }, */ {
+  }, */{
     field: 'Fedramp',
     title: 'Fedramp',
     visible: false,

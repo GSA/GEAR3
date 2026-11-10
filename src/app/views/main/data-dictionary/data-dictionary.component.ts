@@ -2,16 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from '@services/apis/api.service';
 
 import { SharedService } from '@services/shared/shared.service';
+
+import { Column } from '../../../common/table-classes';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 import { TableService } from '@services/tables/table.service';
 
-// Declare jQuery symbol
-declare var $: any;
-
 @Component({
-standalone: false,
-  selector: 'data-dictionary',
-  templateUrl: './data-dictionary.component.html',
-  styleUrls: ['./data-dictionary.component.css']
+    selector: 'data-dictionary',
+    templateUrl: './data-dictionary.component.html',
+    styleUrls: ['./data-dictionary.component.scss'],
+    standalone: false
 })
 export class DataDictionaryComponent implements OnInit {
 
@@ -19,82 +19,58 @@ export class DataDictionaryComponent implements OnInit {
 
   constructor(
     private sharedService: SharedService,
-    private tableService: TableService,
-    private apiService: ApiService) {}
+    private apiService: ApiService,
+    private tableService: TableService) {}
 
-  // Data Dictionary Table Options
-  ddTableOptions: {} = this.tableService.createTableOptions({
-    advancedSearch: false,
-    idTable: null,
-    classes: "table-hover table-dark table-responsive",
-    showColumns: true,
-    showExport: true,
-    exportFileName: 'GEAR_Data_Dictionary',
-    headerStyle: null,
-    pagination: true,
-    search: true,
-    sortName: 'Term',
-    sortOrder: 'asc',
-    showToggle: true
-  });
+  tableData: DataDictionary[] = [];
+  tableDataOriginal: DataDictionary[] = [];
 
-  // Data Dictionary Table Columns
-  ddColumnDefs: any[] = [{
+  tableCols: Column[] = [
+  {
     field: 'ReportName',
-    title: 'Report Name',
-    sortable: true
+    header: 'Report Name',
+    isSortable: true
   },
   {
     field: 'Term',
-    title: 'Term',
-    sortable: true
+    header: 'Term',
+    isSortable: true
   },
   {
     field: 'TermDefinition',
-    title: 'Definition'
+    header: 'Definition'
   },
   {
     field: 'DefinitionSource',
-    title: 'Definition Source',
-    sortable: true,
+    header: 'Definition Source',
+    isSortable: true,
     class: 'table-column-break-word'
   },
   {
     field: 'DefinitionSourceLink',
-    title: 'Definition Source Link',
+    header: 'Definition Source Link',
     formatter: this.sharedService.linksFormatter,
-    visible: false
+    showColumn: false
   },
   {
     field: 'DataSource',
-    title: 'Data Source',
-    sortable: true
+    header: 'Data Source',
+    isSortable: true
   },
   {
     field: 'DataSourceLink',
-    title: 'Data Source Link',
+    header: 'Data Source Link',
     formatter: this.sharedService.linksFormatter,
-    visible: false
+    isSortable: false
   }
 ];
 
   ngOnInit(): void {
     this.apiService.getEntireDataDictionary().subscribe(defs => {
-      $('#dataDictionaryTable').bootstrapTable($.extend(this.ddTableOptions, {
-        columns: this.ddColumnDefs,
-        data: defs,
-      }));
-    });
-
-    // Enable popovers
-    $(function () {
-      $('[data-bs-toggle="popover"]').popover()
-    })
-
-    const self = this;
-    $(document).ready(function() {
-      //Enable table sticky header
-      self.sharedService.enableStickyHeader("dataDictionaryTable");
+      this.tableDataOriginal = defs;
+      this.tableData = defs;
+      this.tableService.updateReportTableData(defs);
+      this.tableService.updateReportTableDataReadyStatus(true);
     });
   }
 }

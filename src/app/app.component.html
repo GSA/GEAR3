@@ -1,52 +1,32 @@
-<!-- Top Navbar -->
-<top-navbar></top-navbar>
-
-<div class="info-banner">
-  <span><!--Check out the 
-    <a href="https://stage.ea.gsa.gov/#/" target="_blank">next version of GEAR's interface.</a> -->
-    GEAR's <a href="https://stage.ea.gsa.gov/#/" target="_blank">new interface</a> is <strong class="countdown-highlight">launching in {{ countdown }}</strong>.
-    Please provide feedback at 
-    <a href="mailto:ea_planning@gsa.gov?subject=GEAR%203.1%20Feedback" target="_blank">ea_planning&#64;gsa.gov</a>
-     or create a
-     <a href="https://github.com/GSA/GEAR3/issues" target="_blank">GitHub issue</a>. 
-  </span>
+<div class="site-container">
+    <app-banner></app-banner>
+    <app-topbar></app-topbar>
+    <div class="content-container">
+      <app-sidebar-v2></app-sidebar-v2>
+      <main class="main-content" id="main-content">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
+  <footer>
+    <app-identifier></app-identifier>
+  </footer>
 </div>
-
-<!-- Main Module -->
-<div class="container-fluid" id="mainModule">
-  <div class="row">
-    <!-- Side Navbar -->
-    <sidenav>
-      <!-- Page content is within sidenav component -->
-    </sidenav>
-  </div>
-</div>
-<!-- End Main Module -->
-
-<!-- Footer -->
-<footer class="footer mt-auto" id="footer">
-  <div class="container">
-    <small>GSA Enterprise Architecture 2026, v3.0</small>
-  </div>
-</footer>
-<!-- End Footer -->
-
-<!-- Details Modals -->
-<investments-modal></investments-modal>
-<capabilities-modal></capabilities-modal>
-<organizations-modal></organizations-modal>
-<website-service-category-modal></website-service-category-modal>
-<systems-modal></systems-modal>
-<records-modal></records-modal>
-<websites-modal></websites-modal>
-<fisma-modal></fisma-modal>
-<it-standards-modal></it-standards-modal>
-
-<!-- GEAR Manager Modals -->
-<capability-manager></capability-manager>
-<it-standard-manager></it-standard-manager>
-<record-manager></record-manager>
-<website-manager></website-manager>
-<system-manager></system-manager>
-
+<gear-chatbot></gear-chatbot>
 <button class="vertical-center" (click)="showPopup('https://feedback.gsa.gov/jfe/form/SV_1FHaqcMEjIa9hPM','feedback', 900, 600)">Give Feedback</button>
+
+
+<!-- 
+<div class="site-container">
+    <app-banner></app-banner>
+    <app-topbar></app-topbar>
+    <div class="full-content-container">
+      <app-sidebar-v2></app-sidebar-v2>
+      <div class="content-container">
+        <router-outlet></router-outlet>
+        <footer>
+          <app-identifier></app-identifier>
+        </footer>
+      </div>
+    </div>
+</div>
+<button class="vertical-center" (click)="showPopup('https://feedback.gsa.gov/jfe/form/SV_1FHaqcMEjIa9hPM','feedback', 900, 600)">Give Feedback</button> -->

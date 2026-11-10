@@ -1,119 +1,102 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
-import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 import { Title } from '@angular/platform-browser';
-
-// Declare jQuery symbol
-declare var $: any;
+import { Column } from '../../../common/table-classes';
+import { Organization } from '@api/models/organizations.model';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 
 @Component({
-standalone: false,
-  selector: 'organizations',
-  templateUrl: './organizations.component.html',
-  styleUrls: ['./organizations.component.css'],
+    selector: 'organizations',
+    templateUrl: './organizations.component.html',
+    styleUrls: ['./organizations.component.scss'],
+    standalone: false
 })
 export class OrganizationsComponent implements OnInit {
   row: Object = <any>{};
 
+  public attrDefinitions: DataDictionary[] = [];
+
   constructor(
     private apiService: ApiService,
-    private location: Location,
     private modalService: ModalsService,
     private route: ActivatedRoute,
-    private router: Router,
-    private sharedService: SharedService,
     private tableService: TableService,
-    private titleService: Title
+    private titleService: Title,
+    private router: Router
   ) {
     this.modalService.currentInvest.subscribe((row) => (this.row = row));
   }
 
-  // Organizations Table Options
-  tableOptions: {} = this.tableService.createTableOptions({
-    advancedSearch: true,
-    idTable: 'OrgTable',
-    classes: 'table-hover table-dark clickable-table',
-    showColumns: false,
-    showExport: true,
-    exportFileName: 'GSA_Organizations',
-    headerStyle: 'bg-royal-blue',
-    pagination: true,
-    search: true,
-    sortName: 'OrgSymbol',
-    sortOrder: 'asc',
-    showToggle: true,
-    url: this.apiService.orgUrl,
-  });
+  tableData: Organization[] = [];
+  tableDataOriginal: Organization[] = [];
 
-  // Organizations Table Columns
-  columnDefs: any[] = [
+  totalRecords: number = 0;
+
+  tableCols: Column[] = [
     {
       field: 'OrgSymbol',
-      title: 'Org Symbol',
-      sortable: true,
+      header: 'Org Symbol',
+      isSortable: true,
     },
     {
       field: 'Name',
-      title: 'Organization Name',
-      sortable: true,
+      header: 'Organization Name',
+      isSortable: true,
     },
     {
       field: 'SSOName',
-      title: 'SSO Name',
-      sortable: true,
+      header: 'SSO Name',
+      isSortable: true,
     },
     {
       field: 'TwoLetterOrgSymbol',
-      title: 'Two Letter Org',
-      sortable: true,
+      header: 'Two Letter Org',
+      isSortable: true,
     },
     {
       field: 'TwoLetterOrgName',
-      title: 'Two Letter Org Name',
-      sortable: true,
+      header: 'Two Letter Org Name',
+      isSortable: true,
     },
   ];
 
   ngOnInit(): void {
-    // Enable popovers
-    $(function () {
-      $('[data-bs-toggle="popover"]').popover();
+    this.apiService.getDataDictionaryByReportName('Organization').subscribe(defs => {
+      this.attrDefinitions = defs;
     });
 
-    $('#orgTable').bootstrapTable(
-      $.extend(this.tableOptions, {
-        columns: this.columnDefs,
-        data: [],
-      })
-    );
+    this.apiService.getOrganizations().subscribe(orgs => {
+      this.tableData = orgs;
+      this.tableDataOriginal = orgs;
+      this.totalRecords = orgs.length;
+      this.tableService.updateReportTableData(orgs);
+      this.tableService.updateReportTableDataReadyStatus(true);
+    });
+  }
 
-    const self = this;
-    $(document).ready(() => {
-      // Method to handle click events on the organization table
-      $('#orgTable').on('click-row.bs.table', function (e, row) {
-          this.tableService.orgsTableClick(row);
-        }.bind(this));
+  public loadPage(event: { page: number; pageSize: number; sortField: string; sortOrder: number; search: string }): void {
+    this.apiService.getOrganizationsPaginated(
+      event.page,
+      event.pageSize,
+      event.sortField,
+      event.sortOrder,
+      event.search
+    ).subscribe(result => {
+      this.tableData = result.data;
+      this.totalRecords = result.total;
+      this.tableService.updateReportTableData(result.data);
+      this.tableService.updateReportTableDataReadyStatus(true);
+    });
+  }
 
-      //Enable table sticky header
-      self.sharedService.enableStickyHeader("orgTable");
-  });
-
-    // Method to open details modal when referenced directly via URL
-    this.route.params.subscribe((params) => {
-      var detailOrgID = params['orgID'];
-      if (detailOrgID) {
-        this.titleService.setTitle(
-          `${this.titleService.getTitle()} - ${detailOrgID}`
-        );
-        this.apiService.getOneOrg(detailOrgID).subscribe((data: any[]) => {
-          this.tableService.orgsTableClick(data[0]);
-        });
-      }
+  public onRowClick(e: any) {
+    const searchTerm: string = e.tableSearchString || '';
+    this.router.navigate(['/organizations', e.ID], {
+        queryParams: { tableSearchTerm: searchTerm }
     });
   }
 }

@@ -1,0 +1,398 @@
+@if (isDataReady) {
+  <div class="systems-details-container">
+    <div class="breadcrumb-container">
+      <app-breadcrumb>
+        <span currentPageName>{{detailsData.Name}}</span>
+      </app-breadcrumb>
+    </div>
+    <div class="title-container">
+      <span class="title">{{detailsData.Name}}</span>
+    </div>
+    @if (showIssoBanner) {
+      <div class="systems-isso-banner" role="note">
+        <i class="fas fa-info-circle" aria-hidden="true"></i>
+        @if (issoEmail) {
+          <span>Contact the system's ISSO for data updates: <a [href]="'mailto:' + issoEmail" target="_blank" rel="noopener">{{issoEmail}}</a></span>
+        } @else {
+          <span>Contact the system's ISSO for data updates.</span>
+        }
+        <button type="button" class="systems-isso-banner-close" (click)="showIssoBanner = false" aria-label="Dismiss banner">&#x2715;</button>
+      </div>
+    }
+    <div class="content-container">
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="isOverviewTabActive" (click)="onTabClick('overview', $event)" href="#overview">Overview</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="isBusinessTabActive" (click)="onTabClick('business', $event)" href="#business">Business</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="isTechnicalTabActive" (click)="onTabClick('technical', $event)" href="#technical">Technical</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="isRecordsTabActive" (click)="onTabClick('records', $event)" href="#records">Records</a>
+        </li>
+        @if(showSubsystemsTab()){
+          <li class="nav-item">
+            <a class="nav-link" [class.active]="isSubsystemsTabActive" (click)="onTabClick('subsystems', $event)" href="#subsystems">Subsystems</a>
+          </li>
+        }
+        @if(sysWebsitesData && sysWebsitesData.length > 0){
+          <li class="nav-item">
+            <a class="nav-link" [class.active]="isWebsitesTabActive" (click)="onTabClick('websites', $event)" href="#websites">Websites</a>
+          </li>
+        }
+      </ul>
+      <div class="time-questionnaire-button-container">
+        <app-button [buttonText]="getTimeQuestionnaireButtonText()" buttonStyle="success" (buttonClick)="onTimeButtonClick()"></app-button>
+      </div>
+      @if (isOverviewTabActive) {
+        <div class="tab-container">
+          <div class="overall-data-container">
+            <div class="main-data-container">
+              <div class="data-wrapper">
+                <div class="data">
+                  <label class="data-label">
+                    <span [pTooltip]="getTooltip('Alias/Acronym')" [escape]="false" role="tooltip">
+                      Alias/Acronym
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>
+                    <span>{{detailsData.DisplayName}}</span>
+                  </span>
+                </div>
+                <div class="data">
+                  <label class="data-label">
+                    <span [pTooltip]="getTooltip('Status')" [escape]="false" role="tooltip">
+                      Status
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>
+                    <span [ngClass]="getStatusClass(detailsData.Status)">{{detailsData.Status}}</span>
+                  </span>
+                </div>
+                <div class="data">
+                  <label class="data-label">
+                    <span [pTooltip]="getTooltip('System Level')" [escape]="false" role="tooltip">
+                      System Level
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>
+                    <span>{{detailsData.SystemLevel}}</span>
+                  </span>
+                </div>
+                <div class="data-full">
+                  <label class="data-label">
+                    <span [pTooltip]="getTooltip('Description')" [escape]="false" role="tooltip">
+                      Description
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>{{detailsData.Description}}</span>
+                </div>
+                <div class="data-full">
+                  <label class="data-label">
+                    <span [pTooltip]="getTooltip('Budget Alias')" [escape]="false" role="tooltip">
+                      Budget Alias
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>{{detailsData.BudgetAlias || 'N/A'}}</span>
+                </div>
+                <div class="data-full">
+                  <label class="data-label">
+                    <span [pTooltip]="getTooltip('Related Artifacts')" [escape]="false" role="tooltip">
+                      Related Artifacts
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  @if (detailsData.RelatedArtifacts) {
+                    <span>
+                      <ul [innerHTML]="getRelatedArtifacts()"></ul>
+                    </span>
+                  }
+                  @if (!detailsData.RelatedArtifacts) {
+                    <span>None</span>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+      @if (isBusinessTabActive) {
+        <div class="tab-container">
+          <div class="overall-data-container">
+            <div class="main-data-container">
+              <div class="data-wrapper">
+                <div class="data">
+                  <label class="data-label">
+                    <span [pTooltip]="getTooltip('Business Org')" [escape]="false" role="tooltip">
+                      Business Org
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>
+                    <span>{{detailsData.BusOrg}}</span>
+                  </span>
+                </div>
+                <div class="data">
+                  <label class="data-label">
+                    <span [pTooltip]="getTooltip('ATO Type')" [escape]="false" role="tooltip">
+                      ATO Type
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>
+                    <span>{{detailsData.ATOType}}</span>
+                  </span>
+                </div>
+                <div class="data">
+                  <label class="data-label">
+                    <span [pTooltip]="getTooltip('CUI')" [escape]="false" role="tooltip">
+                      CUI
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>
+                    <span>{{detailsData.CUI}}</span>
+                  </span>
+                </div>
+                <div class="data">
+                  <label class="data-label">
+                    <span [pTooltip]="getTooltip('Responsible IT Org')" [escape]="false" role="tooltip">
+                      Responsible IT Org
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>
+                    <span>{{detailsData.RespOrg}}</span>
+                  </span>
+                </div>
+                <div class="data">
+                  <label class="data-label">
+                    <span [pTooltip]="getTooltip('ATO Date')" [escape]="false" role="tooltip">
+                      ATO Date
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>
+                    <span>{{detailsData.ATODate | date: 'longDate' : 'UTC'}}</span>
+                  </span>
+                </div>
+                <div class="data"></div>
+                <div class="data">
+                  <label class="data-label">
+                    <span [pTooltip]="getTooltip('Cloud Service Type')" [escape]="false" role="tooltip">
+                      Cloud Service Type
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>
+                    <span>{{detailsData.ServiceType}}</span>
+                  </span>
+                </div>
+                <div class="data">
+                  <label class="data-label">
+                    <span [pTooltip]="getTooltip('Renewal Date')" [escape]="false" role="tooltip">
+                      Renewal Date
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>
+                    <span>{{(detailsData.RenewalDate | date: 'longDate' : 'UTC') || 'N/A'}}</span>
+                  </span>
+                </div>
+              </div>
+              <div class="sub-content full-width">
+                <span class="sub-header">Points of Contact</span>
+                <table>
+                  <tr>
+                    <th>Role</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Org Code</th>
+                  </tr>
+                  @for (poc of splitPOCs; track poc) {
+                    <tr>
+                      <td>
+                        <span [pTooltip]="getTooltip(poc.type)" [escape]="false" role="tooltip">
+                          {{ poc.type }}
+                          <i class="fas fa-info-circle"></i>
+                        </span>
+                      </td>
+                      <td> {{ poc.name }} </td>
+                      <td>
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{poc.email}}" target="_blank" rel="noopener">{{ poc.email }}</a>
+                      </td>
+                      <td [title]="poc.orgName"> {{ poc.orgCode }} </td>
+                    </tr>
+                  }
+                </table>
+              </div>
+              <div class="sub-content full-width">
+                <span class="sub-header">Related Business Capabilities</span>
+                <app-table visibleColumnStorageKey="systems-related-business-capabilities" defaultSortField="Name" [localTableData]="sysCapabilitiesData" [isLocal]="true" [tableCols]="relatedCapabilitiesCols" [attrDefs]="capabilitiesAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="capabilities" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onCapRowClick($event)"></app-table>
+              </div>
+              <!-- System TIME REPORT section — hidden (Nov 2026). Remove comment tags below to restore:
+              <div class="sub-content full-width">
+                <span class="sub-header">System TIME REPORT</span>
+                <app-table visibleColumnStorageKey="systems-system-time" defaultSortField="System Name" [localTableData]="systemTimeData" [isLocal]="true" [tableCols]="systemTimeCols" [attrDefs]="timeAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onTimeRowClick($event)"></app-table>
+              </div>
+              -->
+            </div>
+          </div>
+        </div>
+      }
+      @if (isTechnicalTabActive) {
+        <div class="tab-container">
+          <div class="overall-data-container">
+            <div class="main-data-container">
+              <div class="data-wrapper">
+                <div class="data">
+                  <label class="data-label">
+                    <span [pTooltip]="getTooltip('Cloud Hosted?')" [escape]="false" role="tooltip">
+                      Cloud Enabled?
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>
+                    <span>{{detailsData.CloudYN}}</span>
+                  </span>
+                </div>
+                <div class="data">
+                  <label class="data-label">
+                    <span [pTooltip]="getTooltip('Hosting Provider')" [escape]="false" role="tooltip">
+                      Hosting Provider
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>
+                    <span>{{detailsData.CSP}}</span>
+                  </span>
+                </div>
+                <div class="data">
+                  <label class="data-label">
+                    <span [pTooltip]="getTooltip('Complete FISMA Assessment for Current FY')" [escape]="false" role="tooltip">
+                      Complete FISMA Assessment for Current FY
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>
+                    <span>{{detailsData.ComplFISMA}}</span>
+                  </span>
+                </div>
+                <div class="data">
+                  <label class="data-label">
+                    <span [pTooltip]="getTooltip('FIPS Impact Level')" [escape]="false" role="tooltip">
+                      FIPS Impact Level
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>
+                    <span>{{detailsData.FIPS_Impact_Level}}</span>
+                  </span>
+                </div>
+                <div class="data">
+                  <label class="data-label">
+                    <span [pTooltip]="getTooltip('Gov\'t-Wide Shared Service')" [escape]="false" role="tooltip">
+                      Gov't-Wide Shared Service
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>
+                    <span>{{detailsData.SharedService}}</span>
+                  </span>
+                </div>
+                <div class="data">
+                  <label class="data-label">
+                    <span [pTooltip]="getTooltip('FISMA System Identifier')" [escape]="false" role="tooltip">
+                      FISMA System Identifier
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>
+                    <span>{{detailsData.FISMASystemIdentifier}}</span>
+                  </span>
+                </div>
+                <div class="data">
+                  <label class="data-label">
+                    <span [pTooltip]="getTooltip('Cloud Service Type')" [escape]="false" role="tooltip">
+                      Service Type
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>
+                    <span>{{detailsData.ServiceType}}</span>
+                  </span>
+                </div>
+                <div class="data">
+                  <label class="data-label">
+                    <span [pTooltip]="getTooltip('PII Indicator')" [escape]="false" role="tooltip">
+                      PII Indicator
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>
+                    <span>{{detailsData.PII}}</span>
+                  </span>
+                </div>
+              </div>
+              <div class="sub-content full-width">
+                <span class="sub-header">Related Technology</span>
+                <app-table visibleColumnStorageKey="systems-related-technology" defaultSortField="Name" [localTableData]="sysTechnologiesData" [isLocal]="true" [tableCols]="relatedTechnologyCols" [attrDefs]="technologyAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="itStandards" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRelatedTechRowClick($event)"></app-table>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+      @if (isRecordsTabActive) {
+        <div class="tab-container">
+          <div class="overall-data-container">
+            <div class="main-data-container">
+              <div class="sub-content full-width">
+                <span class="sub-header">Related Records</span>
+                @if(sysRecordsData && sysRecordsData.length > 0) {
+                  <app-table visibleColumnStorageKey="systems-related-records" defaultSortField="GSA_Number" [localTableData]="sysRecordsData" [isLocal]="true" [tableCols]="recordsCols" [attrDefs]="recordsAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="records" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRelatedRecordsRowClick($event)"></app-table>
+                } @else {
+                  <span>Contact Records Management (records@gsa.gov) for a more detailed analysis of records associated with this system.</span>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+      @if (isWebsitesTabActive) {
+        <div class="tab-container">
+          <div class="overall-data-container">
+            <div class="main-data-container">
+              <div class="sub-content full-width">
+                <span class="sub-header">Related Websites</span>
+                <app-table visibleColumnStorageKey="systems-related-websites" defaultSortField="domain" [localTableData]="sysWebsitesData" [isLocal]="true" [tableCols]="websiteCols" [attrDefs]="websitesAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="website" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRelatedWebsitesRowClick($event)"></app-table>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+      @if (isSubsystemsTabActive && showSubsystemsTab()) {
+        <div class="tab-container">
+          <div class="overall-data-container">
+            <div class="main-data-container">
+              <div class="sub-content full-width">
+                <span class="sub-header">Related Subsystems</span>
+                <app-table visibleColumnStorageKey="systems-related-subsystems" defaultSortField="Name" [localTableData]="sysSubsystemsData" [isLocal]="true" [tableCols]="relatedSystemsCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="accessForms" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRelatedSubsystemsRowClick($event)"></app-table>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+      @if (isLoggedIn()) {
+        <app-button [buttonText]="'Edit'" buttonStyle="outline" (buttonClick)="editSystem()"></app-button>
+      }
+    </div>
+  </div>
+}

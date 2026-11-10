@@ -1,0 +1,98 @@
+@if (isDataReady) {
+  <div class="trm-details-container">
+    <div class="breadcrumb-container">
+      <app-breadcrumb>
+        <span currentPageName>{{detailsData.Name}}</span>
+      </app-breadcrumb>
+    </div>
+    <div class="title-container">
+      <span class="title">{{detailsData.Name}}</span>
+    </div>
+    <div class="content-container">
+      <div class="overview-container">
+        <div class="overall-data-container">
+          <div class="main-data-container">
+            <div class="data-wrapper">
+              <div class="data">
+                <label class="data-label">
+                  <span [pTooltip]="getTooltip('Area')" [escape]="false" role="tooltip">
+                    Area
+                    <i class="fas fa-info-circle"></i>
+                  </span>
+                </label>
+                <span>
+                  <span>{{detailsData.Area || 'N/A'}}</span>
+                </span>
+              </div>
+              <div class="data">
+                <label class="data-label">
+                  <span [pTooltip]="getTooltip('Domain')" [escape]="false" role="tooltip">
+                    Domain
+                    <i class="fas fa-info-circle"></i>
+                  </span>
+                </label>
+                <span>
+                  <span>{{detailsData.Domain || 'N/A'}}</span>
+                </span>
+              </div>
+              <div class="data">
+                <label class="data-label">
+                  <span [pTooltip]="getTooltip('Level')" [escape]="false" role="tooltip">
+                    Level
+                    <i class="fas fa-info-circle"></i>
+                  </span>
+                </label>
+                <span>
+                  <span>{{detailsData.Level || 'N/A'}}</span>
+                </span>
+              </div>
+              <div class="data">
+                <label class="data-label">
+                  <span [pTooltip]="getTooltip('Type')" [escape]="false" role="tooltip">
+                    Type
+                    <i class="fas fa-info-circle"></i>
+                  </span>
+                </label>
+                <span>
+                  <span>{{detailsData.Type || 'N/A'}}</span>
+                </span>
+              </div>
+              <div class="data">
+                <label class="data-label">
+                  <span [pTooltip]="getTooltip('FEA Code')" [escape]="false" role="tooltip">
+                    FEA Code
+                    <i class="fas fa-info-circle"></i>
+                  </span>
+                </label>
+                <span>
+                  <span>{{detailsData.FEACode || 'N/A'}}</span>
+                </span>
+              </div>
+              <div class="data-full">
+                <label class="data-label">
+                  <span [pTooltip]="getTooltip('Description')" [escape]="false" role="tooltip">
+                    Description
+                    <i class="fas fa-info-circle"></i>
+                  </span>
+                </label>
+                <span>
+                  <span>{{detailsData.Description || 'N/A'}}</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        @if(hasRelatedTech()) {
+          <div class="overall-data-container">
+            <div class="main-data-container">
+              <div class="sub-content full-width">
+                <span class="sub-header">Associated IT Standards</span>
+                <app-table visibleColumnStorageKey="tech-categories-related-tech" defaultSortField="Name" [localTableData]="relatedITStandards" [isLocal]="true" [tableCols]="relatedITStandardsTableCols" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="technology" [contextSystemName]="detailsData?.Name" (rowClickEvent)="onRowClick($event)"></app-table>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

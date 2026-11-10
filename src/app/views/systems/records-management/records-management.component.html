@@ -1,68 +1,17 @@
-<div class="card">
-  <div class="card-header text-white bg-danger text-center">
-    <h3 class="card-title col-12 mb-0">
-      <span>
-        <i class="far fa-folder-open mr-2"></i>
-        Record Retention Schedules
-      </span>
-    </h3>
-
-    <!-- GEAR Manager Access -->
-    @if (!sharedService.loggedIn) {
-      <a class="btn btn-sm btn-info text-white shadow mngr-btn d-flex align-items-center justify-content-center"
-        routerLink="/gear_manager" aria-label="GEAR Manager Login" (click)="sharedService.setRedirectPath()">
-        <span class="mr-2">GEAR Manager Login</span><i class="fa fa-sign-in-alt fa-2x"></i>
-      </a>
-    }
-    @if (sharedService.loggedIn) {
-      <a class="btn btn-sm btn-danger text-white shadow mngr-btn d-flex align-items-center justify-content-center"
-        routerLink="/records_mgmt" aria-label="GEAR Manager Logout" (click)="sharedService.logoutManager()">
-        <span class="mr-2">Logout</span><i class="fas fa-sign-out-alt fa-2x"></i>
-      </a>
-    }
-
-    <!-- Help Button -->
-    <a tabindex="0"
-      class="btn btn-sm btn-info text-white shadow help-btn d-flex align-items-center justify-content-center"
-      role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="auto" data-bs-html="true"
-      title="Help Using this Table" data-bs-content="<b>Details:</b> Left click on a row within the table to view additional details.
-      <br><br>
-      <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
-      <br><br>
-      <b>Export:</b> Export data by clicking on the <i class='fas fa-download'></i> icon and selecting the format that meets 
-      your needs.
-      <br><br>
-      <b>Search:</b> Perform a filtered search across all fields in the displayed data. Hit the 'Enter' button on your 
-      keyboard to execute. Click the <i class='far fa-trash-alt'></i> icon to clear the search box. 
-      Search within specific columns by clicking on the <i class='fas fa-angle-down'></i> icon. 
-      <br><br>
-      <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
-      <i class='fas fa-caret-square-down'></i> icon to display everything on one page.">
-      <span class="mr-2">More Help</span><i class="far fa-question-circle fa-2x"></i>
-    </a>
+<div class="records-management-container">
+  <div class="records-management-title-container">
+    <h2>Record Retention Schedules</h2>
+    <div class="records-management-title-right-button-container">
+      @if (!isLoggedIn()) {
+        <app-button buttonText="GEAR Manager Login" (buttonClick)="sharedService.setRedirectPath()"></app-button>
+      }
+      @if (isLoggedIn()) {
+        <app-button buttonText="Logout" buttonStyle="error" (buttonClick)="sharedService.logoutManager()"></app-button>
+      }
+      <app-page-help-button></app-page-help-button>
+    </div>
   </div>
-
-  <div class="card-body card-text">
-    <!-- GEAR Manager Google API Call button -->
-    <!-- <a class="btn btn-primary" style="color:white"
-       *ngIf="sharedService.loggedIn && !isLoading && !isDone"
-  (click)="runUpdateAllRecordSys()">Update All Related Records</a>
-  // GEAR Manager Google API Call updating animation
-  <div *ngIf="isLoading" [@loadingAnimation]="isLoading ? 'true' : 'false'">
-    <p>Updating...</p>
+  <div class="records-management-data-container">
+    <app-table visibleColumnStorageKey="records-management-report" defaultSortField="GSA_Number" [tableCols]="tableCols" [attrDefs]="attrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)"></app-table>
   </div>
-  // GEAR Manager Google API Call Response
-  <div *ngIf="!isLoading && sharedService.loggedIn && isDone">
-    <p>
-      <b>Update All Related Records</b><span *ngIf="!isError && isDone" style="color:green"> - Completed Successfully!</span><span *ngIf="isError && isDone" style="color:red"> - Error, please contact the EA Team for assistance. </span><br>
-      <span *ngIf="!isError">Last Ran On: {{ updateAllInfoData.last_ran }}<br></span>
-      <span *ngIf="!isError">By: {{ updateAllInfoData.ran_by }}<br></span>
-      <span *ngIf="!isError"><b>{{ updateAllInfoData.tot_inserts }} rows inserted.</b></span>
-    </p>
-  </div>
-  (hiding for now-- currently not operational) -->
-
-  <!-- Main Table -->
-  <table id="recordsTable" aria-label="The records management table provides a list of records schedules. This table is useful in understanding the implications of each record schedule on specific types of data. It provides information about how long records should be kept and whether data should be archived."></table>
-</div>
 </div>

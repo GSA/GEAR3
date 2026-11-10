@@ -1,0 +1,42 @@
+.trm-container {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 1.5rem;
+
+    & .trm-title-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        & .trm-title-right-button-container {
+            display: flex;
+            flex-direction: row;
+            gap: 1rem;
+        }
+    }
+
+    & .trm-definition-container {
+        padding: 1rem;
+         background-color: #fff;
+         border-radius: 0.3rem;
+
+        & .trm-definition-text {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;  
+            overflow: hidden;
+            margin-bottom: .25rem;
+
+            &.expanded {
+                -webkit-line-clamp: none;
+                overflow: visible;
+            }
+        }
+    }
+
+    & .trm-data-container {
+        display: flex;
+        flex-direction: column;
+        padding: .5rem;
+    }
+}

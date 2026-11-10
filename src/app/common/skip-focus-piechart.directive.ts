@@ -2,6 +2,7 @@ import { AfterContentChecked, AfterContentInit, AfterViewChecked, AfterViewInit,
 
 @Directive({
     selector: '[appSkipFocusPiechart]',
+    standalone: false
 })
 export class SkipFocusPiechartDirective implements AfterContentChecked {
     private setTabindex = false;

@@ -1,0 +1,324 @@
+@if (isDataReady) {
+  <div class="fisma-pocs-details-container">
+    <div class="breadcrumb-container">
+      <app-breadcrumb>
+        <span currentPageName>{{detailsData.Name}}</span>
+      </app-breadcrumb>
+    </div>
+    <div class="title-container">
+      <span class="title">{{detailsData.Name}}</span>
+    </div>
+    <div class="content-container">
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="isOverviewTabActive" (click)="onTabClick('overview', $event)" href="#overview">Overview</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="isPocTabActive" (click)="onTabClick('poc', $event)" href="#poc">Points of Contact</a>
+        </li>
+      </ul>
+      @if (isOverviewTabActive) {
+        <div class="overview-container">
+          <div class="overall-data-container">
+            <div class="main-data-container">
+              <div class="data">
+                <label class="data-label">
+                  <span [pTooltip]="getTooltip('Status')" [escape]="false" role="tooltip">
+                    Status
+                    <i class="fas fa-info-circle"></i>
+                  </span>
+              </label>
+              <span>
+                <span [ngClass]="getStatusClass(detailsData.Status)">{{detailsData.Status}}</span>
+              </span>
+            </div>
+            <div class="data">
+              <label class="data-label">
+                  <span [pTooltip]="getTooltip('FIPS Impact Level')" [escape]="false" role="tooltip">
+                    <i class="fas fa-shield-alt"></i>
+                    FIPS Impact Level
+                    <i class="fas fa-info-circle"></i>
+                  </span>
+              </label>
+                <span>{{detailsData.FIPS_Impact_Level}}</span>
+              </div>
+              <div class="data">
+                <label class="data-label">
+                    <span [pTooltip]="getTooltip('ATO Date')" [escape]="false" role="tooltip">
+                      <i class="fas fa-calendar-alt"></i>
+                      ATO Date
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                  </label>
+                  <span>{{detailsData.ATODate | date : "longDate" : "UTC"}}</span>
+                </div>
+                <div class="data">
+                  <label class="data-label">
+                    <span [pTooltip]="getTooltip('Renewal Date')" [escape]="false" role="tooltip">
+                      <i class="fas fa-calendar-check"></i>
+                      Renewal Date
+                      <i class="fas fa-info-circle"></i>
+                    </span>
+                    </label>
+                    <span>{{detailsData.RenewalDate | date : "longDate" : "UTC"}}</span>
+                  </div>
+                  <!-- <div class="data">
+                    <label class="data-label">
+                      <span>
+                        <i class="fas fa-check-circle"></i> Complete Assessment for Current FY </span>
+                      </label>
+                      <span>{{detailsData.ComplFISMA}}</span>
+                    </div> -->
+                    <div class="data">
+                      <label class="data-label">
+                          <span [pTooltip]="getTooltip('PII')" [escape]="false" role="tooltip">
+                            <i class="fas fa-user-shield"></i>
+                            PII
+                            <i class="fas fa-info-circle"></i>
+                          </span>
+                        </label>
+                        <span>{{detailsData.PII}}</span>
+                      </div>
+                      <div class="data">
+                        <label class="data-label">
+                            <span [pTooltip]="getTooltip('CUI')" [escape]="false" role="tooltip">
+                              <i class="fas fa-lock"></i>
+                              CUI
+                              <i class="fas fa-info-circle"></i>
+                            </span>
+                          </label>
+                          <span>{{detailsData.CUI}}</span>
+                        </div>
+                        <div class="data-full">
+                          <label class="data-label">
+                            <span [pTooltip]="getTooltip('Description')" [escape]="false" role="tooltip">
+                              Description
+                              <i class="fas fa-info-circle"></i>
+                            </span>
+                          </label>
+                        <span>{{detailsData.Description}}</span>
+                      </div>
+                    </div>
+                    <div class="sub-data-container">
+                      <table>
+                        <tr>
+                          <th>Attribute</th>
+                          <th>Value</th>
+                        </tr>
+                        @if (isFieldPopulated(detailsData.SystemLevel)) {
+                          <tr>
+                            <td>
+                              <span [pTooltip]="getTooltip('System Level')" [escape]="false" role="tooltip"> System Level <i class="fas fa-info-circle"></i>
+                            </span>
+                          </td>
+                          <td>{{detailsData.SystemLevel}}</td>
+                        </tr>
+                      }
+                      @if (isFieldPopulated(detailsData.SharedService)) {
+                        <tr>
+                          <td>
+                            <span [pTooltip]="getTooltip('Shared Service')" [escape]="false" role="tooltip"> Shared Service <i class="fas fa-info-circle"></i>
+                          </span>
+                        </td>
+                        <td>{{detailsData.SharedService}}</td>
+                      </tr>
+                    }
+                    @if (isFieldPopulated(detailsData.RespOrg)) {
+                      <tr>
+                        <td>
+                          <span [pTooltip]="getTooltip('Responsible Org')" [escape]="false" role="tooltip"> Responsible Organization <i class="fas fa-info-circle"></i>
+                        </span>
+                      </td>
+                      <td>{{detailsData.RespOrg}}</td>
+                    </tr>
+                  }
+                  @if (isFieldPopulated(detailsData.BusOrg)) {
+                    <tr>
+                      <td>
+                        <span [pTooltip]="getTooltip('Business Organization')" [escape]="false" role="tooltip"> Business Organization <i class="fas fa-info-circle"></i>
+                      </span>
+                    </td>
+                    <td>{{detailsData.BusOrg}}</td>
+                  </tr>
+                }
+                @if (isFieldPopulated(detailsData.FISMASystemIdentifier)) {
+                  <tr>
+                    <td>
+                      <span [pTooltip]="getTooltip('FISMA System Identifier')" [escape]="false" role="tooltip"> FISMA System Identifier <i class="fas fa-info-circle"></i>
+                    </span>
+                  </td>
+                  <td>{{detailsData.FISMASystemIdentifier}}</td>
+                </tr>
+              }
+              @if (isFieldPopulated(detailsData.ATOType)) {
+                <tr>
+                  <td>
+                    <span [pTooltip]="getTooltip('ATO Type')" [escape]="false" role="tooltip"> ATO Type <i class="fas fa-info-circle"></i>
+                  </span>
+                </td>
+                <td>{{detailsData.ATOType}}</td>
+              </tr>
+            }
+            @if (isFieldPopulated(detailsData.CloudYN)) {
+              <tr>
+                <td>
+                  <span [pTooltip]="getTooltip('Cloud Hosted?')" [escape]="false" role="tooltip"> Cloud Hosted <i class="fas fa-info-circle"></i>
+                </span>
+              </td>
+              <td>{{detailsData.CloudYN}}</td>
+            </tr>
+          }
+          @if (isFieldPopulated(detailsData.CSP)) {
+            <tr>
+              <td>
+                <span [pTooltip]="getTooltip('Hosting Provider')" [escape]="false" role="tooltip"> Hosting Provider <i class="fas fa-info-circle"></i>
+              </span>
+            </td>
+            <td>{{detailsData.CSP}}</td>
+          </tr>
+        }
+        @if (isFieldPopulated(detailsData.ServiceType)) {
+          <tr>
+            <td>
+              <span [pTooltip]="getTooltip('Cloud Service Type')" [escape]="false" role="tooltip"> Service Type <i class="fas fa-info-circle"></i>
+            </span>
+          </td>
+          <td>{{detailsData.ServiceType}}</td>
+        </tr>
+      }
+      @if (isFieldPopulated(detailsData.FedContractorLoc)) {
+        <tr>
+          <td>
+            <span [pTooltip]="getTooltip('Fed or Contractor System')" [escape]="false" role="tooltip"> Fed/Contractor Location <i class="fas fa-info-circle"></i>
+          </span>
+        </td>
+        <td>{{detailsData.FedContractorLoc}}</td>
+      </tr>
+    }
+    @if (isFieldPopulated(detailsData.Reportable)) {
+      <tr>
+        <td>
+          <span [pTooltip]="getTooltip('FISMA Reportable')" [escape]="false" role="tooltip"> Reportable <i class="fas fa-info-circle"></i>
+        </span>
+      </td>
+      <td>{{detailsData.Reportable}}</td>
+    </tr>
+  }
+  @if (isFieldPopulated(detailsData.ParentName)) {
+    <tr>
+      <td>
+        <span [pTooltip]="getTooltip('Parent System')" [escape]="false" role="tooltip"> Parent System <i class="fas fa-info-circle"></i>
+      </span>
+    </td>
+    <td>{{detailsData.ParentName}}</td>
+  </tr>
+}
+@if (isFieldPopulated(detailsData.SubSystem_Tag)) {
+  <tr>
+    <td>
+      <span [pTooltip]="getTooltip('Sub System Tag')" [escape]="false" role="tooltip"> Sub System Tag <i class="fas fa-info-circle"></i>
+    </span>
+  </td>
+  <td>{{detailsData.SubSystem_Tag}}</td>
+</tr>
+}
+@if (isFieldPopulated(detailsData.InactiveDate)) {
+  <tr>
+    <td>
+      <span [pTooltip]="getTooltip('Inactive Date')" [escape]="false" role="tooltip"> Inactive Date <i class="fas fa-info-circle"></i>
+    </span>
+  </td>
+  <td>{{detailsData.InactiveDate | date : "longDate" : "UTC"}}</td>
+</tr>
+}
+</table>
+</div>
+</div>
+<div class="edit-info-container">
+  <app-button [buttonText]="getShowAllFieldsButtonText()" buttonStyle="outline" (buttonClick)="toggleShowAllFields()"></app-button>
+</div>
+</div>
+}
+@if (isPocTabActive) {
+  <div class="overview-container">
+    <div class="overall-data-container poc-full-width">
+      <div class="main-data-container poc-main-data">
+        <div class="data">
+          <label class="data-label">
+            <span>
+              Authorizing Official
+              <i class="fas fa-info-circle"></i>
+            </span>
+          </label>
+          <span [innerHTML]="pocFormatter(detailsData.AO)"></span>
+        </div>
+        <div class="data">
+          <label class="data-label">
+            <span>
+              System Owner
+              <i class="fas fa-info-circle"></i>
+            </span>
+          </label>
+          <span [innerHTML]="pocFormatter(detailsData.SO)"></span>
+        </div>
+        <div class="data">
+          <label class="data-label">
+            <span>
+              ISSM
+              <i class="fas fa-info-circle"></i>
+            </span>
+          </label>
+          <span [innerHTML]="pocFormatter(detailsData.ISSM)"></span>
+        </div>
+        <div class="data">
+          <label class="data-label">
+            <span>
+              ISSO
+              <i class="fas fa-info-circle"></i>
+            </span>
+          </label>
+          <span [innerHTML]="pocFormatter(detailsData.ISSO)"></span>
+        </div>
+        <div class="data">
+          <label class="data-label">
+            <span>
+              Contracting Officer
+              <i class="fas fa-info-circle"></i>
+            </span>
+          </label>
+          <span [innerHTML]="pocFormatter(detailsData.CO)"></span>
+        </div>
+        <div class="data">
+          <label class="data-label">
+            <span>
+              Contracting Officer Representative
+              <i class="fas fa-info-circle"></i>
+            </span>
+          </label>
+          <span [innerHTML]="pocFormatter(detailsData.COR)"></span>
+        </div>
+        <div class="data">
+          <label class="data-label">
+            <span [pTooltip]="getSystemsTooltip('Business POC')" [escape]="false" role="tooltip">
+              Business POC
+              <i class="fas fa-info-circle"></i>
+            </span>
+          </label>
+          <span [innerHTML]="pocFormatter(detailsData.BusPOC)"></span>
+        </div>
+        <div class="data">
+          <label class="data-label">
+            <span [pTooltip]="getSystemsTooltip('Technical POC')" [escape]="false" role="tooltip">
+              Technical POC
+              <i class="fas fa-info-circle"></i>
+            </span>
+          </label>
+          <span [innerHTML]="pocFormatter(detailsData.TechPOC)"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+</div>
+</div>
+}

@@ -1,0 +1,72 @@
+.sidebar-container {
+    --closed-sidebar-width: 76px;
+    --open-sidebar-width: 280px;
+
+    // height: 100%;
+    width: var(--closed-sidebar-width);
+    background-color: var(--neutral-white-color);
+    transition: width 0.25s ease-in-out;
+    // Stick below the fixed banner + top navbar so the sidebar scrolls into
+    // place beneath them instead of underneath them.
+    position: sticky;
+    top: var(--gear-header-offset, 0px);
+    height: calc(100vh - var(--gear-header-offset, 0px));
+
+    &.expanded {
+        width: var(--open-sidebar-width);
+        transition: width 0.25s ease-in-out;
+
+        & .sidebar-toggle-icon {
+            left: var(--open-sidebar-width);
+            top: 35px;
+        }
+    }
+
+    & .sidebar-logo {
+        a{
+            text-decoration: none;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-items: center;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        & svg {
+            height: 2rem;
+            width: 2rem;
+        }
+
+        & .sidebar-logo-text {
+            color: var(--neutral-black-color-dark);
+            font-family: var(--primary-font);
+            font-size: 1rem;
+            font-style: normal;
+            font-weight: 500;
+            line-height: 1.25rem;
+        }
+    }
+
+    & .sidebar-button-container {
+        display: flex;
+        flex-direction: column;
+        gap: .25rem;
+        padding: 0.5rem 0.7rem 0;
+        overflow: auto;
+        height: 100%;
+
+        & .sidebar-button-divider {
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+            height: 1px; 
+            width: 100%;
+            background: none;
+            border: none;
+
+            &.expanded {
+                background-color: #E2E8F0;
+            }
+        }
+    }
+}

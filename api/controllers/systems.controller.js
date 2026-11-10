@@ -13,30 +13,51 @@ exports.findAll = (req, res) => {
 };
 
 exports.findOne = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
-    ` WHERE systems.\`ex:GEAR_ID\` = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`;
+  let id = req.params.id.trim();
+  if(/^\d+$/.test(id)) {
+    var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
+    ` WHERE systems.\`ex:GEAR_ID\` = ? GROUP BY systems.\`ex:GEAR_ID\`;`;
 
-  res = ctrl.sendQuery(query, 'individual System/Subsystem', res);
+    res = ctrl.sendQuery(query, 'individual System/Subsystem', res, null, [id]);
+  } else {
+    res.status(404).json({
+      message: "ID not found",
+    });
+  }
 };
 
 exports.findSubsystems = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
-    ` WHERE systems.\`ex:FISMA_System_Identifier\` = 
-        (SELECT systems.\`ex:FISMA_System_Identifier\`
-        FROM obj_fisma_archer AS systems
-        WHERE systems.\`ex:GEAR_ID\` = ${req.params.id} )
-      AND systems.\`ex:SystemLevel\` = 'SubSystem';`;
-      
-  res = ctrl.sendQuery(query, 'Subsystems', res);
+  let id = req.params.id.trim();
+  if(/^[0-9]+$/.test(id)) {
+    var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
+      ` WHERE systems.\`ex:Parent_Name\` =
+          (SELECT parent_system.\`ex:System_Name\`
+           FROM obj_fisma_archer AS parent_system
+           WHERE parent_system.\`ex:GEAR_ID\` = ?)
+        AND LOWER(systems.\`ex:SystemLevel\`) = 'subsystem';`;
+
+    res = ctrl.sendQuery(query, 'Subsystems', res, null, [id]);
+  } else {
+    res.status(404).json({
+      message: 'ID not found',
+    });
+  }
 };
 
 exports.findCapabilities = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_capabilities.sql')).toString() +
+  let id = req.params.id.trim();
+  if(/^\d+$/.test(id)) {
+    var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_capabilities.sql')).toString() +
     ` LEFT JOIN zk_systems_subsystems_capabilities AS cap_mapping    ON cap.capability_Id = cap_mapping.obj_capability_Id
       LEFT JOIN obj_fisma_archer                   AS systems        ON cap_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
-      WHERE systems.\`ex:GEAR_ID\` = ${req.params.id};`;
+      WHERE systems.\`ex:GEAR_ID\` = ?;`;
 
-  res = ctrl.sendQuery(query, 'related capabilities for system', res);
+      res = ctrl.sendQuery(query, 'related capabilities for system', res, null, [id]);
+  } else {
+    res.status(404).json({
+      message: "ID not found",
+    });
+  }
 };
 
 exports.updateCaps = (req, res) => {
@@ -51,19 +72,22 @@ exports.updateCaps = (req, res) => {
 
       // Create string to update system-business capability relationship
       var capString = '';
+      var params = [];
       if (data.relatedCaps) {
         // Delete any references first
-        capString += `DELETE FROM zk_systems_subsystems_capabilities WHERE obj_systems_subsystems_Id=${req.params.id}; `;
+        capString += `DELETE FROM zk_systems_subsystems_capabilities WHERE obj_systems_subsystems_Id = ?; `;
+        params.push(req.params.id);
 
         // Insert new IDs
         data.relatedCaps.forEach(capID => {
-          capString += `INSERT INTO zk_systems_subsystems_capabilities (obj_capability_Id, obj_systems_subsystems_Id) VALUES (${capID}, ${req.params.id}); `;
+          capString += `INSERT INTO zk_systems_subsystems_capabilities (obj_capability_Id, obj_systems_subsystems_Id) VALUES (?, ?); `;
+          params.push(capID, req.params.id);
         });
       };
 
       var query = `${capString}`;
       
-      res = ctrl.sendQuery(query, 'updating capabilities for system', res);
+      res = ctrl.sendQuery(query, 'updating capabilities for system', res, null, params);
 
     } else {
       console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
@@ -80,9 +104,9 @@ exports.findInvestments = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_investments.sql')).toString() +
     ` LEFT JOIN zk_systems_subsystems_investments AS invest_mapping   ON invest.Investment_Id = invest_mapping.obj_investment_Id
       LEFT JOIN obj_fisma_archer                  AS systems          ON invest_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
-      WHERE systems.\`ex:GEAR_ID\` = ${req.params.id};`;
+      WHERE systems.\`ex:GEAR_ID\` = ?;`;
 
-  res = ctrl.sendQuery(query, 'related investments for system', res);
+  res = ctrl.sendQuery(query, 'related investments for system', res, null, [req.params.id]);
 };
 
 exports.updateInvest = (req, res) => {
@@ -97,19 +121,22 @@ exports.updateInvest = (req, res) => {
 
     // Create string to update system-investments relationship
     var investString = '';
+    var params = [];
     if (data.relatedInvest) {
       // Delete any references first
-      investString += `DELETE FROM zk_systems_subsystems_investments WHERE obj_systems_subsystems_Id=${req.params.id}; `;
+      investString += `DELETE FROM zk_systems_subsystems_investments WHERE obj_systems_subsystems_Id = ?; `;
+      params.push(req.params.id);
 
       // Insert new IDs
       data.relatedInvest.forEach(investID => {
-        investString += `INSERT INTO zk_systems_subsystems_investments (obj_systems_subsystems_Id, obj_investment_Id) VALUES (${req.params.id}, ${investID}); `;
+        investString += `INSERT INTO zk_systems_subsystems_investments (obj_systems_subsystems_Id, obj_investment_Id) VALUES (?, ?); `;
+        params.push(req.params.id, investID);
       });
     };
 
     var query = `${investString}`;
     
-    res = ctrl.sendQuery(query, 'updating investments for system', res);
+    res = ctrl.sendQuery(query, 'updating investments for system', res, null, params);
 
   } else {
     console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
@@ -123,37 +150,57 @@ exports.updateInvest = (req, res) => {
 
 
 exports.findRecords = (req, res) => {
-  var query = `SELECT * FROM gear_schema.zk_systems_subsystems_records   AS records_mapping
+  let id = req.params.id.trim();
+  if(/^\d+$/.test(id)) {
+    var query = `SELECT * FROM gear_schema.zk_systems_subsystems_records   AS records_mapping
       LEFT JOIN obj_fisma_archer                                      AS systems       ON records_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
-      WHERE systems.\`ex:GEAR_ID\` = ${req.params.id}
+      WHERE systems.\`ex:GEAR_ID\` = ?
+      GROUP BY records_mapping.obj_records_Id;`;
 
-    GROUP BY records_mapping.obj_records_Id;`;
-
-  res = ctrl.sendQuery(query, 'related records for system', res);
+    res = ctrl.sendQuery(query, 'related records for system', res, null, [id]);
+  } else {
+    res.status(404).json({
+      message: "ID not found",
+    });
+  }
 };
 
 exports.findWebsites = (req, res) => {
-  var query = `SELECT * FROM gear_schema.zk_systems_subsystems_websites   AS websites_mapping
-      LEFT JOIN obj_fisma_archer                                      AS systems       ON websites_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
-      WHERE systems.\`ex:GEAR_ID\` = ${req.params.id}
+  let id = req.params.id.trim();
+  if(/^\d+$/.test(id)) {
+    var query = `SELECT *
+                 FROM gear_schema.zk_systems_subsystems_websites AS websites_mapping
+                 LEFT JOIN obj_fisma_archer AS systems
+                 ON websites_mapping.obj_systems_subsystems_Id = systems.\`ex:GEAR_ID\`
+                 WHERE systems.\`ex:GEAR_ID\` = ?
+                 GROUP BY websites_mapping.obj_websites_Id;`;
 
-    GROUP BY websites_mapping.obj_websites_Id;`;
-
-  res = ctrl.sendQuery(query, 'related websites for system', res);
+    res = ctrl.sendQuery(query, 'related websites for system', res, null, [id]);
+  } else {
+    res.status(404).json({
+      message: "ID not found",
+    });
+  }
 };
 
 
 exports.findTechnologies = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
+  let id = req.params.id.trim();
+  if(/^\d+$/.test(id)) {
+    var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_it-standards.sql')).toString() +
     ` LEFT JOIN gear_schema.zk_systems_subsystems_technology_xml   AS tech_mapping  ON tech.Id = tech_mapping.\`ex:obj_technology_Id\`
       LEFT JOIN gear_schema.obj_fisma_archer                   AS systems       ON tech_mapping.\`ex:obj_systems_subsystems_Id\` = systems.\`ex:GEAR_ID\`
       WHERE obj_standard_type.Keyname LIKE '%Software%'
-        AND systems.\`ex:GEAR_ID\` = ${req.params.id}
-
+        AND systems.\`ex:GEAR_ID\` = ?
     GROUP BY tech.Id
     ORDER BY tech.Keyname;`;
 
-  res = ctrl.sendQuery(query, 'related technologies for system', res); //Removed sendQuery_cowboy reference
+    res = ctrl.sendQuery(query, 'related technologies for system', res, null, [id]);
+  } else {
+    res.status(404).json({
+      message: "ID not found",
+    });
+  }
 };
 
 exports.updateTech = (req, res) => {
@@ -168,19 +215,22 @@ exports.updateTech = (req, res) => {
 
       // Create string to update system-IT Standards relationship
       var techString = '';
+      var params = [];
       if (data.relatedTech) {
         // Delete any references first
-        techString += `DELETE FROM zk_systems_subsystems_technology_xml WHERE \`ex:obj_systems_subsystems_Id\`=${req.params.id}; `;
+        techString += `DELETE FROM zk_systems_subsystems_technology_xml WHERE \`ex:obj_systems_subsystems_Id\` = ?; `;
+        params.push(req.params.id);
 
         // Insert new IDs
         data.relatedTech.forEach(techID => {
-          techString += `INSERT INTO zk_systems_subsystems_technology_xml (\`ex:obj_systems_subsystems_Id\`, \`ex:obj_technology_Id\`) VALUES (${req.params.id}, ${techID}); `;
+          techString += `INSERT INTO zk_systems_subsystems_technology_xml (\`ex:obj_systems_subsystems_Id\`, \`ex:obj_technology_Id\`) VALUES (?, ?); `;
+          params.push(req.params.id, techID);
         });
       };
 
       var query = `${techString}`;
       
-      res = ctrl.sendQuery(query, 'updating IT Standards for system', res);
+      res = ctrl.sendQuery(query, 'updating IT Standards for system', res, null, params);
 
     } else {
       console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
@@ -192,10 +242,28 @@ exports.updateTech = (req, res) => {
   });
 };
 
-
 exports.findTIME = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_sysTIME.sql')).toString() +
-    ` AND \`System Id\` = ${req.params.id};`;
+  let id = req.params.id.trim();
+  if(/^\d+$/.test(id)) {
+    var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_sysTIME.sql')).toString() +
+    ` AND \`System Id\` = ?;`;
 
-  res = ctrl.sendQuery(query, 'related TIME designations for system', res);
+    res = ctrl.sendQuery(query, 'related TIME designations for system', res, null, [id]);
+  } else {
+    res.status(404).json({
+      message: "ID not found",
+    });
+  }
+};
+
+exports.getFilterTotals = (req, res) => {  
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_systems_filter_totals.sql`)).toString();
+
+  res = ctrl.sendQuery(query, `Systems & Subsystems filter totals`, res);
+};
+
+exports.getDecommissionedSystemTotals = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_systems_decommissioned_totals.sql`)).toString();
+
+  res = ctrl.sendQuery(query, `Systems decommissioned totals`, res);
 };

@@ -1,0 +1,454 @@
+@use "./variables.scss";
+@use "./typography.scss";
+@use "./filter-tabs.scss";
+
+
+
+.p-multiselect-option.p-multiselect-option-selected{
+background-color: transparent !important;
+color: unset;
+}
+.p-checkbox{
+  border: 1px solid #fff;
+  height: unset;
+  border-radius: 4px;
+}
+
+// Force override for input focus
+.p-inputtext:focus {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 0.2rem rgba(0, 94, 162, 0.25) !important;
+}
+
+body{
+  background-color: #F9F9F9 !important;
+}
+/* You can add global styles to this file, and also import other style files */
+
+/* Underline H4 Headers, email links, card links for easy distinction */
+
+h4, a.email, a.link, .card-link {
+  text-decoration: underline;
+}
+
+/* Bold has got to be bolder than what the theme gives */
+
+b, strong, .font-weight-bold {
+  font-weight: 900 !important;
+  color: #1a1a1a !important;
+}
+
+/* More Width Classes */
+
+.w-11 {
+  width: 11% !important;
+}
+
+.w-15 {
+  width: 15% !important;
+}
+
+.w-80 {
+  width: 80% !important;
+}
+
+/* More Height Classes */
+
+.h-20 {
+  height: 20% !important;
+}
+
+/* Make xl modals bigger */
+
+@media (min-width: 1200px) {
+  .modal-xl {
+    max-width: 80% !important;
+  }
+}
+
+.submenu-icon {
+  padding-left: 0.5rem;
+  margin-left: auto;
+}
+
+@media (max-width: 1856px) {
+  .navbar-expand-xl2>.container, .navbar-expand-xl2>.container-fluid, .navbar-expand-xl2>.container-sm, .navbar-expand-xl2>.container-md, .navbar-expand-xl2>.container-lg, .navbar-expand-xl2>.container-xl {
+    padding-right: 0;
+    padding-left: 0;
+  }
+}
+
+@media (min-width: 1856px) {
+  .navbar-expand-xl2 {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-flow: row nowrap;
+    flex-flow: row nowrap;
+    -webkit-box-pack: start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+  }
+  .navbar-expand-xl2 .navbar-nav {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+  }
+  .navbar-expand-xl2 .navbar-nav .dropdown-menu {
+    position: absolute;
+  }
+  .navbar-expand-xl2 .navbar-nav .nav-link {
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+  }
+  .navbar-expand-xl2>.container, .navbar-expand-xl2>.container-fluid, .navbar-expand-xl2>.container-sm, .navbar-expand-xl2>.container-md, .navbar-expand-xl2>.container-lg, .navbar-expand-xl2>.container-xl {
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+  }
+  .navbar-expand-xl2 .navbar-collapse {
+    display: -webkit-box !important;
+    display: -ms-flexbox !important;
+    display: flex !important;
+    -ms-flex-preferred-size: auto;
+    flex-basis: auto;
+  }
+  .navbar-expand-xl2 .navbar-toggler {
+    display: none;
+  }
+}
+
+/* Make tab borders thicker */
+
+.nav-tabs {
+  border-bottom: 2px solid rgba(26, 26, 26, 0.5) !important;
+}
+
+.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+  border-color: rgba(26, 26, 26, 0.5) rgba(26, 26, 26, 0.5) rgba(26, 26, 26, 0.5) !important;
+}
+
+.nav-tabs .nav-item {
+  margin-bottom: -4px;
+}
+
+.nav-tabs .nav-link {
+  border: 4px solid transparent;
+}
+
+.nav-tabs .dropdown-menu {
+  margin-top: -4px;
+}
+
+.nav-tabs>li>a.active {
+  color: #fff !important;
+  background-color: #027eb2 !important;
+}
+
+.bg-dark a.nav-link:not(.active) {
+  color: #fff !important;
+}
+
+/* Increase popover font size */
+
+.popover-header {
+  font-size: 1.25rem;
+}
+
+.popover-body {
+  font-size: 1rem;
+}
+
+::-webkit-input-placeholder {
+  /* Chrome/Opera/Safari */
+  color: black !important;
+}
+
+/* Customize Table formatting */
+
+.fixed-table {
+  table-layout: fixed;
+}
+
+table h5 {
+  margin-bottom: 0;
+}
+
+table.table-dark h5 {
+  color: #fff;
+}
+
+.clickable-table {
+  cursor: pointer;
+}
+
+/* Separate icons from text when in tables */
+
+table svg {
+  margin-right: 10px;
+}
+
+/* Links in dark tables should be white and underlined */
+
+table.table-dark a {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* Unordered lists in tables shouldn't have bullets */
+
+table ul {
+  list-style-type: none;
+  padding-inline-start: 0;
+  margin-bottom: 0;
+}
+
+/* Cursor pointer for html tables that can be clicked on */
+
+td.pointer {
+  cursor: pointer;
+  font-size: 0.765625rem;
+  text-transform: uppercase;
+}
+
+/* Custom Colors */
+
+.bg-royal-blue {
+  background-color: #2b60de !important;
+}
+
+a.bg-royal-blue:hover, a.bg-royal-blue:focus, button.bg-royal-blue:hover, button.bg-royal-blue:focus {
+  background-color: #214599 !important;
+}
+
+.btn-outline-royal-blue {
+  color: #2b60de;
+  border-color: #2b60de;
+}
+
+.btn-outline-royal-blue:hover {
+  color: #fff;
+  background-color: #2b60de;
+  border-color: #2b60de;
+}
+
+.btn-outline-royal-blue:focus, .btn-outline-royal-blue.focus {
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(43, 96, 222, 0.5);
+  box-shadow: 0 0 0 0.2rem rgba(43, 96, 222, 0.5);
+}
+
+.btn-outline-royal-blue.disabled, .btn-outline-royal-blue:disabled {
+  color: #2b60de;
+  background-color: transparent;
+}
+
+.btn-outline-royal-blue:not(:disabled):not(.disabled):active, .btn-outline-royal-blue:not(:disabled):not(.disabled).active, .show>.btn-outline-royal-blue.dropdown-toggle {
+  color: #fff;
+  background-color: #2b60de;
+  border-color: #2b60de;
+}
+
+.btn-outline-royal-blue:not(:disabled):not(.disabled):active:focus, .btn-outline-royal-blue:not(:disabled):not(.disabled).active:focus, .show>.btn-outline-royal-blue.dropdown-toggle:focus {
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(43, 96, 222, 0.5);
+  box-shadow: 0 0 0 0.2rem rgba(43, 96, 222, 0.5);
+}
+
+.bg-light-blue {
+  background-color: #027eb2 !important;
+}
+
+.bg-teal {
+  background-color: #008080 !important;
+}
+
+a.bg-teal:hover, a.bg-teal:focus, button.bg-teal:hover, button.bg-teal:focus {
+  background-color: #076464 !important;
+}
+
+.bg-purple {
+  background-color: #800080 !important;
+}
+
+a.bg-purple:hover, a.bg-purple:focus, button.bg-purple:hover, button.bg-purple:focus {
+  background-color: #800080 !important;
+}
+
+.bg-silver {
+  background-color: #C0C0C0 !important;
+}
+
+/* For buttons with these classes, correctly place them */
+
+a.position-absolute.float-right {
+  position: absolute;
+  right: 2%;
+}
+
+.position-absolute.center {
+  left: 50%;
+  transform: translate(-50%);
+}
+
+.help-btn {
+  position: absolute;
+  top: 0;
+  right: 1%;
+  transform: translateY(25%);
+}
+
+.mngr-btn {
+  position: absolute;
+  top: 0;
+  left: 1%;
+  transform: translateY(25%);
+}
+
+/* Date Picker Calendar Adjustments */
+
+.datepicker-inline, .table-condensed {
+  width: 100% !important;
+}
+
+/* Rotation Animation */
+
+.rotate {
+  -moz-transition: all 0.2s linear;
+  -webkit-transition: all 0.2s linear;
+  transition: all 0.2s linear;
+}
+
+.rotate.opposite {
+  -moz-transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+
+/* Also display invalid feedback divs by default. Should control display through ngIf */
+
+.invalid-feedback {
+  display: block !important;
+}
+
+/* Make the bold "Data source:" / "Definition:" labels a light gray that stays
+   readable against the dark tooltip background */
+.p-tooltip .tooltip-label,
+.p-tooltip-text .tooltip-label {
+  color: #d1d5db !important;
+}
+
+/* Widen helper-text tooltips, shrink the text, and allow long descriptions to scroll */
+.p-tooltip .p-tooltip-text {
+  max-width: min(32rem, 90vw) !important;
+  width: max-content;
+  max-height: 60vh;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+  box-sizing: border-box;
+  font-size: 0.8rem;
+  line-height: 1.3;
+  text-align: left;
+}
+
+/* Keep header helper tooltips inside the viewport so right-edge columns
+   don't render their text off the right side of the screen. */
+.gear-help-tooltip {
+  max-width: min(32rem, 92vw) !important;
+}
+.gear-help-tooltip.p-tooltip,
+.gear-help-tooltip .p-tooltip-text {
+  max-width: min(32rem, 92vw) !important;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.description-wrap {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+
+.description-wrap-short {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+
+.description-wrap-lite {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+
+.fixed-table-toolbar .search input {
+  border: 1px solid;
+  height: 100%;
+}
+
+.fixed-table-toolbar .search {
+  padding-right: 3%;
+  min-width: 30%;
+}
+
+.wid-25 {
+  width: 25% !important;
+}
+
+.table-column-break-word {
+  word-break: break-word;
+}
+
+.it-standard-manager-app-bundle-container {
+  border: 2px #ced4da solid;
+  padding: 1em;
+  margin-top: .25em;
+}
+
+.it-standard-manager-app-bundle-item {
+  display: block;
+  margin-bottom: 1em;
+  font-weight: bold;;
+}
+
+.it-standard-manager-app-bundle-clear-icon {
+  margin-left: .5em;
+  font-size: 16px;
+  font-weight: bold;
+  color: red;
+  cursor: pointer;
+}
+
+.it-standard-manager-app-bundle-duplicate-msg {
+  margin-top: 0.25rem;
+  font-size: 80%;
+  color: #ce4844;
+}
+
+.it-standards-filter-button-active button {
+  background-color: #2491ff;
+  border-color: #2491ff;
+}
+
+.btn-border-white {
+  border: 1px solid #fff !important;
+}
+.p-multiselect-dropdown{
+color: #fff;}
+
+button svg{
+  margin: 0 !important;
+}
+.nav-item{
+  margin-right: 0.5rem !important;
+}
+.p-overlay{
+z-index: 99999999;
+}
+

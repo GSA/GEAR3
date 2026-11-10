@@ -10,10 +10,10 @@ import { TableService } from '@services/tables/table.service';
 declare var $: any;
 
 @Component({
-standalone: false,
-  selector: 'investments-modal',
-  templateUrl: './investments-modal.component.html',
-  styleUrls: ['./investments-modal.component.css']
+    selector: 'investments-modal',
+    templateUrl: './investments-modal.component.html',
+    styleUrls: ['./investments-modal.component.css'],
+    standalone: false
 })
 export class InvestmentsModalComponent implements OnInit {
 

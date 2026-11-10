@@ -1,0 +1,48 @@
+// Modal show/hide states
+.modal.show {
+  display: block !important;
+}
+
+.modal-backdrop.show {
+  opacity: 0.5;
+}
+
+// Modal dialog positioning
+.modal-dialog {
+  margin-top: 2rem;
+}
+
+// Modal header - using existing theme colors
+.modal-header.bg-success {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-hover) 100%) !important;
+  
+  .modal-title {
+    color: var(--neutral-white-color);
+    font-weight: 600;
+  }
+}
+
+// Animation for modal
+.modal.fade .modal-dialog {
+  transition: transform 0.3s ease-out;
+  transform: translate(0, -50px);
+}
+
+.modal.show .modal-dialog {
+  transform: none;
+}
+
+.modal-backdrop.fade {
+  opacity: 0;
+}
+
+.modal-backdrop.show {
+  opacity: 0.5;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .modal-dialog {
+    margin: 0.5rem;
+  }
+}

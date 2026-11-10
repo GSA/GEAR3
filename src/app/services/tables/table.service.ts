@@ -7,10 +7,13 @@ import { ApiService } from '@services/apis/api.service';
 import { ModalsService } from '@services/modals/modals.service';
 import { SharedService } from '@services/shared/shared.service';
 import { Service_Category } from '@api/models/service-category.model';
+import { AnalyticsService } from '@services/analytics/analytics.service';
+import { BehaviorSubject, Observable, of, scheduled, Subscription } from 'rxjs';
+import { FilterButton } from '@common/table-classes';
+import { Website } from '@api/models/websites.model';
 
 // Declare jQuery symbol
 declare var $: any;
-declare var gtag: Function;
 
 interface ClickOptions {
   data: any;
@@ -27,6 +30,16 @@ interface ClickOptions {
   providedIn: 'root',
 })
 export class TableService {
+  
+  // Active report table data
+  private reportTableDataSubject = new BehaviorSubject<any>([]);
+  reportTableData$ = this.reportTableDataSubject.asObservable();
+
+  private reportTableDataReadySubject = new BehaviorSubject<boolean>(false);
+  reportTableDataReady$ = this.reportTableDataReadySubject.asObservable();
+
+  reportDataTableFilterKey: string = null;
+
   // Systems Related Table Options
   public relSysTableOptions: {} = this.createTableOptions({
     advancedSearch: true,
@@ -143,7 +156,8 @@ export class TableService {
     private globals: Globals,
     private modalService: ModalsService,
     private sharedService: SharedService,
-    private location: Location
+    private location: Location,
+    private analyticsService: AnalyticsService
   ) {}
 
   public createTableOptions(definitions: any): {} {
@@ -191,7 +205,7 @@ export class TableService {
 
     switch (searchData.GEAR_Type) {
       case 'Capability':
-        this.apiService.getOneCap(searchData.Id).subscribe((apiData: any[]) => {
+        this.apiService.getOneCap(searchData.Id).subscribe((apiData: any) => {
           this.capsTableClick(apiData[0]);
           this.setGlobalSearchModalUrl(searchData.GEAR_Type, searchData.Id);
         });
@@ -209,14 +223,14 @@ export class TableService {
       case 'Investment':
         this.apiService
           .getOneInvest(searchData.Id)
-          .subscribe((apiData: any[]) => {
+          .subscribe((apiData: any) => {
             this.investTableClick(apiData[0]);
             this.setGlobalSearchModalUrl(searchData.GEAR_Type, searchData.Id);
           });
         break;
 
       case 'System': // TODO: need to change when gear_schema is fully transitioned
-        this.apiService.getOneSys(searchData.Id).subscribe((apiData: any[]) => {
+        this.apiService.getOneSys(searchData.Id).subscribe((apiData: any) => {
           this.systemsTableClick(apiData[0]);
           this.setGlobalSearchModalUrl(searchData.GEAR_Type, searchData.Id);
         });
@@ -225,7 +239,7 @@ export class TableService {
       case 'Technology':
         this.apiService
           .getOneITStandard(searchData.Id)
-          .subscribe((apiData: any[]) => {
+          .subscribe((apiData: any) => {
             this.itStandTableClick(apiData[0]);
             this.setGlobalSearchModalUrl(searchData.GEAR_Type, searchData.Id);
           });
@@ -235,7 +249,7 @@ export class TableService {
       case 'Organization':
           this.apiService
             .getOneOrg(searchData.Id)
-            .subscribe((apiData: any[]) => {
+            .subscribe((apiData: any) => {
               this.orgsTableClick(apiData[0]);
               this.setGlobalSearchModalUrl(searchData.GEAR_Type, searchData.Id);
             });
@@ -243,7 +257,7 @@ export class TableService {
       case 'Website':
           this.apiService
             .getOneWebsite(searchData.Id)
-            .subscribe((apiData: any[]) => {
+            .subscribe((apiData: any) => {
               this.websitesTableClick(apiData[0]);
               this.setGlobalSearchModalUrl(searchData.GEAR_Type, searchData.Id);
             });
@@ -364,7 +378,7 @@ export class TableService {
   public websitesTableClick(data: any, addRoute: boolean = true) {
     var options: ClickOptions = {
       data: data,
-      dataID: 'Website_ID',
+      dataID: 'website_id',
       update: 'website',
       detailModalID: '#websiteDetail',
       sysTableID: '#websitesRelSysTable',
@@ -390,7 +404,7 @@ export class TableService {
     // load the related websites list to display within the main modal tab
     this.apiService
       .getWebsiteServiceCategoryRelatedWebsites(data[options.dataID])
-      .subscribe((websiteServiceCategoryWebsiteData: Service_Category[]) => {
+      .subscribe((websiteServiceCategoryWebsiteData: Website[]) => {
         $('#websiteServiceCategoryWebsites').bootstrapTable('refreshOptions', {
           exportOptions: {
             fileName: this.sharedService.fileNameFmt(
@@ -497,8 +511,8 @@ export class TableService {
             websites_mappings.map(({ obj_websites_Id }) => obj_websites_Id)
           );
           // Filter Websites to the IDs related to the one website
-          system_related_websites = websites.filter(({ Website_ID }) =>
-            websiteID_from_mappings.has(parseInt(Website_ID))
+          system_related_websites = websites.filter(({ website_id }) =>
+            websiteID_from_mappings.has(parseInt(website_id))
           ); // Parse into int as GoogleAPI makes everything strings
           // Update related websites table with filtered systems
           $('#systemWebsitesTable').bootstrapTable('refreshOptions', {
@@ -713,6 +727,10 @@ export class TableService {
         this.websitesTableClick(previousModal.data);
         break;
 
+      case 'websiteServiceCategory':
+        this.websiteServiceCategoryTableClick(previousModal.data);
+        break;
+
       default:
         break;
     }
@@ -722,7 +740,7 @@ export class TableService {
     $(detailID).modal('hide');
 
     if (type === 'investment') {
-      this.apiService.getOneInvest(ID).subscribe((apiData: any[]) => {
+      this.apiService.getOneInvest(ID).subscribe((apiData: any) => {
         this.investTableClick(apiData[0]);
       });
     } else if (type === 'capability-name') {
@@ -730,11 +748,11 @@ export class TableService {
         this.capsTableClick(apiData[0]);
       });
     } else if (type === 'system') {
-      this.apiService.getOneSys(ID).subscribe((apiData: any[]) => {
+      this.apiService.getOneSys(ID).subscribe((apiData: any) => {
         this.systemsTableClick(apiData[0]);
       });
     } else if (type === 'org') {
-      this.apiService.getOneOrg(ID).subscribe((apiData: any[]) => {
+      this.apiService.getOneOrg(ID).subscribe((apiData: any) => {
         this.orgsTableClick(apiData[0]);
       });
     } else if (type === 'fisma') {
@@ -747,8 +765,78 @@ export class TableService {
   // Set the gear_type and id in the url for global search
   private setGlobalSearchModalUrl(gear_type: string, id: string) {
     // Send page_view event to GA for modal view
-    gtag('event', 'page_view', { 'page_path': `search/${gear_type}/${id}` });
-
+    this.analyticsService.logPageViewEvent(`search/${gear_type}/${id}`);
+    
     this.location.replaceState(`search/${gear_type}/${id}`);
+  }
+
+  // Call this to update the report table data
+  public updateReportTableData(data: any) {
+    this.reportTableDataSubject.next(data); 
+  }
+
+  public updateReportTableDataReadyStatus(isReady: boolean) {
+    this.reportTableDataReadySubject.next(isReady);
+  }
+
+  public filterButtonClick(filterButtons: FilterButton[], data: any): void {
+    let filteredData = data;
+    for(let i = 0; i < filterButtons.length; i++) {
+      for(let f = 0; f < filterButtons[i].filters.length; f++) {
+        filteredData = filteredData.filter(x => {
+          let dataFieldValue = x[filterButtons[i].filters[f].field];
+          let filterValue = filterButtons[i].filters[f].value;
+          if(typeof(dataFieldValue) === 'string') {
+            dataFieldValue = dataFieldValue.toLocaleLowerCase();
+          }
+          if(typeof(filterValue) === 'string') {
+            filterValue = filterValue.toLocaleLowerCase();
+          }
+          if(filterButtons[i].filters[f].matchMode === 'contains') {
+            return dataFieldValue.includes(filterValue);
+          } else {
+            return dataFieldValue === filterValue;
+          }
+        });
+      }
+    }
+    this.updateReportTableData(filteredData);
+  }
+
+  public updateReportDataTableFilterKey(key: string) {
+    this.reportDataTableFilterKey = key;
+  }
+
+  public getFilteredSearchData(filteredData, keyword, tableCols): any {
+    if(keyword && keyword.length > 0) {
+      const searchableColumns = tableCols.filter(col => col.field && col.showColumn !== false);
+      const rankedData = filteredData.map(item => {
+        let maxScore = 0;
+        
+        searchableColumns.forEach(col => {
+          const value = item[col.field];
+          if (!value) return;
+          
+          const stringValue = String(value).toLowerCase();
+          
+          if (stringValue === keyword) {
+            maxScore = Math.max(maxScore, filteredData.length + 1);
+          } else {
+            const index = stringValue.indexOf(keyword);
+            if (index !== -1) {
+              maxScore = Math.max(maxScore, 1 / (index + 1));
+            }
+          }
+        });
+        
+        return { item, score: maxScore };
+      }).filter(ranked => ranked.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .map(ranked => ranked.item);
+  
+        return rankedData;
+    } else {
+      return filteredData;
+    }
   }
 }

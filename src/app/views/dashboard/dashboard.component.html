@@ -1,0 +1,217 @@
+<div class="dashboard-container">
+  @if (isDataReady) {
+  <h1 class="dashboard-title">Welcome to GEAR</h1>
+
+
+  <div class="dashboard-quick-view-container">
+    <div class="quick-view-grid-container">
+      <!-- Expiring FISMA -->
+      <div class="quick-view-item">
+        <div class="item-header">
+          <div class="number-icon-container">
+            <div class="icon-container">
+              <i class="quick-view-icon fas fa-shield-alt" [ngClass]="{'zero-value': (fismaExpiringThisQuarter || 0) === 0}"></i>
+            </div>
+            <span class="quick-view-number clickable-number" tabindex="0" (click)="viewExpiringFismaThisQuarter()" (keydown.enter)="viewExpiringFismaThisQuarter()" (keydown.space)="viewExpiringFismaThisQuarter()">{{ fismaExpiringThisQuarter || 0 }}</span>
+          </div>
+          <a (click)="viewAllFisma()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllFisma()" (keydown.space)="viewAllFisma()">View All FISMA Systems</a>
+        </div>
+        <span class="quick-view-text">FISMA Systems Expiring by {{ getExpiringDate() }}</span>
+        <div class="quick-view-expiring-text-container" [ngClass]="{'neutral-message': getFismaExpiryAlertCount() === 0}">
+          <div class="expire-text multi-line-expire-text" [ngClass]="{'neutral-text': getFismaExpiryAlertCount() === 0}">
+            @if ((fismaPastDue || 0) > 0) {
+              <span class="expire-link-line" tabindex="0" (click)="viewPastDueFisma()" (keydown.enter)="viewPastDueFisma()" (keydown.space)="viewPastDueFisma()">
+                <i class="expire-icon fas fa-clock"></i>
+                <span>{{ getFismaPastDueLabel() }}</span>
+              </span>
+            }
+            @if ((fismaExpiringThisWeek || 0) > 0) {
+              <span class="expire-link-line" tabindex="0" (click)="viewExpiringFisma()" (keydown.enter)="viewExpiringFisma()" (keydown.space)="viewExpiringFisma()">
+                <i class="expire-icon fas fa-calendar"></i>
+                <span>{{ getFismaExpiringSoonLabel() }}</span>
+              </span>
+            }
+            @if (getFismaExpiryAlertCount() === 0) {
+              <span>No items expiring within 7 days or past due</span>
+            }
+          </div>
+        </div>
+      </div>
+      <!-- Decommissioned Systems -->
+      <div class="quick-view-item">
+        <div class="item-header">
+          <div class="number-icon-container">
+            <div class="icon-container">
+              <i class="quick-view-icon fas fa-laptop" [ngClass]="{'zero-value': (decommissionedSystemsLast6Months || 0) === 0}"></i>
+            </div>
+            <span class="quick-view-number clickable-number" tabindex="0" (click)="viewDecommissionedSystemsLast6Months()" (keydown.enter)="viewDecommissionedSystemsLast6Months()" (keydown.space)="viewDecommissionedSystemsLast6Months()">{{ decommissionedSystemsLast6Months || 0 }}</span>
+          </div>
+          <a (click)="viewAllSystems()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllSystems()" (keydown.space)="viewAllSystems()">View All Business Systems</a>
+        </div>
+        <span class="quick-view-text">Decommissioned Business Systems/Subsystems (Last 6 months)</span>
+        <div class="quick-view-expiring-text-container" [ngClass]="{'neutral-message': (decommissionedSystemsLastMonth || 0) === 0}">
+          <span class="expire-text" [ngClass]="{'positive-expire-text' : decommissionedSystemsLastMonth > 0, 'neutral-text': (decommissionedSystemsLastMonth || 0) === 0}">
+            @if ((decommissionedSystemsLastMonth || 0) > 0) {
+              <span class="expire-link-line" tabindex="0" (click)="viewDecommissionedSystems()" (keydown.enter)="viewDecommissionedSystems()" (keydown.space)="viewDecommissionedSystems()">
+                <i class="expire-icon fas fa-calendar"></i>
+                <span>{{ decommissionedSystemsLastMonth || 0 }} items decommissioned in last month</span>
+              </span>
+            }
+            @if ((decommissionedSystemsLastMonth || 0) === 0) {
+              <span>No items decommissioned in last month</span>
+            }
+          </span>
+        </div>
+      </div>
+      <!-- Expiring IT Standards -->
+      <div class="quick-view-item">
+        <div class="item-header">
+          <div class="number-icon-container">
+            <div class="icon-container">
+              <i class="quick-view-icon fas fa-microchip" [ngClass]="{'zero-value': (standardsExpiringThisQuarter || 0) === 0}"></i>
+            </div>
+            <span class="quick-view-number clickable-number" tabindex="0" (click)="viewExpiringITStandardsThisQuarter()" (keydown.enter)="viewExpiringITStandardsThisQuarter()" (keydown.space)="viewExpiringITStandardsThisQuarter()">{{ standardsExpiringThisQuarter || 0 }}</span>
+          </div>
+          <a (click)="viewAllITStandards()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllITStandards()" (keydown.space)="viewAllITStandards()">View All IT Standards</a>
+        </div>
+        <span class="quick-view-text">IT Standards Expiring by {{ getExpiringDate() }}</span>
+        <div class="quick-view-expiring-text-container" [ngClass]="{'neutral-message': getStandardsExpiryAlertCount() === 0}">
+          <div class="expire-text multi-line-expire-text" [ngClass]="{'neutral-text': getStandardsExpiryAlertCount() === 0}">
+            @if ((standardsPastDue || 0) > 0) {
+              <span class="expire-link-line" tabindex="0" (click)="viewPastDueITStandards()" (keydown.enter)="viewPastDueITStandards()" (keydown.space)="viewPastDueITStandards()">
+                <i class="expire-icon fas fa-clock"></i>
+                <span>{{ getStandardsPastDueLabel() }}</span>
+              </span>
+            }
+            @if ((standardsExpiringThisWeek || 0) > 0) {
+              <span class="expire-link-line" tabindex="0" (click)="viewExpiringITStandards()" (keydown.enter)="viewExpiringITStandards()" (keydown.space)="viewExpiringITStandards()">
+                <i class="expire-icon fas fa-calendar"></i>
+                <span>{{ getStandardsExpiringSoonLabel() }}</span>
+              </span>
+            }
+            @if (getStandardsExpiryAlertCount() === 0) {
+              <span>No items expiring within 7 days or past due</span>
+            }
+          </div>
+        </div>
+      </div>
+      <!-- Retired IT Standards -->
+      <div class="quick-view-item">
+        <div class="item-header">
+          <div class="number-icon-container">
+            <div class="icon-container">
+              <i class="quick-view-icon fas fa-microchip" [ngClass]="{'zero-value': (retiredITStandardsLast6Months || 0) === 0}"></i>
+            </div>
+            <span class="quick-view-number clickable-number" tabindex="0" (click)="viewRetiredITStandardsLast6Months()" (keydown.enter)="viewRetiredITStandardsLast6Months()" (keydown.space)="viewRetiredITStandardsLast6Months()">{{ retiredITStandardsLast6Months || 0 }}</span>
+          </div>
+          <a (click)="viewAllITStandards()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllITStandards()" (keydown.space)="viewAllITStandards()">View All IT Standards</a>
+        </div>
+        <span class="quick-view-text">Retired IT Standards (Last 6 months)</span>
+        <div class="quick-view-expiring-text-container" [ngClass]="{'neutral-message': (retiredITStandardsLast7Days || 0) === 0}">
+          <span class="expire-text" [ngClass]="{'positive-expire-text' : retiredITStandardsLast7Days > 0, 'neutral-text': (retiredITStandardsLast7Days || 0) === 0}">
+            @if ((retiredITStandardsLast7Days || 0) > 0) {
+              <span class="expire-link-line" tabindex="0" (click)="viewRecentRetiredITStandards()" (keydown.enter)="viewRecentRetiredITStandards()" (keydown.space)="viewRecentRetiredITStandards()">
+                <i class="expire-icon fas fa-calendar"></i>
+                <span>{{ retiredITStandardsLast7Days || 0 }} items retired in last 7 days</span>
+              </span>
+            }
+            @if ((retiredITStandardsLast7Days || 0) === 0) {
+              <span>No items retired in last 7 days</span>
+            }
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="quick-view-full-container">
+      <div class="quick-view-item">
+        <div class="item-header">
+          <i class="dashboard-quick-links-icon fas fa-link"></i>
+          <span class="dashboard-card-title-text">Quick Links</span>
+        </div>
+        <div class="item-body">
+          <a routerLink="/it_standards">Software Inventory</a>
+          <a routerLink="/FISMA">Active FISMA systems</a>
+          <a routerLink="/systems">Business systems/subsystems</a>
+          <a routerLink="/org_chart">GSA org chart</a>
+          <a href="https://sites.google.com/a/gsa.gov/it_standards/software-approvals#h.vioogtbleinq" target="_blank" rel="noopener">IT Standards Approval Process <i class="fas fa-external-link-alt"></i></a>
+          <a href="https://gsa.github.io/GEAR-Documentation/api-docs/" target="_blank" rel="noopener">API Documentation <i class="fas fa-external-link-alt"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-chart-container">
+    <!-- Bar Chart -->
+    <div class="bar-chart-item" [ngClass]="{'rotated-labels': shouldRotateLabels}">
+      <div class="item-header">
+        <h3 class="header-text">Hosting Platforms</h3>
+        <a (click)="viewAllSystems()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllSystems()" (keydown.space)="viewAllSystems()">View All Business Systems</a>
+      </div>
+      <div class="bar-chart-content">
+        <ngx-charts-bar-vertical
+          [scheme]="colorScheme"
+          [results]="hostingPlatformsData"
+          [gradient]="false"
+          [xAxis]="true"
+          [yAxis]="true"
+          [legend]="false"
+          [showXAxisLabel]="true"
+          [showYAxisLabel]="true"
+          [xAxisLabel]="'Hosting Platforms'"
+          [yAxisLabel]="'# of Systems'"
+          [rotateXAxisTicks]="shouldRotateLabels"
+          [animations]="true"
+          [barPadding]="15"
+          [xAxisTickFormatting]="xAxisTickFormatting"
+          (select)="onBarChartClick($event.name)">
+        </ngx-charts-bar-vertical>
+      </div>
+    </div>
+    <!-- Pie Chart -->
+    <div class="pie-chart-item">
+      <div class="item-header">
+        <h3 class="header-text">Cloud Adoption</h3>
+        <a (click)="viewAllSystems()" class="view-all-link" tabindex="0" (keydown.enter)="viewAllSystems()" (keydown.space)="viewAllSystems()">View All</a>
+      </div>
+      <div class="pie-chart-content">
+        <ngx-charts-pie-chart
+          [view]="pieChartView"
+          [scheme]="pieColorScheme"
+          [results]="cloudBusinessSystemsData"
+          [gradient]="false"
+          [legend]="false"
+          [labels]="false"
+          [doughnut]="true"
+          [animations]="true"
+          [tooltipDisabled]="false"
+          [arcWidth]="0.25"
+          (select)="onPieChartSelect($event)">
+        </ngx-charts-pie-chart>
+        <div class="pie-chart-center-text">
+          <div class="center-title">Business Systems</div>
+          <div class="center-number">{{ totalBusinessSystems || 0 }}</div>
+        </div>
+      </div>
+      <div class="custom-legend">
+        <div class="legend-item" (click)="navigateToCloudBasedSystems()" style="cursor: pointer;">
+          <div class="legend-color cloud-based"></div>
+          <span class="legend-text">Cloud Based</span>
+        </div>
+        <div class="legend-item" (click)="navigateToNonCloudBasedSystems()" style="cursor: pointer;">
+          <div class="legend-color not-cloud-based"></div>
+          <span class="legend-text">Not Cloud Based</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-recent-report-container">
+    <div class="dashboard-recent-report-title">
+      <span class="dashboard-card-title-text">{{recentITStandardAmount}} Most Recent GSA IT Standards</span>
+      <a (click)="viewAllITStandards()" class="dashboard-view-all-link normal" tabindex="0" (keydown.enter)="viewAllITStandards()" (keydown.space)="viewAllITStandards()">View All</a>
+    </div>
+    <app-table visibleColumnStorageKey="" [tableCols]="tableCols" [attrDefs]="attrDefinitions" [showToolbar]="false" [showPagination]="false" [stickyHeader]="false" reportStyle="neutral" [defaultPaginationNumber]="10" defaultSortField="Name" (rowClickEvent)="onTableRowClick($event)">
+    </app-table>
+  </div>
+}
+</div>

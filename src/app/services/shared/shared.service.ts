@@ -5,9 +5,10 @@ import {Router} from '@angular/router';
 
 import {Globals} from '@common/globals';
 
-import jwtDecode from 'jwt-decode';
 import { HttpClient } from '@angular/common/http';
 import { set } from 'd3';
+import { BehaviorSubject } from 'rxjs';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 
 // Declare jQuery symbol
 declare var $: any;
@@ -16,6 +17,7 @@ declare var $: any;
   providedIn: 'root'
 })
 export class SharedService {
+  public static readonly COOKIE_EXPIRE_HOURS = 12;
 
   // Sidebar Toggle Service
   toggleEmitter = new EventEmitter();
@@ -37,6 +39,8 @@ export class SharedService {
   websiteFormEmitter = new EventEmitter();
   websiteFormSub: Subscription;
 
+  public sidebarVisible: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
   constructor(
     private globals: Globals,
     private location: Location,
@@ -45,10 +49,13 @@ export class SharedService {
     ) {
   }
 
-  // Sidebar Toggle
-  public toggleClick() {
-    this.toggleEmitter.emit();
-  };
+  public openSidebar() {
+    this.sidebarVisible.next(true);
+  }
+
+  public closeSidebar() {
+    this.sidebarVisible.next(false);
+  }
 
   // File Name Formatting
   public fileNameFmt(name: string): string {
@@ -113,13 +120,21 @@ export class SharedService {
     return pocObjs;
   }
 
+  private cookiesVerified: boolean = false;
+
   // JWT Handling
   //// Set JWT on log in to be tracked when checking for authentication
   public setJWTonLogIn(): void {
     this.verifyCookies();
   }
 
-  verifyCookies() : void {    
+  verifyCookies() : void {
+    if (this.cookiesVerified) {
+      return;
+    }
+    // Mark in-flight immediately so concurrent page-init calls don't each fire
+    // a separate request while the first one is still pending.
+    this.cookiesVerified = true;
     //console.log('requesting cookies...'); // debug
     this.http.get('/verify', {
       headers: {
@@ -150,13 +165,14 @@ export class SharedService {
       }
     }
     , error => {
+      // Reset so a real retry can happen if the server was temporarily unavailable
+      this.cookiesVerified = false;
       console.error('An error occurred while verifying cookies', error);
     });
   }
 
   //// Check if user is authenticated to GEAR Manager
   public get loggedIn(): boolean {
-
     if (this.globals.jwtToken === "" || this.globals.jwtToken === null ||
         this.globals.apiToken === "" || this.globals.apiToken === null || 
         this.globals.authUser === "" || this.globals.authUser === null) {
@@ -180,6 +196,7 @@ export class SharedService {
   //// Set Redirect Path to come back to page after GEAR Manager login
   public setRedirectPath(): void {
     localStorage.setItem('redirectPath', this.router.url);
+    this.router.navigate(['/gear_manager']);
   };
 
   //// Remove JWT and show log out banner when logging out of GEAR Manager
@@ -259,11 +276,15 @@ export class SharedService {
     if (value) return `<a target="_blank" rel="noopener" href="${value}">Link</a>`;
   };
 
+  public linkFormatter(value) {
+    if (value) return `<a target="_blank" rel="noopener" href="${value}">${value}</a>`;
+  }
+
   //// Date
   public dateFormatter(value, row, index, field) {
     const date = new Date(value);
     if (value) return date.toLocaleDateString();
-    else return null;
+    else return '-';
   };
 
 
@@ -307,8 +328,57 @@ export class SharedService {
   //// Description formattter
   public formatDescription(value: any, row: any) {
     if (!value) return '';
-    else return '<p class="description-wrap">' + value + "</p>";;
+    const cleaned = String(value).replace(/[\r\n]+/g, ' ');
+    return '<span class="description-wrap">' + cleaned + '</span>';
   };
+  public formatDescriptionShorter(value: any, row: any) {
+    if (!value) return '';
+    const cleaned = String(value).replace(/[\r\n]+/g, ' ');
+    return '<span class="description-wrap-short">' + cleaned + '</span>';
+  };
+  public formatDescriptionLite(value: any, row: any) {
+    if (!value) return '-';
+    const cleaned = String(value).replace(/[\r\n]+/g, ' ');
+    return '<span class="description-wrap-lite">' + cleaned + '</span>';
+  };
+
+  //// Status Formatter
+  private static readonly STATUS_TOOLTIPS: Record<string, string> = {
+    'Approved': 'IT Standards status — software that has been reviewed and authorized for use at the Agency by IT Security.',
+    'Approved with conditions': 'IT Standards status — software authorized for use under specific conditions defined by IT Security.',
+    'Denied': 'IT Standards status — software that has been reviewed and is not authorized for use at the Agency.',
+    'Retired': 'IT Standards status — software that was previously approved but is no longer authorized for use.',
+    'Pilot': 'IT Standards status — software currently under evaluation for potential Agency-wide approval.',
+    'Not yet submitted': 'IT Standards status — software that has not yet been submitted for an IT Security review.',
+    'Active': 'FISMA status — a system actively monitored and reported on in the Agency\'s FISMA inventory.',
+    'Inactive': 'FISMA status — a system no longer actively monitored or maintained in the Agency\'s FISMA inventory.',
+    'production': 'Website status — the site is live and accessible to end users in the production environment.',
+    'staging': 'Website status — the site is in a pre-production staging environment and not yet publicly released.',
+  };
+
+  public formatStatus(value: any, row: any) {
+    if(!value) return '-';
+    const tooltip = SharedService.STATUS_TOOLTIPS[value] ?? '';
+    const titleAttr = tooltip ? ` title="${tooltip}"` : '';
+    if(value === 'Approved' || value === 'Active' || value === 'production') return `<span class="table-status-badge-green"${titleAttr}>${value}</span>`;
+    else if(value === 'Pilot' || value === 'Not yet submitted' || value === 'staging' || value === 'Approved with conditions') return `<span class="table-status-badge-yellow"${titleAttr}>${value}</span>`;
+    else return `<span class="table-status-badge-red"${titleAttr}>${value}</span>`;
+  }
+
+  //// Deployment Type Formatter
+  public formatDeploymentType(value: any, row: any) {
+    if(!value) return '-';
+    else if(value === 'Desktop') return `<span><i class="fas fa-desktop"></i> ${value}</span>`;
+    else if(value === 'Mobile') return `<span><i class="fas fa-mobile-alt"></i> ${value}</span>`;
+    else if(value === 'Server') return `<span><i class="fas fa-server"></i> ${value}</span>`;
+    else return `<span><i class="fas fa-keyboard"></i> ${value}</span>`;
+  }
+
+    //// Approved Versions Formatter
+    public formatApprovedVersions(value: any, row: any) {
+      if(!value) return '-';
+      else return value;
+    }
 
   //// OS & App Bundle formatter
   public csvFormatter(value: any, row: any) {
@@ -319,12 +389,11 @@ export class SharedService {
       for(let i = 0; i < separatedValues.length; i++) {
         output += `<p>${separatedValues[i]}</p>`;
       }
-  
+
       return output;
     }
     return '-';
   }
-
 
   // Set Forms Default
   public setCapabilityForm() {
@@ -366,60 +435,51 @@ export class SharedService {
     this.location.replaceState(`${normalizedURL}/${row[IDname]}`);
   };
 
-  // cookies functions ---------------------------------------
-
-  // get a cookie by name
-  public getCookie(name: string) {
-    const ca: Array<string> = document.cookie.split(';');
-    const caLen: number = ca.length;
-    const cookieName = `${name}=`;
-    let c: string;
-  
-    for (let i = 0; i < caLen; i += 1) {
-      c = ca[i].replace(/^\s+/g, '');
-      if (c.indexOf(cookieName) === 0) {
-        return c.substring(cookieName.length, c.length);
-      }
-    }
-    return '';
-  }
-  
-  // delete a cookie by name
-  public deleteCookie(name) {
-    this.setCookie(name, '', -1);
-  }
-  
-  // set a cookie
-  public setCookie(name: string, value: string, expireDays: number, path: string = '') {
-    const d: Date = new Date();
-    d.setTime(d.getTime() + expireDays * 24 * 60 * 60 * 1000);
-    const expires: string = `expires=${d.toUTCString()}`;
-    const cpath: string = path ? `; path=${path}` : '';
-    document.cookie = `${name}=${value}; ${expires}${cpath}`;
-  }
-
-  // get a list of all cookies
-  public getCookies() {
-    const pairs = document.cookie.split(';');
-    const cookies = {};
-    for (let i = 0; i < pairs.length; i++) {
-      const pair = pairs[i].split('=');
-      cookies[(pair[0] + '').trim()] = unescape(pair.slice(1).join('='));
-    }
-    return cookies;
-  }
-
-  public enableStickyHeader(tableComponentId: string, closestScrollableClass: string = '.ng-sidebar__content') {
+  // Cookie helpers delegate to CookieService
+  public enableStickyHeader(tableComponentId: string, closestScrollableClass: string = '.content-body') {
     $('#'+tableComponentId).floatThead({
-      scrollContainer: function($table) {
+      responsiveContainer: function($table) {
         return $table.closest(closestScrollableClass);
       },
-      position: "fixed",
-      autoReflow: true
+      top: 67 // top navbar offset
     });
   }
 
   public disableStickyHeader(tableComponentId: string) {
     $('#'+tableComponentId).floatThead('destroy');
+  }
+
+  public getTooltip (attrDefinitions: DataDictionary[], name: string): string {
+    const def = attrDefinitions.find(def => def.Term === name);
+    if(def){
+      return this.buildTooltip(def);
+    }
+    return '';
+  }
+
+  // Builds the helper text displayed in tooltips. When a data source is
+  // available a bold "Data source:" label (in light gray) is shown followed by
+  // the value, then a blank line, then a bold "Definition:" label followed by
+  // the term definition. The labels are bold/light-gray while the values use
+  // the default tooltip text color. The returned string contains HTML, so it
+  // must be rendered with a tooltip that allows HTML (e.g. pTooltip with
+  // [escape]="false").
+  private buildTooltip (def: DataDictionary): string {
+    const definition = this.escapeHtml(def.TermDefinition || '');
+    const definitionLine = `<strong class="tooltip-label">Definition:</strong> ${definition}`;
+    if (def.DataSource) {
+      const dataSource = this.escapeHtml(def.DataSource);
+      return `<strong class="tooltip-label">Data source:</strong> ${dataSource}<br><br>${definitionLine}`;
+    }
+    return definitionLine;
+  }
+
+  private escapeHtml (value: string): string {
+    return value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 }

@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-standalone: false,
-  selector: 'assist-tech',
-  templateUrl: './assist-tech.component.html',
-  styleUrls: ['./assist-tech.component.css']
+    selector: 'assist-tech',
+    templateUrl: './assist-tech.component.html',
+    styleUrls: ['./assist-tech.component.css'],
+    standalone: false
 })
 export class AssistTechComponent implements OnInit {
 

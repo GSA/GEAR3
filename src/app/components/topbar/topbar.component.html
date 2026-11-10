@@ -1,0 +1,30 @@
+<div class="topbar-container">
+  <div class="topbar-logo-container">
+    <a [routerLink]="'/'" class="topbar-logo-link">
+      <i class="topbar-logo fas fa-cogs fa-w-20 fa-lg"></i>
+      <span class="topbar-logo-text">GSA EA ANALYTICS & REPORTING (GEAR)</span>
+    </a>
+  </div>
+  <div class="topbar-info-container">
+    @if (!isProd()) {
+      <span class="topbar-info-env-mode">- {{ envName }} Environment</span>
+    }
+    @if (isLoggedIn()) {
+      <span class="topbar-info-manager-mode">**GEAR Manager Mode**</span>
+    }
+  </div>
+  <div class="topbar-items-container">
+    <form role="search">
+      <p-iconField iconPosition="right">
+        <p-inputIcon styleClass="fas fa-search" />
+        <input type="text" placeholder="Global Search" id="globalSearch" name="globalSearchField" [(ngModel)]="searchKW" (keydown)="globalSearch($event)" pInputText />
+      </p-iconField>
+    </form>
+    <app-button buttonText="About GEAR" buttonType="button" buttonStyle="outline" (buttonClick)="onAboutClick()"></app-button>
+    <app-button buttonText="Contact/Feedback" buttonType="dropdown" buttonStyle="outline">
+      <li><a href="https://mail.google.com/mail/?view=cm&fs=1&to=it-standards@gsa.gov" target="_blank">IT Standards</a></li>
+      <li><a href="https://mail.google.com/mail/?view=cm&fs=1&to=ea_planning@gsa.gov" target="_blank">EA Team</a></li>
+      <li><a href="javascript:void(0)" (click)="openFeedbackSurvey()">Feedback Survey</a></li>
+    </app-button>
+  </div>
+</div>

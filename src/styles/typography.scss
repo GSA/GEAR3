@@ -1,0 +1,34 @@
+h1 {
+    font-family: var(--primary-font) !important;
+    font-weight: normal !important;
+    font-size: 2rem !important;
+    line-height: normal !important;
+    color: var(-neutral-black-color-dark) !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+}
+
+h2 {
+    font-family: var(--primary-font) !important;
+    font-weight: 500 !important;
+    font-size: 2rem !important;
+    line-height: normal !important;
+    color: var(-neutral-black-color-dark) !important;
+    text-transform: none !important;
+}
+
+h3 {
+    font-family: var(--primary-font);
+    font-weight: bold;
+    font-size: 2.5rem;
+    line-height: 3.5rem;
+    letter-spacing: 0%;
+}
+
+h4 {
+    font-family: var(--primary-font);
+    font-weight: bold;
+    font-size: 2rem;
+    line-height: 2.5rem;
+    letter-spacing: 0%;
+}

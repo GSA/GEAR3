@@ -6,6 +6,9 @@ const router = express.Router();
 router.route('/')
   .get(itsCtrl.findAll);
 
+router.route('/get/lite')
+  .get(itsCtrl.getStandardsLite);
+
 router.route('/all')
   .get(itsCtrl.findAllNoFilter);
 
@@ -45,6 +48,9 @@ router.route('/statuses')
 router.route('/critical_reviews')
   .get(itsCtrl.findCriticalReviews);
 
+router.route('/c_scrm_reviews')
+  .get(itsCtrl.findCSCRMReviews);
+
 router.route('/types')
   .get(itsCtrl.findTypes);
 
@@ -56,5 +62,29 @@ router.route('/operating_systems')
 
 router.route('/app_bundles/:id')
   .get(itsCtrl.getAppBundles);
+
+router.route('/recent/:records')
+  .get(itsCtrl.getRecent);
+
+router.route('/expiring_quarter')
+  .get(itsCtrl.getExpiringQuarter);
+
+router.route('/expiring_week')
+  .get(itsCtrl.getExpiringWeek);
+
+router.route('/past_due')
+  .get(itsCtrl.getPastDue);
+
+router.route('/filter_totals')
+  .get(itsCtrl.getFilterTotals);
+  
+router.route('/filter_totals/:filters')
+  .get(itsCtrl.getFilterTotals);
+
+router.route('/retired_standard_totals')
+  .get(itsCtrl.getRetiredTotals);
+
+router.route('/get/related_trms/:id')
+  .get(itsCtrl.getRelatedTRMS);
 
 module.exports = router;

@@ -1,0 +1,73 @@
+.capability-manager-container {
+    display: flex;
+    flex-direction: column;
+    width: 94vw;
+    padding: 2rem 1.5rem;
+   
+
+    & .breadcrumb-container {
+        display: flex;
+        padding-bottom: 2rem;
+    }
+
+    & .title-container {
+        display: flex;
+        padding-bottom: 1.5rem;
+
+        & .title {
+            color: var(--neutral-black-color-dark);
+            font-family: var(--primary-font);
+            font-size: 2rem;
+            font-weight: 500;
+            line-height: normal;
+        }
+    }
+
+    & .content-container {
+        display: flex;
+        flex-direction: column;
+
+        & .nav-tabs {
+            margin-bottom: 2rem;
+        }
+
+        & .cap-form {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+
+            & .pool-side {
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+            }
+
+            & .middle-side {
+                display: flex;
+                flex-direction: column;
+            }
+
+            & .selected-side {
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+            }
+        }
+    }
+
+    & .cap-footer {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-top: 1rem;
+
+        & .cap-footer-buttons {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: .5rem;
+        }
+    }
+}

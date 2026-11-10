@@ -14,9 +14,9 @@ exports.findAll = (req, res) => {
 
 exports.findOne = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_investments.sql')).toString() +
-    ` WHERE invest.Investment_Id = ${req.params.id};`;
+    ` WHERE invest.Investment_Id = ?;`;
 
-  res = ctrl.sendQuery(query, 'individual investment', res);
+  res = ctrl.sendQuery(query, 'individual investment', res, null, [req.params.id]);
 };
 
 exports.findSystems = (req, res) => {
@@ -24,9 +24,15 @@ exports.findSystems = (req, res) => {
     ` LEFT JOIN gear_schema.zk_systems_subsystems_investments  AS invest_mappings  ON systems.\`ex:GEAR_ID\` = invest_mappings.obj_systems_subsystems_Id
       LEFT JOIN gear_schema.obj_investments                    AS invest           ON invest_mappings.obj_investment_Id = invest.Investment_Id
     
-      WHERE invest.Investment_Id = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`;
+      WHERE invest.Investment_Id = ? GROUP BY systems.\`ex:GEAR_ID\`;`;
 
-  res = ctrl.sendQuery(query, 'system relations for investment', res);
+  res = ctrl.sendQuery(query, 'system relations for investment', res, null, [req.params.id]);
+};
+
+exports.getFilterTotals = (req, res) => {  
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_it-investments_filter_totals.sql`)).toString();
+
+  res = ctrl.sendQuery(query, `IT Investments filter totals`, res);
 };
 
 // exports.findLatest = (req, res) => {

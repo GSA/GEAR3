@@ -1,0 +1,1226 @@
+import { Component, OnInit } from '@angular/core';
+import { formatDate } from '@angular/common';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+
+import { Globals } from '@common/globals';
+
+import { ApiService } from '@services/apis/api.service';
+import { ModalsService } from '@services/modals/modals.service';
+import { SharedService } from "@services/shared/shared.service";
+import { TableService } from "@services/tables/table.service";
+import { PreviousRouteService } from '@services/previous-route/previous-route.service';
+import { OperatingSystem } from '@api/models/operating-systems.model';
+import { AppBundle } from '@api/models/it-standards-app-bundle.model';
+import { ActivatedRoute, Router } from '@angular/router';
+import { forkJoin, switchMap } from 'rxjs';
+
+// Declare jQuery symbol
+declare var $: any;
+
+@Component({
+    selector: 'it-standards-manager',
+    templateUrl: './it-standards-manager.component.html',
+    styleUrls: ['./it-standards-manager.component.scss'],
+    standalone: false
+})
+export class ItStandardsManagerComponent implements OnInit {
+
+
+  itStandardsForm: FormGroup = new FormGroup({
+    auditUser: new FormControl(null),
+    tcManufacturer: new FormControl(null, [Validators.required]),
+    tcSoftwareProduct: new FormControl(null, [Validators.required]),
+    tcSoftwareVersion: new FormControl(null, Validators.required),
+    tcSoftwareRelease: new FormControl(),
+    tcEndOfLifeDate: new FormControl(),
+    itStandStatus: new FormControl(null, [Validators.required]),
+    itStandCriticalReview: new FormControl(null, [Validators.required]),
+    itStandCSCRMReview: new FormControl(null),
+    itStandPOC: new FormControl(null, [Validators.required]),
+    itStandDesc: new FormControl(),
+    itStandType: new FormControl(null, [Validators.required]),
+    itStandCategory: new FormControl(null, [Validators.required]),
+    itStand508: new FormControl(),
+    itStand508ExceptionLink: new FormControl(),
+    itStandMyView: new FormControl(),
+    itStandReqAtte: new FormControl(null),
+    itStandAtteLink: new FormControl(),
+    itStandFedramp: new FormControl(),
+    itStandOpenSource: new FormControl(),
+    itStandRITM: new FormControl(),
+    itStandVendorOrg: new FormControl(),
+    itStandDeployment: new FormControl(null, [Validators.required]),
+    itStandGoldImg: new FormControl(),
+    itStandGoldComment: new FormControl(),
+    itStandAprvExp: new FormControl(),
+    itStandComments: new FormControl(),
+    itStandRefDocs: new FormControl(),
+    itStandApprovedVersions: new FormControl(),
+    itStandOperatingSystems: new FormControl(),
+    itStandMobileAppBundles: new FormControl(),
+    itStandConditionsRestrictions: new FormControl(),
+    itStandAlsoKnownAs: new FormControl()
+  });
+
+  itStandard = <any>{};
+  createBool: boolean = false;
+  statuses: any[];
+  criticalReviews: any[] = [];
+  cscrmReviews: any[] = [];
+
+  POCs: any = [];
+  pocsLoading = false;
+  pocsBuffer = [];
+  bufferSize = 50;
+
+  manufacturers: any = [];
+  manufacturersLoading = false;
+  manufacturersBuffer = [];
+  
+  itStandReqAtteRefData: any = [];
+  itStandReqAtteLoading = false;
+  itStandReqAtteBuffer = [];
+
+  softwareProducts: any = [];
+  softwareProductsLoading = false;
+  softwareProductsBuffer = [];
+
+  softwareVersions: any = [];
+  softwareVersionsLoading = false;
+  softwareVersionsBuffer = [];
+
+  softwareReleases: any = [];
+  softwareReleasesLoading = false;
+  softwareReleasesBuffer = [];
+  endOfLifeDate: Date;
+
+  types: any[] = [];
+
+  categories: any = [];
+  catsLoading = false;
+  catsBuffer = [];
+
+  compliance: any[] = [];
+  deploymentTypes: any[] = [];
+  aprvExpDate: Date;
+
+  itStandCertify: boolean = false;
+
+  anyServerError = false;
+
+  operatingSystems: OperatingSystem[];
+
+  allAppBundleIds: AppBundle[] = [];
+  initalAppBundleIds: AppBundle[] = [];
+  currentAppBundleId: string = '';
+  showDuplicateAppBundleMsg: boolean = false;
+  showAppBundleField: boolean = false;
+
+  public dataReady: boolean = false;
+
+  constructor(
+    private apiService: ApiService,
+    private globals: Globals,
+    public modalService: ModalsService,
+    private sharedService: SharedService,
+    private tableService: TableService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private previousRouteService: PreviousRouteService) { }
+
+  ngOnInit(): void {
+    // Emit setFormDefaults for when edit button is pressed
+    // if (this.sharedService.itStandardsFormSub == undefined) {
+    //   this.sharedService.itStandardsFormSub = this.sharedService.itStandardsFormEmitter.subscribe(() => { this.setFormDefaults(); });
+    // }
+
+    // this.modalService.currentITStand.subscribe(itStandard => this.itStandard = itStandard);
+    // this.modalService.currentCreate.subscribe(createBool => this.createBool = createBool);
+
+    const standardId:number = +this.route.snapshot.paramMap.get('standardID');
+    if(standardId) {
+      this.createBool = false;
+      this.apiService.getOneITStandard(standardId).subscribe(s => {
+        this.itStandard = s;
+        this.previousRouteService.setCurrentPageTitle(s.SoftwareReleaseName || s.AlsoKnownAs);
+        this.loadFormData();
+      });
+    } else {
+      this.createBool = true;
+      this.loadFormData();
+    }
+
+    this.disableSoftwareProduct();
+    this.disableSoftwareVersion();
+    this.disableSoftwareRelease();
+
+    // disable the End of Life Date field
+    this.disableEndOfLifeDate();
+
+    // // Instantiate the date picker
+    // $('#itStandAprvExp').datepicker({
+    //   todayBtn: true,
+    //   clearBtn: true,
+    //   daysOfWeekHighlighted: "0,6",
+    //   todayHighlight: true,
+    //   toggleActive: true,
+    //   templates: {
+    //     leftArrow: '<i class="fas fa-long-arrow-alt-left"></i>',
+    //     rightArrow: '<i class="fas fa-long-arrow-alt-right"></i>'
+    //   }
+    // });
+
+    // // If the manager modal is exited, clear the create flag
+    // $('#itStandardsManager').on('hidden.bs.modal', function (e) {
+    //   this.modalService.updateRecordCreation(false);
+    //   this.itStandCertify = false;
+    //   $("#itStandMngrTabs li:first-child a").tab('show');
+    // }.bind(this));
+
+    // Reset Form Errors on any value update
+    this.itStandardsForm.valueChanges.subscribe(change=>{  this.anyServerError = false; });
+
+    // Toggle required validator on 508 exception link based on compliance selection
+    this.itStandardsForm.get('itStand508')?.valueChanges.subscribe(() => {
+      this.update508ExceptionLinkValidator();
+    });
+  }
+
+  public is508ExceptionGranted(): boolean {
+    const val = this.itStandardsForm.get('itStand508')?.value;
+    if (!val || !this.compliance?.length) return false;
+    const found = this.compliance.find(c => c.ID == val);
+    return found?.Name === 'Exception Granted';
+  }
+
+  private update508ExceptionLinkValidator(): void {
+    const ctrl = this.itStandardsForm.get('itStand508ExceptionLink');
+    if (!ctrl) return;
+    if (this.is508ExceptionGranted()) {
+      ctrl.setValidators([Validators.required]);
+    } else {
+      ctrl.clearValidators();
+    }
+    ctrl.updateValueAndValidity();
+  }
+
+  public loadFormData(): void {
+    this.manufacturersLoading = true;
+    this.itStandReqAtteLoading = true;
+    this.pocsLoading = true;
+    this.catsLoading = true;
+    forkJoin([
+      this.apiService.getManufacturers(),
+      this.apiService.getCustomManufacturers(),
+      this.apiService.getAttestationStatusTypes(),
+      this.apiService.getITStandStatuses(),
+      this.apiService.getITStandCriticalReviews(),
+      this.apiService.getITStandCSCRMReviews(),
+      this.apiService.getPOCs(),
+      this.apiService.getITStandTypes(),
+      this.apiService.getTRM(),
+      this.apiService.getITStand508Statuses(),
+      this.apiService.getITStandDeploymentTypes(),
+      this.apiService.getOperatingSystems()
+    ]).subscribe(
+      ([
+        manufacturers,
+        customManufacturers,
+        attestationStatus,
+        statuses,
+        criticalReviews,
+        cscrmReviews,
+        pocs,
+        types,
+        cats,
+        compliance,
+        deploymentTypes,
+        os
+      ]) => {
+        // manufactureres
+        this.manufacturers = [...manufacturers, ...customManufacturers];
+        this.manufacturersBuffer = this.manufacturers.slice(0, this.bufferSize);
+        this.manufacturersLoading = false;
+
+        // attestation status
+        attestationStatus.forEach(item => item.ID = item.ID.toString())
+        this.itStandReqAtteRefData = attestationStatus;
+        this.itStandReqAtteBuffer = this.itStandReqAtteRefData.slice(0, this.bufferSize);
+        this.itStandReqAtteLoading = false;
+
+        // statuses
+        this.statuses = statuses;
+
+        // critical reviews
+        this.criticalReviews = criticalReviews;
+
+        // c-scrm reviews
+        this.cscrmReviews = cscrmReviews;
+
+        // pocs
+        this.POCs = pocs;
+        this.pocsBuffer = this.POCs.slice(0, this.bufferSize);
+        this.pocsLoading = false;
+
+        // types
+        this.types = types;
+
+        // categories
+        this.categories = cats;
+        this.catsBuffer = this.categories.slice(0, this.bufferSize);
+        this.catsLoading = false;
+
+        // 508 compliance
+        this.compliance = compliance;
+
+        // deployment types
+        this.deploymentTypes = deploymentTypes;
+
+        // os
+        this.operatingSystems = os;
+
+        this.dataReady = true;
+        this.setFormDefaults();
+      },
+      (error) => {
+        console.log('Failed to load form data', error);
+      }
+    );
+  }
+
+  public getBreadcrumbManagerType(): string {
+    if(this.createBool) {
+      return 'Create';
+    } else {
+      return 'Edit';
+    }
+  }
+
+  public getBreadcrumbValue(): string {
+    if(this.createBool) {
+      return 'New IT Standard';
+    } else {
+      return `${!this.itStandard.SoftwareReleaseName ? this.itStandard.AlsoKnownAs : this.itStandard.SoftwareReleaseName}`;
+    }
+  }
+
+  public getDefaultDate(): Date {
+    const twoYearsLater = new Date();
+    twoYearsLater.setHours(13); // 1pm
+    twoYearsLater.setFullYear(twoYearsLater.getFullYear() + 2);
+    return twoYearsLater;
+  }
+
+  setFormDefaults(): void {
+    if (this.createBool) {
+      this.itStandardsForm.reset();  // Clear any erroneous values if any
+      this.itStandardsForm.patchValue({
+        itStandStatus: 2,
+        itStandReqAtte: "1",
+        itStandAprvExp: this.getDefaultDate()
+      });
+    } else {
+
+      // Set End of Life Date on Date
+      if (this.itStandard.EndOfLifeDate !== null) {
+        this.endOfLifeDate = new Date(this.itStandard.EndOfLifeDate);
+      } else {
+        this.endOfLifeDate = null;
+      }
+
+      // Parse and find IDs for list of POCs
+      var pocIDs = [];
+      if (this.itStandard.POC) {
+        this.itStandard.POC.split('; ').forEach(poc => {
+          // Index 0 has name of POC
+          let pocName = poc.split(', ')[0];
+          const samAccountName = this.sharedService.findInArray(this.POCs, 'Name', pocName, 'SamAccountName');
+          if (samAccountName !== undefined && samAccountName !== null) {
+            pocIDs.push(samAccountName);
+          }
+        });
+      };
+
+      // if Manufacturer is not null, set the Software Product options
+      if (this.itStandard.Manufacturer) {
+        this.manufacturerChange({ id: this.itStandard.Manufacturer, name: this.itStandard.ManufacturerName });
+        if (this.itStandard.SoftwareProduct) {
+          this.softwareProductChange({ id: this.itStandard.SoftwareProduct, name: this.itStandard.SoftwareProductName });
+          if (this.itStandard.SoftwareVersion) {
+            this.softwareVersionChange({ id: this.itStandard.SoftwareVersion, name: this.itStandard.SoftwareVersionName });
+          } else {
+            this.disableSoftwareRelease();
+          }
+        } else {
+          this.disableSoftwareVersion();
+          this.disableSoftwareRelease();
+        }
+      } else {
+        this.disableSoftwareProduct();
+        this.disableSoftwareVersion();
+        this.disableSoftwareRelease();
+      }
+
+      // Adjust MyView for rendering - could turn this into one line:
+      var myView = this.itStandard.Available_through_Myview === 'T';
+
+      // Adjust Gold Image for rendering
+      var goldImg = this.itStandard.Gold_Image === 'T';
+
+      var fedramp = this.itStandard.fedramp === 'T';
+      var openSource = this.itStandard.open_source === 'T';
+
+      // Parse and find IDs for list of Categories
+      var categoryIDs = [];
+      if (this.itStandard.Category) {
+        this.itStandard.Category.split(', ').forEach(cat => {
+          if(cat) {
+            const catId = this.sharedService.findInArray(this.categories, 'Name', cat, 'Id');
+            if(catId !== undefined && catId !== null) {
+              categoryIDs.push(catId);
+            }
+          }
+        });
+      };
+
+      let selectedOSList: string[] = [];
+      if(this.itStandard.OperatingSystems) {
+        selectedOSList = this.itStandard.OperatingSystems.split(', ');
+      }
+
+      // Get IT Standard App Bundles
+      this.apiService.getITStandardAppBundles(this.itStandard.ID).subscribe((data: any) => { 
+        this.allAppBundleIds = data.map(d => {
+          let bundle = new AppBundle();
+          bundle.ID = d.Id;
+          bundle.Name = d.Keyname;
+          return bundle;
+        });
+
+        // retain a copy of the original so we can use it to compare later on save
+        this.initalAppBundleIds = [...this.allAppBundleIds];
+      });
+
+      // Set default values for form with current values
+      this.itStandardsForm.patchValue({
+        tcManufacturer: {id: this.itStandard.Manufacturer, name: this.itStandard.ManufacturerName},
+        tcSoftwareProduct: {id: this.itStandard.SoftwareProduct, name: this.itStandard.SoftwareProductName},
+        tcSoftwareVersion: {id: this.itStandard.SoftwareVersion, name: this.itStandard.SoftwareVersionName},
+        tcSoftwareRelease: {id: this.itStandard.SoftwareRelease, application: this.itStandard.SoftwareReleaseName},
+        tcEndOfLifeDate: (this.itStandard.EndOfLifeDate ? formatDate(this.itStandard.EndOfLifeDate, 'MMMM dd, yyyy', 'en-US') : null),
+        itStandStatus: this.sharedService.findInArray(this.statuses, 'Name', this.itStandard.Status),
+        itStandCriticalReview: this.sharedService.findInArray(this.criticalReviews, 'Name', this.itStandard.CriticalReview),
+        itStandCSCRMReview: this.sharedService.findInArray(this.cscrmReviews, 'Name', this.itStandard.CSCRMReview),
+        itStandPOC: pocIDs,
+        itStandDesc: this.itStandard.Description,
+        itStandType: this.sharedService.findInArray(this.types, 'Name', this.itStandard.StandardType),
+        itStandCategory: categoryIDs,
+        itStand508: this.sharedService.findInArray(this.compliance, 'Name', this.itStandard.ComplianceStatus),
+        itStand508ExceptionLink: this.itStandard.ExceptionLink,
+        itStandMyView: myView,
+        itStandReqAtte: this.sharedService.findInArray(this.itStandReqAtteRefData, 'Name', this.itStandard.attestation_required),
+        itStandAtteLink: this.itStandard.attestation_link,
+        itStandFedramp: fedramp,
+        itStandOpenSource: openSource,
+        itStandRITM: this.itStandard.RITM === 'null' ? '' : this.itStandard.RITM,
+        itStandVendorOrg: this.itStandard.Vendor_Standard_Organization,
+        itStandDeployment: this.sharedService.findInArray(this.deploymentTypes, 'Name', this.itStandard.DeploymentType),
+        itStandGoldImg: goldImg,
+        itStandGoldComment: this.itStandard.Gold_Image_Comment,
+        itStandAprvExp: new Date(this.itStandard.ApprovalExpirationDate),
+        itStandComments: this.itStandard.Comments,
+        itStandRefDocs: this.itStandard.ReferenceDocument,
+        itStandApprovedVersions: this.itStandard.ApprovedVersions,
+        itStandOperatingSystems: selectedOSList.map(o => this.sharedService.findInArray(this.operatingSystems, 'Name', o)),
+        itStandConditionsRestrictions: this.itStandard.ConditionsRestrictions,
+        itStandAlsoKnownAs: this.itStandard.AlsoKnownAs
+      });
+      this.changeDeploymentType();
+    }
+  };
+
+  submitForm() {
+    if(this.itStandardsForm.valid) {
+      // Remove null values from existing pre-TRM categories
+      if(this.itStandardsForm.value.itStandCategory && this.itStandardsForm.value.itStandCategory.length > 0) {
+        let tempList = [];
+        this.itStandardsForm.value.itStandCategory.map(c => {
+          if(c){
+            tempList.push(c);
+          }
+        })
+        this.itStandardsForm.value.itStandCategory = tempList;
+        this.itStandardsForm.patchValue({itStandCategory: tempList});
+      }
+
+      // Adjust MyView & Gold Image for saving
+      if(this.itStandardsForm.value.itStandMyView) {
+        this.itStandardsForm.value.itStandMyView = 'T';
+        this.itStandardsForm.patchValue({itStandMyView: 'T'});
+      } else {
+        this.itStandardsForm.value.itStandMyView = 'F';
+        this.itStandardsForm.patchValue({itStandMyView: 'F'});
+      }
+      if(this.itStandardsForm.value.itStandGoldImg) {
+        this.itStandardsForm.value.itStandGoldImg = 'T';
+        this.itStandardsForm.patchValue({itStandGoldImg: 'T'});
+      } else {
+        this.itStandardsForm.value.itStandGoldImg = 'F';
+        this.itStandardsForm.patchValue({itStandGoldImg: 'F'});
+      }
+
+      if(this.itStandardsForm.value.itStandFedramp) {
+        this.itStandardsForm.value.itStandFedramp = 'T';
+        this.itStandardsForm.patchValue({itStandFedramp: 'T'});
+      } else {
+        this.itStandardsForm.value.itStandFedramp = 'F';
+        this.itStandardsForm.patchValue({itStandFedramp: 'F'});
+      } 
+
+      if(this.itStandardsForm.value.itStandOpenSource) {
+        this.itStandardsForm.value.itStandOpenSource = 'T';
+        this.itStandardsForm.patchValue({itStandOpenSource: 'T'});
+      } else { 
+        this.itStandardsForm.value.itStandOpenSource = 'F';
+        this.itStandardsForm.patchValue({itStandOpenSource: 'F'});
+      }
+       
+
+      // Set Date from Date Picker
+      // if ($('#itStandAprvExp').data('datepicker')) {
+      //   this.itStandardsForm.value.itStandAprvExp = $('#itStandAprvExp').data('datepicker').getFormattedDate('yyyy-mm-dd');
+      //   this.itStandardsForm.patchValue({itStandAprvExp: $('#itStandAprvExp').data('datepicker').getFormattedDate('yyyy-mm-dd')});
+      // }
+
+      if(this.itStandardsForm.value.itStandAprvExp) {
+        const dateToSave = new Date(this.itStandardsForm.value.itStandAprvExp);
+        dateToSave.setHours(13); // 1pm
+        const year = dateToSave.getFullYear();
+        const month = String(dateToSave.getMonth() + 1).padStart(2, '0');
+        const day = String(dateToSave.getDate()).padStart(2, '0');
+        const formattedDate = String(`${year}-${month}-${day}`);
+        this.itStandardsForm.value.itStandAprvExp = formattedDate;
+        this.itStandardsForm.patchValue({itStandAprvExp: formattedDate});
+      }
+
+      // Adjust for N/A text fields
+      if(!this.itStandardsForm.value.itStandVendorOrg || typeof(this.itStandardsForm.value.itStandVendorOrg) === 'undefined') {
+        this.itStandardsForm.value.itStandVendorOrg = 'N/A';
+        this.itStandardsForm.patchValue({itStandVendorOrg: 'N/A'});
+      }
+
+      if(!this.itStandardsForm.value.itStandGoldComment || typeof(this.itStandardsForm.value.itStandGoldComment) === 'undefined') {
+        this.itStandardsForm.value.itStandGoldComment = 'N/A';
+        this.itStandardsForm.patchValue({itStandGoldComment: 'N/A'});
+      } 
+
+      if(!this.itStandardsForm.value.itStandComments || typeof(this.itStandardsForm.value.itStandComments) === 'undefined') {
+        this.itStandardsForm.value.itStandComments = 'N/A';
+        this.itStandardsForm.patchValue({itStandComments: 'N/A'});
+      }
+
+      if(!this.itStandardsForm.value.itStand508 || typeof(this.itStandardsForm.value.itStand508) === 'undefined') {
+        this.itStandardsForm.value.itStand508 = '3';
+        this.itStandardsForm.patchValue({itStand508: '3'});
+      } else {
+        this.itStandardsForm.value.itStand508 = +this.itStandardsForm.value.itStand508;
+        this.itStandardsForm.patchValue({itStand508: +this.itStandardsForm.value.itStand508});
+      }
+
+      if(!this.itStandardsForm.value.itStandAtteLink || typeof(this.itStandardsForm.value.itStandAtteLink) === 'undefined') {
+        this.itStandardsForm.value.itStandAtteLink = 'N/A';
+        this.itStandardsForm.patchValue({itStandAtteLink: 'N/A'});
+      }
+
+      if (!this.is508ExceptionGranted()) {
+        this.itStandardsForm.value.itStand508ExceptionLink = null;
+        this.itStandardsForm.patchValue({itStand508ExceptionLink: null});
+      } else if (this.itStandardsForm.value.itStand508ExceptionLink) {
+        this.itStandardsForm.value.itStand508ExceptionLink = this.escapeString(this.itStandardsForm.value.itStand508ExceptionLink);
+        this.itStandardsForm.patchValue({itStand508ExceptionLink: this.itStandardsForm.value.itStand508ExceptionLink});
+      }
+
+      // Escape strings
+      if(this.itStandardsForm.value.itStandDesc) {
+        this.itStandardsForm.value.itStandDesc = this.escapeString(this.itStandardsForm.value.itStandDesc);
+      }
+      if(this.itStandardsForm.value.itStandVendorOrg) {
+        this.itStandardsForm.value.itStandVendorOrg = this.escapeString(this.itStandardsForm.value.itStandVendorOrg);
+      }
+      if(this.itStandardsForm.value.itStandGoldComment) {
+        this.itStandardsForm.value.itStandGoldComment = this.escapeString(this.itStandardsForm.value.itStandGoldComment);
+      }
+      if(this.itStandardsForm.value.itStandComments) {
+        this.itStandardsForm.value.itStandComments = this.escapeString(this.itStandardsForm.value.itStandComments);
+      }  
+      if(this.itStandardsForm.value.itStandRefDocs) {
+        this.itStandardsForm.value.itStandRefDocs = this.escapeString(this.itStandardsForm.value.itStandRefDocs);
+      }
+      if(this.itStandardsForm.value.ConditionsRestrictions) {
+        this.itStandardsForm.value.ConditionsRestrictions = this.escapeString(this.itStandardsForm.value.ConditionsRestrictions);
+      }
+
+      // Status
+      this.itStandardsForm.value.itStandStatus = +this.itStandardsForm.value.itStandStatus;
+      this.itStandardsForm.patchValue({itStandStatus: +this.itStandardsForm.value.itStandStatus});
+
+      // Critical Software Review Results
+      this.itStandardsForm.value.itStandCriticalReview = +this.itStandardsForm.value.itStandCriticalReview;
+      this.itStandardsForm.patchValue({itStandCriticalReview: +this.itStandardsForm.value.itStandCriticalReview});
+
+      // Deployment
+      this.itStandardsForm.value.itStandDeployment = +this.itStandardsForm.value.itStandDeployment;
+      this.itStandardsForm.patchValue({itStandDeployment: +this.itStandardsForm.value.itStandDeployment});
+
+      // Type
+      this.itStandardsForm.value.itStandType = +this.itStandardsForm.value.itStandType;
+      this.itStandardsForm.patchValue({itStandType: +this.itStandardsForm.value.itStandType});
+
+      // AtteRequired
+      this.itStandardsForm.value.itStandReqAtte = +this.itStandardsForm.value.itStandReqAtte;
+      this.itStandardsForm.patchValue({itStandReqAtte: +this.itStandardsForm.value.itStandReqAtte});
+      
+      // Add username to payload
+      this.itStandardsForm.value.auditUser = this.globals.authUser;
+      this.itStandardsForm.patchValue({auditUser: this.globals.authUser});
+
+      // add ManufacturerName to payload
+      if (this.itStandardsForm.value.tcManufacturer) {
+        this.itStandardsForm.value.tcManufacturerName = this.sharedService.findInArray(this.manufacturers, 'id', this.itStandardsForm.value.tcManufacturer, 'name');
+      }
+
+      // add SoftwareProductName to payload
+      if (this.itStandardsForm.value.tcSoftwareProduct) {
+        this.itStandardsForm.value.tcSoftwareProductName = this.sharedService.findInArray(this.softwareProducts, 'id', this.itStandardsForm.value.tcSoftwareProduct, 'name');
+      }
+
+      // add SoftwareVersionName to payload
+      if (this.itStandardsForm.value.tcSoftwareVersion) {
+        this.itStandardsForm.value.tcSoftwareVersionName = this.sharedService.findInArray(this.softwareVersions, 'id', this.itStandardsForm.value.tcSoftwareVersion, 'name');
+      }
+
+      // add SoftwareReleaseName to payload
+      if (this.itStandardsForm.value.tcSoftwareRelease) {
+        this.itStandardsForm.value.tcSoftwareReleaseName = this.sharedService.findInArray(this.softwareReleases, 'id', this.itStandardsForm.value.tcSoftwareRelease, 'application');
+      }
+
+      // add EndOfLifeDate to payload
+      if (this.endOfLifeDate) {
+        this.itStandardsForm.value.tcEndOfLifeDate = formatDate(this.endOfLifeDate, 'yyyy-MM-dd', 'en-US');
+      }
+
+      // add Attestation Status to payload
+      // if (this.itStandardsForm.value.itStandReqAtte) {
+      //   const foundAtte = this.sharedService.findInArray(this.itStandReqAtteRefData, 'Name', this.itStandardsForm.value.itStandReqAtte, 'ID');
+      //   this.itStandardsForm.value.itStandReqAtte = foundAtte;
+      //   this.itStandardsForm.patchValue({itStandReqAtte: foundAtte});
+      // }
+
+      if(this.allAppBundleIds && this.allAppBundleIds.length > 0) {
+        this.itStandardsForm.value.itStandMobileAppBundles = this.allAppBundleIds;
+        this.itStandardsForm.patchValue({itStandMobileAppBundles: this.allAppBundleIds});
+      } else {
+        this.itStandardsForm.value.itStandMobileAppBundles = [];
+      }
+
+      if(this.itStandardsForm.controls['itStandOperatingSystems'].value && this.itStandardsForm.controls['itStandOperatingSystems'].value.length > 0) {
+        this.itStandardsForm.value.itStandOperatingSystems = this.itStandardsForm.controls['itStandOperatingSystems'].value;
+      }
+
+      // Get list of initial operating system so we can compare for update
+      let initialOS: number[] = [];
+      if(this.itStandard.OperatingSystems) {
+        let initialOSString = this.itStandard.OperatingSystems.split(', ');
+        initialOSString.forEach(o => {
+          const osId = this.sharedService.findInArray(this.operatingSystems, 'Name', o);
+          if (osId !== undefined && osId !== null) {
+            initialOS.push(osId);
+          }
+        });
+      }
+      this.itStandardsForm.value.initialOS = initialOS;
+
+      // Get list of initial app bundles so we an compare for update
+      this.itStandardsForm.value.initialAppBundles = this.initalAppBundleIds;
+
+      // if(this.hasCustomTechnoData()) {
+      //   this.itStandardsForm.patchValue({tcSoftwareRelease: this.buildCustomRelease()});
+      // }
+      this.itStandardsForm.value.tcSoftwareRelease = this.buildCustomRelease();
+      this.itStandardsForm.patchValue({tcSoftwareRelease: this.buildCustomRelease()});
+
+      this.itStandardsForm.value.itStandAlsoKnownAs = this.itStandardsForm?.value?.itStandAlsoKnownAs?.replace(/\s+/g, ' ').trim();
+      this.itStandardsForm.patchValue({itStandAlsoKnownAs: this.itStandardsForm?.value?.itStandAlsoKnownAs?.replace(/\s+/g, ' ').trim()});
+
+      // Send data to database
+      if(this.createBool) {
+        let newId = null;
+        this.apiService.createITStandard(this.itStandardsForm.value).pipe(
+          switchMap(() => {
+            return this.apiService.getLatestITStand();
+          }),
+          switchMap(latest => {
+            newId = latest[0].ID;
+            return this.apiService.createITStandardAdvanced(newId, this.itStandardsForm.value);
+          }),
+          switchMap(() => {
+            return this.apiService.getOneITStandard(newId);
+          })
+        ).subscribe(result => {
+          this.itStandDetailRefresh(result);
+        });
+      } else {
+        this.apiService.updateITStandard(this.itStandard.ID, this.itStandardsForm.value).pipe(
+          switchMap(() => {
+            return this.apiService.getOneITStandard(this.itStandard.ID);
+          })
+        ).subscribe(result => {
+          this.itStandDetailRefresh(result);
+        });
+      }
+    }
+  }
+
+  private handleError(operation: string = 'operation', error: any) {
+    console.log(`Failed ${operation} Call: ${JSON.stringify(error)}`);
+    this.anyServerError = true;
+  }
+
+  itStandDetailRefresh(data: any) {
+    this.showAppBundleField = false;
+    this.showDuplicateAppBundleMsg = false;
+    this.allAppBundleIds = [];
+    this.initalAppBundleIds = [];
+    this.currentAppBundleId = '';
+
+    this.apiService.invalidateCache('it-standards');
+    this.router.navigate([`/it_standards/${data.ID}`]);
+
+    // Refresh Table
+    // $('#itStandardsTable').bootstrapTable('refresh');
+
+    // Close Manager Modal and go back to showing Detail Modal
+    // $('#itStandardsManager').modal('hide');
+    // this.tableService.itStandTableClick(data, false);
+    // $('#itStandardDetail').modal('show');
+  }
+
+  // handles the software release change event
+  softwareReleaseChange(data: any) {
+    this.setApprovalExpirationDate(data);
+  }
+
+  // handles the endOfLifeDate change event
+  setApprovalExpirationDate(data: any) {
+    setTimeout(() => {
+      try {
+        if (data.endOfLifeDate  !== '' && data.endOfLifeDate !== null && data.endOfLifeDate !== undefined && data.endOfLifeDate !== 'null' && data.endOfLifeDate !== 'undefined') {
+
+          let date = new Date(data.endOfLifeDate);
+
+          // set the endOfLifeDate to the value from the database
+          this.endOfLifeDate = date;
+
+          // set the aprvExpDate
+          this.aprvExpDate = date;
+
+          // set the value of the endOfLifeDate field
+          this.itStandardsForm.patchValue({ tcEndOfLifeDate: formatDate(this.endOfLifeDate, 'MMMM dd, yyyy', 'en-US') });
+
+          // Set Approval Expiration Date on Date Picker
+          $('#itStandAprvExp').datepicker('setDate', new Date (data.endOfLifeDate));
+        } else {
+          this.endOfLifeDate = null;
+          this.itStandardsForm.patchValue({ tcEndOfLifeDate: null });
+        }
+      } catch (error) {
+        this.endOfLifeDate = null;
+        this.itStandardsForm.patchValue({ tcEndOfLifeDate: null });
+
+      }
+    }, 1000); // Wait 1 second before setting the date
+  }
+
+  // handles the formatting of the endOfLifeDate
+  formatEndOfLifeDate(data: any) {
+    // return the data as a string in the format Month dd, yyyy
+    if (data === null || data === undefined || data === 'null' || data === 'undefined' || data === '') {
+      return null;
+    } else {
+      return formatDate(data, 'MMMM dd, yyyy', 'en-US');
+    }
+  }
+
+  isAssignedToitStandAprvExp(date1: any, date2: any) {
+    setTimeout(() => {
+      // if the ApprovalExpirationDate is not null
+      if (this.endOfLifeDate) {
+        const target = new Date(date1);
+        const source = new Date(date2);
+        target.setHours(0, 0, 0, 0);
+        source.setHours(0, 0, 0, 0);
+        if (target === source) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    }, 1200); // Wait 1 second before setting the date
+  }
+
+  isOldRecord(data: any) {
+    // if the itStandName is not null, then true
+    if (data !== null && data !== undefined && data !== 'null' && data !== 'undefined') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  // returns boolean true if the endOfLifeDate has passed, else false
+  hasEndOfLifeDatePassed(data: any) {
+    // if the endOfLifeDate is not null
+    if (data !== null) {
+
+      // get the endOfLifeDate as a Date object
+      let date = new Date(data);
+
+      // get today's date
+      let today = new Date();
+
+      // if the endOfLifeDate is before today's date
+      if (date < today) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  manufacturerChange(manufacturer: any) {
+    this.softwareProductsLoading = true;
+    this.itStandardsForm.get('tcSoftwareProduct')?.reset();
+    this.itStandardsForm.get('tcSoftwareVersion')?.reset();
+    this.itStandardsForm.get('tcSoftwareRelease')?.reset();
+
+    try {
+      if (manufacturer) {
+        if(manufacturer["id"]) {
+          this.apiService.getSoftwareProducts(manufacturer["id"]).subscribe((data: any[]) => {
+            this.apiService.getCustomSoftwareProducts(manufacturer["id"]).subscribe((cData: any[]) => {
+              this.softwareProducts = [...data, ...cData];
+              this.softwareProductsBuffer = this.softwareProducts.slice(0, this.bufferSize);
+              this.softwareProductsLoading = false;
+              this.enableSoftwareProduct();
+            });
+          });
+        } else {
+          this.softwareProductsLoading = false;
+          this.enableSoftwareProduct();
+        }
+
+      } else {
+        this.softwareProducts = [];
+        this.softwareVersions = [];
+        this.softwareReleases = [];
+        this.softwareProductsLoading = false;
+        this.softwareVersionsLoading = false;
+        this.softwareReleasesLoading = false;
+      }
+    } catch (error) {
+      this.softwareProducts = [];
+      this.softwareVersions = [];
+      this.softwareReleases = [];
+      this.softwareProductsLoading = false;
+      this.softwareVersionsLoading = false;
+      this.softwareReleasesLoading = false;
+    }
+  }
+
+  softwareProductChange(softwareProduct: any) {
+    this.softwareVersionsLoading = true;
+    this.itStandardsForm.get('tcSoftwareVersion')?.reset();
+    this.itStandardsForm.get('tcSoftwareRelease')?.reset();
+
+    try {
+      if (softwareProduct) {
+        if(softwareProduct["id"]) {
+          this.apiService.getSoftwareVersions(softwareProduct["id"]).subscribe((data: any[]) => {
+            this.apiService.getCustomSoftwareVersions(softwareProduct["id"]).subscribe((cData: any[]) => {
+              this.softwareVersions = [...data, ...cData];
+              this.softwareVersionsBuffer = this.softwareVersions.slice(0, this.bufferSize);
+              this.softwareVersionsLoading = false;
+              this.enableSoftwareVersion();
+            });
+          });
+        } else {
+          this.softwareVersionsLoading = false;
+          this.enableSoftwareVersion();
+        }
+      } else {
+        this.softwareVersions = [];
+        this.softwareReleases = [];
+        this.softwareVersionsLoading = false;
+        this.softwareReleasesLoading = false;
+      }
+    } catch (error) {
+      this.softwareVersions = [];
+      this.softwareReleases = [];
+      this.softwareVersionsLoading = false;
+      this.softwareReleasesLoading = false;
+    }
+  }
+
+  softwareVersionChange(softwareVersion: any) {
+    this.softwareReleasesLoading = true;
+    this.endOfLifeDate = null;
+    this.itStandardsForm.patchValue({ tcEndOfLifeDate: null });
+    this.itStandardsForm.get('tcSoftwareRelease')?.reset();
+
+    if(!this.hasAllTechnoData()) {
+      try {
+        if (softwareVersion) {
+            this.apiService.getSoftwareReleases(softwareVersion["id"]).subscribe((data: any[]) => {
+              this.apiService.getCustomSoftwareReleases(softwareVersion["id"]).subscribe((cData: any[]) => {
+                this.softwareReleases = [...data, ...cData];
+                this.softwareReleasesBuffer = this.softwareReleases.slice(0, this.bufferSize);
+                this.softwareReleasesLoading = false;
+              });
+            });
+        } else {
+          this.softwareReleases = [];
+          this.softwareReleasesLoading = false;
+        }
+      } catch (error) {
+        this.softwareReleases = [];
+        this.softwareReleasesLoading = false;
+        this.itStandardsForm.value.tcSoftwareRelease = this.buildCustomRelease();
+        this.itStandardsForm.patchValue({tcSoftwareRelease: this.buildCustomRelease()});
+      }
+    } else {
+      if (softwareVersion) {
+        this.softwareReleases = [];
+        this.softwareReleasesLoading = false;
+        this.itStandardsForm.value.tcSoftwareRelease = this.buildCustomRelease();
+        this.itStandardsForm.patchValue({tcSoftwareRelease: this.buildCustomRelease()});
+      }
+    }
+
+    // try {
+    //   if (softwareVersion) {
+    //       this.apiService.getSoftwareReleases(softwareVersion["id"]).subscribe((data: any[]) => {
+    //         this.apiService.getCustomSoftwareReleases(softwareVersion["id"]).subscribe((cData: any[]) => {
+    //           this.softwareReleases = [...data, ...cData];
+    //           this.softwareReleasesBuffer = this.softwareReleases.slice(0, this.bufferSize);
+    //           this.softwareReleasesLoading = false;
+    //         });
+    //       });
+    //   } else {
+    //     this.softwareReleases = [];
+    //     this.softwareReleasesLoading = false;
+    //   }
+    // } catch (error) {
+    //   this.softwareReleases = [];
+    //   this.softwareReleasesLoading = false;
+    //   this.itStandardsForm.value.tcSoftwareRelease = this.buildCustomRelease();
+    //   this.itStandardsForm.patchValue({tcSoftwareRelease: this.buildCustomRelease()});
+    // }
+  }
+
+  // enable the software product field
+  enableSoftwareProduct(): void {
+    $("#divProduct").removeClass("disabledDivProduct");
+  }
+
+  disableSoftwareProduct(): void {
+    $("#divProduct").addClass("disabledDivProduct");
+  }
+
+  // enable the software version field
+  enableSoftwareVersion(): void {
+    $("#divVersion").removeClass("disabledDivVersion");
+  }
+
+  disableSoftwareVersion(): void {
+    $("#divVersion").addClass("disabledDivVersion");
+  }
+
+  // enable the software release field
+  enableSoftwareRelease(): void {
+    $("#divRelease").removeClass("disabledDivRelease");
+  }
+
+  disableSoftwareRelease(): void {
+    $("#divRelease").addClass("disabledDivRelease");
+  }
+
+  disableEndOfLifeDate(): void {
+    $("#divEndOfLifeDate").addClass("disabledDivEndOfLifeDate");
+  }
+
+  addAppBundleId() {
+    this.showDuplicateAppBundleMsg = false;
+    let appBundle = this.itStandardsForm.controls['itStandMobileAppBundles'].value;
+
+    // only add to list if not already in the list
+    let sameAppBundle = this.allAppBundleIds.findIndex(a => a.Name === appBundle);
+    if(sameAppBundle < 0) {
+      let tempAppBundle: AppBundle = { ID: 0, Name: appBundle};
+      this.allAppBundleIds.push(tempAppBundle);
+    } else {
+      this.showDuplicateAppBundleMsg = true;
+    }
+
+    this.itStandardsForm.controls['itStandMobileAppBundles'].reset();
+  }
+
+  removeAppBundle(appBundle: string) {
+    let appBundleIndex = this.allAppBundleIds.findIndex(a => a.Name === appBundle);
+    if(appBundleIndex >= 0) {
+      this.allAppBundleIds.splice(appBundleIndex, 1);
+    }
+  }
+
+  changeDeploymentType() {
+    if(this.itStandardsForm.value.itStandDeployment === 6 || this.itStandardsForm.value.itStandDeployment === '6') {
+      this.showAppBundleField = true;
+    } else {
+      this.showAppBundleField = false;
+    }
+  }
+
+  cleanup() {
+    this.itStandardsForm = new FormGroup({
+      auditUser: new FormControl(null),
+      tcManufacturer: new FormControl(null, [Validators.required]),
+      tcSoftwareProduct: new FormControl(null, [Validators.required]),
+      tcSoftwareVersion: new FormControl(null, Validators.required),
+      tcSoftwareRelease: new FormControl(),
+      tcEndOfLifeDate: new FormControl(),
+      itStandStatus: new FormControl(null, [Validators.required]),
+      itStandCriticalReview: new FormControl(null, [Validators.required]),
+      itStandCSCRMReview: new FormControl(null),
+      itStandPOC: new FormControl(null, [Validators.required]),
+      itStandDesc: new FormControl(),
+      itStandType: new FormControl(null, [Validators.required]),
+      itStandCategory: new FormControl(null, [Validators.required]),
+      itStand508: new FormControl(),
+      itStand508ExceptionLink: new FormControl(),
+      itStandMyView: new FormControl(),
+      itStandReqAtte: new FormControl(null),
+      itStandAtteLink: new FormControl(),
+      itStandFedramp: new FormControl(),
+      itStandOpenSource: new FormControl(),
+      itStandRITM: new FormControl(),
+      itStandVendorOrg: new FormControl(),
+      itStandDeployment: new FormControl(null, [Validators.required]),
+      itStandGoldImg: new FormControl(),
+      itStandGoldComment: new FormControl(),
+      itStandAprvExp: new FormControl(),
+      itStandComments: new FormControl(),
+      itStandRefDocs: new FormControl(),
+      itStandApprovedVersions: new FormControl(),
+      itStandOperatingSystems: new FormControl(),
+      itStandMobileAppBundles: new FormControl(),
+      itStandConditionsRestrictions: new FormControl(),
+      itStandAlsoKnownAs: new FormControl()
+    });
+    this.itStandard = {};
+    this.createBool = false;
+    this.statuses = [];
+    this.criticalReviews = [];
+    this.cscrmReviews = [];
+    this.manufacturers = [];
+    this.manufacturersLoading = false;
+    this.manufacturersBuffer = [];
+    this.itStandReqAtteRefData = [];
+    this.itStandReqAtteLoading = false;
+    this.itStandReqAtteBuffer = [];
+    this.softwareProducts = [];
+    this.softwareProductsLoading = false;
+    this.softwareProductsBuffer = [];
+    this.softwareVersions = [];
+    this.softwareVersionsLoading = false;
+    this.softwareVersionsBuffer = [];
+    this.softwareReleases = [];
+    this.softwareReleasesLoading = false;
+    this.softwareReleasesBuffer = [];
+    this.endOfLifeDate = null;
+    this.types = [];
+    this.categories = [];
+    this.catsLoading = false;
+    this.catsBuffer = [];
+    this.compliance = [];
+    this.deploymentTypes = [];
+    this.aprvExpDate = null;
+    this.itStandCertify = false;
+    this.anyServerError = false;
+    this.operatingSystems = [];
+    this.allAppBundleIds = [];
+    this.initalAppBundleIds = [];
+    this.currentAppBundleId = '';
+    this.showDuplicateAppBundleMsg = false;
+    this.showAppBundleField = false;
+
+    // Populate Manufacturer Options
+    this.manufacturersLoading = true;
+    this.apiService.getManufacturers().subscribe((data: any[]) => {
+      this.apiService.getCustomManufacturers().subscribe((cData: any[]) => {
+        this.manufacturers = [...data, ...cData];
+        this.manufacturersBuffer = this.manufacturers.slice(0, this.bufferSize);
+        this.manufacturersLoading = false;
+      });
+    });
+
+    // Populate Attestation Required Options
+    this.itStandReqAtteLoading = true;
+    this.apiService.getAttestationStatusTypes().subscribe((data: any[]) => {
+      data.forEach(item => item.ID = item.ID.toString())
+      this.itStandReqAtteRefData = data;
+      this.itStandReqAtteBuffer = this.itStandReqAtteRefData.slice(0, this.bufferSize);
+      this.itStandReqAtteLoading = false;
+    });
+
+    this.disableSoftwareProduct();
+    this.disableSoftwareVersion();
+    this.disableSoftwareRelease();
+
+    // disable the End of Life Date field
+    this.disableEndOfLifeDate();
+
+    // Populate Statuses
+    this.apiService.getITStandStatuses().subscribe((data: any[]) => { this.statuses = data });
+
+    // Populate POC Options
+    this.pocsLoading = true;
+    this.apiService.getPOCs().subscribe((data: any[]) => {
+      this.POCs = data;
+      this.pocsBuffer = this.POCs.slice(0, this.bufferSize);
+      this.pocsLoading = false;
+    });
+
+    // Populate Standard Types
+    this.apiService.getITStandTypes().subscribe((data: any[]) => { this.types = data });
+
+    // Populate Categories
+    this.catsLoading = true;
+    this.apiService.getTRM().subscribe((data: any[]) => {
+      this.categories = data;
+      this.catsBuffer = this.categories.slice(0, this.bufferSize);
+      this.catsLoading = false;
+    });
+
+    // Populate 508 Compliance Statuses
+    this.apiService.getITStand508Statuses().subscribe((data: any[]) => { this.compliance = data });
+
+    // Populate Deployment Types
+    this.apiService.getITStandDeploymentTypes().subscribe((data: any[]) => { this.deploymentTypes = data });
+
+    // Populate operating systems
+    this.apiService.getOperatingSystems().subscribe((data: any[]) => { this.operatingSystems = data });
+
+    // Instantiate the date picker
+    // $('#itStandAprvExp').datepicker({
+    //   todayBtn: true,
+    //   clearBtn: true,
+    //   daysOfWeekHighlighted: "0,6",
+    //   todayHighlight: true,
+    //   toggleActive: true,
+    //   templates: {
+    //     leftArrow: '<i class="fas fa-long-arrow-alt-left"></i>',
+    //     rightArrow: '<i class="fas fa-long-arrow-alt-right"></i>'
+    //   }
+    // });
+
+    // If the manager modal is exited, clear the create flag
+    // $('#itStandardsManager').on('hidden.bs.modal', function (e) {
+    //   this.modalService.updateRecordCreation(false);
+    //   this.itStandCertify = false;
+    //   $("#itStandMngrTabs li:first-child a").tab('show');
+    // }.bind(this));
+
+    // Reset Form Errors on any value update
+    this.itStandardsForm.valueChanges.subscribe(change=>{  this.anyServerError = false; });
+  }
+
+  getCurrentSoftwareReleaseName(id: string) {
+    if (this.softwareReleases) {
+      return this.softwareReleases.find(s => s.id === id);
+    }
+  }
+
+  escapeString(str: string) {
+    return str.replace(/\\/g, "\\\\").replace(/[/"']/g, "\\$&");
+  }
+
+  isSelectedManufacturerCustom(): boolean {
+    let foundIndex = this.manufacturers.findIndex(x => x.id === this.itStandardsForm.value.tcManufacturer.id);
+    if(foundIndex) {
+      return this.manufacturers[foundIndex].IsCustom;
+    }
+    return true;
+  }
+
+  isSelectedSoftwareProductCustom(): boolean {
+    let foundIndex = this.softwareProducts.findIndex(x => x.id === this.itStandardsForm.value.tcSoftwareProduct.id);
+    if(foundIndex) {
+      return this.softwareProducts[foundIndex].IsCustom;
+    }
+    return true;
+  }
+
+  isSelectedSoftwareVersionCustom(): boolean {
+    let foundIndex = this.softwareVersions.findIndex(x => x.id === this.itStandardsForm.value.tcSoftwareVersion.id);
+    if(foundIndex) {
+      return this.softwareVersions[foundIndex].IsCustom;
+    }
+    return true;
+  }
+
+  buildCustomRelease(): Object {
+    let softwareRelease = {
+      application: ''
+    };
+
+    if(this.hasAllTechnoData()) {
+      softwareRelease.application = `${this.itStandardsForm.value?.tcManufacturer?.name} 
+                ${this.itStandardsForm.value?.tcSoftwareProduct?.name} 
+                ${this.itStandardsForm.value?.tcSoftwareVersion?.name}`;
+    } else {
+      softwareRelease.application = this.itStandardsForm.value?.itStandName;
+    }
+
+    softwareRelease.application = softwareRelease.application.replace(/\s+/g, ' ').trim();
+    return softwareRelease;
+  }
+
+  hasCustomTechnoData(): boolean {
+    return !this.itStandardsForm.value?.tcManufacturer?.id ||
+            !this.itStandardsForm.value?.tcSoftwareProduct?.id ||
+            !this.itStandardsForm.value?.tcSoftwareVersion?.id
+  }
+
+  hasAllCustomTechnoData(): boolean {
+    return !this.itStandardsForm.value?.tcManufacturer?.id &&
+            !this.itStandardsForm.value?.tcSoftwareProduct?.id &&
+            !this.itStandardsForm.value?.tcSoftwareVersion?.id;
+  }
+
+  hasAllTechnoData(): boolean {
+    return this.itStandardsForm.value?.tcManufacturer?.name &&
+           this.itStandardsForm.value?.tcSoftwareProduct?.name &&
+           this.itStandardsForm.value?.tcSoftwareVersion?.name;
+  }
+
+  getTitleName(): string {
+    if(this.itStandard.SoftwareReleaseName) {
+      return this.itStandard.SoftwareReleaseName;
+    } else {
+      return this.itStandard.AlsoKnownAs;
+    }
+  }
+}

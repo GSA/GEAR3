@@ -1,0 +1,18 @@
+.gear-model-container {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 1.5rem;
+
+    & .gear-model-title-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    
+    & .gear-model-data-container {
+        display: flex;
+        flex-direction: column;
+        padding: 1.5rem;
+    }
+}

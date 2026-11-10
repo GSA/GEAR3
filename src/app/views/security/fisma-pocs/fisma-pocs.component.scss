@@ -1,0 +1,25 @@
+.fisma-poc-container {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 1.5rem;
+    width: 94vw;
+
+    & .fisma-poc-title-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    & .fisma-poc-data-container {
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+    }
+}
+::ng-deep .fisma-poc-table{
+    .p-datatable-table-container{
+        max-height: unset !important;
+
+        
+    }
+}

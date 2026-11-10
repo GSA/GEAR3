@@ -13,10 +13,15 @@ exports.findAll = (req, res) => {
 };
 
 exports.findOne = (req, res) => {
-  var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_fisma_archer.sql')).toString() +
-    ` WHERE archer.\`ex:GEAR_ID\` = ${req.params.id} GROUP BY archer.\`ex:GEAR_ID\`;`;
+  let id = req.params.id.trim();
+  if(/^\d+$/.test(id)) {
+    var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_fisma_archer.sql')).toString() +
+      ` WHERE archer.\`ex:GEAR_ID\` = ? GROUP BY archer.\`ex:GEAR_ID\`;`;
 
-  res = ctrl.sendQuery(query, 'individual FISMA System', res);
+    res = ctrl.sendQuery(query, "individual FISMA System", res, null, [id]);
+  } else {
+    res.status(404).json({message: "ID not found"});
+  }
 };
 
 // exports.findApplications = (req, res) => {
@@ -203,4 +208,28 @@ exports.updateAll = (req, res) => {
   query += " SET FOREIGN_KEY_CHECKS=1;";
   // console.log("Final query string: ", query); // Debug
   res = ctrl.sendQuery(query, 'Loading into FISMA Archer Table', res); //removed sendQuery_cowboy reference
+};
+
+exports.getExpiringQuarter = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_fisma_expiring_quarter.sql`)).toString();
+
+  res = ctrl.sendQuery(query, `Expiring FISMA this quarter`, res);
+};
+
+exports.getExpiringWeek = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_fisma_expiring_week.sql`)).toString();
+
+  res = ctrl.sendQuery(query, `Expiring FISMA this week`, res);
+};
+
+exports.getPastDue = (req, res) => {
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_fisma_past_due.sql`)).toString();
+
+  res = ctrl.sendQuery(query, `Past due FISMA`, res);
+};
+
+exports.getFilterTotals = (req, res) => {  
+  var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_fisma_filter_totals.sql`)).toString();
+
+  res = ctrl.sendQuery(query, `FISMA filter totals`, res);
 };

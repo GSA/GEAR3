@@ -1,0 +1,548 @@
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.5rem;
+
+  @media (max-width: 887px) {
+    width: 90%;
+  }
+
+  & .dashboard-title {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--neutral-black-color-dark);
+  }
+
+
+  & .dashboard-quick-view-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 20px;
+
+    & .quick-view-grid-container {
+      display: flex;
+      flex-wrap: wrap; /* Allows items to wrap to the next line */
+      justify-content: space-around; /* Distributes items and space evenly */
+      gap: 20px; /* Adds space between items */
+      flex: 1 1 65%;
+
+      & .quick-view-item {
+        display: flex;
+        flex: 1 1 calc(50% - 20px); /* 50% width minus gap for 2 columns */
+        min-width: 250px; /* Minimum width before wrapping */
+        flex-direction: column;
+        background-color: #fff;
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+        border-radius: 8px;
+        padding: 1rem;
+  
+        @media (max-width: 1092px) {
+          flex: 1 1 100%; /* Full width on small screens */
+        }
+
+        & .item-header {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          margin-bottom: 0.25rem;
+
+          & .number-icon-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            & .icon-container {
+              background: #F4E3DB;
+              border-radius: 2.5rem;
+              height: 2rem;
+              width: 2rem;
+              padding: 0.75rem 1rem;
+              color: #B50909;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              flex-shrink: 0;
+  
+              & .quick-view-icon {
+                width: 1.125rem;
+                height: 1.125rem;
+  
+                &.zero-value {
+                  background: #E5E7EB;
+                  color: #6B7280;
+                }
+              }
+            }
+
+            & .quick-view-number {
+              font-size: 1.5rem;
+              font-weight: 600;
+              color: var(--neutral-black-color-dark);
+
+              &.clickable-number {
+                cursor: pointer;
+                text-decoration: underline;
+                text-decoration-color: transparent;
+                transition: color 120ms ease, text-decoration-color 120ms ease;
+
+                &:hover {
+                  color: var(--primary-color);
+                  text-decoration-color: currentColor;
+                }
+
+                &:focus-visible {
+                  outline: 2px solid rgba(0, 95, 204, 0.45);
+                  outline-offset: 2px;
+                  border-radius: 2px;
+                }
+              }
+            }
+          }
+          
+          & .view-all-link {
+            color: var(--primary-color);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: underline;
+            cursor: pointer;
+            display: flex;
+            flex-direction: row;
+            align-items: start;
+            gap: 0.5rem;
+  
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+
+        & .quick-view-text {
+          font-size: 0.875rem;
+          font-weight: 400;
+          color: var(--neutral-black-color-dark);
+          margin-bottom: 0.75rem;
+        }
+
+        
+        & .quick-view-expiring-text-container {
+          & .expire-icon {
+            color: var(--primary-color);
+            padding-right: 0.25rem;
+          }
+  
+          & .expire-text {
+            font-size: 0.875rem;
+            font-weight: 400;
+            color: var(--primary-color);
+  
+            & a {
+              color: var(--primary-color);
+            }
+
+            &.multi-line-expire-text {
+              display: flex;
+              flex-direction: column;
+              align-items: flex-start;
+              gap: 0.75rem;
+              width: 100%;
+            }
+
+            & .expire-link-line {
+              display: flex;
+              align-items: center;
+              gap: 0.25rem;
+              cursor: pointer;
+              width: fit-content;
+              transition: color 120ms ease, transform 120ms ease;
+
+              & span {
+                text-decoration: underline;
+              }
+
+              & .expire-icon {
+                display: inline-block;
+                text-decoration: none;
+              }
+
+              &:hover {
+                color: var(--primary-color-hover);
+              }
+
+              &:active {
+                transform: translateY(1px) scale(0.99);
+              }
+
+              &:focus-visible {
+                outline: 2px solid rgba(0, 95, 204, 0.45);
+                outline-offset: 2px;
+                border-radius: 2px;
+              }
+            }
+          }
+  
+          & .positive-expire-text {
+            text-decoration-line: underline;
+            cursor: pointer;
+          }
+  
+          &.neutral-message {
+            margin: 0;
+            padding: 0;
+            
+            & .neutral-text {
+              font-size: 0.875rem;
+              font-weight: 400;
+              color: #6B7280;
+              line-height: 1.2;
+              margin: 0;
+              padding: 0;
+            }
+          }
+        }
+      }
+
+    }
+
+    & .quick-view-full-container {
+      display: flex;
+      flex-wrap: wrap;
+      flex: 1 1 15%;
+
+      @media (max-width: 1148px) {
+        //margin-top: 20px;
+      }
+
+      & .quick-view-item {
+        flex: 1 1 100%;
+        min-width: 250px; /* Minimum width before wrapping */
+        flex-direction: column;
+        align-items: flex-start;
+        background-color: #fff;
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+        border-radius: 8px;
+        padding: 1rem;
+
+        & .item-header {
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-start;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 1rem;
+        }
+
+        & .item-body {
+          display: flex;
+          flex-direction: column;
+          align-items: start;
+          gap: .5rem;
+
+          & a {
+            color: var(--primary-color);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: underline;
+            cursor: pointer;
+  
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  & .dashboard-chart-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 20px;
+    margin-top: 20px;
+
+    & .bar-chart-item {
+      flex: 1 1 calc(65% - 20px); /* 50% width minus gap for 2 columns */
+      min-width: 250px; /* Minimum width before wrapping */
+      text-align: center;
+      box-sizing: border-box; /* Include padding and border in the element's total width and height */
+      background-color: #fff;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+      border-radius: 8px;
+      padding: 1rem;
+
+      @media (max-width: 1092px) {
+        flex: 1 1 100%; /* Full width on small screens */
+      }
+
+      & .bar-chart-content {
+        width: 100%;
+
+        ::ng-deep ngx-charts-bar-vertical {
+          display: block;
+          width: 100%;
+
+          ::ng-deep .ngx-charts-outer {
+            width: 100% !important;
+          }
+        }
+      }
+
+      & .item-header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+
+        & .header-text {
+          margin: 0;
+          text-transform: capitalize;
+          letter-spacing: 0.5px;
+          font-size: 1.25rem;
+          font-weight: 700;
+          color: var(--neutral-black-color-dark);
+        }
+
+        & .view-all-link {
+          color: var(--primary-color);
+          font-size: 0.875rem;
+          font-weight: 500;
+          text-decoration: underline;
+          cursor: pointer;
+          display: flex;
+          flex-direction: row;
+          align-items: start;
+          gap: 0.5rem;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+
+      &.rotated-labels {
+        ::ng-deep .ngx-charts-x-axis .tick text {
+          transform: rotate(-45deg);
+          text-anchor: end;
+          dominant-baseline: text-before-edge;
+        }
+        
+        ::ng-deep .ngx-charts .ngx-charts-outer {
+          margin-bottom: 20px;
+          
+          @media (max-width: 576px) {
+            margin-bottom: 15px;
+          }
+        }
+      }
+    }
+
+    & .pie-chart-item {
+      flex: 1 1 calc(15% - 20px); /* 50% width minus gap for 2 columns */
+      min-width: 250px; /* Minimum width before wrapping */
+      text-align: center;
+      box-sizing: border-box; /* Include padding and border in the element's total width and height */
+      background-color: #fff;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+      border-radius: 8px;
+      padding: 1rem;
+
+      @media (max-width: 1092px) {
+        flex: 1 1 100%; /* Full width on small screens */
+      }
+
+      & .item-header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+
+        & .header-text {
+          margin: 0;
+          text-transform: capitalize;
+          letter-spacing: 0.5px;
+          font-size: 1.25rem;
+          font-weight: 700;
+          color: var(--neutral-black-color-dark);
+        }
+
+        & .view-all-link {
+          color: var(--primary-color);
+          font-size: 0.875rem;
+          font-weight: 500;
+          text-decoration: underline;
+          cursor: pointer;
+          display: flex;
+          flex-direction: row;
+          align-items: start;
+          gap: 0.5rem;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+
+      & .pie-chart-content {
+        position: relative;
+        display: flex;
+        justify-content: center;
+
+        // ngx-charts renders the SVG inside a plain div; we use ::ng-deep to give
+        // that wrapper relative positioning so the center-text overlay is anchored
+        // to the actual chart SVG rather than the full container width.
+        ::ng-deep ngx-charts-pie-chart > div {
+          position: relative;
+        }
+
+        & .pie-chart-center-text {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          text-align: center;
+          line-height: 0.5;
+          transform: translate(-50%, -50%);
+          pointer-events: none;
+          z-index: 1;
+
+          & .center-title {
+            color: #666666;
+            margin-bottom: 0.25rem;
+            text-transform: none;
+            letter-spacing: 0.2px;
+            font-size: 0.75rem;
+            font-weight: 500;
+          }
+
+          & .center-number {
+            color: #000000;
+            line-height: 1;
+            font-size: 1.75rem;
+            font-weight: 700;
+          }
+        }
+      }
+
+      & .custom-legend {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+        padding: 0.5rem 0;
+
+        & .legend-item {
+          display: flex;
+          align-items: center;
+          gap: 0.2rem;
+
+          & .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+
+            &.cloud-based {
+              background-color: #1F77B4;
+            }
+
+            &.not-cloud-based {
+              background-color: #B07D12;
+            }
+          }
+
+          & .legend-text {
+            color: #333;
+            font-size: 0.875rem;
+            font-weight: 400;
+          }
+        }
+      }
+    }
+  }
+
+  & .dashboard-recent-report-container {
+    margin-top: 1.5rem;
+
+    & .dashboard-recent-report-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    ::ng-deep {
+      .p-datatable-wrapper {
+        padding-top: 0;
+        padding: 0.3rem;
+      }
+
+      .neutral.p-datatable .p-datatable-thead > tr > th {
+        padding: 0.8rem 1rem;
+        font-size: 0.8rem;
+      }
+
+      .neutral.p-datatable .p-datatable-tbody > tr {
+        cursor: pointer;
+
+        & td {
+          padding: 0.5rem 0.4rem;
+          font-size: 0.7rem;
+        }
+
+        &.p-datatable-tbody > tr:nth-of-type(odd) td {
+          padding: 0.5rem 0.4rem;
+          font-size: 0.7rem;
+        }
+      }
+    }
+  }
+}
+
+.dashboard-view-all-link {
+  position: absolute;
+  top: 1.3rem;
+  right: 0.75rem;
+  z-index: 1;
+  cursor: pointer;
+  color: var(--primary-color);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: underline;
+
+  &.normal{
+    position: relative;
+    top: unset;
+  }
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.dashboard-card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 1rem;
+
+  & .dashboard-quick-links-icon {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--neutral-black-color-dark);
+  }
+}
+
+.dashboard-card-title-text {
+  margin: 0;
+  text-transform: capitalize;
+  letter-spacing: 0.5px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--neutral-black-color-dark);
+}

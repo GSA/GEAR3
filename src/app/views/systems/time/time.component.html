@@ -1,38 +1,17 @@
-<div class="card">
-  <div class="card-header text-white bg-danger text-center">
-    <h3 class="card-title col-12 mb-0">
-      <span>
-        <i class="far fa-clock"></i>
-        Systems TIME Report
-      </span>
-    </h3>
-    <!-- Help Button -->
-    <a tabindex="0"
-      class="btn btn-sm btn-info text-white shadow help-btn d-flex align-items-center justify-content-center"
-      role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="auto" data-bs-html="true"
-      title="Help Using this Table" data-bs-content="<b>Details:</b> Left click on a row within the table to view additional details.
-        <br><br>
-        <b>Sorting:</b> Sort fields by clicking on the arrows in the column headers.
-        <br><br>
-        <b>Export:</b> Export data by clicking on the <i class='fas fa-download'></i> icon and selecting the format that meets 
-        your needs.
-        <br><br>
-        <b>Search:</b> Perform a filtered search across all fields in the displayed data. Hit the 'Enter' button on your 
-        keyboard to execute. Click the <i class='far fa-trash-alt'></i> icon to clear the search box. 
-        Search within specific columns by clicking on the <i class='fas fa-angle-down'></i> icon. 
-        <br><br>
-        <b>Pages:</b> Choose how many rows per page are displayed from the selector at the bottom of the page. Click on the
-        <i class='fas fa-caret-square-down'></i> icon to display everything on one page.">
-      <span class="mr-2">More Help</span><i class="far fa-question-circle fa-2x"></i>
-    </a>
+@if (isDataReady) {
+<div class="time-container">
+  <div class="time-title-container">
+    <h2>Systems TIME Report</h2>
+    <app-page-help-button></app-page-help-button>
   </div>
-
-  <div class="card-body card-text">
-    <!-- Visualizations -->
-    <div id="timeViz" class="row justify-content-center" style="height: 300px;">
+  <div class="time-definition-container">
+    <app-button buttonText="TIME Value Definitions" (buttonClick)="onDefinitionsClick()"></app-button>
+  </div>
+  <div class="time-graph-container">
+    <div class="time-graph">
       @if (vizData) {
-<ngx-charts-bar-vertical-stacked
-        [scheme]="colorScheme"
+        <ngx-charts-bar-vertical-stacked
+          [scheme]="colorScheme"
           [results]="vizData"
           [xAxis]="showXAxis"
           [yAxis]="showYAxis"
@@ -47,24 +26,12 @@
         </ngx-charts-bar-vertical-stacked>
       }
     </div>
-
-    <div class="d-flex justify-content-between">
-      <!-- TIME Definitions Link -->
-      <a type="button" class="btn btn-sm btn-info text-white ml-3" [routerLink]="['/about', 'sysRat']">
-      TIME Value Definitions</a>
-
-      <a tabindex="0"
-        class="btn btn-sm btn-success text-white shadow d-flex align-items-center justify-content-center"
-        role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-placement="auto" data-bs-html="true"
-          title="How to complete my system's TIME questionnaire" data-bs-content="The TIME questionnaire is a spreadsheet that identifies where your system is in its lifecycle based on your responses. 
-          To access your business system's TIME lifecycle questionnaire, please search for your system in the
-          Business Systems report, click your system, then click the TIME questionnaire link">
-        <span class="mr-2">How to complete my system's TIME questionnaire</span><i class="far fa-question-circle fa-2x"></i>
-      </a>
-
-    </div>
-
-    <!-- Main Table -->
-    <table id="timeTable" aria-label="The TIME report table indicates where systems are in their lifecycle by using the tolerate, invest, migrate, and eliminate (TIME) designation."></table>
+  </div>
+  <div class="time-questionaire-container">
+    <app-button buttonText="Please complete your system's TIME Questionnaire" (buttonClick)="onQuestionaireClick()"></app-button>
+  </div>
+  <div class="time-data-container">
+    <app-table visibleColumnStorageKey="time-report" defaultSortField="System Name" [tableCols]="tableCols" [attrDefs]="attrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onRowClick($event)"></app-table>
   </div>
 </div>
+}
