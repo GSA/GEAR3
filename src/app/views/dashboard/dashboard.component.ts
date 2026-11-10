@@ -427,6 +427,27 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.analyticsService.logClickEvent('/FISMA', 'Dashboard view all FISMA');
     this.router.navigate(['/FISMA']);
   }
+  public viewExpiringFismaThisQuarter(): void {
+    this.analyticsService.logClickEvent('/FISMA', 'Dashboard FISMA expiring this quarter');
+    this.router.navigate(['/FISMA'], { queryParams: { expiringWithinDays: '90' } });
+  }
+  public viewDecommissionedSystemsLast6Months(): void {
+    this.analyticsService.logClickEvent('/systems', 'Dashboard decommissioned systems last 6 months');
+    this.router.navigate(['/systems'], { queryParams: { decommissionedWithinMonths: '6' } });
+  }
+  public viewExpiringITStandardsThisQuarter(): void {
+    this.analyticsService.logClickEvent('/it_standards', 'Dashboard IT standards expiring this quarter');
+    // Match SQL: DATE_ADD(CURDATE(), INTERVAL 3 MONTH) — add 1 extra day so the
+    // frontend's <= boundary reaches the same date as MySQL's inclusive interval end.
+    const today = new Date();
+    const threeMonths = new Date(today.getFullYear(), today.getMonth() + 3, today.getDate() + 1);
+    const diffDays = Math.round((threeMonths.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    this.router.navigate(['/it_standards'], { queryParams: { expiringWithinDays: String(diffDays) } });
+  }
+  public viewRetiredITStandardsLast6Months(): void {
+    this.analyticsService.logClickEvent('/it_standards', 'Dashboard IT standards retired last 6 months');
+    this.router.navigate(['/it_standards'], { queryParams: { retiredWithinDays: '180' } });
+  }
   public viewAllSystems(): void {
     this.analyticsService.logClickEvent('/systems', 'Dashboard view all systems');
     this.router.navigate(['/systems']);
