@@ -1,5 +1,5 @@
 const ctrl = require('./base.controller');
-const SqlString = require('sqlstring');
+const SqlString = require('mysql2');
 
 // Need to update this to a view in the database for gear_schema like cowboy_ods once everything is transitioned over to the new schema
 exports.searchAll = (req, res) => {

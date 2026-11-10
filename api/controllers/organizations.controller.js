@@ -2,7 +2,7 @@ const ctrl = require('./base.controller');
 
 const fs = require('fs');
 const path = require('path');
-const SqlString = require('sqlstring');
+const SqlString = require('mysql2');
 
 const queryPath = '../queries/';
 
@@ -65,9 +65,9 @@ exports.findPaginated = (req, res) => {
 
 exports.findOne = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_organizations.sql')).toString() +
-    ` WHERE org.Organization_Id = '${req.params.id}';`;
+    ` WHERE org.Organization_Id = ?;`;
 
-  res = ctrl.sendQuery(query, 'individual organization', res);
+  res = ctrl.sendQuery(query, 'individual organization', res, null, [req.params.id]);
 };
 
 exports.findCapabilites = (req, res) => {
@@ -75,23 +75,23 @@ exports.findCapabilites = (req, res) => {
     ` LEFT JOIN zk_capabilities_org	  AS orgs_mapping ON cap.capability_Id = orgs_mapping.obj_capability_Id
       LEFT JOIN obj_organization	  	AS org          ON orgs_mapping.obj_organization_Id = org.Organization_Id
       
-      WHERE org.Organization_Id = '${req.params.id}';`;
+      WHERE org.Organization_Id = ?;`;
 
-  res = ctrl.sendQuery(query, 'business capabilities for organization', res);
+  res = ctrl.sendQuery(query, 'business capabilities for organization', res, null, [req.params.id]);
 };
 
 exports.findSystems = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
-    ` WHERE systems.\`ex:Responsible_Org\` LIKE "%${ req.params.name}%" GROUP BY systems.\`ex:GEAR_ID\`;`;
+    ` WHERE systems.\`ex:Responsible_Org\` LIKE ? GROUP BY systems.\`ex:GEAR_ID\`;`;
 
-  res = ctrl.sendQuery(query, 'systems for organization', res);
+  res = ctrl.sendQuery(query, 'systems for organization', res, null, [`%${req.params.name}%`]);
 };
 
 exports.findChildOrgs = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_organizations.sql')).toString() +
-    ` WHERE org.Parent_Id = '${req.params.id}' ORDER BY org.Organization_Name;`;
+    ` WHERE org.Parent_Id = ? ORDER BY org.Organization_Name;`;
 
-  res = ctrl.sendQuery(query, 'child organizations for organization', res);
+  res = ctrl.sendQuery(query, 'child organizations for organization', res, null, [req.params.id]);
 };
 
 exports.findBusinessSystems = (req, res) => {
@@ -119,7 +119,8 @@ exports.findBusinessSystems = (req, res) => {
           }
 
           // Build a WHERE clause matching any "(Symbol)" in Business_Org
-          const conditions = orgRows.map(o => `systems_ext.Business_Org LIKE '%(${o.Org_Symbol})%'`).join('\n          OR ');
+          const conditions = orgRows.map(() => `systems_ext.Business_Org LIKE ?`).join('\n          OR ');
+          const conditionParams = orgRows.map(o => `%(${o.Org_Symbol})%`);
 
           var sysQuery = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
             ` WHERE (${conditions})
@@ -127,7 +128,7 @@ exports.findBusinessSystems = (req, res) => {
               AND systems.\`ex:BusinessApplication\` = 'Yes'
               GROUP BY systems.\`ex:GEAR_ID\`;`;
 
-          sql.query(sysQuery, (err3, results) => {
+          sql.query(sysQuery, conditionParams, (err3, results) => {
             if (err3) {
               return res.status(501).json({ message: err3.message });
             }
