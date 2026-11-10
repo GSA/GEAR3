@@ -15,30 +15,30 @@ exports.getManufacturers = (req, res) => {
 exports.getSoftwareProducts = (req, res) => {
   if(req.params.id) {
     var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_tc_softwareproducts.sql')).toString() + 
-    ` where manufacturer = '${req.params.id}'
+    ` where manufacturer = ?
      order by 2 asc;`;
   
-    res = ctrl.sendQuery(query, 'SoftwareProducts', res);
+    res = ctrl.sendQuery(query, 'SoftwareProducts', res, null, [req.params.id]);
   }
 };
 
 exports.getSoftwareVersions = (req, res) => {
   if(req.params.id) {
     var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_tc_softwareversions.sql')).toString() + 
-    ` where softwareProduct = '${req.params.id}'
+    ` where softwareProduct = ?
      order by order_ desc;`;
   
-    res = ctrl.sendQuery(query, 'SoftwareVersions', res);
+    res = ctrl.sendQuery(query, 'SoftwareVersions', res, null, [req.params.id]);
   }
 };
 
 exports.getSoftwareReleases = (req, res) => {
   if(req.params.id) {
     var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_tc_softwarereleases.sql')).toString() + 
-    ` where softwareVersion = '${req.params.id}'
+    ` where softwareVersion = ?
      order by 2 desc;`;
   
-    res = ctrl.sendQuery(query, 'SoftwareReleases', res);
+    res = ctrl.sendQuery(query, 'SoftwareReleases', res, null, [req.params.id]);
   }
 };
 
@@ -50,22 +50,22 @@ exports.getCustomManufacturers = (req, res) => {
 exports.getCustomSoftwareProducts = (req, res) => {
   console.log(req.params.id);
   if(req.params.id !== 'undefined') {
-    var query = `SELECT id, name FROM obj_software_product WHERE manufacturer_id = '${req.params.id}';`;
-    res = ctrl.sendQuery(query, 'CustomSoftwareProducts', res);
+    var query = `SELECT id, name FROM obj_software_product WHERE manufacturer_id = ?;`;
+    res = ctrl.sendQuery(query, 'CustomSoftwareProducts', res, null, [req.params.id]);
   }
 }
 
 exports.getCustomSoftwareVersions = (req, res) => {
   if(req.params.id) {
-    var query = `SELECT id, name FROM obj_software_version WHERE software_product_id = '${req.params.id}';`;
-    res = ctrl.sendQuery(query, 'CustomSoftwareVersions', res);
+    var query = `SELECT id, name FROM obj_software_version WHERE software_product_id = ?;`;
+    res = ctrl.sendQuery(query, 'CustomSoftwareVersions', res, null, [req.params.id]);
   }
 }
 
 exports.getCustomSoftwareReleases = (req, res) => {
   if(req.params.id) {
-    var query = `SELECT id, name FROM obj_software_release WHERE software_version_id = '${req.params.id}';`;
-    res = ctrl.sendQuery(query, 'CustomSoftwareReleases', res);
+    var query = `SELECT id, name FROM obj_software_release WHERE software_version_id = ?;`;
+    res = ctrl.sendQuery(query, 'CustomSoftwareReleases', res, null, [req.params.id]);
   }
 }
 
@@ -75,11 +75,11 @@ exports.saveCustomManufacturer = (req, res) => {
 
   var query = `INSERT INTO obj_manufacturer
                 (name, createdDate)
-                VALUES ('${data.manufacturerName}', '${date}');`;
+                VALUES (?, ?);`;
 
   console.log(query);
 
-  res = ctrl.sendQuery(query, 'CustomManufacturer'. res);
+  res = ctrl.sendQuery(query, 'CustomManufacturer', res, null, [data.manufacturerName, date]);
 };
 
 exports.saveCustomSoftwareProduct = (req, res) => {
@@ -88,11 +88,11 @@ exports.saveCustomSoftwareProduct = (req, res) => {
 
   var query = `INSERT INTO obj_software_product
                 (name, createdDate)
-                VALUES ('${data.productName}', '${date}');`;
+                VALUES (?, ?);`;
   
   console.log(query);
 
-  res = ctrl.sendQuery(query, 'CustomSoftwareProduct'. res);
+  res = ctrl.sendQuery(query, 'CustomSoftwareProduct', res, null, [data.productName, date]);
 };
 
 exports.saveCustomSoftwareVersion = (req, res) => {
@@ -101,9 +101,9 @@ exports.saveCustomSoftwareVersion = (req, res) => {
 
   var query = `INSERT INTO obj_software_version
                 (name, createdDate)
-                VALUES ('${data.versionName}', '${date}');`;
+                VALUES (?, ?);`;
                 
   console.log(query);
 
-  res = ctrl.sendQuery(query, 'CustomSoftwareVersion'. res);
+  res = ctrl.sendQuery(query, 'CustomSoftwareVersion', res, null, [data.versionName, date]);
 };

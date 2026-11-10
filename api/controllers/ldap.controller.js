@@ -14,7 +14,14 @@ var opts = {
 
 exports.check = (req, res) => {
   var ldapClient = ldapjs.createClient(creds);
-  opts.filter = `&(ObjectCategory=user)(ObjectClass=Person)(givenName=${req.params.first_name})(sn=${req.params.last_name})`
+  opts.filter = new ldapjs.AndFilter({
+    filters: [
+      new ldapjs.EqualityFilter({ attribute: 'ObjectCategory', value: 'user' }),
+      new ldapjs.EqualityFilter({ attribute: 'ObjectClass', value: 'Person' }),
+      new ldapjs.EqualityFilter({ attribute: 'givenName', value: req.params.first_name }),
+      new ldapjs.EqualityFilter({ attribute: 'sn', value: req.params.last_name })
+    ]
+  });
 
   res = authDN(ldapClient, searchUser, res);
 };
