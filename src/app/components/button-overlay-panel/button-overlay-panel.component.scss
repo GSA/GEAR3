@@ -3,7 +3,7 @@
         width: 25%;
     }
 
-    & .button-overlay-panel .p-button {
+    & .button-overlay-panel .gear-button {
         background-color: var(--primary-color);
         border-color: var(--neutral-white-color);
         padding: 10px 20px;
@@ -40,7 +40,7 @@
             color: var(--neutral-white-color-darker);
         }
         
-        & .p-button-label {
+        & .gear-button-label {
             font-size: 10px;
             line-height: 1.6;
             text-transform: uppercase;

@@ -1,11 +1,11 @@
 import { Component, EventEmitter, HostListener, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild, ChangeDetectionStrategy } from '@angular/core';
-import { Table, TablePageEvent, TableLazyLoadEvent, TableRowSelectEvent } from 'primeng/table';
+import { GearDataTableComponent, TablePageEvent, TableLazyLoadEvent, TableRowSelectEvent } from '../gear-ui/gear-datatable.component';
 import { Column, ExportColumn, TwoDimArray, FilterButton, ColumnFilter } from '../../common/table-classes';
 import { SharedService } from '@services/shared/shared.service';
 import { CookieService } from '@services/shared/cookie.service';
 import { TableService } from '@services/tables/table.service';
 import { ApiService } from '@services/apis/api.service';
-import { FilterMatchMode, SelectItem } from 'primeng/api';
+import { FilterMatchMode } from '../gear-ui/gear-filter';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
@@ -88,7 +88,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   // Row click event
   @Output() rowClickEvent = new EventEmitter<any>();
 
-  @ViewChild(Table) private dt!: Table;
+  @ViewChild(GearDataTableComponent) private dt!: GearDataTableComponent;
 
   @HostListener('window:resize', ['$event'])
   onResize(event: UIEvent) {
@@ -128,7 +128,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
   activeTableData: any[] = [];
 
-  matchModeOptions: SelectItem[] = [];
+  matchModeOptions: { label: string; value: string }[] = [];
 
   isDataReady: boolean = false;
 
@@ -195,7 +195,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
           this.tableData = d ?? [];
         }
         // Defer paginator reset to after Angular has applied the new tableData
-        // binding so PrimeNG recalculates totalRecords and page links correctly.
+        // binding so the table recalculates totalRecords and page links correctly.
         setTimeout(() => {
           this.first = 0;
           if (this.dt) {

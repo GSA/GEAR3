@@ -4,12 +4,12 @@
     @for (buttons of filterButtons; track buttons) {
       <span class="mr-2">
         @for (button of buttons; track button) {
-          <p-button (click)="onFilterButtonClick(button)" [ngClass]="{'it-standards-filter-button-active': isFilterButtonActive(button)}" severity="contrast" [ariaLabel]="'Filter by ' + button.buttonText">{{button.buttonText}}</p-button>
+          <gear-button (onClick)="onFilterButtonClick(button)" [ngClass]="{'it-standards-filter-button-active': isFilterButtonActive(button)}" severity="contrast" [ariaLabel]="'Filter by ' + button.buttonText">{{button.buttonText}}</gear-button>
         }
       </span>
     }
     @if (showResetButton()) {
-      <span><p-button (click)="onFilterButtonClear()" severity="primary" ariaLabel="Reset Filters">Reset Filters</p-button></span>
+      <span><gear-button (onClick)="onFilterButtonClear()" severity="primary" ariaLabel="Reset Filters">Reset Filters</gear-button></span>
     }
   </div>
 }

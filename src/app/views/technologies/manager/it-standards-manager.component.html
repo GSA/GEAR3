@@ -215,8 +215,8 @@
                     </div>
                     <div class="data-full">
                       <label for="itStandOperatingSystems" class="data-label">Operating System(s)</label><br/>
-                      <p-multiSelect
-                        id="itStandOperatingSystems"
+                      <gear-multiselect
+                        inputId="itStandOperatingSystems"
                         [options]="operatingSystems"
                         formControlName="itStandOperatingSystems"
                         optionLabel="Name"
@@ -224,7 +224,7 @@
                         placeholder="Select Operating System(s)"
                         display="chip"
                         [filter]="false"
-                        [showHeader]="false" />
+                        [showHeader]="false"></gear-multiselect>
                       </div>
                       <div class="data-full">
                         <div class="section-title-container">
@@ -428,7 +428,7 @@
                                     </div>
                                     <div class="data">
                                       <label for="itStandAprvExp" class="data-label">Approval Expires</label>
-                                      <p-datepicker formControlName="itStandAprvExp" [iconDisplay]="'input'" [showIcon]="true" [showButtonBar]="true" fluid />
+                                      <gear-datepicker formControlName="itStandAprvExp" inputId="itStandAprvExp" [showIcon]="true" [showButtonBar]="true" [fluid]="true"></gear-datepicker>
                                     </div>
                                     <div class="data">
                                       <label for="itStandRITM" class="data-label">Requested Item (RITM)</label>

@@ -53,7 +53,7 @@
     width: 86vw;
   }
 
-  .p-datatable {
+  .gear-datatable {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -61,15 +61,15 @@
 
     // Only the virtual-scroll (pagination-off) mode keeps its own inner scroll
     // container. In paginated mode the table flows with the page scroll bar.
-    &.p-datatable-scrollable {
-      .p-datatable-wrapper,
-      .p-datatable-table-container {
+    &.gear-datatable-scrollable {
+      .gear-datatable-wrapper,
+      .gear-datatable-table-container {
         flex: 1;
         overflow: auto;
       }
     }
 
-    .p-paginator {
+    .gear-paginator {
       flex-shrink: 0;
     }
   }
@@ -79,9 +79,9 @@
 // mode so small viewports still get a bounded scroll area there.
 @media (max-height: 768px) {
   .table-responsive-container {
-    .p-datatable.p-datatable-scrollable {
-      .p-datatable-wrapper,
-      .p-datatable-table-container {
+    .gear-datatable.gear-datatable-scrollable {
+      .gear-datatable-wrapper,
+      .gear-datatable-table-container {
         max-height: 400px;
       }
     }
@@ -90,9 +90,9 @@
 
 @media (max-height: 600px) {
   .table-responsive-container {
-    .p-datatable.p-datatable-scrollable {
-      .p-datatable-wrapper,
-      .p-datatable-table-container {
+    .gear-datatable.gear-datatable-scrollable {
+      .gear-datatable-wrapper,
+      .gear-datatable-table-container {
         max-height: 300px;
       }
     }
@@ -117,9 +117,9 @@
 
 @media (max-width: 480px) {
   .table-responsive-container {
-    .p-datatable.p-datatable-scrollable {
-      .p-datatable-wrapper,
-      .p-datatable-table-container {
+    .gear-datatable.gear-datatable-scrollable {
+      .gear-datatable-wrapper,
+      .gear-datatable-table-container {
         max-height: 350px;
       }
     }
@@ -139,7 +139,7 @@
 }
 
 ::ng-deep {
-    .p-datatable-wrapper {
+    .gear-datatable-wrapper {
         background-color: #fff;
         padding: 0.6rem;
         padding-top: 0;
@@ -150,21 +150,21 @@
     // to the container edges instead of the viewport. In the default paginated
     // mode we want the table to flow with the page's scrollbar, so force the
     // container to overflow visibly (sticky then resolves against the page).
-    .p-datatable:not(.p-datatable-scrollable) {
-        .p-datatable-table-container {
+    .gear-datatable:not(.gear-datatable-scrollable) {
+        .gear-datatable-table-container {
             overflow: visible !important;
         }
     }
 
     // Only the inner-scroll (virtual scroll / pagination-off) mode manages its
     // own scrollbar.
-    .p-datatable.p-datatable-scrollable {
-        .p-datatable-wrapper {
+    .gear-datatable.gear-datatable-scrollable {
+        .gear-datatable-wrapper {
             overflow-y: auto;
         }
     }
 
-    .p-datatable {
+    .gear-datatable {
         font-family: Nunito Sans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", Segoe UI Symbol;
         font-size: 0.75rem;
         font-weight: 200;
@@ -172,11 +172,11 @@
         display: flex;
         flex-direction: column;
 
-        &.p-datatable-scrollable {
+        &.gear-datatable-scrollable {
             height: 100%;
         }
 
-        .p-datatable-thead {
+        .gear-datatable-thead {
             position: sticky;
             top: var(--gear-table-sticky-offset, 0px);
             z-index: 10;
@@ -184,14 +184,14 @@
             transition: all ease 0.3s;
         }
 
-        & .p-datatable-thead>tr>th {
+        & .gear-datatable-thead>tr>th {
             padding: .5rem .25rem;
             font-size: 0.875rem;
             // background-color: #ececec;
             background-color: var(--primary-color);
             color: #fff !important;
 
-            & .p-icon {
+            & .gear-icon {
                 color: #fff !important;
             }
 
@@ -199,14 +199,14 @@
                 justify-content: space-between;
             }
 
-            & .p-column-filter-menu-button:hover,
-            .p-column-filter-menu-button-active,
-            .p-column-filter-clear-button:hover {
+            & .gear-column-filter-menu-button:hover,
+            .gear-column-filter-menu-button-active,
+            .gear-column-filter-clear-button:hover {
                 background: none;
             }
         }
         
-        .p-paginator {
+        .gear-paginator {
             position: sticky;
             bottom: 0;
             z-index: 10;
@@ -215,86 +215,86 @@
         }
     }
 
-    .p-datatable .p-datatable-header {
+    .gear-datatable .gear-datatable-header {
         border: none;
         background-color: #fff;
         border-radius: 0.3rem 0.3rem 0 0;
     }
 
-    .default.p-datatable .p-datatable-thead>tr>th {
+    .default.gear-datatable .gear-datatable-thead>tr>th {
         color: #fff;
         background-color: #343a40;
         border-color: #454d55;
 
-        & .p-icon {
+        & .gear-icon {
             color: #fff;
         }
     }
 
-    .it-strategy.p-datatable .p-datatable-thead>tr>th {
+    .it-strategy.gear-datatable .gear-datatable-thead>tr>th {
         color: #fff;
         background-color: #14883c;
         border-color: #454d55;
 
-        & .p-icon {
+        & .gear-icon {
             color: #fff;
         }
     }
 
-    .business-systems.p-datatable .p-datatable-thead>tr>th {
+    .business-systems.gear-datatable .gear-datatable-thead>tr>th {
         color: #fff;
         background-color: #ce4844;
         border-color: #454d55;
 
-        & .p-icon {
+        & .gear-icon {
             color: #fff;
         }
     }
 
-    .gsa-enterprise.p-datatable .p-datatable-thead>tr>th {
+    .gsa-enterprise.gear-datatable .gear-datatable-thead>tr>th {
         color: #fff;
         background-color: #2b60de;
         border-color: #454d55;
 
-        & .p-icon {
+        & .gear-icon {
             color: #fff;
         }
     }
 
-    .security.p-datatable .p-datatable-thead>tr>th {
+    .security.gear-datatable .gear-datatable-thead>tr>th {
         color: #fff;
         background-color: #aa6708;
         border-color: #454d55;
 
-        & .p-icon {
+        & .gear-icon {
             color: #fff;
         }
     }
 
-    .technologies.p-datatable .p-datatable-thead>tr>th {
+    .technologies.gear-datatable .gear-datatable-thead>tr>th {
         color: #fff;
         background-color: #008080;
         border-color: #454d55;
 
-        & .p-icon {
+        & .gear-icon {
             color: #fff;
         }
     }
 
-    .additional-info.p-datatable .p-datatable-thead>tr>th {
+    .additional-info.gear-datatable .gear-datatable-thead>tr>th {
         color: #fff;
         background-color: #027eb2;
         border-color: #454d55;
 
-        & .p-icon {
+        & .gear-icon {
             color: #fff;
         }
     }
 
-    .neutral.p-datatable {
+    .neutral.gear-datatable {
 
 
-        .p-datatable-thead>tr>th {
+        .gear-datatable-thead>tr>th {
             color: var(--neutral-black-color-dark);
 
             border: none;
@@ -305,12 +305,12 @@
                 text-transform: none;
             }
 
-            & .p-icon {
+            & .gear-icon {
                 color: var(--neutral-black-color-dark);
             }
         }
 
-        .p-datatable-tbody>tr {
+        .gear-datatable-tbody>tr {
             color: var(--neutral-black-color-dark);
             background-color: var(--neutral-white-color);
             border: none;
@@ -350,7 +350,7 @@
     }
 
 
-    .p-datatable .p-datatable-tbody>tr {
+    .gear-datatable .gear-datatable-tbody>tr {
         color: #fff;
         background-color: #343a40;
         border-width: 1px;
@@ -468,7 +468,7 @@
     }
 
 
-    .p-button-contrast {
+    .gear-button-contrast {
         color: #fff;
         background-color: #1a1a1a;
         border-color: #1a1a1a;
@@ -488,7 +488,7 @@
         }
     }
 
-    .p-button-primary {
+    .gear-button-primary {
         color: #fff;
         background-color: var(--primary-color) !important;
         border-left: 1px solid #fff;
@@ -509,25 +509,25 @@
     }
 
 
-    .p-multiselect {
+    .gear-multiselect {
         color: #fff;
-        background-color: var(--p-primary-color, #027eb2);
-        border-color: var(--p-primary-color, #027eb2);
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
         border-radius: 0;
         height: 38px;
 
         &:hover {
-            background-color: var(--p-primary-hover-color, #1a82ae);
-            border-color: var(--p-primary-hover-color, #187aa3);
+            background-color: var(--primary-color-hover);
+            border-color: var(--primary-color-hover);
         }
 
-        & .p-multiselect-trigger {
+        & .gear-multiselect-dropdown {
             color: #fff;
-            background-color: var(--p-primary-color, #027eb2);
-            border-color: var(--p-primary-color, #027eb2);
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
         }
 
-        & .p-multiselect-label {
+        & .gear-multiselect-label {
             color: #fff;
             padding: 6px;
         }
@@ -535,25 +535,25 @@
 
     }
 
-    .p-inputtext {
+    .gear-inputtext {
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
     }
-    .p-paginator-page.p-paginator-page-selected{
+    .gear-paginator-page.gear-paginator-page-selected{
         background-color: var(--primary-color);
         color: #fff;
     }
-    .p-select:not(.p-disabled):hover{
+    .gear-select:not(.gear-disabled):hover{
         border-color: #027eb2 !important;
         box-shadow: none !important;
     }
-    .p-select-option.p-select-option-selected.p-focus{
+    .gear-select-option.gear-select-option-selected.gear-focus{
         background-color: #027eb2 !important;
         color: #fff !important;
     }
 }
 
-.p-inputicon {
+.gear-inputicon {
     margin-top: -5px;
 }
 

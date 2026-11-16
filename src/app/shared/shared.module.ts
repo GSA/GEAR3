@@ -4,20 +4,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
 
-// PrimeNG
-import { TableModule } from 'primeng/table';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { ButtonModule } from 'primeng/button';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
-import { InputTextModule } from 'primeng/inputtext';
-import { DrawerModule } from 'primeng/drawer';
-import { AccordionModule } from 'primeng/accordion';
-import { TooltipModule } from 'primeng/tooltip';
-import { DatePickerModule } from 'primeng/datepicker';
-import { PopoverModule } from 'primeng/popover';
-import { InputGroupModule } from 'primeng/inputgroup';
-import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+// GEAR UI (replacements for the PrimeNG widgets GEAR used previously)
+import { GEAR_UI } from '../components/gear-ui';
 
 // Shared components
 import { TableComponent } from '../components/table/table.component';
@@ -52,19 +40,7 @@ const SHARED_MODULES = [
   ReactiveFormsModule,
   RouterModule,
   NgSelectModule,
-  TableModule,
-  MultiSelectModule,
-  ButtonModule,
-  IconFieldModule,
-  InputIconModule,
-  InputTextModule,
-  DrawerModule,
-  AccordionModule,
-  TooltipModule,
-  DatePickerModule,
-  PopoverModule,
-  InputGroupModule,
-  InputGroupAddonModule,
+  ...GEAR_UI,
 ];
 
 @NgModule({

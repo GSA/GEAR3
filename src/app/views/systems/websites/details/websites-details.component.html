@@ -24,7 +24,7 @@
               <div class="data-wrapper">
                   <div class="data">
                     <label class="data-label">
-                      <span [pTooltip]="getTooltip('Status')" [escape]="false" role="tooltip">
+                      <span [gearTooltip]="getTooltip('Status')" [escape]="false" role="tooltip">
                         Status
                         <i class="fas fa-info-circle"></i>
                       </span>
@@ -35,7 +35,7 @@
                   </div>
                   <div class="data">
                     <label class="data-label">
-                      <span [pTooltip]="getTooltip('Type of Site')" [escape]="false" role="tooltip">
+                      <span [gearTooltip]="getTooltip('Type of Site')" [escape]="false" role="tooltip">
                         Type of Site
                         <i class="fas fa-info-circle"></i>
                       </span>
@@ -46,7 +46,7 @@
                   </div>
                   <div class="data">
                     <label class="data-label">
-                      <span [pTooltip]="getTooltip('Recent Screenshots')" [escape]="false" role="tooltip">
+                      <span [gearTooltip]="getTooltip('Recent Screenshots')" [escape]="false" role="tooltip">
                         Recent Screenshots
                         <i class="fas fa-info-circle"></i>
                       </span>
@@ -81,18 +81,16 @@
               @if (hasServiceCategories()) {
                 <h4>Service Categories</h4>
                 <div class="service-category-container">
-                  <p-accordion>
+                  <gear-accordion>
                     @for (sc of websiteServiceCategories; track sc; let i = $index) {
-                      <p-accordion-panel [value]="$index">
-                        <p-accordion-header>
+                      <gear-accordion-panel [value]="$index">
+                        <ng-container gearAccordionHeader>
                           {{sc.name}}
-                        </p-accordion-header>
-                        <p-accordion-content>
-                          <website-service-category-details-content-lite [data]="sc" [websiteName]="detailsData.domain"></website-service-category-details-content-lite>
-                        </p-accordion-content>
-                      </p-accordion-panel>
+                        </ng-container>
+                        <website-service-category-details-content-lite [data]="sc" [websiteName]="detailsData.domain"></website-service-category-details-content-lite>
+                      </gear-accordion-panel>
                     }
-                  </p-accordion>
+                  </gear-accordion>
                 </div>
               }
               <div class="additional-info-container">
@@ -101,7 +99,7 @@
                   <div class="data-wrapper">
                     <div class="data">
                       <label class="data-label">
-                        <span [pTooltip]="getTooltip('Office')" [escape]="false" role="tooltip">
+                        <span [gearTooltip]="getTooltip('Office')" [escape]="false" role="tooltip">
                           Office
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -112,7 +110,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [pTooltip]="getTooltip('Sub-office')" [escape]="false" role="tooltip">
+                        <span [gearTooltip]="getTooltip('Sub-office')" [escape]="false" role="tooltip">
                           Sub Office
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -123,7 +121,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [pTooltip]="getTooltip('Website Manager')" [escape]="false" role="tooltip">
+                        <span [gearTooltip]="getTooltip('Website Manager')" [escape]="false" role="tooltip">
                           Website Manager
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -134,7 +132,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [pTooltip]="getTooltip('Contact Email')" [escape]="false" role="tooltip">
+                        <span [gearTooltip]="getTooltip('Contact Email')" [escape]="false" role="tooltip">
                           Contact Email
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -145,7 +143,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [pTooltip]="getTooltip('Redirect URL')" [escape]="false" role="tooltip">
+                        <span [gearTooltip]="getTooltip('Redirect URL')" [escape]="false" role="tooltip">
                           Redirect URL
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -156,7 +154,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [pTooltip]="getTooltip('Required by Law/Policy?')" [escape]="false" role="tooltip">
+                        <span [gearTooltip]="getTooltip('Required by Law/Policy?')" [escape]="false" role="tooltip">
                           Required By Law/Policy?
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -167,7 +165,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [pTooltip]="getTooltip('DAP Enabled')" [escape]="false" role="tooltip">
+                        <span [gearTooltip]="getTooltip('DAP Enabled')" [escape]="false" role="tooltip">
                           DAP Enabled
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -178,7 +176,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [pTooltip]="getTooltip('Current USWDS Score')" [escape]="false" role="tooltip">
+                        <span [gearTooltip]="getTooltip('Current USWDS Score')" [escape]="false" role="tooltip">
                           Current USWDS Score
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -189,7 +187,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [pTooltip]="getTooltip('Mobile Friendly?')" [escape]="false" role="tooltip">
+                        <span [gearTooltip]="getTooltip('Mobile Friendly?')" [escape]="false" role="tooltip">
                           Mobile Friendly?
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -200,7 +198,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [pTooltip]="getTooltip('Has Search?')" [escape]="false" role="tooltip">
+                        <span [gearTooltip]="getTooltip('Has Search?')" [escape]="false" role="tooltip">
                           Has Search?
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -211,7 +209,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [pTooltip]="getTooltip('HTTPS Enabled')" [escape]="false" role="tooltip">
+                        <span [gearTooltip]="getTooltip('HTTPS Enabled')" [escape]="false" role="tooltip">
                           HTTPS Enabled
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -222,7 +220,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [pTooltip]="getTooltip('Hosting Platform')" [escape]="false" role="tooltip">
+                        <span [gearTooltip]="getTooltip('Hosting Platform')" [escape]="false" role="tooltip">
                           Hosting Platform
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -233,7 +231,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [pTooltip]="getTooltip('Content Management Platform')" [escape]="false" role="tooltip">
+                        <span [gearTooltip]="getTooltip('Content Management Platform')" [escape]="false" role="tooltip">
                           Content Management Platform
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -244,7 +242,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [pTooltip]="getTooltip('Repository URL')" [escape]="false" role="tooltip">
+                        <span [gearTooltip]="getTooltip('Repository URL')" [escape]="false" role="tooltip">
                           Repository URL
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -255,7 +253,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [pTooltip]="getTooltip('Target Decommission Date')" [escape]="false" role="tooltip">
+                        <span [gearTooltip]="getTooltip('Target Decommission Date')" [escape]="false" role="tooltip">
                           Target Decommission Date
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -266,7 +264,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [pTooltip]="getTooltip('Sitemap URL')" [escape]="false" role="tooltip">
+                        <span [gearTooltip]="getTooltip('Sitemap URL')" [escape]="false" role="tooltip">
                           Sitemap URL
                           <i class="fas fa-info-circle"></i>
                         </span>

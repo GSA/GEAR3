@@ -54,7 +54,7 @@
               <div class="data-wrapper">
                 <div class="data">
                   <label class="data-label">
-                    <span [pTooltip]="getTooltip('Alias/Acronym')" [escape]="false" role="tooltip">
+                    <span [gearTooltip]="getTooltip('Alias/Acronym')" [escape]="false" role="tooltip">
                       Alias/Acronym
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -65,7 +65,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [pTooltip]="getTooltip('Status')" [escape]="false" role="tooltip">
+                    <span [gearTooltip]="getTooltip('Status')" [escape]="false" role="tooltip">
                       Status
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -76,7 +76,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [pTooltip]="getTooltip('System Level')" [escape]="false" role="tooltip">
+                    <span [gearTooltip]="getTooltip('System Level')" [escape]="false" role="tooltip">
                       System Level
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -87,7 +87,7 @@
                 </div>
                 <div class="data-full">
                   <label class="data-label">
-                    <span [pTooltip]="getTooltip('Description')" [escape]="false" role="tooltip">
+                    <span [gearTooltip]="getTooltip('Description')" [escape]="false" role="tooltip">
                       Description
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -96,7 +96,7 @@
                 </div>
                 <div class="data-full">
                   <label class="data-label">
-                    <span [pTooltip]="getTooltip('Budget Alias')" [escape]="false" role="tooltip">
+                    <span [gearTooltip]="getTooltip('Budget Alias')" [escape]="false" role="tooltip">
                       Budget Alias
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -105,7 +105,7 @@
                 </div>
                 <div class="data-full">
                   <label class="data-label">
-                    <span [pTooltip]="getTooltip('Related Artifacts')" [escape]="false" role="tooltip">
+                    <span [gearTooltip]="getTooltip('Related Artifacts')" [escape]="false" role="tooltip">
                       Related Artifacts
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -131,7 +131,7 @@
               <div class="data-wrapper">
                 <div class="data">
                   <label class="data-label">
-                    <span [pTooltip]="getTooltip('Business Org')" [escape]="false" role="tooltip">
+                    <span [gearTooltip]="getTooltip('Business Org')" [escape]="false" role="tooltip">
                       Business Org
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -142,7 +142,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [pTooltip]="getTooltip('ATO Type')" [escape]="false" role="tooltip">
+                    <span [gearTooltip]="getTooltip('ATO Type')" [escape]="false" role="tooltip">
                       ATO Type
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -153,7 +153,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [pTooltip]="getTooltip('CUI')" [escape]="false" role="tooltip">
+                    <span [gearTooltip]="getTooltip('CUI')" [escape]="false" role="tooltip">
                       CUI
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -164,7 +164,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [pTooltip]="getTooltip('Responsible IT Org')" [escape]="false" role="tooltip">
+                    <span [gearTooltip]="getTooltip('Responsible IT Org')" [escape]="false" role="tooltip">
                       Responsible IT Org
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -175,7 +175,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [pTooltip]="getTooltip('ATO Date')" [escape]="false" role="tooltip">
+                    <span [gearTooltip]="getTooltip('ATO Date')" [escape]="false" role="tooltip">
                       ATO Date
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -187,7 +187,7 @@
                 <div class="data"></div>
                 <div class="data">
                   <label class="data-label">
-                    <span [pTooltip]="getTooltip('Cloud Service Type')" [escape]="false" role="tooltip">
+                    <span [gearTooltip]="getTooltip('Cloud Service Type')" [escape]="false" role="tooltip">
                       Cloud Service Type
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -198,7 +198,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [pTooltip]="getTooltip('Renewal Date')" [escape]="false" role="tooltip">
+                    <span [gearTooltip]="getTooltip('Renewal Date')" [escape]="false" role="tooltip">
                       Renewal Date
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -220,7 +220,7 @@
                   @for (poc of splitPOCs; track poc) {
                     <tr>
                       <td>
-                        <span [pTooltip]="getTooltip(poc.type)" [escape]="false" role="tooltip">
+                        <span [gearTooltip]="getTooltip(poc.type)" [escape]="false" role="tooltip">
                           {{ poc.type }}
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -253,7 +253,7 @@
               <div class="data-wrapper">
                 <div class="data">
                   <label class="data-label">
-                    <span [pTooltip]="getTooltip('Cloud Hosted?')" [escape]="false" role="tooltip">
+                    <span [gearTooltip]="getTooltip('Cloud Hosted?')" [escape]="false" role="tooltip">
                       Cloud Enabled?
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -264,7 +264,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [pTooltip]="getTooltip('Hosting Provider')" [escape]="false" role="tooltip">
+                    <span [gearTooltip]="getTooltip('Hosting Provider')" [escape]="false" role="tooltip">
                       Hosting Provider
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -275,7 +275,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [pTooltip]="getTooltip('Complete FISMA Assessment for Current FY')" [escape]="false" role="tooltip">
+                    <span [gearTooltip]="getTooltip('Complete FISMA Assessment for Current FY')" [escape]="false" role="tooltip">
                       Complete FISMA Assessment for Current FY
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -286,7 +286,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [pTooltip]="getTooltip('FIPS Impact Level')" [escape]="false" role="tooltip">
+                    <span [gearTooltip]="getTooltip('FIPS Impact Level')" [escape]="false" role="tooltip">
                       FIPS Impact Level
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -297,7 +297,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [pTooltip]="getTooltip('Gov\'t-Wide Shared Service')" [escape]="false" role="tooltip">
+                    <span [gearTooltip]="getTooltip('Gov\'t-Wide Shared Service')" [escape]="false" role="tooltip">
                       Gov't-Wide Shared Service
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -308,7 +308,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [pTooltip]="getTooltip('FISMA System Identifier')" [escape]="false" role="tooltip">
+                    <span [gearTooltip]="getTooltip('FISMA System Identifier')" [escape]="false" role="tooltip">
                       FISMA System Identifier
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -319,7 +319,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [pTooltip]="getTooltip('Cloud Service Type')" [escape]="false" role="tooltip">
+                    <span [gearTooltip]="getTooltip('Cloud Service Type')" [escape]="false" role="tooltip">
                       Service Type
                       <i class="fas fa-info-circle"></i>
                     </span>
@@ -330,7 +330,7 @@
                 </div>
                 <div class="data">
                   <label class="data-label">
-                    <span [pTooltip]="getTooltip('PII Indicator')" [escape]="false" role="tooltip">
+                    <span [gearTooltip]="getTooltip('PII Indicator')" [escape]="false" role="tooltip">
                       PII Indicator
                       <i class="fas fa-info-circle"></i>
                     </span>

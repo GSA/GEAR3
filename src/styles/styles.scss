@@ -4,18 +4,18 @@
 
 
 
-.p-multiselect-option.p-multiselect-option-selected{
+.gear-multiselect-option.gear-multiselect-option-selected{
 background-color: transparent !important;
 color: unset;
 }
-.p-checkbox{
+.gear-checkbox{
   border: 1px solid #fff;
   height: unset;
   border-radius: 4px;
 }
 
 // Force override for input focus
-.p-inputtext:focus {
+.gear-inputtext:focus {
   border-color: var(--primary-color) !important;
   box-shadow: 0 0 0 0.2rem rgba(0, 94, 162, 0.25) !important;
 }
@@ -330,13 +330,13 @@ a.position-absolute.float-right {
 
 /* Make the bold "Data source:" / "Definition:" labels a light gray that stays
    readable against the dark tooltip background */
-.p-tooltip .tooltip-label,
-.p-tooltip-text .tooltip-label {
+.gear-tooltip .tooltip-label,
+.gear-tooltip-text .tooltip-label {
   color: #d1d5db !important;
 }
 
 /* Widen helper-text tooltips, shrink the text, and allow long descriptions to scroll */
-.p-tooltip .p-tooltip-text {
+.gear-tooltip .gear-tooltip-text {
   max-width: min(32rem, 90vw) !important;
   width: max-content;
   max-height: 60vh;
@@ -355,8 +355,8 @@ a.position-absolute.float-right {
 .gear-help-tooltip {
   max-width: min(32rem, 92vw) !important;
 }
-.gear-help-tooltip.p-tooltip,
-.gear-help-tooltip .p-tooltip-text {
+.gear-help-tooltip.gear-tooltip,
+.gear-help-tooltip .gear-tooltip-text {
   max-width: min(32rem, 92vw) !important;
   overflow-wrap: anywhere;
   word-break: break-word;
@@ -439,7 +439,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .btn-border-white {
   border: 1px solid #fff !important;
 }
-.p-multiselect-dropdown{
+.gear-multiselect-dropdown{
 color: #fff;}
 
 button svg{
@@ -448,7 +448,7 @@ button svg{
 .nav-item{
   margin-right: 0.5rem !important;
 }
-.p-overlay{
+.gear-overlay{
 z-index: 99999999;
 }
 

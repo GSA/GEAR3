@@ -3,7 +3,7 @@
     <img aria-hidden="true" class="banner-flag-icon" src="/assets/img/us_flag_small.png" alt="US Flag Icon" />
     <span class="banner-header-text">An official website of the United States government</span>
     <button class="banner-header-link-text" (click)="toggleBanner()">Here's how you know</button>
-    <i class="banner-header-link-icon pi" [ngClass]="isBannerExpanded ? 'pi-angle-up' : 'pi-angle-down'" (click)="toggleBanner()"></i>
+    <svg class="banner-header-link-icon" [gearIcon]="isBannerExpanded ? 'angle-up' : 'angle-down'" (click)="toggleBanner()"></svg>
   </div>
     @if (isBannerExpanded) {
       <div class="banner-content-container">

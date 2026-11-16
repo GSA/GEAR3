@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <p-table #dt
+    <gear-datatable #dt
       [columns]="tableCols"
       [value]="tableData"
       [rowsPerPageOptions]="[10, 25, 50, 100, 200]"
@@ -22,10 +22,8 @@
       [totalRecords]="serverSidePagination ? serverSideTotalRecords : tableData.length"
       [scrollable]="!showPagination && stickyHeader"
       [scrollHeight]="!showPagination && stickyHeader ? screenHeight : undefined"
-      [virtualScroll]="!showPagination && stickyHeader"
-      [virtualScrollItemSize]="46"
       [exportFilename]="getExportFilename()"
-      [styleClass]="reportStyle + ' p-datatable-gridlines'"
+      [styleClass]="reportStyle + ' gear-datatable-gridlines'"
       [sortOrder]="defaultSortOrder"
       [sortField]="defaultSortField"
       selectionMode="single"
@@ -42,43 +40,42 @@
             @if (showToolbar) {
               <div class="table-toolbar-container">
                 @if (showSearchbar) {
-                  <p-iconField iconPosition="left">
-                    <p-inputgroup>
-                      <p-inputgroup-addon>
-                        <p-button icon="pi pi-search" severity="secondary" variant="text" ariaLabel="Search table" (click)="onTableSearchIconClick()" />
-                      </p-inputgroup-addon>
+                  <div class="gear-iconfield gear-iconfield-left">
+                    <div class="gear-inputgroup">
+                      <div class="gear-inputgroupaddon">
+                        <gear-button severity="secondary" variant="text" ariaLabel="Search table" [iconOnly]="true" (onClick)="onTableSearchIconClick()"><svg gearIcon="search" class="gear-button-icon gear-icon"></svg></gear-button>
+                      </div>
                       <input
-                      pInputText
+                      class="gear-inputtext gear-component"
                       type="text"
                       [formControl]="tableSearchControl"
                       (keypress)="onTableSearchKeypress($event)"
                       (keyup.enter)="serverSidePagination ? onServerSideSearch() : null"
                       placeholder="Search keyword"
                       aria-label="Table Search" />
-                    </p-inputgroup>
-                  </p-iconField>
+                    </div>
+                  </div>
                   }
                   @if (showShowHideColumnButton) {
-                    <p-multiSelect
+                    <gear-multiselect
                       [options]="pickableColumns"
                       [(ngModel)]="visibleColumns"
                       (onChange)="toggleVisible($event)"
                       optionLabel="header"
-                      pTooltip="Add/Remove Columns"
+                      gearTooltip="Add/Remove Columns"
                       tooltipPosition="left"
-                      [showToggleAll]="false"
                       ariaLabel="Toggle Columns">
-                      <ng-template pTemplate="selectedItems">
+                      <ng-template #selectedItems>
                         <i class="fa fa-th-list"></i>
                       </ng-template>
-                    </p-multiSelect>
-                    <p-button icon="fa fa-undo" pTooltip="Reset columns to default" tooltipPosition="left" severity="primary" (click)="resetVisibleColumns()" ariaLabel="Reset Columns" />
+                    </gear-multiselect>
+                    <gear-button icon="fa fa-undo" gearTooltip="Reset columns to default" tooltipPosition="left" severity="primary" (onClick)="resetVisibleColumns()" ariaLabel="Reset Columns" />
                   }
                   @if (showExportButton) {
-                    <p-button icon="fa fa-download" pTooltip="Export table data" tooltipPosition="left" severity="primary" (click)="exportSanitizedData()" ariaLabel="Export Data" />
+                    <gear-button icon="fa fa-download" gearTooltip="Export table data" tooltipPosition="left" severity="primary" (onClick)="exportSanitizedData()" ariaLabel="Export Data" />
                   }
                   @if (showFilterButton) {
-                    <p-button icon="fa fa-filter" pTooltip="Column filters" tooltipPosition="left" severity="primary" (click)="openColumnFilterModal()" ariaLabel="Column Filters" />
+                    <gear-button icon="fa fa-filter" gearTooltip="Column filters" tooltipPosition="left" severity="primary" (onClick)="openColumnFilterModal()" ariaLabel="Column Filters" />
                   }
                 </div>
               }
@@ -92,45 +89,27 @@
           <tr>
             @for (col of columns; track col.field) {
               @if (showColumn(col)) {
-                <th [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.isSortable ? true : false" [class]="col.class" [ngStyle]="col.style">
+                <th [gearSortableColumn]="col.field" [gearSortableColumnDisabled]="!col.isSortable ? true : false" [class]="col.class" [ngStyle]="col.style">
                   <div class="d-flex align-items-center table-heading">
                     @if (!col.titleTooltip) {
-                      <span [pTooltip]="getTooltip(col.header)" [escape]="false" tooltipPosition="top" tooltipStyleClass="gear-help-tooltip" [appendTo]="'body'">{{ col.header }}</span>
+                      <span [gearTooltip]="getTooltip(col.header)" [escape]="false" tooltipPosition="top" tooltipStyleClass="gear-help-tooltip">{{ col.header }}</span>
                     }
                     <!-- Table tooltip override for definitions that don't match the col.header property -->
                     @if (col.titleTooltip) {
-                      <span [pTooltip]="col.titleTooltip" [escape]="false" tooltipPosition="top" tooltipStyleClass="gear-help-tooltip" [appendTo]="'body'">{{ col.header }}</span>
+                      <span [gearTooltip]="col.titleTooltip" [escape]="false" tooltipPosition="top" tooltipStyleClass="gear-help-tooltip">{{ col.header }}</span>
                     }
-                    <!-- <span *ngIf="showFilters"><p-columnFilter type="text" [field]="col.field" display="menu" /></span> -->
                     @if (col.isSortable) {
-                      <p-sortIcon [field]="col.field"></p-sortIcon>
+                      <gear-sorticon [field]="col.field"></gear-sorticon>
                     }
                   </div>
                 </th>
               }
             }
           </tr>
-          @if (showFilters) {
-            <tr>
-              @for (col of columns; track col.field) {
-                @if (showColumn(col)) {
-                  <th>
-                    <p-columnFilter
-                      type="text"
-                      [field]="col.field"
-                      [matchModeOptions]="matchModeOptions"
-                      [matchMode]="'contains'"
-                      [placeholder]="'Filter by ' + col.header"
-                      [ariaLabel]="'Filter ' + col.header" />
-                    </th>
-                  }
-                }
-              </tr>
-            }
           </ng-template>
           <!-- Table body -->
-          <ng-template pTemplate="body" let-rowData let-columns="columns">
-            <tr [pSelectableRow]="rowData">
+          <ng-template #body let-rowData let-columns="columns" let-rowIndex="rowIndex">
+            <tr [gearSelectableRow]="rowData" [gearSelectableRowIndex]="rowIndex">
               @for (col of columns; track col.field) {
                 @if (showColumn(col)) {
                   <td [ngStyle]="col.style">
@@ -154,7 +133,7 @@
               </td>
             </tr>
           </ng-template>
-        </p-table>
+        </gear-datatable>
   </div>
   <table-column-filter-modal
     [columns]="tableCols"

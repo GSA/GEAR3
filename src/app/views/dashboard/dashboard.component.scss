@@ -477,17 +477,17 @@
     }
 
     ::ng-deep {
-      .p-datatable-wrapper {
+      .gear-datatable-wrapper {
         padding-top: 0;
         padding: 0.3rem;
       }
 
-      .neutral.p-datatable .p-datatable-thead > tr > th {
+      .neutral.gear-datatable .gear-datatable-thead > tr > th {
         padding: 0.8rem 1rem;
         font-size: 0.8rem;
       }
 
-      .neutral.p-datatable .p-datatable-tbody > tr {
+      .neutral.gear-datatable .gear-datatable-tbody > tr {
         cursor: pointer;
 
         & td {
@@ -495,7 +495,7 @@
           font-size: 0.7rem;
         }
 
-        &.p-datatable-tbody > tr:nth-of-type(odd) td {
+        &.gear-datatable-tbody > tr:nth-of-type(odd) td {
           padding: 0.5rem 0.4rem;
           font-size: 0.7rem;
         }

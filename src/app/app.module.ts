@@ -14,15 +14,11 @@ import { PreviousRouteService } from '@services/previous-route/previous-route.se
 import { TopNavbarComponent } from './components/top-navbar/top-navbar.component';
 import { BannerComponent } from './components/banner/banner.component';
 import { IdentifierComponent } from './components/identifier/identifier.component';
-import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SidebarV2Component } from './components/sidebar-v2/sidebar-v2.component';
 import { TopbarComponent } from './components/topbar/topbar.component';
 import { ChatbotComponent } from './components/chatbot/chatbot.component';
 
-import { providePrimeNG } from 'primeng/config';
-import Lara from '@primeuix/themes/lara';
-
-// SharedModule provides all shared components, pipes, directives & PrimeNG modules
+// SharedModule provides all shared components, pipes, directives & GEAR UI widgets
 // to each feature module. Layout components above are kept here since they live
 // outside the router-outlet (in AppComponent template).
 import { SharedModule } from './shared/shared.module';
@@ -33,7 +29,6 @@ import { SharedModule } from './shared/shared.module';
     TopNavbarComponent,
     BannerComponent,
     IdentifierComponent,
-    SidebarComponent,
     SidebarV2Component,
     TopbarComponent,
     ChatbotComponent,
@@ -48,22 +43,7 @@ import { SharedModule } from './shared/shared.module';
   providers: [
     Globals,
     provideHttpClient(withXhr(), withInterceptorsFromDi()),
-    PreviousRouteService,
-    providePrimeNG({
-      theme: {
-        preset: Lara,
-        options: {
-          prefix: 'p',
-          darkModeSelector: false,
-          cssLayer: {
-            name: 'primeng',
-            order: 'tailwind-base, primeng, tailwind-utilities'
-          }
-        }
-      },
-      ripple: true,
-      inputStyle: 'outlined'
-    })
+    PreviousRouteService
   ]
 })
 export class AppModule {

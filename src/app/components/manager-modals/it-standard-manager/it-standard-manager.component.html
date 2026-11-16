@@ -260,8 +260,8 @@
 
                     <div class="form-group col-6">
                       <label for="itStandOperatingSystems">Operating System(s)</label><br/>
-                      <p-multiSelect
-                        id="itStandOperatingSystems"
+                      <gear-multiselect
+                        inputId="itStandOperatingSystems"
                         [options]="operatingSystems"
                         formControlName="itStandOperatingSystems"
                         optionLabel="Name"
@@ -269,7 +269,7 @@
                         placeholder="Select Operating System(s)"
                         display="chip"
                         [filter]="false"
-                        [showHeader]="false" />
+                        [showHeader]="false"></gear-multiselect>
                       </div>
 
                       <!-- Description -->

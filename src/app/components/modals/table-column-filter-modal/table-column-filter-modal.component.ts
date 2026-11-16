@@ -9,12 +9,12 @@ import {
   ChangeDetectionStrategy
 } from '@angular/core';
 import { Column } from '../../../common/table-classes';
-import { FilterMatchMode } from 'primeng/api';
+import { FilterMatchMode, FilterMatchModeValue } from '../../gear-ui/gear-filter';
 
 export interface ColumnFilter {
   field: string;
   value: any;
-  matchMode: FilterMatchMode;
+  matchMode: FilterMatchModeValue | string;
 }
 
 @Component({
@@ -184,7 +184,7 @@ export class TableColumnFilterModalComponent
     );
   }
 
-  getMatchModeLabel(matchMode: FilterMatchMode): string {
+  getMatchModeLabel(matchMode: FilterMatchModeValue | string): string {
     const option = this.matchModeOptions.find((opt) => opt.value === matchMode);
     return option ? option.label : 'Contains';
   }
