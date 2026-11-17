@@ -164,6 +164,22 @@ export class SystemsComponent implements OnInit, OnDestroy {
           titleTooltip: this.getTooltip('Status')
         },
         {
+          field: 'RenewalDate',
+          header: 'Renewal Date',
+          isSortable: true,
+          showColumn: false,
+          formatter: this.sharedService.utcDateFormatter,
+          titleTooltip: this.getTooltip('Renewal Date')
+        },
+        {
+          field: 'ATODate',
+          header: 'ATO Date',
+          isSortable: true,
+          showColumn: false,
+          formatter: this.sharedService.utcDateFormatter,
+          titleTooltip: this.getTooltip('ATO Date')
+        },
+        {
           field: 'RespOrg',
           header: 'Responsible Org',
           isSortable: true,
@@ -292,6 +308,22 @@ export class SystemsComponent implements OnInit, OnDestroy {
           header: 'Status',
           isSortable: true,
           titleTooltip: this.getTooltip('Status')
+        },
+        {
+          field: 'RenewalDate',
+          header: 'Renewal Date',
+          isSortable: true,
+          showColumn: false,
+          formatter: this.sharedService.utcDateFormatter,
+          titleTooltip: this.getTooltip('Renewal Date')
+        },
+        {
+          field: 'ATODate',
+          header: 'ATO Date',
+          isSortable: true,
+          showColumn: false,
+          formatter: this.sharedService.utcDateFormatter,
+          titleTooltip: this.getTooltip('ATO Date')
         },
         {
           field: 'RespOrg',
