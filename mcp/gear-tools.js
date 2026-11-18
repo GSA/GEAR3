@@ -648,7 +648,11 @@ async function findSimilarApprovedSoftware({ name, limit }) {
   return {
     ...capped,
     searchedFor: name,
-    referenceProduct: { Name: referenceName, Status: referenceStatus },
+    referenceProduct: {
+      Id: reference.ID != null ? reference.ID : reference.Id,
+      Name: referenceName,
+      Status: referenceStatus,
+    },
     basis,
     enterpriseArchitectureContact: 'ea@gsa.gov',
     note: capped.total

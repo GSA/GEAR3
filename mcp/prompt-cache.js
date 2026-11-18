@@ -302,7 +302,7 @@ async function lookup(prompt, type, opts = {}) {
     }
 
     // 2. FULLTEXT similarity match (catches near-duplicate phrasing).
-    //    Requires: ALTER TABLE gear_log.ai_log ADD FULLTEXT INDEX ft_prompt (Prompt);
+    //    Requires the ft_prompt FULLTEXT index on gear_log.ai_log.Prompt (DBA-provisioned).
     //    Candidates are re-checked with promptSimilarity() below, because
     //    FULLTEXT relevance alone is not a safe reuse signal.
     try {

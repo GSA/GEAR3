@@ -244,13 +244,22 @@ previous keyword-only ordering rather than failing.
 
 ### Index storage
 
-Vectors live in `gear_log.search_vectors` (created automatically on first use),
-one row per searchable record, embedding stored as a packed float32 BLOB with a
+Vectors live in `gear_log.search_vectors`, one row per searchable record, embedding stored as a packed float32 BLOB with a
 SHA-256 content hash for change detection. At GEAR's scale (~7,700 records ×
 1024 dims ≈ 32 MB) the whole set is held in memory and scanned by brute-force
 cosine similarity in a few milliseconds, so no external vector database or
 approximate-nearest-neighbour index is needed. Revisit if the corpus approaches
 ~100k records.
+
+The app never creates or alters tables, so a DBA must provision both
+`gear_log.search_vectors` and `gear_log.search_vectors_staging` in each
+environment, with identical columns and primary key (`entity_type`,
+`entity_id`): `entity_type` VARCHAR(32), `entity_id` VARCHAR(64), `name`
+VARCHAR(512) NULL, `description` TEXT NULL, `status` VARCHAR(128) NULL,
+`type_display` VARCHAR(255) NULL, `content_hash` CHAR(64), `dimensions`
+SMALLINT UNSIGNED, `embedding` BLOB, `model` VARCHAR(64), `updated_at`
+TIMESTAMP default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP. If either is
+missing or lacks a column, the embedding jobs fail with an error naming it.
 
 Covered entity types mirror the global search controller: `System`, `FISMA`,
 `Technology`, `Capability`, `Organization`, `Investment`, `Website`, `TRM`.
@@ -274,8 +283,8 @@ save to USAi availability.
 The nightly rebuild is a *reconciliation* pass, not the freshness mechanism. It
 exists to repair drift: rows skipped due to USAi errors, changes to how document
 text is built, and embedding model changes. It writes to a staging table and
-swaps via `RENAME TABLE`, so searches never see a half-built index, and a failed
-rebuild leaves the previous vectors serving.
+copies it into the live table in one transaction (DML only), so searches never
+see a half-built index, and a failed rebuild leaves the previous vectors serving.
 
 ### Manual operations
 
@@ -338,15 +347,58 @@ blocks that regardless of what a recommendation's draft SQL says).
      via `readOnlyPool`): Approved IT standards with zero TRM mapping, active
      business-application systems with zero Business Capability mapping, and
      exact-duplicate-named TRM categories / Business Capabilities.
+   - Unmapped Approved IT standards share the re-alignment rotation below: up
+     to `GEAR_TAXONOMY_MAX_TECH` (default 50) per run, chosen *after* removing
+     standards that already have an open recommendation of any gap type
+     (including a "create a new TRM category" suggestion) or were reviewed
+     within `GEAR_TAXONOMY_REALIGN_INTERVAL_DAYS`. Each run therefore moves on
+     to standards not yet looked at, and a rejected suggestion is not raised
+     again until the interval elapses. Chat signals about an unmapped standard
+     are resolved to its `obj_technology.Id` and go through the same check.
    - For each mapping gap, asks USAi to choose the best-fitting *existing*
      node, or — only when nothing existing fits — to nominate a new node and
      an *existing* parent for it. The model never writes SQL; it returns a
      small structured decision that is validated against the real candidate
      list, then turned into `Proposed_SQL` deterministically using the
      verified `gear_schema` column names documented at the top of the file.
+   - Re-checks IT standards that **already** have TRM mappings
+     (`zk_technology_TRM`), in a bounded rotation tracked in
+     `gear_log.taxonomy_mapping_review`: never-reviewed standards first, then
+     any whose mappings changed since their last review, then reviews older
+     than `GEAR_TAXONOMY_REALIGN_INTERVAL_DAYS` (default 90). Up to
+     `GEAR_TAXONOMY_MAX_REALIGN` (default 25; `0` disables) per run. USAi
+     answers "keep" or gives the complete set of TRM ids the standard should
+     map to. Every id is validated, and the difference becomes an
+     `add_mapping`, `remove_mapping`, or `remap_mapping` recommendation whose
+     `Proposed_SQL` inserts new links before deleting old ones. Mappings to TRM
+     ids that no longer exist are always proposed for removal. Standards with
+     an open (pending/approved) recommendation are skipped, and a rejected
+     suggestion is not raised again until the mappings change or the interval
+     elapses.
    - Writes `Status='pending'` rows to `gear_log.taxonomy_gap_recommendation`
      for a GEAR Manager admin to review and, if appropriate, run through
      GEAR's authenticated, audited path.
+
+The app never creates or alters tables. `gear_log.taxonomy_gap_signal` and
+`gear_log.taxonomy_gap_recommendation` must be provisioned by a DBA in each
+environment; the dev `gear_log` schema is the reference definition.
+
+The re-alignment review and the unmapped-standard rotation read and write
+`gear_log.taxonomy_mapping_review`, and re-alignment recommendations use the
+`remap_mapping` value of `taxonomy_gap_recommendation.Recommended_Action`. The
+app never creates or alters tables, so both must be provisioned by a DBA in
+each environment before deploying:
+
+- `gear_log.taxonomy_mapping_review`, primary key (`Entity_Type`, `Entity_Id`):
+  `Entity_Type` VARCHAR(64), `Entity_Id` VARCHAR(64), `Mapping_Fingerprint`
+  VARCHAR(1000), `Verdict` ENUM('keep','change','undetermined'), `Confidence`
+  ENUM('low','medium','high') NULL, `Reasoning` TEXT NULL, `Recommendation_Id`
+  INT NULL, `Reviewed_DTG` TIMESTAMP default CURRENT_TIMESTAMP; index on
+  `Reviewed_DTG`. The app user needs SELECT and INSERT/UPDATE on it.
+- `Recommended_Action` ENUM extended with `'remap_mapping'`.
+
+If the table is missing, the analyzer logs a `technology_review_state` error
+and skips the IT standards steps rather than re-recommending everything.
 
 `npm run taxonomy-gaps:stats` reports pending signal/recommendation counts.
 `mcp/test/taxonomy-gap-analyzer.test.js` unit-tests the pure SQL-builder
@@ -412,9 +464,10 @@ hallucinations (e.g. `Flosum` for the low-code/no-code question). It is separate
 from `ai_log` because `ai_log` has many responses per question, while the gold
 answer belongs to the question.
 
-Schema changes are recorded in
-[`api/queries/DDL/2026-10-21_ai_log_review_columns.sql`](../api/queries/DDL/2026-10-21_ai_log_review_columns.sql)
-and must be applied once per environment.
+The app never creates or alters tables. The `ai_log` review columns (`Source`,
+`Correct`, `Review_Notes`, `Reviewed_DTG`), its `ft_prompt` FULLTEXT index on
+`Prompt`, and `gear_log.ai_eval_question` must be provisioned by a DBA in each
+environment; the dev `gear_log` schema is the reference definition.
 
 ## Security notes
 
@@ -453,8 +506,8 @@ endpoints. Three independent layers hold the line:
 
    ```sql
    CREATE USER 'gear_ai'@'%' IDENTIFIED BY '<strong-password>' REQUIRE X509;
-   GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX
-     ON gear_log.* TO 'gear_ai'@'%';   -- DDL is needed by the vector-index rebuild
+   GRANT SELECT, INSERT, UPDATE, DELETE
+     ON gear_log.* TO 'gear_ai'@'%';   -- DML only; tables are DBA-provisioned
    GRANT SELECT ON gear_schema.* TO 'gear_ai'@'%';  -- read-only, for embeddings
    -- Deliberately no grant of any kind on gear_acl.
    ```
