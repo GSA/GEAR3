@@ -36,7 +36,7 @@ export class ItStandardsComponent implements OnInit {
 
   public rollupTableCols: Column[] = [
     { field: 'displayName',            header: 'IT Standard Name',  isSortable: true,  showColumn: true  },
-    { field: 'versionsCount',          header: 'Versions',          isSortable: true,  showColumn: true  },
+    { field: 'versionsCount',          header: '# of Versions',          isSortable: true,  showColumn: true  },
     { field: 'manufacturerName',       header: 'Manufacturer',      isSortable: true,  showColumn: true  },
     { field: 'description',            header: 'Description',       isSortable: true,  showColumn: true,  formatter: this.sharedService.formatDescriptionLite },
     { field: 'status',                 header: 'Status',            isSortable: true,  showColumn: true,  formatter: this.sharedService.formatStatus },
