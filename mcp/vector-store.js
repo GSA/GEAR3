@@ -3,9 +3,9 @@
  *
  * Storage: gear_log.search_vectors — one row per searchable GEAR record,
  * holding the embedding as a packed float32 BLOB plus the content hash used for
- * change detection. In dev the table is created on demand if missing; in prod,
- * where the app user has no DDL rights, it and search_vectors_staging must be
- * provisioned by a DBA. Steady-state operation issues DML only.
+ * change detection. The app never creates or alters tables: it and
+ * search_vectors_staging must be provisioned by a DBA in every environment
+ * (see mcp/README.md, "Index storage"). All operations are DML only.
  *
  * Search: the full set of vectors is held in a single Float32Array and scored
  * by brute-force cosine similarity. At GEAR's scale (~7,700 records x 1024
@@ -15,8 +15,9 @@
  * dot product at query time. Revisit this approach if the corpus approaches
  * ~100k records.
  *
- * Rebuild safety: a full rebuild writes to a staging table and swaps it in
- * atomically, so searches never observe a half-populated index.
+ * Rebuild safety: a full rebuild writes to a staging table and copies it to
+ * the live table in one transaction, so searches never observe a
+ * half-populated index.
  */
 
 const path = require('path');
@@ -69,70 +70,49 @@ function getPool() {
   return pool;
 }
 
-function createTableSql(qualifiedName) {
-  return `CREATE TABLE IF NOT EXISTS ${qualifiedName} (
-    entity_type   VARCHAR(32)  NOT NULL,
-    entity_id     VARCHAR(64)  NOT NULL,
-    name          VARCHAR(512)     NULL,
-    description   TEXT             NULL,
-    status        VARCHAR(128)     NULL,
-    type_display  VARCHAR(255)     NULL,
-    content_hash  CHAR(64)     NOT NULL,
-    dimensions    SMALLINT UNSIGNED NOT NULL,
-    embedding     BLOB         NOT NULL,
-    model         VARCHAR(64)  NOT NULL,
-    updated_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
-                               ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (entity_type, entity_id)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`;
-}
+/** Columns the live and staging tables must have; a DBA provisions both. */
+const REQUIRED_COLUMNS = [
+  'entity_type', 'entity_id', 'name', 'description', 'status', 'type_display',
+  'content_hash', 'dimensions', 'embedding', 'model', 'updated_at',
+];
 
-/** True once the live table is known to exist with current columns. */
-let tableEnsured = false;
-
-/** True if a gear_log table exists, via a read the app user can always run. */
-async function tableExists(table) {
-  const db = getPool();
-  const [rows] = await db.query(
-    `SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? LIMIT 1`,
-    [VECTOR_SCHEMA, table]
-  );
-  return rows.length > 0;
-}
+/** Tables already verified this process, so the check runs once each. */
+const verifiedTables = new Set();
 
 /**
- * Create the vector table only if it does not exist yet.
+ * Confirm a gear_log vector table exists with every required column, or throw.
  *
- * Checks first instead of always issuing CREATE TABLE IF NOT EXISTS: MySQL
- * requires the CREATE privilege for that statement even when the table already
- * exists, so in prod — where the app user has DML but no DDL rights — every
- * delta refresh failed with "CREATE command denied" on an existing table.
+ * The app never creates or alters tables: in prod its DB user has no DDL
+ * rights, so search_vectors and search_vectors_staging must be provisioned by
+ * a DBA (see mcp/README.md, "Index storage"). This check is a read against
+ * information_schema, which any user can run.
  */
-async function ensureTable() {
-  if (tableEnsured) return;
-  if (!(await tableExists(VECTOR_TABLE))) {
-    await getPool().query(createTableSql(QUALIFIED_TABLE));
-  }
-  await ensureColumns(QUALIFIED_TABLE);
-  tableEnsured = true;
-}
-
-/**
- * Add columns introduced after a table was first created, so an index built by
- * an earlier version keeps working without a manual migration.
- */
-async function ensureColumns(qualifiedName) {
-  const db = getPool();
-  const [, table] = qualifiedName.split('.');
-  const [rows] = await db.query(
+async function assertTableReady(table) {
+  if (verifiedTables.has(table)) return;
+  const [rows] = await getPool().query(
     `SELECT COLUMN_NAME AS c FROM information_schema.COLUMNS
      WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?`,
     [VECTOR_SCHEMA, table]
   );
-  const present = new Set(rows.map((r) => r.c));
-  if (!present.has('description')) {
-    await db.query(`ALTER TABLE ${qualifiedName} ADD COLUMN description TEXT NULL AFTER name`);
+  if (!rows.length) {
+    throw new Error(
+      `${VECTOR_SCHEMA}.${table} does not exist. The app does not create tables; ` +
+        'ask a DBA to provision it (see mcp/README.md, "Index storage").'
+    );
   }
+  const present = new Set(rows.map((r) => r.c));
+  const missing = REQUIRED_COLUMNS.filter((c) => !present.has(c));
+  if (missing.length) {
+    throw new Error(
+      `${VECTOR_SCHEMA}.${table} is missing column(s) ${missing.join(', ')}. ` +
+        'The app does not alter tables; ask a DBA to add them (see mcp/README.md, "Index storage").'
+    );
+  }
+  verifiedTables.add(table);
+}
+
+async function ensureTable() {
+  await assertTableReady(VECTOR_TABLE);
 }
 
 /* ------------------------------------------------------------------ *
@@ -274,14 +254,10 @@ const VECTOR_COLUMNS =
  * Empty the staging table, ready for a full rebuild.
  *
  * DELETE rather than TRUNCATE: MySQL requires the DROP privilege for TRUNCATE.
- * The table is only created when it is genuinely missing (dev convenience);
- * in prod it must already exist.
  */
 async function beginFullRebuild() {
-  if (!(await tableExists(STAGING_TABLE))) {
-    await getPool().query(createTableSql(QUALIFIED_STAGING));
-    return;
-  }
+  await assertTableReady(VECTOR_TABLE);
+  await assertTableReady(STAGING_TABLE);
   await getPool().query(`DELETE FROM ${QUALIFIED_STAGING}`);
 }
 

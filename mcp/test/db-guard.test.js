@@ -48,12 +48,10 @@ test('allows the AI layer writes that actually exist today', () => {
      ON DUPLICATE KEY UPDATE name = VALUES(name), model = VALUES(model)`
   );
   assertAllowed('DELETE FROM gear_log.search_vectors WHERE (entity_type, entity_id) IN (?)');
-  assertAllowed('CREATE TABLE IF NOT EXISTS gear_log.search_vectors_staging (id INT)');
-  assertAllowed('ALTER TABLE gear_log.search_vectors ADD COLUMN description TEXT NULL AFTER name');
-  assertAllowed('DROP TABLE IF EXISTS gear_log.search_vectors_staging');
+  assertAllowed('DELETE FROM gear_log.search_vectors_staging');
   assertAllowed(
-    `RENAME TABLE gear_log.search_vectors TO gear_log.search_vectors_staging_old,
-                  gear_log.search_vectors_staging TO gear_log.search_vectors`
+    `INSERT INTO gear_log.search_vectors (entity_type, entity_id)
+     SELECT entity_type, entity_id FROM gear_log.search_vectors_staging`
   );
   assertAllowed(
     'UPDATE gear_log.ai_log SET Correct = ?, Review_Notes = ?, Reviewed_DTG = NOW() WHERE Id = ?'
