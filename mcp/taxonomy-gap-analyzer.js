@@ -13,6 +13,11 @@
  *      with no TRM mapping, active business-application systems with no
  *      Business Capability mapping, and exact-duplicate-named TRM categories
  *      / Business Capabilities (candidates for a remove_node merge).
+ *      Unmapped Approved standards are picked AFTER filtering out those with
+ *      an open recommendation (any gap type) or a review within
+ *      GEAR_TAXONOMY_REALIGN_INTERVAL_DAYS, using the same
+ *      gear_log.taxonomy_mapping_review rotation as step 3b, so runs never
+ *      stall on the same Ids and rejected suggestions are not re-raised.
  *   3. For mapping-gap candidates, asks USAi to choose which EXISTING TRM
  *      category / Business Capability best fits, or - only when nothing
  *      existing fits - to nominate a new node and an existing parent for it.
@@ -22,6 +27,15 @@
  *      verified gear_schema column names below. This keeps every proposal
  *      syntactically correct and groundable against real GEAR data, and
  *      removes any chance of the model hallucinating table/column names.
+ *   3b. Re-alignment review: re-checks IT standards that ALREADY have TRM
+ *      mappings, a bounded batch per run, rotating via
+ *      gear_log.taxonomy_mapping_review (never-reviewed first, then changed
+ *      mapping sets, then reviews older than
+ *      GEAR_TAXONOMY_REALIGN_INTERVAL_DAYS). USAi returns keep, or the complete
+ *      set of TRM ids the standard should map to; every id is validated, and
+ *      the difference becomes add_mapping / remove_mapping / remap_mapping
+ *      Proposed_SQL. Mappings to TRM ids that no longer exist are always
+ *      proposed for removal.
  *   4. Writes finished rows to gear_log.taxonomy_gap_recommendation and marks
  *      the originating signals Processed.
  *
@@ -59,6 +73,11 @@ const schemaPool = readOnlyPool(db.promisePool, 'taxonomy-gap-analyzer');
 const MAX_SIGNALS_PER_RUN = Number(process.env.GEAR_TAXONOMY_MAX_SIGNALS || 200);
 const MAX_STRUCTURAL_TECH_PER_RUN = Number(process.env.GEAR_TAXONOMY_MAX_TECH || 50);
 const MAX_STRUCTURAL_SYSTEMS_PER_RUN = Number(process.env.GEAR_TAXONOMY_MAX_SYSTEMS || 50);
+/** Re-alignment review of EXISTING technology<->TRM mappings: per-run cap and re-review interval. */
+const MAX_REALIGN_PER_RUN = Number(process.env.GEAR_TAXONOMY_MAX_REALIGN || 25);
+const REALIGN_INTERVAL_DAYS = Number(process.env.GEAR_TAXONOMY_REALIGN_INTERVAL_DAYS || 90);
+/** Upper bound on TRM categories a single technology may be proposed to map to. */
+const MAX_TARGETS_PER_TECH = 5;
 /** Cap on how many existing TRM categories / Capabilities are listed in a prompt. */
 const MAX_CANDIDATES_IN_PROMPT = 400;
 
@@ -93,8 +112,12 @@ async function fetchCapabilities() {
   return rows;
 }
 
-/** Approved IT standards with zero TRM category mapping. */
-async function fetchUnmappedApprovedTechnologies(limit) {
+/**
+ * Every Approved IT standard with zero TRM category mapping. Which ones are
+ * reviewed this run is decided in JS (see selectDueForReview) because the
+ * rotation and open-recommendation state live in gear_log.
+ */
+async function fetchUnmappedApprovedTechnologies() {
   const [rows] = await schemaPool.query(
     `SELECT tech.Id AS Id,
             IFNULL(tech.softwareReleaseName, tech.Keyname) AS Name,
@@ -106,11 +129,64 @@ async function fetchUnmappedApprovedTechnologies(limit) {
             ON tech.Id = ztt.obj_technology_Id
      WHERE ztt.obj_TRM_Id IS NULL
        AND status.Keyname = 'Approved'
-     ORDER BY tech.Id ASC
-     LIMIT ?`,
-    [limit]
+     ORDER BY tech.Id ASC`
   );
-  return rows;
+  return rows.map((r) => ({ ...r, TrmIds: [] }));
+}
+
+/**
+ * Look up the IT standard a chat signal refers to, by Id when the signal has
+ * one, otherwise by exact name (older signals carried only a name). Returns
+ * null when no single standard matches.
+ */
+async function fetchTechnologyForSignal({ id, name }) {
+  const byId = id != null && String(id).trim() !== '';
+  const [rows] = await schemaPool.query(
+    `SELECT tech.Id AS Id,
+            IFNULL(tech.softwareReleaseName, tech.Keyname) AS Name,
+            tech.Description AS Description,
+            status.Keyname AS Status,
+            COUNT(ztt.obj_TRM_Id) AS MappedCount
+     FROM gear_schema.obj_technology AS tech
+     LEFT JOIN gear_schema.obj_technology_status AS status
+            ON tech.obj_technology_status_Id = status.Id
+     LEFT JOIN gear_schema.zk_technology_TRM AS ztt
+            ON tech.Id = ztt.obj_technology_Id
+     WHERE ${byId ? 'tech.Id = ?' : 'IFNULL(tech.softwareReleaseName, tech.Keyname) = ?'}
+     GROUP BY tech.Id, tech.softwareReleaseName, tech.Keyname, tech.Description, status.Keyname
+     LIMIT 2`,
+    [byId ? Number(id) : String(name || '')]
+  );
+  if (rows.length !== 1) return null;
+  return { ...rows[0], MappedCount: Number(rows[0].MappedCount) || 0, TrmIds: [] };
+}
+
+/**
+ * Every IT standard that already has at least one TRM mapping, with its
+ * current mapped TRM ids. Re-alignment candidates are chosen from this in JS
+ * (see selectDueForReview) because rotation state lives in gear_log.
+ */
+async function fetchMappedTechnologies() {
+  const [rows] = await schemaPool.query(
+    `SELECT tech.Id AS Id,
+            IFNULL(tech.softwareReleaseName, tech.Keyname) AS Name,
+            tech.Description AS Description,
+            status.Keyname AS Status,
+            GROUP_CONCAT(DISTINCT ztt.obj_TRM_Id ORDER BY ztt.obj_TRM_Id SEPARATOR ',') AS TrmIds
+     FROM gear_schema.obj_technology AS tech
+     INNER JOIN gear_schema.zk_technology_TRM AS ztt
+            ON tech.Id = ztt.obj_technology_Id
+     LEFT JOIN gear_schema.obj_technology_status AS status
+            ON tech.obj_technology_status_Id = status.Id
+     GROUP BY tech.Id, tech.softwareReleaseName, tech.Keyname, tech.Description, status.Keyname`
+  );
+  return rows.map((r) => ({
+    ...r,
+    TrmIds: String(r.TrmIds || '')
+      .split(',')
+      .filter(Boolean)
+      .map(Number),
+  }));
 }
 
 /** Active, business-application systems with zero Business Capability mapping. */
@@ -178,6 +254,61 @@ async function fetchPendingSignals(limit) {
     [limit]
   );
   return rows;
+}
+
+/** Re-alignment rotation state, keyed by obj_technology.Id (as a string). */
+async function fetchTechnologyReviewState() {
+  const pool = getSignalsPool();
+  const [rows] = await pool.query(
+    `SELECT Entity_Id, Mapping_Fingerprint, Reviewed_DTG
+     FROM gear_log.taxonomy_mapping_review
+     WHERE Entity_Type = 'Technology'`
+  );
+  const state = new Map();
+  for (const r of rows) {
+    state.set(String(r.Entity_Id), {
+      fingerprint: r.Mapping_Fingerprint,
+      reviewedMs: new Date(r.Reviewed_DTG).getTime(),
+    });
+  }
+  return state;
+}
+
+async function recordTechnologyReview({ entityId, fingerprint, verdict, confidence, reasoning, recommendationId }) {
+  const pool = getSignalsPool();
+  await pool.execute(
+    `INSERT INTO gear_log.taxonomy_mapping_review
+       (Entity_Type, Entity_Id, Mapping_Fingerprint, Verdict, Confidence, Reasoning, Recommendation_Id, Reviewed_DTG)
+     VALUES ('Technology', ?, ?, ?, ?, ?, ?, NOW())
+     ON DUPLICATE KEY UPDATE
+       Mapping_Fingerprint = VALUES(Mapping_Fingerprint),
+       Verdict = VALUES(Verdict),
+       Confidence = VALUES(Confidence),
+       Reasoning = VALUES(Reasoning),
+       Recommendation_Id = VALUES(Recommendation_Id),
+       Reviewed_DTG = NOW()`,
+    [
+      String(entityId),
+      fingerprint,
+      verdict,
+      confidence ?? null,
+      reasoning ? String(reasoning).slice(0, 2000) : null,
+      recommendationId ?? null,
+    ]
+  );
+}
+
+/** Ids of entities of this type that already have a pending/approved recommendation of any gap type. */
+async function fetchOpenRecommendationEntityIds(entityType) {
+  const pool = getSignalsPool();
+  const [rows] = await pool.query(
+    `SELECT DISTINCT Affected_Entity_Id AS Id
+     FROM gear_log.taxonomy_gap_recommendation
+     WHERE Affected_Entity_Type = ? AND Affected_Entity_Id IS NOT NULL
+       AND Status IN ('pending', 'approved')`,
+    [entityType]
+  );
+  return new Set(rows.map((r) => String(r.Id)));
 }
 
 /** True when a pending/approved recommendation already covers this exact entity+gap. */
@@ -302,6 +433,98 @@ function buildManualReviewPlaceholderSql(reason) {
   return `-- MANUAL REVIEW REQUIRED: ${reason.replace(/\*\//g, '* /')} -- no SQL drafted.`;
 }
 
+/** Stable identity for a technology's current mapping set, so a changed set re-triggers review. */
+function mappingFingerprint(ids) {
+  return [...new Set((ids || []).map(Number).filter(Number.isFinite))].sort((a, b) => a - b).join(',');
+}
+
+/**
+ * Review tier for one technology: 0 = never reviewed, 1 = mapping set changed
+ * since its last review, 2 = last review older than the interval, null = not
+ * due. Entities with an open recommendation are never due, so a pending
+ * admin decision is never duplicated.
+ */
+function reviewTier(tech, prior, openEntityIds, cutoffMs) {
+  if (openEntityIds.has(String(tech.Id))) return null;
+  if (!prior) return 0;
+  if (prior.fingerprint !== mappingFingerprint(tech.TrmIds)) return 1;
+  if (prior.reviewedMs < cutoffMs) return 2;
+  return null;
+}
+
+function reviewCutoffMs(nowMs, intervalDays) {
+  return nowMs - intervalDays * 24 * 60 * 60 * 1000;
+}
+
+/**
+ * Pick which technologies to review this run, in priority order: never
+ * reviewed, then mapping set changed since last review, then the oldest
+ * reviews past the interval. Used for both the unmapped scan (TrmIds = [])
+ * and the re-alignment review of existing mappings. Filtering happens before
+ * the cap, so already-covered entities never use up a run's slots.
+ */
+function selectDueForReview(technologies, reviewState, openEntityIds, { limit, intervalDays, nowMs }) {
+  const cutoffMs = reviewCutoffMs(nowMs, intervalDays);
+  const tiers = [[], [], []];
+  for (const tech of technologies) {
+    const prior = reviewState.get(String(tech.Id));
+    const tier = reviewTier(tech, prior, openEntityIds, cutoffMs);
+    if (tier !== null) tiers[tier].push({ tech, reviewedMs: prior ? prior.reviewedMs : 0 });
+  }
+  tiers[2].sort((a, b) => a.reviewedMs - b.reviewedMs);
+  return tiers.flat().slice(0, limit).map((t) => t.tech);
+}
+
+/**
+ * Draft SQL that moves a technology from its current TRM mappings to the
+ * desired set. New links are inserted before old ones are deleted, so the
+ * technology is never left unmapped if the script is run part-way.
+ */
+function buildRealignMappingSql(technologyId, currentIds, desiredIds) {
+  const current = new Set(currentIds.map(Number));
+  const desired = new Set(desiredIds.map(Number));
+  const toAdd = [...desired].filter((id) => !current.has(id)).sort((a, b) => a - b);
+  const toRemove = [...current].filter((id) => !desired.has(id)).sort((a, b) => a - b);
+  const techId = Number(technologyId);
+  const statements = [
+    ...toAdd.map((id) => buildAddMappingSql('technology_trm_mapping', id, techId)),
+    ...toRemove.map(
+      (id) => `DELETE FROM gear_schema.zk_technology_TRM WHERE obj_TRM_Id = ${id} AND obj_technology_Id = ${techId};`
+    ),
+  ];
+  return { toAdd, toRemove, sql: statements.join(' ') };
+}
+
+/**
+ * Validate a model's re-alignment answer against real GEAR data. Returns
+ * {verdict:'keep'|'change', desiredIds, confidence, reasoning} or null when
+ * the answer cannot be trusted (unknown ids, empty result, or no real change).
+ * Any current mapping pointing at a TRM id that no longer exists is always
+ * dropped, whatever the model says.
+ */
+function validateRealignmentDecision(parsed, currentIds, knownTrmIds) {
+  if (!parsed || typeof parsed.verdict !== 'string') return null;
+  const confidence = ['low', 'medium', 'high'].includes(parsed.confidence) ? parsed.confidence : 'medium';
+  const reasoning = String(parsed.reasoning || '').slice(0, 1000);
+  const validCurrent = currentIds.filter((id) => knownTrmIds.has(Number(id)));
+  const hasDangling = validCurrent.length !== currentIds.length;
+
+  if (parsed.verdict === 'keep') {
+    if (!hasDangling) return { verdict: 'keep', desiredIds: currentIds.map(Number), confidence, reasoning };
+    if (!validCurrent.length) return null;
+    return { verdict: 'change', desiredIds: validCurrent.map(Number), confidence: 'high', reasoning };
+  }
+
+  if (parsed.verdict !== 'change' || !Array.isArray(parsed.target_ids)) return null;
+  const ids = parsed.target_ids.map(Number);
+  if (!ids.length || ids.some((id) => !knownTrmIds.has(id))) return null;
+  const desiredIds = [...new Set(ids)].slice(0, MAX_TARGETS_PER_TECH);
+  if (mappingFingerprint(desiredIds) === mappingFingerprint(currentIds)) {
+    return { verdict: 'keep', desiredIds, confidence, reasoning };
+  }
+  return { verdict: 'change', desiredIds, confidence, reasoning };
+}
+
 /* ------------------------------------------------------------------ *
  * USAi-backed decision step for mapping gaps.
  *
@@ -409,14 +632,165 @@ async function decideMappingTarget({ cfg, kind, entityName, entityDescription, a
   return null;
 }
 
+/**
+ * Ask USAi whether a technology's EXISTING TRM mappings still fit, returning
+ * the parsed (unvalidated) JSON. Callers must run validateRealignmentDecision.
+ */
+async function decideRealignment({ cfg, tech, currentNodes, allNodes }) {
+  const currentIdSet = new Set(currentNodes.map((n) => String(n.Id)));
+  // Always list the current mappings, even if they fall past the prompt cap.
+  const listedNodes = [
+    ...currentNodes,
+    ...allNodes.filter((n) => !currentIdSet.has(String(n.Id))),
+  ].slice(0, Math.max(MAX_CANDIDATES_IN_PROMPT, currentNodes.length));
+  const listed = listedNodes.map((n) => `${n.Id}|${n.Name}|Level ${n.Level}`).join('\n');
+  const current = currentNodes
+    .map((n) => `${n.Id}|${n.Name}|Level ${n.Level}|${String(n.Description || '').slice(0, 200)}`)
+    .join('\n');
+
+  const prompt = [
+    "You are auditing how a GEAR IT standard is classified in GEAR's Technology Reference Model (TRM).",
+    `IT standard name: ${tech.Name}`,
+    `IT standard description: ${tech.Description || '(none provided)'}`,
+    `IT standard status: ${tech.Status || '(unknown)'}`,
+    '',
+    'It is CURRENTLY mapped to these TRM categories (Id|Name|Level|Description):',
+    current || '(none that still exist)',
+    '',
+    'All TRM categories (Id|Name|Level):',
+    listed,
+    '',
+    'Decide whether the current mappings are the right ones. Keep a mapping unless it is clearly wrong or a',
+    'clearly more specific category exists. Add a category only if the standard plainly belongs in it too.',
+    `Never return more than ${MAX_TARGETS_PER_TECH} categories.`,
+    '',
+    'Respond with ONLY a single JSON object, no prose, no markdown fences, in exactly this shape:',
+    '{"verdict":"keep","confidence":"low|medium|high","reasoning":"..."}',
+    'OR',
+    '{"verdict":"change","target_ids":["<the COMPLETE set of TRM ids it should be mapped to, from the list above>"],"confidence":"low|medium|high","reasoning":"..."}',
+  ].join('\n');
+
+  const { content } = await chatCompletion(
+    [{ role: 'user', content: prompt }],
+    { model: cfg.model, temperature: cfg.temperature, maxTokens: 500 }
+  );
+  return extractJsonObject(content);
+}
+
 /* ------------------------------------------------------------------ *
  * Candidate processors - one per gap shape. Each returns a recommendation
  * object ready for insertRecommendation(), or null to skip.
  * ------------------------------------------------------------------ */
 
-async function processUnmappedTechnology(tech, trmCategories, trmTopLevel, cfg, situationAnalyzed, source) {
-  if (await hasExistingRecommendation('technology_trm_mapping', 'Technology', tech.Id)) return null;
+/**
+ * Turn a validated 'change' decision into a recommendation row. Pure, so it
+ * can be unit-tested without a database or USAi call.
+ */
+function buildRealignmentRecommendation(tech, decision, trmById, situationAnalyzed, source) {
+  const { toAdd, toRemove, sql } = buildRealignMappingSql(tech.Id, tech.TrmIds, decision.desiredIds);
+  if (!toAdd.length && !toRemove.length) return null;
+  const label = (id) => {
+    const node = trmById.get(Number(id));
+    return node ? `"${node.Name}" (Id ${id})` : `missing TRM category (Id ${id})`;
+  };
+  let recommendedAction = 'remap_mapping';
+  if (!toRemove.length) recommendedAction = 'add_mapping';
+  else if (!toAdd.length) recommendedAction = 'remove_mapping';
 
+  const parts = [];
+  if (toAdd.length) parts.push(`map it to ${toAdd.map(label).join(', ')}`);
+  if (toRemove.length) parts.push(`remove its mapping to ${toRemove.map(label).join(', ')}`);
+
+  return {
+    source,
+    gapType: 'technology_trm_mapping',
+    recommendedAction,
+    situationAnalyzed,
+    gapDescription:
+      `IT standard "${tech.Name}" (Id ${tech.Id}, status ${tech.Status || 'unknown'}) is currently mapped to ` +
+      `${tech.TrmIds.map(label).join(', ')}, which may not be the best TRM alignment.`,
+    recommendedAddition: `Re-align "${tech.Name}": ${parts.join('; ')}. ${decision.reasoning}`.trim(),
+    affectedEntityType: 'Technology',
+    affectedEntityId: tech.Id,
+    affectedEntityName: tech.Name,
+    proposedSql: sql,
+    confidence: decision.confidence,
+  };
+}
+
+/**
+ * Re-check one already-mapped technology. Always records a review row (so the
+ * rotation advances) and returns 1 when a recommendation was written.
+ */
+async function processRealignTechnology(tech, trmCategories, trmById, cfg) {
+  const fingerprint = mappingFingerprint(tech.TrmIds);
+  const knownTrmIds = new Set(trmById.keys());
+  const currentNodes = tech.TrmIds.map((id) => trmById.get(Number(id))).filter(Boolean);
+
+  const parsed = await decideRealignment({ cfg, tech, currentNodes, allNodes: trmCategories }).catch((err) => {
+    console.error('[taxonomy-gap-analyzer] USAi re-alignment failed for technology %s: %s', tech.Id, err.message);
+    return undefined;
+  });
+  // A transport failure is not a verdict: leave the rotation untouched so it is retried next run.
+  if (parsed === undefined) return 0;
+
+  const decision = validateRealignmentDecision(parsed, tech.TrmIds, knownTrmIds);
+  if (!decision) {
+    await recordTechnologyReview({ entityId: tech.Id, fingerprint, verdict: 'undetermined' });
+    return 0;
+  }
+  if (decision.verdict === 'keep') {
+    await recordTechnologyReview({
+      entityId: tech.Id, fingerprint, verdict: 'keep',
+      confidence: decision.confidence, reasoning: decision.reasoning,
+    });
+    return 0;
+  }
+
+  const rec = buildRealignmentRecommendation(
+    tech, decision, trmById,
+    'Re-alignment review: existing IT standard <-> TRM category mappings (zk_technology_TRM).',
+    'test'
+  );
+  const recommendationId = rec ? await insertRecommendation(rec) : null;
+  await recordTechnologyReview({
+    entityId: tech.Id, fingerprint, verdict: rec ? 'change' : 'keep',
+    confidence: decision.confidence, reasoning: decision.reasoning, recommendationId,
+  });
+  return rec ? 1 : 0;
+}
+
+/**
+ * Review one Approved, unmapped technology: skip it when it already has an
+ * open recommendation (of any gap type) or was reviewed recently, otherwise
+ * write a recommendation and record the review so the rotation advances and
+ * a rejected suggestion is not raised again until the interval elapses.
+ * `ctx` holds this run's in-memory review state and open-recommendation ids,
+ * updated here so later candidates in the same run see this review.
+ * Returns the new recommendation Id, or null when skipped.
+ */
+async function reviewUnmappedTechnology(tech, trmCategories, trmTopLevel, cfg, situationAnalyzed, source, ctx) {
+  const id = String(tech.Id);
+  const cutoffMs = reviewCutoffMs(Date.now(), REALIGN_INTERVAL_DAYS);
+  if (reviewTier(tech, ctx.reviewState.get(id), ctx.openIds, cutoffMs) === null) return null;
+
+  const rec = await processUnmappedTechnology(tech, trmCategories, trmTopLevel, cfg, situationAnalyzed, source);
+  const recommendationId = await insertRecommendation(rec);
+  ctx.openIds.add(id);
+  const fingerprint = mappingFingerprint([]);
+  await recordTechnologyReview({
+    entityId: tech.Id,
+    fingerprint,
+    verdict: rec.proposedSql.startsWith('-- MANUAL REVIEW') ? 'undetermined' : 'change',
+    confidence: rec.confidence,
+    reasoning: rec.recommendedAddition,
+    recommendationId,
+  });
+  ctx.reviewState.set(id, { fingerprint, reviewedMs: Date.now() });
+  return recommendationId;
+}
+
+async function processUnmappedTechnology(tech, trmCategories, trmTopLevel, cfg, situationAnalyzed, source) {
   const decision = await decideMappingTarget({
     cfg,
     kind: 'technology_trm_mapping',
@@ -617,21 +991,27 @@ function processDuplicateCapabilityPair(pair, situationAnalyzed, source) {
  * recommendation using the same processors as the structural scan.
  * ------------------------------------------------------------------ */
 
-async function processSignal(signal, trmCategories, trmTopLevel, capabilities, capTopLevel, cfg) {
+async function processSignal(signal, trmCategories, trmTopLevel, capabilities, capTopLevel, cfg, ctx) {
   const situationAnalyzed = `Chat question: "${signal.Query_Text || '(not recorded)'}"`;
 
   if (
     signal.Signal_Type === 'technology_incomplete_trm_mapping' &&
-    signal.Entity_Name
+    (signal.Entity_Name || signal.Entity_Id != null)
   ) {
-    return processUnmappedTechnology(
-      { Id: signal.Entity_Id, Name: signal.Entity_Name, Description: null },
-      trmCategories,
-      trmTopLevel,
-      cfg,
-      situationAnalyzed,
-      signal.Source
-    );
+    // Resolve the signal to a real record so it is deduplicated against the
+    // structural scan by Id. Only Approved, still-unmapped standards are in
+    // scope; mapped ones are covered by the re-alignment review instead.
+    // Throwing leaves the signal unprocessed so it is retried next run.
+    if (!ctx) throw new Error('technology review state unavailable');
+    const tech = await fetchTechnologyForSignal({ id: signal.Entity_Id, name: signal.Entity_Name });
+    if (!tech || tech.MappedCount > 0 || String(tech.Status || '').toLowerCase() !== 'approved') return null;
+    // reviewUnmappedTechnology inserts the row itself (or skips when already covered).
+    return {
+      alreadyInserted: true,
+      recommendationId: await reviewUnmappedTechnology(
+        tech, trmCategories, trmTopLevel, cfg, situationAnalyzed, signal.Source, ctx
+      ),
+    };
   }
 
   if (signal.Signal_Type === 'system_no_capability_mapping' && signal.Entity_Id != null) {
@@ -704,21 +1084,65 @@ async function runNightlyAnalysis() {
     const trmTopLevel = trmCategories.filter((n) => Number(n.Level) <= 2);
     const capTopLevel = capabilities.filter((n) => Number(n.Level) <= 1);
 
-    // 1. Structural scan: Approved technologies with no TRM mapping.
-    const unmappedTech = await fetchUnmappedApprovedTechnologies(MAX_STRUCTURAL_TECH_PER_RUN);
-    for (const tech of unmappedTech) {
+    // 1. Structural scan: Approved technologies with no TRM mapping. Already
+    // covered or recently reviewed ones are filtered out BEFORE the cap, so
+    // each run moves on to standards that have not been looked at yet.
+    let techCtx = null;
+    try {
+      const [techReviewState, techOpenIds] = await Promise.all([
+        fetchTechnologyReviewState(),
+        fetchOpenRecommendationEntityIds('Technology'),
+      ]);
+      techCtx = { reviewState: techReviewState, openIds: techOpenIds };
+    } catch (err) {
+      // Without rotation state every technology would look never-reviewed and
+      // be re-recommended, so technology steps are skipped rather than guessed.
+      summary.errors.push({ stage: 'technology_review_state', error: err.message });
+    }
+    const unmappedTech = techCtx ? await fetchUnmappedApprovedTechnologies() : [];
+    const dueUnmapped = techCtx
+      ? selectDueForReview(unmappedTech, techCtx.reviewState, techCtx.openIds, {
+          limit: MAX_STRUCTURAL_TECH_PER_RUN,
+          intervalDays: REALIGN_INTERVAL_DAYS,
+          nowMs: Date.now(),
+        })
+      : [];
+    summary.unmappedReviewed = 0;
+    for (const tech of dueUnmapped) {
       try {
-        const rec = await processUnmappedTechnology(
+        const recommendationId = await reviewUnmappedTechnology(
           tech, trmCategories, trmTopLevel, cfg,
           'Nightly structural scan: Approved IT standards with zero TRM category mapping.',
-          'test'
+          'test', techCtx
         );
-        if (rec) {
-          await insertRecommendation(rec);
-          summary.recommendations++;
-        }
+        if (recommendationId != null) summary.recommendations++;
+        summary.unmappedReviewed++;
       } catch (err) {
         summary.errors.push({ stage: 'unmapped_technology', id: tech.Id, error: err.message });
+      }
+    }
+
+    // 1b. Re-alignment review: re-check EXISTING technology<->TRM mappings in rotation.
+    if (techCtx && MAX_REALIGN_PER_RUN > 0) {
+      try {
+        const trmById = new Map(trmCategories.map((n) => [Number(n.Id), n]));
+        const mappedTech = await fetchMappedTechnologies();
+        const due = selectDueForReview(mappedTech, techCtx.reviewState, techCtx.openIds, {
+          limit: MAX_REALIGN_PER_RUN,
+          intervalDays: REALIGN_INTERVAL_DAYS,
+          nowMs: Date.now(),
+        });
+        summary.realignmentReviewed = 0;
+        for (const tech of due) {
+          try {
+            summary.recommendations += await processRealignTechnology(tech, trmCategories, trmById, cfg);
+            summary.realignmentReviewed++;
+          } catch (err) {
+            summary.errors.push({ stage: 'realign_technology', id: tech.Id, error: err.message });
+          }
+        }
+      } catch (err) {
+        summary.errors.push({ stage: 'realign_technology_setup', error: err.message });
       }
     }
 
@@ -784,9 +1208,12 @@ async function runNightlyAnalysis() {
     for (const [, group] of groups) {
       const representative = group[0];
       try {
-        const rec = await processSignal(representative, trmCategories, trmTopLevel, capabilities, capTopLevel, cfg);
+        const rec = await processSignal(representative, trmCategories, trmTopLevel, capabilities, capTopLevel, cfg, techCtx);
         let recommendationId = null;
-        if (rec) {
+        if (rec && rec.alreadyInserted) {
+          recommendationId = rec.recommendationId;
+          if (recommendationId != null) summary.recommendations++;
+        } else if (rec) {
           recommendationId = await insertRecommendation(rec);
           summary.recommendations++;
         }
@@ -814,4 +1241,10 @@ module.exports = {
   buildRemoveNodeMergeSql,
   buildManualReviewPlaceholderSql,
   sqlString,
+  mappingFingerprint,
+  selectDueForReview,
+  reviewTier,
+  buildRealignMappingSql,
+  validateRealignmentDecision,
+  buildRealignmentRecommendation,
 };

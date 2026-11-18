@@ -599,6 +599,7 @@ async function runChat(history, userMessage) {
           signalType: 'technology_incomplete_trm_mapping',
           queryText: userMessage,
           entityType: 'Technology',
+          entityId: alternatives.referenceProduct.Id,
           entityName: alternatives.referenceProduct.Name,
           context: { status: alternatives.referenceProduct.Status },
           source: sourceOverride,

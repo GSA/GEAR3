@@ -338,15 +338,42 @@ blocks that regardless of what a recommendation's draft SQL says).
      via `readOnlyPool`): Approved IT standards with zero TRM mapping, active
      business-application systems with zero Business Capability mapping, and
      exact-duplicate-named TRM categories / Business Capabilities.
+   - Unmapped Approved IT standards share the re-alignment rotation below: up
+     to `GEAR_TAXONOMY_MAX_TECH` (default 50) per run, chosen *after* removing
+     standards that already have an open recommendation of any gap type
+     (including a "create a new TRM category" suggestion) or were reviewed
+     within `GEAR_TAXONOMY_REALIGN_INTERVAL_DAYS`. Each run therefore moves on
+     to standards not yet looked at, and a rejected suggestion is not raised
+     again until the interval elapses. Chat signals about an unmapped standard
+     are resolved to its `obj_technology.Id` and go through the same check.
    - For each mapping gap, asks USAi to choose the best-fitting *existing*
      node, or — only when nothing existing fits — to nominate a new node and
      an *existing* parent for it. The model never writes SQL; it returns a
      small structured decision that is validated against the real candidate
      list, then turned into `Proposed_SQL` deterministically using the
      verified `gear_schema` column names documented at the top of the file.
+   - Re-checks IT standards that **already** have TRM mappings
+     (`zk_technology_TRM`), in a bounded rotation tracked in
+     `gear_log.taxonomy_mapping_review`: never-reviewed standards first, then
+     any whose mappings changed since their last review, then reviews older
+     than `GEAR_TAXONOMY_REALIGN_INTERVAL_DAYS` (default 90). Up to
+     `GEAR_TAXONOMY_MAX_REALIGN` (default 25; `0` disables) per run. USAi
+     answers "keep" or gives the complete set of TRM ids the standard should
+     map to. Every id is validated, and the difference becomes an
+     `add_mapping`, `remove_mapping`, or `remap_mapping` recommendation whose
+     `Proposed_SQL` inserts new links before deleting old ones. Mappings to TRM
+     ids that no longer exist are always proposed for removal. Standards with
+     an open (pending/approved) recommendation are skipped, and a rejected
+     suggestion is not raised again until the mappings change or the interval
+     elapses.
    - Writes `Status='pending'` rows to `gear_log.taxonomy_gap_recommendation`
      for a GEAR Manager admin to review and, if appropriate, run through
      GEAR's authenticated, audited path.
+
+The re-alignment review requires
+`api/queries/DDL/2026-11-18_taxonomy_mapping_review.sql` to be run once per
+environment (it creates the rotation table and adds `remap_mapping` to
+`Recommended_Action`).
 
 `npm run taxonomy-gaps:stats` reports pending signal/recommendation counts.
 `mcp/test/taxonomy-gap-analyzer.test.js` unit-tests the pure SQL-builder

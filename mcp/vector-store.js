@@ -3,8 +3,9 @@
  *
  * Storage: gear_log.search_vectors — one row per searchable GEAR record,
  * holding the embedding as a packed float32 BLOB plus the content hash used for
- * change detection. The table is created on demand so no manual DDL step is
- * required before first use.
+ * change detection. In dev the table is created on demand if missing; in prod,
+ * where the app user has no DDL rights, it and search_vectors_staging must be
+ * provisioned by a DBA. Steady-state operation issues DML only.
  *
  * Search: the full set of vectors is held in a single Float32Array and scored
  * by brute-force cosine similarity. At GEAR's scale (~7,700 records x 1024
@@ -86,11 +87,34 @@ function createTableSql(qualifiedName) {
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`;
 }
 
-/** Create the vector table if it does not exist yet. */
-async function ensureTable() {
+/** True once the live table is known to exist with current columns. */
+let tableEnsured = false;
+
+/** True if a gear_log table exists, via a read the app user can always run. */
+async function tableExists(table) {
   const db = getPool();
-  await db.query(createTableSql(QUALIFIED_TABLE));
+  const [rows] = await db.query(
+    `SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? LIMIT 1`,
+    [VECTOR_SCHEMA, table]
+  );
+  return rows.length > 0;
+}
+
+/**
+ * Create the vector table only if it does not exist yet.
+ *
+ * Checks first instead of always issuing CREATE TABLE IF NOT EXISTS: MySQL
+ * requires the CREATE privilege for that statement even when the table already
+ * exists, so in prod — where the app user has DML but no DDL rights — every
+ * delta refresh failed with "CREATE command denied" on an existing table.
+ */
+async function ensureTable() {
+  if (tableEnsured) return;
+  if (!(await tableExists(VECTOR_TABLE))) {
+    await getPool().query(createTableSql(QUALIFIED_TABLE));
+  }
   await ensureColumns(QUALIFIED_TABLE);
+  tableEnsured = true;
 }
 
 /**
@@ -236,48 +260,63 @@ async function loadStoredHashes() {
 
 /* ------------------------------------------------------------------ *
  * Full-rebuild staging lifecycle
+ *
+ * Everything here is DML only (SELECT/INSERT/DELETE). The prod app user has no
+ * CREATE, ALTER, or DROP rights, so the original DROP/CREATE/RENAME swap could
+ * never run there. gear_log.search_vectors_staging is now a permanent table
+ * provisioned by a DBA, and is emptied and refilled rather than recreated.
  * ------------------------------------------------------------------ */
 
-/** Drop and recreate the staging table, ready for a full rebuild. */
+const VECTOR_COLUMNS =
+  'entity_type, entity_id, name, description, status, type_display, content_hash, dimensions, embedding, model';
+
+/**
+ * Empty the staging table, ready for a full rebuild.
+ *
+ * DELETE rather than TRUNCATE: MySQL requires the DROP privilege for TRUNCATE.
+ * The table is only created when it is genuinely missing (dev convenience);
+ * in prod it must already exist.
+ */
 async function beginFullRebuild() {
-  const db = getPool();
-  
-  // In dev, drop and recreate; in prod where app lacks permissions, truncate the existing table.
-  try {
-    await db.query(`TRUNCATE TABLE ${QUALIFIED_STAGING}`);
-  } catch (err) {
-    if (err.code === 'ER_NO_SUCH_TABLE') {
-      // Table doesn't exist yet; create it from scratch
-      await db.query(createTableSql(QUALIFIED_STAGING));
-    } else {
-      throw err;
-    }
+  if (!(await tableExists(STAGING_TABLE))) {
+    await getPool().query(createTableSql(QUALIFIED_STAGING));
+    return;
   }
+  await getPool().query(`DELETE FROM ${QUALIFIED_STAGING}`);
 }
 
 /**
- * Promote the staging table to live.
+ * Promote the staging table's contents to live.
  *
- * Uses a single atomic RENAME so readers never see a partially built index: if
- * the rebuild dies midway, the previous night's vectors keep serving.
+ * Replaces the live rows inside one InnoDB transaction instead of an atomic
+ * RENAME, which needs ALTER/DROP/CREATE. Readers keep seeing the previous
+ * index until COMMIT, and a failure rolls back so the live table is untouched.
+ * The staging table is left in place so the next rebuild can reuse it.
  */
 async function commitFullRebuild() {
-  const db = getPool();
   await ensureTable();
-  const retired = `${STAGING_TABLE}_old`;
-  await db.query(`DROP TABLE IF EXISTS ${VECTOR_SCHEMA}.${retired}`);
-  await db.query(
-    `RENAME TABLE ${QUALIFIED_TABLE} TO ${VECTOR_SCHEMA}.${retired},
-                  ${QUALIFIED_STAGING} TO ${QUALIFIED_TABLE}`
-  );
-  await db.query(`DROP TABLE IF EXISTS ${VECTOR_SCHEMA}.${retired}`);
+  const conn = await getPool().getConnection();
+  try {
+    await conn.beginTransaction();
+    await conn.query(`DELETE FROM ${QUALIFIED_TABLE}`);
+    await conn.query(
+      `INSERT INTO ${QUALIFIED_TABLE} (${VECTOR_COLUMNS})
+       SELECT ${VECTOR_COLUMNS} FROM ${QUALIFIED_STAGING}`
+    );
+    await conn.commit();
+  } catch (err) {
+    await conn.rollback().catch(() => {});
+    throw err;
+  } finally {
+    conn.release();
+  }
+  await getPool().query(`DELETE FROM ${QUALIFIED_STAGING}`).catch(() => {});
   invalidateCache();
 }
 
-/** Discard a failed rebuild's staging table, leaving live vectors untouched. */
+/** Discard a failed rebuild's staged rows, leaving live vectors untouched. */
 async function abortFullRebuild() {
-  const db = getPool();
-  await db.query(`DROP TABLE IF EXISTS ${QUALIFIED_STAGING}`);
+  await getPool().query(`DELETE FROM ${QUALIFIED_STAGING}`);
 }
 
 /* ------------------------------------------------------------------ *
