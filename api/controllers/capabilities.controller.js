@@ -14,16 +14,16 @@ exports.findAll = (req, res) => {
 
 exports.findOne = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_capabilities.sql')).toString() +
-    ` WHERE cap.capability_Id = ${req.params.id};`;
+    ` WHERE cap.capability_Id = ?;`;
 
-  res = ctrl.sendQuery(query, 'individual business capability by ID', res);
+  res = ctrl.sendQuery(query, 'individual business capability by ID', res, null, [req.params.id]);
 };
 
 exports.findOneName = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_capabilities.sql')).toString() +
-    ` WHERE cap.Capability_Name = '${req.params.name}';`;
+    ` WHERE cap.Capability_Name = ?;`;
 
-  res = ctrl.sendQuery(query, 'individual business capability by name', res);
+  res = ctrl.sendQuery(query, 'individual business capability by name', res, null, [req.params.name]);
 };
 
 exports.findSystems = (req, res) => {
@@ -31,10 +31,10 @@ exports.findSystems = (req, res) => {
     ` LEFT JOIN gear_schema.zk_systems_subsystems_capabilities AS cap_mappings ON systems.\`ex:GEAR_ID\` = cap_mappings.obj_systems_subsystems_Id
       LEFT JOIN gear_schema.obj_capability AS cap ON cap_mappings.obj_capability_Id = cap.capability_Id
     
-      WHERE cap.capability_Id = ${req.params.id} AND systems.\`ex:Status\` = 'Active' AND systems.\`ex:BusinessApplication\` = 'Yes' 
+      WHERE cap.capability_Id = ? AND systems.\`ex:Status\` = 'Active' AND systems.\`ex:BusinessApplication\` = 'Yes' 
       GROUP BY systems.\`ex:GEAR_ID\`;`;
 
-  res = ctrl.sendQuery(query, 'supporting systems for capability', res);
+  res = ctrl.sendQuery(query, 'supporting systems for capability', res, null, [req.params.id]);
 };
 
 exports.findOrgs = (req, res) => {
@@ -42,9 +42,9 @@ exports.findOrgs = (req, res) => {
     ` LEFT JOIN zk_capabilities_org	  AS caps_mapping ON org.Organization_Id = caps_mapping.obj_organization_Id
       LEFT JOIN obj_capability	  	  AS cap          ON caps_mapping.obj_capability_Id = cap.capability_Id
     
-      WHERE cap.capability_Id = ${req.params.id};`;
+      WHERE cap.capability_Id = ?;`;
 
-  res = ctrl.sendQuery(query, 'related orgs for capability', res);
+  res = ctrl.sendQuery(query, 'related orgs for capability', res, null, [req.params.id]);
 };
 
 exports.updateOrgs = (req, res) => {
@@ -58,19 +58,22 @@ exports.updateOrgs = (req, res) => {
 
     // Create string to update business capability-organization relationship
     var orgString = '';
+    var params = [];
     if (data.relatedOrgs) {
       // Delete any references first
-      orgString += `DELETE FROM zk_capabilities_org WHERE obj_capability_Id=${req.params.id}; `;
+      orgString += `DELETE FROM zk_capabilities_org WHERE obj_capability_Id = ?; `;
+      params.push(req.params.id);
 
       // Insert new IDs
       data.relatedOrgs.forEach(orgID => {
-        orgString += `INSERT INTO zk_capabilities_org (obj_capability_Id, obj_organization_Id) VALUES (${req.params.id}, ${orgID}); `;
+        orgString += `INSERT INTO zk_capabilities_org (obj_capability_Id, obj_organization_Id) VALUES (?, ?); `;
+        params.push(req.params.id, orgID);
       });
     };
 
     var query = `${orgString}`;
     
-    res = ctrl.sendQuery(query, 'updating organizations for capability', res);
+    res = ctrl.sendQuery(query, 'updating organizations for capability', res, null, params);
 
   } else {
     console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING

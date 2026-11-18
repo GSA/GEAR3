@@ -83,35 +83,10 @@ export class AppComponent implements OnInit {
   //   }
   // }
 
-  showPopup(url, title, w, h) {
-    // Only for stage
-    this.router.navigate(['/feedback']);
-
-    // Uncomment this for prod
-    // this.analyticsService.logClickEvent('Give Feedback');
-
-    // const dualScreenLeft = window.screenLeft !==  undefined ? window.screenLeft : window.screenX;
-    // const dualScreenTop = window.screenTop !==  undefined   ? window.screenTop  : window.screenY;
-
-    // const width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
-    // const height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
-
-    // const systemZoom = width / window.screen.availWidth;
-    // const left = (width - w) / 2 / systemZoom + dualScreenLeft;
-    // const top = (height - h) / 2 / systemZoom + dualScreenTop;
-    // const popupWindow = window.open(url, title, 
-    //   `
-    //   scrollbars=yes,
-    //   width=${w / systemZoom}, 
-    //   height=${h / systemZoom}, 
-    //   top=${top}, 
-    //   left=${left}
-    //   `
-    // );
-
-    // if (window.focus) {
-    //  popupWindow.focus();
-    // } 
- }
+  showPopup(url: string, title: string, w: number, h: number): void {
+    const left = Math.round(window.screenX + (window.outerWidth - w) / 2);
+    const top = Math.round(window.screenY + (window.outerHeight - h) / 2);
+    window.open(url, title, `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=yes`);
+  }
 
 }

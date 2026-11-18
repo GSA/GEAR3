@@ -13,13 +13,13 @@ exports.findAll = (req, res) => {
 
 exports.findOne = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_TRM.sql')).toString() + 
-  ` WHERE Technology_Category_Id = ${req.params.id};`;
-  res = ctrl.sendQuery(query, 'TRM', res);
+  ` WHERE Technology_Category_Id = ?;`;
+  res = ctrl.sendQuery(query, 'TRM', res, null, [req.params.id]);
 };
 
 exports.relatedITStandards = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_TRM_related_it_standards.sql')).toString() + 
-  ` WHERE ttrm.obj_TRM_Id = ${req.params.id}
+  ` WHERE ttrm.obj_TRM_Id = ?
   GROUP BY tech.Id;`;
-  res = ctrl.sendQuery(query, 'TRM', res);
+  res = ctrl.sendQuery(query, 'TRM', res, null, [req.params.id]);
 };

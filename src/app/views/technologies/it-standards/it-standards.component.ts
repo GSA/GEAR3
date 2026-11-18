@@ -50,7 +50,7 @@ export class ItStandardsComponent implements OnInit {
   public filterTotals: any = null;
   public selectedTab: string = 'All';
   public filterChips: string[] = ['Mobile', 'Desktop', 'Server', 'SaaS', 'PaaS', 'Other'];
-  private selectedChips: string[] = [];
+  public selectedChips: string[] = [];
 
   public daysExpiring: number = 0;
   public daysRetired: number = 0;
@@ -74,12 +74,48 @@ export class ItStandardsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Support deep-link filtered URLs: /it_standards/filtered/:deploymentType/:status
+    // and /it_standards/status/:status
+    const routeParams = this.route.snapshot.params;
+    if (routeParams['deploymentType']) {
+      const depType = routeParams['deploymentType'];
+      const match = this.filterChips.find(c => c.toLowerCase() === depType.toLowerCase());
+      if (match) {
+        this.selectedChips = [match];
+      }
+    }
+    if (routeParams['status']) {
+      const status = routeParams['status'];
+      this.selectedTab = status === 'ApprovedDenied'
+        ? 'ApprovedDenied'
+        : status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+    }
+
     this.route.queryParams.subscribe(params => {
-      if (params['tab'])               this.selectedTab = params['tab'];
-      if (params['expiringWithinDays']) this.daysExpiring = +params['expiringWithinDays'];
-      if (params['includePastDue'])    this.includePastDueExpirations = params['includePastDue'] === 'true';
-      if (params['pastDueOnly'])       this.pastDueOnly = params['pastDueOnly'] === 'true';
-      if (params['retiredWithinDays']) this.daysRetired = +params['retiredWithinDays'];
+      if (params['tab']) {
+        this.selectedTab = params['tab'];
+      }
+      if (params['deploymentTypes']) {
+        const types: string[] = params['deploymentTypes'].split(',');
+        this.selectedChips = types
+          .filter(t => this.filterChips.some(c => c.toLowerCase() === t.toLowerCase()))
+          .map(t => this.filterChips.find(c => c.toLowerCase() === t.toLowerCase())!);
+      }
+      if (params['status']) {
+        this.selectedTab = params['status'].charAt(0).toUpperCase() + params['status'].slice(1).toLowerCase();
+      }
+      if (params['expiringWithinDays']) {
+        this.daysExpiring = +params['expiringWithinDays'];
+      }
+      if (params['includePastDue']) {
+        this.includePastDueExpirations = params['includePastDue'] === 'true';
+      }
+      if (params['pastDueOnly']) {
+        this.pastDueOnly = params['pastDueOnly'] === 'true';
+      }
+      if (params['retiredWithinDays']) {
+        this.daysRetired = +params['retiredWithinDays'];
+      }
     });
 
     this.sharedService.setJWTonLogIn();
@@ -90,12 +126,12 @@ export class ItStandardsComponent implements OnInit {
       this.rollupRows = this.buildRollupRows(dateFiltered);
       this.computeFilterTotals();
 
-      if (this.selectedTab !== 'All') {
-        this.onSelectTab(this.selectedTab);
+      if (this.selectedTab !== 'All' || this.hasSelectedChips()) {
+        this.tableService.updateReportTableData(this.getTabFilteredRows());
       } else {
         this.tableService.updateReportTableData(this.rollupRows);
-        this.tableService.updateReportTableDataReadyStatus(true);
       }
+      this.tableService.updateReportTableDataReadyStatus(true);
     });
   }
 
@@ -218,8 +254,10 @@ export class ItStandardsComponent implements OnInit {
 
     if (this.selectedTab === 'Other') {
       rows = rows.filter(r => !this.otherStatuses.includes(r.status));
-    } else if (this.selectedTab === 'Approved') {
-      rows = rows.filter(r => r.status === 'Approved' || r.status === 'Approved with conditions');
+    } else if (this.selectedTab === 'Approved' || this.selectedTab === 'ApprovedDenied') {
+      rows = this.selectedTab === 'ApprovedDenied'
+        ? rows.filter(r => r.status === 'Approved' || r.status === 'Denied' || r.status === 'Approved with conditions')
+        : rows.filter(r => r.status === 'Approved' || r.status === 'Approved with conditions');
     } else if (this.selectedTab !== 'All') {
       rows = rows.filter(r => r.status === this.selectedTab);
     }
@@ -233,6 +271,7 @@ export class ItStandardsComponent implements OnInit {
 
   public onSelectTab(tabName: string): void {
     this.selectedTab = tabName;
+    this.syncUrlToFilters();
     this.tableService.updateReportTableData(this.getTabFilteredRows());
     this.tableService.updateReportTableDataReadyStatus(true);
   }
@@ -243,6 +282,7 @@ export class ItStandardsComponent implements OnInit {
 
   public onFilterChipSelect(selectedChips: string[]): void {
     this.selectedChips = selectedChips;
+    this.syncUrlToFilters();
     this.tableService.updateReportTableData(this.getTabFilteredRows());
     this.tableService.updateReportTableDataReadyStatus(true);
     this.computeFilterTotals();
@@ -254,6 +294,41 @@ export class ItStandardsComponent implements OnInit {
 
   private hasSelectedChips(): boolean {
     return this.selectedChips && this.selectedChips.length > 0;
+  }
+
+  private syncUrlToFilters(): void {
+    const chips = this.selectedChips;
+    const tab = this.selectedTab;
+    const hasChips = chips.length > 0;
+    const hasTab = tab && tab !== 'All';
+
+    if (hasChips && hasTab) {
+      if (chips.length === 1) {
+        this.router.navigate(['/it_standards/filtered', chips[0], tab], { replaceUrl: true });
+      } else {
+        this.router.navigate(['/it_standards'], {
+          replaceUrl: true,
+          queryParams: { deploymentTypes: chips.join(','), status: tab }
+        });
+      }
+    } else if (hasChips) {
+      if (chips.length === 1) {
+        this.router.navigate(['/it_standards/filtered', chips[0]], { replaceUrl: true });
+      } else {
+        this.router.navigate(['/it_standards'], {
+          replaceUrl: true,
+          queryParams: { deploymentTypes: chips.join(',') }
+        });
+      }
+    } else if (hasTab) {
+      if (tab === 'ApprovedDenied') {
+        this.router.navigate(['/it_standards'], { replaceUrl: true, queryParams: { tab: 'ApprovedDenied' } });
+      } else {
+        this.router.navigate(['/it_standards/status', tab], { replaceUrl: true });
+      }
+    } else {
+      this.router.navigate(['/it_standards'], { replaceUrl: true });
+    }
   }
 
   public onRowClick(e: any): void {
@@ -276,6 +351,7 @@ export class ItStandardsComponent implements OnInit {
     });
   }
 
+  // Keep dashboard deep-link filters consistent with backend totals query scope.
   private isInExpiringStatusScope(standard: ITStandards): boolean {
     const approvedLikeStatusIds = [11, 2, 6, 9];
     if (typeof standard.StatusId === 'number') {

@@ -31,9 +31,9 @@ exports.findOne = (req, res) => {
   //ctrl.googleMain(res, 'single', SHEET_ID, RANGE, req.params.id);
 
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_records.sql')).toString() +
-    ` WHERE Records_Id = ${req.params.id} ORDER BY Record_Item_Title;`;
+    ` WHERE Records_Id = ? ORDER BY Record_Item_Title;`;
 
-  res = ctrl.sendQuery(query, 'individual record', res);
+  res = ctrl.sendQuery(query, 'individual record', res, null, [req.params.id]);
 };
 
 
@@ -44,10 +44,10 @@ exports.findSystems = (req, res) => {
   // The join is necessary to get the system ID from the mapping table
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
     ` LEFT JOIN gear_schema.zk_systems_subsystems_records AS records_mapping ON systems.\`ex:GEAR_ID\` = records_mapping.obj_systems_subsystems_Id
-    WHERE records_mapping.obj_records_Id = ${req.params.id} GROUP BY systems.\`ex:GEAR_ID\`;`;
+    WHERE records_mapping.obj_records_Id = ? GROUP BY systems.\`ex:GEAR_ID\`;`;
 
   // Get all systems related to a record ID and return them to the client (res)
-  res = ctrl.sendQuery(query, 'related systems for record', res);
+  res = ctrl.sendQuery(query, 'related systems for record', res, null, [req.params.id]);
 };
 
 exports.updateSystems = (req, res) => {
@@ -61,20 +61,22 @@ exports.updateSystems = (req, res) => {
 
     // Create string to update record-system relationship
     var systemString = '';
+    var params = [];
     if (data.relatedSystems) {
       // Delete any references first
-      systemString += `DELETE FROM zk_systems_subsystems_records WHERE obj_records_Id=${req.params.id}; `;
+      systemString += `DELETE FROM zk_systems_subsystems_records WHERE obj_records_Id = ?; `;
+      params.push(req.params.id);
 
       // Insert new IDs
       data.relatedSystems.forEach(systemID => {
-        systemID = systemID
-        systemString += `INSERT INTO zk_systems_subsystems_records (obj_records_Id, obj_systems_subsystems_Id) VALUES (${req.params.id}, ${systemID}); `;
+        systemString += `INSERT INTO zk_systems_subsystems_records (obj_records_Id, obj_systems_subsystems_Id) VALUES (?, ?); `;
+        params.push(req.params.id, systemID);
       });
     };
 
     var query = `${systemString}`;
 
-    //res = ctrl.sendQuery(query, 'updating systems for record', res);
+    //res = ctrl.sendQuery(query, 'updating systems for record', res, null, params);
 
   } else {
     console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING

@@ -120,13 +120,21 @@ export class SharedService {
     return pocObjs;
   }
 
+  private cookiesVerified: boolean = false;
+
   // JWT Handling
   //// Set JWT on log in to be tracked when checking for authentication
   public setJWTonLogIn(): void {
     this.verifyCookies();
   }
 
-  verifyCookies() : void {    
+  verifyCookies() : void {
+    if (this.cookiesVerified) {
+      return;
+    }
+    // Mark in-flight immediately so concurrent page-init calls don't each fire
+    // a separate request while the first one is still pending.
+    this.cookiesVerified = true;
     //console.log('requesting cookies...'); // debug
     this.http.get('/verify', {
       headers: {
@@ -157,6 +165,8 @@ export class SharedService {
       }
     }
     , error => {
+      // Reset so a real retry can happen if the server was temporarily unavailable
+      this.cookiesVerified = false;
       console.error('An error occurred while verifying cookies', error);
     });
   }
@@ -318,23 +328,41 @@ export class SharedService {
   //// Description formattter
   public formatDescription(value: any, row: any) {
     if (!value) return '';
-    else return '<span class="description-wrap">' + value + "</span>";
+    const cleaned = String(value).replace(/[\r\n]+/g, ' ');
+    return '<span class="description-wrap">' + cleaned + '</span>';
   };
   public formatDescriptionShorter(value: any, row: any) {
     if (!value) return '';
-    else return '<span class="description-wrap-short">' + value + "</span>";
+    const cleaned = String(value).replace(/[\r\n]+/g, ' ');
+    return '<span class="description-wrap-short">' + cleaned + '</span>';
   };
   public formatDescriptionLite(value: any, row: any) {
     if (!value) return '-';
-    else return '<span class="description-wrap-lite">' + value + "</span>";
+    const cleaned = String(value).replace(/[\r\n]+/g, ' ');
+    return '<span class="description-wrap-lite">' + cleaned + '</span>';
   };
 
   //// Status Formatter
+  private static readonly STATUS_TOOLTIPS: Record<string, string> = {
+    'Approved': 'IT Standards status — software that has been reviewed and authorized for use at the Agency by IT Security.',
+    'Approved with conditions': 'IT Standards status — software authorized for use under specific conditions defined by IT Security.',
+    'Denied': 'IT Standards status — software that has been reviewed and is not authorized for use at the Agency.',
+    'Retired': 'IT Standards status — software that was previously approved but is no longer authorized for use.',
+    'Pilot': 'IT Standards status — software currently under evaluation for potential Agency-wide approval.',
+    'Not yet submitted': 'IT Standards status — software that has not yet been submitted for an IT Security review.',
+    'Active': 'FISMA status — a system actively monitored and reported on in the Agency\'s FISMA inventory.',
+    'Inactive': 'FISMA status — a system no longer actively monitored or maintained in the Agency\'s FISMA inventory.',
+    'production': 'Website status — the site is live and accessible to end users in the production environment.',
+    'staging': 'Website status — the site is in a pre-production staging environment and not yet publicly released.',
+  };
+
   public formatStatus(value: any, row: any) {
     if(!value) return '-';
-    else if(value === 'Approved' || value === 'Active' || value === 'production') return `<span class="table-status-badge-green">${value}</span>`;
-    else if(value === 'Pilot' || value === 'Not yet submitted' || value === 'staging' || value === 'Approved with conditions') return `<span class="table-status-badge-yellow">${value}</span>`;
-    else return `<span class="table-status-badge-red">${value}</span>`;
+    const tooltip = SharedService.STATUS_TOOLTIPS[value] ?? '';
+    const titleAttr = tooltip ? ` title="${tooltip}"` : '';
+    if(value === 'Approved' || value === 'Active' || value === 'production') return `<span class="table-status-badge-green"${titleAttr}>${value}</span>`;
+    else if(value === 'Pilot' || value === 'Not yet submitted' || value === 'staging' || value === 'Approved with conditions') return `<span class="table-status-badge-yellow"${titleAttr}>${value}</span>`;
+    else return `<span class="table-status-badge-red"${titleAttr}>${value}</span>`;
   }
 
   //// Deployment Type Formatter
@@ -424,8 +452,34 @@ export class SharedService {
   public getTooltip (attrDefinitions: DataDictionary[], name: string): string {
     const def = attrDefinitions.find(def => def.Term === name);
     if(def){
-      return def.TermDefinition;
+      return this.buildTooltip(def);
     }
     return '';
+  }
+
+  // Builds the helper text displayed in tooltips. When a data source is
+  // available a bold "Data source:" label (in light gray) is shown followed by
+  // the value, then a blank line, then a bold "Definition:" label followed by
+  // the term definition. The labels are bold/light-gray while the values use
+  // the default tooltip text color. The returned string contains HTML, so it
+  // must be rendered with a tooltip that allows HTML (e.g. pTooltip with
+  // [escape]="false").
+  private buildTooltip (def: DataDictionary): string {
+    const definition = this.escapeHtml(def.TermDefinition || '');
+    const definitionLine = `<strong class="tooltip-label">Definition:</strong> ${definition}`;
+    if (def.DataSource) {
+      const dataSource = this.escapeHtml(def.DataSource);
+      return `<strong class="tooltip-label">Data source:</strong> ${dataSource}<br><br>${definitionLine}`;
+    }
+    return definitionLine;
+  }
+
+  private escapeHtml (value: string): string {
+    return value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 }

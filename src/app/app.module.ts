@@ -17,6 +17,7 @@ import { IdentifierComponent } from './components/identifier/identifier.componen
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SidebarV2Component } from './components/sidebar-v2/sidebar-v2.component';
 import { TopbarComponent } from './components/topbar/topbar.component';
+import { ChatbotComponent } from './components/chatbot/chatbot.component';
 
 import { providePrimeNG } from 'primeng/config';
 import Lara from '@primeuix/themes/lara';
@@ -35,6 +36,7 @@ import { SharedModule } from './shared/shared.module';
     SidebarComponent,
     SidebarV2Component,
     TopbarComponent,
+    ChatbotComponent,
   ],
   bootstrap: [AppComponent],
   imports: [

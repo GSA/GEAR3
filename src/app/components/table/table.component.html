@@ -1,4 +1,4 @@
-@if (isDataReady && !isSearchLoading) {
+@if (isDataReady) {
   <div class="table-responsive-container">
     <div class="d-flex justify-content-between">
       <div></div>
@@ -15,10 +15,15 @@
       [value]="tableData"
       [rowsPerPageOptions]="[10, 25, 50, 100, 200]"
       [rows]="defaultPaginationNumber"
-      [first]="first"
+      [(first)]="first"
       [paginator]="showPagination"
-      [scrollable]="true"
-      [scrollHeight]="screenHeight"
+      [lazy]="serverSidePagination"
+      [lazyLoadOnInit]="serverSidePagination"
+      [totalRecords]="serverSidePagination ? serverSideTotalRecords : tableData.length"
+      [scrollable]="!showPagination && stickyHeader"
+      [scrollHeight]="!showPagination && stickyHeader ? screenHeight : undefined"
+      [virtualScroll]="!showPagination && stickyHeader"
+      [virtualScrollItemSize]="46"
       [exportFilename]="getExportFilename()"
       [styleClass]="reportStyle + ' p-datatable-gridlines'"
       [sortOrder]="defaultSortOrder"
@@ -27,6 +32,7 @@
       [showCurrentPageReport]="true"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
       (onPage)="pageChange($event)"
+      (onLazyLoad)="onLazyLoad($event)"
       (onRowSelect)="onRowSelect($event)"
       [dataKey]="showExpandColumn ? expandDataKey : null"
       [(expandedRowKeys)]="expandedRows">
@@ -48,6 +54,7 @@
                       type="text"
                       [formControl]="tableSearchControl"
                       (keypress)="onTableSearchKeypress($event)"
+                      (keyup.enter)="serverSidePagination ? onServerSideSearch() : null"
                       placeholder="Search keyword"
                       aria-label="Table Search" />
                     </p-inputgroup>
@@ -88,16 +95,16 @@
             @if (showExpandColumn) {
               <th style="width: 3rem;"></th>
             }
-            @for (col of columns; track col) {
+            @for (col of columns; track col.field) {
               @if (showColumn(col)) {
-                <th [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.isSortable ? true : false" [class]="col.class">
+                <th [pSortableColumn]="col.field" [pSortableColumnDisabled]="!col.isSortable ? true : false" [class]="col.class" [ngStyle]="col.style">
                   <div class="d-flex align-items-center table-heading">
                     @if (!col.titleTooltip) {
-                      <span [title]="getTooltip(col.header)" >{{ col.header }}</span>
+                      <span [pTooltip]="getTooltip(col.header)" [escape]="false" tooltipPosition="top" tooltipStyleClass="gear-help-tooltip" [appendTo]="'body'">{{ col.header }}</span>
                     }
                     <!-- Table tooltip override for definitions that don't match the col.header property -->
                     @if (col.titleTooltip) {
-                      <span [title]="col.titleTooltip">{{ col.header }}</span>
+                      <span [pTooltip]="col.titleTooltip" [escape]="false" tooltipPosition="top" tooltipStyleClass="gear-help-tooltip" [appendTo]="'body'">{{ col.header }}</span>
                     }
                     <!-- <span *ngIf="showFilters"><p-columnFilter type="text" [field]="col.field" display="menu" /></span> -->
                     @if (col.isSortable) {
@@ -110,7 +117,7 @@
           </tr>
           @if (showFilters) {
             <tr>
-              @for (col of columns; track col) {
+              @for (col of columns; track col.field) {
                 @if (showColumn(col)) {
                   <th>
                     <p-columnFilter
@@ -144,9 +151,9 @@
                   }
                 </td>
               }
-              @for (col of columns; track col) {
+              @for (col of columns; track col.field) {
                 @if (showColumn(col)) {
-                  <td>
+                  <td [ngStyle]="col.style">
                     @if (!col.formatter) {
                       <span [ngClass]="col.class">{{ rowData[col.field] }}</span>
                     }

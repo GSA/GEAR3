@@ -1,5 +1,5 @@
 import { Component, ContentChild, EventEmitter, HostListener, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
-import { Table, TableLazyLoadEvent, TableRowSelectEvent } from 'primeng/table';
+import { Table, TablePageEvent, TableLazyLoadEvent, TableRowSelectEvent } from 'primeng/table';
 import { Column, ExportColumn, TwoDimArray, FilterButton, ColumnFilter } from '../../common/table-classes';
 import { SharedService } from '@services/shared/shared.service';
 import { CookieService } from '@services/shared/cookie.service';
@@ -41,7 +41,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
   // An optional function to use for exporting the data
   // instead of the built in export function
-  @Input() exportFunction: Function = null;
+  @Input() exportFunction: Function | null = null;
 
   // Inputs for showing/hiding specific toolbar items
   // as well as the entire toolbar itself
@@ -54,6 +54,11 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
   // Show/hide pagination
   @Input() showPagination: boolean = true;
+
+  // Disable the sticky (pinned) table header. When false, the table renders
+  // in a non-scrollable, fully-expanded layout and the header flows with the
+  // page instead of pinning (and scrolling content behind it).
+  @Input() stickyHeader: boolean = true;
 
   // Default sort inputs order is either 1 or -1
   // for ascending and descending respectively
@@ -68,6 +73,13 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   @Input() visibleColumnStorageKey: string = '';
 
   @Input() attrDefs: DataDictionary[] = [];
+
+  // Server-side (lazy) pagination
+  @Input() serverSidePagination: boolean = false;
+  @Input() serverSideTotalRecords: number = 0;
+
+  // Emits {page, pageSize, sortField, sortOrder, search} for server-side pagination
+  @Output() lazyLoadEvent = new EventEmitter<{ page: number; pageSize: number; sortField: string; sortOrder: number; search: string }>();
 
   // Row expansion support
   @Input() showExpandColumn: boolean = false;
@@ -84,16 +96,16 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   // Row click event
   @Output() rowClickEvent = new EventEmitter<any>();
 
-  @ViewChild(Table) private dt: Table;
+  @ViewChild(Table) private dt!: Table;
 
   @HostListener('window:resize', ['$event'])
-  onResize(event) {
+  onResize(event: UIEvent) {
     this.setScreenHeight();
     this.adjustTableHeight();
   }
 
   @HostListener('window:orientationchange', ['$event'])
-  onOrientationChange(event) {
+  onOrientationChange(event: Event) {
     setTimeout(() => {
       this.setScreenHeight();
       this.adjustTableHeight();
@@ -124,10 +136,9 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
   activeTableData: any[] = [];
 
-  matchModeOptions: SelectItem[];
+  matchModeOptions: SelectItem[] = [];
 
   isDataReady: boolean = false;
-  isSearchLoading: boolean = false;
 
   tableSearchControl = new FormControl('');
   private tableSearchSubscription?: Subscription;
@@ -136,6 +147,9 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   private urlSearchTerm: string = '';
   private isHandlingDataUpdate: boolean = false;
   private defaultColumnVisibility: Map<string, boolean> = new Map();
+  private tableDataSubscription?: Subscription;
+  private tableReadySubscription?: Subscription;
+  private queryParamsSubscription?: Subscription;
 
   constructor(
     private sharedService: SharedService,
@@ -153,14 +167,10 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     // Search is now triggered by Enter key, not by value changes
     // But we still need to handle when search is manually cleared
     this.tableSearchSubscription = this.tableSearchControl.valueChanges
-      .subscribe((searchValue: string) => {
+      .subscribe((searchValue: string | null) => {
         // Only trigger search reset when value becomes empty (manual clearing)
         if (!searchValue || searchValue.trim() === '') {
-          this.isSearchLoading = true;
-          setTimeout(() => {
-            this.onTableSearch('');
-            this.isSearchLoading = false;
-          }, 0);
+          this.onTableSearch('');
         }
     });
 
@@ -173,7 +183,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
     this.exportColumns = this.tableCols.map((col) => ({ title: col.header, dataKey: col.field }));
     
-    this.route.queryParams.subscribe(p => {
+    this.queryParamsSubscription = this.route.queryParams.subscribe(p => {
       this.urlSearchTerm = p['tableSearchTerm'] || '';
       if (!this.urlSearchTerm) {
         this.tableSearchControl.patchValue('', { emitEvent: false });
@@ -186,16 +196,23 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
       this.originalTableData = [...this.localTableData];
       this.isDataReady = true;
     } else {
-      this.tableService.reportTableData$.subscribe(d => {
+      this.tableDataSubscription = this.tableService.reportTableData$.subscribe(d => {
         if (this.isHandlingDataUpdate) return;
-        if (d && d.length > 0) {
-          this.originalTableData = [...d];
-          if (!this.applyPendingSearch()) {
-            this.tableData = d;
-          }
+        this.originalTableData = d ? [...d] : [];
+        if (!this.applyPendingSearch()) {
+          this.tableData = d ?? [];
         }
+        // Defer paginator reset to after Angular has applied the new tableData
+        // binding so PrimeNG recalculates totalRecords and page links correctly.
+        setTimeout(() => {
+          this.first = 0;
+          if (this.dt) {
+            this.dt.first = 0;
+            this.dt.totalRecords = this.tableData.length;
+          }
+        });
       });
-      this.tableService.reportTableDataReady$.subscribe(r => {
+      this.tableReadySubscription = this.tableService.reportTableDataReady$.subscribe(r => {
         this.isDataReady = r;
       });
     }
@@ -235,9 +252,10 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   ngOnDestroy(): void {
     this.tableService.updateReportTableData(null);
     this.tableService.updateReportTableDataReadyStatus(false);
-    if (this.tableSearchSubscription) {
-      this.tableSearchSubscription.unsubscribe();
-    }
+    this.tableSearchSubscription?.unsubscribe();
+    this.tableDataSubscription?.unsubscribe();
+    this.tableReadySubscription?.unsubscribe();
+    this.queryParamsSubscription?.unsubscribe();
   }
 
   private captureDefaultColumnVisibility(): void {
@@ -400,9 +418,33 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  pageChange(event) {
+  pageChange(event: TablePageEvent) {
     this.first = event.first;
     this.rows = event.rows;
+  }
+
+  onLazyLoad(event: TableLazyLoadEvent): void {
+    if (!this.serverSidePagination) return;
+    const pageSize = event.rows || this.defaultPaginationNumber;
+    const page = Math.floor((event.first || 0) / pageSize) + 1;
+    const sortField = (event.sortField as string) || this.defaultSortField;
+    const sortOrder = event.sortOrder || this.defaultSortOrder;
+    const search = this.tableSearchControl.value?.trim() || '';
+    this.lazyLoadEvent.emit({ page, pageSize, sortField, sortOrder, search });
+  }
+
+  onServerSideSearch(): void {
+    if (!this.serverSidePagination) return;
+    const search = this.tableSearchControl.value?.trim() || '';
+    const pageSize = this.rows || this.defaultPaginationNumber;
+    this.first = 0;
+    this.lazyLoadEvent.emit({
+      page: 1,
+      pageSize,
+      sortField: this.defaultSortField,
+      sortOrder: this.defaultSortOrder,
+      search,
+    });
   }
 
   hasPreFilteredTableData() {
@@ -433,7 +475,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
   private navigateByType(type: string, data: any) {
     const currentRoute = this.router.url;
-    const navigationMap = {
+    const navigationMap: Record<string, { route: string; id: string; context: string }> = {
       'Investment': { route: '/investments', id: 'ID', context: '/capabilities/' },
       'investments': { route: '/investments', id: 'ID', context: '/capabilities/' },
       'Capability': { route: '/capabilities', id: 'ID', context: '/systems/' },
@@ -566,12 +608,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   clearSearch(): void {
-    this.isSearchLoading = true;
-    this.tableSearchControl.setValue('', { emitEvent: false });
-    setTimeout(() => {
-      this.onTableSearch('');
-      this.isSearchLoading = false;
-    }, 0);
+    this.tableSearchControl.setValue('', { emitEvent: true });
   }
 
   private updateOriginalData() {
@@ -636,7 +673,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
   exportSanitizedData() {
     if(this.exportFunction) {
-      this.dt.exportFunction();
+      this.dt.exportFunction?.();
     } else {
       const sanitizedData = JSON.parse(JSON.stringify(this.tableData));
 
@@ -655,7 +692,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  escapeCsvField(field) {
+  escapeCsvField(field: unknown) {
     const stringField = String(field); 
   
     const escapedField = stringField.replace(/"/g, '""');
@@ -668,10 +705,6 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public getTooltip (name: string): string {
-    const def = this.attrDefs.find(def => def.Term === name);
-    if(def){
-      return def.TermDefinition;
-    }
-    return '';
+    return this.sharedService.getTooltip(this.attrDefs, name);
   }
 }

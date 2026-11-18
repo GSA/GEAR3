@@ -43,11 +43,13 @@ export class WebsiteServiceCategoryComponent implements OnInit {
       field: 'website_service_category_id',
       header: 'Id',
       isSortable: true,
+      style: { 'width': '60px' },
     },
     {
       field: 'name',
       header: 'Name',
       isSortable: true,
+      style: { 'width': '120px' },
     },
     {
       field: 'description',

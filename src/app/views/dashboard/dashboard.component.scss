@@ -48,7 +48,7 @@
           display: flex;
           flex-direction: row;
           justify-content: space-between;
-          margin-bottom: 1rem;
+          margin-bottom: 0.25rem;
 
           & .number-icon-container {
             display: flex;
@@ -82,6 +82,24 @@
               font-size: 1.5rem;
               font-weight: 600;
               color: var(--neutral-black-color-dark);
+
+              &.clickable-number {
+                cursor: pointer;
+                text-decoration: underline;
+                text-decoration-color: transparent;
+                transition: color 120ms ease, text-decoration-color 120ms ease;
+
+                &:hover {
+                  color: var(--primary-color);
+                  text-decoration-color: currentColor;
+                }
+
+                &:focus-visible {
+                  outline: 2px solid rgba(0, 95, 204, 0.45);
+                  outline-offset: 2px;
+                  border-radius: 2px;
+                }
+              }
             }
           }
           
@@ -106,29 +124,30 @@
           font-size: 0.875rem;
           font-weight: 400;
           color: var(--neutral-black-color-dark);
+          margin-bottom: 0.75rem;
         }
 
         
         & .quick-view-expiring-text-container {
           & .expire-icon {
-            color: #8a4300;
+            color: var(--primary-color);
             padding-right: 0.25rem;
           }
   
           & .expire-text {
             font-size: 0.875rem;
             font-weight: 400;
-            color: #8a4300;
+            color: var(--primary-color);
   
             & a {
-              color: #8a4300;
+              color: var(--primary-color);
             }
 
             &.multi-line-expire-text {
               display: flex;
               flex-direction: column;
               align-items: flex-start;
-              gap: 0.15rem;
+              gap: 0.75rem;
               width: 100%;
             }
 
@@ -136,13 +155,21 @@
               display: flex;
               align-items: center;
               gap: 0.25rem;
-              text-decoration-line: underline;
               cursor: pointer;
               width: fit-content;
-              transition: transform 120ms ease, filter 120ms ease;
+              transition: color 120ms ease, transform 120ms ease;
+
+              & span {
+                text-decoration: underline;
+              }
+
+              & .expire-icon {
+                display: inline-block;
+                text-decoration: none;
+              }
 
               &:hover {
-                filter: brightness(0.9);
+                color: var(--primary-color-hover);
               }
 
               &:active {
@@ -252,6 +279,19 @@
         flex: 1 1 100%; /* Full width on small screens */
       }
 
+      & .bar-chart-content {
+        width: 100%;
+
+        ::ng-deep ngx-charts-bar-vertical {
+          display: block;
+          width: 100%;
+
+          ::ng-deep .ngx-charts-outer {
+            width: 100% !important;
+          }
+        }
+      }
+
       & .item-header {
         display: flex;
         flex-direction: row;
@@ -351,6 +391,16 @@
 
       & .pie-chart-content {
         position: relative;
+        display: flex;
+        justify-content: center;
+
+        // ngx-charts renders the SVG inside a plain div; we use ::ng-deep to give
+        // that wrapper relative positioning so the center-text overlay is anchored
+        // to the actual chart SVG rather than the full container width.
+        ::ng-deep ngx-charts-pie-chart > div {
+          position: relative;
+        }
+
         & .pie-chart-center-text {
           position: absolute;
           top: 50%;
@@ -358,6 +408,8 @@
           text-align: center;
           line-height: 0.5;
           transform: translate(-50%, -50%);
+          pointer-events: none;
+          z-index: 1;
 
           & .center-title {
             color: #666666;

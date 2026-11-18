@@ -71,7 +71,7 @@
                     <tbody>
                       <tr>
                         <td><i class="fa fa-calendar-alt"></i>ATO Date</td>
-                        <td>{{ fisma.ATODate | date : "longDate" }}</td>
+                        <td>{{ fisma.ATODate | date : "longDate" : "UTC" }}</td>
                       </tr>
                       <tr>
                         <td><i class="far fa-file"></i>ATO Type</td>
@@ -117,7 +117,7 @@
                     </tr>
                     <tr>
                       <td><i class="fa fa-calendar-alt"></i>Renewal Date</td>
-                      <td>{{ fisma.RenewalDate | date : "longDate" }}</td>
+                      <td>{{ fisma.RenewalDate | date : "longDate" : "UTC" }}</td>
                     </tr>
                     <tr>
                       <td><i class="fas fa-layer-group"></i>Fed or Contractor System</td>

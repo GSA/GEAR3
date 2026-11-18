@@ -1,8 +1,9 @@
 const ctrl = require('./base.controller'),
   techCatImport = require('./tech-catalog-import.controller'),
   cronJobDbUtilService = require('../cron-jobs/cron-job-db-util.service.js'),
-  JobLogger = require('../cron-jobs/job-logger.js'),
-  JobStatus = require('../enums/job-status.js');
+  { JobLogger } = require('../cron-jobs/job-logger.js'),
+  JobStatus = require('../enums/job-status.js'),
+  { runFismaSheetJob } = require('../cron-jobs/fisma-sheet-job-handler.js');
 
 const SHEET_ID = '1eSoyn7-2EZMqbohzTMNDcFmNBbkl-CzXtpwNXHNHD1A', // FOR PRODUCTION
 RANGE = 'Master Junction with Business Systems!A2:B',
@@ -50,6 +51,11 @@ exports.runUpdateAllRelatedRecordsJob = async () => {
 async function postprocesJobExecution(jobId, jobLogger, jobStatus) {
   await cronJobDbUtilService.updateDbData({ jobStatus: jobStatus, endTime: ctrl.formatDateTime(new Date()), jobLogs: jobLogger.getLogs(), jobId: jobId })
 }
+// -------------------------------------------------------------------------------------------------
+// CRON JOB: Push FISMA data to the Google Sheet "TEST" tab
+exports.runFismaSheetJob = async () => {
+  await runFismaSheetJob();
+};
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Tech Catalog Daily Import (runs daily at 5:00 AM)
 exports.runTechCatalogImportJob = async () => {

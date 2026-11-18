@@ -1,5 +1,5 @@
-import { Component, OnInit, HostListener, AfterViewInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, HostListener, AfterViewInit, ChangeDetectorRef, OnDestroy, NgZone } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
 import { Column } from '@common/table-classes';
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
@@ -155,8 +155,33 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private sharedService: SharedService,
     private router: Router,
     private cdr: ChangeDetectorRef,
-    private analyticsService: AnalyticsService
-  ) { }
+    private analyticsService: AnalyticsService,
+    private ngZone: NgZone
+  ) {
+    // Re-measure charts whenever Angular navigation ends on this page
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.ngZone.runOutsideAngular(() => {
+          // Fire a synthetic resize so ngx-charts recalculates its own dimensions,
+          // then follow up with our own measurement.
+          setTimeout(() => {
+            window.dispatchEvent(new Event('resize'));
+            this.ngZone.run(() => {
+              this.updateChartViews();
+              this.cdr.detectChanges();
+            });
+          }, 150);
+          setTimeout(() => {
+            window.dispatchEvent(new Event('resize'));
+            this.ngZone.run(() => {
+              this.updateChartViews();
+              this.cdr.detectChanges();
+            });
+          }, 400);
+        });
+      }
+    });
+  }
 
   public ngOnInit(): void {
     // Single aggregated call replaces 9 separate dashboard metric requests
@@ -187,6 +212,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.attrDefinitions = definitions;
       this.isDataReady = true;
+      // Charts can only be measured after isDataReady renders their containers.
+      // Defer one tick so Angular flushes the @if block into the DOM first.
+      setTimeout(() => {
+        this.updateChartViews();
+        this.cdr.detectChanges();
+      }, 50);
     });
 
     this.apiService.getRecentITStandards(this.recentITStandardAmount).subscribe(standards => {
@@ -198,9 +229,27 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public ngAfterViewInit(): void {
-    this.updateChartViews();
+    // Defer initial measurement so the flex layout has settled and
+    // container offsetWidth returns the correct value.
+    setTimeout(() => {
+      this.updateChartViews();
+      this.cdr.detectChanges();
+    }, 0);
+
+    // Re-measure after a longer delay to handle cases where navigating
+    // from another route leaves the layout still settling (e.g. sidebar animation).
+    setTimeout(() => {
+      this.updateChartViews();
+      this.cdr.detectChanges();
+    }, 300);
+
+    // Final safety re-measure for slow navigations
+    setTimeout(() => {
+      this.updateChartViews();
+      this.cdr.detectChanges();
+    }, 800);
+
     this.setupResizeObserver();
-    this.cdr.detectChanges();
   }
 
   public ngOnDestroy(): void {
@@ -218,8 +267,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private loadHostingPlatformsData(): void {
     // Replaces full GET /api/systems (1.98MB) with a lightweight aggregation endpoint
     this.apiService.getHostingPlatforms().subscribe(rows => {
-      const { individualPlatforms, othersCount } = rows
-        .map(row => ({ name: this.normalizePlatformName(row.CSP), value: row.count }))
+      // Normalize names first, then merge duplicate names so ngx-charts
+      // does not silently overwrite bars that share the same key.
+      const mergedMap = new Map<string, number>();
+      for (const row of rows) {
+        const name = this.normalizePlatformName(row.CSP);
+        mergedMap.set(name, (mergedMap.get(name) ?? 0) + row.count);
+      }
+
+      const { individualPlatforms, othersCount } = Array.from(mergedMap.entries())
+        .map(([name, value]) => ({ name, value }))
         .sort((a, b) => b.value - a.value)
         .reduce((acc, platform) => {
           if (platform.value >= 3) {
@@ -236,8 +293,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
 
       this.hostingPlatformsData = finalData;
-      this.updateChartViews();
-      this.cdr.detectChanges();
+      // Defer measurement until after Angular has reflowed the DOM with the new data.
+      // Without this, offsetWidth can be 0 or stale on the initial load, causing the
+      // bar chart to render condensed to the left.
+      setTimeout(() => {
+        this.updateChartViews();
+        this.cdr.detectChanges();
+      }, 0);
     });
   }
 
@@ -257,7 +319,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private setupResizeObserver(): void {
     if (typeof ResizeObserver !== 'undefined') {
       this.resizeObserver = new ResizeObserver(() => {
-        this.updateChartViews();
+        // Defer to avoid measuring mid-reflow during resize events
+        setTimeout(() => this.updateChartViews(), 0);
       });
 
       const barContainer = document.querySelector('.bar-chart-content');
@@ -364,6 +427,27 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.analyticsService.logClickEvent('/FISMA', 'Dashboard view all FISMA');
     this.router.navigate(['/FISMA']);
   }
+  public viewExpiringFismaThisQuarter(): void {
+    this.analyticsService.logClickEvent('/FISMA', 'Dashboard FISMA expiring this quarter');
+    this.router.navigate(['/FISMA'], { queryParams: { expiringWithinDays: '90' } });
+  }
+  public viewDecommissionedSystemsLast6Months(): void {
+    this.analyticsService.logClickEvent('/systems', 'Dashboard decommissioned systems last 6 months');
+    this.router.navigate(['/systems'], { queryParams: { decommissionedWithinMonths: '6' } });
+  }
+  public viewExpiringITStandardsThisQuarter(): void {
+    this.analyticsService.logClickEvent('/it_standards', 'Dashboard IT standards expiring this quarter');
+    // Match SQL: DATE_ADD(CURDATE(), INTERVAL 3 MONTH) — add 1 extra day so the
+    // frontend's <= boundary reaches the same date as MySQL's inclusive interval end.
+    const today = new Date();
+    const threeMonths = new Date(today.getFullYear(), today.getMonth() + 3, today.getDate() + 1);
+    const diffDays = Math.round((threeMonths.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    this.router.navigate(['/it_standards'], { queryParams: { expiringWithinDays: String(diffDays) } });
+  }
+  public viewRetiredITStandardsLast6Months(): void {
+    this.analyticsService.logClickEvent('/it_standards', 'Dashboard IT standards retired last 6 months');
+    this.router.navigate(['/it_standards'], { queryParams: { retiredWithinDays: '180' } });
+  }
   public viewAllSystems(): void {
     this.analyticsService.logClickEvent('/systems', 'Dashboard view all systems');
     this.router.navigate(['/systems']);
@@ -424,18 +508,22 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public getFismaPastDueLabel(): string {
-    return `${this.itemLabel(this.fismaPastDue || 0)} past due`;
+    const count = this.fismaPastDue || 0;
+    return `${count} active system${count === 1 ? '' : 's'} past ${count === 1 ? 'its' : 'their'} ATO renewal date`;
   }
 
   public getFismaExpiringSoonLabel(): string {
-    return `${this.itemLabel(this.fismaExpiringThisWeek || 0)} expiring within 7 days`;
+    const count = this.fismaExpiringThisWeek || 0;
+    return `${count} system${count === 1 ? '' : 's'}' ATO renewal date${count === 1 ? '' : 's'} within 7 days`;
   }
 
   public getStandardsPastDueLabel(): string {
-    return `${this.itemLabel(this.standardsPastDue || 0)} past due`;
+    const count = this.standardsPastDue || 0;
+    return `${count} software entr${count === 1 ? 'y' : 'ies'} past ${count === 1 ? 'its' : 'their'} approval date`;
   }
 
   public getStandardsExpiringSoonLabel(): string {
-    return `${this.itemLabel(this.standardsExpiringThisWeek || 0)} expiring within 7 days`;
+    const count = this.standardsExpiringThisWeek || 0;
+    return `${count} software entr${count === 1 ? 'y' : 'ies'} expiring within 7 days`;
   }
 }

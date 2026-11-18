@@ -45,6 +45,7 @@ export class ItStandardsDetailsComponent implements OnInit {
   public detailsData: ITStandards;
   public showAllFields: boolean = false;
   public attrDefinitions = <DataDictionary[]>[];
+  public trmAttrDefinitions = <DataDictionary[]>[];
   public isDataReady: boolean = false;
   public relatedSystems: System[] = [];
   public hasRelatedSystems: boolean = false;
@@ -263,6 +264,12 @@ export class ItStandardsDetailsComponent implements OnInit {
         .subscribe((data: DataDictionary[]) => {
           this.attrDefinitions = data;
       });
+
+      // Get attribute definitions for the Technology Categories table
+      this.apiService.getDataDictionaryByReportName('TRM')
+        .subscribe((data: DataDictionary[]) => {
+          this.trmAttrDefinitions = data;
+      });
     });
   }
 
@@ -356,11 +363,7 @@ export class ItStandardsDetailsComponent implements OnInit {
   }
 
   public getTooltip (name: string): string {
-    const def = this.attrDefinitions.find(def => def.Term === name);
-    if(def){
-      return def.TermDefinition;
-    }
-    return '';
+    return this.sharedService.getTooltip(this.attrDefinitions, name);
   }
 
   public isApproved(): boolean {

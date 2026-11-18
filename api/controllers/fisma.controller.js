@@ -16,9 +16,9 @@ exports.findOne = (req, res) => {
   let id = req.params.id.trim();
   if(/^\d+$/.test(id)) {
     var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_fisma_archer.sql')).toString() +
-      ` WHERE archer.\`ex:GEAR_ID\` = ${id} GROUP BY archer.\`ex:GEAR_ID\`;`;
+      ` WHERE archer.\`ex:GEAR_ID\` = ? GROUP BY archer.\`ex:GEAR_ID\`;`;
 
-    res = ctrl.sendQuery(query, "individual FISMA System", res);
+    res = ctrl.sendQuery(query, "individual FISMA System", res, null, [id]);
   } else {
     res.status(404).json({message: "ID not found"});
   }

@@ -10,15 +10,19 @@ import { ItStandardRollupComponent } from './it-standards/rollup/it-standard-rol
 import { TechCategoriesComponent } from './tech-categories/tech-categories.component';
 import { TechCategoriesDetailsComponent } from './tech-categories/details/tech-categories-details.component';
 import { TechCategoriesModelComponent } from './tech-categories-model/tech-categories-model.component';
+import { ItBricksComponent } from './it-bricks/it-bricks.component';
 
 const routes: Routes = [
   { path: 'it_standards', component: ItStandardsComponent, title: 'IT Standards' },
-  { path: 'it_standards/filtered/:deploymentType/:status', component: ItStandardsComponent, title: 'IT Standard' },
-  { path: 'it_standards/filtered/:deploymentType', component: ItStandardsComponent, title: 'IT Standard' },
+  { path: 'it_standards/filtered/:deploymentType/:status', component: ItStandardsComponent, title: 'IT Standards' },
+  { path: 'it_standards/filtered/:deploymentType', component: ItStandardsComponent, title: 'IT Standards' },
+  { path: 'it_standards/status/:status', component: ItStandardsComponent, title: 'IT Standards' },
   { path: 'it_standards/:standardID', component: ItStandardsDetailsComponent, title: 'IT Standard' },
   { path: 'it-standard-rollup/:productKey', component: ItStandardRollupComponent, title: 'IT Standard' },
   { path: 'it_standards_manager', component: ItStandardsManagerComponent, title: 'IT Standard Manager' },
   { path: 'it_standards_manager/:standardID', component: ItStandardsManagerComponent, title: 'IT Standard Manager' },
+  { path: 'it_bricks', component: ItBricksComponent, title: 'IT Bricks', data: { title: 'IT Bricks', bricksSrc: '/assets/it-bricks/it-bricks.html' } },
+  { path: 'it_bricks_executive', component: ItBricksComponent, title: 'IT Bricks (Executive)', data: { title: 'IT Bricks (Executive)', bricksSrc: '/assets/it-bricks/it-bricks-executive.html' } },
   { path: 'tech_categories', component: TechCategoriesComponent, title: 'Technology Categories' },
   { path: 'tech_categories/:techCatID', component: TechCategoriesDetailsComponent, title: 'Technology Category' },
   { path: 'tech_categories_model', component: TechCategoriesModelComponent, title: 'Technology Categories Model' },
@@ -34,6 +38,7 @@ const routes: Routes = [
     TechCategoriesComponent,
     TechCategoriesDetailsComponent,
     TechCategoriesModelComponent,
+    ItBricksComponent,
   ],
   imports: [
     SharedModule,

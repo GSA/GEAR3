@@ -14,7 +14,7 @@ exports.findAll = (req, res) => {
 
 exports.findOne = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_pocs.sql')).toString() +
-    ` WHERE poc.SamAccountName = '${req.params.samName}';`;
+    ` WHERE poc.SamAccountName = ?;`;
 
-  res = ctrl.sendQuery(query, 'individual POC', res); //removed sendQuery_cowboy reference
+  res = ctrl.sendQuery(query, 'individual POC', res, null, [req.params.samName]); //removed sendQuery_cowboy reference
 };

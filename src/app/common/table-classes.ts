@@ -7,6 +7,7 @@ export interface Column {
   showColumn?: boolean,
   hideFromPicker?: boolean,
   class?: string,
+  style?: { [key: string]: string },
   formatter?: Function,
   titleTooltip?: string
 }

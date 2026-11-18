@@ -24,7 +24,7 @@
               <div class="data-wrapper">
                   <div class="data">
                     <label class="data-label">
-                      <span [title]="getTooltip('Status')" role="tooltip">
+                      <span [pTooltip]="getTooltip('Status')" [escape]="false" role="tooltip">
                         Status
                         <i class="fas fa-info-circle"></i>
                       </span>
@@ -35,7 +35,7 @@
                   </div>
                   <div class="data">
                     <label class="data-label">
-                      <span [title]="getTooltip('Type of Site')" role="tooltip">
+                      <span [pTooltip]="getTooltip('Type of Site')" [escape]="false" role="tooltip">
                         Type of Site
                         <i class="fas fa-info-circle"></i>
                       </span>
@@ -46,7 +46,7 @@
                   </div>
                   <div class="data">
                     <label class="data-label">
-                      <span [title]="getTooltip('Recent Screenshots')" role="tooltip">
+                      <span [pTooltip]="getTooltip('Recent Screenshots')" [escape]="false" role="tooltip">
                         Recent Screenshots
                         <i class="fas fa-info-circle"></i>
                       </span>
@@ -101,7 +101,7 @@
                   <div class="data-wrapper">
                     <div class="data">
                       <label class="data-label">
-                        <span [title]="getTooltip('Office')" role="tooltip">
+                        <span [pTooltip]="getTooltip('Office')" [escape]="false" role="tooltip">
                           Office
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -112,7 +112,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [title]="getTooltip('Sub-office')" role="tooltip">
+                        <span [pTooltip]="getTooltip('Sub-office')" [escape]="false" role="tooltip">
                           Sub Office
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -123,7 +123,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [title]="getTooltip('Website Manager')" role="tooltip">
+                        <span [pTooltip]="getTooltip('Website Manager')" [escape]="false" role="tooltip">
                           Website Manager
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -134,7 +134,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [title]="getTooltip('Contact Email')" role="tooltip">
+                        <span [pTooltip]="getTooltip('Contact Email')" [escape]="false" role="tooltip">
                           Contact Email
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -145,7 +145,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [title]="getTooltip('Redirect URL')" role="tooltip">
+                        <span [pTooltip]="getTooltip('Redirect URL')" [escape]="false" role="tooltip">
                           Redirect URL
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -156,7 +156,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [title]="getTooltip('Required by Law/Policy?')" role="tooltip">
+                        <span [pTooltip]="getTooltip('Required by Law/Policy?')" [escape]="false" role="tooltip">
                           Required By Law/Policy?
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -167,7 +167,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [title]="getTooltip('DAP Enabled')" role="tooltip">
+                        <span [pTooltip]="getTooltip('DAP Enabled')" [escape]="false" role="tooltip">
                           DAP Enabled
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -178,7 +178,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [title]="getTooltip('Current USWDS Score')" role="tooltip">
+                        <span [pTooltip]="getTooltip('Current USWDS Score')" [escape]="false" role="tooltip">
                           Current USWDS Score
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -189,7 +189,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [title]="getTooltip('Mobile Friendly?')" role="tooltip">
+                        <span [pTooltip]="getTooltip('Mobile Friendly?')" [escape]="false" role="tooltip">
                           Mobile Friendly?
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -200,7 +200,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [title]="getTooltip('Has Search?')" role="tooltip">
+                        <span [pTooltip]="getTooltip('Has Search?')" [escape]="false" role="tooltip">
                           Has Search?
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -211,7 +211,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [title]="getTooltip('HTTPS Enabled')" role="tooltip">
+                        <span [pTooltip]="getTooltip('HTTPS Enabled')" [escape]="false" role="tooltip">
                           HTTPS Enabled
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -222,7 +222,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [title]="getTooltip('Hosting Platform')" role="tooltip">
+                        <span [pTooltip]="getTooltip('Hosting Platform')" [escape]="false" role="tooltip">
                           Hosting Platform
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -233,7 +233,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [title]="getTooltip('Content Management Platform')" role="tooltip">
+                        <span [pTooltip]="getTooltip('Content Management Platform')" [escape]="false" role="tooltip">
                           Content Management Platform
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -244,7 +244,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [title]="getTooltip('Repository URL')" role="tooltip">
+                        <span [pTooltip]="getTooltip('Repository URL')" [escape]="false" role="tooltip">
                           Repository URL
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -255,7 +255,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [title]="getTooltip('Target Decommission Date')" role="tooltip">
+                        <span [pTooltip]="getTooltip('Target Decommission Date')" [escape]="false" role="tooltip">
                           Target Decommission Date
                           <i class="fas fa-info-circle"></i>
                         </span>
@@ -266,7 +266,7 @@
                     </div>
                     <div class="data">
                       <label class="data-label">
-                        <span [title]="getTooltip('Sitemap URL')" role="tooltip">
+                        <span [pTooltip]="getTooltip('Sitemap URL')" [escape]="false" role="tooltip">
                           Sitemap URL
                           <i class="fas fa-info-circle"></i>
                         </span>

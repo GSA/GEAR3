@@ -5,7 +5,7 @@ const path = require('path');
 
 const queryPath = '../queries/';
 
-const SqlString = require('sqlstring');
+const SqlString = require('mysql2');
 
 exports.getDataDictionary = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_data_dictionary.sql')).toString() + ';';

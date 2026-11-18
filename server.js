@@ -451,6 +451,40 @@ server.on('error', onError);
 server.on('listening', onListening);
 
 /*
+ * Internal loopback listener for the AI tool layer.
+ *
+ * Under IIS/iisnode the main server listens on a named pipe, not a TCP port,
+ * so mcp/gear-tools.js has no address it can fetch GEAR's own /api endpoints
+ * from. Pointing it at the public hostname does not work either: GSA's
+ * certificates are issued by an internal CA that Node does not trust, so TLS
+ * verification fails. This opens a second listener for the SAME Express app on
+ * a loopback-only TCP port and advertises it via GEAR_INTERNAL_API_PORT.
+ *
+ * Bound to 127.0.0.1, so it is not reachable off the box. Skipped entirely
+ * when the main listener is already TCP (local development) or when
+ * GEAR_API_BASE is set explicitly.
+*/
+if (typeof port === 'string' && !process.env.GEAR_API_BASE) {
+  const internalServer = http.createServer(app);
+  internalServer.listen(0, '127.0.0.1', () => {
+    const internalPort = internalServer.address().port;
+    process.env.GEAR_INTERNAL_API_PORT = String(internalPort);
+    console.log(
+      'Internal API loopback listening on 127.0.0.1:' + internalPort +
+      ' (for AI tool layer; main listener is pipe ' + port + ')'
+    );
+  });
+  internalServer.on('error', (err) => {
+    // Non-fatal: the site keeps serving, but AI tools will not reach the API.
+    console.error(
+      'Internal API loopback failed to start (%s). GEAR Assistant tools will be ' +
+      'unable to reach the GEAR API; set GEAR_API_BASE to a loopback URL instead.',
+      err.message
+    );
+  });
+}
+
+/*
  * Event listener for HTTP server "error" event.
 */
 function onError(error) {
@@ -586,6 +620,15 @@ if (process.env.RECORDS_CRON) {
 } else {
   console.warn('RECORDS_CRON env variable not set — skipping cron job.');
 }
+
+// CRON JOB: FISMA data -> Google Sheets
+if (process.env.FISMA_SHEET_CRON) {
+  cron.schedule(process.env.FISMA_SHEET_CRON, async () => {
+    await cronCtrl.runFismaSheetJob();
+  });
+} else {
+  console.warn('FISMA_SHEET_CRON env variable not set — skipping cron job.');
+}
 /* 
 // -------------------------------------------------------------------------------------------------
 // CRON JOB: Tech Catalog Daily Import
@@ -607,4 +650,61 @@ if (process.env.TOUCHPOINTS_CRON) {
   });
 } else {
   console.warn('TOUCHPOINTS_CRON env variable not set — skipping cron job.');
+}
+
+// -------------------------------------------------------------------------------------------------
+// CRON JOBS: GEAR Assistant semantic search index (see mcp/embedding-pipeline.js)
+//
+// Two schedules with different jobs:
+//   EMBEDDING_DELTA_CRON    — every few minutes. Hashes searchable text and
+//     re-embeds only changed records, so edits made during the day (e.g. an IT
+//     standard's approval status) are searchable within minutes.
+//   EMBEDDING_REBUILD_CRON  — nightly, after the data loaders above finish.
+//     Re-embeds everything into a staging table and swaps it in, reconciling
+//     anything the delta sweep could not detect.
+//
+// Both are no-ops unless GEAR_SEMANTIC_SEARCH=true.
+if (process.env.GEAR_SEMANTIC_SEARCH === 'true') {
+  const embeddingPipeline = require('./mcp/embedding-pipeline.js');
+
+  if (process.env.EMBEDDING_DELTA_CRON) {
+    cron.schedule(process.env.EMBEDDING_DELTA_CRON, async () => {
+      await embeddingPipeline.runDeltaRefresh();
+    });
+  } else {
+    console.warn('EMBEDDING_DELTA_CRON env variable not set — skipping cron job.');
+  }
+
+  if (process.env.EMBEDDING_REBUILD_CRON) {
+    cron.schedule(process.env.EMBEDDING_REBUILD_CRON, async () => {
+      await embeddingPipeline.runFullRebuild();
+    });
+  } else {
+    console.warn('EMBEDDING_REBUILD_CRON env variable not set — skipping cron job.');
+  }
+} else {
+  console.warn('GEAR_SEMANTIC_SEARCH is not "true" — semantic search disabled, embedding cron jobs skipped.');
+}
+
+// -------------------------------------------------------------------------------------------------
+// CRON JOB: GEAR Assistant taxonomy-gap analysis (see mcp/taxonomy-gap-analyzer.js)
+//
+// Runs nightly, after the embedding rebuild above. All the "thinking" for
+// taxonomy-gap recommendations happens here - reading signals the chatbot
+// captured inline (zero latency, fire-and-forget - see
+// mcp/taxonomy-gap-signals.js), running its own structural scan of
+// gear_schema, and calling USAi to decide mapping targets - fully decoupled
+// from any user request, so chat responses are never slowed down by this.
+// Writes land only in gear_log.taxonomy_gap_recommendation as pending,
+// advisory rows for a human GEAR Manager admin to review; nothing here is
+// ever applied to gear_schema automatically.
+//
+// Also runnable on demand: `node mcp/taxonomy-gap-cli.js run`.
+if (process.env.TAXONOMY_GAP_ANALYSIS_CRON) {
+  const taxonomyGapAnalyzer = require('./mcp/taxonomy-gap-analyzer.js');
+  cron.schedule(process.env.TAXONOMY_GAP_ANALYSIS_CRON, async () => {
+    await taxonomyGapAnalyzer.runNightlyAnalysis();
+  });
+} else {
+  console.warn('TAXONOMY_GAP_ANALYSIS_CRON env variable not set — skipping cron job.');
 }

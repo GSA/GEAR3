@@ -3,6 +3,7 @@ const ctrl = require('./base.controller');
 const fs = require('fs');
 const path = require('path');
 const { Guid } = require('typescript-guid');
+const { escape } = require('mysql2');
 
 const queryPath = '../queries/';
 
@@ -219,7 +220,7 @@ exports.createAdvanced = (req, res) => {
         });
       }
 
-      var logStatement = `insert into gear_log.event (Event, User, DTG) values ('create IT Standard: ${query.replace(/'/g, '')}', '${req.headers.requester}', now());`;
+      var logStatement = `insert into gear_log.event (Event, User, DTG) values (${escape('create IT Standard: ' + query.replace(/'/g, ''))}, ${escape(req.headers.requester)}, now());`;
       res = ctrl.sendQuery(query + ' ' + logStatement, 'create IT Standard', res); //removed sendQuery_cowboy reference
     } else {
       res.status(502).json({
@@ -301,46 +302,46 @@ exports.getAllOperatingSystems = (req, res) => {
 
 exports.getAppBundles = (req, res) => {
   var query = fs.readFileSync(path.join(__dirname, queryPath, `GET/get_it-standard_app_bundles.sql`)).toString() +
-  ` WHERE matchBundle.obj_technology_Id = ${req.params.id});`;
+  ` WHERE matchBundle.obj_technology_Id = ?);`;
 
-  res = ctrl.sendQuery(query, 'App Bundles', res);
+  res = ctrl.sendQuery(query, 'App Bundles', res, null, [req.params.id]);
 }
 
 // Remove and Save Categories
 function removeSavedCategories(techId) {
-  return `DELETE FROM zk_technology_TRM WHERE obj_technology_Id=${techId};`;
+  return `DELETE FROM zk_technology_TRM WHERE obj_technology_Id=${escape(techId)};`;
 }
 function saveCategories(techId, categoryId) {
-  return `INSERT INTO zk_technology_TRM (obj_TRM_Id, obj_technology_Id) VALUES (${categoryId}, ${techId});`;
+  return `INSERT INTO zk_technology_TRM (obj_TRM_Id, obj_technology_Id) VALUES (${escape(categoryId)}, ${escape(techId)});`;
 }
 
 // Remove and Save POCs
 function removeSavedPOCs(techId) {
-  return `DELETE FROM zk_technology_poc WHERE obj_technology_Id=${techId};`;
+  return `DELETE FROM zk_technology_poc WHERE obj_technology_Id=${escape(techId)};`;
 }
 function savePOCs(techId, pocName) {
-  return `INSERT INTO zk_technology_poc (obj_technology_Id, obj_ldap_SamAccountName) VALUES (${techId}, '${pocName}');`;
+  return `INSERT INTO zk_technology_poc (obj_technology_Id, obj_ldap_SamAccountName) VALUES (${escape(techId)}, ${escape(String(pocName))});`;
 }
 
 // Remove and Save OS
 function removeSavedOS(techId) {
-  return `DELETE FROM zk_technology_operating_system WHERE obj_technology_Id=${techId}; `;
+  return `DELETE FROM zk_technology_operating_system WHERE obj_technology_Id=${escape(techId)}; `;
 }
 function saveOS(techId, osId) {
-  return `INSERT INTO zk_technology_operating_system (obj_operating_system_Id, obj_technology_Id) VALUES (${osId}, ${techId});`;
+  return `INSERT INTO zk_technology_operating_system (obj_operating_system_Id, obj_technology_Id) VALUES (${escape(osId)}, ${escape(techId)});`;
 }
 
 // Remove and Save App Bundles
 function removeSavedAppBundles(techId) {
   let deletionString = '';
-  deletionString += `DELETE FROM zk_technology_app_bundle WHERE obj_technology_Id=${techId};`;
-  deletionString += `DELETE FROM obj_technology_app_bundle WHERE Id=${techId};`;
+  deletionString += `DELETE FROM zk_technology_app_bundle WHERE obj_technology_Id=${escape(techId)};`;
+  deletionString += `DELETE FROM obj_technology_app_bundle WHERE Id=${escape(techId)};`;
   return deletionString;
 }
 function saveAppBundles(techId, appBundle) {
   let saveString = '';
-  saveString += `INSERT INTO obj_technology_app_bundle (Keyname) VALUES ('${appBundle.Name}'); `;
-  saveString += `INSERT INTO zk_technology_app_bundle (obj_technology_app_bundle_Id, obj_technology_Id) VALUES (LAST_INSERT_ID(), ${techId}); `;
+  saveString += `INSERT INTO obj_technology_app_bundle (Keyname) VALUES (${escape(String(appBundle.Name))}); `;
+  saveString += `INSERT INTO zk_technology_app_bundle (obj_technology_app_bundle_Id, obj_technology_Id) VALUES (LAST_INSERT_ID(), ${escape(techId)}); `;
   return saveString;
 }
 
@@ -352,22 +353,22 @@ function saveCustomManufacturer(techId, manufacturer) {
     queryString = `UPDATE 
                     obj_technology
                   SET
-                    manufacturer = '${manufacturer.id}',
-                    manufacturerName = '${manufacturer.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
+                    manufacturer = ${escape(String(manufacturer.id))},
+                    manufacturerName = ${escape(manufacturer.name)}
                   WHERE
-                    Id = ${techId};`;
+                    Id = ${escape(techId)};`;
   } else {
     let guid = Guid.create().toString();
     queryString += `INSERT INTO obj_manufacturer
                       (id, name, createdDate)
-                    VALUES ('${guid}', '${manufacturer.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}', NOW());`;
+                    VALUES ('${guid}', ${escape(manufacturer.name)}, NOW());`;
     queryString += `UPDATE 
                       obj_technology
                     SET
                       manufacturer = '${guid}',
-                      manufacturerName = '${manufacturer.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
+                      manufacturerName = ${escape(manufacturer.name)}
                     WHERE
-                      Id = ${techId};`;
+                      Id = ${escape(techId)};`;
   }
 
   return queryString;
@@ -380,22 +381,22 @@ function saveCustomSoftwareProduct(techId, softwareProduct, manufacturer) {
     queryString = `UPDATE 
                     obj_technology
                   SET
-                    softwareProduct = '${softwareProduct.id}',
-                    softwareProductName = '${softwareProduct.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
+                    softwareProduct = ${escape(String(softwareProduct.id))},
+                    softwareProductName = ${escape(softwareProduct.name)}
                   WHERE
-                    Id = ${techId};`;
+                    Id = ${escape(techId)};`;
   } else {
     let guid = Guid.create().toString();
     queryString += `INSERT INTO obj_software_product
                       (id, name, createdDate, manufacturer_id)
-                    VALUES ('${guid}', '${softwareProduct.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}', NOW(), '${manufacturer.id}');`;
+                    VALUES ('${guid}', ${escape(softwareProduct.name)}, NOW(), ${escape(String(manufacturer.id))});`;
     queryString += `UPDATE 
                       obj_technology
                     SET
                       softwareProduct = '${guid}',
-                      softwareProductName = '${softwareProduct.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
+                      softwareProductName = ${escape(softwareProduct.name)}
                     WHERE
-                      Id = ${techId};`;
+                      Id = ${escape(techId)};`;
   }
 
   return queryString;
@@ -408,22 +409,22 @@ function saveCustomSoftwareVersion(techId, softwareVersion, softwareProduct) {
     queryString = `UPDATE 
                     obj_technology
                   SET
-                    softwareVersion = '${softwareVersion.id}',
-                    softwareVersionName = '${softwareVersion.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
+                    softwareVersion = ${escape(String(softwareVersion.id))},
+                    softwareVersionName = ${escape(softwareVersion.name)}
                   WHERE
-                    Id = ${techId};`;
+                    Id = ${escape(techId)};`;
   } else {
     let guid = Guid.create().toString();
     queryString += `INSERT INTO obj_software_version
                       (id, name, createdDate, software_product_id)
-                    VALUES ('${guid}', '${softwareVersion.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}', NOW(), '${softwareProduct.id}');`;
+                    VALUES ('${guid}', ${escape(softwareVersion.name)}, NOW(), ${escape(String(softwareProduct.id))});`;
     queryString += `UPDATE 
                       obj_technology
                     SET
                       softwareVersion = '${guid}',
-                      softwareVersionName = '${softwareVersion.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
+                      softwareVersionName = ${escape(softwareVersion.name)}
                     WHERE
-                      Id = ${techId};`;
+                      Id = ${escape(techId)};`;
   }
 
   return queryString;
@@ -436,22 +437,22 @@ function saveCustomSoftwareRelease(techId, softwareRelease, softwareVersion) {
     queryString = `UPDATE 
                     obj_technology
                   SET
-                    softwareRelease = '${softwareRelease.id}',
-                    softwareReleaseName = '${softwareRelease.application.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
+                    softwareRelease = ${escape(String(softwareRelease.id))},
+                    softwareReleaseName = ${escape(softwareRelease.application)}
                   WHERE
-                    Id = ${techId};`;
+                    Id = ${escape(techId)};`;
   } else if(softwareRelease && !softwareRelease.id) {
     let guid = Guid.create().toString();
     queryString += `INSERT INTO obj_software_release
                       (id, name, createdDate, software_version_id)
-                    VALUES ('${guid}', '${softwareRelease.application.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}', NOW(), '${softwareVersion.id}');`;
+                    VALUES ('${guid}', ${escape(softwareRelease.application)}, NOW(), ${escape(String(softwareVersion.id))});`;
     queryString += `UPDATE 
                       obj_technology
                     SET
                       softwareRelease = '${guid}',
-                      softwareReleaseName = '${softwareRelease.application.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
+                      softwareReleaseName = ${escape(softwareRelease.application)}
                     WHERE
-                      Id = ${techId};`;
+                      Id = ${escape(techId)};`;
   }
 
   return queryString;
@@ -465,9 +466,9 @@ function updateITStandardRelease(techId, softwareRelease) {
   queryString = `UPDATE 
                   obj_technology
                 SET
-                  softwareReleaseName = '${softwareRelease.application.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'")}'
+                  softwareReleaseName = ${escape(softwareRelease.application)}
                 WHERE
-                  Id = ${techId};`;
+                  Id = ${escape(techId)};`;
   return queryString;
 }
 
@@ -489,8 +490,13 @@ function generateKeyname(data) {
   } else {
     keyname = data.tcSoftwareRelease.application;
   }
-  keyname = keyname.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'").trim();
+  keyname = keyname.trim();
   return keyname;
+}
+
+function textOrNull(content) {
+  if (!content || content === 'NULL' || content === 'null') return null;
+  return content;
 }
 
 function normalizeFormBooleanValues(booleanValue) {
@@ -510,19 +516,6 @@ function updateData(techId, data) {
   // data.itStandOpenSource = normalizeFormBooleanValues(data.itStandOpenSource);
   // data.itStandGoldImg = normalizeFormBooleanValues(data.itStandGoldImg);
   // data.itStandReqAtte = normalizeFormBooleanValues(data.itStandReqAtte);
-
-  data.itStandDesc = ctrl.setNullEmptyTextHandler(data.itStandDesc);
-  data.itStandAprvExp = ctrl.setNullEmptyTextHandler(data.itStandAprvExp);
-  data.itStandRefDocs = ctrl.setNullEmptyTextHandler(data.itStandRefDocs);
-  data.itStandApprovedVersions = ctrl.setNullEmptyTextHandler(data.itStandApprovedVersions);
-  data.itStandVendorOrg = ctrl.setNullEmptyTextHandler(data.itStandVendorOrg);
-  data.itStandAtteLink = ctrl.setNullEmptyTextHandler(data.itStandAtteLink);
-  data.itStandGoldComment = ctrl.setNullEmptyTextHandler(data.itStandGoldComment);
-  data.itStandRITM = ctrl.setNullEmptyTextHandler(data.itStandRITM);
-  data.itStandComments = ctrl.setNullEmptyTextHandler(data.itStandComments);
-  data.itStandConditionsRestrictions = ctrl.setNullEmptyTextHandler(data.itStandConditionsRestrictions);
-  data.itStandAlsoKnownAs = ctrl.setNullEmptyTextHandler(data.itStandAlsoKnownAs);
-  data.itStand508ExceptionLink = ctrl.setNullEmptyTextHandler(data.itStand508ExceptionLink);
   if (data.itStandCSCRMReview === undefined || data.itStandCSCRMReview === null || data.itStandCSCRMReview === '') {
     data.itStandCSCRMReview = null;
   }
@@ -534,34 +527,34 @@ function updateData(techId, data) {
 
   return `UPDATE obj_technology
           SET
-            obj_technology_status_Id          = ${data.itStandStatus},
-            Keyname                           = '${keyname}',
-            approvedVersions                  = ${data.itStandApprovedVersions},
-            Description                       = ${data.itStandDesc},
-            obj_standard_type_Id              = ${data.itStandType},
-            obj_508_compliance_status_Id      = ${data.itStand508},
-            obj_technology_critical_review_Id = ${data.itStandCriticalReview},
-            obj_technology_cscrm_review_Id    = ${data.itStandCSCRMReview},
-            \`508_exception_link\`            = ${data.itStand508ExceptionLink},
-            Available_through_Myview          = '${data.itStandMyView}',
-            Vendor_Standard_Organization      = ${data.itStandVendorOrg},
-            obj_deployment_type_Id            = ${data.itStandDeployment},
-            Approved_Status_Expiration_Date   = ${data.itStandAprvExp},
-            attestation_required              = ${data.itStandReqAtte},
-            attestation_link                  = ${data.itStandAtteLink},
-            fedramp                           = '${data.itStandFedramp}',
-            open_source                       = '${data.itStandOpenSource}',
-            Gold_Image                        = '${data.itStandGoldImg}',
-            Gold_Image_Comment                = ${data.itStandGoldComment},
-            RITM                              = ${data.itStandRITM},
-            Comments                          = ${data.itStandComments},
-            Reference_documents               = ${data.itStandRefDocs},
-            ChangeAudit                       = '${data.auditUser}',
+            obj_technology_status_Id          = ${escape(data.itStandStatus)},
+            Keyname                           = ${escape(String(keyname))},
+            approvedVersions                  = ${escape(textOrNull(data.itStandApprovedVersions))},
+            Description                       = ${escape(textOrNull(data.itStandDesc))},
+            obj_standard_type_Id              = ${escape(data.itStandType)},
+            obj_508_compliance_status_Id      = ${escape(data.itStand508)},
+            obj_technology_critical_review_Id = ${escape(data.itStandCriticalReview)},
+            obj_technology_cscrm_review_Id    = ${escape(data.itStandCSCRMReview)},
+            \`508_exception_link\`            = ${escape(textOrNull(data.itStand508ExceptionLink))},
+            Available_through_Myview          = ${escape(String(data.itStandMyView))},
+            Vendor_Standard_Organization      = ${escape(textOrNull(data.itStandVendorOrg))},
+            obj_deployment_type_Id            = ${escape(data.itStandDeployment)},
+            Approved_Status_Expiration_Date   = ${escape(textOrNull(data.itStandAprvExp))},
+            attestation_required              = ${escape(data.itStandReqAtte)},
+            attestation_link                  = ${escape(textOrNull(data.itStandAtteLink))},
+            fedramp                           = ${escape(String(data.itStandFedramp))},
+            open_source                       = ${escape(String(data.itStandOpenSource))},
+            Gold_Image                        = ${escape(String(data.itStandGoldImg))},
+            Gold_Image_Comment                = ${escape(textOrNull(data.itStandGoldComment))},
+            RITM                              = ${escape(textOrNull(data.itStandRITM))},
+            Comments                          = ${escape(textOrNull(data.itStandComments))},
+            Reference_documents               = ${escape(textOrNull(data.itStandRefDocs))},
+            ChangeAudit                       = ${escape(String(data.auditUser))},
             ChangeDTG                         = NOW(),
             endOfLifeDate                     = ${endOfLifeDateFragment},
-            Conditions_Restrictions           = ${data.itStandConditionsRestrictions},
-            AlsoKnownAs                       = ${data.itStandAlsoKnownAs}
-          WHERE Id = ${techId};`;
+            Conditions_Restrictions           = ${escape(textOrNull(data.itStandConditionsRestrictions))},
+            AlsoKnownAs                       = ${escape(textOrNull(data.itStandAlsoKnownAs))}
+          WHERE Id = ${escape(techId)};`;
 }
 
 function saveData(data) {
@@ -573,19 +566,6 @@ function saveData(data) {
   // data.itStandOpenSource = normalizeFormBooleanValues(data.itStandOpenSource);
   // data.itStandGoldImg = normalizeFormBooleanValues(data.itStandGoldImg);
   // data.itStandReqAtte = normalizeFormBooleanValues(data.itStandReqAtte);
-
-  data.itStandDesc = ctrl.setNullEmptyTextHandler(data.itStandDesc);
-  data.itStandAprvExp = ctrl.setNullEmptyTextHandler(data.itStandAprvExp);
-  data.itStandRefDocs = ctrl.setNullEmptyTextHandler(data.itStandRefDocs);
-  data.itStandApprovedVersions = ctrl.setNullEmptyTextHandler(data.itStandApprovedVersions);
-  data.itStandVendorOrg = ctrl.setNullEmptyTextHandler(data.itStandVendorOrg);
-  data.itStandAtteLink = ctrl.setNullEmptyTextHandler(data.itStandAtteLink);
-  data.itStandGoldComment = ctrl.setNullEmptyTextHandler(data.itStandGoldComment);
-  data.itStandRITM = ctrl.setNullEmptyTextHandler(data.itStandRITM);
-  data.itStandComments = ctrl.setNullEmptyTextHandler(data.itStandComments);
-  data.itStandConditionsRestrictions = ctrl.setNullEmptyTextHandler(data.itStandConditionsRestrictions);
-  data.itStandAlsoKnownAs = ctrl.setNullEmptyTextHandler(data.itStandAlsoKnownAs);
-  data.itStand508ExceptionLink = ctrl.setNullEmptyTextHandler(data.itStand508ExceptionLink);
   if (data.itStandCSCRMReview === undefined || data.itStandCSCRMReview === null || data.itStandCSCRMReview === '') {
     data.itStandCSCRMReview = null;
   }
@@ -624,34 +604,34 @@ function saveData(data) {
             ChangeAudit,
             ChangeDTG
           ) VALUES (
-           ${data.itStandStatus},
-           '${keyname}',
-           ${data.itStandApprovedVersions},
-           ${data.itStandDesc},
-           ${data.itStandType},
-           ${data.itStand508},
-           ${data.itStandCriticalReview},
-           ${data.itStandCSCRMReview},
-           ${data.itStand508ExceptionLink},
-           '${data.itStandMyView}',
-           ${data.itStandVendorOrg},
-           ${data.itStandDeployment},
-           ${data.itStandAprvExp},
-           ${data.itStandReqAtte},
-           ${data.itStandAtteLink},
-           '${data.itStandFedramp}',
-           '${data.itStandOpenSource}',
-           '${data.itStandGoldImg}',
-           ${data.itStandGoldComment},
-           ${data.itStandRITM},
-           ${data.itStandComments},
-           ${data.itStandRefDocs},
+           ${escape(data.itStandStatus)},
+           ${escape(String(keyname))},
+           ${escape(textOrNull(data.itStandApprovedVersions))},
+           ${escape(textOrNull(data.itStandDesc))},
+           ${escape(data.itStandType)},
+           ${escape(data.itStand508)},
+           ${escape(data.itStandCriticalReview)},
+           ${escape(data.itStandCSCRMReview)},
+           ${escape(textOrNull(data.itStand508ExceptionLink))},
+           ${escape(String(data.itStandMyView))},
+           ${escape(textOrNull(data.itStandVendorOrg))},
+           ${escape(data.itStandDeployment)},
+           ${escape(textOrNull(data.itStandAprvExp))},
+           ${escape(data.itStandReqAtte)},
+           ${escape(textOrNull(data.itStandAtteLink))},
+           ${escape(String(data.itStandFedramp))},
+           ${escape(String(data.itStandOpenSource))},
+           ${escape(String(data.itStandGoldImg))},
+           ${escape(textOrNull(data.itStandGoldComment))},
+           ${escape(textOrNull(data.itStandRITM))},
+           ${escape(textOrNull(data.itStandComments))},
+           ${escape(textOrNull(data.itStandRefDocs))},
            ${endOfLifeDateFragment},
-           ${data.itStandConditionsRestrictions},
-           ${data.itStandAlsoKnownAs},
-           '${data.auditUser}',
+           ${escape(textOrNull(data.itStandConditionsRestrictions))},
+           ${escape(textOrNull(data.itStandAlsoKnownAs))},
+           ${escape(String(data.auditUser))},
            NOW(),
-           '${data.auditUser}',
+           ${escape(String(data.auditUser))},
            NOW()
           );`;
 }
@@ -711,9 +691,9 @@ exports.getFilterTotals = (req, res) => {
 
     for(i = 0; i < filters.length; i++) {
       if(i === 0) {
-        filterQuery += `obj_deployment_type.Keyname = '${filters[i]}'`;
+        filterQuery += `obj_deployment_type.Keyname = ${escape(filters[i])}`;
       } else {
-        filterQuery += ` OR obj_deployment_type.Keyname = '${filters[i]}'`;
+        filterQuery += ` OR obj_deployment_type.Keyname = ${escape(filters[i])}`;
       }
     }
 

@@ -6,6 +6,7 @@ import { ApiService } from '@services/apis/api.service';
 
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
+import { ChatbotService } from '@services/chatbot/chatbot.service';
 
 @Component({
     selector: 'global-search',
@@ -25,7 +26,8 @@ export class GlobalSearchComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private apiService: ApiService,
-    private analyticsService: AnalyticsService
+    private analyticsService: AnalyticsService,
+    private chatbotService: ChatbotService
   ) { }
 
   tableCols: Column[] = [];
@@ -78,6 +80,11 @@ export class GlobalSearchComponent implements OnInit {
         });
         // Log GA4 event
         this.analyticsService.logSearchEvent(this.searchKW);
+
+        // Feed the search term to the global chatbot: open it and pre-fill the
+        // input so the user can ask the GEAR Assistant about this term. The
+        // results table above is independent of the chatbot.
+        this.chatbotService.seedPrompt(this.searchKW);
       }
     });
   }
@@ -148,17 +155,47 @@ export class GlobalSearchComponent implements OnInit {
   }
 
   private sortBySearchTerm(arr, searchTerm, key) {
-    const matchFN = (item) => {
-      const value = item[key];
-      // if no direct match return 0
-      if (!value) return 0;
-      // if exact match make sure it goes to the top
-      if(value.toLowerCase() === searchTerm.toLowerCase()) return arr.length + 1;
-      const index = value.toLowerCase().indexOf(searchTerm.toLowerCase());
-      return index === -1 ? 0 : 1 / (index + 1);
-    }
+    if (!Array.isArray(arr)) return arr;
+    const term = (searchTerm || '').toLowerCase().trim();
 
-    arr.sort((a, b) => matchFN(b) - matchFN(a));
-    return arr;
+    // Tiered score so that Item Name matches always outrank description-only
+    // (relevance) matches. Higher score = more relevant.
+    //   4000+ : exact name match
+    //   3000+ : name starts with the term
+    //   2000+ : whole-word name match (term appears as its own word)
+    //   1000+ : name contains the term anywhere
+    //      0+ : no name match (rely on DB relevance only)
+    // Within each tier we add the DB `relevance` (if present) and, for the
+    // "contains" tiers, favor earlier positions in the name.
+    const scoreFN = (item) => {
+      const rawName = item && item[key] ? String(item[key]) : '';
+      const name = rawName.toLowerCase();
+      const relevance = Number(item && item.relevance) || 0;
+
+      if (!term) return relevance;
+
+      if (name === term) return 4000 + relevance;
+
+      const idx = name.indexOf(term);
+      if (idx === -1) return relevance; // no name match
+
+      if (idx === 0) return 3000 + relevance;
+
+      // Whole-word match (bounded by non-word chars)
+      const wordBoundary = new RegExp(
+        `(^|[^a-z0-9])${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}([^a-z0-9]|$)`,
+        'i'
+      );
+      if (wordBoundary.test(name)) return 2000 + relevance;
+
+      // Contains anywhere; earlier position is slightly better.
+      return 1000 + relevance + 1 / (idx + 1);
+    };
+
+    // Stable sort: compare scores, break ties by original order.
+    return arr
+      .map((item, i) => ({ item, i, score: scoreFN(item) }))
+      .sort((a, b) => (b.score - a.score) || (a.i - b.i))
+      .map((entry) => entry.item);
   }
 }

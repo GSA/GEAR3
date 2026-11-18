@@ -34,7 +34,7 @@ export class ItStandardsManagerComponent implements OnInit {
     tcSoftwareRelease: new FormControl(),
     tcEndOfLifeDate: new FormControl(),
     itStandStatus: new FormControl(null, [Validators.required]),
-    itStandCriticalReview: new FormControl(null),
+    itStandCriticalReview: new FormControl(null, [Validators.required]),
     itStandCSCRMReview: new FormControl(null),
     itStandPOC: new FormControl(null, [Validators.required]),
     itStandDesc: new FormControl(),
@@ -564,6 +564,10 @@ export class ItStandardsManagerComponent implements OnInit {
       this.itStandardsForm.value.itStandStatus = +this.itStandardsForm.value.itStandStatus;
       this.itStandardsForm.patchValue({itStandStatus: +this.itStandardsForm.value.itStandStatus});
 
+      // Critical Software Review Results
+      this.itStandardsForm.value.itStandCriticalReview = +this.itStandardsForm.value.itStandCriticalReview;
+      this.itStandardsForm.patchValue({itStandCriticalReview: +this.itStandardsForm.value.itStandCriticalReview});
+
       // Deployment
       this.itStandardsForm.value.itStandDeployment = +this.itStandardsForm.value.itStandDeployment;
       this.itStandardsForm.patchValue({itStandDeployment: +this.itStandardsForm.value.itStandDeployment});
@@ -689,6 +693,7 @@ export class ItStandardsManagerComponent implements OnInit {
     this.initalAppBundleIds = [];
     this.currentAppBundleId = '';
 
+    this.apiService.invalidateCache('it-standards');
     this.router.navigate([`/it_standards/${data.ID}`]);
 
     // Refresh Table
@@ -997,7 +1002,7 @@ export class ItStandardsManagerComponent implements OnInit {
       tcSoftwareRelease: new FormControl(),
       tcEndOfLifeDate: new FormControl(),
       itStandStatus: new FormControl(null, [Validators.required]),
-      itStandCriticalReview: new FormControl(null),
+      itStandCriticalReview: new FormControl(null, [Validators.required]),
       itStandCSCRMReview: new FormControl(null),
       itStandPOC: new FormControl(null, [Validators.required]),
       itStandDesc: new FormControl(),

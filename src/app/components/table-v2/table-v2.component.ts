@@ -97,6 +97,10 @@ export class TableComponent implements OnInit, OnChanges {
     this.exportColumns = this.tableCols.map((col) => ({ title: col.header, dataKey: col.field }));
     // this.activeTableData = this.getTableData();
     this.tableService.reportTableData$.subscribe(d => {
+      if (this.dt) {
+        this.dt.reset();
+        this.first = 0;
+      }
       this.tableData = d;
     });
     this.generateColumns();

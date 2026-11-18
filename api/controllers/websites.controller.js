@@ -16,9 +16,9 @@ exports.findOne = (req, res) => {
   var query =
     fs
       .readFileSync(path.join(__dirname, queryPath, "GET/get_websites.sql"))
-      .toString() + ` WHERE id = ${req.params.id} ORDER BY domain;`;
+      .toString() + ` WHERE id = ? ORDER BY domain;`;
 
-  res = ctrl.sendQuery(query, "individual website", res);
+  res = ctrl.sendQuery(query, "individual website", res, null, [req.params.id]);
 };
 
 exports.findScans = (req, res) => {
@@ -28,9 +28,9 @@ exports.findScans = (req, res) => {
         path.join(__dirname, queryPath, "GET/get_website_scans.sql")
       )
       .toString() +
-    ` WHERE obj_website_id = ${req.params.id} ORDER BY scan_date DESC;`;
+    ` WHERE obj_website_id = ? ORDER BY scan_date DESC;`;
 
-  res = ctrl.sendQuery(query, "individual website scans", res);
+  res = ctrl.sendQuery(query, "individual website scans", res, null, [req.params.id]);
 };
 
 exports.findOneScan = (req, res) => {
@@ -40,9 +40,9 @@ exports.findOneScan = (req, res) => {
         path.join(__dirname, queryPath, "GET/get_website_scans.sql")
       )
       .toString() +
-    ` WHERE obj_website_id = ${req.params.id} AND id = ${req.params.scanId} ORDER BY scan_date DESC;`;
+    ` WHERE obj_website_id = ? AND id = ? ORDER BY scan_date DESC;`;
 
-  res = ctrl.sendQuery(query, "individual website one scan", res);
+  res = ctrl.sendQuery(query, "individual website one scan", res, null, [req.params.id, req.params.scanId]);
 };
 
 exports.findServiceCategories = (req, res) => {
@@ -58,9 +58,9 @@ exports.findServiceCategories = (req, res) => {
         )
       )
       .toString() +
-    ` WHERE obj_websites_id = ${id} ORDER BY name ASC`;
+    ` WHERE obj_websites_id = ? ORDER BY name ASC`;
 
-    res = ctrl.sendQuery(query, "service categories for a website", res);
+    res = ctrl.sendQuery(query, "service categories for a website", res, null, [id]);
   } else {
     res.status(404).json({
       message: "ID not found",
@@ -76,9 +76,9 @@ exports.findSystems = (req, res) => {
       .readFileSync(path.join(__dirname, queryPath, "GET/get_systems.sql"))
       .toString() +
     ` LEFT JOIN gear_schema.zk_systems_subsystems_websites AS websites_mapping ON systems.\`ex:GEAR_ID\` = websites_mapping.obj_systems_subsystems_Id
-    WHERE websites_mapping.obj_websites_Id = ${id} GROUP BY systems.\`ex:GEAR_ID\`;`;
+    WHERE websites_mapping.obj_websites_Id = ? GROUP BY systems.\`ex:GEAR_ID\`;`;
 
-  res = ctrl.sendQuery(query, "related systems for website", res);
+  res = ctrl.sendQuery(query, "related systems for website", res, null, [id]);
   } else {
     res.status(500).json({
       message: "Error: Invalid ID",
@@ -97,19 +97,22 @@ exports.updateSystems = (req, res) => {
 
     // Create string to update website-system relationship
     var systemString = "";
+    var params = [];
     if (data.relatedSystems) {
       // Delete any references first
-      systemString += `DELETE FROM zk_systems_subsystems_websites WHERE obj_websites_Id=${req.params.id}; `;
+      systemString += `DELETE FROM zk_systems_subsystems_websites WHERE obj_websites_Id = ?; `;
+      params.push(req.params.id);
 
       // Insert new IDs
       data.relatedSystems.forEach((systemID) => {
-        systemString += `INSERT INTO zk_systems_subsystems_websites (obj_websites_Id, obj_systems_subsystems_Id) VALUES (${req.params.id}, ${systemID}); `;
+        systemString += `INSERT INTO zk_systems_subsystems_websites (obj_websites_Id, obj_systems_subsystems_Id) VALUES (?, ?); `;
+        params.push(req.params.id, systemID);
       });
     }
 
     var query = `${systemString}`;
 
-    res = ctrl.sendQuery(query, "updating systems for website", res);
+    res = ctrl.sendQuery(query, "updating systems for website", res, null, params);
   } else {
     console.log('*** API Security Testing - API Auth Validation: FAILED'); //DEBUGGING
 

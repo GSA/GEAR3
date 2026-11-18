@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, shareReplay } from 'rxjs';
 import { catchError, filter, map } from 'rxjs/operators';
 
 import { SharedService } from '@services/shared/shared.service';
@@ -114,11 +114,26 @@ export class ApiService {
   // Dashboard Summary
   dashboardSummaryUrl: string = this.sharedService.internalURLFmt('/api/dashboard_summary');
 
+  // Session-scoped cache for expensive list endpoints
+  private cache: Map<string, Observable<any>> = new Map();
+
   constructor(
     private globals: Globals,
     private http: HttpClient,
     private sharedService: SharedService
   ) {}
+
+  /** Invalidate a cached observable (call after any mutating operation). */
+  public invalidateCache(key: string): void {
+    this.cache.delete(key);
+  }
+
+  private getCached<T>(key: string, source: Observable<T>): Observable<T> {
+    if (!this.cache.has(key)) {
+      this.cache.set(key, source.pipe(shareReplay({ bufferSize: 1, refCount: true })));
+    }
+    return this.cache.get(key) as Observable<T>;
+  }
 
   // Calls
   //// Dashboard Summary
@@ -129,16 +144,16 @@ export class ApiService {
   }
 
   public getHostingPlatforms(): Observable<{ CSP: string; count: number }[]> {
-    return this.http
+    return this.getCached('hosting-platforms', this.http
       .get<{ CSP: string; count: number }[]>(this.dashboardSummaryUrl + '/hosting_platforms')
-      .pipe(catchError(this.handleError<any[]>('GET Hosting Platforms', [])));
+      .pipe(catchError(this.handleError<any[]>('GET Hosting Platforms', []))));
   }
 
   //// Capabilities
   public getCapabilities(): Observable<Capability[]> {
-    return this.http
+    return this.getCached('capabilities', this.http
       .get<Capability[]>(this.capUrl)
-      .pipe(catchError(this.handleError<Capability[]>('GET Capabilities', [])));
+      .pipe(catchError(this.handleError<Capability[]>('GET Capabilities', []))));
   }
   public getOneCap(id: number): Observable<Capability> {
     return this.http
@@ -212,9 +227,9 @@ export class ApiService {
 
   //// FISMA
   public getFISMA(): Observable<FISMA[]> {
-    return this.http
+    return this.getCached('fisma', this.http
       .get<FISMA[]>(this.fismaUrl)
-      .pipe(catchError(this.handleError<FISMA[]>('GET FISMA Systems', [])));
+      .pipe(catchError(this.handleError<FISMA[]>('GET FISMA Systems', []))));
   }
   public getOneFISMASys(id: number): Observable<FISMA[]> {
     return this.http
@@ -257,9 +272,9 @@ export class ApiService {
 
   //// Investment
   public getInvestments(): Observable<Investment[]> {
-    return this.http
+    return this.getCached('investments', this.http
       .get<Investment[]>(this.investUrl)
-      .pipe(catchError(this.handleError<Investment[]>('GET Investments', [])));
+      .pipe(catchError(this.handleError<Investment[]>('GET Investments', []))));
   }
   public getOneInvest(id: number): Observable<Investment> {
     return this.http
@@ -326,10 +341,24 @@ export class ApiService {
 
   //// Organizations
   public getOrganizations(): Observable<Organization[]> {
-    return this.http
+    return this.getCached('organizations', this.http
       .get<Organization[]>(this.orgUrl)
+      .pipe(catchError(this.handleError<Organization[]>('GET Organizations', []))));
+  }
+
+  public getOrganizationsPaginated(
+    page: number,
+    pageSize: number,
+    sortField: string = 'Name',
+    sortOrder: number = 1,
+    search: string = ''
+  ): Observable<{ total: number; data: Organization[] }> {
+    const params: any = { page, pageSize, sortField, sortOrder };
+    if (search) { params.search = search; }
+    return this.http
+      .get<{ total: number; data: Organization[] }>(this.orgUrl + '/paginated', { params })
       .pipe(
-        catchError(this.handleError<Organization[]>('GET Organizations', []))
+        catchError(this.handleError<{ total: number; data: Organization[] }>('GET Organizations Paginated', { total: 0, data: [] }))
       );
   }
   public getOneOrg(id: string): Observable<Organization> {
@@ -358,6 +387,24 @@ export class ApiService {
       .pipe(
         catchError(
           this.handleError<System[]>('GET Systems for Organization', [])
+        )
+      );
+  }
+  public getOrgBusinessSystems(id: string): Observable<System[]> {
+    return this.http
+      .get<System[]>(this.orgUrl + '/get/' + id + '/business_systems')
+      .pipe(
+        catchError(
+          this.handleError<System[]>('GET Business Systems for Organization', [])
+        )
+      );
+  }
+  public getOrgChildOrgs(id: string): Observable<Organization[]> {
+    return this.http
+      .get<Organization[]>(this.orgUrl + '/get/' + id + '/child_orgs')
+      .pipe(
+        catchError(
+          this.handleError<Organization[]>('GET Child Organizations for Organization', [])
         )
       );
   }
@@ -500,9 +547,9 @@ export class ApiService {
 
   //// Systems
   public getSystems(): Observable<System[]> {
-    return this.http
+    return this.getCached('systems', this.http
       .get<System[]>(this.sysUrl)
-      .pipe(catchError(this.handleError<System[]>('GET Systems', [])));
+      .pipe(catchError(this.handleError<System[]>('GET Systems', []))));
   }
   public getOneSys(id: number): Observable<System> {
     return this.http
@@ -689,11 +736,9 @@ export class ApiService {
 
   //// IT-Standards
   public getITStandards(): Observable<ITStandards[]> {
-    return this.http
+    return this.getCached('it-standards', this.http
       .get<ITStandards[]>(this.techUrl)
-      .pipe(
-        catchError(this.handleError<ITStandards[]>('GET IT Standards', []))
-      );
+      .pipe(catchError(this.handleError<ITStandards[]>('GET IT Standards', []))));
   }
 
   public getITStandardsLite(): Observable<ITStandards[]> {
