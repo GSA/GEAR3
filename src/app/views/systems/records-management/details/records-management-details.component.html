@@ -11,9 +11,15 @@
     <div class="content-container">
       <ul class="nav nav-tabs">
         <li class="nav-item">
-          <a class="nav-link active" href="#overview">Overview</a>
+          <a class="nav-link" [class.active]="isOverviewTabActive" (click)="onTabClick('overview', $event)" href="#overview">Overview</a>
         </li>
+        @if (hasRelatedSystems()) {
+          <li class="nav-item">
+            <a class="nav-link" [class.active]="isRelatedSystemsTabActive" (click)="onTabClick('relatedSystems', $event)" href="#relatedSystems">Related Systems</a>
+          </li>
+        }
       </ul>
+      @if (isOverviewTabActive) {
       <div class="tab-container">
         <div class="overall-data-container">
           <div class="main-data-container">
@@ -160,6 +166,20 @@
           </div>
         </div>
       </div>
+      }
+      @if (isRelatedSystemsTabActive && hasRelatedSystems()) {
+        <div class="tab-container">
+          <div class="overall-data-container">
+            <div class="main-data-container">
+              <div class="sub-content full-width">
+                <span class="sub-header">Related Systems</span>
+                <app-table visibleColumnStorageKey="records-related-systems" defaultSortField="Name" [localTableData]="relatedSystemsData" [isLocal]="true" [tableCols]="relatedSystemsCols"
+                [showToolbar]="true" [showPagination]="true" reportStyle="neutral" tableType="systems" [contextSystemName]="detailsData?.Record_Item_Title" (rowClickEvent)="onRelatedSystemsRowClick($event)"></app-table>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
       @if (isLoggedIn()) {
         <app-button [buttonText]="'Edit'" buttonStyle="outline" (buttonClick)="editRecord()"></app-button>
       }

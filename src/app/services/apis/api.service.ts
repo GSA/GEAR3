@@ -434,9 +434,9 @@ export class ApiService {
         map(r => r[0]),
         catchError(this.handleError<Record>('GET Record')));
   }
-  public getRecordSys(id: number): Observable<System[]> {
+  public getRecordSys(id: number, includeChildren: boolean = false): Observable<System[]> {
     return this.http
-      .get<System[]>(this.recordsUrl + '/get/' + String(id) + '/systems')
+      .get<System[]>(this.recordsUrl + '/get/' + String(id) + '/systems' + (includeChildren ? '?includeChildren=true' : ''))
       .pipe(
         catchError(this.handleError<System[]>('GET Systems for Record', []))
       );

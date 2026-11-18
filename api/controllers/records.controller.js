@@ -41,10 +41,23 @@ exports.findOne = (req, res) => {
 exports.findSystems = (req, res) => {
 
   // Generate query to get all systems related to a record ID and return them to the client (res)
-  // The join is necessary to get the system ID from the mapping table
+  // The join is necessary to get the system ID from the mapping table.
+  // With ?includeChildren=true, parent schedules (GSA_Number ending in '/', e.g. '121.1/')
+  // also roll up the systems mapped to their child schedules (e.g. '121.1/010').
+  var recordFilter = req.query.includeChildren === 'true'
+    ? `records_mapping.obj_records_Id IN (
+      SELECT child_rec.Records_Id
+      FROM gear_schema.obj_records AS parent_rec
+      JOIN gear_schema.obj_records AS child_rec
+        ON child_rec.Records_Id = parent_rec.Records_Id
+        OR (parent_rec.GSA_Number LIKE '%/' AND child_rec.GSA_Number LIKE CONCAT(parent_rec.GSA_Number, '%'))
+      WHERE parent_rec.Records_Id = ?
+    )`
+    : `records_mapping.obj_records_Id = ?`;
+
   var query = fs.readFileSync(path.join(__dirname, queryPath, 'GET/get_systems.sql')).toString() +
     ` LEFT JOIN gear_schema.zk_systems_subsystems_records AS records_mapping ON systems.\`ex:GEAR_ID\` = records_mapping.obj_systems_subsystems_Id
-    WHERE records_mapping.obj_records_Id = ? GROUP BY systems.\`ex:GEAR_ID\`;`;
+    WHERE ${recordFilter} GROUP BY systems.\`ex:GEAR_ID\`;`;
 
   // Get all systems related to a record ID and return them to the client (res)
   res = ctrl.sendQuery(query, 'related systems for record', res, null, [req.params.id]);

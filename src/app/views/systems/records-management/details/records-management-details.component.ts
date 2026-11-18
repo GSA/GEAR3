@@ -6,6 +6,9 @@ import { TableService } from '@services/tables/table.service';
 import { PreviousRouteService } from '@services/previous-route/previous-route.service';
 import { Record } from '@api/models/records.model';
 import { DataDictionary } from '@api/models/data-dictionary.model';
+import { System } from '@api/models/systems.model';
+import { Column } from '@common/table-classes';
+import { RelatedSystemsCols } from '@common/table-columns/related-systems';
 
 @Component({
     selector: 'records-management-details',
@@ -18,6 +21,12 @@ export class RecordsManagementDetailsComponent implements OnInit {
   public recordsMgntId: number = null;
   public detailsData: Record;
   public isDataReady: boolean = false;
+
+  public isOverviewTabActive: boolean = true;
+  public isRelatedSystemsTabActive: boolean = false;
+
+  public relatedSystemsCols: Column[] = RelatedSystemsCols;
+  public relatedSystemsData: System[] = [];
 
   public attrDefinitions = <DataDictionary[]>[];
 
@@ -42,6 +51,12 @@ export class RecordsManagementDetailsComponent implements OnInit {
         this.isDataReady = true;
       });
 
+      this.relatedSystemsData = [];
+      this.onTabClick('overview');
+      this.apiService.getRecordSys(this.recordsMgntId, true).subscribe(sys => {
+        this.relatedSystemsData = sys;
+      });
+
       // Get attribute definition list
       this.apiService.getDataDictionaryByReportName('Records Management')
         .subscribe((data: DataDictionary[]) => {
@@ -53,6 +68,22 @@ export class RecordsManagementDetailsComponent implements OnInit {
 
   public getTooltip (name: string): string {
     return this.sharedService.getTooltip(this.attrDefinitions, name);
+  }
+
+  public onTabClick(tabName: string, event?: Event): void {
+    event?.preventDefault();
+    this.isOverviewTabActive = tabName === 'overview';
+    this.isRelatedSystemsTabActive = tabName === 'relatedSystems';
+  }
+
+  public hasRelatedSystems(): boolean {
+    return this.relatedSystemsData?.length > 0;
+  }
+
+  public onRelatedSystemsRowClick(data: System): void {
+    this.router.navigate(['systems', data.ID], {
+      queryParams: { fromPrevious: this.detailsData.Record_Item_Title }
+    });
   }
 
   public editRecord(): void {
