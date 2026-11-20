@@ -266,7 +266,7 @@ export class ItStandardsManagerComponent implements OnInit {
         this.types = types;
 
         // categories
-        this.categories = cats;
+        this.categories = this.buildTrmOptions(cats);
         this.catsBuffer = this.categories.slice(0, this.bufferSize);
         this.catsLoading = false;
 
@@ -370,18 +370,13 @@ export class ItStandardsManagerComponent implements OnInit {
       var fedramp = this.itStandard.fedramp === 'T';
       var openSource = this.itStandard.open_source === 'T';
 
-      // Parse and find IDs for list of Categories
-      var categoryIDs = [];
-      if (this.itStandard.Category) {
-        this.itStandard.Category.split(', ').forEach(cat => {
-          if(cat) {
-            const catId = this.sharedService.findInArray(this.categories, 'Name', cat, 'Id');
-            if(catId !== undefined && catId !== null) {
-              categoryIDs.push(catId);
-            }
-          }
+      // Load assigned TRM IDs directly; TRM names can contain commas so the joined Category string can't be split reliably
+      this.apiService.getITStandardsRelatedTRM(this.itStandard.ID).subscribe((trms: any[]) => {
+        const validIds = new Set(this.categories.map(c => c.Id));
+        this.itStandardsForm.patchValue({
+          itStandCategory: (trms || []).map(t => t.Id).filter(id => validIds.has(id))
         });
-      };
+      });
 
       let selectedOSList: string[] = [];
       if(this.itStandard.OperatingSystems) {
@@ -414,7 +409,6 @@ export class ItStandardsManagerComponent implements OnInit {
         itStandPOC: pocIDs,
         itStandDesc: this.itStandard.Description,
         itStandType: this.sharedService.findInArray(this.types, 'Name', this.itStandard.StandardType),
-        itStandCategory: categoryIDs,
         itStand508: this.sharedService.findInArray(this.compliance, 'Name', this.itStandard.ComplianceStatus),
         itStand508ExceptionLink: this.itStandard.ExceptionLink,
         itStandMyView: myView,
@@ -993,6 +987,74 @@ export class ItStandardsManagerComponent implements OnInit {
     }
   }
 
+  // Orders TRMs depth-first (Domain > Area > Category) and drops the root TRM node, which should never be assigned
+  private buildTrmOptions(trms: any[]): any[] {
+    if (!trms) return [];
+    const ids = new Set(trms.map(t => Number(t.Id)));
+    const childrenOf = new Map<number, any[]>();
+    trms.forEach(t => {
+      const parentId = ids.has(Number(t.ParentId)) ? Number(t.ParentId) : null;
+      if (!childrenOf.has(parentId)) childrenOf.set(parentId, []);
+      childrenOf.get(parentId).push(t);
+    });
+    childrenOf.forEach(list => list.sort((a, b) => a.Name.localeCompare(b.Name)));
+
+    const options: any[] = [];
+    const visit = (parentId: number, ancestors: string[]) => {
+      (childrenOf.get(parentId) || []).forEach(t => {
+        const isRoot = String(t.Level) === '0';
+        if (!isRoot) {
+          options.push({
+            ...t,
+            Type: t.Type || 'Category',
+            Depth: ancestors.length,
+            Parents: ancestors.join(' › '),
+            Path: [...ancestors, t.Name].join(' › ')
+          });
+        }
+        visit(Number(t.Id), isRoot ? ancestors : [...ancestors, t.Name]);
+      });
+    };
+    visit(null, []);
+    return options;
+  }
+
+  public trmSearchFn = (term: string, item: any): boolean => {
+    const words = term.toLowerCase().split(/\s+/).filter(w => w);
+    const haystack = `${item.Name} ${item.Parents} ${item.Description || ''}`.toLowerCase();
+    return words.every(w => haystack.includes(w));
+  };
+
+  private escapeHtml(text: string): string {
+    return String(text ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  public highlightTrmText(text: string, term: string): string {
+    const raw = String(text ?? '');
+    const words = (term || '').trim().split(/\s+/).filter(w => w).map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    if (!words.length) return this.escapeHtml(raw);
+    // Split on the raw text so highlighting never lands inside an HTML entity
+    return raw.split(new RegExp(`(${words.join('|')})`, 'gi'))
+      .map((part, i) => i % 2 ? `<mark>${this.escapeHtml(part)}</mark>` : this.escapeHtml(part))
+      .join('');
+  }
+
+  // Shows the start of the definition, or a window around the first search hit when it falls later in the text
+  public trmDescriptionSnippet(description: string, term: string, maxLength: number = 160): string {
+    const text = String(description ?? '').replace(/\s+/g, ' ').trim();
+    if (!text) return '';
+    let start = 0;
+    const firstWord = (term || '').trim().split(/\s+/)[0]?.toLowerCase();
+    if (firstWord) {
+      const hit = text.toLowerCase().indexOf(firstWord);
+      if (hit > maxLength - firstWord.length) start = Math.max(0, hit - 40);
+    }
+    let snippet = text.substring(start, start + maxLength);
+    if (start > 0) snippet = '…' + snippet;
+    if (start + maxLength < text.length) snippet += '…';
+    return this.highlightTrmText(snippet, term);
+  }
+
   cleanup() {
     this.itStandardsForm = new FormGroup({
       auditUser: new FormControl(null),
@@ -1109,7 +1171,7 @@ export class ItStandardsManagerComponent implements OnInit {
     // Populate Categories
     this.catsLoading = true;
     this.apiService.getTRM().subscribe((data: any[]) => {
-      this.categories = data;
+      this.categories = this.buildTrmOptions(data);
       this.catsBuffer = this.categories.slice(0, this.bufferSize);
       this.catsLoading = false;
     });

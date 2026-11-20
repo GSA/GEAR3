@@ -312,7 +312,10 @@ function removeSavedCategories(techId) {
   return `DELETE FROM zk_technology_TRM WHERE obj_technology_Id=${escape(techId)};`;
 }
 function saveCategories(techId, categoryId) {
-  return `INSERT INTO zk_technology_TRM (obj_TRM_Id, obj_technology_Id) VALUES (${escape(categoryId)}, ${escape(techId)});`;
+  // The root "Technical Reference Model (TRM)" node (level 0) must never be assigned
+  return `INSERT INTO zk_technology_TRM (obj_TRM_Id, obj_technology_Id)
+    SELECT Technology_Category_Id, ${escape(techId)} FROM obj_TRM
+    WHERE Technology_Category_Id = ${escape(categoryId)} AND TRM_Level <> '0';`;
 }
 
 // Remove and Save POCs
