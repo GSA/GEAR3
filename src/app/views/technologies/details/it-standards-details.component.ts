@@ -181,6 +181,7 @@ export class ItStandardsDetailsComponent implements OnInit {
       field: 'Id',
       header: 'Id',
       isSortable: true,
+      showColumn: false,
     },
     {
       field: 'Name',
@@ -196,6 +197,7 @@ export class ItStandardsDetailsComponent implements OnInit {
       field: 'Domain',
       header: 'Domain',
       isSortable: true,
+      showColumn: false,
     },
     {
       field: 'Description',
@@ -207,11 +209,13 @@ export class ItStandardsDetailsComponent implements OnInit {
       field: 'Level',
       header: 'Level',
       isSortable: true,
+      showColumn: false,
     },
     {
       field: 'Type',
       header: 'Type',
       isSortable: true,
+      showColumn: false,
     },
     {
       field: 'FEACode',

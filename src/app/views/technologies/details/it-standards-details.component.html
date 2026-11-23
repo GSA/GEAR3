@@ -366,8 +366,15 @@
             </div>
             @if(hasRelatedTRMS) {
               <div class="trm-table-container">
-                <span class="sub-header">Technology Categories</span>
-                <app-table visibleColumnStorageKey="related-trm-report" defaultSortField="Name"  [localTableData]="relatedTRMS" [isLocal]="true" [tableCols]="relatedTRMTableCols" [attrDefs]="trmAttrDefinitions" [showToolbar]="true" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onTRMRowClick($event)"></app-table>
+                <span class="sub-header"
+                  pTooltip="Technology Capabilities represent the functional categories from the Technology Reference Model (TRM) that an IT standard supports."
+                  [escape]="false"
+                  tooltipPosition="top"
+                  role="tooltip">
+                  Technology Capabilities
+                  <i class="fas fa-info-circle"></i>
+                </span>
+                <app-table visibleColumnStorageKey="related-trm-report" defaultSortField="Name" [localTableData]="relatedTRMS" [isLocal]="true" [tableCols]="relatedTRMTableCols" [attrDefs]="trmAttrDefinitions" [showToolbar]="true" [showSearchbar]="false" [showPagination]="true" reportStyle="neutral" (rowClickEvent)="onTRMRowClick($event)"></app-table>
               </div>
             }
           </div>
