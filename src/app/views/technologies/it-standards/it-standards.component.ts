@@ -1,19 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { forkJoin } from 'rxjs';
 
 import { ApiService } from '@services/apis/api.service';
 import { SharedService } from '@services/shared/shared.service';
 import { TableService } from '@services/tables/table.service';
 
 import { ITStandards } from '@api/models/it-standards.model';
+import { DataDictionary } from '@api/models/data-dictionary.model';
 import { Column } from '@common/table-classes';
+
+export type ItStandardsViewMode = 'rollup' | 'flat';
 
 export interface ItStandardRollupRow {
   productKey: string;
   displayName: string;
   manufacturerName: string;
   status: string;
-  deploymentType: string;
   description: string;
   approvalExpirationDate: any;
   alsoKnownAs: string;
@@ -33,20 +36,17 @@ export interface ItStandardRollupRow {
 export class ItStandardsComponent implements OnInit {
 
   private readonly otherStatuses = ['Approved', 'Denied', 'Retired', 'Approved with conditions'];
+  private readonly tabNames = ['All', 'Approved', 'Denied', 'Retired', 'Other'];
 
-  public rollupTableCols: Column[] = [
-    { field: 'displayName',            header: 'IT Standard Name',  isSortable: true,  showColumn: true  },
-    { field: 'versionsCount',          header: '# of Versions',          isSortable: true,  showColumn: true  },
-    { field: 'manufacturerName',       header: 'Manufacturer',      isSortable: true,  showColumn: true  },
-    { field: 'description',            header: 'Description',       isSortable: true,  showColumn: true,  formatter: this.sharedService.formatDescriptionLite },
-    { field: 'status',                 header: 'Status',            isSortable: true,  showColumn: true,  formatter: this.sharedService.formatStatus },
-    { field: 'deploymentType',         header: 'Deployment Type',   isSortable: true,  showColumn: true,  formatter: this.sharedService.formatDeploymentType },
-    { field: 'approvalExpirationDate', header: 'Approval Expires',  isSortable: true,  showColumn: true,  formatter: this.sharedService.dateFormatter },
-    { field: 'alsoKnownAs',            header: 'Also Known As',     isSortable: true,  showColumn: false },
-    { field: 'standardType',           header: 'Standard Type',     isSortable: true,  showColumn: false },
-  ];
+  public viewMode: ItStandardsViewMode = 'rollup';
 
-  public rollupRows: ItStandardRollupRow[] = [];
+  public rollupTableCols: Column[] = [];
+  public flatTableCols: Column[] = [];
+
+  // All standards after any dashboard deep-link date filters are applied
+  private standards: ITStandards[] = [];
+  private attrDefinitions: DataDictionary[] = [];
+
   public filterTotals: any = null;
   public selectedTab: string = 'All';
   public filterChips: string[] = ['Mobile', 'Desktop', 'Server', 'SaaS', 'PaaS', 'Other'];
@@ -64,6 +64,14 @@ export class ItStandardsComponent implements OnInit {
     private tableService: TableService,
     private router: Router
   ) {}
+
+  public get isRollupView(): boolean {
+    return this.viewMode === 'rollup';
+  }
+
+  public get tableCols(): Column[] {
+    return this.isRollupView ? this.rollupTableCols : this.flatTableCols;
+  }
 
   public isLoggedIn(): boolean {
     return this.sharedService.loggedIn;
@@ -120,18 +128,138 @@ export class ItStandardsComponent implements OnInit {
 
     this.sharedService.setJWTonLogIn();
 
-    this.apiService.getITStandards().subscribe(standards => {
-      this.applyConditionStatus(standards);
-      const dateFiltered = this.applyDateFilters(standards);
-      this.rollupRows = this.buildRollupRows(dateFiltered);
-      this.computeFilterTotals();
+    forkJoin({
+      defs: this.apiService.getDataDictionaryByReportName('IT Standards List'),
+      standards: this.apiService.getITStandards(),
+    }).subscribe(({ defs, standards }) => {
+      this.attrDefinitions = defs;
+      this.rollupTableCols = this.buildRollupTableCols();
+      this.flatTableCols = this.buildFlatTableCols();
 
-      if (this.selectedTab !== 'All' || this.hasSelectedChips()) {
-        this.tableService.updateReportTableData(this.getTabFilteredRows());
-      } else {
-        this.tableService.updateReportTableData(this.rollupRows);
+      this.applyConditionStatus(standards);
+      this.standards = this.applyDateFilters(standards);
+      this.refreshTable();
+    });
+  }
+
+  // ── View toggle ──────────────────────────────────────────────────────────
+
+  public onToggleView(): void {
+    this.viewMode = this.isRollupView ? 'flat' : 'rollup';
+    this.refreshTable();
+  }
+
+  // ── Table data ───────────────────────────────────────────────────────────
+
+  private refreshTable(): void {
+    const filtered = this.getFilteredStandards(this.selectedTab);
+    const data = this.isRollupView ? this.buildRollupRows(filtered) : filtered;
+    this.tableService.updateReportTableData(data);
+    this.tableService.updateReportTableDataReadyStatus(true);
+    this.computeFilterTotals();
+  }
+
+  private getFilteredStandards(tab: string): ITStandards[] {
+    return this.standards.filter(s =>
+      this.matchesTab(s.Status, tab) &&
+      (!this.hasSelectedChips() || this.selectedChips.includes(s.DeploymentType))
+    );
+  }
+
+  private matchesTab(status: string, tab: string): boolean {
+    switch (tab) {
+      case 'All':            return true;
+      case 'Approved':       return status === 'Approved' || status === 'Approved with conditions';
+      case 'ApprovedDenied': return status === 'Approved' || status === 'Approved with conditions' || status === 'Denied';
+      case 'Other':          return !this.otherStatuses.includes(status);
+      default:               return status === tab;
+    }
+  }
+
+  // Tab counts reflect the number of rows each tab would show in the current view
+  private computeFilterTotals(): void {
+    const count = (tab: string): number => {
+      const matches = this.getFilteredStandards(tab);
+      return this.isRollupView
+        ? new Set(matches.map(s => this.getProductKey(s))).size
+        : matches.length;
+    };
+
+    const totals: any = {};
+    this.tabNames.forEach(tab => totals[`${tab}Total`] = count(tab));
+    this.filterTotals = totals;
+  }
+
+  private getProductKey(std: ITStandards): string {
+    return std.SoftwareProduct != null ? `p${std.SoftwareProduct}` : `s${std.ID}`;
+  }
+
+  private buildRollupRows(standards: ITStandards[]): ItStandardRollupRow[] {
+    const groups = new Map<string, ITStandards[]>();
+
+    for (const std of standards) {
+      const key = this.getProductKey(std);
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key)!.push(std);
+    }
+
+    const rows: ItStandardRollupRow[] = [];
+    groups.forEach((versions, key) => {
+      const recent = this.getMostRecentVersion(versions);
+      rows.push({
+        productKey:             key,
+        displayName:            this.getRollupDisplayName(recent),
+        manufacturerName:       recent.ManufacturerName,
+        status:                 recent.Status,
+        description:            recent.Description,
+        approvalExpirationDate: recent.ApprovalExpirationDate,
+        alsoKnownAs:            recent.AlsoKnownAs,
+        standardType:           recent.StandardType,
+        versionsCount:          versions.length,
+        hasMultipleVersions:    versions.length > 1,
+        mostRecentStandard:     recent,
+        versions:               this.sortVersions(versions),
+      });
+    });
+
+    return rows.sort((a, b) => (a.displayName || '').localeCompare(b.displayName || ''));
+  }
+
+  // "<Manufacturer> <Software Product>", without repeating the manufacturer when the
+  // product name already starts with it (e.g. "Microsoft" + "Microsoft Teams").
+  private getRollupDisplayName(std: ITStandards): string {
+    const manufacturer = (std.ManufacturerName || '').trim();
+    const product = (std.SoftwareProductName || '').trim();
+
+    if (!product) return std.Name;
+    if (!manufacturer || product.toLowerCase().startsWith(manufacturer.toLowerCase())) return product;
+    return `${manufacturer} ${product}`;
+  }
+
+  private getMostRecentVersion(versions: ITStandards[]): ITStandards {
+    const withDate = versions.filter(v => v.ApprovalExpirationDate);
+    if (withDate.length > 0) {
+      return withDate.sort((a, b) =>
+        new Date(b.ApprovalExpirationDate).getTime() - new Date(a.ApprovalExpirationDate).getTime()
+      )[0];
+    }
+    return [...versions].sort((a, b) => b.ID - a.ID)[0];
+  }
+
+  private sortVersions(versions: ITStandards[]): ITStandards[] {
+    const priority = (s: string): number => {
+      if (s === 'Approved' || s === 'Approved with conditions') return 0;
+      if (s === 'Denied')  return 1;
+      if (s === 'Retired') return 2;
+      return 3;
+    };
+    return [...versions].sort((a, b) => {
+      const p = priority(a.Status) - priority(b.Status);
+      if (p !== 0) return p;
+      if (a.ApprovalExpirationDate && b.ApprovalExpirationDate) {
+        return new Date(b.ApprovalExpirationDate).getTime() - new Date(a.ApprovalExpirationDate).getTime();
       }
-      this.tableService.updateReportTableDataReadyStatus(true);
+      return b.ID - a.ID;
     });
   }
 
@@ -176,104 +304,12 @@ export class ItStandardsComponent implements OnInit {
     return standards;
   }
 
-  private buildRollupRows(standards: ITStandards[]): ItStandardRollupRow[] {
-    const groups = new Map<string, ITStandards[]>();
-
-    for (const std of standards) {
-      const key = std.SoftwareProduct != null ? `p${std.SoftwareProduct}` : `s${std.ID}`;
-      if (!groups.has(key)) groups.set(key, []);
-      groups.get(key)!.push(std);
-    }
-
-    const rows: ItStandardRollupRow[] = [];
-    groups.forEach((versions, key) => {
-      const recent = this.getMostRecentVersion(versions);
-      rows.push({
-        productKey:           key,
-        displayName:          recent.SoftwareProductName || recent.Name,
-        manufacturerName:     recent.ManufacturerName,
-        status:               recent.Status,
-        deploymentType:       recent.DeploymentType,
-        description:          recent.Description,
-        approvalExpirationDate: recent.ApprovalExpirationDate,
-        alsoKnownAs:          recent.AlsoKnownAs,
-        standardType:         recent.StandardType,
-        versionsCount:        versions.length,
-        hasMultipleVersions:  versions.length > 1,
-        mostRecentStandard:   recent,
-        versions:             this.sortVersions(versions),
-      });
-    });
-
-    return rows.sort((a, b) => (a.displayName || '').localeCompare(b.displayName || ''));
-  }
-
-  private getMostRecentVersion(versions: ITStandards[]): ITStandards {
-    const withDate = versions.filter(v => v.ApprovalExpirationDate);
-    if (withDate.length > 0) {
-      return withDate.sort((a, b) =>
-        new Date(b.ApprovalExpirationDate).getTime() - new Date(a.ApprovalExpirationDate).getTime()
-      )[0];
-    }
-    return [...versions].sort((a, b) => b.ID - a.ID)[0];
-  }
-
-  private sortVersions(versions: ITStandards[]): ITStandards[] {
-    const priority = (s: string): number => {
-      if (s === 'Approved' || s === 'Approved with conditions') return 0;
-      if (s === 'Denied')  return 1;
-      if (s === 'Retired') return 2;
-      return 3;
-    };
-    return [...versions].sort((a, b) => {
-      const p = priority(a.Status) - priority(b.Status);
-      if (p !== 0) return p;
-      if (a.ApprovalExpirationDate && b.ApprovalExpirationDate) {
-        return new Date(b.ApprovalExpirationDate).getTime() - new Date(a.ApprovalExpirationDate).getTime();
-      }
-      return b.ID - a.ID;
-    });
-  }
-
-  private computeFilterTotals(): void {
-    const base = this.hasSelectedChips()
-      ? this.rollupRows.filter(r => this.selectedChips.includes(r.deploymentType))
-      : this.rollupRows;
-
-    this.filterTotals = {
-      AllTotal:      base.length,
-      ApprovedTotal: base.filter(r => r.status === 'Approved' || r.status === 'Approved with conditions').length,
-      DeniedTotal:   base.filter(r => r.status === 'Denied').length,
-      RetiredTotal:  base.filter(r => r.status === 'Retired').length,
-      OtherTotal:    base.filter(r => !this.otherStatuses.includes(r.status)).length,
-    };
-  }
-
-  private getTabFilteredRows(): ItStandardRollupRow[] {
-    let rows = [...this.rollupRows];
-
-    if (this.selectedTab === 'Other') {
-      rows = rows.filter(r => !this.otherStatuses.includes(r.status));
-    } else if (this.selectedTab === 'Approved' || this.selectedTab === 'ApprovedDenied') {
-      rows = this.selectedTab === 'ApprovedDenied'
-        ? rows.filter(r => r.status === 'Approved' || r.status === 'Denied' || r.status === 'Approved with conditions')
-        : rows.filter(r => r.status === 'Approved' || r.status === 'Approved with conditions');
-    } else if (this.selectedTab !== 'All') {
-      rows = rows.filter(r => r.status === this.selectedTab);
-    }
-
-    if (this.hasSelectedChips()) {
-      rows = rows.filter(r => this.selectedChips.includes(r.deploymentType));
-    }
-
-    return rows;
-  }
+  // ── Tabs / chips ─────────────────────────────────────────────────────────
 
   public onSelectTab(tabName: string): void {
     this.selectedTab = tabName;
     this.syncUrlToFilters();
-    this.tableService.updateReportTableData(this.getTabFilteredRows());
-    this.tableService.updateReportTableDataReadyStatus(true);
+    this.refreshTable();
   }
 
   public onKeyUp(e: KeyboardEvent, tabName: string): void {
@@ -283,9 +319,7 @@ export class ItStandardsComponent implements OnInit {
   public onFilterChipSelect(selectedChips: string[]): void {
     this.selectedChips = selectedChips;
     this.syncUrlToFilters();
-    this.tableService.updateReportTableData(this.getTabFilteredRows());
-    this.tableService.updateReportTableDataReadyStatus(true);
-    this.computeFilterTotals();
+    this.refreshTable();
   }
 
   public isTabSelected(tabName: string): boolean {
@@ -331,17 +365,28 @@ export class ItStandardsComponent implements OnInit {
     }
   }
 
+  // ── Navigation ───────────────────────────────────────────────────────────
+
+  // Rollup rows with multiple versions are expanded by the table on click and never reach
+  // here; single-version rollup rows and flat rows go straight to the details page.
   public onRowClick(e: any): void {
-    const searchTerm: string = e.tableSearchString || '';
-    this.router.navigate(['/it-standard-rollup', e.productKey], {
-      queryParams: { tableSearchTerm: searchTerm || undefined }
-    });
+    const standard: ITStandards | undefined = this.isRollupView ? e.versions?.[0] : e;
+    if (!standard || (this.isRollupView && e.hasMultipleVersions)) return;
+    this.navigateToDetails(standard, e.tableSearchString);
   }
 
   public onVersionClick(standard: ITStandards, event: Event): void {
     event.stopPropagation();
-    this.router.navigate(['/it_standards', standard.ID]);
+    this.navigateToDetails(standard);
   }
+
+  private navigateToDetails(standard: ITStandards, searchTerm?: string): void {
+    this.router.navigate(['/it_standards', standard.ID], {
+      queryParams: { tableSearchTerm: searchTerm || undefined }
+    });
+  }
+
+  // ── Helpers ──────────────────────────────────────────────────────────────
 
   private applyConditionStatus(standards: ITStandards[]): void {
     standards.forEach(s => {
@@ -362,5 +407,63 @@ export class ItStandardsComponent implements OnInit {
       || standard.Status === 'Pilot'
       || standard.Status === 'Exception'
       || standard.Status === 'Sunsetting';
+  }
+
+  private YesNo(value: any): string {
+    return value === 'T' ? 'Yes' : 'No';
+  }
+
+  private tooltip(name: string): string {
+    return this.sharedService.getTooltip(this.attrDefinitions, name);
+  }
+
+  // ── Column definitions ───────────────────────────────────────────────────
+
+  private buildRollupTableCols(): Column[] {
+    return [
+      { field: 'displayName',            header: 'IT Standard Name', isSortable: true, showColumn: true,  titleTooltip: this.tooltip('IT Standard Name') },
+      { field: 'versionsCount',          header: '# of Versions',    isSortable: true, showColumn: true },
+      { field: 'manufacturerName',       header: 'Manufacturer',     isSortable: true, showColumn: true,  titleTooltip: this.tooltip('Manufacturer Name') },
+      { field: 'description',            header: 'Description',      isSortable: true, showColumn: true,  formatter: this.sharedService.formatDescriptionLite, titleTooltip: this.tooltip('Description') },
+      { field: 'status',                 header: 'Status',           isSortable: true, showColumn: true,  formatter: this.sharedService.formatStatus, titleTooltip: this.tooltip('Status') },
+      { field: 'approvalExpirationDate', header: 'Approval Expires', isSortable: true, showColumn: true,  formatter: this.sharedService.dateFormatter, titleTooltip: this.tooltip('Approval Expiration Date') },
+      { field: 'alsoKnownAs',            header: 'Also Known As',    isSortable: true, showColumn: false, titleTooltip: this.tooltip('Previously Known As') },
+      { field: 'standardType',           header: 'Standard Type',    isSortable: true, showColumn: false, titleTooltip: this.tooltip('Standard Type') },
+    ];
+  }
+
+  private buildFlatTableCols(): Column[] {
+    return [
+      { field: 'ID',                     header: 'ID',                               isSortable: true,  showColumn: false, titleTooltip: this.tooltip('ID') },
+      { field: 'Name',                   header: 'IT Standard Name',                 isSortable: true,  showColumn: true,  titleTooltip: this.tooltip('IT Standard Name') },
+      { field: 'ApprovedVersions',       header: 'Approved Versions',                isSortable: false, showColumn: true,  titleTooltip: this.tooltip('Approved Versions') },
+      { field: 'ManufacturerName',       header: 'Manufacturer',                     isSortable: true,                     titleTooltip: this.tooltip('Manufacturer Name') },
+      { field: 'Description',            header: 'Description',                      isSortable: true,  showColumn: true,  formatter: this.sharedService.formatDescriptionLite, titleTooltip: this.tooltip('Description') },
+      { field: 'Status',                 header: 'Status',                           isSortable: true,                     formatter: this.sharedService.formatStatus, titleTooltip: this.tooltip('Status') },
+      { field: 'DeploymentType',         header: 'Deployment Type',                  isSortable: true,                     formatter: this.sharedService.formatDeploymentType, titleTooltip: this.tooltip('Deployment Type') },
+      { field: 'ApprovalExpirationDate', header: 'Approval Expires',                 isSortable: true,  showColumn: true,  formatter: this.sharedService.dateFormatter, titleTooltip: this.tooltip('Approval Expiration Date') },
+      { field: 'Manufacturer',           header: 'Manufacturer ID',                  isSortable: true,  showColumn: false, titleTooltip: this.tooltip('Manufacturer ID') },
+      { field: 'SoftwareProduct',        header: 'Product ID',                       isSortable: true,  showColumn: false, titleTooltip: this.tooltip('Software Product ID') },
+      { field: 'SoftwareProductName',    header: 'Product',                          isSortable: true,  showColumn: false, titleTooltip: this.tooltip('Software Product Name') },
+      { field: 'SoftwareVersion',        header: 'Version ID',                       isSortable: true,  showColumn: false, titleTooltip: this.tooltip('Software Version ID') },
+      { field: 'SoftwareVersionName',    header: 'Version',                          isSortable: true,  showColumn: false, titleTooltip: this.tooltip('Software Version Name') },
+      { field: 'SoftwareRelease',        header: 'Release ID',                       isSortable: true,  showColumn: false, titleTooltip: this.tooltip('Software Release ID') },
+      { field: 'SoftwareReleaseName',    header: 'Release',                          isSortable: true,  showColumn: false, titleTooltip: this.tooltip('Software Release Name') },
+      { field: 'AlsoKnownAs',            header: 'Also Known As',                    isSortable: true,  showColumn: false, titleTooltip: this.tooltip('Previously Known As') },
+      { field: 'StandardType',           header: 'Standard Type',                    isSortable: true,  showColumn: false, titleTooltip: this.tooltip('Standard Type') },
+      { field: 'ComplianceStatus',       header: '508 Compliance',                   isSortable: true,  showColumn: false, titleTooltip: this.tooltip('508 Compliance') },
+      { field: 'ExceptionLink',          header: '508 Exception Link',               isSortable: true,  showColumn: false, titleTooltip: this.tooltip('508 Exception Link') },
+      { field: 'POC',                    header: 'POC',                              isSortable: true,  showColumn: false, titleTooltip: this.tooltip('POC') },
+      { field: 'POCorg',                 header: 'POC Org',                          isSortable: true,  showColumn: false, titleTooltip: this.tooltip('POC Org') },
+      { field: 'Comments',               header: 'Comments',                         isSortable: true,  showColumn: false, formatter: this.sharedService.formatDescription, titleTooltip: this.tooltip('Comments') },
+      { field: 'fedramp',                header: 'FedRAMP',                          isSortable: true,  showColumn: false, formatter: this.YesNo, titleTooltip: this.tooltip('FedRAMP') },
+      { field: 'open_source',            header: 'Open Source',                      isSortable: true,  showColumn: false, formatter: this.YesNo, titleTooltip: this.tooltip('Open Source') },
+      { field: 'RITM',                   header: 'Requested Item (RITM)',            isSortable: true,  showColumn: false, titleTooltip: this.tooltip('Requested Item (RITM)') },
+      { field: 'OperatingSystems',       header: 'Operating Systems',                isSortable: false, showColumn: false, formatter: this.sharedService.csvFormatter, titleTooltip: this.tooltip('Operating Systems') },
+      { field: 'AppBundleIds',           header: 'App Bundle Ids',                   isSortable: false, showColumn: false, formatter: this.sharedService.csvFormatter, titleTooltip: this.tooltip('App Bundle Ids') },
+      { field: 'ConditionsRestrictions', header: 'Conditions/Restrictions',          isSortable: false, showColumn: false, titleTooltip: this.tooltip('ConditionsRestrictions') },
+      { field: 'CriticalReview',         header: 'Critical Software Review Results', isSortable: true,  showColumn: false, titleTooltip: this.tooltip('Critical Software Review Results') },
+      { field: 'CSCRMReview',            header: 'C-SCRM Review Results',            isSortable: true,  showColumn: false, hideFromPicker: true, titleTooltip: this.tooltip('C-SCRM Review Results') },
+    ];
   }
 }

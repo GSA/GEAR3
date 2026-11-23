@@ -6,7 +6,6 @@ import { ItStandardsComponent } from './it-standards/it-standards.component';
 import { ItStandardsDetailsComponent } from './details/it-standards-details.component';
 import { ItStandardsModalComponent } from '../../components/modals/it-standards-modal/it-standards-modal.component';
 import { ItStandardsManagerComponent } from './manager/it-standards-manager.component';
-import { ItStandardRollupComponent } from './it-standards/rollup/it-standard-rollup.component';
 import { TechCategoriesComponent } from './tech-categories/tech-categories.component';
 import { TechCategoriesDetailsComponent } from './tech-categories/details/tech-categories-details.component';
 import { TechCategoriesModelComponent } from './tech-categories-model/tech-categories-model.component';
@@ -18,7 +17,6 @@ const routes: Routes = [
   { path: 'it_standards/filtered/:deploymentType', component: ItStandardsComponent, title: 'IT Standards' },
   { path: 'it_standards/status/:status', component: ItStandardsComponent, title: 'IT Standards' },
   { path: 'it_standards/:standardID', component: ItStandardsDetailsComponent, title: 'IT Standard' },
-  { path: 'it-standard-rollup/:productKey', component: ItStandardRollupComponent, title: 'IT Standard' },
   { path: 'it_standards_manager', component: ItStandardsManagerComponent, title: 'IT Standard Manager' },
   { path: 'it_standards_manager/:standardID', component: ItStandardsManagerComponent, title: 'IT Standard Manager' },
   { path: 'it_bricks', component: ItBricksComponent, title: 'IT Bricks', data: { title: 'IT Bricks', bricksSrc: '/assets/it-bricks/it-bricks.html' } },
@@ -34,7 +32,6 @@ const routes: Routes = [
     ItStandardsDetailsComponent,
     ItStandardsModalComponent,
     ItStandardsManagerComponent,
-    ItStandardRollupComponent,
     TechCategoriesComponent,
     TechCategoriesDetailsComponent,
     TechCategoriesModelComponent,

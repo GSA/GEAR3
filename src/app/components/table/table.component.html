@@ -60,6 +60,8 @@
                     </p-inputgroup>
                   </p-iconField>
                   }
+                  <!-- Report-specific toolbar buttons projected from the parent -->
+                  <ng-content select="[toolbarBtns]"></ng-content>
                   @if (showShowHideColumnButton) {
                     <p-multiSelect
                       [options]="pickableColumns"

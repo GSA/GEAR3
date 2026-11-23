@@ -24,16 +24,28 @@
     @if (filterTotals) {
       <div>
         <app-table
-          visibleColumnStorageKey="it-standards-rollup-report"
-          [tableCols]="rollupTableCols"
+          [visibleColumnStorageKey]="isRollupView ? 'it-standards-rollup-report' : 'it-standards-report'"
+          [tableCols]="tableCols"
           [showToolbar]="true"
           [showPagination]="true"
           reportStyle="neutral"
-          defaultSortField="displayName"
-          [showExpandColumn]="true"
+          exportName="IT Standards"
+          [defaultSortField]="isRollupView ? 'displayName' : 'Name'"
+          [showExpandColumn]="isRollupView"
+          [expandOnRowClick]="isRollupView"
           expandDataKey="productKey"
           expandableRowField="hasMultipleVersions"
           (rowClickEvent)="onRowClick($event)">
+
+          <!-- Rollup / flat view toggle (IT Standards only) -->
+          <p-button
+            toolbarBtns
+            [icon]="isRollupView ? 'pi pi-list' : 'pi pi-objects-column'"
+            [pTooltip]="isRollupView ? 'Switch to flat view (one row per version)' : 'Switch to rollup view (grouped by product)'"
+            tooltipPosition="left"
+            severity="primary"
+            (click)="onToggleView()"
+            [ariaLabel]="isRollupView ? 'Switch to flat view' : 'Switch to rollup view'" />
 
           <!-- Version sub-rows shown when a rollup row is expanded -->
           <ng-template #expansionRows let-row>

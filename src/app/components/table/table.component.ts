@@ -85,6 +85,8 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   @Input() showExpandColumn: boolean = false;
   @Input() expandDataKey: string = 'id';
   @Input() expandableRowField: string = '';
+  // When true, clicking an expandable row toggles its expansion instead of emitting rowClickEvent
+  @Input() expandOnRowClick: boolean = false;
 
   @ContentChild('expansionRows', { read: TemplateRef }) expansionRowsTemplate: TemplateRef<any>;
 
@@ -457,6 +459,11 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public onRowSelect(e: TableRowSelectEvent) {
+    if (this.expandOnRowClick && this.isRowExpandable(e.data)) {
+      this.toggleRowExpansion(e.data);
+      this.clearRowSelection();
+      return;
+    }
     e.data.tableSearchString = this.tabelSearchString || this.urlSearchTerm;
     this.rowClickEvent.emit(e.data);
     // if(this.tableType === 'globalSearch') {
@@ -472,6 +479,33 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     // }
   }
 
+
+  private isRowExpandable(row: any): boolean {
+    if (!this.showExpandColumn || !row) return false;
+    return !this.expandableRowField || !!row[this.expandableRowField];
+  }
+
+  private toggleRowExpansion(row: any): void {
+    const key = row[this.expandDataKey];
+    const next = { ...this.expandedRows };
+    if (next[key]) {
+      delete next[key];
+    } else {
+      next[key] = true;
+    }
+    this.expandedRows = next;
+  }
+
+  // PrimeNG marks the clicked row as selected after onRowSelect fires; clear it on the
+  // next tick so the expanded row isn't highlighted and the next click selects again.
+  private clearRowSelection(): void {
+    setTimeout(() => {
+      if (!this.dt) return;
+      this.dt.selection = null;
+      this.dt.selectionKeys = {};
+      this.dt.tableService.onSelectionChange();
+    });
+  }
 
   private navigateByType(type: string, data: any) {
     const currentRoute = this.router.url;
@@ -671,37 +705,49 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
+  // Builds the CSV directly from the table's current rows (search + column filters applied)
+  // rather than relying on PrimeNG's exportCSV, so row data with nested objects/arrays
+  // (e.g. rollup rows) or embedded HTML always exports as plain cell values.
   exportSanitizedData() {
-    if(this.exportFunction) {
-      this.dt.exportFunction?.();
-    } else {
-      const sanitizedData = JSON.parse(JSON.stringify(this.tableData));
-
-      for (const row of sanitizedData) {
-        for (const key in row) {
-          if (Object.prototype.hasOwnProperty.call(row, key)) {
-            row[key] = this.escapeCsvField(row[key]);
-          }
-        }
-      }
-      let options = { 
-        selectionOnly: false,
-        data: sanitizedData
-       };
-      this.dt.exportCSV(options);
+    if (this.exportFunction) {
+      this.exportFunction();
+      return;
     }
+
+    const rows: any[] = (this.dt?.filteredValue as any[]) ?? this.tableData ?? [];
+    const cols = this.tableCols.filter(col => !!col.field);
+
+    const lines = [
+      cols.map(col => this.escapeCsvField(col.header)).join(','),
+      ...rows.map(row => cols.map(col => this.escapeCsvField(this.getExportValue(row, col.field))).join(','))
+    ];
+
+    const blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.style.display = 'none';
+    link.href = url;
+    link.download = `${this.getExportFilename()}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(() => URL.revokeObjectURL(url));
   }
 
-  escapeCsvField(field: unknown) {
-    const stringField = String(field); 
-  
-    const escapedField = stringField.replace(/"/g, '""');
-  
-    if (escapedField.includes(',') || escapedField.includes('\n') || escapedField.includes('"')) {
-      return `"${escapedField}"`;
-    } else {
-      return escapedField;
+  private getExportValue(row: any, field: string): string {
+    const value = field.split('.').reduce((obj, key) => (obj == null ? obj : obj[key]), row);
+    if (value == null) return '';
+    if (value instanceof Date) return value.toISOString();
+    if (Array.isArray(value)) {
+      return value.map(v => (v !== null && typeof v === 'object') ? JSON.stringify(v) : String(v)).join('; ');
     }
+    if (typeof value === 'object') return JSON.stringify(value);
+    // Strip any HTML markup so cells contain plain text
+    return String(value).replace(/<\/?[a-zA-Z][^>]*>/g, '');
+  }
+
+  escapeCsvField(field: unknown): string {
+    return `"${String(field ?? '').replace(/"/g, '""')}"`;
   }
 
   public getTooltip (name: string): string {
