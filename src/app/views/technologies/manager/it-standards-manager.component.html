@@ -253,21 +253,40 @@
                       <div class="data">
                         <label for="itStandCategory" class="data-label">Technology Category<span class="text-danger">*</span></label>
                         <ng-select id="itStandCategory" formControlName="itStandCategory"
+                          class="trm-select"
                           [items]="categories"
                           [multiple]="true"
                           bindLabel="Name"
                           bindValue="Id"
+                          [searchFn]="trmSearchFn"
                           clearAllText="Clear All"
-                          [clearSearchOnAdd]="true"
+                          [clearSearchOnAdd]="false"
                           [closeOnSelect]="false"
                           [loading]="catsLoading"
-                          placeholder="Search & Select Categories Here"
-                          [virtualScroll]="true"
-                          (scroll)="modalService.onScroll($event, catsBuffer, bufferSize, categories, catsLoading)"
-                          (scrollToEnd)="modalService.onScrollToEnd(catsBuffer, bufferSize, categories, catsLoading)"
+                          placeholder="Search by name or definition (e.g. vulnerability, database)"
+                          notFoundText="No technology categories match your search"
                           required>
                           <ng-template ng-header-tmp>
-                            <small class="form-text text-muted">Loaded {{ catsBuffer.length }} of {{ categories.length }}</small>
+                            <small class="form-text text-muted">
+                              Search matches TRM names and definitions. Choose the most specific category that applies;
+                              you can select more than one.
+                            </small>
+                          </ng-template>
+                          <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                            <span class="ng-value-icon left" (click)="clear(item)" aria-hidden="true">×</span>
+                            <span class="ng-value-label" [title]="item.Path">{{ item.Name }}</span>
+                          </ng-template>
+                          <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
+                            <div class="trm-option" [style.padding-left.rem]="search ? 0 : item.Depth * 1.25">
+                              <div class="trm-option-header">
+                                <span class="trm-option-name" [innerHTML]="highlightTrmText(item.Name, search)"></span>
+                                <span class="trm-level-badge" [ngClass]="'trm-level-' + item.Type?.toLowerCase()">{{ item.Type }}</span>
+                              </div>
+                              @if (search && item.Parents) {
+                                <div class="trm-option-path">{{ item.Parents }}</div>
+                              }
+                              <div class="trm-option-desc" [innerHTML]="trmDescriptionSnippet(item.Description, search)"></div>
+                            </div>
                           </ng-template>
                         </ng-select>
                         @if (modalService.fieldValidCheck(itStandardsForm, 'itStandCategory')) {

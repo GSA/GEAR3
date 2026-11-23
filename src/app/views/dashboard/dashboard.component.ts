@@ -101,6 +101,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       header: 'Category',
       isSortable: false,
       showColumn: true,
+      formatter: this.sharedService.formatTrmCategories
     },{
       field: 'Status',
       header: 'Status',

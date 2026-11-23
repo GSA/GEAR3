@@ -157,3 +157,69 @@
         }
     }
 }
+// Technology Category (TRM) picker
+.trm-option {
+    display: flex;
+    flex-direction: column;
+    gap: .15rem;
+    white-space: normal;
+
+    & .trm-option-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: .5rem;
+    }
+
+    & .trm-option-name {
+        font-weight: 600;
+    }
+
+    & .trm-option-path {
+        font-size: .75rem;
+        color: #565C65;
+    }
+
+    & .trm-option-desc {
+        font-size: .75rem;
+        color: #3D4551;
+        line-height: 1.35;
+    }
+
+    & .trm-level-badge {
+        flex-shrink: 0;
+        padding: .1rem .45rem;
+        border-radius: .25rem;
+        font-size: .65rem;
+        letter-spacing: .5px;
+        text-transform: uppercase;
+        background: #E7F2F8;
+        color: #0B4778;
+
+        &.trm-level-domain {
+            background: #0B4778;
+            color: #fff;
+        }
+
+        &.trm-level-area {
+            background: #CFE8FF;
+            color: #0B4778;
+        }
+    }
+}
+
+::ng-deep .trm-select {
+    & .ng-dropdown-panel .ng-dropdown-panel-items {
+        max-height: 26rem;
+    }
+
+    & .ng-dropdown-panel .ng-option {
+        border-bottom: 1px solid #F0F0F0;
+    }
+
+    & .trm-option mark {
+        padding: 0;
+        background: #FFE396;
+        color: inherit;
+    }
+}

@@ -380,6 +380,35 @@ export class SharedService {
       else return value;
     }
 
+  //// TRM Category Formatter
+  // Expects '|'-separated entries of "Domain > Area > Name" (see get_it-standards_recent.sql)
+  public formatTrmCategories(value: any, row: any) {
+    if (!value) return '-';
+    const escapeHtml = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const maxChips = 2;
+
+    const paths = String(value).split('|').filter(e => e.trim()).map(entry =>
+      // Areas repeat their name at the Area and Name levels, so collapse duplicates
+      entry.split(' > ').map(p => p.trim()).filter((p, i, arr) => p && p !== arr[i - 1])
+    );
+    // Drop parent Domains/Areas when a more specific TRM beneath them is also assigned
+    const entries = paths
+      .filter(p => !paths.some(other => other.length > p.length && p.every((part, i) => other[i] === part)))
+      .map(p => ({ label: p[p.length - 1], path: p.join(' › ') }));
+    if (!entries.length) return '-';
+
+    const chips = entries.slice(0, maxChips)
+      .map(e => `<span class="trm-category-chip" title="${escapeHtml(e.path)}">${escapeHtml(e.label)}</span>`);
+
+    const hidden = entries.slice(maxChips);
+    if (hidden.length) {
+      const hiddenTitle = escapeHtml(hidden.map(e => e.path).join('\n'));
+      chips.push(`<span class="trm-category-chip trm-category-chip-more" title="${hiddenTitle}">+${hidden.length} more</span>`);
+    }
+
+    return `<span class="trm-category-chips">${chips.join('')}</span>`;
+  }
+
   //// OS & App Bundle formatter
   public csvFormatter(value: any, row: any) {
     if(value) {
