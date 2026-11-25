@@ -17,6 +17,7 @@
       [rows]="defaultPaginationNumber"
       [(first)]="first"
       [paginator]="showPagination"
+      [paginatorStyleClass]="hasMultiplePages ? '' : 'table-paginator-no-navigation'"
       [lazy]="serverSidePagination"
       [lazyLoadOnInit]="serverSidePagination"
       [totalRecords]="serverSidePagination ? serverSideTotalRecords : tableData.length"

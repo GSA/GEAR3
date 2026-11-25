@@ -213,6 +213,17 @@
             background-color: #fff;
             border-top: 1px solid #dee2e6;
         }
+
+        .table-paginator-no-navigation {
+            .p-paginator-first,
+            .p-paginator-prev,
+            .p-paginator-pages,
+            .p-paginator-next,
+            .p-paginator-last,
+            .p-paginator-rpp-dropdown {
+                display: none;
+            }
+        }
     }
 
     .p-datatable .p-datatable-header {
