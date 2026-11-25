@@ -155,6 +155,8 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.rows = this.defaultPaginationNumber;
+
     // Search is now triggered by Enter key, not by value changes
     // But we still need to handle when search is manually cleared
     this.tableSearchSubscription = this.tableSearchControl.valueChanges
@@ -193,15 +195,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
         if (!this.applyPendingSearch()) {
           this.tableData = d ?? [];
         }
-        // Defer paginator reset to after Angular has applied the new tableData
-        // binding so PrimeNG recalculates totalRecords and page links correctly.
-        setTimeout(() => {
-          this.first = 0;
-          if (this.dt) {
-            this.dt.first = 0;
-            this.dt.totalRecords = this.tableData.length;
-          }
-        });
+        this.resetPaginator();
       });
       this.tableReadySubscription = this.tableService.reportTableDataReady$.subscribe(r => {
         this.isDataReady = r;
@@ -414,6 +408,23 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     this.rows = event.rows;
   }
 
+  get hasMultiplePages(): boolean {
+    const totalRecords = this.serverSidePagination ? this.serverSideTotalRecords : this.tableData.length;
+    return totalRecords > this.rows;
+  }
+
+  private resetPaginator(): void {
+    this.first = 0;
+    // Let PrimeNG process the new table data before syncing its paginator state.
+    setTimeout(() => {
+      this.first = 0;
+      if (this.dt) {
+        this.dt.first = 0;
+        this.dt.totalRecords = this.serverSidePagination ? this.serverSideTotalRecords : this.tableData.length;
+      }
+    });
+  }
+
   onLazyLoad(event: TableLazyLoadEvent): void {
     if (!this.serverSidePagination) return;
     const pageSize = event.rows || this.defaultPaginationNumber;
@@ -552,6 +563,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
       this.tableService.updateReportTableData(this.tableData);
       this.isHandlingDataUpdate = false;
       this.tableService.updateReportDataTableFilterKey(null);
+      this.resetPaginator();
       return;
     }
 
@@ -586,6 +598,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
     this.tableData = rankedData;
     this.tabelSearchString = searchTerm;
     this.tableService.updateReportDataTableFilterKey(keyword);
+    this.resetPaginator();
   }
 
   onTableSearchKeypress(event: KeyboardEvent): void {
