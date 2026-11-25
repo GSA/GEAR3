@@ -27,7 +27,7 @@
       [exportFilename]="getExportFilename()"
       [styleClass]="reportStyle + ' p-datatable-gridlines'"
       [sortOrder]="defaultSortOrder"
-      [sortField]="defaultSortField"
+      [sortField]="isTableSearchActive ? null : defaultSortField"
       selectionMode="single"
       [showCurrentPageReport]="true"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"

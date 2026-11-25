@@ -132,6 +132,7 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   isDataReady: boolean = false;
 
   tableSearchControl = new FormControl('');
+  isTableSearchActive: boolean = false;
   private tableSearchSubscription?: Subscription;
 
   private tabelSearchString: string = '';
@@ -547,6 +548,10 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
   onTableSearch(keyword: string) {
     if (!keyword || keyword.trim() === '') {
       // When search is empty, show all items from current filter
+      this.isTableSearchActive = false;
+      if (this.dt) {
+        this.dt.sortField = this.defaultSortField;
+      }
       this.tableData = [...this.originalTableData];
       this.isHandlingDataUpdate = true;
       this.tableService.updateReportTableData(this.tableData);
@@ -557,35 +562,81 @@ export class TableComponent implements OnInit, OnChanges, OnDestroy {
 
     const searchTerm = keyword.toLowerCase().trim();
     const searchableColumns = this.tableCols.filter(col => col.field && col.showColumn !== false);
-    
+    const primaryColumn = this.getPrimarySearchColumn(searchableColumns);
+
     // Search within the filtered/tab-selected data (originalTableData), not all data
     const rankedData = this.originalTableData.map(item => {
-      let maxScore = 0;
-      
+      const primaryScore = primaryColumn
+        ? this.getSearchScore(item[primaryColumn.field], searchTerm)
+        : 0;
+      let secondaryScore = 0;
+
       searchableColumns.forEach(col => {
-        const value = item[col.field];
-        if (!value) return;
-        
-        const stringValue = String(value).toLowerCase();
-        
-        if (stringValue === searchTerm) {
-          maxScore = Math.max(maxScore, this.originalTableData.length + 1);
-        } else {
-          const index = stringValue.indexOf(searchTerm);
-          if (index !== -1) {
-            maxScore = Math.max(maxScore, 1 / (index + 1));
-          }
-        }
+        if (col === primaryColumn) return;
+        secondaryScore = Math.max(secondaryScore, this.getSearchScore(item[col.field], searchTerm));
       });
-      
-      return { item, score: maxScore };
+
+      return { item, primaryScore, score: Math.max(primaryScore, secondaryScore) };
     }).filter(ranked => ranked.score > 0)
-      .sort((a, b) => b.score - a.score)
+      .sort((a, b) => Number(b.primaryScore > 0) - Number(a.primaryScore > 0) || b.score - a.score)
       .map(ranked => ranked.item);
-    
+
+    this.isTableSearchActive = true;
+    if (this.dt) {
+      this.dt.sortField = null;
+    }
     this.tableData = rankedData;
     this.tabelSearchString = searchTerm;
     this.tableService.updateReportDataTableFilterKey(keyword);
+  }
+
+  private getPrimarySearchColumn(searchableColumns: Column[]): Column | undefined {
+    const defaultSortField = this.defaultSortField.trim().toLowerCase();
+    const defaultSortColumn = searchableColumns.find(col => col.field.toLowerCase() === defaultSortField);
+    if (defaultSortColumn) {
+      return defaultSortColumn;
+    }
+
+    const getPrimaryFieldPriority = (value: string): number => {
+      const normalized = value.toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (normalized === 'keyname') return 0;
+      if (['name', 'title', 'term', 'domain'].includes(normalized)) return 1;
+      if (/(name|title|term|domain)$/.test(normalized)) return 2;
+      if ([
+        'id', 'key', 'identifier', 'number', 'num', 'symbol', 'code',
+        'refid', 'referenceid', 'referencenum', 'referencenumber'
+      ].includes(normalized)) return 3;
+      if (/(identifier|number|num|symbol|code|key)$/.test(normalized)) return 3;
+      return Infinity;
+    };
+
+    let primaryColumn: Column | undefined;
+    let bestPriority = Infinity;
+
+    searchableColumns.forEach(col => {
+      const priority = Math.min(
+        getPrimaryFieldPriority(col.field),
+        getPrimaryFieldPriority(col.header)
+      );
+      if (priority < bestPriority) {
+        primaryColumn = col;
+        bestPriority = priority;
+      }
+    });
+
+    return primaryColumn ?? searchableColumns[0];
+  }
+
+  private getSearchScore(value: unknown, searchTerm: string): number {
+    if (value === null || value === undefined) return 0;
+
+    const stringValue = String(value).toLowerCase();
+    if (stringValue === searchTerm) {
+      return this.originalTableData.length + 1;
+    }
+
+    const index = stringValue.indexOf(searchTerm);
+    return index === -1 ? 0 : 1 / (index + 1);
   }
 
   onTableSearchKeypress(event: KeyboardEvent): void {
