@@ -40,6 +40,32 @@ exports.feedback = async (req, res) => {
     return res.status(500).json({ message: 'Failed to save feedback.' });
   }
 };
+/**
+ * Patterns that indicate a prompt injection attempt — instructions trying to
+ * override the system prompt or assume a different persona.
+ * Checked against the raw user message before it reaches the LLM.
+ */
+const INJECTION_PATTERNS = [
+  /ignore\s+(previous|all|above|prior)\s+(instructions?|prompts?|rules?|context)/i,
+  /disregard\s+(your|all|the|any)\s+(instructions?|rules?|guidelines?|constraints?)/i,
+  /forget\s+(your|all|previous|prior)\s+(instructions?|rules?|training|context)/i,
+  /you\s+are\s+now\s+(?!the\s+GEAR)/i,
+  /act\s+as\s+(if\s+you\s+are\s+|a\s+)?(?!the\s+GEAR)/i,
+  /pretend\s+(you\s+are|to\s+be)\b/i,
+  /new\s+(role|persona|instructions?|rules?|system\s+prompt)\b/i,
+  /override\s+(your\s+)?(instructions?|rules?|guidelines?|system\s*prompt)/i,
+  /system\s*prompt\s*[:=]/i,
+  // Common LLM injection delimiters used to break out of context
+  /\[INST\]|\[\/INST\]|<\|im_start\|>|<\|im_end\|>|<<SYS>>|<\/SYS>/i,
+];
+
+/**
+ * Returns true if the message appears to be a prompt injection attempt.
+ */
+function isPromptInjection(message) {
+  return INJECTION_PATTERNS.some((pattern) => pattern.test(message));
+}
+
 exports.chat = async (req, res) => {
   try {
     const message = req.body && req.body.message;
@@ -50,6 +76,10 @@ exports.chat = async (req, res) => {
     }
     if (message.length > 8000) {
       return res.status(400).json({ message: 'Message is too long.' });
+    }
+    if (isPromptInjection(message)) {
+      console.warn('[chat] Prompt injection attempt detected. message_preview=%s', message.slice(0, 120));
+      return res.status(400).json({ message: 'Your message could not be processed.' });
     }
 
     // Validate history at the controller boundary before passing deeper.
